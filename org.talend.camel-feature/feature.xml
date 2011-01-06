@@ -17,6 +17,28 @@
    </license>
 
    <includes
-         id="org.talend.tos_feature"
-         version="0.0.0"/>
+         id="org.talend.commons_feature"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.talend.core_feature"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.talend.repository_feature"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.talend.designer_feature"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.talend.rcp_feature"
+         version="0.0.0"
+         search-location="self"/>
+
 </feature>
