@@ -26,9 +26,8 @@
          search-location="self"/>
 
    <includes
-         id="org.talend.core_feature"
-         version="0.0.0"
-         search-location="self"/>
+         id="org.talend.camel.core_feature"
+         version="0.0.0"/>
 
    <includes
          id="org.talend.repository_feature"
