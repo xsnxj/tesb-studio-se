@@ -17,6 +17,10 @@
    </license>
 
    <includes
+         id="org.eclipse.datatools_feature"
+         version="0.0.0"/>
+
+   <includes
          id="org.talend.commons_feature"
          version="0.0.0"
          search-location="self"/>
@@ -40,9 +44,5 @@
          id="org.talend.rcp_feature"
          version="0.0.0"
          search-location="self"/>
-
-   <includes
-         id="org.eclipse.datatools_feature"
-         version="0.0.0"/>
 
 </feature>
