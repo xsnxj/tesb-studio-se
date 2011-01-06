@@ -1064,25 +1064,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.talend.libraries.javacsv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.libraries.jdbc.jtds"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.talend.libraries.jdbc.mysql"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.talend.commons"
          download-size="0"
          install-size="0"
@@ -1154,28 +1135,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.talend.libraries.jxplorer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.libraries.jexcel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.libraries.salesforce"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.lang"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.gmf.runtime.draw2d.ui.render"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -1312,13 +1312,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.talend.libraries.javacsv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.talend.librariesmanager"
          download-size="0"
          install-size="0"
@@ -1357,27 +1350,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="org.talend.libraries.jexcel"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.libraries.mozilla"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.libraries.uniserv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.mortbay.jetty.server"
