@@ -36,12 +36,12 @@
          search-location="self"/>
 
    <includes
+         id="org.talend.camel.designer_feature"
+         version="0.0.0"/>
+
+   <includes
          id="org.talend.rcp_feature"
          version="0.0.0"
          search-location="self"/>
-
-   <includes
-         id="org.talend.camel.designer_feature"
-         version="0.0.0"/>
 
 </feature>
