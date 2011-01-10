@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.Bundle;
 import org.talend.core.ui.branding.AbstractTalendBrandingService;
-import org.talend.core.ui.branding.DefaultBrandingConfiguration;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.rcp.branding.camel.i18n.Messages;
 
@@ -66,13 +65,13 @@ public class CamelBrandingService extends AbstractTalendBrandingService {
      */
     public IBrandingConfiguration getBrandingConfiguration() {
         if (brandingConfigure == null) {
-            brandingConfigure = new DefaultBrandingConfiguration();
+            brandingConfigure = new CamelBrandingConfiguration();
         }
         return brandingConfigure;
     }
 
     public String getAcronym() {
-        return "tos";
+        return "tcs";
     }
 
     @Override

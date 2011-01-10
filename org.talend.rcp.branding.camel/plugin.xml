@@ -12,10 +12,10 @@
             value="FFFFFF"/>
       <property
             name="startupMessageRect"
-            value="12,209,415,12"/>
+            value="7,168,441,20"/>
       <property
             name="startupProgressRect"
-            value="12,223,411,14"/>
+            value="7,188,441,20"/>
       <property
             name="windowImages"
             value="platform:/plugin/org.talend.rcp/icons/appli_16x16.gif,platform:/plugin/org.talend.rcp/icons/appli_32x32.gif,platform:/plugin/org.talend.rcp/icons/appli_48x48.gif"/>
@@ -72,8 +72,71 @@
    </extension>
          <extension
             point="org.talend.core.runtime.service">
+            <Service
+                  class="org.talend.rcp.branding.camel.CamelDesignerCoreService"
+                  serviceId="ICamelDesignerCoreService">
+            </Service>
          <Service
                class="org.talend.rcp.branding.camel.CamelBrandingService"
                serviceId="org.talend.core.ui.branding.IBrandingService"/>
       </extension>
+         <extension
+               point="org.talend.core.repositoryContextualsActions">
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.EditCamelProcess"
+                  id="org.talend.rcp.branding.camel.EditCamelProcess"
+                  isEditAction="true"
+                  level="10"
+                  name="Edit Process">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.RunCamelProcess"
+                  id="org.talend.rcp.branding.camel.RunCamelProcess"
+                  isEditAction="true"
+                  level="99"
+                  name="Run process">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.ReadCamelProcess"
+                  id="org.talend.rcp.branding.camel.ReadCamelProcess"
+                  isReadAction="true"
+                  level="11"
+                  name="Read process">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.CreateCamelProcess"
+                  id="org.talend.rcp.branding.camel.CreateCamelProcess"
+                  level="10"
+                  name="Create process">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.EditCamelPropertiesAction"
+                  id="org.talend.rcp.branding.camel.ui.EditCamelPropertiesAction"
+                  isPropertiesAction="true"
+                  level="12"
+                  name="Edit properties">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.OpenCamelExistVersionProcessAction"
+                  id="org.talend.rcp.branding.camel.ui.OpenCamelExistVersionProcessAction"
+                  isReadAction="true"
+                  level="12"
+                  name="Open an other version job">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.ExporCameltJobScriptAction"
+                  id="org.talend.repository.ui.actions.exportjobscript"
+                  level="99"
+                  name="Export job scripts">
+            </Action>
+         </extension>
+         <extension
+               point="org.eclipse.ui.preferencePages">
+            <page
+                  category="org.talend.core.prefs"
+                  class="org.talend.rcp.branding.camel.ui.preference.CamelPerformancePreferencePage"
+                  id="org.talend.rcp.branding.camel.PerformancePreferencePage"
+                  name="%performance">
+            </page>
+         </extension>
 </plugin>
