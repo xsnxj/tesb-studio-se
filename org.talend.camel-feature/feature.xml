@@ -31,7 +31,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.talend.repository_feature"
+         id="org.talend.camel.repository_feature"
          version="0.0.0"
          search-location="self"/>
 
