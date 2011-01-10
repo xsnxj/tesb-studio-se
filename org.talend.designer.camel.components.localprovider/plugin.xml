@@ -5,9 +5,16 @@
          point="org.talend.core.components_provider">
       <ComponentsProvider
             class="org.talend.designer.camel.components.localprovider.CamelLocalComponentsProvider"
-            folderName="camel"
+            folderName="components"
             id="org.talend.designer.camel.components.localprovider.CamelLocalComponentsProvider">
       </ComponentsProvider>
+   </extension>
+   <extension
+         point="org.talend.core.runtime.service">
+      <Service
+            class="org.talend.designer.camel.components.localprovider.CamelLocalProviderService"
+            serviceId="ILocalProviderService">
+      </Service>
    </extension>
 
 
