@@ -17,8 +17,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.talend.core.model.components.AbstractComponentsProvider;
 
 /**
@@ -37,8 +35,6 @@ public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
      */
 
     protected File getExternalComponentsLocation() {
-        // test camel component provider if work
-        MessageDialog.openConfirm(new Shell(), "camel localprovider", "create camel components in localprovider");
         URL url = FileLocator.find(CamelComponentPlugin.getDefault().getBundle(), new Path("components"), null); //$NON-NLS-1$
         URL fileUrl;
         try {
