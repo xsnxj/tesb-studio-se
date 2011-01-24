@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.BusinessException;
+import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -121,6 +122,8 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
             }
         } catch (PersistenceException e) {
             ExceptionHandler.process(e);
+        } catch (LoginException e) {
+            ExceptionHandler.process(e);
         }
         RepositoryManager.refreshCreatedNode(ERepositoryObjectType.PROCESS);
     }
@@ -145,6 +148,8 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
             try {
                 ProxyRepositoryFactory.getInstance().lock(processObject);
             } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
+            } catch (LoginException e) {
                 ExceptionHandler.process(e);
             }
 
