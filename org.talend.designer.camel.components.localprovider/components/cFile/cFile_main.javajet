@@ -1,0 +1,92 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+	org.talend.core.model.metadata.IMetadataTable
+	org.talend.core.model.metadata.IMetadataColumn
+    org.talend.core.model.metadata.MetadataTalendType    
+    org.talend.core.model.metadata.MappingTypeRetriever	
+    java.util.List
+    java.util.ArrayList
+    java.util.Map
+    java.util.HashMap
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	
+	String uri = ElementParameterParser.getValue(node, "__CONTEXT_PATH__");
+
+	List<Map<String, String>> options = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__OPTIONS__");
+	int optionsCount = options.size();
+
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+
+	boolean firstOption = false;
+
+	if(conns.size()>0) {	
+	
+%>
+	.to("file:/" +<%=uri%>	
+	
+<% 
+		if(optionsCount > 0){
+			
+			firstOption = true;
+			for(Map<String, String> anOption : options) { 
+			
+			String optionParameter = anOption.get("OPTIONLIST");
+			
+			if(firstOption){
+				firstOption = false;
+							
+%>
+				+"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+
+<%   
+		}else {
+%>
+				+"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+<%
+	        }
+	     }
+	 }
+
+%>
+	  )
+
+<% } else {%>
+
+	from("file:/" + <%=uri%>	
+
+<% 
+		if(optionsCount>0) {	
+			
+			boolean isFirstOption = true;
+
+			for(Map<String, String> anOption : options) { 
+			String optionParameter = anOption.get("OPTIONLIST");
+
+			if(isFirstOption) {
+				isFirstOption = false;
+				
+%>
+				+"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+
+<%  		   
+			}else {
+%>
+				+"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+<%
+	    }
+	  }
+	}
+%>
+        )
+<%
+    }
+%>
