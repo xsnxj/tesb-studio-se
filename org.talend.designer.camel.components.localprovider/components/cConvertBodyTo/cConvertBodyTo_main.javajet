@@ -20,10 +20,13 @@ imports="
 	String cid = node.getUniqueName();
 	
 	String toClass = ElementParameterParser.getValue(node, "__TOCLASS__");
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
 	
-	if(toClass!=null && toClass.trim().length()!=0) {
+    	if(toClass!=null && toClass.trim().length()!=0) {
 %>
-		.convertBodyTo(<%=toClass%>)
+    		.convertBodyTo(<%=toClass%>)
 <%
+    	}
 	}
 %>
