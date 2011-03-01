@@ -8,6 +8,7 @@ imports="
 	org.talend.core.model.metadata.IMetadataColumn
     org.talend.core.model.metadata.MetadataTalendType    
     org.talend.core.model.metadata.MappingTypeRetriever	
+	org.talend.core.model.process.EConnectionType
     java.util.List
     java.util.ArrayList
     java.util.Map
@@ -24,8 +25,8 @@ imports="
 	int optionsCount = options.size();
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
-	
-	if(conns.size()>0) {
+
+	if(conns.size()>0 && !("INTERCEPT".equals(conns.get(0).getConnectorName()))) {
 %>
 		.to(<%=uri%>
 <%
@@ -49,6 +50,11 @@ imports="
 			)
 <%
 	} else {
+		if(conns.size()>0) {
+%>
+		;
+<%
+		}
 %>
 		from(<%=uri%>
 <%
