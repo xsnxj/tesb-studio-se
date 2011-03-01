@@ -37,8 +37,19 @@
 
     <PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="false" NUM_ROW="3">
 		<ITEMS DEFAULT="XPATH">
-			<ITEM NAME="XPATH"    VALUE="xpath" />
-			<ITEM NAME="JAVA"     VALUE="Java" />
+			<ITEM NAME="XPATH"      VALUE="xpath" />
+			<ITEM NAME="EL"         VALUE="el" />
+			<ITEM NAME="GROOVY"     VALUE="groovy" />
+			<ITEM NAME="JAVASCRIPT" VALUE="javascript" />
+			<ITEM NAME="JXPATH"     VALUE="jxpath" />
+			<ITEM NAME="MVEL"       VALUE="mvel" />
+			<ITEM NAME="OGNL"       VALUE="ognl" />
+			<ITEM NAME="XQUERY"     VALUE="xquery" />
+			<ITEM NAME="PHP"        VALUE="php" />
+			<ITEM NAME="PYTHON"     VALUE="python" />
+			<ITEM NAME="RUBY"       VALUE="ruby" />
+			<ITEM NAME="SIMPLE"     VALUE="simple" />
+			<ITEM NAME="SQL"        VALUE="sql" />
 		</ITEMS>
 	</PARAMETER>
     
