@@ -29,7 +29,7 @@ imports="
 
 	boolean firstOption = false;
 
-	if(conns.size()>0) {	
+	if(conns.size()>0 && !("INTERCEPT".equals(conns.get(0).getConnectorName()))) {	
 %>
 	    .to("file:" +<%=uri%>	
 <% 
@@ -55,7 +55,11 @@ imports="
 	 }
 %>
 	  )
-<% } else {%>
+<% } else if( conns.size()>0 ){  %>
+
+	;
+<% } %>
+
 	   from("file:" + <%=uri%>	
 <% 
 		if(optionsCount>0) {	
