@@ -20,6 +20,7 @@ imports="
 	String cid = node.getUniqueName();
 	
 	String uri = ElementParameterParser.getValue(node, "__CONTEXT_PATH__");
+	boolean isChecked = ("true").equals(ElementParameterParser.getValue(node, "__OPTIONCHECK__"));
 
 	List<Map<String, String>> options = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__OPTIONS__");
 	int optionsCount = options.size();
@@ -29,10 +30,8 @@ imports="
 	boolean firstOption = false;
 
 	if(conns.size()>0) {	
-	
 %>
-	.to("file:/" +<%=uri%>	
-	
+	    .to("file:" +<%=uri%>	
 <% 
 		if(optionsCount > 0){
 			
@@ -40,29 +39,24 @@ imports="
 			for(Map<String, String> anOption : options) { 
 			
 			String optionParameter = anOption.get("OPTIONLIST");
-			
-			if(firstOption){
-				firstOption = false;
-							
+			if(isChecked){
+			    if(firstOption){
+				    firstOption = false;
 %>
-				+"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
-
+				    +"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%   
-		}else {
+		        }else {
 %>
-				+"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+				    +"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%
 	        }
-	     }
+		  }
+	    }
 	 }
-
 %>
 	  )
-
 <% } else {%>
-
-	from("file:/" + <%=uri%>	
-
+	   from("file:" + <%=uri%>	
 <% 
 		if(optionsCount>0) {	
 			
@@ -70,23 +64,22 @@ imports="
 
 			for(Map<String, String> anOption : options) { 
 			String optionParameter = anOption.get("OPTIONLIST");
-
-			if(isFirstOption) {
-				isFirstOption = false;
-				
+			if(isChecked){
+			    if(isFirstOption) {
+				    isFirstOption = false;				
 %>
-				+"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
-
+				    +"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%  		   
-			}else {
+			    }else {
 %>
-				+"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+				    +"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%
-	    }
+	       }
+		}
 	  }
 	}
 %>
-        )
+     )
 <%
     }
 %>
