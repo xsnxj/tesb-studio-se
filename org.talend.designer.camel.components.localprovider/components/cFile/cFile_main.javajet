@@ -29,7 +29,7 @@ imports="
 
 	boolean firstOption = false;
 
-	if(conns.size()>0 && !("INTERCEPT".equals(conns.get(0).getConnectorName()))) {	
+	if(conns.size()>0) {	
 %>
 	    .to("file:" +<%=uri%>	
 <% 
@@ -55,9 +55,7 @@ imports="
 	 }
 %>
 	  )
-<% } else if( conns.size()>0 ){  %>
 
-	;
 <% } else {%>
 
 	   from("file:" + <%=uri%>	
@@ -68,20 +66,20 @@ imports="
 
 			for(Map<String, String> anOption : options) { 
 			String optionParameter = anOption.get("OPTIONLIST");
-			if(isChecked){
-			    if(isFirstOption) {
-				    isFirstOption = false;				
+				if(isChecked){
+					if(isFirstOption) {
+						isFirstOption = false;				
 %>
-				    +"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+						+"?"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%  		   
-			    }else {
+					}else {
 %>
-				    +"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
+						+"&"+"<%=optionParameter%>"+"="+<%=anOption.get("VALUE")%>
 <%
-	       }
+					}
+				}
+			}
 		}
-	  }
-	}
 %>
      )
 <%

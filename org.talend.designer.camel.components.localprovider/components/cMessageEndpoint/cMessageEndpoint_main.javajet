@@ -25,8 +25,7 @@ imports="
 	int optionsCount = options.size();
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
-
-	if(conns.size()>0 && !("INTERCEPT".equals(conns.get(0).getConnectorName()))) {
+	if(conns.size()>0) {
 %>
 		.to(<%=uri%>
 <%
@@ -50,11 +49,6 @@ imports="
 			)
 <%
 	} else {
-		if(conns.size()>0) {
-%>
-		;
-<%
-		}
 %>
 		from(<%=uri%>
 <%
