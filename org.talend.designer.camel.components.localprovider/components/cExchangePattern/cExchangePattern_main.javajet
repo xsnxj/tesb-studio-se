@@ -25,7 +25,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-	.setExchangePattern(ExchangePattern.<%=patterns%>);	
+	.setExchangePattern(org.apache.camel.ExchangePattern.<%=patterns%>);	
 	
 
 <%}%>
