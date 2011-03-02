@@ -4,14 +4,7 @@ imports="
     org.talend.core.model.process.ElementParameterParser 
     org.talend.core.model.process.IConnection
     org.talend.designer.codegen.config.CodeGeneratorArgument
-	org.talend.core.model.metadata.IMetadataTable
-	org.talend.core.model.metadata.IMetadataColumn
-    org.talend.core.model.metadata.MetadataTalendType    
-    org.talend.core.model.metadata.MappingTypeRetriever	
     java.util.List
-    java.util.ArrayList
-    java.util.Map
-    java.util.HashMap
 " 
 %>
 <%
@@ -21,9 +14,12 @@ imports="
 	
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	
-	if(expression!=null && !("".equals(expression)) && expression.length()>2) {
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+		if(expression!=null && !("".equals(expression)) && expression.length()>2) {
 %>
-		.splitter(<%=expression%>)
+			.split(<%=expression%>)
 <%
+		}
 	}
 %>
