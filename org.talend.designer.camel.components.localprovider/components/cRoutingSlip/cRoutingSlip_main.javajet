@@ -13,22 +13,13 @@ imports="
 	String cid = node.getUniqueName();
 	
 	String header = ElementParameterParser.getValue(node, "__HEADER__");
-	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
-	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
-	
-	String useBean = ElementParameterParser.getValue(node, "__USE_BEAN__");
-	String bean = ElementParameterParser.getValue(node, "__BEAN__");
+	String delimiter = ElementParameterParser.getValue(node, "__DELIMITER__");
+	//String ignoreInvalidEndpoint = ElementParameterParser.getValue(node, "__IGNORE_INVALID__");
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		if("false".equals(useBean)) {
 %>
-			.setHeader(<%=header%>, <%=language%>(<%=expression%>))
+		.routingSlip(<%=header%>, <%=delimiter%>)
 <%
-		} else {
-%>
-			.setHeader(<%=header%>).method(<%=bean%>)
-<%
-		}
 	}
 %>
