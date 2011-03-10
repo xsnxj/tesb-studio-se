@@ -102,7 +102,7 @@ public class CamelNewBeanWizard extends Wizard {
     public void addPages() {
         mainPage = new CamelNewBeanWizardPage(property, path);
         addPage(mainPage);
-        setWindowTitle(Messages.getString("NewRoutineWizard.title")); //$NON-NLS-1$
+        setWindowTitle(Messages.getString("NewBeanWizard.title")); //$NON-NLS-1$
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTINE_WIZ));
     }
 
@@ -118,7 +118,7 @@ public class CamelNewBeanWizard extends Wizard {
             // repositoryFactory.create(routineItem, mainPage.getDestinationPath());
             repositoryFactory.createCamel(beanItem, mainPage.getDestinationPath());
         } catch (PersistenceException e) {
-            MessageDialog.openError(getShell(), Messages.getString("NewProcessWizard.failureTitle"), ""); //$NON-NLS-1$ //$NON-NLS-2$
+            MessageDialog.openError(getShell(), Messages.getString("NewBeanWizard.failureTitle"), ""); //$NON-NLS-1$ //$NON-NLS-2$
             ExceptionHandler.process(e);
         }
 

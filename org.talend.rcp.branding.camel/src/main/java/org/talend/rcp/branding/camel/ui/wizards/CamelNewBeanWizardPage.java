@@ -36,7 +36,7 @@ import org.talend.repository.ui.wizards.PropertiesWizardPage;
  */
 public class CamelNewBeanWizardPage extends PropertiesWizardPage {
 
-    private static final String DESC = Messages.getString("NewRoutineWizardPage.description"); //$NON-NLS-1$
+    private static final String DESC = Messages.getString("NewBeanWizard.description"); //$NON-NLS-1$
 
     /**
      * Constructs a new NewProjectWizardPage.
@@ -45,7 +45,7 @@ public class CamelNewBeanWizardPage extends PropertiesWizardPage {
     public CamelNewBeanWizardPage(Property property, IPath destinationPath) {
         super("WizardPage", property, destinationPath); //$NON-NLS-1$
 
-        setTitle(Messages.getString("NewRoutineWizardPage.title")); //$NON-NLS-1$
+        setTitle(Messages.getString("NewBeanWizardPage.title")); //$NON-NLS-1$
         setDescription(DESC);
     }
 
