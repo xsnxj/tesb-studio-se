@@ -15,6 +15,7 @@ package org.talend.rcp.branding.camel;
 import org.eclipse.jface.action.IAction;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.rcp.branding.camel.ui.CreateCamelProcess;
+import org.talend.rcp.branding.camel.ui.bean.CreateCamelBean;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -30,4 +31,13 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return new CreateCamelProcess(isToolbar);
     }
 
+    /*
+     * (non-Jsdoc)
+     * 
+     * @see org.talend.designer.core.ICamelDesignerCoreService#getCreateBeanAction(boolean)
+     */
+    public IAction getCreateBeanAction(boolean isToolbar) {
+        // TODO Auto-generated method stub
+        return new CreateCamelBean(isToolbar);
+    }
 }

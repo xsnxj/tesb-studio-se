@@ -129,6 +129,28 @@
                   level="99"
                   name="Export job scripts">
             </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.bean.CreateCamelBean"
+                  id="org.talend.rcp.branding.camel.ui.CreateCamelBean"
+                  isEditAction="true"
+                  level="10"
+                  name="Create Camel Bean">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.bean.EditCamelBean"
+                  id="org.talend.rcp.branding.camel.ui.EditCamelBean"
+                  isEditAction="true"
+                  level="11"
+                  name="Edit Camel Bean">
+            </Action>
+            <Action
+                  class="org.talend.rcp.branding.camel.ui.bean.ReadCamelBean"
+                  id="org.talend.rcp.branding.camel.ui.ReadCamelBean"
+                  isEditAction="false"
+                  isPropertiesAction="false"
+                  isReadAction="false"
+                  name="Rean Camel Bean">
+            </Action>
          </extension>
          <extension
                point="org.eclipse.ui.preferencePages">
