@@ -43,29 +43,45 @@
       <ITEMS>
        <!-- <ITEM NAME="OUTPUT_COLUMN" FIELD="COLUMN_LIST" />-->
         <ITEM NAME="OPTIONLIST" FIELD="CLOSED_LIST">
-          <ITEMS DEFAULT="INITIALDELAY">
-            <ITEM NAME="INITIALDELAY"         VALUE="consumer.initialDelay"/>
-            <ITEM NAME="FIXEDDELAY"           VALUE="consumer.useFixedDelay"/>
-            <ITEM NAME="EXCLUSIVEREADLOCK"    VALUE="consumer.exclusiveReadLock"/>
-            <ITEM NAME="RECURSIVE"        VALUE="consumer.recursive"/>
-            <ITEM NAME="REGEXPATTERN"     VALUE="consumer.regexPattern"/>
-            <ITEM NAME="ALWAYSCONSUME"    VALUE="consumer.alwaysConsume "/>
-            <ITEM NAME="TIMESTAMP"        VALUE="consumer.timestamp"/>
-            <ITEM NAME="GENERATEEMPTYEXCHANGEWHENIDLE"    VALUE="consumer.generateEmptyExchangeWhenIdle"/>
-            <ITEM NAME="EXCLUDEDNAMEPREFIXES"    VALUE="excludedNamePrefix"/>
-            <ITEM NAME="PREMOVENAMEPOSTFIX"      VALUE="preMoveNamePostfix"/>
-            <ITEM NAME="PREMOVENAMEPREFIX"       VALUE="preMoveNamePrefix"/>
-			<ITEM NAME="PREMOVEEXPRESSION"       VALUE="preMoveExpression "/>
-			<ITEM NAME="LOCK"                    VALUE="lock"/>
-			<ITEM NAME="DELETE"                  VALUE="delete"/>
-			<ITEM NAME="NOOP"                    VALUE="noop"/>
-			<ITEM NAME="MOVENAMEPREFIX"          VALUE="moveNamePrefix"/>
-			<ITEM NAME="MOVENAMEPOSTFIX"         VALUE="moveNamePostfix"/>
-			<ITEM NAME="APPEND"                  VALUE="append"/>
-			<ITEM NAME="AUTOCREATE"              VALUE="autoCreate"/>
-			<ITEM NAME="BUFFERSIZE"              VALUE="bufferSize"/>
-			<ITEM NAME="IGNOREFILENAMEHEADER"    VALUE="ignoreFileNameHeader"/>
-			<ITEM NAME="EXPRESSION"              VALUE="expression"/>
+          <ITEMS DEFAULT="AUTOCREATE">
+            <ITEM NAME="AUTOCREATE"         VALUE="autoCreate"/>
+            <ITEM NAME="BUFFERSIZE"         VALUE="bufferSize"/>
+            <ITEM NAME="FILENAME"         VALUE="fileName"/>
+            <ITEM NAME="FLATTEN"         VALUE="flatten"/>
+            <ITEM NAME="CHARSET"         VALUE="charset"/>
+            <ITEM NAME="INITIALDELAY"         VALUE="initialDelay"/>
+            <ITEM NAME="DELAY"         VALUE="delay"/>
+            <ITEM NAME="USEFIXEDDELAY"         VALUE="useFixedDelay"/>
+            <ITEM NAME="RECURSIVE"         VALUE="recursive"/>
+            <ITEM NAME="DELETE"         VALUE="delete"/>
+            <ITEM NAME="NOOP"         VALUE="noop"/>
+            <ITEM NAME="PREMOVE"         VALUE="preMove"/>
+            <ITEM NAME="MOVE"         VALUE="move"/>
+            <ITEM NAME="MOVEFAILED"         VALUE="moveFailed"/>
+            <ITEM NAME="INCLUDE"         VALUE="include"/>
+            <ITEM NAME="EXCLUDE"         VALUE="exclude"/>
+            <ITEM NAME="IDEMPOTENT"         VALUE="idempotent"/>
+            <ITEM NAME="IDEMPOTENTREPOSITORY"         VALUE="idempotentRepository"/>
+            <ITEM NAME="INPROGRESSREPOSITORY"         VALUE="inProgressRepository"/>
+            <ITEM NAME="FILTER"         VALUE="filter"/>
+            <ITEM NAME="SORTER"         VALUE="sorter"/>
+            <ITEM NAME="SORTBY"         VALUE="sortBy"/>
+            <ITEM NAME="READLOCK"         VALUE="readLock"/>
+            <ITEM NAME="READLOCKTIMEOUT"         VALUE="readLockTimeout"/>
+            <ITEM NAME="READLOCKCHECKINTERVAL"         VALUE="readLockCheckInterval"/>
+            <ITEM NAME="EXCLUSIVEREADLOCKSTRATEGY"         VALUE="exclusiveReadLockStrategy"/>
+            <ITEM NAME="PROCESSSTRATEGY"         VALUE="processStrategy"/>
+            <ITEM NAME="MAXMESSAGESPERPOLL"         VALUE="maxMessagesPerPoll"/>
+            <ITEM NAME="STARTINGDIRECTORYMUSTEXIST"         VALUE="startingDirectoryMustExist"/>
+            <ITEM NAME="DIRECTORYMUSTEXIST"         VALUE="directoryMustExist"/>
+            <ITEM NAME="DONEFILENAME"         VALUE="doneFileName"/>
+            <ITEM NAME="MAXMESSAGESPERPOLL"         VALUE="maxMessagesPerPoll"/>
+            <ITEM NAME="FILEEXIST"         VALUE="fileExist"/>
+            <ITEM NAME="TEMPPREFIX"         VALUE="tempPrefix"/>
+            <ITEM NAME="TEMPFILENAME"         VALUE="tempFileName"/>
+            <ITEM NAME="KEEPLASTMODIFIED"         VALUE="keepLastModified"/>
+            <ITEM NAME="EAGERDELETETARGETFILE"         VALUE="eagerDeleteTargetFile"/>
+            <ITEM NAME="DONEFILENAME"         VALUE="doneFileName"/>
           </ITEMS>
         </ITEM>
 		<ITEM NAME="VALUE" VALUE="&quot;&quot;" FIELD="TEXT" />
