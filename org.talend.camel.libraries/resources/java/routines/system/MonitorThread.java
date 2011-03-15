@@ -54,8 +54,9 @@ public class MonitorThread extends Thread {
                             this.wait();
                         }
                     } else {
-                        i++;
+                        if(i==0)
                         Thread.sleep(waitForFirstExchange);
+                        i++;
                         if (waitForNextExchange())
                             break;
                         else {
