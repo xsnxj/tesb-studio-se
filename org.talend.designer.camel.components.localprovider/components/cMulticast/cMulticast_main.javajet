@@ -1,0 +1,40 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	String URIS = ElementParameterParser.getValue(node, "__URIS__");
+	String AGGREGATION_STRATEGY  = ElementParameterParser.getValue(node, "__AGGREGATION_STRATEGY__");
+	String code = ElementParameterParser.getValue(node, "__CODE__");
+	String PARALLEL_PROCESSING  = ElementParameterParser.getValue(node, "__PARALLEL_PROCESSING__");
+	String TIMEOUT  = ElementParameterParser.getValue(node, "__TIMEOUT__");
+	String USE_TIMEOUT = ElementParameterParser.getValue(node, "__USE_TIMEOUT__");
+	String cMulticastString = ".multicast(";
+	 
+        	if("true".equals(AGGREGATION_STRATEGY))
+                {
+                    cMulticastString = cMulticastString+"new org.apache.camel.processor.aggregate.AggregationStrategy()\n\t"+
+                          "{\n\n\t "+
+                           "public org.apache.camel.Exchange aggregate(org.apache.camel.Exchange oldExchange, org.apache.camel.Exchange newExchange) {\n\n\t"+
+                              code+"\n\t"+"} }";
+                }
+            cMulticastString = cMulticastString+")";
+            
+        	if("true".equals(PARALLEL_PROCESSING))
+                {
+                cMulticastString = cMulticastString + ".parallelProcessing()";
+                if("true".equals(USE_TIMEOUT))
+                    {
+                        cMulticastString = cMulticastString+".timeout("+TIMEOUT+")";
+                    }
+                cMulticastString = cMulticastString + ".to("+URIS+")";
+                }
+%>
+			<%=cMulticastString%>
