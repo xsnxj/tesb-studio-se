@@ -264,10 +264,9 @@ public class ExportCamelTreeViewer extends ExportTreeViewer {
 
         ERepositoryObjectType contentType = node.getContentType();
         if (contentType != null) {
-            switch (contentType) {
-            case ROUTES: // referenced project.
+            if (contentType == ERepositoryObjectType.ROUTES) { // referenced project.
                 return true;
-            default:
+            } else {
                 return false;
             }
         } else {
