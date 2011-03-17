@@ -72,9 +72,11 @@ public class MonitorThread extends Thread {
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
