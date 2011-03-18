@@ -1,0 +1,40 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+	"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+
+	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
+		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
+%>
+//*** ESB context initialization
+	final String endpointUrl = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
+//*** ESB context initialization finish
+
+<%@ include file="tESBProvider.javajet" %> 
+
+//*** external processor(s) initialization
+	final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
+		new QueuedMessageHandlerImpl<org.dom4j.Document>();
+	HandlerThread_<%=cid%> handlerThread_<%=cid%> =
+		new HandlerThread_<%=cid%>(handler, this.getClass().getSimpleName());
+	handlerThread_<%=cid%>.start();
+
+	globalMap.put("esbHandler", handler);
+//*** external processor(s) initialization finish
+
+int nb_line_<%=cid%> = 0;
+
+try {
+	QueuedExchangeContextImpl<org.dom4j.Document> messagesExchange_<%=cid%> = null;
+	// This is a beginning of the ESB provider request component cycle
+	while(true) {
+		try {
+			String uuid = java.util.UUID.randomUUID().toString();
+

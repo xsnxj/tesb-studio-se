@@ -1,0 +1,51 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		java.util.List
+	"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+
+	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
+		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
+
+	List<IMetadataTable> metadatas = node.getMetadataList();
+	if (null != metadatas && 0 < metadatas.size()) {
+		IMetadataTable metadata = metadatas.get(0);
+		if (null != metadata) {
+			List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+			if(null != conns && 0 < conns.size()) {
+				for(IConnection conn : conns) {
+					if(!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+						continue;
+					}
+%>
+			QueuedMessageHandlerImpl<org.dom4j.Document> esbHandler_<%=cid%> =
+				(QueuedMessageHandlerImpl<org.dom4j.Document>) globalMap.get("esbHandler");
+			messagesExchange_<%=cid%> = esbHandler_<%=cid%>.fetchNext();
+<% if (isOneWay) { %>
+			messagesExchange_<%=cid%>.release();
+<% } %>
+			globalMap.put(uuid, messagesExchange_<%=cid%>);
+
+			org.dom4j.Document requestMessage_<%=cid%> =
+				messagesExchange_<%=cid%>.getInputMessage();
+
+			Document talendDocument_<%=cid%> = new Document();
+			talendDocument_<%=cid%>.setDocument(requestMessage_<%=cid%>);
+			<%=conn.getName()%>.payload = talendDocument_<%=cid%>;
+<%
+				}
+			}
+		}
+	}
+%>
+

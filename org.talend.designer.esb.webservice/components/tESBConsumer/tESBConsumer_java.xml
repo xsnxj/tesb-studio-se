@@ -1,0 +1,323 @@
+<COMPONENT>
+	<HEADER PLATEFORM="ALL"
+			SERIAL=""
+			VERSION="0.102"
+			STATUS="ALPHA"
+			COMPATIBILITY="ALL"
+			AUTHOR="Talend"
+			RELEASE_DATE="20050320A"
+			SCHEMA_AUTO_PROPAGATE="true"
+			STARTABLE="true"
+			DATA_AUTO_PROPAGATE="false"
+			HAS_CONDITIONAL_OUTPUTS="true"
+			EXTENSION="org.talend.designer.esb.webservice" >
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>ESB</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="1" MAX_OUTPUT="0"/>
+		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" MAX_OUTPUT="1"/>
+		<CONNECTOR NAME="FAULT" CTYPE="FLOW" MAX_OUTPUT="1"/>
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" />
+		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="COMPONENT_OK" />
+		<CONNECTOR CTYPE="COMPONENT_ERROR" />
+		<CONNECTOR CTYPE="RUN_IF" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1"
+				REPOSITORY_VALUE="WEBSERVICE" />
+
+		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
+
+		<PARAMETER NAME="MAPPING_DISPLAY" FIELD="CLOSED_LIST" NUM_ROW="10" >
+			<ITEMS DEFAULT="AUTO">
+				<ITEM NAME="AUTO" VALUE="AUTO" />
+				<ITEM NAME="BEZIER_CURVE" VALUE="BEZIER_CURVE" />
+				<ITEM NAME="LINE" VALUE="LINE" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
+			<DEFAULT>20</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
+			<DEFAULT>20</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
+			<TABLE READONLY="true">
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true"/>
+			</TABLE>
+		</PARAMETER>
+		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
+			<TABLE READONLY="true">
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true"/>
+			</TABLE>
+		</PARAMETER>
+
+		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30" CONTEXT="FAULT">
+			<TABLE READONLY="true">
+				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true"/>
+				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true"/>
+			</TABLE>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_NTLM" FIELD="CHECK" REQUIRED="true" NUM_ROW="40">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NTLM_DOMAIN" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
+				SHOW_IF="USE_NTLM == 'true'">
+			<DEFAULT>"192.168.0.100"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="NTLM_HOST" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
+				SHOW_IF="USE_NTLM == 'true'">
+			<DEFAULT>"192.168.0.100"</DEFAULT>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="50">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
+				SHOW_IF="NEED_AUTH == 'true'" REPOSITORY_VALUE="AUTH_USERNAME">
+			<DEFAULT>"username"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
+				SHOW_IF="NEED_AUTH == 'true'"  REPOSITORY_VALUE="AUTH_PASSWORD">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="55"
+				REPOSITORY_VALUE="USE_PROXY">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PROXY_HOST" FIELD="TEXT" NUM_ROW="56"
+				SHOW_IF="USE_PROXY == 'true'" REPOSITORY_VALUE="PROXY_HOST">
+			<DEFAULT>"61.163.92.4"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PORT" FIELD="TEXT" NUM_ROW="57"
+				SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>8080</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PROXY_USERNAME" FIELD="TEXT" NUM_ROW="58"
+				SHOW_IF="USE_PROXY == 'true'" REPOSITORY_VALUE="PROXY_USERNAME">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PASSWORD" FIELD="TEXT" NUM_ROW="59"
+				SHOW_IF="USE_PROXY == 'true'"  REPOSITORY_VALUE="PROXY_PASSWORD">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="60">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="SSL_TRUSTSERVER_TRUSTSTORE" FIELD="TEXT" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"C:/clientTrustStore.trustStore"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SSL_TRUSTSERVER_PASSWORD" FIELD="TEXT" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="100">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<!--<PARAMETER NAME="SOAP_ENCODING" FIELD="CLOSED_LIST" NUM_ROW="62" >
+			<ITEMS DEFAULT="RPC_ENCODED">
+			<ITEM NAME="RPC_ENCODED" VALUE="RPC_ENCODED"/>
+			<ITEM NAME="DOCUMENT_LITERAL" VALUE="DOCUMENT_LITERAL"/>
+			<ITEM NAME="DOCUMENT_LITERAL_WRAPPED" VALUE="DOCUMENT_LITERAL_WRAPPED" />
+		</ITEMS>
+		</PARAMETER>-->
+		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
+				SHOW="false"  REPOSITORY_VALUE="ENDPOINT">
+			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx?WSDL"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NS">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
+				SHOW="false" REPOSITORY_VALUE="METHOD">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="INPUT_PARAMS" FIELD="TABLE" NUM_ROW="70" NB_LINES="6"
+				SHOW="false" REPOSITORY_VALUE="INPUT_PARAMS">
+			<ITEMS>
+				<ITEM NAME="EXPRESSION"/>
+				<ITEM NAME="ELEMENT"/>
+				<ITEM NAME="SOURCE"/>
+				<ITEM NAME="PARAMETERINFO"/>
+				<ITEM NAME="PARAPARENT"/>
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="OUTPUT_PARAMS" FIELD="TABLE" NUM_ROW="80" NB_LINES="6"
+				SHOW="false"  REPOSITORY_VALUE="OUTPUT_PARAMS">
+			<ITEMS>
+				<ITEM NAME="EXPRESSION"/>
+				<ITEM NAME="COLUMN"/>
+				<ITEM NAME="SOURCE"/>
+				<ITEM NAME="ELEMENT"/>
+				<ITEM NAME="PARAMETERINFO"/>
+				<ITEM NAME="PARAPARENT"/>
+			</ITEMS>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="TMPPATH" FIELD="DIRECTORY" REQUIRED="false" NUM_ROW="10">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="talend-esb-ws"
+					MODULE="org.talend.esb.ws.jar"
+					REQUIRED="true" />
+
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="commons-beanutils"
+					MODULE="commons-beanutils-1.7.0.jar"
+					REQUIRED="true"/>
+			<!--IMPORT NAME="commons-codec"
+					MODULE="commons-codec-1.3.jar"
+					REQUIRED="true"/-->
+			<IMPORT NAME="commons-codec"
+					MODULE="commons-codec-1.2.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="commons-collections"
+					MODULE="commons-collections-3.2.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="commons-httpclient"
+					MODULE="commons-httpclient-3.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="commons-lang"
+					MODULE="commons-lang-2.5.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					REQUIRED="true"/>
+
+			<IMPORT NAME="cxf-bundle"
+					MODULE="cxf-bundle-2.3.3.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="neethi"
+					MODULE="neethi-2.0.4.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.2.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="XmlSchema"
+					MODULE="XmlSchema-1.4.7.jar"
+					REQUIRED="true"/>
+
+			<IMPORT NAME="jaxb-api"
+					MODULE="jaxb-api-2.2.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="jaxb-impl"
+					MODULE="jaxb-impl-2.2.1.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="jaxb-xjc"
+					MODULE="jaxb-xjc-2.2.1.1.jar"
+					REQUIRED="true"/>
+
+			<IMPORT NAME="geronimo-activation"
+					MODULE="geronimo-activation_1.1_spec-1.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="geronimo-annotation"
+					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="geronimo-javamail"
+					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="geronimo-stax-api"
+					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="geronimo-ws-metadata"
+					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="geronimo-jaxws"
+					MODULE="geronimo-jaxws_2.2_spec-1.0.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="stax2-api-3.0.2"
+					MODULE="stax2-api-3.0.2.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="woodstox-core-asl-4.0.8"
+					MODULE="woodstox-core-asl-4.0.8.jar"
+					REQUIRED="true"/>
+
+			<IMPORT NAME="saaj-api"
+					MODULE="saaj-api-1.3.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="saaj-impl"
+					MODULE="saaj-impl-1.3.2.jar"
+					REQUIRED="true"/>
+
+			<!-- IMPORT NAME="jcifs"
+					MODULE="jcifs-1.3.11.jar"
+					REQUIRED="true"/-->
+			<IMPORT NAME="jcifs"
+					MODULE="jcifs-1.2.19.jar"
+					REQUIRED="true"/>
+
+			<IMPORT NAME="spring-aop-3.0.5.RELEASE"
+					MODULE="spring-aop-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="spring-asm-3.0.5.RELEASE"
+					MODULE="spring-asm-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="spring-beans-3.0.5.RELEASE"
+					MODULE="spring-beans-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="spring-context-3.0.5.RELEASE"
+					MODULE="spring-context-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="spring-core-3.0.5.RELEASE"
+					MODULE="spring-core-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+			<IMPORT NAME="spring-expression-3.0.5.RELEASE"
+					MODULE="spring-expression-3.0.5.RELEASE.jar"
+					REQUIRED="true"/>
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS>
+		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
+	</RETURNS>
+</COMPONENT>
