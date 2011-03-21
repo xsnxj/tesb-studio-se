@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.talend.esb.tooling.feature"
+      id="org.talend.esb.tooling_feature"
       label="ESB Tooling feature"
       version="1.0.0.qualifier">
 
