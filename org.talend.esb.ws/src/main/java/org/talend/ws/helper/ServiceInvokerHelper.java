@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
@@ -28,6 +29,7 @@ import javax.wsdl.Output;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -329,9 +331,18 @@ public class ServiceInvokerHelper implements ClassMapper {
     	javax.xml.ws.Dispatch<javax.xml.transform.Source> disp = service1.createDispatch(portName, javax.xml.transform.Source.class, javax.xml.ws.Service.Mode.PAYLOAD);
     	java.util.Map requestContext = disp.getRequestContext();
     	if(requestContext == null) {
-    		System.err.println("setSOAPActionURI:getRequestContext() returned null");
+    		throw new Exception("setSOAPActionURI:getRequestContext() returned null");
     	} else {
-    		requestContext.put(disp.SOAPACTION_URI_PROPERTY, operationName);
+    		BindingOperation bindingOperation = port.getBinding().getBindingOperation(operationName, null, null);
+    		List ele = bindingOperation.getExtensibilityElements();
+    		for (Object obj: ele) {
+    			if (obj instanceof SOAPOperation) {
+    				SOAPOperation soapOperation = (SOAPOperation) obj;
+    	    		requestContext.put(disp.SOAPACTION_URI_PROPERTY, soapOperation.getSoapActionURI());
+    	    		break;
+    			}
+    			throw new Exception("SoapAction URI was not found for operation "+operationName);
+    		}
     	}
 
     	if (null != operation.getOutput()) {
