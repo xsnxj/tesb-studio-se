@@ -91,7 +91,7 @@ class QueuedExchangeContextImpl<T> {
 	public boolean isBusinessFault() {
 		return isFault() && null == fault;
 	}
-	
+
 	public T getResponse() {
 		return output;
 	}
@@ -107,7 +107,7 @@ class QueuedExchangeContextImpl<T> {
 	public Throwable getFault() {
 		return fault;
 	}
-	
+
 }
 
 /**
@@ -189,7 +189,7 @@ class ESBProvider_<%=cid%> implements
 		javax.xml.ws.Provider<javax.xml.transform.Source> {
 
 	private javax.xml.transform.TransformerFactory factory =
-		javax.xml.transform.TransformerFactory.newInstance();	
+		javax.xml.transform.TransformerFactory.newInstance();
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
 	private final String TNS = ESBProvider_<%=cid%>.class.getAnnotation(
@@ -240,7 +240,7 @@ class ESBProvider_<%=cid%> implements
 				if (messageExchange.isFault()) {
 					String faultString = messageExchange.getFaultMessage();
 					// System.out.println("fault: " + faultString);
-					
+
 					if (messageExchange.isBusinessFault()) {
 						org.dom4j.Document faultDoc = messageExchange.getBusinessFaultDetails();
 						javax.xml.soap.SOAPFactory soapFactory =
@@ -268,6 +268,10 @@ class ESBProvider_<%=cid%> implements
 					}
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
+					if (null == responseDoc) {
+						// System.out.println("response: empty");
+						throw new RuntimeException("no response provided by Talend job");
+					}
 					// System.out.println("response: " + responseDoc.asXML());
 
 					return new org.dom4j.io.DocumentSource(responseDoc);
