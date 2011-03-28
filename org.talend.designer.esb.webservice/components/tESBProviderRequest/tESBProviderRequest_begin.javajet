@@ -9,7 +9,8 @@
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
-
+	String projectName = codeGenArgument.getCurrentProjectName();
+	
 	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
 		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 %>
@@ -23,7 +24,7 @@
 	final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
 		new QueuedMessageHandlerImpl<org.dom4j.Document>();
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> =
-		new HandlerThread_<%=cid%>(handler, this.getClass().getSimpleName());
+		new HandlerThread_<%=cid%>(handler, "<%=projectName%>_"+this.getClass().getSimpleName());
 	handlerThread_<%=cid%>.start();
 
 	globalMap.put("esbHandler", handler);
