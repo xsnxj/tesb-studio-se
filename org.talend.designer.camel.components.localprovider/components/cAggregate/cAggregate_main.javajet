@@ -38,6 +38,8 @@ imports="
 	boolean ignoreInvalidKey = "true".equals(ElementParameterParser.getValue(node, "__IGNORE_INVALID_KEY__"));
 	boolean groupExchange = "true".equals(ElementParameterParser.getValue(node, "__GROUP_EXCHANGES__"));
 	
+	boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
+	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if(!useAggregationStrategy) {	
@@ -47,6 +49,12 @@ imports="
 		} else {
 %>
 			.aggregate(<%=language%>(<%=expression%>), new beans.<%=aggregationStrategy%>())
+<%
+		}
+		
+		if(usePersistence) {
+%>
+			.aggregationRepository(repo_<%=cid%>)
 <%
 		}
 		
