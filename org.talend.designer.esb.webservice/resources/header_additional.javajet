@@ -1,40 +1,81 @@
-<%@ jet 
+<%@ jet
 	package="org.talend.designer.codegen.translators.common"
 	imports="
 		java.util.List
 		java.util.Vector
-		
+
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IProcess
+		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-	"	
-	class="Header_additional" 
+	"
+	class="Header_additional"
 %>
-	
 <%
-boolean withESB = false;
-
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess)v.get(0);
 
-List<? extends INode> tESBProviderComponentList = process.getNodesOfType("tESBProviderRequest");
-//tESBProviderComponentList.addAll(process.getNodesOfType("tESBProviderResponse"));
-//tESBProviderComponentList.addAll(process.getNodesOfType("tESBProviderFault"));
+boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
+boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 
+if (actAsProvider || actAsConsumer) { %>
 
-if ((tESBProviderComponentList != null && tESBProviderComponentList.size() > 0)){
-	withESB = true;
-}
+	private ESBEndpointRegistry registry = null;
+	private ESBProviderCallback callback = null;
 
-if(withESB){
-%>	
-	
-	
-	// These fields are defined for ESB  
-    private java.util.Map<String, String> esbResponseMap = new java.util.HashMap<String,String>(2);
-	// End of ESB fields
+	public void setEndpointRegistry(ESBEndpointRegistry registry) {
+<% if (actAsConsumer) { %>		this.registry = registry;<% } %>
+	}
 
-<%
-}
-%>
+	public void setProviderCallback(ESBProviderCallback callback) {
+<% if (actAsProvider) { %>		this.callback = callback;<% } %>
+	}
+
+	public ESBEndpointInfo getEndpoint() {
+<% 		if (actAsProvider) { %>
+		return new ESBEndpointInfo() {
+			public String getEndpointKey() {
+				return "cxf";
+			}
+
+			public String getEndpointUri() {
+				return <%=ElementParameterParser.getValue(
+								process.getNodesOfType("tESBProviderRequest").get(0),
+								"__ESB_ENDPOINT__")%>;
+			}
+
+			public java.util.Map<String, Object> getEndpointProperties() {
+				return null;
+			}
+		};
+<% 		} else { %>
+		return null;
+<% 		} %>
+	}
+<% } %>
+
+<% if (actAsProvider) { %>
+	private class ProviderFault {
+
+		final String message;
+		final Object detail;
+
+		public ProviderFault(String message) {
+			this(message, null);
+		}
+
+		public ProviderFault(String message, Object detail) {
+			this.message = message;
+			this.detail = detail;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public Object getDetail() {
+			return detail;
+		}
+	}
+<% } %>
