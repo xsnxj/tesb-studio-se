@@ -28,16 +28,15 @@
 						continue;
 					}
 %>
-			QueuedMessageHandlerImpl<org.dom4j.Document> esbHandler_<%=cid%> =
-				(QueuedMessageHandlerImpl<org.dom4j.Document>) globalMap.get("esbHandler");
-			messagesExchange_<%=cid%> = esbHandler_<%=cid%>.fetchNext();
-<% if (isOneWay) { %>
-			messagesExchange_<%=cid%>.release();
-<% } %>
-			globalMap.put(uuid, messagesExchange_<%=cid%>);
+			ESBProviderCallback esbHandler_<%=cid%> =
+				(ESBProviderCallback) globalMap.get("esbHandler");
 
 			org.dom4j.Document requestMessage_<%=cid%> =
-				messagesExchange_<%=cid%>.getInputMessage();
+					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
+
+<% if (isOneWay) { %>
+			// esbHandler_<%=cid%>.sendResponse(null);
+<% } %>
 
 			Document talendDocument_<%=cid%> = new Document();
 			talendDocument_<%=cid%>.setDocument(requestMessage_<%=cid%>);

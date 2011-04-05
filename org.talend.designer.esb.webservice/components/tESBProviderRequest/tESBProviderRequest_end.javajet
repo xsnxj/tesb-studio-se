@@ -13,12 +13,12 @@
 	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
 		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 %>
+		} catch (ESBJobInterruptedException e) {
+			// job interrupted from outside
+			break;
 		} catch (Throwable e) {
-			messagesExchange_<%=cid%>.serveFault("Talend job execution error", e);
+			((ESBProviderCallback) globalMap.get("esbHandler")).sendResponse(e);
 		} finally {
-<% if (!isOneWay) { %>
-			messagesExchange_<%=cid%>.release();
-<% } %>
 			// Exit from this loop is made by the configuring "Keep listening"
 			// parameter to false. Then we will have a break before.
 			if ("false".equals("<%=ElementParameterParser.getValue(node, "__KEEPLISTENING__")%>")) {
@@ -33,6 +33,9 @@
 	Thread.currentThread();
 	Thread.sleep(500);
 	// unsubscribe
-	handlerThread_<%=cid%>.stopEndpoint();
+	if (null != handlerThread_<%=cid%>) {
+		// stop endpoint in case it was opened by job
+		handlerThread_<%=cid%>.stopEndpoint();
+	}
 }
 

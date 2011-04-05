@@ -41,9 +41,12 @@ if (null != metadatas && 0 < metadatas.size()) {
 					}
 				}
 %>
-	((QueuedExchangeContextImpl<org.dom4j.Document>) globalMap.get(uuid)).serveBusinessFault(
-		esbProviderFaultTitle_<%=cid%>,
-		(null == esbProviderFaultDoc_<%=cid%>) ? null : esbProviderFaultDoc_<%=cid%>.getDocument());
+	((ESBProviderCallback) globalMap.get("esbHandler")).sendResponse(
+			new ProviderFault(
+					esbProviderFaultTitle_<%=cid%>,
+					(null == esbProviderFaultDoc_<%=cid%>)
+						? null : esbProviderFaultDoc_<%=cid%>.getDocument())
+		);
 <%
 			}
 		}

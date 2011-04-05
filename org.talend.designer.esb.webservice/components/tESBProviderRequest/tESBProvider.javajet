@@ -26,7 +26,7 @@ class QueuedExchangeContextImpl<T> {
 
 	/**
 	 * Don't forget to call this method when you are done
-	 *  with processing of the {@link QueuedExchangeContext}
+	 * with processing of the {@link QueuedExchangeContext}
 	 */
 	public void release() throws Exception {
 		latch.countDown();
@@ -113,7 +113,7 @@ class QueuedExchangeContextImpl<T> {
 /**
  * message exchange controller
  */
-class QueuedMessageHandlerImpl<T> {
+class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	private final int MAX_QUEUE_SIZE = 1000;
 
 	private final int WAIT_TIMEOUT_SECONDS = 120;
@@ -155,19 +155,46 @@ class QueuedMessageHandlerImpl<T> {
 		return context;
 	}
 
-	/**
-	 * Blocking method to obtain the next message from the queue
-	 *
-	 * @return
-	 * @throws InterruptedException
-	 */
-	@SuppressWarnings("unchecked")
-	public QueuedExchangeContextImpl<T> next() throws InterruptedException {
-		return (QueuedExchangeContextImpl<T>) queue.take();
+	QueuedExchangeContextImpl<T> currentExchangeContext;
+
+	public Object getRequest() throws ESBJobInterruptedException {
+		currentExchangeContext = null;
+		try {
+			currentExchangeContext = (QueuedExchangeContextImpl<T>) queue.take();
+		} catch (InterruptedException e) {
+			// e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		return currentExchangeContext.getInputMessage();
 	}
 
-	public QueuedExchangeContextImpl<T> fetchNext() throws Exception {
-		return next();
+	public void sendResponse(Object output) {
+		if (null == currentExchangeContext) {
+			throw new RuntimeException("sendResponse() invoked before getRequest()");
+		}
+
+		// business fault
+		if (output instanceof ProviderFault) {
+			ProviderFault providerFault = (ProviderFault) output;
+			currentExchangeContext.serveBusinessFault(
+					providerFault.getMessage(), (T) providerFault.getDetail());
+		}
+
+		// job error
+		if (output instanceof Exception) {
+			currentExchangeContext.serveFault(
+					"Talend job execution error", (Throwable) output);
+		}
+
+		// payload
+		currentExchangeContext.serveOutputMessage((T) output);
+
+		try {
+			currentExchangeContext.release();
+		} catch (Exception e) {
+			// e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 }
 

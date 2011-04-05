@@ -10,7 +10,7 @@
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 	String projectName = codeGenArgument.getCurrentProjectName();
-	
+
 	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
 		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 %>
@@ -18,24 +18,29 @@
 	final String endpointUrl = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
 //*** ESB context initialization finish
 
-<%@ include file="tESBProvider.javajet" %> 
+<%@ include file="tESBProvider.javajet" %>
 
 //*** external processor(s) initialization
-	final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
-		new QueuedMessageHandlerImpl<org.dom4j.Document>();
-	HandlerThread_<%=cid%> handlerThread_<%=cid%> =
-		new HandlerThread_<%=cid%>(handler, "<%=projectName%>_"+this.getClass().getSimpleName());
-	handlerThread_<%=cid%>.start();
+	ESBProviderCallback providerCallback;
+	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
+	if (null == callback) {
+		final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
+			new QueuedMessageHandlerImpl<org.dom4j.Document>();
+		handlerThread_<%=cid%> =
+			new HandlerThread_<%=cid%>(handler, "<%=projectName%>_" + this.getClass().getSimpleName());
+		handlerThread_<%=cid%>.start();
+		providerCallback = handler;
+	} else {
+		providerCallback = callback;
+	}
 
-	globalMap.put("esbHandler", handler);
+	globalMap.put("esbHandler", providerCallback);
 //*** external processor(s) initialization finish
 
 int nb_line_<%=cid%> = 0;
 
 try {
-	QueuedExchangeContextImpl<org.dom4j.Document> messagesExchange_<%=cid%> = null;
 	// This is a beginning of the ESB provider request component cycle
 	while(true) {
 		try {
-			String uuid = java.util.UUID.randomUUID().toString();
 
