@@ -31,7 +31,6 @@ imports="
 	String predicate = ElementParameterParser.getValue(node, "__PREDICATE__");
 	
 	boolean useCompletionBatch = "true".equals(ElementParameterParser.getValue(node, "__USE_COMPLETION_BATCH__"));
-	String batch = ElementParameterParser.getValue(node, "__BATCH__");
 	
 	boolean eagerCheckCompletion = "true".equals(ElementParameterParser.getValue(node, "__EAGER_CHECK_COMPLETION__"));
 	boolean closeCorrelation = "true".equals(ElementParameterParser.getValue(node, "__CLOSE_CORRELATION__"));
@@ -84,11 +83,9 @@ imports="
 		}
 		
 		if(useCompletionBatch) {
-			if(!("".equals(batch)) && batch!=null) {
 %>
-				.completionFromBatchCustomer(<%=batch%>)
+			.completionFromBatchCustomer()
 <%
-			}
 		}
 		
 		if(eagerCheckCompletion) {
