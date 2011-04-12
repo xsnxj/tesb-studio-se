@@ -20,7 +20,29 @@ INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName(); 
 
 String endpoint = ElementParameterParser.getValue(node,"__ENDPOINT__");
+%>
+	javax.xml.namespace.QName serviceName_<%=cid%> = null;
+	javax.xml.namespace.QName portName_<%=cid%> = null;
+	org.talend.ws.helper.ServiceInvokerHelper serviceInvokerHelper_<%=cid%> = null ;
 
+    ESBConsumer consumer_<%=cid%> = null;
+    if (registry != null) {
+        consumer_<%=cid%> = registry.createConsumer(new ESBEndpointInfo() {
+            
+            public String getEndpointUri() {
+                return <%=endpoint%>;
+            }
+            
+            public java.util.Map<String, Object> getEndpointProperties() {
+                return null;
+            }
+            
+            public String getEndpointKey() {
+                return null;
+            }
+        });
+    } else {
+<%
 String serviceNS = ElementParameterParser.getValue(node,"__SERVICE_NS__");
 String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
 String portNS = ElementParameterParser.getValue(node,"__PORT_NS__");
@@ -216,7 +238,6 @@ if (needSSLtoTrustServer) {
 }	
 %>
 	org.talend.ws.helper.ServiceDiscoveryHelper serviceDiscoveryHelper_<%=cid%> = null ;
-	org.talend.ws.helper.ServiceInvokerHelper serviceInvokerHelper_<%=cid%> = null ;
 
 <%if(!useNTLM){%>
 	java.net.URI uri_<%=cid%> = new java.net.URI(<%=endpoint%>);
@@ -232,7 +253,10 @@ if (needSSLtoTrustServer) {
 	}
 <%}%>
 	
-	javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
-	javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
+	serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
+	portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 	
 	java.util.Map<String,Object> inMap_<%=cid%> = null;
+    
+    }
+	

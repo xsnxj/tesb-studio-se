@@ -65,16 +65,24 @@ if (connsFault.size() == 1) {
 
 		Document requestTalendDoc = <%=inputConn.getName()%>.payload; 
 
-		org.dom4j.Document responseDoc = serviceInvokerHelper_<%=cid%>.invoke(
-				serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>", requestTalendDoc.getDocument());
-
+		org.dom4j.Document responseDoc_<%=cid%> = null;
+		if (consumer_<%=cid%> == null) { 
+		      responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
+    				serviceName_<%=cid%>, 
+    				portName_<%=cid%>, 
+    				"<%=method%>", 
+    				requestTalendDoc.getDocument()
+			  );
+		} else {
+              responseDoc_<%=cid%> = (org.dom4j.Document)consumer_<%=cid%>.invoke(requestTalendDoc.getDocument()); 
+        }
 		<% if (null != connResponse) { %>
 		if(<%=connResponse.getName() %> == null){ 
 			<%=connResponse.getName() %> = new <%=connResponse.getName() %>Struct();
 		}
 
 		Document responseTalendDoc = new Document();
-		responseTalendDoc.setDocument(responseDoc);
+		responseTalendDoc.setDocument(responseDoc_<%=cid%>);
 		<%=connResponse.getName()%>.payload = responseTalendDoc;
 		<% } %>
 	} catch (javax.xml.ws.soap.SOAPFaultException e) {
