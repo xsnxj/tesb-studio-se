@@ -33,25 +33,52 @@ if (actAsProvider || actAsConsumer) { %>
 	}
 
 	public ESBEndpointInfo getEndpoint() {
-<% 		if (actAsProvider) { %>
+<% if (actAsProvider) {
+	String projectName = codeGenArgument.getCurrentProjectName();
+	String processName = process.getName();
+
+	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
+		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
+	%>
 		return new ESBEndpointInfo() {
+			private String uri = <%=ElementParameterParser.getValue(
+										process.getNodesOfType("tESBProviderRequest").get(0),
+										"__ESB_ENDPOINT__")%>;
+			@SuppressWarnings("serial")
+			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
+				// "request-response" or "one-way"
+				put("COMMUNICATION_STYLE", "<%=(isOneWay)?"one-way":"request-response"%>");
+				//
+				put("dataFormat", "PAYLOAD");
+				// static
+				put("portName", "{http://talend.org/esb/service/job}TalendJobAsWebService");
+				// local part is: projectName + "_" + processName
+				put("serviceName", "{http://talend.org/esb/service/job}<%=projectName%>_<%=processName%>");
+				// static
+				put("defaultOperationName", "invoke");
+				// static
+				put("defaultOperationNameSpace", "");
+				// endpoint URI configured in tESBProviderInput
+				put("publishedEndpointUrl", uri);
+			}};
+
 			public String getEndpointKey() {
 				return "cxf";
 			}
 
 			public String getEndpointUri() {
-				return <%=ElementParameterParser.getValue(
-								process.getNodesOfType("tESBProviderRequest").get(0),
-								"__ESB_ENDPOINT__")%>;
+				// projectName + "_" + processName
+				return "<%=projectName%>_<%=processName%>";
+				// return uri;
 			}
 
 			public java.util.Map<String, Object> getEndpointProperties() {
-				return null;
+				return props;
 			}
 		};
-<% 		} else { %>
+<% } else { %>
 		return null;
-<% 		} %>
+<% } %>
 	}
 <% } %>
 
