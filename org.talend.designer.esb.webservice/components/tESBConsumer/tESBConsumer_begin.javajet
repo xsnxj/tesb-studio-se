@@ -29,6 +29,9 @@ String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
 String portNS = ElementParameterParser.getValue(node,"__PORT_NS__");
 String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
 
+String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
+String method = methodTemp.indexOf("(")!=-1?methodTemp.substring(0,methodTemp.indexOf("(")):methodTemp;
+
 String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
 %>
@@ -46,10 +49,8 @@ if (registry != null) {
 				put("dataFormat", "PAYLOAD");
 				put("portName", "{<%=portNS%>}<%=portName%>");
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
-				// TODO: ???
-				// put("defaultOperationName", "invoke");
-				// TODO: ???
-				// put("defaultOperationNameSpace", "");
+				put("defaultOperationName", "<%=method%>");
+				put("defaultOperationNameSpace", "");
 			}};
 
 			public String getEndpointUri() {
