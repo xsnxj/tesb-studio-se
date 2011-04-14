@@ -60,11 +60,11 @@ public class ServiceDiscoveryHelper {
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
         // newWSDLReader.getExtensionRegistry()
         newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        if (configuration == null) {
+//        if (configuration == null) {
             definition = newWSDLReader.readWSDL(wsdlUri);
-        } else {
-            definition = newWSDLReader.readWSDL(configuration.createWSDLLocator(wsdlUri));
-        }
+//        } else {
+//            definition = newWSDLReader.readWSDL(configuration.createWSDLLocator(wsdlUri));
+//        }
         schemaCollection = new XmlSchemaCollection();
 
         schemaCollection.setBaseUri(definition.getDocumentBaseURI());// bchen for bug 8674

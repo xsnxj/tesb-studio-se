@@ -91,12 +91,11 @@ public class ComponentBuilder {
         // WSDLReader reader = wsdlFactory.newWSDLReader();
         // Definition def = reader.readWSDL(null, serviceinfo.getWsdlUri());
         ServiceDiscoveryHelper sdh;
-        if (serviceinfo.getAuthConfig() != null && serviceinfo.getWsdlUri().indexOf("http") == 0) {
-            sdh = new ServiceDiscoveryHelper(serviceinfo.getWsdlUri(), serviceinfo.getAuthConfig());
-
-        } else {
+//        if (serviceinfo.getAuthConfig() != null && serviceinfo.getWsdlUri().indexOf("http") == 0) {
+//            sdh = new ServiceDiscoveryHelper(serviceinfo.getWsdlUri(), serviceinfo.getAuthConfig());
+//        } else {
             sdh = new ServiceDiscoveryHelper(serviceinfo.getWsdlUri());
-        }
+//        }
         Definition def = sdh.getDefinition();
 
         wsdlTypes = createSchemaFromTypes(def);
