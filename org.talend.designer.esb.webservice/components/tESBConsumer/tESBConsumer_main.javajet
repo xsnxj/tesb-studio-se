@@ -118,11 +118,13 @@ if (connsFault.size() == 1) {
 	}
 
 <%	if (null != connResponse) { %>
-	if (<%=connResponse.getName()%> == null) {
-		<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
-	}
+	if (null != responseDoc_<%=cid%>) {
+		if (<%=connResponse.getName()%> == null) {
+			<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
+		}
 
-	Document responseTalendDoc_<%=cid%> = new Document();
-	responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
-	<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
+		Document responseTalendDoc_<%=cid%> = new Document();
+		responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+		<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
+	}
 <%	} %>
