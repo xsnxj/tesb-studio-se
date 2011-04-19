@@ -11,11 +11,4 @@ imports="
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
-	
-	List< ? extends IConnection> conns = node.getIncomingConnections();
-	if(conns.size()>0) {
-%>
-		.doTry()
-<%
-	}
 %>
