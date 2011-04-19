@@ -103,6 +103,8 @@ public class ServiceDiscoveryHelper {
         schemaCollection = new XmlSchemaCollection();
 
         createTempWsdlFile(definition);
+        
+
 
         // bchen bug for 8674
         int tmpCount = 0;
@@ -111,7 +113,8 @@ public class ServiceDiscoveryHelper {
 
         Types types = definition.getTypes();
         if (types != null) {
-            List<ExtensibilityElement> extensibilityElements = types.getExtensibilityElements();
+            @SuppressWarnings("unchecked")
+			List<ExtensibilityElement> extensibilityElements = types.getExtensibilityElements();
             for (ExtensibilityElement el : extensibilityElements) {
                 if (el instanceof Schema) {
                     Schema schema = (Schema) el;
@@ -187,7 +190,8 @@ public class ServiceDiscoveryHelper {
 
     Map<String, String> importXsdMap = new HashMap<String, String>();
 
-    private void createTempImportSchemaFile(Schema schema, File baseFile) throws FileNotFoundException, TransformerException,
+    @SuppressWarnings("rawtypes")
+	private void createTempImportSchemaFile(Schema schema, File baseFile) throws FileNotFoundException, TransformerException,
             URISyntaxException {
         Iterator importSchemaIte = schema.getImports().values().iterator();
         while (importSchemaIte.hasNext()) {

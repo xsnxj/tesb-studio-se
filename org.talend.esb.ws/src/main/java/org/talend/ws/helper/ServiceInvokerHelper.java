@@ -6,8 +6,6 @@ package org.talend.ws.helper;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,11 +31,8 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -62,17 +57,12 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
-import org.dom4j.dom.DOMElement;
 import org.talend.ws.exception.LocalizedException;
 import org.talend.ws.helper.conf.ServiceHelperConfiguration;
-import org.talend.ws.helper.map.MapConverter;
 import org.talend.ws.mapper.ClassMapper;
 import org.talend.ws.mapper.EmptyMessageMapper;
 import org.talend.ws.mapper.MapperFactory;
 import org.talend.ws.mapper.MessageMapper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -80,7 +70,12 @@ import org.xml.sax.InputSource;
  */
 public class ServiceInvokerHelper implements ClassMapper {
 
-    private ServiceDiscoveryHelper serviceDiscoveryHelper;
+    private static final String HTTP_PROXY_PASSWORD = "http.proxyPassword";
+	private static final String HTTP_PROXY_USER = "http.proxyUser";
+	private static final String HTTP_PROXY_PORT = "http.proxyPort";
+	private static final String HTTP_PROXY_HOST = "http.proxyHost";
+
+	private ServiceDiscoveryHelper serviceDiscoveryHelper;
 
     private DynamicClientFactory dynamicClientFactory;
 
@@ -326,7 +321,7 @@ public class ServiceInvokerHelper implements ClassMapper {
         			+ serviceName.toString() + ".");
         }
 
-    	URL wsdlUrl = new URL(definition.getDocumentBaseURI());
+    	URL wsdlUrl = new URL(serviceDiscoveryHelper.getLocalWsdlUri());
     	javax.xml.ws.Service service1 = javax.xml.ws.Service.create(wsdlUrl, serviceName);
     	javax.xml.ws.Dispatch<javax.xml.transform.Source> disp = service1.createDispatch(portName, javax.xml.transform.Source.class, javax.xml.ws.Service.Mode.PAYLOAD);
     	java.util.Map requestContext = disp.getRequestContext();
@@ -341,18 +336,41 @@ public class ServiceInvokerHelper implements ClassMapper {
     	    		requestContext.put(disp.SOAPACTION_URI_PROPERTY, soapOperation.getSoapActionURI());
     	    		break;
     			}
-    			throw new Exception("SoapAction URI was not found for operation "+operationName);
+    			//throw new Exception("SoapAction URI was not found for operation "+operationName);
     		}
     	}
-
+        boolean useProxy = configuration.getProxyServer() != null;
+        String proxyHost = System.getProperty(HTTP_PROXY_HOST);
+        String proxyPort = System.getProperty(HTTP_PROXY_PORT);
+		if (useProxy) { 
+        	System.setProperty(HTTP_PROXY_HOST, configuration.getProxyServer());
+        	System.setProperty(HTTP_PROXY_PORT, String.valueOf(configuration.getProxyPort()));
+        	String proxyUsername = configuration.getProxyUsername();
+			if ((proxyUsername != null) && (proxyUsername.length() > 0)) {
+	        	System.setProperty(HTTP_PROXY_USER, proxyUsername);
+				System.setProperty(HTTP_PROXY_PASSWORD, configuration.getProxyPassword());
+        	}
+        }
+		Source response = null;
     	if (null != operation.getOutput()) {
-    		Source response = disp.invoke(payload);
-    		return response;
+			response = disp.invoke(payload);
     	} else {
     		disp.invokeOneWay(payload);
-    		return null;
     	}
+    	if (useProxy) {
+    		setPropertyBack(HTTP_PROXY_HOST, proxyHost);
+        	setPropertyBack(HTTP_PROXY_PORT, proxyPort);
+    	}
+		return response;
     }
+
+	private static void setPropertyBack(String key, String value) {
+		if (null != value) {
+			System.setProperty(key, value);
+		} else {
+			System.clearProperty(key);
+		}
+	}
 
     /**
      * Invoke a service with a simple map of parametes (address.city=LYON, address.zipCode=69003, etc ...) Returned
