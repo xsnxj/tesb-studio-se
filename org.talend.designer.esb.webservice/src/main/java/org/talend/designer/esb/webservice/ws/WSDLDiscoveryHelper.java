@@ -13,7 +13,7 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
-import org.talend.ws.helper.conf.ServiceHelperConfiguration;
+import org.talend.designer.esb.webservice.ws.wsdlutil.ServiceHelperConfiguration;
 
 /**
  * 

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.exolab.castor.xml.schema.Schema;
-import org.talend.ws.helper.conf.ServiceHelperConfiguration;
+import org.talend.designer.esb.webservice.ws.wsdlutil.ServiceHelperConfiguration;
 
 /**
  * 

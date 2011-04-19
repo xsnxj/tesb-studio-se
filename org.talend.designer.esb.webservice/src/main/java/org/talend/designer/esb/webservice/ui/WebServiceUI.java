@@ -81,7 +81,7 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.PortNames;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
-import org.talend.ws.helper.conf.ServiceHelperConfiguration;
+//import org.talend.ws.helper.conf.ServiceHelperConfiguration;
 
 /**
  * gcui class global comment. Detailled comment
@@ -140,7 +140,7 @@ public class WebServiceUI extends AbstractWebService {
 
     private PortNames currentPortName;
 
-    private ServiceHelperConfiguration serverConfig = null;
+//    private ServiceHelperConfiguration serverConfig = null;
 
     private Boolean isFirst = true;
 
@@ -345,31 +345,31 @@ public class WebServiceUI extends AbstractWebService {
             boolean isUseSSL = webServiceComponent.getElementParameter("NEED_SSL_TO_TRUSTSERVER").getValue().toString()
                     .equals("true");
 
-            if (isUseProxy) {
-                useProxy();
-            }
-
-            if (isUseAuth && !isUseNTLM) {
-                useAuth();
-            }
+//            if (isUseProxy) {
+//                useProxy();
+//            }
+//
+//            if (isUseAuth && !isUseNTLM) {
+//                useAuth();
+//            }
 
             if (isUseSSL) {
                 useSSL();
             }
 
-            if (serverConfig != null) {
-                if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
-                    funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl), serverConfig);
-                } else {
-                    funList = ws.getFunctionsAvailable(wsdlUrl, serverConfig);
-                }
-            } else {
+//            if (serverConfig != null) {
+//                if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
+//                    funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl), serverConfig);
+//                } else {
+//                    funList = ws.getFunctionsAvailable(wsdlUrl, serverConfig);
+//                }
+//            } else {
                 if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
                     funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
                 } else {
                     funList = ws.getFunctionsAvailable(wsdlUrl);
                 }
-            }
+//            }
 
             PortNames retrivePortName = new PortNames();
             retrivePortName.setPortName(currentURL);
@@ -615,71 +615,71 @@ public class WebServiceUI extends AbstractWebService {
 //        }
 //    }
 
-    /**
-     * DOC Comment method "useProxy".
-     */
-    private ServiceHelperConfiguration useProxy() {
-        String proxyHost = "";
-        String proxyPort = "";
-        String proxyUser = "";
-        String proxyPassword = "";
-        IElementParameter proxyHostParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_HOST");
-        IElementParameter proxyPortParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_PORT");
-        IElementParameter proxyUserParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_USERNAME");
-        IElementParameter proxyPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter(
-                "PROXY_PASSWORD");
+//    /**
+//     * DOC Comment method "useProxy".
+//     */
+//    private ServiceHelperConfiguration useProxy() {
+//        String proxyHost = "";
+//        String proxyPort = "";
+//        String proxyUser = "";
+//        String proxyPassword = "";
+//        IElementParameter proxyHostParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_HOST");
+//        IElementParameter proxyPortParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_PORT");
+//        IElementParameter proxyUserParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_USERNAME");
+//        IElementParameter proxyPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter(
+//                "PROXY_PASSWORD");
+//
+//        if (proxyHostParameter.getValue() != null) {
+//            proxyHost = TalendTextUtils.removeQuotes(proxyHostParameter.getValue().toString());
+//        }
+//        if (proxyPortParameter.getValue() != null) {
+//            proxyPort = TalendTextUtils.removeQuotes(proxyPortParameter.getValue().toString());
+//        }
+//        if (proxyUserParameter.getValue() != null) {
+//            proxyUser = TalendTextUtils.removeQuotes(proxyUserParameter.getValue().toString());
+//        }
+//        if (proxyPasswordParameter.getValue() != null) {
+//            proxyPassword = TalendTextUtils.removeQuotes(proxyPasswordParameter.getValue().toString());
+//        }
+//        if (serverConfig == null) {
+//            serverConfig = new ServiceHelperConfiguration();
+//        }
+//        serverConfig.setProxyServer(proxyHost);
+//        serverConfig.setProxyPort(Integer.parseInt(proxyPort));
+//        serverConfig.setUsername(proxyUser);
+//        serverConfig.setPassword(proxyPassword);
+//
+//        return serverConfig;
+//
+//    }
 
-        if (proxyHostParameter.getValue() != null) {
-            proxyHost = TalendTextUtils.removeQuotes(proxyHostParameter.getValue().toString());
-        }
-        if (proxyPortParameter.getValue() != null) {
-            proxyPort = TalendTextUtils.removeQuotes(proxyPortParameter.getValue().toString());
-        }
-        if (proxyUserParameter.getValue() != null) {
-            proxyUser = TalendTextUtils.removeQuotes(proxyUserParameter.getValue().toString());
-        }
-        if (proxyPasswordParameter.getValue() != null) {
-            proxyPassword = TalendTextUtils.removeQuotes(proxyPasswordParameter.getValue().toString());
-        }
-        if (serverConfig == null) {
-            serverConfig = new ServiceHelperConfiguration();
-        }
-        serverConfig.setProxyServer(proxyHost);
-        serverConfig.setProxyPort(Integer.parseInt(proxyPort));
-        serverConfig.setUsername(proxyUser);
-        serverConfig.setPassword(proxyPassword);
-
-        return serverConfig;
-
-    }
-
-    /**
-     * DOC Comment method "useAuth".
-     */
-    private ServiceHelperConfiguration useAuth() {
-
-        String authUsername = "";
-        String authPassword = "";
-
-        IElementParameter authUsernameParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_USERNAME");
-        IElementParameter authPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_PASSWORD");
-        if (authUsernameParameter.getValue() != null) {
-            authUsername = authUsernameParameter.getValue().toString();
-            authUsername = TalendTextUtils.removeQuotes(authUsername);
-        }
-        if (authPasswordParameter.getValue() != null) {
-            authPassword = authPasswordParameter.getValue().toString();
-            authPassword = TalendTextUtils.removeQuotes(authPassword);
-        }
-        if (serverConfig == null) {
-            serverConfig = new ServiceHelperConfiguration();
-        }
-        serverConfig.setUsername(authUsername);
-        serverConfig.setPassword(authPassword);
-
-        return serverConfig;
-
-    }
+//    /**
+//     * DOC Comment method "useAuth".
+//     */
+//    private ServiceHelperConfiguration useAuth() {
+//
+//        String authUsername = "";
+//        String authPassword = "";
+//
+//        IElementParameter authUsernameParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_USERNAME");
+//        IElementParameter authPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_PASSWORD");
+//        if (authUsernameParameter.getValue() != null) {
+//            authUsername = authUsernameParameter.getValue().toString();
+//            authUsername = TalendTextUtils.removeQuotes(authUsername);
+//        }
+//        if (authPasswordParameter.getValue() != null) {
+//            authPassword = authPasswordParameter.getValue().toString();
+//            authPassword = TalendTextUtils.removeQuotes(authPassword);
+//        }
+//        if (serverConfig == null) {
+//            serverConfig = new ServiceHelperConfiguration();
+//        }
+//        serverConfig.setUsername(authUsername);
+//        serverConfig.setPassword(authPassword);
+//
+//        return serverConfig;
+//
+//    }
 
     /**
      * DOC gcui Comment method "useSSL".
@@ -1076,13 +1076,13 @@ public class WebServiceUI extends AbstractWebService {
         boolean isUseNTLM = webServiceComponent.getElementParameter("USE_NTLM").getValue().toString().equals("true");
         boolean isUseAuth = webServiceComponent.getElementParameter("NEED_AUTH").getValue().toString().equals("true");
 
-        if (isUseProxy) {
-            useProxy();
-        }
-
-        if (isUseAuth && !isUseNTLM) {
-            useAuth();
-        }
+//        if (isUseProxy) {
+//            useProxy();
+//        }
+//
+//        if (isUseAuth && !isUseNTLM) {
+//            useAuth();
+//        }
 
         boolean isUseSSL = webServiceComponent.getElementParameter("NEED_SSL_TO_TRUSTSERVER").getValue().toString()
                 .equals("true");
@@ -1090,20 +1090,20 @@ public class WebServiceUI extends AbstractWebService {
             useSSL();
         }
 
-        if (serverConfig != null) {
-            if (URLValue != null && !URLValue.contains("\"")) {
-                funList = ws.getFunctionsAvailable(parseContextParameter(URLValue), serverConfig);
-            } else {
-                funList = ws.getFunctionsAvailable(URLValue, serverConfig);
-            }
-
-        } else {
+//        if (serverConfig != null) {
+//            if (URLValue != null && !URLValue.contains("\"")) {
+//                funList = ws.getFunctionsAvailable(parseContextParameter(URLValue), serverConfig);
+//            } else {
+//                funList = ws.getFunctionsAvailable(URLValue, serverConfig);
+//            }
+//
+//        } else {
             if (URLValue != null && !URLValue.contains("\"")) {
                 funList = ws.getFunctionsAvailable(parseContextParameter(URLValue));
             } else {
                 funList = ws.getFunctionsAvailable(URLValue);
             }
-        }
+//        }
 
         if (!funList.isEmpty()) {
             if (funList.get(0) != null) {

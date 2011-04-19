@@ -16,7 +16,6 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.talend.ws.helper.conf.ServiceHelperConfiguration;
 
 /**
  * This helper allow easy discovery of services and types
@@ -33,19 +32,18 @@ public class ServiceDiscoveryHelper {
 
     private XmlSchemaCollection schemaCollection;
 
-    private ServiceHelperConfiguration configuration;
-
     private File localWsdl;
 
     public ServiceDiscoveryHelper(String wsdlUri) throws WSDLException, IOException {
-        this(wsdlUri, null);
-    }
-
-    public ServiceDiscoveryHelper(String wsdlUri, ServiceHelperConfiguration configuration) throws WSDLException, IOException {
         this.wsdlUri = wsdlUri;
-        this.configuration = configuration;
         init();
     }
+
+//    public ServiceDiscoveryHelper(String wsdlUri, ServiceHelperConfiguration configuration) throws WSDLException, IOException {
+//        this.wsdlUri = wsdlUri;
+//        this.configuration = configuration;
+//        init();
+//    }
 
     /**
      * Read the wsdl and schema
