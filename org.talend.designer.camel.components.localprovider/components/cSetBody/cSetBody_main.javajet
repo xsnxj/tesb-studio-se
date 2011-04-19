@@ -17,9 +17,14 @@ imports="
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
+		if(!("none".equals(language))) {
 %>
-		.setBody(<%=language%>(<%=expression%>))
-	
+			.setBody(<%=language%>(<%=expression%>))
 <%
+		} else {
+%>
+			.setBody(<%=expression%>)
+<%
+		}
 	}
 %>

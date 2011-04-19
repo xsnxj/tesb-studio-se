@@ -22,9 +22,15 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if("false".equals(useBean)) {
+			if(!("none".equals(language))) {
 %>
-			.setHeader(<%=header%>, <%=language%>(<%=expression%>))
+				.setHeader(<%=header%>, <%=language%>(<%=expression%>))
 <%
+			} else {
+%>
+				.setHeader(<%=header%>, <%=expression%>)
+<%
+			}
 		} else {
 %>
 			.setHeader(<%=header%>).method(<%=bean%>)
