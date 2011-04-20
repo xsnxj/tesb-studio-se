@@ -158,7 +158,7 @@ public class WebServiceUI extends AbstractWebService {
         this.webServiceManager = webServiceMain.getWebServiceManager();
         this.connector = webServiceMain.getWebServiceComponent();
         URLValue = new String();
-        getLastFunction();
+        //getLastFunction();
         initWebserviceUI();
     }
 
