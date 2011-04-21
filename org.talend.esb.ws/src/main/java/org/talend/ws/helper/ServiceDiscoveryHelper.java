@@ -95,10 +95,14 @@ public class ServiceDiscoveryHelper {
         WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
         newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
 
-        if (configuration == null) {
-            definition = newWSDLReader.readWSDL(wsdlUri);
-        } else {
-            definition = newWSDLReader.readWSDL(configuration.createWSDLLocator(wsdlUri));
+        try {
+	        if (configuration == null) {
+	            definition = newWSDLReader.readWSDL(wsdlUri);
+	        } else {
+	            definition = newWSDLReader.readWSDL(configuration.createWSDLLocator(wsdlUri));
+	        }
+        } catch (WSDLException e) {
+        	throw new WSDLException("Cannot parse cervice WSDL or WSDL is not accessible", wsdlUri, e);
         }
         schemaCollection = new XmlSchemaCollection();
 
