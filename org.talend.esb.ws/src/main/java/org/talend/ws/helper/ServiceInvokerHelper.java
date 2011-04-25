@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -291,7 +292,8 @@ public class ServiceInvokerHelper implements ClassMapper {
     	return response;
     }
 
-    public Source invoke(QName serviceName, QName portName, String operationName, Source payload)
+    @SuppressWarnings("unchecked")
+	public Source invoke(QName serviceName, QName portName, String operationName, Source payload)
     		throws SOAPFaultException, Exception {
 
     	if (serviceName == null) {
@@ -338,6 +340,10 @@ public class ServiceInvokerHelper implements ClassMapper {
     			}
     			//throw new Exception("SoapAction URI was not found for operation "+operationName);
     		}
+    	}
+    	if ((configuration.getUsername() != null) && (configuration.getPassword() != null)){
+    		requestContext.put(BindingProvider.USERNAME_PROPERTY, configuration.getUsername());
+    		requestContext.put(BindingProvider.PASSWORD_PROPERTY, configuration.getPassword());
     	}
         boolean useProxy = configuration.getProxyServer() != null;
         String proxyHost = System.getProperty(HTTP_PROXY_HOST);
