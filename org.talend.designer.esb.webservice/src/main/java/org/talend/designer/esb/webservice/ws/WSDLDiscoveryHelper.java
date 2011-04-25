@@ -1,13 +1,17 @@
 package org.talend.designer.esb.webservice.ws;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.exolab.castor.xml.schema.SchemaException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.utils.TalendTextUtils;
+import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
@@ -34,8 +38,9 @@ public class WSDLDiscoveryHelper {
      * 
      * @param wsdlURI
      * @return
+     * @throws IOException 
      */
-    public List<Function> getFunctionsAvailable(String wsdlURI, ServiceHelperConfiguration config) {
+    public List<Function> getFunctionsAvailable(String wsdlURI, ServiceHelperConfiguration config) throws IOException {
         functionsAvailable = new ArrayList();
         wsdlURI = TalendTextUtils.removeQuotes(wsdlURI);
 
@@ -143,12 +148,10 @@ public class WSDLDiscoveryHelper {
                 f.setName(operationName);
                 functionsAvailable.add(f);
             }
-        } catch (SchemaException e) {
-            exceptionMessage = exceptionMessage + e.getMessage();
-            ExceptionHandler.process(e);
         } catch (Exception e) {
             exceptionMessage = exceptionMessage + e.getMessage();
             ExceptionHandler.process(e);
+            throw new IOException(e.getMessage());
         }
 
         if (!"".equals(exceptionMessage)) {
@@ -186,7 +189,7 @@ public class WSDLDiscoveryHelper {
         return list;
     }
 
-    public List<Function> getFunctionsAvailable(String wsdlURI) {
+    public List<Function> getFunctionsAvailable(String wsdlURI) throws IOException {
         ServiceHelperConfiguration config = null;
         return getFunctionsAvailable(wsdlURI, config);
 

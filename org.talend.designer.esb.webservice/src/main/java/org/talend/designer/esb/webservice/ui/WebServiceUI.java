@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.esb.webservice.ui;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,9 +21,11 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -73,6 +76,7 @@ import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentMain;
+import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.data.ExternalWebServiceUIProperties;
 import org.talend.designer.esb.webservice.i18n.Messages;
 import org.talend.designer.esb.webservice.managers.WebServiceManager;
@@ -88,6 +92,8 @@ import org.talend.repository.ui.utils.ConnectionContextHelper;
  */
 @SuppressWarnings("unchecked")
 public class WebServiceUI extends AbstractWebService {
+
+    private static final String ERROR_GETTING_WSDL = "Error getting service description";
 
     protected int maximumRowsToPreview = CorePlugin.getDefault().getPreferenceStore()
             .getInt(ITalendCorePrefConstants.PREVIEW_LIMIT);
@@ -324,6 +330,25 @@ public class WebServiceUI extends AbstractWebService {
 
     }
 
+    private static IStatus[] getStatus(final Throwable e, final String pluginId) {
+        List<IStatus> alStatus = new ArrayList<IStatus>();
+        alStatus.add(new Status(IStatus.ERROR, pluginId, 0, e.getClass().getName(), e));
+        for (int i = 0; i < e.getStackTrace().length; i++) {
+            alStatus.add(new Status(IStatus.ERROR, pluginId, 0, e.getStackTrace()[i].toString(), null));
+        }
+        return alStatus.toArray(new IStatus[alStatus.size()]);
+    }
+
+    public final void openErrorDialog(String message, Throwable e) {
+        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName()); //$NON-NLS-1$
+        String pluginId = WebServiceComponentPlugin.PLUGIN_ID;
+        final IStatus status = new MultiStatus(pluginId, 0, getStatus(e, pluginId), msg, null);
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                ErrorDialog.openError(uiParent.getShell(), Messages.getString("Error"), null, status);
+            }
+        });
+    }
 
     private void getLastFunction() {
         IElementParameter METHODPara = connector.getElementParameter("METHOD"); //$NON-NLS-1$
@@ -345,10 +370,6 @@ public class WebServiceUI extends AbstractWebService {
             boolean isUseSSL = webServiceComponent.getElementParameter("NEED_SSL_TO_TRUSTSERVER").getValue().toString()
                     .equals("true");
 
-//            if (isUseProxy) {
-//                useProxy();
-//            }
-//
 //            if (isUseAuth && !isUseNTLM) {
 //                useAuth();
 //            }
@@ -364,11 +385,15 @@ public class WebServiceUI extends AbstractWebService {
 //                    funList = ws.getFunctionsAvailable(wsdlUrl, serverConfig);
 //                }
 //            } else {
+            try {
                 if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
                     funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
                 } else {
                     funList = ws.getFunctionsAvailable(wsdlUrl);
                 }
+            } catch (IOException e) {
+                openErrorDialog(ERROR_GETTING_WSDL, e);
+            }
 //            }
 
             PortNames retrivePortName = new PortNames();
@@ -1098,11 +1123,15 @@ public class WebServiceUI extends AbstractWebService {
 //            }
 //
 //        } else {
+        try {
             if (URLValue != null && !URLValue.contains("\"")) {
                 funList = ws.getFunctionsAvailable(parseContextParameter(URLValue));
             } else {
                 funList = ws.getFunctionsAvailable(URLValue);
             }
+        } catch (IOException e) {
+            openErrorDialog(ERROR_GETTING_WSDL, e);
+        }
 //        }
 
         if (!funList.isEmpty()) {
