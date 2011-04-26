@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.talend.core.model.components.IODataComponent;
 import org.talend.core.model.components.IODataComponentContainer;
 import org.talend.core.model.metadata.IMetadataTable;
+import org.talend.core.model.metadata.MetadataTable;
 import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IConnection;
@@ -140,21 +141,26 @@ public class WebServiceComponent extends AbstractExternalNode {
     @Override
     public IODataComponentContainer getIODataComponents() {
         IODataComponentContainer inAndOut = new IODataComponentContainer();
-//
-//        List<IODataComponent> outputs = inAndOut.getOuputs();
-//        for (IConnection currentConnection : getOutgoingConnections()) {
-//            if (currentConnection.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-//                IODataComponent component = new IODataComponent(currentConnection, getMetadataList().get(1));
-//                outputs.add(component);
-//            }
-//        }
-//        List<IODataComponent> inputs = inAndOut.getInputs();
-//        for (IConnection currentConnection : getIncomingConnections()) {
-//            if (currentConnection.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-//                IODataComponent component = new IODataComponent(currentConnection, inputMetadata);
-//                inputs.add(component);
-//            }
-//        }
+
+        List<IODataComponent> outputs = inAndOut.getOuputs();
+        for (IConnection currentConnection : getOutgoingConnections()) {
+            if (currentConnection.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+                for (IMetadataTable mt : getMetadataList()) {
+                    if ((null != mt.getAttachedConnector()) && (mt.getAttachedConnector().equals(currentConnection.getConnectorName()))) {
+                        IODataComponent component = new IODataComponent(currentConnection, mt);
+                        outputs.add(component);
+                        break;
+                    }
+                }
+            }
+        }
+        List<IODataComponent> inputs = inAndOut.getInputs();
+        for (IConnection currentConnection : getIncomingConnections()) {
+            if (currentConnection.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+                IODataComponent component = new IODataComponent(currentConnection, inputMetadata);
+                inputs.add(component);
+            }
+        }
         return inAndOut;
     }
 
