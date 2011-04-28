@@ -18,18 +18,18 @@ import org.talend.core.model.routines.IRoutinesProvider;
 
 /**
  * @author Administrator
- *
+ * 
  */
 public class CamelRoutineProviderCreator implements IRoutineProviderCreator {
-	IRoutinesProvider javaProvider = null;
-	
-	public CamelRoutineProviderCreator() {
-		javaProvider = new CamelJavaRoutinesProvider();
-	}
 
-	@Override
-	public IRoutinesProvider createIRoutinesProviderByLanguage(ECodeLanguage lan) {
-		return javaProvider;
-	}
+    IRoutinesProvider javaProvider = null;
+
+    public CamelRoutineProviderCreator() {
+        javaProvider = new CamelJavaRoutinesProvider();
+    }
+
+    public IRoutinesProvider createIRoutinesProviderByLanguage(ECodeLanguage lan) {
+        return javaProvider;
+    }
 
 }

@@ -23,36 +23,40 @@ import org.talend.librariesmanager.model.service.JavaLibrariesService;
 
 /**
  * @author Administrator
- *
+ * 
  */
 public class CamelJavaRoutinesProvider implements IRoutinesProvider {
 
-	/* (non-Javadoc)
-	 * @see org.talend.core.model.routines.IRoutinesProvider#getSystemRoutines()
-	 */
-	@Override
-	public List<URL> getSystemRoutines() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.routines.IRoutinesProvider#getSystemRoutines()
+     */
+
+    public List<URL> getSystemRoutines() {
         List<URL> toReturn = FilesUtils.getFilesFromFolder(Activator.BUNDLE, "resources/java/" //$NON-NLS-1$
                 + JavaLibrariesService.SOURCE_JAVA_ROUTINES_FOLDER, ".java", false, false); //$NON-NLS-1$
         return toReturn;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.talend.core.model.routines.IRoutinesProvider#getTalendRoutinesFolder()
-	 */
-	@Override
-	public URL getTalendRoutinesFolder() throws IOException {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.routines.IRoutinesProvider#getTalendRoutinesFolder()
+     */
+    public URL getTalendRoutinesFolder() throws IOException {
         URL url = Activator.BUNDLE.getEntry("resources/java/routines/system"); //$NON-NLS-1$
         return FileLocator.resolve(url);
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.talend.core.model.routines.IRoutinesProvider#getTalendRoutines()
-	 */
-	@Override
-	public List<URL> getTalendRoutines() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.routines.IRoutinesProvider#getTalendRoutines()
+     */
+    public List<URL> getTalendRoutines() {
         List<URL> toReturn = FilesUtils.getFilesFromFolder(Activator.BUNDLE, "resources/java/routines/system", ".java"); //$NON-NLS-1$ //$NON-NLS-2$
         return toReturn;
-	}
+    }
 
 }
