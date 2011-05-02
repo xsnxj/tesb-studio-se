@@ -83,7 +83,7 @@ if (actAsProvider || actAsConsumer) { %>
 <% } %>
 
 <% if (actAsProvider) { %>
-	private class ProviderFault {
+	public class ProviderFault {
 
 		final String message;
 		final Object detail;
