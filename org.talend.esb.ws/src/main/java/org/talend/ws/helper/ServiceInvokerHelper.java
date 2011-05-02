@@ -54,9 +54,9 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaContent;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.talend.ws.exception.LocalizedException;
 import org.talend.ws.helper.conf.ServiceHelperConfiguration;
@@ -348,7 +348,7 @@ public class ServiceInvokerHelper implements ClassMapper {
         boolean useProxy = configuration.getProxyServer() != null;
         String proxyHost = System.getProperty(HTTP_PROXY_HOST);
         String proxyPort = System.getProperty(HTTP_PROXY_PORT);
-		if (useProxy) { 
+		if (useProxy) {
         	System.setProperty(HTTP_PROXY_HOST, configuration.getProxyServer());
         	System.setProperty(HTTP_PROXY_PORT, String.valueOf(configuration.getProxyPort()));
         	String proxyUsername = configuration.getProxyUsername();
@@ -467,7 +467,7 @@ public class ServiceInvokerHelper implements ClassMapper {
                 int tempSuffix = 0;
                 // bug13001 by bchen, deal with choice in sequence
                 // Iterator<XmlSchemaObject> iterator = MapperFactory.getXmlSchemaObjectIter(xmlSchemaSequence);
-                Iterator<XmlSchemaObject> iterator = xmlSchemaSequence.getItems().getIterator();
+                Iterator<XmlSchemaSequenceMember> iterator = xmlSchemaSequence.getItems().iterator();
                 while (!allCorrect) {
                     // if (iterator == null) {// bug 14053 created by bchen, handle <any/> tag
                     // return clazz;
@@ -480,7 +480,7 @@ public class ServiceInvokerHelper implements ClassMapper {
                     }
                     String propertyName = "";
                     while (iterator.hasNext()) {
-                        XmlSchemaObject xmlSchemaObject = iterator.next();
+                        XmlSchemaSequenceMember xmlSchemaObject = iterator.next();
                         if (xmlSchemaObject instanceof XmlSchemaElement) {
                             XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) xmlSchemaObject;
                             propertyName = xmlSchemaElement.getName();
@@ -495,8 +495,8 @@ public class ServiceInvokerHelper implements ClassMapper {
                             }
                         } else if (xmlSchemaObject instanceof XmlSchemaChoice) {
                             XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) xmlSchemaObject;
-                            XmlSchemaObjectCollection xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
-                            Iterator<XmlSchemaObject> choiceIterator = xmlSchemaObjectCollection.getIterator();
+                            List<XmlSchemaObject> xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
+                            Iterator<XmlSchemaObject> choiceIterator = xmlSchemaObjectCollection.iterator();
                             while (choiceIterator.hasNext()) {
                                 XmlSchemaObject choiceXmlSchemaObject = choiceIterator.next();
                                 if (choiceXmlSchemaObject instanceof XmlSchemaElement) {

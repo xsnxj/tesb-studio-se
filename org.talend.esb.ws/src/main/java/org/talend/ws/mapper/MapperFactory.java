@@ -3,8 +3,11 @@
  */
 package org.talend.ws.mapper;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Message;
@@ -22,10 +25,11 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaContent;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
@@ -34,7 +38,7 @@ import org.apache.ws.commons.schema.XmlSchemaType;
 import org.talend.ws.exception.LocalizedException;
 
 /**
- * 
+ *
  * @author rlamarche
  */
 public class MapperFactory {
@@ -156,8 +160,8 @@ public class MapperFactory {
         XmlSchemaType xmlSchemaType = xmlSchemaElement.getSchemaType();
 
         if (xmlSchemaType == null) { // bug 13001 by bchen, <element ref="refElement"/> "ref"
-            if (xmlSchemaElement.getRefName() != null) {
-                XmlSchemaElement xmlRefSchemaElement = schemaCollection.getElementByQName(xmlSchemaElement.getRefName());
+            if (xmlSchemaElement.getTargetQName() != null) {
+                XmlSchemaElement xmlRefSchemaElement = schemaCollection.getElementByQName(xmlSchemaElement.getTargetQName());
                 if (xmlRefSchemaElement != null) {
                     xmlSchemaType = xmlRefSchemaElement.getSchemaType();
                     // if ref elemnet haven't type attribute, assign type name with element name.
@@ -188,7 +192,7 @@ public class MapperFactory {
 
     /**
      * Return the message mapper or null if the message does not have any parts or is null
-     * 
+     *
      * @param message
      * @return
      */
@@ -276,9 +280,9 @@ public class MapperFactory {
                 // </xsd:simpleType>
                 // and not enum
                 // and enum have not typename,means jaxb didn't gen class for this enum
-                XmlSchemaObjectCollection xmlSchemaObjectCol = ((XmlSchemaSimpleTypeRestriction) xmlSchemaSimpleTypeContent)
+                List<XmlSchemaFacet> xmlSchemaObjectCol = ((XmlSchemaSimpleTypeRestriction) xmlSchemaSimpleTypeContent)
                         .getFacets();
-                if (xmlSchemaObjectCol.getCount() > 0 && xmlSchemaObjectCol.getItem(0) instanceof XmlSchemaEnumerationFacet
+                if (xmlSchemaObjectCol.size() > 0 && xmlSchemaObjectCol.get(0) instanceof XmlSchemaEnumerationFacet
                         && xmlSchemaSimpleType.getName() != null) {
                     Class<?> clazz = classMapper.getClassForType(xmlSchemaSimpleType);
                     if (!clazz.isEnum()) {
@@ -356,17 +360,17 @@ public class MapperFactory {
             throws LocalizedException {
         Map<String, PropertyMapper> map = new ListOrderedMap();
         // bug13001 by bchen, deal with choice in sequence
-        Iterator<XmlSchemaObject> iterator = xmlSchemaSequence.getItems().getIterator();
+        Iterator<XmlSchemaSequenceMember> iterator = xmlSchemaSequence.getItems().iterator();
         while (iterator.hasNext()) {
-            XmlSchemaObject xmlSchemaObject = iterator.next();
+            XmlSchemaSequenceMember xmlSchemaObject = iterator.next();
             if (xmlSchemaObject instanceof XmlSchemaElement) {
                 XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) xmlSchemaObject;
                 map.put(xmlSchemaElement.getName(), createPropertyMapper(xmlSchemaElement, clazz));
             } else if (xmlSchemaObject instanceof XmlSchemaChoice) {
                 XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) xmlSchemaObject;
-                XmlSchemaObjectCollection xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
+                List<XmlSchemaObject> xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
                 // map.putAll(createPropertyMappers(xmlSchemaObjectCollection.getIterator(), map, clazz));
-                Iterator<XmlSchemaObject> choiceIter = xmlSchemaObjectCollection.getIterator();
+                Iterator<XmlSchemaObject> choiceIter = xmlSchemaObjectCollection.iterator();
                 while (choiceIter.hasNext()) {
                     XmlSchemaObject choiceXmlSchemaObject = choiceIter.next();
                     if (choiceXmlSchemaObject instanceof XmlSchemaElement) {
@@ -404,22 +408,27 @@ public class MapperFactory {
      * <xsd:element/> </xsd:choice> </xsd:sequence> </xsd:complexType>
      */
     public static Iterator<XmlSchemaObject> getXmlSchemaObjectIter(XmlSchemaSequence xmlSchemaSequence) {
-        Iterator<XmlSchemaObject> iterator = xmlSchemaSequence.getItems().getIterator();
+        Iterator<XmlSchemaSequenceMember> iterator = xmlSchemaSequence.getItems().iterator();
         while (iterator.hasNext()) {
-            XmlSchemaObject xmlSchemaObject = iterator.next();
+            XmlSchemaSequenceMember xmlSchemaObject = iterator.next();
             if (xmlSchemaObject instanceof XmlSchemaElement) {
-                return xmlSchemaSequence.getItems().getIterator();
+                List<XmlSchemaObject> xmlSchemaObjects =
+                    new ArrayList<XmlSchemaObject>(xmlSchemaSequence.getItems().size());
+                for (XmlSchemaSequenceMember item : xmlSchemaSequence.getItems()) {
+                    xmlSchemaObjects.add((XmlSchemaObject) item);
+                }
+                return xmlSchemaObjects.iterator();
             } else if (xmlSchemaObject instanceof XmlSchemaChoice) {
                 XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) xmlSchemaObject;
-                XmlSchemaObjectCollection xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
-                return xmlSchemaObjectCollection.getIterator();
+                List<XmlSchemaObject> xmlSchemaObjectList = xmlSchemaChoice.getItems();
+                return xmlSchemaObjectList.iterator();
             } else if (xmlSchemaObject instanceof XmlSchemaAny) {
                 return null;
             } else {
                 throw new IllegalArgumentException("Invalid xmlSchemaObject.");
             }
         }
-        return iterator;
+        return new ArrayList<XmlSchemaObject>().iterator();
     }
 
     private static String builtInTypeToJavaType(String type) {
