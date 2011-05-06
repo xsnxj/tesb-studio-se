@@ -15,6 +15,7 @@ package org.talend.designer.camel.components.localprovider;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.designer.core.ILocalProviderService;
 
 /**
@@ -29,6 +30,10 @@ public class CamelLocalProviderService implements ILocalProviderService {
      */
     public ResourceBundle getResourceBundle(String label) {
         return ResourceBundle.getBundle(label, Locale.getDefault(), new ResClassLoader(getClass().getClassLoader()));
+    }
+
+    public AbstractUIPlugin getPlugin() {
+        return CamelComponentPlugin.getDefault();
     }
 
 }
