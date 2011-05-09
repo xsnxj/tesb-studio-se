@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.talend.esbstandard-feature"
+      label="ESB standard edition Feature"
+      version="4.2.1.NB_r60033"
+      provider-name=".Talend SA.">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="license.txt">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="ESB Talend update site for stables" url="http://www.talend.com/tisteam/updatesite/stable/"/>
+   </url>
+
+   <includes
+         id="org.talend.tos-feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.talend.camel-feature"
+         version="0.0.0"/>
+
+</feature>
