@@ -40,9 +40,15 @@ imports="
 			.loadBalance().<%=strategy%>(
 <%
 				if("sticky".equals(strategy)) { //BEGIN STICKY
+					if(!("none".equals(language))) {
 %>
-					<%=language%>(<%=expression%>)
+						<%=language%>(<%=expression%>)
 <%
+					} else {
+%>
+						<%=expression%>
+<%
+					}
 				} // END STICKY
 				if("failover".equals(strategy)) { //BEGIN FAILOVER
 					if("true".equals(exceptionMode)) {

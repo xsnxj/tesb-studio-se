@@ -15,7 +15,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String useLanguage = ElementParameterParser.getValue(node, "__USE_LANGUAGE__");
-	String language = ElementParameterParser.getValue(node, "__LANGUAGE__");
+	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String predicate = ElementParameterParser.getValue(node, "__PREDICATE__");
 	String repository = ElementParameterParser.getValue(node, "__REPOSITORY_TYPE__");
 	String cacheSize = ElementParameterParser.getValue(node, "__CACHE_SIZE__");
@@ -27,9 +27,15 @@ imports="
 			.idempotentConsumer(<%=expression%>,
 <%
 		} else {
+			if(!("none".equals(language))) {
 %>
-			.idempotentConsumer(<%=language%>(<%=predicate%>),
+				.idempotentConsumer(<%=language%>(<%=predicate%>),
 <%
+			} else {
+%>
+				.idempotentConsumer(<%=predicate%>,
+<%
+			}
 		} //END 2
 		
 		if("MEMORY".equals(repository)) { //BEGIN 2

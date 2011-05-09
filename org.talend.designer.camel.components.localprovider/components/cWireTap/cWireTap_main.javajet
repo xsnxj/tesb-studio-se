@@ -16,7 +16,7 @@ imports="
 	String expression  = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String processor  = ElementParameterParser.getValue(node, "__PROCESSOR__");
 	String code = ElementParameterParser.getValue(node, "__CODE__");
-	String language  = ElementParameterParser.getValue(node, "__LANGUAGE__");
+	String language  = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expressiontxt  = ElementParameterParser.getValue(node, "__EXPRESSIONTXT__");
 	String wireTapString = "";
 	if(!"true".equals(new_exchange))
@@ -29,7 +29,11 @@ imports="
 		        {
 		        if("true".equals(expression))
 		            {
-		            wireTapString = ".wireTap("+URI+",true,"+language+"("+expressiontxt+"))";
+						if(!("none".equals(language))) {
+							wireTapString = ".wireTap("+URI+",true,"+language+"("+expressiontxt+"))";
+						} else {
+							wireTapString = ".wireTap("+URI+",true,"+expressiontxt+")";
+						}
 		            }
 		        else if("true".equals(processor))
 		            {

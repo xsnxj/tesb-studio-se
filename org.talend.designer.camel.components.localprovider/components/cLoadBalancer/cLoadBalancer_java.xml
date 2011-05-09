@@ -39,21 +39,27 @@
       </ITEMS>
     </PARAMETER>
 	
-	<PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="true" NUM_ROW="10" SHOW_IF="STRATEGY == 'STICKY'">
+	<PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="false" NUM_ROW="10" SHOW_IF="STRATEGY == 'STICKY'">
 		<ITEMS DEFAULT="XPATH">
-			<ITEM NAME="XPATH"      VALUE="xpath" />
+			<ITEM NAME="NONE"       VALUE="none" />
+			<ITEM NAME="CONSTANT"   VALUE="constant" />
 			<ITEM NAME="EL"         VALUE="el" />
 			<ITEM NAME="GROOVY"     VALUE="groovy" />
-			<ITEM NAME="JAVASCRIPT" VALUE="javascript" />
+			<ITEM NAME="HEADER"     VALUE="header" />
+			<ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
+			<ITEM NAME="JOSQL" 		VALUE="sql" />
 			<ITEM NAME="JXPATH"     VALUE="jxpath" />
 			<ITEM NAME="MVEL"       VALUE="mvel" />
 			<ITEM NAME="OGNL"       VALUE="ognl" />
-			<ITEM NAME="XQUERY"     VALUE="xquery" />
 			<ITEM NAME="PHP"        VALUE="php" />
+			<ITEM NAME="PROPERTY"   VALUE="property" />
 			<ITEM NAME="PYTHON"     VALUE="python" />
 			<ITEM NAME="RUBY"       VALUE="ruby" />
 			<ITEM NAME="SIMPLE"     VALUE="simple" />
-			<ITEM NAME="SQL"        VALUE="sql" />
+			<ITEM NAME="SPEL"       VALUE="spel" />
+			<ITEM NAME="SQL"        VALUE="sql" />			
+			<ITEM NAME="XPATH"      VALUE="xpath" />
+			<ITEM NAME="XQUERY"     VALUE="xquery" />
 		</ITEMS>
 	</PARAMETER>
 	<PARAMETER NAME="EXPRESSION" FIELD="TEXT"  NUM_ROW="10" REQUIRED="true" SHOW_IF="STRATEGY == 'STICKY'">

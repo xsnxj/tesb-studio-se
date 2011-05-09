@@ -16,7 +16,7 @@ imports="
 	String value = ElementParameterParser.getValue(node, "__VALUE__");
 	String header = ElementParameterParser.getValue(node, "__HEADER__");
 	String exp = ElementParameterParser.getValue(node, "__EXPRESSION__");
-	String language = ElementParameterParser.getValue(node, "__LANGUAGE__");
+	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if("VALUE_TYPE".equals(type)) {
@@ -28,9 +28,15 @@ imports="
 			.loop(<%=header%>)
 <%	
 		} else if("EXPRESSION_TYPE".equals(type)) {
+			if(!("none".equals(language))) {
 %>
-			.loop().<%=language%>(<%=exp%>)
+				.loop().<%=language%>(<%=exp%>)
 <%
+			} else {
+%>
+				.loop.<%=exp%>
+<%
+			}
 		}
 	}
 %>

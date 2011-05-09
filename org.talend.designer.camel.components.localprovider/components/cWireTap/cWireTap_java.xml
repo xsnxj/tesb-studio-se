@@ -1,136 +1,109 @@
 <COMPONENT>
 
-  <HEADER
-    PLATEFORM="ALL"
-    SERIAL=""
-    VERSION="0.102"
-    STATUS="ALPHA"
-    
-    COMPATIBILITY="ALL"
-    AUTHOR="Talend"
-    RELEASE_DATE="20100401A"
-    STARTABLE="true"
-  >
-    <SIGNATURE/>
-  </HEADER>
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
 
-  <FAMILIES>
-    <FAMILY>Routing</FAMILY>
-  </FAMILIES>
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
 
-  <DOCUMENTATION>
-    <URL/>
-  </DOCUMENTATION>
+	<FAMILIES>
+		<FAMILY>Routing</FAMILY>
+	</FAMILIES>
 
-  <CONNECTORS>
-    <CONNECTOR CTYPE="ROUTE" MAX_INPUT="1" MAX_OUTPUT="1" MIN_OUTPUT="0"/>
-	<CONNECTOR CTYPE="ROUTE_WHEN"  MAX_INPUT="0" MAX_OUTPUT="1" MIN_OUTPUT="0" />
-  </CONNECTORS>
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
 
-   <PARAMETERS>
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MAX_INPUT="1" MAX_OUTPUT="1"
+			MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="0" MAX_OUTPUT="1"
+			MIN_OUTPUT="0" />
+	</CONNECTORS>
 
-		<PARAMETER
-      NAME="URI"
-      FIELD="TEXT"
-      NUM_ROW="1"
-	  REQUIRED="true"
-    >
-		<DEFAULT>""</DEFAULT>
-	  </PARAMETER>
-	  
-	  <PARAMETER 
-		NAME="NEW_EXCHANGE" 
-		FIELD="CHECK" 
-		REQUIRED="true"
-		NUM_ROW="2">
+	<PARAMETERS>
+
+		<PARAMETER NAME="URI" FIELD="TEXT" NUM_ROW="1" REQUIRED="true">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NEW_EXCHANGE" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="2">
 			<DEFAULT>false</DEFAULT>
-	  </PARAMETER>
-	  
-	  <PARAMETER
-      NAME="EXPRESSION"
-      FIELD="RADIO"
-      NUM_ROW="3"
-      GROUP="POPULATETYPE"
-      SHOW_IF="NEW_EXCHANGE == 'true'"
-    >
-      <DEFAULT>true</DEFAULT>
-    </PARAMETER>
+		</PARAMETER>
 
-    <PARAMETER
-      NAME="PROCESSOR"
-      FIELD="RADIO"
-      NUM_ROW="4"
-      GROUP="POPULATETYPE"
-      SHOW_IF="NEW_EXCHANGE == 'true'"
-    >
-      <DEFAULT>false</DEFAULT> 
-    </PARAMETER>
-    
-    	<PARAMETER
-      NAME="LANGUAGE"
-      FIELD="CLOSED_LIST"
-      NUM_ROW="6"
-	  REQUIRED="true"
-	  SHOW_IF="((EXPRESSION == 'true') and (NEW_EXCHANGE == 'true'))">
-	  <ITEMS DEFAULT="XPATH">
-        <ITEM NAME="EL" VALUE="el"/>
-        <ITEM NAME="GROOVY" VALUE="groovy"/>
-		<ITEM NAME="JXPATH" VALUE="jxpath"/>
-		<ITEM NAME="MVEL" VALUE="mvel"/>
-		<ITEM NAME="OGNL" VALUE="ognl"/>
-		<ITEM NAME="PHP" VALUE="php"/>
-		<ITEM NAME="PYTHON" VALUE="python"/>
-		<ITEM NAME="RUBY" VALUE="ruby"/>
-		<ITEM NAME="SIMPLE" VALUE="simple"/>
-		<ITEM NAME="SQL" VALUE="sql"/>
-		<ITEM NAME="XQUERY" VALUE="xquery"/>
-		<ITEM NAME="HEADER" VALUE="header"/>
-		<ITEM NAME="CONSTANT" VALUE="constant"/>
-		<ITEM NAME="PROPERTY" VALUE="property"/>
-		<ITEM NAME="XPATH" VALUE="xpath"/>
-      </ITEMS>
-	</PARAMETER>
-	
-		<PARAMETER
-      NAME="EXPRESSIONTXT"
-      FIELD="TEXT"
-      NUM_ROW="7"
-	 	  REQUIRED="true"
-	 	  SHOW_IF="((EXPRESSION == 'true') and (NEW_EXCHANGE == 'true'))"
-	 	  >
-	<DEFAULT>""</DEFAULT>
-	</PARAMETER>
-	
-      <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="7" NB_LINES="9" CONTEXT="begin"
-      	SHOW_IF="((PROCESSOR == 'true') and (NEW_EXCHANGE == 'true'))"
-      	>
-	      <DEFAULT>System.out.println("We just downloaded: "+ exchange.getIn().getHeader("CamelFileName"));</DEFAULT>
-	  </PARAMETER>
-	  
-	    <PARAMETER 
-		NAME="COPY_ORIGINAL_MESSAGE" 
-		FIELD="CHECK" 
-		REQUIRED="true"
-		NUM_ROW="8"
-		SHOW_IF="NEW_EXCHANGE == 'true'">
+		<PARAMETER NAME="EXPRESSION" FIELD="RADIO" NUM_ROW="3"
+			GROUP="POPULATETYPE" SHOW_IF="NEW_EXCHANGE == 'true'">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PROCESSOR" FIELD="RADIO" NUM_ROW="4"
+			GROUP="POPULATETYPE" SHOW_IF="NEW_EXCHANGE == 'true'">
 			<DEFAULT>false</DEFAULT>
-	  </PARAMETER>
-	  
-   </PARAMETERS>
-   
-   <ADVANCED_PARAMETERS>
-   </ADVANCED_PARAMETERS>
+		</PARAMETER>
+
+		<PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" NUM_ROW="6"
+			REQUIRED="true" SHOW_IF="((EXPRESSION == 'true') and (NEW_EXCHANGE == 'true'))">
+			<ITEMS DEFAULT="XPATH">
+				<ITEM NAME="NONE" VALUE="none" />
+				<ITEM NAME="CONSTANT" VALUE="constant" />
+				<ITEM NAME="EL" VALUE="el" />
+				<ITEM NAME="GROOVY" VALUE="groovy" />
+				<ITEM NAME="HEADER" VALUE="header" />
+				<ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
+				<ITEM NAME="JOSQL" VALUE="sql" />
+				<ITEM NAME="JXPATH" VALUE="jxpath" />
+				<ITEM NAME="MVEL" VALUE="mvel" />
+				<ITEM NAME="OGNL" VALUE="ognl" />
+				<ITEM NAME="PHP" VALUE="php" />
+				<ITEM NAME="PROPERTY" VALUE="property" />
+				<ITEM NAME="PYTHON" VALUE="python" />
+				<ITEM NAME="RUBY" VALUE="ruby" />
+				<ITEM NAME="SIMPLE" VALUE="simple" />
+				<ITEM NAME="SPEL" VALUE="spel" />
+				<ITEM NAME="SQL" VALUE="sql" />
+				<ITEM NAME="XPATH" VALUE="xpath" />
+				<ITEM NAME="XQUERY" VALUE="xquery" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="EXPRESSIONTXT" FIELD="TEXT" NUM_ROW="7"
+			REQUIRED="true" SHOW_IF="((EXPRESSION == 'true') and (NEW_EXCHANGE == 'true'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false"
+			NUM_ROW="7" NB_LINES="9" CONTEXT="begin"
+			SHOW_IF="((PROCESSOR == 'true') and (NEW_EXCHANGE == 'true'))">
+			<DEFAULT>System.out.println("We just downloaded: "+
+				exchange.getIn().getHeader("CamelFileName"));</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="COPY_ORIGINAL_MESSAGE" FIELD="CHECK"
+			REQUIRED="true" NUM_ROW="8" SHOW_IF="NEW_EXCHANGE == 'true'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
 		<IMPORTS>
-		   <IMPORT NAME="apache-camel" MODULE="camel-core-2.7.0.jar" REQUIRED="true" />
-		   <IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar" REQUIRED="true" />
-		   <IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar" REQUIRED="true" />
-		   <IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
-		   <IMPORT NAME="slf4j" MODULE="slf4j-api-1.5.11.jar" REQUIRED="true" />
-		   <IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.5.11.jar" REQUIRED="true" />
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.5.11.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.5.11.jar"
+				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
-   <RETURNS />
+	<RETURNS />
 </COMPONENT>

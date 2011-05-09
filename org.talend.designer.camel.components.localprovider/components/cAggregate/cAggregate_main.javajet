@@ -42,14 +42,26 @@ imports="
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		if(!useAggregationStrategy) {	
+		if(!useAggregationStrategy) {
+			if(!("none".equals(language))) {
 %>
-			.aggregate(<%=language%>(<%=expression%>))
+				.aggregate(<%=language%>(<%=expression%>))
 <%
+			} else {
+%>
+				.aggregate(<%=expression%>)
+<%
+			}
 		} else {
+			if(!("none".equals(language))) {
 %>
-			.aggregate(<%=language%>(<%=expression%>), new beans.<%=aggregationStrategy%>())
+				.aggregate(<%=language%>(<%=expression%>), new beans.<%=aggregationStrategy%>())
 <%
+			} else {
+%>
+				.aggregate(<%=expression%>, new beans.<%=aggregationStrategy%>())
+<%
+			}
 		}
 		
 		if(usePersistence) {

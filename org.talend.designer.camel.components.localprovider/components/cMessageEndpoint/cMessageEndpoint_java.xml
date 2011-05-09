@@ -1,74 +1,166 @@
 <COMPONENT>
 
-  <HEADER
-    PLATEFORM="ALL"
-    SERIAL=""
-    VERSION="0.102"
-    STATUS="ALPHA"
-    
-    COMPATIBILITY="ALL"
-    AUTHOR="Talend"
-    RELEASE_DATE="20100401A"
-    STARTABLE="true"
-  >
-    <SIGNATURE/>
-  </HEADER>
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
 
-  <FAMILIES>
-    <FAMILY>Messaging</FAMILY>
-  </FAMILIES>
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
 
-  <DOCUMENTATION>
-    <URL/>
-  </DOCUMENTATION>
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
 
-  <CONNECTORS>
-    <CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1" MAX_OUTPUT="1" MIN_OUTPUT="0"/>    
-    <CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0"/>
-    <CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0"/>
-    <CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0"/>
-    <CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0"/>
-    <CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0"/>
-    <CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0"/>
-  </CONNECTORS>
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
 
-  <PARAMETERS>
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
+			MAX_OUTPUT="1" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
+	</CONNECTORS>
 
-	<PARAMETER
-      NAME="URI"
-      FIELD="TEXT"
-      NUM_ROW="10"
-    >
-      <DEFAULT>""</DEFAULT>
-    </PARAMETER>
-	<PARAMETER
-      NAME="OPTIONS"
-      FIELD="TABLE"
-      NUM_ROW="20"
-      NB_LINES="5"
-    >
-      <ITEMS>
-        <ITEM NAME="OPTION" VALUE="&quot;&quot;" FIELD="TEXT" />
-		<ITEM NAME="VALUE" VALUE="&quot;&quot;" FIELD="TEXT" />
-	  </ITEMS>
-	</PARAMETER>
-   </PARAMETERS>
-   
-   <ADVANCED_PARAMETERS>
-   </ADVANCED_PARAMETERS>
+	<PARAMETERS>
 
-   <CODEGENERATION>
-   <IMPORTS>
-       <IMPORT NAME="apache-camel" MODULE="camel-core-2.7.0.jar" REQUIRED="true" />
-       <IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar" REQUIRED="true" />
-       <IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar" REQUIRED="true" />
-	   <IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
-	   <IMPORT NAME="slf4j" MODULE="slf4j-api-1.5.11.jar" REQUIRED="true" />
-	   <IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.5.11.jar" REQUIRED="true" />
-	   <IMPORT NAME="camel-jetty" MODULE="camel-jetty-2.7.0.jar" REQUIRED="true" />
-	   <IMPORT NAME="camel-http" MODULE="camel-http-2.7.0.jar" REQUIRED="true" />
-   </IMPORTS>
-  </CODEGENERATION>
+		<PARAMETER NAME="URI" FIELD="TEXT" NUM_ROW="10">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="OPTIONS" FIELD="TABLE" NUM_ROW="20"
+			NB_LINES="5">
+			<ITEMS>
+				<ITEM NAME="OPTION" VALUE="&quot;&quot;" FIELD="TEXT" />
+				<ITEM NAME="VALUE" VALUE="&quot;&quot;" FIELD="TEXT" />
+			</ITEMS>
+		</PARAMETER>
+	</PARAMETERS>
 
-   <RETURNS />
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="DEPENDENCIES" FIELD="TABLE" NUM_ROW="10"
+			NB_LINES="5">
+			<ITEMS>
+				<ITEM NAME="COMPONENT" FIELD="CLOSED_LIST">
+					<ITEMS DEFAULT="AMQP">
+						<ITEM NAME="AMQP" VALUE="titi" />
+						<ITEM NAME="ATOM" VALUE="tata" />
+						<ITEM NAME="AWS" VALUE="toto" />
+						<ITEM NAME="BAM" VALUE="" />
+						<ITEM NAME="BEAN-VALIDATOR" VALUE="" />
+						<ITEM NAME="BINDY" VALUE="" />
+						<ITEM NAME="BLUEPRINT" VALUE="" />
+						<ITEM NAME="CACHE" VALUE="" />
+						<ITEM NAME="CASTOR" VALUE="" />
+						<ITEM NAME="COMETD" VALUE="" />
+						<ITEM NAME="CONTEXT" VALUE="" />
+						<ITEM NAME="CORE" VALUE="" />
+						<ITEM NAME="CRYPTO" VALUE="" />
+						<ITEM NAME="CSV" VALUE="" />
+						<ITEM NAME="CXF" VALUE="" />
+						<ITEM NAME="DOZER" VALUE="" />
+						<ITEM NAME="ECLIPSE" VALUE="" />
+						<ITEM NAME="EJB" VALUE="" />
+						<ITEM NAME="EVENTADMIN" VALUE="" />
+						<ITEM NAME="EXEC" VALUE="" />
+						<ITEM NAME="FLATPACK" VALUE="" />
+						<ITEM NAME="FREEMARKER" VALUE="" />
+						<ITEM NAME="FTP" VALUE="" />
+						<ITEM NAME="GAE" VALUE="" />
+						<ITEM NAME="GROOVY" VALUE="" />
+						<ITEM NAME="GUICE" VALUE="" />
+						<ITEM NAME="HAWTDB" VALUE="" />
+						<ITEM NAME="HAZELCAST" VALUE="" />
+						<ITEM NAME="HL7" VALUE="" />
+						<ITEM NAME="HTTP" VALUE="" />
+						<ITEM NAME="HTTP4" VALUE="" />
+						<ITEM NAME="IBATIS" VALUE="" />
+						<ITEM NAME="IRC" VALUE="" />
+						<ITEM NAME="JACKSON" VALUE="" />
+						<ITEM NAME="JASYPT" VALUE="" />
+						<ITEM NAME="JAVASPACE" VALUE="" />
+						<ITEM NAME="JAXB" VALUE="" />
+						<ITEM NAME="JCR" VALUE="" />
+						<ITEM NAME="JDBC" VALUE="" />
+						<ITEM NAME="JETTY" VALUE="" />
+						<ITEM NAME="JIBX" VALUE="" />
+						<ITEM NAME="JING" VALUE="" />
+						<ITEM NAME="JMS" VALUE="" />
+						<ITEM NAME="JMX" VALUE="" />
+						<ITEM NAME="JOSQL" VALUE="" />
+						<ITEM NAME="JPA" VALUE="" />
+						<ITEM NAME="JT400" VALUE="" />
+						<ITEM NAME="JUEL" VALUE="" />
+						<ITEM NAME="JXPATH" VALUE="" />
+						<ITEM NAME="KESTREL" VALUE="" />
+						<ITEM NAME="LDAP" VALUE="" />
+						<ITEM NAME="LUCENE" VALUE="" />
+						<ITEM NAME="MAIL" VALUE="" />
+						<ITEM NAME="MINA" VALUE="" />
+						<ITEM NAME="MSV" VALUE="" />
+						<ITEM NAME="MVEL" VALUE="" />
+						<ITEM NAME="MYBATIS" VALUE="" />
+						<ITEM NAME="NAGIOS" VALUE="" />
+						<ITEM NAME="NETTY" VALUE="" />
+						<ITEM NAME="OGNL" VALUE="" />
+						<ITEM NAME="PAXLOGGING" VALUE="" />
+						<ITEM NAME="PRINTER" VALUE="" />
+						<ITEM NAME="PROTOBUF" VALUE="" />
+						<ITEM NAME="QUARTZ" VALUE="" />
+						<ITEM NAME="QUICKFIX" VALUE="" />
+						<ITEM NAME="RESTLET" VALUE="" />
+						<ITEM NAME="RMI" VALUE="" />
+						<ITEM NAME="ROUTEBOX" VALUE="" />
+						<ITEM NAME="RSS" VALUE="" />
+						<ITEM NAME="RUBY" VALUE="" />
+						<ITEM NAME="SAXON" VALUE="" />
+						<ITEM NAME="SCALA" VALUE="" />
+						<ITEM NAME="SCRIPT" VALUE="" />
+						<ITEM NAME="SERVLET" VALUE="" />
+						<ITEM NAME="SHIRO" VALUE="" />
+						<ITEM NAME="SIP" VALUE="" />
+						<ITEM NAME="SMPP" VALUE="" />
+						<ITEM NAME="SNMP" VALUE="" />
+						<ITEM NAME="SOAP" VALUE="" />
+						<ITEM NAME="SPRING" VALUE="" />
+						<ITEM NAME="SPRING-INTEGRATION" VALUE="" />
+						<ITEM NAME="SPRING-JAVACONFIG" VALUE="" />
+						<ITEM NAME="SPRING-SECURITY" VALUE="" />
+						<ITEM NAME="SPRING-WS" VALUE="" />
+						<ITEM NAME="SQL" VALUE="" />
+						<ITEM NAME="STREAM" VALUE="" />
+						<ITEM NAME="STRINGTEMPLATE" VALUE="" />
+						<ITEM NAME="SYSLOG" VALUE="" />
+						<ITEM NAME="TAGSOUP" VALUE="" />
+						<ITEM NAME="TEST" VALUE="" />
+						<ITEM NAME="VELOCITY" VALUE="" />
+						<ITEM NAME="XMLBEANS" VALUE="" />
+						<ITEM NAME="XMLSECURITY" VALUE="" />
+						<ITEM NAME="XMPP" VALUE="" />
+						<ITEM NAME="XSTREAM" VALUE="" />
+					</ITEMS>
+				</ITEM>
+			</ITEMS>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.5.11.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.5.11.jar"
+				REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
 </COMPONENT>
