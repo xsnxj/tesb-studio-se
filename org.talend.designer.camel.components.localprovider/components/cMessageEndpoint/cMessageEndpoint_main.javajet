@@ -20,7 +20,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.to(<%=uri%>
+		.to("<%=uri%>"
 <%
 		if(optionsCount>0) {
 			boolean isFirstOption = true;
@@ -43,7 +43,7 @@ imports="
 <%
 	} else {
 %>
-		from(<%=uri%>
+		from("<%=uri%>"
 <%
 		if(optionsCount>0) {
 			boolean isFirstOption = true;
