@@ -20,49 +20,11 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.to("<%=uri%>"
-<%
-		if(optionsCount>0) {
-			boolean isFirstOption = true;
-			for(Map<String, String> anOption : options) {
-			
-				if(isFirstOption) {
-					isFirstOption=false;
-%>
-					+"?"+<%=anOption.get("OPTION")%>+"="+<%=anOption.get("VALUE")%>
-<%
-				} else {
-%>
-					+"&"+<%=anOption.get("OPTION")%>+"="+<%=anOption.get("VALUE")%>
-<%
-				}
-			}
-		}
-%>
-			)
+		.to("<%=uri%>")
 <%
 	} else {
 %>
-		from("<%=uri%>"
-<%
-		if(optionsCount>0) {
-			boolean isFirstOption = true;
-			for(Map<String, String> anOption : options) {
-			
-				if(isFirstOption) {
-					isFirstOption=false;
-%>
-					+"?"+<%=anOption.get("OPTION")%>+"="+<%=anOption.get("VALUE")%>
-<%
-				} else {
-%>
-					+"&"+<%=anOption.get("OPTION")%>+"="+<%=anOption.get("VALUE")%>
-<%
-				}
-			}
-		}
-%>
-			)
+		from("<%=uri%>")
 <%
 	}
 %>
