@@ -1,11 +1,6 @@
 package org.talend.designer.esb.webservice.ui.dialog;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -20,19 +15,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.talend.core.model.metadata.IMetadataColumn;
-import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentMain;
 import org.talend.designer.esb.webservice.data.ExternalWebServiceUIProperties;
-import org.talend.designer.esb.webservice.data.InputMappingData;
-import org.talend.designer.esb.webservice.data.OutPutMappingData;
 import org.talend.designer.esb.webservice.managers.UIManager;
-import org.talend.designer.esb.webservice.ui.ParameterInfoUtil;
 import org.talend.designer.esb.webservice.ui.WebServiceUI;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.PortNames;
 
 public class WebServiceDialog extends Dialog implements WebServiceEventListener {
@@ -126,14 +116,8 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
      */
 
     protected void createButtonsForButtonBar(Composite parent) {
-        // create OK and Cancel buttons by default
-//        createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
-//        createButton(parent, IDialogConstants.NEXT_ID, IDialogConstants.NEXT_LABEL, false);
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-//        backButton = getButton(IDialogConstants.BACK_ID);
-//        backButton.setEnabled(false);
-//        nextButton = getButton(IDialogConstants.NEXT_ID);
     }
 
     protected Control createDialogArea(Composite parent) {
@@ -148,7 +132,6 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
         applyDialogFont(panel);
 
         webServiceUI = new WebServiceUI(panel, this.webServiceComponentMain);
-//        webServiceUI.addListener(this);
         webServiceUI.init();
 
         return panel;
@@ -179,59 +162,21 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
                 webServiceUI.initWebserviceData();
             }
             tabFolder.setSelection(curreSelect + 1);
-//            if (!backButton.getEnabled()) {
-//                backButton.setEnabled(true);
-//            }
-//            if ((curreSelect + 1) == 2) {
-//                nextButton.setEnabled(false);
-//            }
-
         }
     }
 
     protected void okPressed() {
-        // if (getWebServiceUI().getIsFirst()) {
-        // super.cancelPressed();
-        // } else {
         getWebServiceUI().saveProperties();
-        // getWebServiceUI().prepareClosing(SWT.OK);
         saveValue();
         getUIManager().setDialogResponse(SWT.OK);
-        // }
     }
 
     private void saveValue() {
-//        List<InputMappingData> inputList = webServiceUI.getInputParams();
-//        List<OutPutMappingData> outputList = webServiceUI.getOutputParams();
         String currentURL = webServiceUI.getURL();
         List<PortNames> allPortNames = webServiceUI.getAllPortNames();
         Function function = webServiceUI.getCurrentFunction();
         PortNames currePortName = webServiceUI.getCurrentPortName();
-//        List<OutPutMappingData> outEleList = webServiceUI.getOutputElement();
-//        Set<String> insourceList = webServiceUI.getInSourceList();
-//        Set<String> outsourceList = webServiceUI.getOutSourceList();
-
-//        IMetadataTable inputMetaCopy = webServiceUI.getInputMetaCopy();
-//        IMetadataTable outputMetaCopy = webServiceUI.getOutputMetaCopy();
-//        IMetadataTable inputMetadata = webServiceUI.getInputMetadata();
-//        IMetadataTable outputMetadata = webServiceUI.getOutputMetadata();
-//        List<IMetadataColumn> inputmetadata = webServiceUI.getInputValue();
         WebServiceComponent wenCom = webServiceComponentMain.getWebServiceComponent();
-
-        // save schema.
-//        if (outputMetaCopy != null) {
-//            if (!outputMetaCopy.sameMetadataAs(outputMetadata, IMetadataColumn.OPTIONS_NONE)) {
-//                outputMetadata.getListColumns().clear();
-//                outputMetadata.getListColumns().addAll(outputMetaCopy.getListColumns());
-//            }
-//        }
-        // if (inputMetadata != null) {
-        // wenCom.setInputMetadata(inputMetaCopy);
-        // if (!inputMetaCopy.sameMetadataAs(inputMetadata, IMetadataColumn.OPTIONS_NONE)) {
-        // inputMetadata.getListColumns().clear();
-        // inputMetadata.getListColumns().addAll(inputMetaCopy.getListColumns());
-        // }
-        // }
 
         if (!"".equals(currentURL) && currentURL != null) {
             IElementParameter ENDPOINTPara = wenCom.getElementParameter("ENDPOINT");
@@ -264,193 +209,12 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
                 IElementParameter Port_NS = wenCom.getElementParameter("PORT_NS");
                 Port_NS.setValue(function.getServerNameSpace());
             }
-            // IElementParameter ADDRESSLocation = wenCom.getElementParameter("ADDRESS_LOCATION");
-            // ADDRESSLocation.setValue(function.getAddressLocation());
+            IElementParameter esbEndpoint = wenCom.getElementParameter("ESB_ENDPOINT");
+            if (esbEndpoint != null) {
+                esbEndpoint.setValue(TalendTextUtils.addQuotes(function.getAddressLocation()));
+            }
 
         }
-
-        // save input
-//        IElementParameter INPUT_PARAMSPara = wenCom.getElementParameter("INPUT_PARAMS");
-//        List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-//        if (inputparaValue == null) {
-//            inputparaValue = new ArrayList<Map<String, String>>();
-//        } else {
-//            inputparaValue.clear();
-//        }
-//
-//        for (InputMappingData inputData : inputList) {
-//
-//            Map<String, String> inputMap = new HashMap<String, String>(2);
-//            if (inputData.getInputColumnValue() != null) {
-//                inputMap.put("EXPRESSION", inputData.getInputColumnValue());
-//            }
-//
-//            if (inputData.getParameterName() != null) {
-//                String name = inputData.getParameterName();
-//                if (!name.equals(""))
-//                    inputMap.put("ELEMENT", name);
-//            } else if (inputData.getParameterName() == null && inputData.getParameter() != null) {
-//                if (inputData.getParameter().getParent() != null) {
-//                    String name = new ParameterInfoUtil().getParentName(inputData.getParameter());
-//                    inputMap.put("ELEMENT", name);
-//                } else {
-//                    inputMap.put("ELEMENT", inputData.getParameter().getName());
-//                }
-//                // inputMap.put("ELEMENT", inputData.getInputElementValue());
-//                // inputMap.put("NAMESPACE", inputData.getParameter().getNameSpace());
-//                // inputMap.put("TYPE", inputData.getParameter().getKind());
-//            }
-//
-//            inputparaValue.add(inputMap);
-//        }
-//        for (IMetadataColumn column : inputmetadata) {
-//            Map<String, String> columnMap = new HashMap<String, String>(1);
-//            if (column.getLabel() != null) {
-//                columnMap.put("COLUMN", column.getLabel());
-//                inputparaValue.add(columnMap);
-//            }
-//        }
-//        for (String insource : insourceList) {
-//            if (insource == null || "".equals(insource)) {
-//                continue;
-//            }
-//            Map<String, String> sourceMap = new HashMap<String, String>(1);
-//            sourceMap.put("SOURCE", insource);
-//            inputparaValue.add(sourceMap);
-//        }
-//        List<ParameterInfo> listParamter = new ArrayList();
-//        if (function != null) {
-//            List inputParameter = function.getInputParameters();
-//            if (inputParameter != null) {
-//                // for (int i = 0; i < inputParameter.size(); i++) {
-//                boolean mark = true;
-//                goin: for (Iterator iterator2 = inputParameter.iterator(); iterator2.hasNext();) {
-//                    ParameterInfo element = (ParameterInfo) iterator2.next();
-//                    Map<String, String> sourceMap = new HashMap<String, String>(2);
-//                    sourceMap.put("PARAMETERINFO", element.getName());
-//                    if (element.getParent() == null) {
-//                        sourceMap.put("PARAPARENT", "");
-//                    } else {
-//                        sourceMap.put("PARAPARENT", element.getParent().getName());
-//                    }
-//                    inputparaValue.add(sourceMap);
-//                    mark = false;
-//                    if (!element.getParameterInfos().isEmpty()) {
-//                        listParamter.addAll(new ParameterInfoUtil().getAllChildren(element));
-//                    }
-//                    break goin;
-//                }
-//                if (!mark) {
-//                    for (ParameterInfo para : listParamter) {
-//                        Map<String, String> sourceMap = new HashMap<String, String>(2);
-//                        sourceMap.put("PARAMETERINFO", para.getName());
-//                        sourceMap.put("PARAPARENT", para.getParent().getName());
-//                        inputparaValue.add(sourceMap);
-//                    }
-//                }
-//                // }
-//            }
-//        }
-//        // save output
-//        IElementParameter OUTPUT_PARAMSPara = wenCom.getElementParameter("OUTPUT_PARAMS");
-//        List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-//        if (outputMap == null) {
-//            outputMap = new ArrayList<Map<String, String>>();
-//        } else {
-//            outputMap.clear();
-//        }
-//        for (OutPutMappingData outData : outEleList) {
-//            ParameterInfo para = outData.getParameter();
-//            if (para.getName() == null || "".equals(para.getName())) {
-//                continue;
-//            }
-//
-//            Map<String, String> eleMap = new HashMap<String, String>(3);
-//            if (outData.getParameterName() != null) {
-//                eleMap.put("ELEMENT", outData.getParameterName());
-//            } else {
-//                eleMap.put("ELEMENT", para.getName());
-//            }
-//            // eleMap.put("NAMESPACE", para.getNameSpace());
-//            // eleMap.put("TYPE", para.getKind());
-//            outputMap.add(eleMap);
-//        }
-//
-//        for (OutPutMappingData data : outputList) {
-//
-//            Map<String, String> dataMap = new HashMap<String, String>(2);
-//            if (data.getParameterName() != null) {
-//                dataMap.put("EXPRESSION", data.getParameterName());
-//            } else if (data.getParameterName() == null) {
-//                // warningDialog("Please Select a Output Item.");
-//                // return;
-//            }
-//
-//            if (data.getMetadataColumn() != null) {
-//                dataMap.put("COLUMN", data.getMetadataColumn().getLabel());
-//            }
-//            // else if (data.getMetadataColumn() == null) {
-//            // warningDialog("Please Select a Output Item.");
-//            // return;
-//            // }
-//
-//            // Map<String, String> dataMap2 = new HashMap<String, String>(2);
-//            // if (data.getParameterList().size() > 0) {
-//            // for (ParameterInfo para : data.getParameterList()) {
-//            // dataMap2.put("", para.getNameSpace());
-//            // dataMap2.put("", para.getKind());
-//            // }
-//            // }
-//            //
-//            // if (data.getOutputColumnValue() != null) {
-//            // dataMap.put(data.getParameterName(), data.getOutputColumnValue());
-//            // }
-//
-//            outputMap.add(dataMap);
-//            // outputMap.add(dataMap2);
-//        }
-//
-//        for (String outsource : outsourceList) {
-//            if (outsource == null || "".equals(outsource)) {
-//                continue;
-//            }
-//            Map<String, String> sourceMap = new HashMap<String, String>(1);
-//            sourceMap.put("SOURCE", outsource);
-//            outputMap.add(sourceMap);
-//        }
-//        List<ParameterInfo> ls = new ArrayList();
-//        if (function != null) {
-//            List inputParameter = function.getOutputParameters();
-//            if (inputParameter != null) {
-//                // for (int i = 0; i < inputParameter.size(); i++) {
-//                boolean mark = true;
-//                goin: for (Iterator iterator2 = inputParameter.iterator(); iterator2.hasNext();) {
-//                    ParameterInfo element = (ParameterInfo) iterator2.next();
-//                    Map<String, String> sourceMap = new HashMap<String, String>(1);
-//                    sourceMap.put("PARAMETERINFO", element.getName());
-//                    if (element.getParent() == null) {
-//                        sourceMap.put("PARAPARENT", "");
-//                    } else {
-//                        sourceMap.put("PARAPARENT", element.getParent().getName());
-//                    }
-//                    outputMap.add(sourceMap);
-//                    mark = false;
-//                    if (!element.getParameterInfos().isEmpty()) {
-//                        ls.addAll(new ParameterInfoUtil().getAllChildren(element));
-//                    }
-//                    break goin;
-//                }
-//                if (!mark) {
-//                    for (ParameterInfo para : ls) {
-//                        Map<String, String> sourceMap = new HashMap<String, String>(2);
-//                        sourceMap.put("PARAMETERINFO", para.getName());
-//                        sourceMap.put("PARAPARENT", para.getParent().getName());
-//                        outputMap.add(sourceMap);
-//                    }
-//                }
-//                // }
-//            }
-//        }
         super.okPressed();
 
     }
@@ -469,29 +233,5 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
         }
 
     }
-
-//    public Button getBackButton() {
-//        return this.backButton;
-//    }
-//
-//    public Button getNextButton() {
-//        return this.nextButton;
-//    }
-//
-//    public void setBackButtonUnuse() {
-//        backButton.setEnabled(false);
-//    }
-//
-//    public void setNextButtonUnuse() {
-//        nextButton.setEnabled(false);
-//    }
-//
-//    public void setBackButtonCanuse() {
-//        backButton.setEnabled(true);
-//    }
-//
-//    public void setNextButtonCanuse() {
-//        nextButton.setEnabled(true);
-//    }
 
 }

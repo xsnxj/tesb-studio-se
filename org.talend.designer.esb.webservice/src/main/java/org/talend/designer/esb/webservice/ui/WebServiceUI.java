@@ -93,6 +93,12 @@ import org.talend.repository.ui.utils.ConnectionContextHelper;
 @SuppressWarnings("unchecked")
 public class WebServiceUI extends AbstractWebService {
 
+    private static final String METHOD = "METHOD";
+    private static final String TRUE = "true";
+    private static final String NEED_SSL_TO_TRUSTSERVER = "NEED_SSL_TO_TRUSTSERVER";
+    private static final String PORT_NAME = "PORT_NAME";
+    private static final String ENDPOINT = "ENDPOINT";
+
     private static final String ERROR_GETTING_WSDL = "Error getting service description";
 
     protected int maximumRowsToPreview = CorePlugin.getDefault().getPreferenceStore()
@@ -175,22 +181,17 @@ public class WebServiceUI extends AbstractWebService {
         this.connector = webServiceMain.getWebServiceComponent();
         this.connection = (WSDLSchemaConnection) connectionItem.getConnection();
         URLValue = new String();
-        // getInConnList();
-        // getOutConnList();
-        // getLastFunction();
         initWebserviceUI();
-        // getInputElementList();
-        // getOutputElementList();
     }
 
     private void initWebserviceUI() {
-        IElementParameter METHODPara = connector.getElementParameter("METHOD"); //$NON-NLS-1$
+        IElementParameter METHODPara = connector.getElementParameter(METHOD); //$NON-NLS-1$
         Object obj = METHODPara.getValue();
         if (obj == null) {
             return;
         }
         if (obj != null && obj instanceof String && !"".equals(obj)) {
-            String currentURL = (String) connector.getElementParameter("PORT_NAME").getValue(); //$NON-NLS-1$
+            String currentURL = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
 
             PortNames retrivePortName = new PortNames();
             retrivePortName.setPortName(currentURL);
@@ -211,9 +212,8 @@ public class WebServiceUI extends AbstractWebService {
     private void initwebServiceMappingData(String currentURL) {
         if (currentURL != null && !currentURL.equals("")) {
             isFirst = false;
-            // getLastFunction();
             Function fun = new Function(currentURL);
-            IElementParameter METHODPara = this.connector.getElementParameter("METHOD");
+            IElementParameter METHODPara = this.connector.getElementParameter(METHOD);
             Object obj = METHODPara.getValue();
             if (obj == null) {
                 return;
@@ -222,79 +222,6 @@ public class WebServiceUI extends AbstractWebService {
                 String str = (String) obj;
                 fun.setName(str);
             }
-            ParameterInfo para = new ParameterInfo();
-            IElementParameter OUTPUT_PARAMSPara = connector.getElementParameter("OUTPUT_PARAMS"); //$NON-NLS-1$
-            List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-            List<ParameterInfo> paraoutList = new ArrayList<ParameterInfo>();
-            ParameterInfo paraout = new ParameterInfo();
-            for (Map<String, String> map : outputMap) {
-                if (map.get("PARAMETERINFO") != null && map.get("PARAMETERINFO") instanceof String) {
-                    String ele = (String) map.get("PARAMETERINFO"); //$NON-NLS-1$
-                    if (!ele.equals("")) {
-                        if (!map.get("PARAPARENT").equals("")) {
-                            String paraParent = map.get("PARAPARENT");
-                            if (paraParent.equals(ele)) {
-                                ParameterInfo parain = new ParameterInfo();
-                                parain.setName(ele);
-                            } else {
-                                for (int i = 0; i < paraoutList.size(); i++) {
-                                    ParameterInfo para2 = paraoutList.get(i);
-                                    if (paraParent.equals(para2.getName())) {
-                                        // para.setParent(para2);
-                                        ParameterInfo parain = new ParameterInfo();
-                                        parain.setName(ele);
-                                        para2.getParameterInfos().add(parain);
-                                        parain.setParent(para2);
-                                        paraoutList.add(parain);
-                                    }
-                                }
-                            }
-                        } else {
-                            paraout = new ParameterInfo();
-                            paraout.setName(ele);
-                            paraoutList.add(paraout);
-                        }
-
-                    }
-                }
-            }
-            ParameterInfo inpara = new ParameterInfo();
-            List<ParameterInfo> paraList = new ArrayList<ParameterInfo>();
-            ParameterInfo paraiun = new ParameterInfo();
-            IElementParameter INPUT_PARAMSPara = connector.getElementParameter("INPUT_PARAMS"); //$NON-NLS-1$
-            List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-            for (Map<String, String> map : inputparaValue) {
-                if (map.get("PARAMETERINFO") != null && map.get("PARAMETERINFO") instanceof String) {
-                    String ele = (String) map.get("PARAMETERINFO"); //$NON-NLS-1$
-                    if (!ele.equals("")) {
-                        if (!map.get("PARAPARENT").equals("")) {
-                            String paraParent = map.get("PARAPARENT");
-                            if (paraParent.equals(ele)) {
-                                ParameterInfo parain = new ParameterInfo();
-                                parain.setName(ele);
-                            } else {
-                                for (int i = 0; i < paraList.size(); i++) {
-                                    ParameterInfo para2 = paraList.get(i);
-                                    if (paraParent.equals(para2.getName())) {
-                                        // para.setParent(para2);
-                                        ParameterInfo parain = new ParameterInfo();
-                                        parain.setName(ele);
-                                        para2.getParameterInfos().add(parain);
-                                        parain.setParent(para2);
-                                        paraList.add(parain);
-                                    }
-                                }
-                            }
-                        } else {
-                            paraiun = new ParameterInfo();
-                            paraiun.setName(ele);
-                            paraList.add(paraiun);
-                        }
-
-                    }
-                }
-            }
-            fun.setInputParameters(paraList);
             currentFunction = fun;
         }
     }
@@ -351,50 +278,16 @@ public class WebServiceUI extends AbstractWebService {
     }
 
     private void getLastFunction() {
-        IElementParameter METHODPara = connector.getElementParameter("METHOD"); //$NON-NLS-1$
+        IElementParameter METHODPara = connector.getElementParameter(METHOD); //$NON-NLS-1$
         Object obj = METHODPara.getValue();
         if (obj == null) {
             return;
         }
         if (obj instanceof String) {
             String str = (String) obj;
-            String wsdlUrl = (String) connector.getElementParameter("ENDPOINT").getValue(); //$NON-NLS-1$
-            String currentURL = (String) connector.getElementParameter("PORT_NAME").getValue(); //$NON-NLS-1$
-            WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
-            List<Function> funList = new ArrayList<Function>();
-
-            WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
-            boolean isUseProxy = webServiceComponent.getElementParameter("USE_PROXY").getValue().toString().equals("true");
-            boolean isUseAuth = webServiceComponent.getElementParameter("NEED_AUTH").getValue().toString().equals("true");
-            boolean isUseNTLM = webServiceComponent.getElementParameter("USE_NTLM").getValue().toString().equals("true");
-            boolean isUseSSL = webServiceComponent.getElementParameter("NEED_SSL_TO_TRUSTSERVER").getValue().toString()
-                    .equals("true");
-
-//            if (isUseAuth && !isUseNTLM) {
-//                useAuth();
-//            }
-
-            if (isUseSSL) {
-                useSSL();
-            }
-
-//            if (serverConfig != null) {
-//                if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
-//                    funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl), serverConfig);
-//                } else {
-//                    funList = ws.getFunctionsAvailable(wsdlUrl, serverConfig);
-//                }
-//            } else {
-            try {
-                if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
-                    funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
-                } else {
-                    funList = ws.getFunctionsAvailable(wsdlUrl);
-                }
-            } catch (IOException e) {
-                openErrorDialog(ERROR_GETTING_WSDL, e);
-            }
-//            }
+            String wsdlUrl = (String) connector.getElementParameter(ENDPOINT).getValue(); //$NON-NLS-1$
+            String currentURL = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
+            List<Function> funList = getFunctionsList(wsdlUrl);
 
             PortNames retrivePortName = new PortNames();
             retrivePortName.setPortName(currentURL);
@@ -415,296 +308,30 @@ public class WebServiceUI extends AbstractWebService {
         }
 
     }
-//
-//    private void getInputElementList() {
-//        IElementParameter INPUT_PARAMSPara = connector.getElementParameter("INPUT_PARAMS"); //$NON-NLS-1$
-//        List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-//        WebServiceExpressionParser webParser = new WebServiceExpressionParser("\\s*(\\w+)\\s*\\.\\s*(\\w+)\\s*"); //$NON-NLS-1$
-//        List<ParameterInfo> childList = new ArrayList<ParameterInfo>();
-//        if (connector.getIncomingConnections().isEmpty()) {
-//            if (inPutcolumnList.isEmpty()) {
-//                IMetadataTable inputMetadataTable = this.connector.getMetadataFromConnector("FLOW");
-//                inPutcolumnList.addAll(inputMetadataTable.getListColumns());
-//            }
-//        }
-//        for (Map<String, String> map : inputparaValue) {
-//            boolean mark = true;
-//            InputMappingData data = new InputMappingData();
-//            Function fun = allfunList.get(0);
-//            List<ParameterInfo> list = fun.getInputParameters();
-//            if (list != null) {
-//                if (map.get("EXPRESSION") != null && map.get("EXPRESSION") instanceof String) { //$NON-NLS-1$ //$NON-NLS-2$
-//                    String expr = (String) map.get("EXPRESSION"); //$NON-NLS-1$
-//
-//                    if (inPutcolumnList == null || inPutcolumnList.size() <= 0) {
-//                        Map<String, String> exPmap = webParser.parseInTableEntryLocations(expr);
-//                        data.setInputColumnValue(expr);
-//
-//                    } else {
-//
-//                        Map<String, String> exPmap = webParser.parseInTableEntryLocations(expr);
-//                        data.setInputColumnValue(expr);
-//                        for (IMetadataColumn column : inPutcolumnList) {
-//                            Set<Entry<String, String>> set = exPmap.entrySet();
-//                            Iterator<Entry<String, String>> ite = set.iterator();
-//                            while (ite.hasNext()) {
-//                                if (ite.next().getKey().equals(column.getLabel())) {// (expr.contains(column.getLabel()))
-//                                    // {
-//                                    List<IMetadataColumn> columnList = data.getMetadataColumnList();
-//                                    columnList.add(column);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                if (map.get("ELEMENT") != null && map.get("ELEMENT") instanceof String) { //$NON-NLS-1$ //$NON-NLS-2$
-//                    String paraName = map.get("ELEMENT"); //$NON-NLS-1$
-//                    String reArrayParaName = paraName;
-//                    // if (paraName.endsWith("]")) {
-//                    // int lastArray = paraName.lastIndexOf("[");
-//                    // reArrayParaName = paraName.substring(0, lastArray);
-//                    // }
-//                    if (reArrayParaName.contains("[")) {
-//                        reArrayParaName = paraName.replaceAll("\\[\\S+\\]", "");
-//                    }
-//                    if (allfunList == null || allfunList.size() <= 0) {
-//                        return;
-//                    }
-//
-//                    goin: for (ParameterInfo para : list) {
-//                        String firstParaName = para.getName();
-//                        if (para.getName().equals(reArrayParaName)) {
-//                            // paraName = para.getName();
-//                            mark = false;
-//                            childList.clear();
-//                            data.setParameter(para);
-//                            data.setParameterName(paraName);
-//                            if (para.getParameterInfos().size() > 0) {
-//                                childList.addAll(new ParameterInfoUtil().getAllChildren(para));
-//                            }
-//                            break goin;
-//                        }
-//                        // else if (!para.getParameterInfos().isEmpty()) {
-//                        // List<ParameterInfo> nexChildlist = para.getParameterInfos();
-//                        // for (ParameterInfo nexPara : nexChildlist) {
-//                        // String nextParaName = firstParaName + "." + nexPara.getName();
-//                        // if (nextParaName.equals(reArrayParaName)) {
-//                        // mark = false;
-//                        // childList.clear();
-//                        // data.setParameter(para);
-//                        // data.setParameterName(paraName);
-//                        // if (para.getParameterInfos().size() > 0) {
-//                        // childList.addAll(new ParameterInfoUtil().getAllChildren(para));
-//                        // }
-//                        // break goin;
-//                        //
-//                        // }
-//                        // }
-//                        // }
-//                    }
-//                    if (mark) {
-//                        goout: for (ParameterInfo para : childList) {
-//                            if (para.getName().equals(paraName) || paraName.endsWith(para.getName())
-//                                    || reArrayParaName.endsWith(para.getName())) {
-//                                // paraName = para.getName();
-//                                data.setParameter(para);
-//                                data.setParameterName(paraName);
-//                                // if (para.getParameterInfos().size() > 0) {
-//                                // childList.addAll(para.getParameterInfos());
-//                                // }
-//                                break goout;
-//                            }
-//                        }
-//                    }
-//
-//                }
-//                if (("".equals(data.getInputColumnValue()) || data.getInputColumnValue() == null) //$NON-NLS-1$
-//                        && ("".equals(data.getParameterName()) || data.getParameterName() == null)) { //$NON-NLS-1$
-//                    continue;
-//                } else {
-//                    inputMappingList.add(data);
-//                }
-//            }
-//        }
-//    }
-//
-//    private void getOutputElementList() {
-//        IElementParameter OUTPUT_PARAMSPara = connector.getElementParameter("OUTPUT_PARAMS"); //$NON-NLS-1$
-//        List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-//        List<OutPutMappingData> list = new ArrayList<OutPutMappingData>();
-//        WebServiceExpressionParser webParser = new WebServiceExpressionParser("\\s*\\w+(\\[\\d+\\])?\\s*"); //$NON-NLS-1$
-//        List<ParameterInfo> childList = new ArrayList<ParameterInfo>();
-//        for (Map<String, String> map : outputMap) {
-//            boolean mark = true;
-//            OutPutMappingData data = new OutPutMappingData();
-//
-//            if (map.get("ELEMENT") != null && map.get("ELEMENT") instanceof String) { //$NON-NLS-1$ //$NON-NLS-2$
-//                String ele = (String) map.get("ELEMENT"); //$NON-NLS-1$
-//                String reArrayOutEle = "";
-//                if (ele.endsWith("]")) {
-//                    int lastArray = ele.lastIndexOf("[");
-//                    reArrayOutEle = ele.substring(0, lastArray);
-//                }
-//                if (allfunList == null || allfunList.size() <= 0) {
-//                    return;
-//                }
-//                Function fun = allfunList.get(0);
-//                List<ParameterInfo> outPaList = fun.getOutputParameters();
-//                if (outPaList != null) {
-//                    goin: for (ParameterInfo para : outPaList) {
-//                        if (para.getName().equals(ele)) {
-//                            childList.clear();
-//                            mark = false;
-//                            data.setParameter(para);
-//                            data.setParameterName(ele);
-//                            outParaList.add(data);
-//                            if (para.getParameterInfos().size() > 0) {
-//                                childList.addAll(new ParameterInfoUtil().getAllChildren(para));
-//                            }
-//                            // if (para != null) {
-//                            // OutPutMappingData outData = new OutPutMappingData();
-//                            // outData.setParameter(para);
-//                            // outData.setParameterName(ele);
-//                            // outParaList.add(outData);
-//                            // }
-//                            break goin;
-//                        }
-//                    }
-//
-//                    if (mark) {
-//                        goout: for (ParameterInfo para : childList) {
-//                            if (para.getName().equals(ele) || ele.endsWith(para.getName())
-//                                    || reArrayOutEle.endsWith(para.getName())) {
-//                                data.setParameter(para);
-//                                data.setParameterName(ele);
-//                                outParaList.add(data);
-//                                // if (para.getParameterInfos().size() > 0) {
-//                                // childList.addAll(para.getParameterInfos());
-//                                // }
-//                                // if (para != null) {
-//                                // OutPutMappingData outData = new OutPutMappingData();
-//                                // outData.setParameter(para);
-//                                // outParaList.add(outData);
-//                                // }
-//                                break goout;
-//                            }
-//                        }
-//                    }
-//
-//                }
-//            }
-//            if (map.get("EXPRESSION") != null && map.get("EXPRESSION") instanceof String) { //$NON-NLS-1$ //$NON-NLS-2$
-//                String exp = (String) map.get("EXPRESSION"); //$NON-NLS-1$
-//                String reArrayOutExp = "";
-//                if (exp.endsWith("]")) {
-//                    int lastArray = exp.lastIndexOf("[");
-//                    reArrayOutExp = exp.substring(0, lastArray);
-//                }
-//                if (!"".equals(exp) && exp != null) { //$NON-NLS-1$
-//                    data.setParameterName(exp);
-//                    // org.talend.core.model.metadata.MetadataColumn
-//                    // Set<String> expList = webParser.parseOutTableEntryLocations(exp);
-//                    for (OutPutMappingData outMappingData : outParaList) {
-//                        ParameterInfo outInfo = outMappingData.getParameter();
-//                        String outInfoName = outMappingData.getParameterName();
-//                        // if (outInfoName != null) {
-//                        // int m = outInfoName.lastIndexOf(".");
-//                        // outInfoName = outInfoName.substring(m + 1);
-//                        // } else {
-//                        // outInfoName = outInfo.getName();
-//                        // }
-//                        // Iterator<String> ite = expList.iterator();
-//                        // while (ite.hasNext()) {
-//                        if (exp.equals(outInfoName)) {
-//                            data.getParameterList().add(outInfo);
-//                        }
-//                        // }
-//                    }
-//                }
-//
-//            }
-//
-//            if (map.get("COLUMN") != null && map.get("COLUMN") instanceof String) {
-//                String columnName = map.get("COLUMN");
-//                org.talend.core.model.metadata.MetadataColumn column = new org.talend.core.model.metadata.MetadataColumn();
-//                column.setLabel(columnName);
-//                data.setMetadataColumn(column);
-//                data.setOutputColumnValue(columnName);
-//                if (!"".equals(columnName) && data.getParameterName() == null) {
-//                    data.setParameterName("");
-//                }
-//            }
-//            if (data != null && data.getParameterName() != null) {
-//                list.add(data);
-//            }
-//        }
-//    }
 
-//    /**
-//     * DOC Comment method "useProxy".
-//     */
-//    private ServiceHelperConfiguration useProxy() {
-//        String proxyHost = "";
-//        String proxyPort = "";
-//        String proxyUser = "";
-//        String proxyPassword = "";
-//        IElementParameter proxyHostParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_HOST");
-//        IElementParameter proxyPortParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_PORT");
-//        IElementParameter proxyUserParameter = webServiceManager.getWebServiceComponent().getElementParameter("PROXY_USERNAME");
-//        IElementParameter proxyPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter(
-//                "PROXY_PASSWORD");
-//
-//        if (proxyHostParameter.getValue() != null) {
-//            proxyHost = TalendTextUtils.removeQuotes(proxyHostParameter.getValue().toString());
-//        }
-//        if (proxyPortParameter.getValue() != null) {
-//            proxyPort = TalendTextUtils.removeQuotes(proxyPortParameter.getValue().toString());
-//        }
-//        if (proxyUserParameter.getValue() != null) {
-//            proxyUser = TalendTextUtils.removeQuotes(proxyUserParameter.getValue().toString());
-//        }
-//        if (proxyPasswordParameter.getValue() != null) {
-//            proxyPassword = TalendTextUtils.removeQuotes(proxyPasswordParameter.getValue().toString());
-//        }
-//        if (serverConfig == null) {
-//            serverConfig = new ServiceHelperConfiguration();
-//        }
-//        serverConfig.setProxyServer(proxyHost);
-//        serverConfig.setProxyPort(Integer.parseInt(proxyPort));
-//        serverConfig.setUsername(proxyUser);
-//        serverConfig.setPassword(proxyPassword);
-//
-//        return serverConfig;
-//
-//    }
+    private List<Function> getFunctionsList(String wsdlUrl) {
+        List<Function> funList = new ArrayList<Function>();
+        WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
+        WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
+        IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
+        boolean isUseSSL = (parameter != null) && TRUE
+                .equals(parameter.getValue().toString());
 
-//    /**
-//     * DOC Comment method "useAuth".
-//     */
-//    private ServiceHelperConfiguration useAuth() {
-//
-//        String authUsername = "";
-//        String authPassword = "";
-//
-//        IElementParameter authUsernameParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_USERNAME");
-//        IElementParameter authPasswordParameter = webServiceManager.getWebServiceComponent().getElementParameter("AUTH_PASSWORD");
-//        if (authUsernameParameter.getValue() != null) {
-//            authUsername = authUsernameParameter.getValue().toString();
-//            authUsername = TalendTextUtils.removeQuotes(authUsername);
-//        }
-//        if (authPasswordParameter.getValue() != null) {
-//            authPassword = authPasswordParameter.getValue().toString();
-//            authPassword = TalendTextUtils.removeQuotes(authPassword);
-//        }
-//        if (serverConfig == null) {
-//            serverConfig = new ServiceHelperConfiguration();
-//        }
-//        serverConfig.setUsername(authUsername);
-//        serverConfig.setPassword(authPassword);
-//
-//        return serverConfig;
-//
-//    }
+        if (isUseSSL) {
+            useSSL();
+        }
+
+        try {
+            if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
+                funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
+            } else {
+                funList = ws.getFunctionsAvailable(wsdlUrl);
+            }
+        } catch (IOException e) {
+            openErrorDialog(ERROR_GETTING_WSDL, e);
+        }
+        return funList;
+    }
 
     /**
      * DOC gcui Comment method "useSSL".
@@ -850,7 +477,7 @@ public class WebServiceUI extends AbstractWebService {
 
         // add a listener for ctrl+space.
         TalendProposalUtils.installOn(wsdlField.getTextControl(), connector.getProcess(), connector);
-        String wsdlUrl = (String) connector.getElementParameter("ENDPOINT").getValue(); //$NON-NLS-1$
+        String wsdlUrl = (String) connector.getElementParameter(ENDPOINT).getValue(); //$NON-NLS-1$
         if (wsdlUrl != null) {
             wsdlField.setText(wsdlUrl);
         }
@@ -1067,19 +694,6 @@ public class WebServiceUI extends AbstractWebService {
         });
     }
 
-    private ParameterInfo isOnlyOnePara(List<ParameterInfo> list) {
-        if (list.size() == 1) {
-            ParameterInfo first = list.get(0);
-            if (first.getParameterInfos() != null && !first.getParameterInfos().isEmpty()) {
-                return isOnlyOnePara(list.get(0).getParameterInfos());
-            } else
-                return first;
-
-        }
-
-        return null;
-    }
-
     private void getDataFromNet() {
         funList.clear();
         portNameList.clear();
@@ -1094,46 +708,7 @@ public class WebServiceUI extends AbstractWebService {
         if (URLValue == null) {
             URLValue = ""; //$NON-NLS-1$
         }
-        final WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
-
-        WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
-        boolean isUseProxy = webServiceComponent.getElementParameter("USE_PROXY").getValue().toString().equals("true");
-        boolean isUseNTLM = webServiceComponent.getElementParameter("USE_NTLM").getValue().toString().equals("true");
-        boolean isUseAuth = webServiceComponent.getElementParameter("NEED_AUTH").getValue().toString().equals("true");
-
-//        if (isUseProxy) {
-//            useProxy();
-//        }
-//
-//        if (isUseAuth && !isUseNTLM) {
-//            useAuth();
-//        }
-
-        boolean isUseSSL = webServiceComponent.getElementParameter("NEED_SSL_TO_TRUSTSERVER").getValue().toString()
-                .equals("true");
-        if (isUseSSL) {
-            useSSL();
-        }
-
-//        if (serverConfig != null) {
-//            if (URLValue != null && !URLValue.contains("\"")) {
-//                funList = ws.getFunctionsAvailable(parseContextParameter(URLValue), serverConfig);
-//            } else {
-//                funList = ws.getFunctionsAvailable(URLValue, serverConfig);
-//            }
-//
-//        } else {
-        try {
-            if (URLValue != null && !URLValue.contains("\"")) {
-                funList = ws.getFunctionsAvailable(parseContextParameter(URLValue));
-            } else {
-                funList = ws.getFunctionsAvailable(URLValue);
-            }
-        } catch (IOException e) {
-            openErrorDialog(ERROR_GETTING_WSDL, e);
-        }
-//        }
-
+        funList = getFunctionsList(URLValue); 
         if (!funList.isEmpty()) {
             if (funList.get(0) != null) {
                 if (funList.get(0).getPortNames() != null) {

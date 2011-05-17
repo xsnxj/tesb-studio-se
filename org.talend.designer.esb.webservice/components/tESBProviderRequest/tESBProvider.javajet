@@ -201,9 +201,14 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 /**
  * web service provider implementation
  */
+<%
+	String methodName = ElementParameterParser.getValue(node,"__METHOD__");
+	methodName = methodName.split("\\(")[0];
+	String serviceNS = ElementParameterParser.getValue(node,"__SERVICE_NS__");
+	%>
 @javax.jws.WebService(
-		name = "TalendJobAsWebService",
-		targetNamespace = "http://talend.org/esb/service/job"
+		name = "<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>",
+		targetNamespace = "<%=serviceNS%>"
 	)
 @javax.jws.soap.SOAPBinding(
 		parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE
@@ -226,26 +231,26 @@ class ESBProvider_<%=cid%> implements
 			QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
-
+	<% 
+	 
+	%>
 	@javax.jws.WebMethod(
-			operationName = "invoke",
-			action = "http://talend.org/esb/service/job/invoke"
+			operationName = "<%=methodName%>",
+			action = "<%=serviceNS%>/<%=methodName%>"
 		)
 <% if (isOneWay) { %>
 	@javax.jws.Oneway()
 <% } else { %>
 	@javax.jws.WebResult(
-			name = "jobOutput",
-			targetNamespace = "http://talend.org/esb/service/job",
-			// targetNamespace = "",
+			name = "<%=methodName%>Output",
+			targetNamespace = "<%=serviceNS%>",
 			partName = "response"
 		)
 <% } %>
 	public javax.xml.transform.Source invoke(
 			@javax.jws.WebParam(
-					name = "jobInput",
-					targetNamespace = "http://talend.org/esb/service/job",
-					// targetNamespace = "",
+					name = "<%=methodName%>Input",
+					targetNamespace = "<%=serviceNS%>",
 					partName = "request"
 				) javax.xml.transform.Source request) {
 
