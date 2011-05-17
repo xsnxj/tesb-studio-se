@@ -40,16 +40,6 @@
 
 int nb_line_<%=cid%> = 0;
 
-System.out.println(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-System.out.println(<%=ElementParameterParser.getValue(node,"__ENDPOINT__")%>); 
-
-System.out.println("<%=ElementParameterParser.getValue(node,"__SERVICE_NS__")%>");
-System.out.println("<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>");
-System.out.println("<%=ElementParameterParser.getValue(node,"__PORT_NS__")%>");
-System.out.println("<%=ElementParameterParser.getValue(node,"__PORT_NAME__")%>");
-
-System.out.println("<%=ElementParameterParser.getValue(node,"__METHOD__")%>"); 
-
 try {
 	// This is a beginning of the ESB provider request component cycle
 	while(true) {
