@@ -14,8 +14,6 @@ imports="
 	String cid = node.getUniqueName();
 	
 	String uri = ElementParameterParser.getValue(node, "__URI__");
-	List<Map<String, String>> options = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__OPTIONS__");
-	int optionsCount = options.size();
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
