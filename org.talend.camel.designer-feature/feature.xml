@@ -1267,7 +1267,8 @@
          id="org.talend.designer.camel.components.localprovider"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="true" />
 
    <plugin
          id="org.eclipse.gmf.runtime.draw2d.ui.render"
