@@ -554,8 +554,7 @@
          id="org.apache.axis"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ui.intro"
@@ -1191,22 +1190,19 @@
          id="org.talend.libraries.apache"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.dom4j-jaxen"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.jackson"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.librariesmanager"
@@ -1246,8 +1242,7 @@
          id="org.talend.libraries.jdom"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.mortbay.jetty.server"
@@ -1267,11 +1262,24 @@
          id="org.talend.designer.camel.components.localprovider"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true" />
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.gmf.runtime.draw2d.ui.render"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.talend.camel.designer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.talend.camel.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
