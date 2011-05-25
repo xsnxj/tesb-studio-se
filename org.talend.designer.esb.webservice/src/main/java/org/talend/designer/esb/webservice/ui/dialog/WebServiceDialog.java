@@ -5,7 +5,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -23,7 +22,6 @@ import org.talend.designer.esb.webservice.data.ExternalWebServiceUIProperties;
 import org.talend.designer.esb.webservice.managers.UIManager;
 import org.talend.designer.esb.webservice.ui.WebServiceUI;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.PortNames;
 
 public class WebServiceDialog extends Dialog implements WebServiceEventListener {
 
@@ -37,11 +35,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     private boolean maximized;
 
-    private CTabFolder tabFolder;
-
-//    private Button backButton;
-//
-//    private Button nextButton;
+    private Button okButton;
 
     public WebServiceDialog(Shell parentShell, WebServiceComponentMain webServiceComponentMain) {
         super(parentShell);
@@ -97,10 +91,6 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
             okPressed();
         } else if (IDialogConstants.CANCEL_ID == buttonId) {
             cancelPressed();
-        } else if (IDialogConstants.NEXT_ID == buttonId) {
-            nextPressed();
-        } else if (IDialogConstants.BACK_ID == buttonId) {
-            backPressed();
         }
     }
 
@@ -116,7 +106,8 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
      */
 
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
+        okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
+        webServiceUI.setWizardOkButton(okButton);
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
     }
 
@@ -130,39 +121,9 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
         panel.setLayout(layout);
         panel.setLayoutData(new GridData(GridData.FILL_BOTH));
         applyDialogFont(panel);
-
         webServiceUI = new WebServiceUI(panel, this.webServiceComponentMain);
         webServiceUI.init();
-
         return panel;
-    }
-
-    protected void backPressed() {
-        tabFolder = webServiceUI.getTabFolder();
-        int curreSelect = tabFolder.getSelectionIndex();
-        if (curreSelect > 0) {
-            tabFolder.setSelection(curreSelect - 1);
-//            if (!nextButton.getEnabled()) {
-//                nextButton.setEnabled(true);
-//            }
-//            if ((curreSelect - 1) == 0) {
-//                backButton.setEnabled(false);
-//            }
-        }
-    }
-
-    protected void nextPressed() {
-        tabFolder = webServiceUI.getTabFolder();
-        Function function = webServiceUI.getCurrentFunction();
-        int curreSelect = tabFolder.getSelectionIndex();
-        if (function == null) {
-            warningDialog("Please Select a Operation!");
-        } else if (curreSelect < 2 && function != null) {
-            if (webServiceUI.getIsFirst()) {
-                webServiceUI.initWebserviceData();
-            }
-            tabFolder.setSelection(curreSelect + 1);
-        }
     }
 
     protected void okPressed() {
@@ -173,9 +134,9 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     private void saveValue() {
         String currentURL = webServiceUI.getURL();
-        List<PortNames> allPortNames = webServiceUI.getAllPortNames();
+        List<String> allPortNames = webServiceUI.getAllPortNames();
         Function function = webServiceUI.getCurrentFunction();
-        PortNames currePortName = webServiceUI.getCurrentPortName();
+        String currentPortName = webServiceUI.getCurrentPortName();
         WebServiceComponent wenCom = webServiceComponentMain.getWebServiceComponent();
 
         if (!"".equals(currentURL) && currentURL != null) {
@@ -183,13 +144,13 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
             ENDPOINTPara.setValue(currentURL);
         }
 
-        if (currePortName != null) {
+        if (currentPortName != null) {
             IElementParameter Port_Name = wenCom.getElementParameter("PORT_NAME");
-            Port_Name.setValue(currePortName.getPortName());
-        } else if (currePortName == null && !allPortNames.isEmpty()) {
-            currePortName = allPortNames.get(0);
+            Port_Name.setValue(currentPortName);
+        } else if (currentPortName == null && !allPortNames.isEmpty()) {
+            currentPortName = allPortNames.get(0);
             IElementParameter Port_Name = wenCom.getElementParameter("PORT_NAME");
-            Port_Name.setValue(currePortName.getPortName());
+            Port_Name.setValue(currentPortName);
         }
 
         if (function != null) {
@@ -219,7 +180,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     }
 
-    private void warningDialog(String title) {
+    public static final void warningDialog(String title) {
         MessageBox box = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_WARNING | SWT.OK);
         box.setText("WARNING"); //$NON-NLS-1$
         box.setMessage(title); //$NON-NLS-1$

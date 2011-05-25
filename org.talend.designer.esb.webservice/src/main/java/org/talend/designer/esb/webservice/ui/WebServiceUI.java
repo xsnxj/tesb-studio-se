@@ -15,9 +15,11 @@ package org.talend.designer.esb.webservice.ui;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -83,9 +85,7 @@ import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.PortNames;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
-//import org.talend.ws.helper.conf.ServiceHelperConfiguration;
 
 /**
  * gcui class global comment. Detailled comment
@@ -118,17 +118,13 @@ public class WebServiceUI extends AbstractWebService {
 
     private CTabItem wsdlTabItem;
 
-    private Composite outputComposite;
-
-    private Composite inputComposite;
-
     private Composite wsdlComposite;
 
     private SashForm allContentForm;
 
     private AbstractDataTableEditorView<Function> listTableView;
 
-    private AbstractDataTableEditorView<PortNames> portListTableView;
+    private AbstractDataTableEditorView<String> portListTableView;
 
     private Button refreshbut;
 
@@ -142,27 +138,25 @@ public class WebServiceUI extends AbstractWebService {
 
     private int selectedColumnIndex = DEFAULT_INDEX;
 
-    private List<Function> allfunList = new ArrayList<Function>();
+    private List<Function> functionList = new ArrayList<Function>();
 
-    private List<PortNames> allPortNames = new ArrayList<PortNames>();
+    private List<String> allPortNames = new ArrayList<String>();
 
     private String URLValue;
 
     private Function currentFunction;
 
-    private PortNames currentPortName;
-
-//    private ServiceHelperConfiguration serverConfig = null;
-
-    private Boolean isFirst = true;
+    private String currentPortName;
 
     private WSDLSchemaConnection connection = null;
 
-    private List<Function> funList = new ArrayList<Function>();
+    private List<Function> allFunctions = new ArrayList<Function>();
 
-    private List<PortNames> portNameList = new ArrayList<PortNames>();
+    private Set<String> portNameList = new HashSet<String>();
 
-    private String url = "";
+    private Button wizardOkButton;
+    
+    private boolean gotNewData = false;
 
     public WebServiceUI(Composite uiParent, WebServiceComponentMain webServiceMain) {
         super();
@@ -170,7 +164,6 @@ public class WebServiceUI extends AbstractWebService {
         this.webServiceManager = webServiceMain.getWebServiceManager();
         this.connector = webServiceMain.getWebServiceComponent();
         URLValue = new String();
-        //getLastFunction();
         initWebserviceUI();
     }
 
@@ -193,15 +186,14 @@ public class WebServiceUI extends AbstractWebService {
         if (obj != null && obj instanceof String && !"".equals(obj)) {
             String currentURL = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
 
-            PortNames retrivePortName = new PortNames();
-            retrivePortName.setPortName(currentURL);
             allPortNames.clear();
-            allPortNames.add(retrivePortName);
-            retrivePortName.setPortName(currentURL);
+            allPortNames.add(currentURL);
 
             Function fun = new Function(obj.toString());
-            allfunList.clear();
-            allfunList.add(fun);
+            fun.setPortNames(Arrays.asList(new String[]{currentURL}));
+            functionList.clear();
+            functionList.add(fun);
+            allFunctions.add(fun);
             if (fun != null) {
                 currentFunction = fun;
             }
@@ -211,50 +203,18 @@ public class WebServiceUI extends AbstractWebService {
 
     private void initwebServiceMappingData(String currentURL) {
         if (currentURL != null && !currentURL.equals("")) {
-            isFirst = false;
-            Function fun = new Function(currentURL);
+            String str = currentURL;
             IElementParameter METHODPara = this.connector.getElementParameter(METHOD);
             Object obj = METHODPara.getValue();
             if (obj == null) {
                 return;
             }
             if (obj instanceof String) {
-                String str = (String) obj;
-                fun.setName(str);
+                str = (String) obj;
             }
+            Function fun = new Function(str);
             currentFunction = fun;
         }
-    }
-
-    public void initWebserviceData() {
-        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell()
-                .getShell());
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
-            public void run(final IProgressMonitor monitor) {
-                monitor.beginTask("Retrieve WSDL parameter from net,please wait....", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-                Display.getDefault().syncExec(new Runnable() {
-
-                    public void run() {
-                        getLastFunction();
-                        isFirst = false;
-                    }
-                });
-
-                monitor.done();
-
-            }
-        };
-        try {
-            progressDialog.run(true, true, runnable);
-        } catch (InvocationTargetException e1) {
-            ExceptionHandler.process(e1);
-        } catch (InterruptedException e1) {
-            ExceptionHandler.process(e1);
-        } catch (WebServiceCancelException e1) {
-            return;
-        }
-
     }
 
     private static IStatus[] getStatus(final Throwable e, final String pluginId) {
@@ -275,62 +235,6 @@ public class WebServiceUI extends AbstractWebService {
                 ErrorDialog.openError(uiParent.getShell(), Messages.getString("Error"), null, status);
             }
         });
-    }
-
-    private void getLastFunction() {
-        IElementParameter METHODPara = connector.getElementParameter(METHOD); //$NON-NLS-1$
-        Object obj = METHODPara.getValue();
-        if (obj == null) {
-            return;
-        }
-        if (obj instanceof String) {
-            String str = (String) obj;
-            String wsdlUrl = (String) connector.getElementParameter(ENDPOINT).getValue(); //$NON-NLS-1$
-            String currentURL = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
-            List<Function> funList = getFunctionsList(wsdlUrl);
-
-            PortNames retrivePortName = new PortNames();
-            retrivePortName.setPortName(currentURL);
-            allPortNames.clear();
-            allPortNames.add(retrivePortName);
-
-            for (Function fun : funList) {
-                if (fun.getName().equals(str)) {
-                    allfunList.clear();
-                    allfunList.add(fun);
-                    if (fun != null) {
-                        currentFunction = fun;
-                    }
-                    return;
-                }
-            }
-
-        }
-
-    }
-
-    private List<Function> getFunctionsList(String wsdlUrl) {
-        List<Function> funList = new ArrayList<Function>();
-        WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
-        WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
-        IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
-        boolean isUseSSL = (parameter != null) && TRUE
-                .equals(parameter.getValue().toString());
-
-        if (isUseSSL) {
-            useSSL();
-        }
-
-        try {
-            if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
-                funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
-            } else {
-                funList = ws.getFunctionsAvailable(wsdlUrl);
-            }
-        } catch (IOException e) {
-            openErrorDialog(ERROR_GETTING_WSDL, e);
-        }
-        return funList;
     }
 
     /**
@@ -374,7 +278,12 @@ public class WebServiceUI extends AbstractWebService {
         formData.bottom = new FormAttachment(100, -5);
         allContentForm.setLayoutData(formData);
         createViewers(allContentForm);
+    }
 
+    private void setOk(boolean enabled) {
+        if (null != wizardOkButton) {
+            wizardOkButton.setEnabled(enabled && gotNewData);
+        }
     }
 
     protected WebServiceComponent getWebServiceComponent() {
@@ -401,6 +310,7 @@ public class WebServiceUI extends AbstractWebService {
         wsdlTabItem.setControl(createWSDLStatus());
     }
 
+    @SuppressWarnings("rawtypes")
     private class DataTableEditorView<T> extends AbstractDataTableEditorView<T>{
     
         private IBeanPropertyAccessors accessors;
@@ -462,7 +372,6 @@ public class WebServiceUI extends AbstractWebService {
                 if (result != null) {
                     getTextControl().setText(TalendTextUtils.addQuotes(PathUtils.getPortablePath(result)));
                     getDataFromNet();
-                    isFirst = false;
                 }
             }
 
@@ -488,10 +397,6 @@ public class WebServiceUI extends AbstractWebService {
         butData.verticalSpan = 1;
         refreshbut.setLayoutData(butData);
 
-//        if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
-//            wsdlField.setReadOnly(true);
-//            refreshbut.setEnabled(false);
-//        }
         // add port name UI
         Composite wsdlPortOperationComposite = new Composite(wsdlComposite, SWT.NONE);
         GridData portlayoutData = new GridData(GridData.FILL_HORIZONTAL);
@@ -503,17 +408,17 @@ public class WebServiceUI extends AbstractWebService {
         portNameLabel.setText(Messages.getString("WebServiceUI.Port")); //$NON-NLS-1$
         portNameLabel.setLayoutData(new GridData(SWT.NONE, SWT.TOP, false, false));
 
-        ExtendedTableModel<PortNames> portModel = new ExtendedTableModel<PortNames>("PORTNAMELIST", allPortNames); //$NON-NLS-1$
-        portListTableView = new DataTableEditorView<PortNames>(
+        ExtendedTableModel<String> portModel = new ExtendedTableModel<String>("PORTNAMELIST", allPortNames); //$NON-NLS-1$
+        portListTableView = new DataTableEditorView<String>(
                 wsdlPortOperationComposite, 
                 SWT.NONE, portModel, false, true, false,
-                new IBeanPropertyAccessors<PortNames, String>() {
-                    public String get(PortNames bean) {
-                        return bean.getPortName();
+                new IBeanPropertyAccessors<String, String>() {
+                    public String get(String bean) {
+                        return bean;
                     }
 
-                    public void set(PortNames bean, String value) {
-                        bean.setPortName(value);
+                    public void set(String bean, String value) {
+                      //readonly
                     }
                 }
         );
@@ -523,7 +428,7 @@ public class WebServiceUI extends AbstractWebService {
         operationLabel.setText(Messages.getString("WebServiceUI.Operation")); //$NON-NLS-1$
         operationLabel.setLayoutData(new GridData(SWT.NONE, SWT.TOP, false, false));
 
-        ExtendedTableModel<Function> funModel = new ExtendedTableModel<Function>("FUNCTIONLIST", allfunList); //$NON-NLS-1$
+        ExtendedTableModel<Function> funModel = new ExtendedTableModel<Function>("FUNCTIONLIST", functionList); //$NON-NLS-1$
         listTableView = new DataTableEditorView<Function>(
                 wsdlPortOperationComposite, 
                 SWT.NONE, funModel, false, true, false,
@@ -533,8 +438,7 @@ public class WebServiceUI extends AbstractWebService {
                     }
 
                     public void set(Function bean, String value) {
-                        bean.setName(value);
-
+                        //readonly
                     }
                 }
         ); 
@@ -569,7 +473,7 @@ public class WebServiceUI extends AbstractWebService {
                         boolean f = true;
                         while (f) {
                             try {
-                                Thread.sleep(1000);
+                                Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -582,8 +486,6 @@ public class WebServiceUI extends AbstractWebService {
                                 f = false;
                             }
                         }
-
-                        // monitor.done();
                     }
                 };
 
@@ -596,42 +498,16 @@ public class WebServiceUI extends AbstractWebService {
                 } catch (WebServiceCancelException e1) {
                     return;
                 }
-
-                if (connection != null) {
-                    if (listTable.getItemCount() > 0) {
-                        listTable.setSelection(listTable.getItem(0));
-                    }
-                    if (currentFunction != null) {
-                        if (currentFunction.getName() != null) {
-                            connection.setMethodName(currentFunction.getName());
-                        }
-                        if (currentFunction.getServerNameSpace() != null) {
-                            connection.setServerNameSpace(currentFunction.getServerNameSpace());
-                        }
-                        if (currentFunction.getServerName() != null) {
-                            connection.setServerName(currentFunction.getServerName());
-                        }
-                        if (currentFunction.getServerNameSpace() != null) {
-                            connection.setPortNameSpace(currentFunction.getServerNameSpace());
-                        }
-                    }
-                    if (currentPortName != null) {
-                        connection.setPortName(currentPortName.getPortName());
-
-                    } else if (currentPortName == null && !allPortNames.isEmpty()) {
-                        currentPortName = allPortNames.get(0);
-                        connection.setPortName(currentPortName.getPortName());
-                    }
+                if (portListTable.getItemCount() > 1) {
+                    portListTable.deselectAll();
+                    setOk(false);
                 }
                 if (listTable.getItemCount() == 1) {
-                    listTable.setSelection(0);
-                    currentFunction = (Function) listTable.getItem(0).getData();
+                    selectFirstFunction();
                 }
-                isFirst = false;
             }
+
         });
-        // TableItem firstItem = listTable.getItem(0);
-        // currentFunction = firstItem.getData();
         listTable = listTableView.getTable();
         portListTable = portListTableView.getTable();
 
@@ -640,35 +516,8 @@ public class WebServiceUI extends AbstractWebService {
             public void widgetSelected(SelectionEvent e) {
                 TableItem[] item = listTable.getSelection();
                 currentFunction = (Function) item[0].getData();
-
-                // if select the same as before ,don't change it
-                // IElementParameter METHODPara = connector.getElementParameter("METHOD"); //$NON-NLS-1$
-                // Object obj = METHODPara.getValue();
-                // if (currentFunction.getName().equals(obj.toString())) {
-                // return;
-                // }
-                if (connection != null) {
-                    if (currentPortName != null) {
-                        connection.setPortName(currentPortName.getPortName());
-
-                    } else if (currentPortName == null && allPortNames != null) {
-                        currentPortName = allPortNames.get(0);
-                        connection.setPortName(currentPortName.getPortName());
-                    }
-                    if (currentFunction != null) {
-                        if (currentFunction.getName() != null) {
-                            connection.setMethodName(currentFunction.getName());
-                        }
-                        if (currentFunction.getServerNameSpace() != null) {
-                            connection.setServerNameSpace(currentFunction.getServerNameSpace());
-                        }
-                        if (currentFunction.getServerName() != null) {
-                            connection.setServerName(currentFunction.getServerName());
-                        }
-                        if (currentFunction.getServerNameSpace() != null) {
-                            connection.setPortNameSpace(currentFunction.getServerNameSpace());
-                        }
-                    }
+                if (currentFunction != null) {
+                    setOk(true);
                 }
             }
         });
@@ -677,65 +526,102 @@ public class WebServiceUI extends AbstractWebService {
 
             public void widgetSelected(SelectionEvent e) {
                 TableItem[] item = portListTable.getSelection();
-                currentPortName = (PortNames) item[0].getData();
+                currentPortName = (String) item[0].getData();
                 if (connection != null) {
-                    if (currentPortName != null) {
-                        connection.setPortName(currentPortName.getPortName());
-
-                    } else if (currentPortName == null && allPortNames != null) {
-                        currentPortName = allPortNames.get(0);
-                        connection.setPortName(currentPortName.getPortName());
-                    } else {
+                    if (!updateConnection()) {
                         connection.setPortName("");
                     }
-
                 }
+                List<Function> portFunctions = new ArrayList<Function>();
+                for (Function function : allFunctions) {
+                    List<String> portNames = function.getPortNames();
+                    if ((portNames != null) && (portNames.contains(currentPortName))) {
+                        portFunctions.add(function);
+                    }
+                }
+                ExtendedTableModel<Function> listModel = listTableView.getExtendedTableModel();
+                listModel.removeAll();
+                listModel.addAll(portFunctions);
+                selectFirstFunction();
             }
         });
     }
 
+    private void selectFirstFunction() {
+        if (listTable.getItemCount() > 0) {
+            listTable.setSelection(new int[]{0});
+            currentFunction = (Function) listTable.getItem(0).getData();
+            setOk(true);
+        } else {
+            setOk(false);
+        }
+    }
+    
     private void getDataFromNet() {
-        funList.clear();
+        allFunctions.clear();
         portNameList.clear();
         Display.getDefault().syncExec(new Runnable() {
-
             public void run() {
                 URLValue = wsdlField.getText();
             }
-
         });
 
         if (URLValue == null) {
             URLValue = ""; //$NON-NLS-1$
         }
-        funList = getFunctionsList(URLValue); 
-        if (!funList.isEmpty()) {
-            if (funList.get(0) != null) {
-                if (funList.get(0).getPortNames() != null) {
-                    portNameList = funList.get(0).getPortNames();
-                }
+        allFunctions = getFunctionsList(URLValue); 
+        gotNewData = true;
+        for (Function function : allFunctions) {
+            if ((function != null) && (function.getPortNames() != null)) {
+                portNameList.addAll(function.getPortNames());
             }
         }
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
-                ExtendedTableModel<Function> listModel = listTableView.getExtendedTableModel();
-                ExtendedTableModel<PortNames> portListModel = portListTableView.getExtendedTableModel();
-                listModel.removeAll();
-                listModel.addAll(funList);
-                allfunList.clear();
-                allfunList.addAll(funList);
-                // getInputElementList();
-                // getOutputElementList();
+                ExtendedTableModel<String> portListModel = portListTableView.getExtendedTableModel();
                 portListModel.removeAll();
-                portListModel.addAll(portNameList);
+                //NO addAll(Collection) for ExtendedTableModel??? grrr
+                for (String portName : portNameList) {
+                    portListModel.add(portName);
+                }
+                //clear functions
+                ExtendedTableModel<Function> listModel = listTableView.getExtendedTableModel();
+                listModel.removeAll();
+                if (portNameList.size() == 1) { //only one porttype
+                    listModel.addAll(allFunctions);
+                } 
             }
 
         });
 
     }
 
-    private String parseContextParameter(final String contextValue) {
+    private List<Function> getFunctionsList(String wsdlUrl) {
+        List<Function> funList = new ArrayList<Function>();
+        WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
+        WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
+        IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
+        boolean isUseSSL = (parameter != null) && TRUE
+                .equals(parameter.getValue().toString());
 
+        if (isUseSSL) {
+            useSSL();
+        }
+
+        try {
+            if (wsdlUrl != null && !wsdlUrl.contains("\"")) {
+                funList = ws.getFunctionsAvailable(parseContextParameter(wsdlUrl));
+            } else {
+                funList = ws.getFunctionsAvailable(wsdlUrl);
+            }
+        } catch (IOException e) {
+            openErrorDialog(ERROR_GETTING_WSDL, e);
+        }
+        return funList;
+    }
+
+    String parseUrl = "";
+    private String parseContextParameter(final String contextValue) {
         Display.getDefault().syncExec(new Runnable() {
 
             public void run() {
@@ -751,8 +637,8 @@ public class WebServiceUI extends AbstractWebService {
                 } else {
                     contextManager = connector.getProcess().getContextManager();
                     String currentDefaultName = contextManager.getDefaultContext().getName();
-                    List contextList = contextManager.getListContext();
-                    if (!contextList.isEmpty() && contextList.size() > 1) {
+                    List<IContext> contextList = contextManager.getListContext();
+                    if ((contextList != null) && (contextList.size() > 1)) {
                         currentDefaultName = ConnectionContextHelper.getContextTypeForJob(shell, contextManager, false);
                     }
                     // ContextSetsSelectionDialog cssd=new ContextSetsSelectionDialog(shell,,false);
@@ -761,32 +647,16 @@ public class WebServiceUI extends AbstractWebService {
                     url = ContextParameterUtils.parseScriptContextCode(contextValue, context);
 
                 }
-                setParseURL(url);
+                parseUrl = url;
             }
 
         });
 
-        return getparseURL();
-    }
-
-    private String getparseURL() {
-        return url;
-    }
-
-    private void setParseURL(String url) {
-        this.url = url;
+        return parseUrl;
     }
 
     public CTabFolder getTabFolder() {
         return this.tabFolder;
-    }
-
-    public Composite getOutputComposite() {
-        return this.outputComposite;
-    }
-
-    public Composite getInputComposite() {
-        return this.inputComposite;
     }
 
     public Composite getWsdlComposite() {
@@ -802,11 +672,11 @@ public class WebServiceUI extends AbstractWebService {
         return currentFunction;
     }
 
-    public PortNames getCurrentPortName() {
+    public String getCurrentPortName() {
         return currentPortName;
     }
 
-    public List<PortNames> getAllPortNames() {
+    public List<String> getAllPortNames() {
         return this.allPortNames;
     }
 
@@ -816,10 +686,6 @@ public class WebServiceUI extends AbstractWebService {
 
     public void saveProperties() {
         getWebServiceManager().savePropertiesToComponent();
-    }
-
-    public Boolean getIsFirst() {
-        return this.isFirst;
     }
 
     public void prepareClosing(int dialogResponse) {
@@ -851,28 +717,21 @@ public class WebServiceUI extends AbstractWebService {
                     connection.setPortNameSpace(currentFunction.getServerNameSpace());
                 }
             }
-            if (currentPortName != null) {
-                connection.setPortName(currentPortName.getPortName());
-            } else if (currentPortName == null && !allPortNames.isEmpty()) {
-                currentPortName = allPortNames.get(0);
-                connection.setPortName(currentPortName.getPortName());
-            }
+            updateConnection();
 
         }
-        EList inputValue = connection.getParameterValue();
+        EList<WSDLParameter> inputValue = connection.getParameterValue();
 
         IElementParameter INPUT_PARAMSPara = connector.getElementParameter("INPUT_PARAMS");
         List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
         if (inputparaValue != null) {
             inputValue.clear();
             if (currentFunction != null) {
-                List inputParameter = currentFunction.getInputParameters();
+                List<ParameterInfo> inputParameter = currentFunction.getInputParameters();
                 if (inputParameter != null) {
-
                     boolean mark = true;
-                    List<ParameterInfo> ls = new ArrayList();
-                    goin: for (Iterator iterator2 = inputParameter.iterator(); iterator2.hasNext();) {
-                        ParameterInfo element = (ParameterInfo) iterator2.next();
+                    List<ParameterInfo> ls = new ArrayList<ParameterInfo>();
+                    for (ParameterInfo element : inputParameter) {
                         WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
                         parameter.setParameterInfo(element.getName());
                         if (element.getParent() == null) {
@@ -885,7 +744,7 @@ public class WebServiceUI extends AbstractWebService {
                         if (!element.getParameterInfos().isEmpty()) {
                             ls.addAll(new ParameterInfoUtil().getAllChildren(element));
                         }
-                        break goin;
+                        break;
                     }
                     if (!mark) {
                         for (ParameterInfo para : ls) {
@@ -898,13 +757,6 @@ public class WebServiceUI extends AbstractWebService {
 
                 }
             }
-//            for (IMetadataColumn column : getInputValue()) {
-//                WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-//                if (column.getLabel() != null) {
-//                    parameter.setColumn(column.getLabel());
-//                    inputValue.add(parameter);
-//                }
-//            }
             String[] src = new String[]{"payload"};
             for (String insource : src) {
                 WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
@@ -918,11 +770,23 @@ public class WebServiceUI extends AbstractWebService {
         }
     }
 
+    private boolean updateConnection() {
+        if (currentPortName != null) {
+            connection.setPortName(currentPortName);
+        } else if (currentPortName == null && !allPortNames.isEmpty()) {
+            currentPortName = allPortNames.get(0);
+            connection.setPortName(currentPortName);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     public void saveOutPutValue() {
         // save output
-        EList outPutValue = connection.getOutputParameter();
+        EList<WSDLParameter> outPutValue = connection.getOutputParameter();
 
-        List<ParameterInfo> ls = new ArrayList();
+        List<ParameterInfo> ls = new ArrayList<ParameterInfo>();
         IElementParameter OUTPUT_PARAMSPara = connector.getElementParameter("OUTPUT_PARAMS");
         List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
         if (outputMap != null) {
@@ -959,4 +823,15 @@ public class WebServiceUI extends AbstractWebService {
             }
         }
     }
+
+    
+    /**
+     * @param okButton the wizardOkButton to set
+     */
+    public void setWizardOkButton(Button okButton) {
+        this.wizardOkButton = okButton;
+        setOk(false);
+    }
+    
+    
 }

@@ -14,10 +14,8 @@ package org.talend.designer.esb.webservice.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.custom.CTabFolder;
@@ -27,7 +25,6 @@ import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.components.IComponent;
 import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MetadataTable;
-import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
 import org.talend.core.model.process.IElementParameter;
@@ -35,7 +32,6 @@ import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.service.IWebService;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.webService.WebServiceSaveManager;
-import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentMain;
 import org.talend.repository.model.ComponentsFactoryProvider;
@@ -63,6 +59,7 @@ public class WebServiceHelper implements IWebService {
      * org.talend.repository.ui.wizards.metadata.connection.wsdl.IWebService#getWebServiceUI(org.eclipse.swt.widgets
      * .Composite, org.talend.core.model.components.IComponent)
      */
+    @SuppressWarnings("unchecked")
     public AbstractWebService getWebServiceUI(Composite uiParent, ConnectionItem connectionItem) {
         this.connectionItem = connectionItem;
         WebServiceComponent wenCom = new WebServiceComponent();
@@ -108,10 +105,10 @@ public class WebServiceHelper implements IWebService {
             if (connection.getParameterValue() != null) {
                 IElementParameter INPUT_PARAMSPara = wenCom.getElementParameter("INPUT_PARAMS");
                 List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-                EList inputList = connection.getParameterValue();
+                EList<WSDLParameter> inputList = connection.getParameterValue();
                 for (int i = 0; i < inputList.size(); i++) {
                     Map<String, String> inputMap = new HashMap<String, String>(2);
-                    WSDLParameter parameter = (WSDLParameter) inputList.get(i);
+                    WSDLParameter parameter = inputList.get(i);
                     if (parameter.getElement() != null) {
                         if (parameter.getExpression() != null) {
                             inputMap.put("EXPRESSION", parameter.getExpression());
@@ -138,7 +135,7 @@ public class WebServiceHelper implements IWebService {
             if (connection.getOutputParameter() != null) {
                 IElementParameter OUTPUT_PARAMSPara = wenCom.getElementParameter("OUTPUT_PARAMS");
                 List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-                EList inputList = connection.getOutputParameter();
+                EList<WSDLParameter> inputList = connection.getOutputParameter();
                 for (int i = 0; i < inputList.size(); i++) {
                     Map<String, String> eleMap = new HashMap<String, String>(3);
                     WSDLParameter parameter = (WSDLParameter) inputList.get(i);
@@ -171,8 +168,8 @@ public class WebServiceHelper implements IWebService {
         MetadataTable inputMetadata = new MetadataTable();
         inputMetadata.setAttachedConnector("FLOW");
         inputMetadata.setLabel("Input");
-        List<org.talend.core.model.metadata.IMetadataColumn> newColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
-        List<org.talend.core.model.metadata.IMetadataColumn> newInputColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
+//        List<org.talend.core.model.metadata.IMetadataColumn> newColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
+//        List<org.talend.core.model.metadata.IMetadataColumn> newInputColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
         
 //        if (connectionItem.getState() != null) {
 //            outputMetadaTable = new MetadataTable();

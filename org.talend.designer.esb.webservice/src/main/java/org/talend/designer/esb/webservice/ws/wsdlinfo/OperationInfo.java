@@ -2,7 +2,6 @@ package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.wsdl.Message;
 
@@ -56,8 +55,6 @@ public class OperationInfo {
 
     private Message outmessage;
 
-    private Vector wsdltypes;
-
     private String serviceid;
 
     public OperationInfo() {
@@ -75,14 +72,6 @@ public class OperationInfo {
 
     public void setServiceid(String serviceid) {
         this.serviceid = serviceid;
-    }
-
-    public Vector getWsdltype() {
-        return wsdltypes;
-    }
-
-    public void setWsdltype(Vector wsdltypes) {
-        this.wsdltypes = wsdltypes;
     }
 
     public Message getInmessage() {

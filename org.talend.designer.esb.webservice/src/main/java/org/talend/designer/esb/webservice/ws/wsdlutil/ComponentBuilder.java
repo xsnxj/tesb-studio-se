@@ -50,7 +50,6 @@ import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.PortNames;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 
 /**
@@ -92,7 +91,7 @@ public class ComponentBuilder {
         }
     }
 
-    public ServiceInfo buildserviceinformation(ServiceInfo serviceinfo) throws Exception {
+    public ServiceInfo[] buildserviceinformation(ServiceInfo serviceinfo) throws Exception {
         // WSDLReader reader = wsdlFactory.newWSDLReader();
         // Definition def = reader.readWSDL(null, serviceinfo.getWsdlUri());
         ServiceDiscoveryHelper sdh;
@@ -109,12 +108,15 @@ public class ComponentBuilder {
 
         collectAllXmlSchemaType();
 
-        Map services = def.getServices();
-        if (services != null) {
-            Iterator svcIter = services.values().iterator();
-            populateComponent(serviceinfo, (Service) svcIter.next());
+        Collection<Service> services = def.getServices().values();
+        if (services == null) return new ServiceInfo[]{}; 
+        ServiceInfo[] value = new ServiceInfo[services.size()];
+        int i = 0;
+        for (Service service : services) {
+            value[i] = populateComponent(serviceinfo, service);
+            i++;
         }
-        return serviceinfo;
+        return value;
     }
 
     /**
@@ -352,26 +354,22 @@ public class ComponentBuilder {
     }
 
     private ServiceInfo populateComponent(ServiceInfo component, Service service) {
+        ServiceInfo value = new ServiceInfo(component);
         QName qName = service.getQName();
         String namespace = qName.getNamespaceURI();
         String name = qName.getLocalPart();
-        component.setServerName(name);
-        component.setServerNameSpace(namespace);
+        value.setServerName(name);
+        value.setServerNameSpace(namespace);
         Map ports = service.getPorts();
         Iterator portIter = ports.values().iterator();
         while (portIter.hasNext()) {
             Port port = (Port) portIter.next();
             Binding binding = port.getBinding();
-            if (port.getName() != null && component.getPortNames() == null) {
-                List<PortNames> portNames = new ArrayList();
-                PortNames portName = new PortNames();
-                portName.setPortName(port.getName());
-                portNames.add(portName);
-                component.setPortNames(portNames);
-            } else if (port.getName() != null && component.getPortNames() != null) {
-                PortNames portName = new PortNames();
-                portName.setPortName(port.getName());
-                component.getPortNames().add(portName);
+            if (port.getName() != null) {
+                if (value.getPortNames() == null) {
+                    value.setPortNames(new ArrayList<String>());
+                }
+                value.getPortNames().add(port.getName());
             }
             List operations = buildOperations(binding);
             Iterator operIter = operations.iterator();
@@ -383,10 +381,10 @@ public class ComponentBuilder {
                     SOAPAddress soapAddr = (SOAPAddress) element;
                     operation.setTargetURL(soapAddr.getLocationURI());
                 }
-                component.addOperation(operation);
+                value.addOperation(operation);
             }
         }
-        return component;
+        return value;
     }
 
     private List buildOperations(Binding binding) {
@@ -519,7 +517,7 @@ public class ComponentBuilder {
 
                 buileParameterFromTypes(partElement, parameterRoot, manner);
             }
-            operationInfo.setWsdltype(wsdlTypes);
+            //operationInfo.setWsdltype(wsdlTypes);
         }
     }
 

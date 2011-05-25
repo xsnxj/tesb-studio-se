@@ -1,7 +1,7 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import org.exolab.castor.xml.schema.Schema;
@@ -18,7 +18,7 @@ public class ServiceInfo {
 
     private String serverNameSpace;
 
-    private List<PortNames> portNames;
+    private List<String> portNames;
 
     /** WSDL URI */
     private String wsdluri;//
@@ -34,6 +34,17 @@ public class ServiceInfo {
     /** The list of operations that this service defines. */
     List<OperationInfo> operations = new ArrayList<OperationInfo>();
 
+    public ServiceInfo(ServiceInfo clone) {
+        this.wsdluri = clone.wsdluri;
+        this.authConfig = clone.authConfig;
+
+    }
+
+    public ServiceInfo(String wsdlURI, ServiceHelperConfiguration authConfig) {
+        this.wsdluri = wsdlURI;
+        this.authConfig = authConfig;
+    }
+
     public Schema getWsdlType() {
         return wsdlType;
     }
@@ -42,12 +53,8 @@ public class ServiceInfo {
         this.wsdlType = wsdlType;
     }
 
-    public List<OperationInfo> getOperation() {
+    public Collection<OperationInfo> getOperations() {
         return operations;
-    }
-
-    public Iterator<OperationInfo> getOperations() {
-        return operations.iterator();
     }
 
     public void addOperation(OperationInfo operation) {
@@ -98,11 +105,11 @@ public class ServiceInfo {
         this.serverNameSpace = serverNameSpace;
     }
 
-    public List<PortNames> getPortNames() {
+    public List<String> getPortNames() {
         return this.portNames;
     }
 
-    public void setPortNames(List<PortNames> portNames) {
+    public void setPortNames(List<String> portNames) {
         this.portNames = portNames;
     }
 
