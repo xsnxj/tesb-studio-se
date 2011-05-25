@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.talend.core.runtime.service">
+      <Service
+            class="org.talend.camel.designer.CamelItemService"
+            serviceId="ICamelItemService">
+      </Service>
+      <Service
+            class="org.talend.camel.designer.CamelDesignerCoreService"
+            serviceId="ICamelDesignerCoreService">
+      </Service>
+   </extension>
+
+ <extension
+               point="org.talend.core.repository.repository_node_provider">
+            <repositoryNode
+                  class="org.talend.camel.designer.model.CamelExtendRoutesNode"
+                  folder="routes"
+                  isResouce="true"
+                  label="Routes"
+                  products="CAMEL"
+                  type="ROUTES">
+            </repositoryNode>
+            <repositoryNode
+                  class="org.talend.camel.designer.model.CamelExtendBeansNode"
+                  folder="code/beans"
+                  isResouce="true"
+                  label="Beans"
+                  parentNodeType="Routines"
+                  products="CAMEL"
+                  type="BEANS">
+            </repositoryNode>
+         </extension>
+ 
+   <extension
+               point="org.talend.core.repositoryContextualsActions">
+            <Action
+                  class="org.talend.camel.designer.ui.EditCamelProcess"
+                  id="org.talend.camel.designer.ui.EditCamelProcess"
+                  isEditAction="true"
+                  level="10"
+                  name="Edit Process">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.RunCamelProcess"
+                  id="org.talend.camel.designer.ui.RunCamelProcess"
+                  isEditAction="true"
+                  level="99"
+                  name="Run process">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.ReadCamelProcess"
+                  id="org.talend.camel.designer.ui.ReadCamelProcess"
+                  isReadAction="true"
+                  level="11"
+                  name="Read process">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.CreateCamelProcess"
+                  id="org.talend.camel.designer.ui.CreateCamelProcess"
+                  level="10"
+                  name="Create process">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.EditCamelPropertiesAction"
+                  id="org.talend.camel.designer.ui.EditCamelPropertiesAction"
+                  isPropertiesAction="true"
+                  level="12"
+                  name="Edit properties">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.OpenCamelExistVersionProcessAction"
+                  id="org.talend.camel.designer.ui.OpenCamelExistVersionProcessAction"
+                  isReadAction="true"
+                  level="12"
+                  name="Open an other version job">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.ExporCameltJobScriptAction"
+                  id="org.talend.repository.ui.actions.exportjobscript"
+                  level="99"
+                  name="Export job scripts">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.bean.CreateCamelBean"
+                  id="org.talend.camel.designer.ui.bean.CreateCamelBean"
+                  isEditAction="true"
+                  level="10"
+                  name="Create Camel Bean">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.bean.EditCamelBean"
+                  id="org.talend.camel.designer.ui.bean.EditCamelBean"
+                  isEditAction="true"
+                  level="11"
+                  name="Edit Camel Bean">
+            </Action>
+            <Action
+                  class="org.talend.camel.designer.ui.bean.ReadCamelBean"
+                  id="org.talend.camel.designer.ui.bean.ReadCamelBean"
+                  isEditAction="false"
+                  isPropertiesAction="false"
+                  isReadAction="false"
+                  name="Rean Camel Bean">
+            </Action>
+         </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor"
+            contributorClass="org.talend.designer.core.ui.MultiPageEditorContributor"
+            default="false"
+            icon="icons/empty.gif"
+            id="org.talend.camel.designer.core.ui.CamelMultiPageTalendEditor"
+            name="CamelDesigner">
+      </editor>
+   </extension>
+   <extension
+         point="org.talend.repository.toolbar_creation">
+      <CreationToolAction
+            class="org.talend.camel.designer.ui.CreateCamelProcess">
+      </CreationToolAction>
+      <CreationToolAction
+            class="org.talend.camel.designer.ui.bean.CreateCamelBean">
+      </CreationToolAction>
+   </extension>
+</plugin>
