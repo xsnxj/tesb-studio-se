@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            class="org.talend.camel.designer.core.model.utils.emf.talendfile.CamelFilePackage"
+            genModel="model/CamelFile.genmodel"
+            uri="platform:/resource/org.talend.model/model/CamelFile.xsd">
+      </package>
+      <package
+            class="org.talend.camel.core.model.properties.CamelPropertiesPackage"
+            genModel="model/CamelProperties.genmodel"
+            uri="http://www.talend.org/CamelProperties">
+      </package>
+   </extension>
+
+
+</plugin>
