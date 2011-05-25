@@ -76,8 +76,8 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
         String runProcessViewId = "org.talend.designer.runprocess.ui.views.processview"; //$NON-NLS-1$
         String problemsViewId = "org.talend.designer.core.ui.views.ProblemsView"; //$NON-NLS-1$
         //String modulesViewId = "org.talend.designer.codegen.perlmodule.ModulesView"; //$NON-NLS-1$
-        String ecosystemViewId = "org.talend.designer.components.ecosystem.ui.views.EcosystemView"; //$NON-NLS-1$
-        String schedulerViewId = "org.talend.scheduler.views.Scheduler"; //$NON-NLS-1$
+        // String ecosystemViewId = "org.talend.designer.components.ecosystem.ui.views.EcosystemView"; //$NON-NLS-1$
+        //String schedulerViewId = "org.talend.scheduler.views.Scheduler"; //$NON-NLS-1$
         String contextsViewId = "org.talend.designer.core.ui.views.ContextsView"; //$NON-NLS-1$
         String gefPaletteViewId = "org.eclipse.gef.ui.palette_view"; //$NON-NLS-1$
         String jobSettingsViewId = "org.talend.designer.core.ui.views.jobsettings.JobSettingsView"; //$NON-NLS-1$
@@ -110,8 +110,8 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
         bottomLayout.addView(runProcessViewId);
         bottomLayout.addView(problemsViewId);
         // bottomLayout.addView(modulesViewId);
-        bottomLayout.addView(ecosystemViewId);
-        bottomLayout.addView(schedulerViewId);
+        // bottomLayout.addView(ecosystemViewId);
+        // bottomLayout.addView(schedulerViewId);
         // bottomLayout.addView(jobHierarchyViewId);
         bottomLayout.addPlaceholder("*");
     }
@@ -232,7 +232,7 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
         pm.find("org.talend.core.prefs").findSubNode("org.talend.designer.core.ui.preferences.SpecificSettingPreferencePage")
                 .remove("org.talend.sqlbuilder.ui.prefs.sqlbuilder");
         pm.find("org.talend.core.prefs").remove("org.talend.designer.core.ui.preferences.PerformancePreferencePage");
-        return null;
+        return IBrandingConfiguration.PERSPECTIVE_CAMEL_ID;
     }
 
     /*

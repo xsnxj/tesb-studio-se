@@ -78,4 +78,8 @@ public class CamelBrandingService extends AbstractTalendBrandingService {
     public String getJobLicenseHeader(String version) {
         return Messages.getString("CamelBrandingService_job_license_header_content", this.getFullProductName(), version);
     }
+
+    public boolean isPoweredOnlyCamel() {
+        return true;
+    }
 }
