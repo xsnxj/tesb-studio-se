@@ -34,6 +34,21 @@ String method = methodTemp.indexOf("(")!=-1?methodTemp.substring(0,methodTemp.in
 
 String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
+
+boolean useSl = "true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
+String slStrategy = "";
+String slStrategyDefault="Default";
+String slStrategyEvenDistribution="EvenDistribution";
+if (useSl) {
+	slStrategy = 
+	"true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY_DEFAULT__"))?slStrategyDefault:"";
+	if ("".equals(slStrategy)) {
+		slStrategy = 
+	"true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY_EVEN_DISTRIBUTION__"))?slStrategyEvenDistribution:"";
+	}
+}
+
+boolean useSam = "true".equals(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
 %>
 javax.xml.namespace.QName serviceName_<%=cid%> = null;
 javax.xml.namespace.QName portName_<%=cid%> = null;
@@ -51,6 +66,13 @@ if (registry != null) {
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
 				put("defaultOperationName", "<%=method%>");
 				put("defaultOperationNameSpace", "");
+				// use Service Locator
+				put("useServiceLocator", "<%=(useSl)?"true":"false"%>");
+				<%if (useSl) { %>
+				put("LocatorSelectionStrategy", "<%=slStrategy%>");
+				<% } %>
+ 				// use Service Activity Monitor
+				put("useServiceActivityMonitor", "<%=(useSam)?"true":"false"%>");
 			}};
 
 			public String getEndpointUri() {

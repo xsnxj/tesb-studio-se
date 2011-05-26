@@ -36,14 +36,15 @@ if (actAsProvider || actAsConsumer) { %>
 <% if (actAsProvider) {
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
+	INode node = process.getNodesOfType("tESBProviderRequest").get(0);
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
+	boolean useSl = "true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
+	boolean useSam = "true".equals(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
 	%>
 		return new ESBEndpointInfo() {
-			private String uri = <%=ElementParameterParser.getValue(
-										process.getNodesOfType("tESBProviderRequest").get(0),
-										"__ESB_ENDPOINT__")%>;
+			private String uri = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
 			@SuppressWarnings("serial")
 			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
 				// "request-response" or "one-way"
@@ -60,6 +61,11 @@ if (actAsProvider || actAsConsumer) { %>
 				put("defaultOperationNameSpace", "");
 				// endpoint URI configured in tESBProviderInput
 				put("publishedEndpointUrl", uri);
+ 				// use Service Locator
+				put("useServiceLocator", "<%=(useSl)?"true":"false"%>");
+ 				// use Service Activity Monitor
+				put("useServiceActivityMonitor", "<%=(useSam)?"true":"false"%>");
+				
 			}};
 
 			public String getEndpointKey() {
