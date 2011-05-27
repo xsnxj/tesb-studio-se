@@ -40,8 +40,8 @@ if (actAsProvider || actAsConsumer) { %>
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
-	boolean useSl = "true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
-	boolean useSam = "true".equals(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
+	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
+	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
 	%>
 		return new ESBEndpointInfo() {
 			private String uri = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
@@ -62,9 +62,9 @@ if (actAsProvider || actAsConsumer) { %>
 				// endpoint URI configured in tESBProviderInput
 				put("publishedEndpointUrl", uri);
  				// use Service Locator
-				put("useServiceLocator", "<%=(useSl)?"true":"false"%>");
+				put("useServiceLocator", <%=useSl%>);
  				// use Service Activity Monitor
-				put("useServiceActivityMonitor", "<%=(useSam)?"true":"false"%>");
+				put("useServiceActivityMonitor", <%=useSam%>);
 				
 			}};
 
