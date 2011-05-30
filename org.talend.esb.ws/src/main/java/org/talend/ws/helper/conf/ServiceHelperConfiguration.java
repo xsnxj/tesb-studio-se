@@ -182,6 +182,10 @@ public class ServiceHelperConfiguration {
         this.proxyPort = proxyPort;
     }
 
+    public void setProxyPort(String proxyPort) {
+        this.proxyPort = Integer.valueOf(proxyPort);
+    }
+
     public String getProxyServer() {
         return proxyServer;
     }
