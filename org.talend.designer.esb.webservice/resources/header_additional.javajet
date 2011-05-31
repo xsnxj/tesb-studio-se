@@ -52,11 +52,15 @@ if (actAsProvider || actAsConsumer) { %>
 				//
 				put("dataFormat", "PAYLOAD");
 				// static
-				put("portName", "{http://talend.org/esb/service/job}TalendJobAsWebService");
+				put("portName", "{<%=ElementParameterParser.getValue(node, "__PORT_NS__")%>}<%=ElementParameterParser.getValue(node, "__PORT_NAME__")%>");
 				// local part is: projectName + "_" + processName
-				put("serviceName", "{http://talend.org/esb/service/job}<%=projectName%>_<%=processName%>");
+				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>");
 				// static
-				put("defaultOperationName", "invoke");
+				<%
+				String methodName = ElementParameterParser.getValue(node,"__METHOD__");
+                methodName = methodName.split("\\(")[0];
+				%>
+				put("defaultOperationName", "<%=methodName%>");
 				// static
 				put("defaultOperationNameSpace", "");
 				// endpoint URI configured in tESBProviderInput
