@@ -97,8 +97,8 @@ public class Function {
             }
             int operationNamelen = operationName.length();
             operationName = operationName.substring(0, operationNamelen - 1);
-            this.name = operationName;
         }
+        this.name = operationName;
     }
 
     private final static void getParaFullName(ParameterInfo paraElement) {
