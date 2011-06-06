@@ -73,6 +73,10 @@ if (registry != null) {
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
+				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
+				
+				put("useServiceActivityMonitor", <%=useSam%>);
 			}};
 
 			public String getEndpointUri() {

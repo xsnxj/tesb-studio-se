@@ -174,6 +174,10 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
             if (esbEndpoint != null) {
                 esbEndpoint.setValue(TalendTextUtils.addQuotes(function.getAddressLocation()));
             }
+            IElementParameter commStyle = wenCom.getElementParameter("COMMUNICATION_STYLE");
+            if (commStyle != null) {
+                commStyle.setValue(function.getOutputParameters().size() == 0 ? "one-way":"request-response");
+            }
 
         }
         super.okPressed();

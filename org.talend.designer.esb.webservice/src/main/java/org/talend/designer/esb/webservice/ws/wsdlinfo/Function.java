@@ -78,7 +78,7 @@ public class Function {
         outputParameters = new ArrayList<ParameterInfo>();
         List<ParameterInfo> outps = oper.getOutparameters();
         if ((outps == null) || (outps.size() == 0)) {
-            outputParameters.add(new ParameterInfo());
+            //outputParameters.add(new ParameterInfo());
         } else {
             for (ParameterInfo element : outps) {
                 getParaFullName(element);
