@@ -614,7 +614,7 @@ public class WebServiceUI extends AbstractWebService {
             } else {
                 funList = ws.getFunctionsAvailable(wsdlUrl);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             openErrorDialog(ERROR_GETTING_WSDL, e);
         }
         return funList;

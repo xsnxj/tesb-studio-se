@@ -407,13 +407,15 @@ public class ComponentBuilder {
 
             while (opIter.hasNext()) {
                 BindingOperation oper = (BindingOperation) opIter.next();
-                Vector operElems = findExtensibilityElement(oper.getExtensibilityElements(), "operation");
-                ExtensibilityElement operElem = (ExtensibilityElement) operElems.elementAt(0);
-                if (operElem != null && operElem instanceof SOAPOperation) {
-
-                    OperationInfo operationInfo = new OperationInfo(style);
-                    buildOperation(operationInfo, oper);
-                    operationInfos.add(operationInfo);
+                Vector<ExtensibilityElement> operElems = findExtensibilityElement(oper.getExtensibilityElements(), "operation");
+                for (ExtensibilityElement operElem : operElems) {
+//                    ExtensibilityElement operElem = (ExtensibilityElement) operElems.elementAt(0);
+                    if (operElem != null && operElem instanceof SOAPOperation) {
+    
+                        OperationInfo operationInfo = new OperationInfo(style);
+                        buildOperation(operationInfo, oper);
+                        operationInfos.add(operationInfo);
+                    }
                 }
             }
         }

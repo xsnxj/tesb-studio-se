@@ -33,9 +33,9 @@ public class WSDLDiscoveryHelper {
      * 
      * @param wsdlURI
      * @return
-     * @throws IOException 
+     * @throws Exception 
      */
-    public List<Function> getFunctionsAvailable(String wsdlURI, ServiceHelperConfiguration config) throws IOException {
+    public List<Function> getFunctionsAvailable(String wsdlURI, ServiceHelperConfiguration config) throws Exception {
         functionsAvailable = new ArrayList<Function>();
         wsdlURI = TalendTextUtils.removeQuotes(wsdlURI);
 
@@ -54,7 +54,7 @@ public class WSDLDiscoveryHelper {
         } catch (Exception e) {
             exceptionMessage = exceptionMessage + e.getMessage();
             ExceptionHandler.process(e);
-            throw new IOException(e.getMessage());
+            throw e;
         }
 
         if (!"".equals(exceptionMessage)) {
@@ -64,7 +64,7 @@ public class WSDLDiscoveryHelper {
         return functionsAvailable;
     }
 
-    public List<Function> getFunctionsAvailable(String wsdlURI) throws IOException {
+    public List<Function> getFunctionsAvailable(String wsdlURI) throws Exception {
         ServiceHelperConfiguration config = null;
         return getFunctionsAvailable(wsdlURI, config);
 
