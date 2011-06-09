@@ -153,6 +153,14 @@
 		<IMPORTS>
 			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.0.jar"
 				REQUIRED="true" />
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
 			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
