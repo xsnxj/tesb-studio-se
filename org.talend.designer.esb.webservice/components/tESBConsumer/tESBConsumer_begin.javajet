@@ -36,17 +36,7 @@ String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
 
 Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
-String slStrategy = "";
-String slStrategyDefault="Default";
-String slStrategyEvenDistribution="EvenDistribution";
-if (useSl) {
-	slStrategy = 
-	"true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY_DEFAULT__"))?slStrategyDefault:"";
-	if ("".equals(slStrategy)) {
-		slStrategy = 
-	"true".equals(ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY_EVEN_DISTRIBUTION__"))?slStrategyEvenDistribution:"";
-	}
-}
+String slStrategy = ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY__");
 
 Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
 %>
@@ -75,8 +65,6 @@ if (registry != null) {
 				put("useServiceActivityMonitor", <%=useSam%>);
 				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
-				
-				put("useServiceActivityMonitor", <%=useSam%>);
 			}};
 
 			public String getEndpointUri() {
