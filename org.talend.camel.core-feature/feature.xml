@@ -1038,15 +1038,13 @@
          id="org.talend.libraries.apache"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.dom4j-jaxen"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.commons"
@@ -1102,22 +1100,19 @@
          id="org.talend.libraries.apache.axis2"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.jackson"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.jdom"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.apache.commons.lang"
@@ -1135,6 +1130,13 @@
 
    <plugin
          id="org.eclipse.xsd"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.talend.designer.routines.camelprovider"
          download-size="0"
          install-size="0"
          version="0.0.0"

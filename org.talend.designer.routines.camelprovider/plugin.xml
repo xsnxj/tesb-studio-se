@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         point="org.talend.core.routines_provider">
+      <RoutinesProvider
+            class="org.talend.designer.routines.camelprovider.CamelRoutinesProviderCreator">
+      </RoutinesProvider>
+   </extension>
+   <extension 
+         point="org.talend.core.systemRoutineLibrary"> 
+      <libraryNeeded 
+            language="java" 
+            moduleName="camel-core-2.7.2.jar" 
+            routineName="CamelStat"></libraryNeeded> 
+    </extension> 
+
+</plugin>
