@@ -102,7 +102,7 @@ public class ServiceDiscoveryHelper {
 	            definition = newWSDLReader.readWSDL(configuration.createWSDLLocator(wsdlUri));
 	        }
         } catch (WSDLException e) {
-        	throw new WSDLException("Cannot parse cervice WSDL or WSDL is not accessible", wsdlUri, e);
+        	throw new WSDLException("Cannot parse service WSDL or WSDL is not accessible", wsdlUri, e);
         }
         schemaCollection = new XmlSchemaCollection();
 
