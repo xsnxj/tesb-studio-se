@@ -163,11 +163,9 @@ public class ComponentBuilder {
         Vector<XmlSchema> schemas = new Vector<XmlSchema>();
         org.w3c.dom.Element schemaElementt = null;
         Map importElement = null;
-        List includeElement = null;
         if (wsdlDefinition.getTypes() != null) {
-            Vector schemaExtElem = findExtensibilityElement(wsdlDefinition.getTypes().getExtensibilityElements(), "schema");
-            for (int i = 0; i < schemaExtElem.size(); i++) {
-                ExtensibilityElement schemaElement = (ExtensibilityElement) schemaExtElem.elementAt(i);
+            Collection<ExtensibilityElement> schemaExtElem = findExtensibilityElement(wsdlDefinition.getTypes().getExtensibilityElements(), "schema");
+            for (ExtensibilityElement schemaElement : schemaExtElem) {
                 if (schemaElement != null && schemaElement instanceof UnknownExtensibilityElement) {
                     schemaElementt = ((UnknownExtensibilityElement) schemaElement).getElement();
 
@@ -192,22 +190,9 @@ public class ComponentBuilder {
                     importElement = ((javax.wsdl.extensions.schema.Schema) schemaElement).getImports();
                     if (importElement != null && importElement.size() > 0) {
                         Iterator keyIterator = importElement.keySet().iterator();
-                        // while (keyIterator.hasNext()) {
-                        // String key = keyIterator.next().toString();
-                        // Vector importEle = (Vector) importElement.get(key);
-                        // for (int j = 0; j < importEle.size(); j++) {
-                        // com.ibm.wsdl.extensions.schema.SchemaImportImpl importValidate =
-                        // (com.ibm.wsdl.extensions.schema.SchemaImportImpl) importEle
-                        // .elementAt(j);
-                        // if (importValidate.getSchemaLocationURI() == null) {
-                        // importElement.remove(key);
-                        // }
-                        // }
-                        // }
                         if (importElement.size() > 0) {
                             isHaveImport = true;
                         }
-                        // validateImportUrlPath(importElement);
                     }
 
                     XmlSchema schema = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
@@ -311,13 +296,10 @@ public class ComponentBuilder {
         }
     }
 
-    private Vector findExtensibilityElement(List extensibilityElements, String elementType) {
-
-        Vector elements = new Vector();
+    private Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
+        List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
         if (extensibilityElements != null) {
-            Iterator iter = extensibilityElements.iterator();
-            while (iter.hasNext()) {
-                ExtensibilityElement elment = (ExtensibilityElement) iter.next();
+            for (ExtensibilityElement elment : extensibilityElements) {
                 if (elment.getElementType().getLocalPart().equalsIgnoreCase(elementType)) {
                     elements.add(elment);
                 }
@@ -375,11 +357,12 @@ public class ComponentBuilder {
             Iterator operIter = operations.iterator();
             while (operIter.hasNext()) {
                 OperationInfo operation = (OperationInfo) operIter.next();
-                Vector addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
-                ExtensibilityElement element = (ExtensibilityElement) addrElems.elementAt(0);
-                if (element != null && element instanceof SOAPAddress) {
-                    SOAPAddress soapAddr = (SOAPAddress) element;
-                    operation.setTargetURL(soapAddr.getLocationURI());
+                Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
+                for (ExtensibilityElement element : addrElems) {
+                    if (element != null && element instanceof SOAPAddress) {
+                        SOAPAddress soapAddr = (SOAPAddress) element;
+                        operation.setTargetURL(soapAddr.getLocationURI());
+                    }
                 }
                 value.addOperation(operation);
             }
@@ -388,32 +371,24 @@ public class ComponentBuilder {
     }
 
     private List buildOperations(Binding binding) {
-        List operationInfos = new ArrayList();
+        List<OperationInfo> operationInfos = new ArrayList<OperationInfo>();
 
-        List operations = binding.getBindingOperations();
+        List<BindingOperation> operations = binding.getBindingOperations();
 
         if (operations != null && !operations.isEmpty()) {
-
-            Vector soapBindingElems = findExtensibilityElement(binding.getExtensibilityElements(), "binding");
             String style = "document"; // default
-
-            ExtensibilityElement soapBindingElem = (ExtensibilityElement) soapBindingElems.elementAt(0);
-            if (soapBindingElem != null && soapBindingElem instanceof SOAPBinding) {
-                SOAPBinding soapBinding = (SOAPBinding) soapBindingElem;
-                style = soapBinding.getStyle();
+            for (ExtensibilityElement soapBindingElem : findExtensibilityElement(binding.getExtensibilityElements(), "binding")) {
+                if (soapBindingElem != null && soapBindingElem instanceof SOAPBinding) {
+                    SOAPBinding soapBinding = (SOAPBinding) soapBindingElem;
+                    style = soapBinding.getStyle();
+                }
             }
 
-            Iterator opIter = operations.iterator();
-
-            while (opIter.hasNext()) {
-                BindingOperation oper = (BindingOperation) opIter.next();
-                Vector<ExtensibilityElement> operElems = findExtensibilityElement(oper.getExtensibilityElements(), "operation");
-                for (ExtensibilityElement operElem : operElems) {
-//                    ExtensibilityElement operElem = (ExtensibilityElement) operElems.elementAt(0);
+            for (BindingOperation operation : operations) {
+                for (ExtensibilityElement operElem : findExtensibilityElement(operation.getExtensibilityElements(), "operation")) {
                     if (operElem != null && operElem instanceof SOAPOperation) {
-    
                         OperationInfo operationInfo = new OperationInfo(style);
-                        buildOperation(operationInfo, oper);
+                        buildOperation(operationInfo, operation);
                         operationInfos.add(operationInfo);
                     }
                 }
@@ -426,29 +401,27 @@ public class ComponentBuilder {
     private OperationInfo buildOperation(OperationInfo operationInfo, BindingOperation bindingOper) {
         Operation oper = bindingOper.getOperation();
         operationInfo.setTargetMethodName(oper.getName());
-        Vector operElems = findExtensibilityElement(bindingOper.getExtensibilityElements(), "operation");
-        ExtensibilityElement operElem = (ExtensibilityElement) operElems.elementAt(0);
-        if (operElem != null && operElem instanceof SOAPOperation) {
-            SOAPOperation soapOperation = (SOAPOperation) operElem;
-            operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
+        for (ExtensibilityElement operElem : findExtensibilityElement(bindingOper.getExtensibilityElements(), "operation")) {
+            if (operElem != null && operElem instanceof SOAPOperation) {
+                SOAPOperation soapOperation = (SOAPOperation) operElem;
+                operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
+            }
         }
         BindingInput bindingInput = bindingOper.getBindingInput();
-        BindingOutput bindingOutput = bindingOper.getBindingOutput();
-        Vector bodyElems = findExtensibilityElement(bindingInput.getExtensibilityElements(), "body");
-        ExtensibilityElement bodyElem = (ExtensibilityElement) bodyElems.elementAt(0);
-
-        if (bodyElem != null && bodyElem instanceof SOAPBody) {
-            SOAPBody soapBody = (SOAPBody) bodyElem;
-            List styles = soapBody.getEncodingStyles();
-            String encodingStyle = null;
-            if (styles != null) {
-                encodingStyle = styles.get(0).toString();
+        for (ExtensibilityElement bodyElem : findExtensibilityElement(bindingInput.getExtensibilityElements(), "body")) {
+            if (bodyElem != null && bodyElem instanceof SOAPBody) {
+                SOAPBody soapBody = (SOAPBody) bodyElem;
+                List styles = soapBody.getEncodingStyles();
+                String encodingStyle = null;
+                if (styles != null) {
+                    encodingStyle = styles.get(0).toString();
+                }
+                if (encodingStyle == null) {
+                    encodingStyle = DEFAULT_SOAP_ENCODING_STYLE;
+                }
+                operationInfo.setEncodingStyle(encodingStyle.toString());
+                operationInfo.setTargetObjectURI(soapBody.getNamespaceURI());
             }
-            if (encodingStyle == null) {
-                encodingStyle = DEFAULT_SOAP_ENCODING_STYLE;
-            }
-            operationInfo.setEncodingStyle(encodingStyle.toString());
-            operationInfo.setTargetObjectURI(soapBody.getNamespaceURI());
         }
 
         Input inDef = oper.getInput();
@@ -499,27 +472,11 @@ public class ComponentBuilder {
             } else {
                 operationInfo.addOutparameter(parameterRoot);
             }
-            // String targetnamespace = "";
-            // ComplexType complexType = null;
-
-            // for (int i = 0; i < wsdlTypes.size(); i++) {
-            // xmlSchema = (XmlSchema) (wsdlTypes.elementAt(i));
-            // if (xmlSchema == null) {
-            // continue;
-            // }
-            // if (xmlSchema != null && xmlSchema.getTargetNamespace() != null) {
-            // targetnamespace = xmlSchema.getTargetNamespace();
-            // operationInfo.setNamespaceURI(targetnamespace);
-            // }
             if (allXmlSchemaElement.size() > 0) {
-
                 buildParameterFromElements(partElement, parameterRoot, manner);
-
             } else if (allXmlSchemaType.size() > 0) {
-
                 buileParameterFromTypes(partElement, parameterRoot, manner);
             }
-            //operationInfo.setWsdltype(wsdlTypes);
         }
     }
 

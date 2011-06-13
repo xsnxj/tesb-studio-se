@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.esb.webservice.ui;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +34,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -383,7 +385,6 @@ public class WebServiceUI extends AbstractWebService {
                     connection.setWSDL(URLValue);
             }
         });
-
         // add a listener for ctrl+space.
         TalendProposalUtils.installOn(wsdlField.getTextControl(), connector.getProcess(), connector);
         String wsdlUrl = (String) connector.getElementParameter(ENDPOINT).getValue(); //$NON-NLS-1$
@@ -447,64 +448,84 @@ public class WebServiceUI extends AbstractWebService {
         return wsdlComposite;
     }
 
+    private void refresh() {
+        final Job job = new Job("t") {
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                // monitor.setCanceled(true);
+                monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
+                getDataFromNet();
+                monitor.done();
+                return Status.OK_STATUS;
+            }
+        };
+        job.setSystem(true);
+        job.schedule();
+        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay()
+                .getActiveShell().getShell());
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+
+            public void run(final IProgressMonitor monitor) {
+                monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                boolean f = true;
+                while (f) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (monitor.isCanceled()) {
+                        job.done(Status.OK_STATUS);
+                        job.cancel();
+                    }
+                    if (job.getResult() != null && job.getResult().isOK()) {
+                        monitor.done();
+                        f = false;
+                    }
+                }
+            }
+        };
+
+        try {
+            progressDialog.run(true, true, runnable);
+        } catch (InvocationTargetException e1) {
+            ExceptionHandler.process(e1);
+        } catch (InterruptedException e1) {
+            ExceptionHandler.process(e1);
+        } catch (WebServiceCancelException e1) {
+            return;
+        }
+        if (portListTable.getItemCount() > 1) {
+            portListTable.deselectAll();
+            setOk(false);
+        }
+        if (listTable.getItemCount() == 1) {
+            selectFirstFunction();
+        }
+    }
+
+
+    
     private void addListenerForWSDLCom() {
+        wsdlField.getTextControl().addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent event) {
+                switch (event.keyCode) {
+                case 13:
+                case SWT.KEYPAD_CR:
+                    refresh();
+                }
+                
+            }
+
+            public void keyReleased(KeyEvent event) {
+            }
+        });
+
         refreshbut.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
-                final Job job = new Job("t") {
-
-                    @Override
-                    protected IStatus run(IProgressMonitor monitor) {
-                        // monitor.setCanceled(true);
-                        monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
-                        getDataFromNet();
-                        monitor.done();
-                        return Status.OK_STATUS;
-                    }
-                };
-                job.setSystem(true);
-                job.schedule();
-                ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay()
-                        .getActiveShell().getShell());
-                IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
-                    public void run(final IProgressMonitor monitor) {
-                        monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-                        boolean f = true;
-                        while (f) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            if (monitor.isCanceled()) {
-                                job.done(Status.OK_STATUS);
-                                job.cancel();
-                            }
-                            if (job.getResult() != null && job.getResult().isOK()) {
-                                monitor.done();
-                                f = false;
-                            }
-                        }
-                    }
-                };
-
-                try {
-                    progressDialog.run(true, true, runnable);
-                } catch (InvocationTargetException e1) {
-                    ExceptionHandler.process(e1);
-                } catch (InterruptedException e1) {
-                    ExceptionHandler.process(e1);
-                } catch (WebServiceCancelException e1) {
-                    return;
-                }
-                if (portListTable.getItemCount() > 1) {
-                    portListTable.deselectAll();
-                    setOk(false);
-                }
-                if (listTable.getItemCount() == 1) {
-                    selectFirstFunction();
-                }
+                refresh();
             }
 
         });
