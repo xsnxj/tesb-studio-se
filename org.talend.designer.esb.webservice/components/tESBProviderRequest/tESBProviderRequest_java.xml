@@ -50,13 +50,13 @@
 				SHOW="true" NUM_ROW="200">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER FIELD="CHECK"
 				NAME="SERVICEACTIVITYMONITOR"
 				DYNAMIC_SETTINGS="true" GROUP="ESB"
 				SHOW="true" NUM_ROW="220">
 			<DEFAULT>false</DEFAULT>
-		</PARAMETER>		
+		</PARAMETER>
 
 		<PARAMETER FIELD="CHECK"
 				NAME="KEEPLISTENING"
@@ -66,17 +66,17 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="80" />
-		
+
 		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
 				SHOW="false" REPOSITORY_VALUE="METHOD">
 			<DEFAULT>invoke</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
 				SHOW="false"  REPOSITORY_VALUE="ENDPOINT">
 			<DEFAULT>"http://127.0.0.1:8088/esb/provider"</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
 				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
 			<DEFAULT>http://talend.org/esb/service/job</DEFAULT>
@@ -93,7 +93,7 @@
 				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
 			<DEFAULT>TalendJobAsWebService</DEFAULT>
 		</PARAMETER>
-		
+
 <!-- ############ ESB end  -->
 	</PARAMETERS>
 
@@ -103,7 +103,7 @@
 					MODULE="commons-logging-1.1.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.0.jar"
+					MODULE="cxf-bundle-2.4.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="dom4j"
 					MODULE="dom4j-1.6.1.jar"
@@ -173,19 +173,19 @@
 					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-continuation"
-					MODULE="jetty-continuation-7.3.1.v20110307.jar"
+					MODULE="jetty-continuation-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-http"
-					MODULE="jetty-http-7.3.1.v20110307.jar"
+					MODULE="jetty-http-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-io"
-					MODULE="jetty-io-7.3.1.v20110307.jar"
+					MODULE="jetty-io-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-server"
-					MODULE="jetty-server-7.3.1.v20110307.jar"
+					MODULE="jetty-server-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-util"
-					MODULE="jetty-util-7.3.1.v20110307.jar"
+					MODULE="jetty-util-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 		</IMPORTS>
 	</CODEGENERATION>
