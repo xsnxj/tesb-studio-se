@@ -87,11 +87,11 @@
 		</PARAMETER>
 		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
 				SHOW="false" REPOSITORY_VALUE="PORT_NS">
-			<DEFAULT></DEFAULT>
+			<DEFAULT>http://talend.org/esb/service/job</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
 				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
-			<DEFAULT></DEFAULT>
+			<DEFAULT>TalendJobAsWebService</DEFAULT>
 		</PARAMETER>
 		
 <!-- ############ ESB end  -->
