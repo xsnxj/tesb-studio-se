@@ -237,7 +237,7 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="true"/>
 
    <plugin
          id="org.apache.log4j"
@@ -356,7 +356,7 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="true"/>
 
    <plugin
          id="javax.mail.glassfish"
@@ -685,7 +685,7 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="true"/>
 
    <plugin
          id="org.eclipse.ecf"
