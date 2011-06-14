@@ -76,4 +76,20 @@
                class="org.talend.rcp.branding.camel.CamelBrandingService"
                serviceId="org.talend.core.ui.branding.IBrandingService"/>
       </extension>
+         <extension
+               point="org.eclipse.ui.perspectives">
+            <perspective
+                  class="org.talend.rcp.perspective.Perspective"
+                  icon="icons/di_perspective_16x16.png"
+                  id="org.talend.rcp.perspective"
+                  name="Service Builder">
+            </perspective>
+         </extension>
+         <extension
+               point="org.talend.core.talendperspectives">
+            <TalendPerspective
+                  refPerspectiveId="org.talend.rcp.perspective"
+                  talendPerspectiveId="org.talend.rcp.DesignPerspective">
+            </TalendPerspective>
+         </extension>
 </plugin>
