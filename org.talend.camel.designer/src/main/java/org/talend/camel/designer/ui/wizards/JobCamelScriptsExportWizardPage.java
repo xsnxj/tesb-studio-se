@@ -110,6 +110,7 @@ import org.talend.repository.ui.utils.ZipToFile;
 import org.talend.repository.ui.wizards.exportjob.JavaJobExportReArchieveCreator;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsJobJavaScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsTemporaryOptionsKeeper;
 import org.talend.repository.utils.JobVersionUtils;
@@ -1296,6 +1297,8 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
         }
         if (manager instanceof PetalsJobJavaScriptsManager) {
             setTopFolderForPetals();
+        } else if (manager instanceof JobJavaScriptOSGIForESBManager) {
+            // do nothing.
         } else {
             if (isNotFirstTime) {
                 setTopFolder(resourcesToExport, this.originalRootFolderName);
