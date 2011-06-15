@@ -66,6 +66,7 @@ public class CamelBrandingService extends AbstractTalendBrandingService {
     public IBrandingConfiguration getBrandingConfiguration() {
         if (brandingConfigure == null) {
             brandingConfigure = new CamelBrandingConfiguration();
+            brandingConfigure.setHelper(new CamelActionBarHelper());
         }
         return brandingConfigure;
     }

@@ -28,7 +28,7 @@
                   folder="code/beans"
                   isResouce="true"
                   label="Beans"
-                  parentNodeType="Routines"
+                  parentNodeType="CODE"
                   products="CAMEL"
                   type="BEANS">
             </repositoryNode>
@@ -125,5 +125,26 @@
       <CreationToolAction
             class="org.talend.camel.designer.ui.bean.CreateCamelBean">
       </CreationToolAction>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.talend.camel.designer.CamelPerspectiveFactory"
+            icon="icons/appli_16x16.png"
+            id="org.talend.camel.perspective"
+            name="Camel Route Builder">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.talend.camel.perspective">
+         <actionSet
+               id="org.talend.repository.actionSet">
+         </actionSet>
+         <actionSet
+               id="org.talend.repository.localprovider.actionSet">
+         </actionSet>
+      </perspectiveExtension>
    </extension>
 </plugin>

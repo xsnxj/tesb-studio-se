@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.rcp.branding.camel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,26 +19,61 @@ import java.util.Map;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
-import org.talend.core.GlobalServiceRegister;
 import org.talend.core.language.ECodeLanguage;
-import org.talend.core.service.ICorePerlService;
-import org.talend.core.ui.branding.IActionBarHelper;
+import org.talend.core.ui.branding.DefaultBrandingConfiguration;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.repository.model.IRepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
  */
-public class CamelBrandingConfiguration implements IBrandingConfiguration {
+public class CamelBrandingConfiguration extends DefaultBrandingConfiguration {
 
-    String ROUTES = "Routes";
+    public List<IRepositoryNode> getHiddenRepositoryCategory(IRepositoryNode nodeParent, String type) {
+        List<IRepositoryNode> nodes = super.getHiddenRepositoryCategory(nodeParent, type);
 
-    public List<IRepositoryNode> getHiddenRepositoryCategory(IRepositoryNode parent) {
-
-        List<IRepositoryNode> nodes = new ArrayList<IRepositoryNode>();
+        // if ("DI".equals(type)) {
+        //
+        // } else {
+        // RepositoryNode parent = (RepositoryNode) nodeParent;
+        //
+        // // 1. Business process
+        // RepositoryNode businessProcessNode = new RepositoryNode(null, parent, ENodeType.SYSTEM_FOLDER);
+        // businessProcessNode.setProperties(EProperties.LABEL, ERepositoryObjectType.BUSINESS_PROCESS);
+        // businessProcessNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.BUSINESS_PROCESS);
+        // nodes.add(businessProcessNode);
+        //
+        // // 2. Process
+        // RepositoryNode processNode = new RepositoryNode(null, parent, ENodeType.SYSTEM_FOLDER);
+        // processNode.setProperties(EProperties.LABEL, ERepositoryObjectType.PROCESS);
+        // processNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.PROCESS);
+        // nodes.add(processNode);
+        //
+        // // 4.1. Routines
+        // RepositoryNode routineNode = new RepositoryNode(null, parent, ENodeType.SYSTEM_FOLDER);
+        // routineNode.setProperties(EProperties.LABEL, ERepositoryObjectType.ROUTINES);
+        // routineNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.ROUTINES);
+        // nodes.add(routineNode);
+        //
+        // // 5. Sql patterns
+        // RepositoryNode sqlPatternNode = new RepositoryNode(null, parent, ENodeType.SYSTEM_FOLDER);
+        // sqlPatternNode.setProperties(EProperties.LABEL, ERepositoryObjectType.SQLPATTERNS);
+        // sqlPatternNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SQLPATTERNS);
+        // nodes.add(sqlPatternNode);
+        //
+        // // 6. Documentation
+        // RepositoryNode docNode = new RepositoryNode(null, parent, ENodeType.SYSTEM_FOLDER);
+        // docNode.setProperties(EProperties.LABEL, ERepositoryObjectType.DOCUMENTATION);
+        // docNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.DOCUMENTATION);
+        // nodes.add(docNode);
+        //
+        // // 7. Metadata
+        // RepositoryNode metadataNode = new RepositoryNode(null, parent, ENodeType.STABLE_SYSTEM_FOLDER);
+        // metadataNode.setProperties(EProperties.LABEL, ERepositoryObjectType.METADATA);
+        // metadataNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.METADATA);
+        // nodes.add(metadataNode);
+        // }
 
         return nodes;
     }
@@ -64,61 +98,6 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
     /*
      * (non-Jsdoc)
      * 
-     * @see org.talend.core.ui.branding.IBrandingConfiguration#initPerspective(org.eclipse.ui.IPageLayout)
-     */
-    public void initPerspective(IPageLayout layout) {
-        String componentSettingViewerId = "org.talend.designer.core.ui.views.properties.ComponentSettingsView";//$NON-NLS-1$
-        String navigatorId = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
-        String outlineId = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
-        String codeId = "org.talend.designer.core.codeView"; //$NON-NLS-1$
-        String repositoryId = "org.talend.repository.views.repository"; //$NON-NLS-1$
-
-        String runProcessViewId = "org.talend.designer.runprocess.ui.views.processview"; //$NON-NLS-1$
-        String problemsViewId = "org.talend.designer.core.ui.views.ProblemsView"; //$NON-NLS-1$
-        //String modulesViewId = "org.talend.designer.codegen.perlmodule.ModulesView"; //$NON-NLS-1$
-        // String ecosystemViewId = "org.talend.designer.components.ecosystem.ui.views.EcosystemView"; //$NON-NLS-1$
-        //String schedulerViewId = "org.talend.scheduler.views.Scheduler"; //$NON-NLS-1$
-        String contextsViewId = "org.talend.designer.core.ui.views.ContextsView"; //$NON-NLS-1$
-        String gefPaletteViewId = "org.eclipse.gef.ui.palette_view"; //$NON-NLS-1$
-        String jobSettingsViewId = "org.talend.designer.core.ui.views.jobsettings.JobSettingsView"; //$NON-NLS-1$
-        // String jobHierarchyViewId = "org.talend.designer.core.ui.hierarchy.JobHierarchyViewPart"; //$NON-NLS-1$
-
-        // leftTopLayout
-        IFolderLayout leftTopLayout = layout.createFolder("navigatorLayout", IPageLayout.LEFT, new Float(0.3), //$NON-NLS-1$
-                IPageLayout.ID_EDITOR_AREA);
-        leftTopLayout.addView(repositoryId);
-        leftTopLayout.addView(navigatorId);
-
-        // leftBottomLayout
-        IFolderLayout leftBottomLayout = layout.createFolder("outlineCodeLayout", IPageLayout.BOTTOM, new Float(0.6), //$NON-NLS-1$
-                repositoryId);
-        leftBottomLayout.addView(outlineId);
-        leftBottomLayout.addView(codeId);
-
-        IFolderLayout rightTopLayout = layout.createFolder("paletteLayout", IPageLayout.RIGHT, new Float(0.8), //$NON-NLS-1$
-                IPageLayout.ID_EDITOR_AREA);
-        rightTopLayout.addView(gefPaletteViewId);
-
-        // bottomLayout
-        IFolderLayout bottomLayout = layout.createFolder("bottomLayout", IPageLayout.BOTTOM, new Float(0.6), //$NON-NLS-1$
-                IPageLayout.ID_EDITOR_AREA);
-        // bottomLayout.addView(propertyId);
-        bottomLayout.addView(jobSettingsViewId);
-        bottomLayout.addView(contextsViewId);
-        bottomLayout.addView(componentSettingViewerId);
-
-        bottomLayout.addView(runProcessViewId);
-        bottomLayout.addView(problemsViewId);
-        // bottomLayout.addView(modulesViewId);
-        // bottomLayout.addView(ecosystemViewId);
-        // bottomLayout.addView(schedulerViewId);
-        // bottomLayout.addView(jobHierarchyViewId);
-        bottomLayout.addPlaceholder("*");
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
      * @see org.talend.core.ui.branding.IBrandingConfiguration#getAvailableComponents()
      */
     public String[] getAvailableComponents() {
@@ -128,34 +107,10 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
     /*
      * (non-Jsdoc)
      * 
-     * @see org.talend.core.ui.branding.IBrandingConfiguration#setHelper(org.talend.core.ui.branding.IActionBarHelper)
-     */
-    public void setHelper(IActionBarHelper helper) {
-
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.core.ui.branding.IBrandingConfiguration#getHelper()
-     */
-    public IActionBarHelper getHelper() {
-        return null;
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
      * @see org.talend.core.ui.branding.IBrandingConfiguration#getAvailableLanguages()
      */
     public String[] getAvailableLanguages() {
-        String[] languages;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(ICorePerlService.class)) {
-            languages = new String[] { ECodeLanguage.JAVA.getName(), ECodeLanguage.PERL.getName() };
-        } else {
-            languages = new String[] { ECodeLanguage.JAVA.getName() };
-        }
-        return languages;
+        return new String[] { ECodeLanguage.JAVA.getName() };
     }
 
     /*
@@ -251,15 +206,6 @@ public class CamelBrandingConfiguration implements IBrandingConfiguration {
      */
     public void setUseProductRegistration(boolean useProductRegistration) {
 
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.core.ui.branding.IBrandingConfiguration#getJobDesignName()
-     */
-    public String getJobDesignName() {
-        return ROUTES;
     }
 
 }

@@ -13,7 +13,6 @@
 package org.talend.designer.camel.components.localprovider;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -23,10 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.i18n.Messages;
 import org.talend.core.model.components.AbstractComponentsProvider;
 import org.talend.core.model.components.IComponentsFactory;
 import org.talend.core.ui.branding.IBrandingService;
@@ -59,47 +55,44 @@ public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
         return null;
     }
 
-    public void preComponentsLoad() throws IOException {
-        File installationFolder = super.getInstallationFolder();
-        IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
-                IBrandingService.class);
-        if (breaningService.isPoweredOnlyCamel()) {
-            installationFolder = getInstallationFolder();
-        }
-        FilesUtils.createFoldersIfNotExists(installationFolder.getAbsolutePath(), false);
+    // public void preComponentsLoad() throws IOException {
+    // File installationFolder = getInstallationFolder();
+    //
+    // FilesUtils.createFoldersIfNotExists(installationFolder.getAbsolutePath(), false);
+    //
+    // File externalComponentsLocation = getExternalComponentsLocation();
+    // if (externalComponentsLocation != null) {
+    // if (externalComponentsLocation.exists()) {
+    // try {
+    // FileFilter ff = new FileFilter() {
+    //
+    // public boolean accept(File pathname) {
+    // if (pathname.getName().equals(".svn")) {
+    // return false;
+    // }
+    // return true;
+    // }
+    //
+    // };
+    // FilesUtils.copyFolder(externalComponentsLocation, installationFolder, false, ff, null, true, true);
+    // } catch (IOException e) {
+    // ExceptionHandler.process(e);
+    // }
+    // } else {
+    // logger.warn(Messages
+    //                        .getString("AbstractComponentsProvider.folderNotExist", externalComponentsLocation.toString())); //$NON-NLS-1$
+    // }
+    // }
+    // }
 
-        File externalComponentsLocation = getExternalComponentsLocation();
-        if (externalComponentsLocation != null) {
-            if (externalComponentsLocation.exists()) {
-                try {
-                    FileFilter ff = new FileFilter() {
-
-                        public boolean accept(File pathname) {
-                            if (pathname.getName().equals(".svn")) {
-                                return false;
-                            }
-                            return true;
-                        }
-
-                    };
-                    FilesUtils.copyFolder(externalComponentsLocation, installationFolder, false, ff, null, true, true);
-                } catch (IOException e) {
-                    ExceptionHandler.process(e);
-                }
-            } else {
-                logger.warn(Messages
-                        .getString("AbstractComponentsProvider.folderNotExist", externalComponentsLocation.toString())); //$NON-NLS-1$
-            }
-        }
-    }
-
+    @Override
     public File getInstallationFolder() throws IOException {
-        File installationFolder = null;
-        IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
+        IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
                 IBrandingService.class);
-        if (breaningService.isPoweredOnlyCamel()) {
+        if (brandingService.isPoweredOnlyCamel()) {
             Bundle b = Platform.getBundle(IComponentsFactory.CAMEL_COMPONENTS_LOCATION);
 
+            File installationFolder = null;
             IPath nullPath = new Path(""); //$NON-NLS-1$
             URL url = FileLocator.find(b, nullPath, null);
             URL fileUrl = FileLocator.toFileURL(url);
@@ -109,18 +102,21 @@ public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
             // path = path.append(ComponentUtilities.getExtFolder(getFolderName()));
 
             installationFolder = new File(bundleFolder, path.toOSString());
+
+            return installationFolder;
         } else {
-            installationFolder = super.getInstallationFolder();
+            return super.getInstallationFolder();
         }
-        return installationFolder;
     }
 
+    @Override
     public String getComponentsLocation() {
-        IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
+        IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
                 IBrandingService.class);
-        if (breaningService.isPoweredOnlyCamel()) {
+        if (brandingService.isPoweredOnlyCamel()) {
             return new Path(IComponentsFactory.COMPONENTS_INNER_FOLDER).toString();
+        } else {
+            return super.getComponentsLocation();
         }
-        return super.getComponentsLocation();
     }
 }

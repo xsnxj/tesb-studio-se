@@ -87,7 +87,7 @@
    </plugins>
 
    <features>
-      <feature id="org.talend.rcp.branding.esbstandard_feature"/>
+      <feature id="org.talend.rcp.branding.esbstandard_feature" version="2.2.0.qualifier"/>
    </features>
 
 
