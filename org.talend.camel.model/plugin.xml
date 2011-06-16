@@ -4,12 +4,7 @@
    <extension
          point="org.eclipse.emf.ecore.generated_package">
       <package
-            class="org.talend.camel.designer.core.model.utils.emf.talendfile.CamelFilePackage"
-            genModel="model/CamelFile.genmodel"
-            uri="platform:/resource/org.talend.model/model/CamelFile.xsd">
-      </package>
-      <package
-            class="org.talend.camel.core.model.properties.CamelPropertiesPackage"
+            class="org.talend.camel.core.model.camelProperties.CamelPropertiesPackage"
             genModel="model/CamelProperties.genmodel"
             uri="http://www.talend.org/CamelProperties">
       </package>
