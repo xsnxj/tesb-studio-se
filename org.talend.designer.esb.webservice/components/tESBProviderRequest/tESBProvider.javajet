@@ -202,12 +202,23 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
  * web service provider implementation
  */
 <%
+	String projectName = codeGenArgument.getCurrentProjectName();
+	String processName = node.getProcess().getName();
+
 	String methodName = ElementParameterParser.getValue(node,"__METHOD__");
 	methodName = methodName.split("\\(")[0];
 	String serviceNS = ElementParameterParser.getValue(node,"__SERVICE_NS__");
+	String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
+	if ("--DEFAULT--".equals(serviceName)) {
+	 	serviceName = projectName+"_"+processName;
+ 	}
+	String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
+	if ("--DEFAULT--".equals(portName)) {
+		portName = serviceName+"_Port";
+	}
 	%>
 @javax.jws.WebService(
-		name = "<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>",
+		name = "<%=serviceName%>",
 		targetNamespace = "<%=serviceNS%>"
 	)
 @javax.jws.soap.SOAPBinding(
@@ -329,16 +340,12 @@ class HandlerThread_<%=cid%> extends Thread {
 	private final String TNS = ESBProvider_<%=cid%>.class.getAnnotation(
 			javax.jws.WebService.class).targetNamespace();
 
-	private final String serviceName;
-
 	private javax.xml.ws.Endpoint endpoint;
 	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
 
 	public HandlerThread_<%=cid%>(
-			QueuedMessageHandlerImpl<org.dom4j.Document> handler,
-			String serviceName) {
+			QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
 		this.handler = handler;
-		this.serviceName = serviceName;
 	}
 
 	public void run() {
@@ -348,9 +355,9 @@ class HandlerThread_<%=cid%> extends Thread {
 		@SuppressWarnings("serial")
 		java.util.Map<String, Object> map = new java.util.HashMap<String, Object>() {{
 			put(javax.xml.ws.Endpoint.WSDL_SERVICE,
-					new javax.xml.namespace.QName(TNS, serviceName));
+					new javax.xml.namespace.QName(TNS, "<%=serviceName%>"));
 			put(javax.xml.ws.Endpoint.WSDL_PORT,
-					new javax.xml.namespace.QName(TNS, serviceName + "SoapBinding"));
+					new javax.xml.namespace.QName(TNS, "<%=portName%>"));
 		}};
 		endpoint.setProperties(map);
 		endpoint.publish(endpointUrl);

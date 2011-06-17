@@ -37,6 +37,16 @@ if (actAsProvider || actAsConsumer) { %>
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
 	INode node = process.getNodesOfType("tESBProviderRequest").get(0);
+	
+	String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
+    if ("--DEFAULT--".equals(serviceName)) {
+        serviceName = projectName+"_"+processName;
+    }
+    String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
+    if ("--DEFAULT--".equals(portName)) {
+        portName = serviceName+"_Port";
+    }
+	
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
@@ -52,9 +62,9 @@ if (actAsProvider || actAsConsumer) { %>
 				//
 				put("dataFormat", "PAYLOAD");
 				// static
-				put("portName", "{<%=ElementParameterParser.getValue(node, "__PORT_NS__")%>}<%=ElementParameterParser.getValue(node, "__PORT_NAME__")%>");
+				put("portName", "{<%=ElementParameterParser.getValue(node, "__PORT_NS__")%>}<%=portName%>");
 				// local part is: projectName + "_" + processName
-				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>");
+				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=serviceName%>");
 				// static
 				<%
 				String methodName = ElementParameterParser.getValue(node,"__METHOD__");
