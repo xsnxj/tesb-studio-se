@@ -26,7 +26,7 @@
 		final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
 			new QueuedMessageHandlerImpl<org.dom4j.Document>(); 
 		handlerThread_<%=cid%> =
-			new HandlerThread_<%=cid%>(handler); 
+			new HandlerThread_<%=cid%>(handler); //
 		handlerThread_<%=cid%>.start();
 		providerCallback = handler;
 	} else {

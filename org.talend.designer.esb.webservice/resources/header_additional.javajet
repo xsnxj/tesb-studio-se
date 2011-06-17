@@ -44,7 +44,7 @@ if (actAsProvider || actAsConsumer) { %>
     }
     String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
     if ("--DEFAULT--".equals(portName)) {
-        portName = serviceName+"_Port";
+        portName = serviceName+"_Port"; 
     }
 	
 
@@ -63,7 +63,7 @@ if (actAsProvider || actAsConsumer) { %>
 				put("dataFormat", "PAYLOAD");
 				// static
 				put("portName", "{<%=ElementParameterParser.getValue(node, "__PORT_NS__")%>}<%=portName%>");
-				// local part is: projectName + "_" + processName
+				// default local part is: projectName + "_" + processName
 				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=serviceName%>");
 				// static
 				<%

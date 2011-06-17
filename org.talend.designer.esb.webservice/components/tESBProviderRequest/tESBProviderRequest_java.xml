@@ -103,7 +103,7 @@
 					MODULE="commons-logging-1.1.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.0.jar"
+					MODULE="cxf-bundle-2.4.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="dom4j"
 					MODULE="dom4j-1.6.1.jar"
@@ -173,19 +173,19 @@
 					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-continuation"
-					MODULE="jetty-continuation-7.3.1.v20110307.jar"
+					MODULE="jetty-continuation-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-http"
-					MODULE="jetty-http-7.3.1.v20110307.jar"
+					MODULE="jetty-http-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-io"
-					MODULE="jetty-io-7.3.1.v20110307.jar"
+					MODULE="jetty-io-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-server"
-					MODULE="jetty-server-7.3.1.v20110307.jar"
+					MODULE="jetty-server-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-util"
-					MODULE="jetty-util-7.3.1.v20110307.jar"
+					MODULE="jetty-util-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
 		</IMPORTS>
 	</CODEGENERATION>

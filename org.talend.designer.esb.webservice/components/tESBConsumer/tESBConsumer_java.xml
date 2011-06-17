@@ -286,7 +286,7 @@
 					REQUIRED="true"/>
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.0.jar"
+					MODULE="cxf-bundle-2.4.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="neethi"
 					MODULE="neethi-3.0.0.jar"

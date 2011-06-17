@@ -357,7 +357,7 @@ class HandlerThread_<%=cid%> extends Thread {
 			put(javax.xml.ws.Endpoint.WSDL_SERVICE,
 					new javax.xml.namespace.QName(TNS, "<%=serviceName%>"));
 			put(javax.xml.ws.Endpoint.WSDL_PORT,
-					new javax.xml.namespace.QName(TNS, "<%=portName%>"));
+					new javax.xml.namespace.QName(TNS, "<%=portName%>")); //
 		}};
 		endpoint.setProperties(map);
 		endpoint.publish(endpointUrl);
