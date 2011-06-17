@@ -40,7 +40,7 @@ import org.talend.repository.ui.wizards.exportjob.PerlJobScriptsExportWizardPage
 /**
  * Job scripts export wizard. <br/>
  * 
- * $Id: JobScriptsExportWizard.java 1 2006-12-13 下午03:13:18 bqian
+ * $Id: JobScriptsExportWizard.java 1 2006-12-13 ä¸‹å�ˆ03:13:18 bqian
  * 
  */
 public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard {
@@ -84,7 +84,9 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
             section.put(JavaJobScriptsExportWSWizardPage.STORE_WSDD_ID, true);
             section.put(JavaJobScriptsExportWSWizardPage.STORE_WSDL_ID, true);
             section.put(JavaJobScriptsExportWSWizardPage.STORE_SOURCE_ID, true);
-            section.put(JavaJobScriptsExportWSWizardPage.STORE_EXPORTTYPE_ID, JavaJobScriptsExportWSWizardPage.EXPORTTYPE_ROUTE);
+            // done in the wizard page
+            // section.put(JavaJobScriptsExportWSWizardPage.STORE_EXPORTTYPE_ID,
+            // JavaJobScriptsExportWSWizardPage.JobExportType.OSGI.label);
             // section.put(JobScriptsExportWizardPage.STORE_GENERATECODE_ID, true);
         }
         setDialogSettings(section);

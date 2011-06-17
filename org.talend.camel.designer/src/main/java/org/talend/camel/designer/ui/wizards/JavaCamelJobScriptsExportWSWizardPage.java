@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -60,6 +61,7 @@ import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -179,6 +181,33 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         return EXPORTTYPE_POJO;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.WizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
+     */
+    @Override
+    public void setWizard(IWizard newWizard) {
+        super.setWizard(newWizard);
+        initialiseDefaultDialogSettings();
+    }
+
+    /**
+     * this set default dialog settings if none already exists.
+     */
+    private void initialiseDefaultDialogSettings() {
+        IDialogSettings dialogSettings = getDialogSettings();
+        if (dialogSettings != null) {
+            // set default export type according to system properties
+            String exportType = dialogSettings.get(STORE_EXPORTTYPE_ID);
+            String defaultExportType = System.getProperty("talend.export.route.default.type"); //$NON-NLS-1$
+            if ((exportType == null || exportType.equals("")) && defaultExportType != null && !defaultExportType.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+                dialogSettings.put(STORE_EXPORTTYPE_ID,
+                        JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(defaultExportType).label);
+            }
+        }// else ignors it
+    }
+
     @Override
     public void createControl(Composite parent) {
 
@@ -254,13 +283,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         gd.horizontalSpan = 1;
         exportTypeCombo.setLayoutData(gd);
 
-        exportTypeCombo.add(EXPORTTYPE_POJO);
-        exportTypeCombo.add(EXPORTTYPE_WSWAR);
-        exportTypeCombo.add(EXPORTTYPE_WSZIP);
-        exportTypeCombo.add(EXPORTTYPE_JBOSSESB);
-        exportTypeCombo.add(EXPORTTYPE_PETALSESB);
-        exportTypeCombo.add(EXPORTTYPE_OSGI);
-        // exportTypeCombo.add("JBI (JSR 208)");
+        for (JavaJobScriptsExportWSWizardPage.JobExportType exportType : JavaJobScriptsExportWSWizardPage.JobExportType.values()) {
+            if (!Boolean.getBoolean("talend.export.route.2." + exportType.toString() + ".hide")) {
+                exportTypeCombo.add(exportType.label);
+            }
+        }
 
         exportTypeCombo.setText(getCurrentExportType());
         if (exportTypeFixed != null) {
@@ -329,7 +356,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     public JobScriptsManager createJobScriptsManager() {
         ECodeLanguage language = LanguageManager.getCurrentLanguage();
 
-        return JobScriptsManagerFactory.getInstance().createManagerInstance(language, getCurrentExportType());
+        return JobScriptsManagerFactory.getInstance().createManagerInstance(language,
+                JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(getCurrentExportType()));
     }
 
     @Override
