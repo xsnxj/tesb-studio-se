@@ -20,17 +20,17 @@
 <%@ include file="tESBProvider.javajet" %>
 
 //*** external processor(s) initialization
-	ESBProviderCallback providerCallback;
-	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null; 
+	ESBProviderCallbackTalendJobInner providerCallback;
+	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
 	if (null == callback) {
 		final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
-			new QueuedMessageHandlerImpl<org.dom4j.Document>(); 
+			new QueuedMessageHandlerImpl<org.dom4j.Document>();
 		handlerThread_<%=cid%> =
 			new HandlerThread_<%=cid%>(handler); //
 		handlerThread_<%=cid%>.start();
-		providerCallback = handler;
+		providerCallback = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler);
 	} else {
-		providerCallback = callback;
+		providerCallback = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(callback);
 	}
 
 	globalMap.put("esbHandler", providerCallback);

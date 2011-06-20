@@ -37,16 +37,16 @@ if (actAsProvider || actAsConsumer) { %>
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
 	INode node = process.getNodesOfType("tESBProviderRequest").get(0);
-	
-	String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
-    if ("--DEFAULT--".equals(serviceName)) {
-        serviceName = projectName+"_"+processName;
-    }
-    String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
-    if ("--DEFAULT--".equals(portName)) {
-        portName = serviceName+"_Port"; 
-    }
-	
+
+	String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
+	if ("--DEFAULT--".equals(serviceName)) {
+		serviceName = projectName + "_" + processName;
+	}
+	String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
+	if ("--DEFAULT--".equals(portName)) {
+		portName = serviceName + "_Port";
+	}
+
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
@@ -67,8 +67,8 @@ if (actAsProvider || actAsConsumer) { %>
 				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=serviceName%>");
 				// static
 				<%
-				String methodName = ElementParameterParser.getValue(node,"__METHOD__");
-                methodName = methodName.split("\\(")[0];
+					String methodName = ElementParameterParser.getValue(node,"__METHOD__");
+					methodName = methodName.split("\\(")[0];
 				%>
 				put("defaultOperationName", "<%=methodName%>");
 				// static
@@ -79,7 +79,7 @@ if (actAsProvider || actAsConsumer) { %>
 				put("useServiceLocator", <%=useSl%>);
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
-				
+
 			}};
 
 			public String getEndpointKey() {
@@ -102,27 +102,7 @@ if (actAsProvider || actAsConsumer) { %>
 	}
 <% } %>
 
-<% if (actAsProvider) { %>
-	public class ProviderFault {
-
-		final String message;
-		final Object detail;
-
-		public ProviderFault(String message) {
-			this(message, null);
-		}
-
-		public ProviderFault(String message, Object detail) {
-			this.message = message;
-			this.detail = detail;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public Object getDetail() {
-			return detail;
-		}
+	interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
+		void sendFault(Throwable e);
+		void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
 	}
-<% } %>

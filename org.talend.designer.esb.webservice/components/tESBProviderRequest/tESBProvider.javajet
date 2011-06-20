@@ -16,9 +16,9 @@ class QueuedExchangeContextImpl<T> {
 	private final T input;
 
 	private T output = null;
-	private T faultDetails = null;
+//	private T faultDetails = null;
 	private Throwable fault = null;
-	private String faultMessage = null;
+//	private String faultMessage = null;
 
 	public QueuedExchangeContextImpl(T inMsg) {
 		this.input = inMsg;
@@ -70,39 +70,44 @@ class QueuedExchangeContextImpl<T> {
 		output = response;
 	}
 
-	public void serveBusinessFault(String faultMessage, T faultDetails) {
-		this.faultMessage =
-			(null == faultMessage || 0 == faultMessage.trim().length())
-				? "Talend job business fault" : faultMessage;
-		this.faultDetails = faultDetails;
-	}
+//	public void serveBusinessFault(String faultMessage, T faultDetails) {
+//		this.faultMessage =
+//			(null == faultMessage || 0 == faultMessage.trim().length())
+//				? "Talend job business fault" : faultMessage;
+//		this.faultDetails = faultDetails;
+//	}
+//
+//	public void serveFault(String faultMessage, Throwable fault) {
+//		this.faultMessage =
+//			(null == faultMessage || 0 == faultMessage.trim().length())
+//				? "Talend job error" : faultMessage;
+//		this.fault = fault;
+//	}
 
-	public void serveFault(String faultMessage, Throwable fault) {
-		this.faultMessage =
-			(null == faultMessage || 0 == faultMessage.trim().length())
-				? "Talend job error" : faultMessage;
+	public void serveFault(Throwable fault) {
 		this.fault = fault;
 	}
 
 	public boolean isFault() {
-		return (faultMessage != null);
+//		return (faultMessage != null);
+		return fault != null;
 	}
 
-	public boolean isBusinessFault() {
-		return isFault() && null == fault;
-	}
+//	public boolean isBusinessFault() {
+//		return isFault() && null == fault;
+//	}
 
 	public T getResponse() {
 		return output;
 	}
 
-	public String getFaultMessage() {
-		return faultMessage;
-	}
-
-	public T getBusinessFaultDetails() {
-		return faultDetails;
-	}
+//	public String getFaultMessage() {
+//		return faultMessage;
+//	}
+//
+//	public T getBusinessFaultDetails() {
+//		return faultDetails;
+//	}
 
 	public Throwable getFault() {
 		return fault;
@@ -157,7 +162,7 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 
 	QueuedExchangeContextImpl<T> currentExchangeContext;
 
-	public Object getRequest() throws ESBJobInterruptedException {
+	public T getRequest() throws ESBJobInterruptedException {
 		currentExchangeContext = null;
 		try {
 			currentExchangeContext = (QueuedExchangeContextImpl<T>) queue.take();
@@ -173,21 +178,29 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 			throw new RuntimeException("sendResponse() invoked before getRequest()");
 		}
 
-		// business fault
-		if (output instanceof ProviderFault) {
-			ProviderFault providerFault = (ProviderFault) output;
-			currentExchangeContext.serveBusinessFault(
-					providerFault.getMessage(), (T) providerFault.getDetail());
-		}
+//		// business fault
+//		if (output instanceof ProviderFault) {
+//			ProviderFault providerFault = (ProviderFault) output;
+//			currentExchangeContext.serveBusinessFault(
+//					providerFault.getMessage(), (T) providerFault.getDetail());
+//		}
+//
+//		// job error
+//		if (output instanceof Exception) {
+//			currentExchangeContext.serveFault(
+//					"Talend job execution error", (Throwable) output);
+//		}
+//
+//		// payload
+//		currentExchangeContext.serveOutputMessage((T) output);
 
-		// job error
-		if (output instanceof Exception) {
-			currentExchangeContext.serveFault(
-					"Talend job execution error", (Throwable) output);
+		if (output instanceof Throwable) {
+			// fault
+			currentExchangeContext.serveFault((Throwable) output);
+		} else {
+			// response
+			currentExchangeContext.serveOutputMessage((T) output);
 		}
-
-		// payload
-		currentExchangeContext.serveOutputMessage((T) output);
 
 		try {
 			currentExchangeContext.release();
@@ -210,13 +223,13 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	String serviceNS = ElementParameterParser.getValue(node,"__SERVICE_NS__");
 	String serviceName = ElementParameterParser.getValue(node,"__SERVICE_NAME__");
 	if ("--DEFAULT--".equals(serviceName)) {
-	 	serviceName = projectName+"_"+processName;
- 	}
+		serviceName = projectName+"_"+processName;
+	}
 	String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
 	if ("--DEFAULT--".equals(portName)) {
 		portName = serviceName+"_Port";
 	}
-	%>
+%>
 @javax.jws.WebService(
 		name = "<%=serviceName%>",
 		targetNamespace = "<%=serviceNS%>"
@@ -242,8 +255,8 @@ class ESBProvider_<%=cid%> implements
 			QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
-	<% 
-	 
+	<%
+
 	%>
 	@javax.jws.WebMethod(
 			operationName = "<%=methodName%>",
@@ -281,34 +294,36 @@ class ESBProvider_<%=cid%> implements
 				return null;
 <% } else { %>
 				if (messageExchange.isFault()) {
-					String faultString = messageExchange.getFaultMessage();
-					// System.out.println("fault: " + faultString);
+					throw messageExchange.getFault();
 
-					if (messageExchange.isBusinessFault()) {
-						org.dom4j.Document faultDoc = messageExchange.getBusinessFaultDetails();
-						javax.xml.soap.SOAPFactory soapFactory =
-							javax.xml.soap.SOAPFactory.newInstance();
-						javax.xml.soap.SOAPFault soapFault =
-							soapFactory.createFault(faultString,
-									new javax.xml.namespace.QName(TNS, "businessFault"));
-						if (null != faultDoc) {
-							// System.out.println("business fault details: " + faultDoc.asXML());
-							org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter();
-							org.w3c.dom.Document faultDetailDom = writer.write(faultDoc);
-							soapFault.addDetail().appendChild(
-									soapFault.getOwnerDocument().importNode(
-											faultDetailDom.getDocumentElement(), true));
-						}
-						throw new javax.xml.ws.soap.SOAPFaultException(soapFault);
-					} else {
-						Throwable error = messageExchange.getFault();
-						// System.out.println("job error: " + error.getMessage());
-						if (error instanceof RuntimeException) {
-							throw (RuntimeException) error;
-						} else {
-							throw new RuntimeException(faultString, error);
-						}
-					}
+//					String faultString = messageExchange.getFaultMessage();
+//					// System.out.println("fault: " + faultString);
+//
+//					if (messageExchange.isBusinessFault()) {
+//						org.dom4j.Document faultDoc = messageExchange.getBusinessFaultDetails();
+//						javax.xml.soap.SOAPFactory soapFactory =
+//							javax.xml.soap.SOAPFactory.newInstance();
+//						javax.xml.soap.SOAPFault soapFault =
+//							soapFactory.createFault(faultString,
+//									new javax.xml.namespace.QName(TNS, "businessFault"));
+//						if (null != faultDoc) {
+//							// System.out.println("business fault details: " + faultDoc.asXML());
+//							org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter();
+//							org.w3c.dom.Document faultDetailDom = writer.write(faultDoc);
+//							soapFault.addDetail().appendChild(
+//									soapFault.getOwnerDocument().importNode(
+//											faultDetailDom.getDocumentElement(), true));
+//						}
+//						throw new javax.xml.ws.soap.SOAPFaultException(soapFault);
+//					} else {
+//						Throwable error = messageExchange.getFault();
+//						// System.out.println("job error: " + error.getMessage());
+//						if (error instanceof RuntimeException) {
+//							throw (RuntimeException) error;
+//						} else {
+//							throw new RuntimeException(faultString, error);
+//						}
+//					}
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
 					if (null == responseDoc) {
@@ -331,6 +346,61 @@ class ESBProvider_<%=cid%> implements
 			throw new RuntimeException(ex);
 		} finally {
 			// System.out.println(System.currentTimeMillis() + " <- handleMessage");
+		}
+	}
+}
+
+class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbackTalendJobInner {
+
+	private final String TNS = ESBProvider_<%=cid%>.class.getAnnotation(
+			javax.jws.WebService.class).targetNamespace();
+
+	private ESBProviderCallback esbProviderCallback;
+
+	public ESBProviderCallbackTalendJobWrapper_<%=cid%>(ESBProviderCallback callback) {
+		esbProviderCallback = callback;
+	}
+
+	public Object getRequest() throws ESBJobInterruptedException {
+		return esbProviderCallback.getRequest();
+	}
+
+	public void sendResponse(Object response) {
+		esbProviderCallback.sendResponse(response);
+	}
+
+	public void sendFault(Throwable error) {
+		RuntimeException talendJobError;
+		if (error instanceof RuntimeException) {
+			talendJobError = (RuntimeException) error;
+		} else {
+			talendJobError = new RuntimeException(
+					"Talend job execution error", error);
+		}
+		esbProviderCallback.sendResponse(talendJobError);
+	}
+
+	public void sendBusinessFault(String faultString,
+			org.dom4j.Document faultDetail) {
+
+		try {
+			javax.xml.soap.SOAPFactory soapFactory =
+				javax.xml.soap.SOAPFactory.newInstance();
+			javax.xml.soap.SOAPFault soapFault = soapFactory.createFault(
+					faultString, new javax.xml.namespace.QName(TNS, "businessFault"));
+			if (null != faultDetail) {
+				// System.out.println("business fault details: " + faultDoc.asXML());
+				org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter();
+				org.w3c.dom.Document faultDetailDom = writer.write(faultDetail);
+				soapFault.addDetail().appendChild(
+						soapFault.getOwnerDocument().importNode(
+								faultDetailDom.getDocumentElement(), true));
+			}
+			esbProviderCallback.sendResponse(
+					new javax.xml.ws.soap.SOAPFaultException(soapFault)
+			);
+		} catch (Exception e) {
+			this.sendFault(e);
 		}
 	}
 }

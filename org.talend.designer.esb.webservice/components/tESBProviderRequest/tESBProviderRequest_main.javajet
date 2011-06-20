@@ -28,8 +28,8 @@
 						continue;
 					}
 %>
-			ESBProviderCallback esbHandler_<%=cid%> =
-				(ESBProviderCallback) globalMap.get("esbHandler");
+			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
+				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 
 			org.dom4j.Document requestMessage_<%=cid%> =
 					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();

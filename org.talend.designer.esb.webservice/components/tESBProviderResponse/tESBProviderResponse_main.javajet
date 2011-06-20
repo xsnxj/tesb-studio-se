@@ -33,7 +33,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 %>
 	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.<%=column.getLabel()%>;
 
-	ESBProviderCallback esbProviderCallback_<%=cid%> = (ESBProviderCallback) globalMap.get("esbHandler");
+	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
 		esbProviderCallback_<%=cid%>.sendResponse(esbProviderResponseDoc_<%=cid%>.getDocument());
 	}

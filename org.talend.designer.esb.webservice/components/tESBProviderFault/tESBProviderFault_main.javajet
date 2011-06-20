@@ -41,13 +41,12 @@ if (null != metadatas && 0 < metadatas.size()) {
 					}
 				}
 %>
-	ESBProviderCallback esbProviderCallback_<%=cid%> = (ESBProviderCallback) globalMap.get("esbHandler");
+	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
-		esbProviderCallback_<%=cid%>.sendResponse(
-				new ProviderFault(
-						esbProviderFaultTitle_<%=cid%>,
-						(null == esbProviderFaultDoc_<%=cid%>)
-							? null : esbProviderFaultDoc_<%=cid%>.getDocument())
+		esbProviderCallback_<%=cid%>.sendBusinessFault(
+				esbProviderFaultTitle_<%=cid%>,
+				(null == esbProviderFaultDoc_<%=cid%>) ? null
+						: esbProviderFaultDoc_<%=cid%>.getDocument()
 			);
 	}
 <%
