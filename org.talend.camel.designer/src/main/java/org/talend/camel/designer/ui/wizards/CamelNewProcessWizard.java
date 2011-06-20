@@ -118,7 +118,7 @@ public class CamelNewProcessWizard extends Wizard {
 
                 @Override
                 protected void run() throws LoginException, PersistenceException {
-                    repositoryFactory.createCamel(processItem, mainPage.getDestinationPath());
+                    repositoryFactory.create(processItem, mainPage.getDestinationPath());
                     RelationshipItemBuilder.getInstance().addOrUpdateItem(processItem);
                 }
             };

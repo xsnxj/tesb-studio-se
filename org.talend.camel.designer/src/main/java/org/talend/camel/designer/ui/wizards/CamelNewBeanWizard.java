@@ -117,7 +117,7 @@ public class CamelNewBeanWizard extends Wizard {
         try {
             property.setId(repositoryFactory.getNextId());
             // repositoryFactory.create(routineItem, mainPage.getDestinationPath());
-            repositoryFactory.createCamel(beanItem, mainPage.getDestinationPath());
+            repositoryFactory.create(beanItem, mainPage.getDestinationPath());
         } catch (PersistenceException e) {
             MessageDialog.openError(getShell(), Messages.getString("NewBeanWizard.failureTitle"), ""); //$NON-NLS-1$ //$NON-NLS-2$
             ExceptionHandler.process(e);

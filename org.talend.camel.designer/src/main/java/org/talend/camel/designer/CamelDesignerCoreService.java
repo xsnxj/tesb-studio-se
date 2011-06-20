@@ -12,28 +12,16 @@
 // ============================================================================
 package org.talend.camel.designer;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
-import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
-import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.designer.ui.CreateCamelProcess;
 import org.talend.camel.designer.ui.bean.CreateCamelBean;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.IImage;
-import org.talend.core.model.properties.ByteArray;
-import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -43,7 +31,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
  */
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
-    private XmiResourceManager xmiResourceManager = new XmiResourceManager();
+    // private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
     /*
      * (non-Jsdoc)
@@ -64,30 +52,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return new CreateCamelBean(isToolbar);
     }
 
-    public IImage getCamelIcon(ERepositoryObjectType type) {
-        if (type == CamelRepositoryNodeType.repositoryRoutesType) {
-            return ECoreImage.PROCESS_ICON;
-        } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
-            return ECoreImage.ROUTINE_ICON;
-        }
-        return null;
-    }
-
-    public ERepositoryObjectType createCamelResource(Item item) {
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                return CamelRepositoryNodeType.repositoryRoutesType;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                return CamelRepositoryNodeType.repositoryBeansType;
-            default:
-                throw new UnsupportedOperationException();
-            }
-        }
-        return null;
-    }
-
     public ERepositoryObjectType getRoutes() {
         return CamelRepositoryNodeType.repositoryRoutesType;
     }
@@ -102,82 +66,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
             return camelItem.getProcess();
         }
         return null;
-    }
-
-    public Resource createCamel(IProject project, Item item, IPath path, ERepositoryObjectType type) throws PersistenceException {
-        Resource itemResource = null;
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                type = CamelRepositoryNodeType.repositoryRoutesType;
-                itemResource = create(project, (CamelProcessItem) item, path, type);
-                return itemResource;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                type = CamelRepositoryNodeType.repositoryBeansType;
-                itemResource = create(project, (BeanItem) item, path, type);
-                return itemResource;
-            default:
-                throw new UnsupportedOperationException();
-            }
-        } else {
-            if (itemResource == null) {
-                throw new UnsupportedOperationException();
-            }
-        }
-        return null;
-    }
-
-    public Resource saveCamel(Item item) throws PersistenceException {
-        Resource itemResource = null;
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                itemResource = save((CamelProcessItem) item);
-                return itemResource;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                itemResource = save((BeanItem) item);
-                return itemResource;
-            default:
-                throw new UnsupportedOperationException();
-            }
-        } else {
-            if (itemResource == null) {
-                throw new UnsupportedOperationException();
-            }
-        }
-        return null;
-    }
-
-    private Resource create(IProject project, CamelProcessItem item, IPath path, ERepositoryObjectType type)
-            throws PersistenceException {
-        Resource itemResource = xmiResourceManager.createItemResource(project, item, path, type, false);
-        itemResource.getContents().add(item.getProcess());
-        return itemResource;
-    }
-
-    private Resource create(IProject project, FileItem item, IPath path, ERepositoryObjectType type) throws PersistenceException {
-        Resource itemResource = xmiResourceManager.createItemResource(project, item, path, type, true);
-        itemResource.getContents().add(item.getContent());
-        return itemResource;
-    }
-
-    private Resource save(CamelProcessItem item) {
-        Resource itemResource = xmiResourceManager.getItemResource(item);
-        itemResource.getContents().clear();
-        itemResource.getContents().add(item.getProcess());
-        return itemResource;
-    }
-
-    private Resource save(FileItem item) {
-        Resource itemResource = xmiResourceManager.getItemResource(item);
-
-        ByteArray content = item.getContent();
-        itemResource.getContents().clear();
-        itemResource.getContents().add(content);
-
-        return itemResource;
     }
 
     public boolean isInstanceofCamelRoutes(Item item) {
@@ -199,16 +87,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
             return true;
         }
         return false;
-    }
-
-    public Item createNewCamelItem(ERepositoryObjectType type) {
-        Item item = null;
-        if (type == CamelRepositoryNodeType.repositoryRoutesType) {
-            item = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
-        } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
-            item = CamelPropertiesFactory.eINSTANCE.createBeanItem();
-        }
-        return item;
     }
 
     public ITalendSynchronizer createCamelJavaSynchronizer() {

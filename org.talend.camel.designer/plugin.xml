@@ -147,4 +147,10 @@
          </actionSet>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.talend.core.repository.repository_content">
+      <RepositoryContent
+            class="org.talend.camel.designer.CamelRepositoryContentHandler">
+      </RepositoryContent>
+   </extension>
 </plugin>

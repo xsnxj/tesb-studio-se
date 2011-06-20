@@ -15,7 +15,7 @@ package org.talend.camel.designer.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.talend.commons.ui.runtime.image.ECoreImage;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.repository.IExtendRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -32,7 +32,7 @@ public class CamelExtendBeansNode implements IExtendRepositoryNode {
      */
     public IImage getNodeImage() {
         // TODO Auto-generated method stub
-        return ECoreImage.ROUTINE_ICON;
+        return ECamelCoreImage.BEAN_ICON;
     }
 
     /*
