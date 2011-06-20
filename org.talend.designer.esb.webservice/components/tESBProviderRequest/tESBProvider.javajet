@@ -390,7 +390,12 @@ class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbac
 					faultString, new javax.xml.namespace.QName(TNS, "businessFault"));
 			if (null != faultDetail) {
 				// System.out.println("business fault details: " + faultDoc.asXML());
-				org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter();
+				// A special version of DOMWriter that does not write xmlns:foo attributes
+				org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
+					protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
+						// Do nothing
+					}
+				};
 				org.w3c.dom.Document faultDetailDom = writer.write(faultDetail);
 				soapFault.addDetail().appendChild(
 						soapFault.getOwnerDocument().importNode(
