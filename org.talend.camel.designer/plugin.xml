@@ -128,7 +128,7 @@
             class="org.talend.camel.designer.CamelPerspectiveFactory"
             icon="icons/appli_16x16.png"
             id="org.talend.camel.perspective"
-            name="Camel Route Builder">
+            name="Route Builder">
       </perspective>
    </extension>
    <extension
