@@ -153,4 +153,11 @@
             class="org.talend.camel.designer.CamelRepositoryContentHandler">
       </RepositoryContent>
    </extension>
+   <extension
+         point="org.talend.core.talendperspectives">
+      <TalendPerspective
+            refPerspectiveId="org.talend.camel.perspective"
+            talendPerspectiveId="org.talend.camel.CamelPerspective">
+      </TalendPerspective>
+   </extension>
 </plugin>
