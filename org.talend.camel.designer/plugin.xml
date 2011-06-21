@@ -4,10 +4,6 @@
    <extension
          point="org.talend.core.runtime.service">
       <Service
-            class="org.talend.camel.designer.CamelItemService"
-            serviceId="ICamelItemService">
-      </Service>
-      <Service
             class="org.talend.camel.designer.CamelDesignerCoreService"
             serviceId="ICamelDesignerCoreService">
       </Service>
