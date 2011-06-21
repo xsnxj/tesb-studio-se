@@ -34,6 +34,7 @@ import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.wizards.CamelNewProcessWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
@@ -72,7 +73,7 @@ public class CreateCamelProcess extends CreateProcess {
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
 
-        Image folderImg = ImageProvider.getImage(ECoreImage.PROCESS_ICON);
+        Image folderImg = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
         this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 

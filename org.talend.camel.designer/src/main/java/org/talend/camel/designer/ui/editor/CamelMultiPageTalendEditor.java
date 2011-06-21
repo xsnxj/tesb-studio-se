@@ -23,7 +23,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.commons.ui.runtime.image.ECoreImage;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
@@ -87,9 +87,10 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
                 }
                 InformationLevel level = getProcess().getProperty().getMaxInformationLevel();
                 if (level.equals(InformationLevel.ERROR_LITERAL)) {
-                    image = OverlayImageProvider.getImageWithError(ImageProvider.getImage(ECoreImage.PROCESS_ICON)).createImage();
+                    image = OverlayImageProvider.getImageWithError(ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON))
+                            .createImage();
                 } else {
-                    image = ImageProvider.getImage(ECoreImage.PROCESS_ICON);
+                    image = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
                 }
                 setTitleImage(image);
             }

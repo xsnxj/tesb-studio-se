@@ -53,7 +53,7 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             case CamelPropertiesPackage.BEAN_ITEM:
                 return CamelRepositoryNodeType.repositoryBeansType;
             default:
-                throw new UnsupportedOperationException();
+                return null;
             }
         }
         return null;
@@ -102,7 +102,7 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             itemResource = create(project, (FileItem) item, path, type);
             return itemResource;
         default:
-            throw new UnsupportedOperationException();
+            return null;
         }
     }
 
@@ -137,11 +137,7 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
                 itemResource = save((BeanItem) item);
                 return itemResource;
             default:
-                throw new UnsupportedOperationException();
-            }
-        } else {
-            if (itemResource == null) {
-                throw new UnsupportedOperationException();
+                return null;
             }
         }
         return null;

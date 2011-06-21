@@ -33,8 +33,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.CommonsPlugin;
-import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.repository.RepositoryObject;
@@ -56,7 +56,7 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
 
         this.setText(ACTION_LABEL);
         this.setToolTipText(ACTION_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_ICON));
     }
 
     @Override

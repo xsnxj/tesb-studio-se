@@ -19,7 +19,9 @@ import org.talend.commons.ui.runtime.image.IImage;
  */
 public enum ECamelCoreImage implements IImage {
     BEAN_ICON("/icons/bean.gif"), //$NON-NLS-1$
-    ROUTES_ICON("/icons/route.gif"); //$NON-NLS-1$
+    ROUTES_ICON("/icons/route.gif"), //$NON-NLS-1$
+    ROUTES_WIZ("/icons/route_wiz.png"),
+    BEAN_WIZ("/icons/bean_siz.png");
 
     private String path;
 

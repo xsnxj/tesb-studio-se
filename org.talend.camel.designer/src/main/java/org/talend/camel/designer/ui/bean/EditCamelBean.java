@@ -23,9 +23,9 @@ import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
-import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
@@ -53,7 +53,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         super();
         this.setText(EDIT_LABEL);
         this.setToolTipText(EDIT_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTINE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.BEAN_ICON));
     }
 
     public void init(TreeViewer viewer, IStructuredSelection selection) {
