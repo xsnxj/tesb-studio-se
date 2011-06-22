@@ -192,4 +192,13 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         return item;
     }
 
+    public ERepositoryObjectType getRepositoryObjectType(Item item) {
+        if (item instanceof CamelProcessItem) {
+            return CamelRepositoryNodeType.repositoryRoutesType;
+        } else if (item instanceof BeanItem) {
+            return CamelRepositoryNodeType.repositoryBeansType;
+        }
+        return null;
+    }
+
 }
