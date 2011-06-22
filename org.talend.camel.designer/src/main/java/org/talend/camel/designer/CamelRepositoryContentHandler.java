@@ -38,27 +38,6 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
 
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.core.repository.IRepositoryContentHandler#createResource(org.talend.core.model.properties.Item)
-     */
-    public ERepositoryObjectType createResource(Item item) {
-
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                return CamelRepositoryNodeType.repositoryRoutesType;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                return CamelRepositoryNodeType.repositoryBeansType;
-            default:
-                return null;
-            }
-        }
-        return null;
-    }
-
     public boolean isProcess(Item item) {
         if (item instanceof CamelProcessItem) {
             return true;
@@ -193,10 +172,16 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
     }
 
     public ERepositoryObjectType getRepositoryObjectType(Item item) {
-        if (item instanceof CamelProcessItem) {
-            return CamelRepositoryNodeType.repositoryRoutesType;
-        } else if (item instanceof BeanItem) {
-            return CamelRepositoryNodeType.repositoryBeansType;
+        EClass eClass = item.eClass();
+        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
+            switch (eClass.getClassifierID()) {
+            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
+                return CamelRepositoryNodeType.repositoryRoutesType;
+            case CamelPropertiesPackage.BEAN_ITEM:
+                return CamelRepositoryNodeType.repositoryBeansType;
+            default:
+                return null;
+            }
         }
         return null;
     }
