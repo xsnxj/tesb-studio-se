@@ -16,6 +16,7 @@ import org.talend.camel.core.model.camelProperties.*;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.RoutineItem;
 
 /**
  * <!-- begin-user-doc -->
@@ -94,6 +95,7 @@ public class CamelPropertiesSwitch<T> {
             case CamelPropertiesPackage.BEAN_ITEM: {
                 BeanItem beanItem = (BeanItem)theEObject;
                 T result = caseBeanItem(beanItem);
+                if (result == null) result = caseRoutineItem(beanItem);
                 if (result == null) result = caseFileItem(beanItem);
                 if (result == null) result = caseItem(beanItem);
                 if (result == null) result = defaultCase(theEObject);
@@ -168,6 +170,21 @@ public class CamelPropertiesSwitch<T> {
      * @generated
      */
     public T caseFileItem(FileItem object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Routine Item</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Routine Item</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseRoutineItem(RoutineItem object) {
         return null;
     }
 

@@ -108,14 +108,6 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
-    public EReference getBeanItem_Imports() {
-        return (EReference)beanItemEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getCamelProcessItem() {
         return camelProcessItemEClass;
     }
@@ -146,7 +138,6 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 
         // Create classes and their features
         beanItemEClass = createEClass(BEAN_ITEM);
-        createEReference(beanItemEClass, BEAN_ITEM__IMPORTS);
 
         camelProcessItemEClass = createEClass(CAMEL_PROCESS_ITEM);
     }
@@ -174,19 +165,17 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 
         // Obtain other dependent packages
         PropertiesPackage thePropertiesPackage = (PropertiesPackage)EPackage.Registry.INSTANCE.getEPackage(PropertiesPackage.eNS_URI);
-        ComponentPackage theComponentPackage = (ComponentPackage)EPackage.Registry.INSTANCE.getEPackage(ComponentPackage.eNS_URI);
 
         // Create type parameters
 
         // Set bounds for type parameters
 
         // Add supertypes to classes
-        beanItemEClass.getESuperTypes().add(thePropertiesPackage.getFileItem());
+        beanItemEClass.getESuperTypes().add(thePropertiesPackage.getRoutineItem());
         camelProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getProcessItem());
 
         // Initialize classes and features; add operations and parameters
         initEClass(beanItemEClass, BeanItem.class, "BeanItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getBeanItem_Imports(), theComponentPackage.getIMPORTType(), null, "imports", null, 0, -1, BeanItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(camelProcessItemEClass, CamelProcessItem.class, "CamelProcessItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

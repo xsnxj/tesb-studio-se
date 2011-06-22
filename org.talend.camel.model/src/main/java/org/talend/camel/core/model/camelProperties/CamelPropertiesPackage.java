@@ -77,7 +77,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__PROPERTY = PropertiesPackage.FILE_ITEM__PROPERTY;
+    int BEAN_ITEM__PROPERTY = PropertiesPackage.ROUTINE_ITEM__PROPERTY;
 
     /**
      * The feature id for the '<em><b>State</b></em>' reference.
@@ -86,7 +86,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__STATE = PropertiesPackage.FILE_ITEM__STATE;
+    int BEAN_ITEM__STATE = PropertiesPackage.ROUTINE_ITEM__STATE;
 
     /**
      * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -95,7 +95,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__PARENT = PropertiesPackage.FILE_ITEM__PARENT;
+    int BEAN_ITEM__PARENT = PropertiesPackage.ROUTINE_ITEM__PARENT;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -104,7 +104,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__NAME = PropertiesPackage.FILE_ITEM__NAME;
+    int BEAN_ITEM__NAME = PropertiesPackage.ROUTINE_ITEM__NAME;
 
     /**
      * The feature id for the '<em><b>Extension</b></em>' attribute.
@@ -113,7 +113,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__EXTENSION = PropertiesPackage.FILE_ITEM__EXTENSION;
+    int BEAN_ITEM__EXTENSION = PropertiesPackage.ROUTINE_ITEM__EXTENSION;
 
     /**
      * The feature id for the '<em><b>Content</b></em>' reference.
@@ -122,7 +122,16 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__CONTENT = PropertiesPackage.FILE_ITEM__CONTENT;
+    int BEAN_ITEM__CONTENT = PropertiesPackage.ROUTINE_ITEM__CONTENT;
+
+    /**
+     * The feature id for the '<em><b>Built In</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BEAN_ITEM__BUILT_IN = PropertiesPackage.ROUTINE_ITEM__BUILT_IN;
 
     /**
      * The feature id for the '<em><b>Imports</b></em>' containment reference list.
@@ -131,7 +140,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM__IMPORTS = PropertiesPackage.FILE_ITEM_FEATURE_COUNT + 0;
+    int BEAN_ITEM__IMPORTS = PropertiesPackage.ROUTINE_ITEM__IMPORTS;
 
     /**
      * The number of structural features of the '<em>Bean Item</em>' class.
@@ -140,7 +149,7 @@ public interface CamelPropertiesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int BEAN_ITEM_FEATURE_COUNT = PropertiesPackage.FILE_ITEM_FEATURE_COUNT + 1;
+    int BEAN_ITEM_FEATURE_COUNT = PropertiesPackage.ROUTINE_ITEM_FEATURE_COUNT + 0;
 
 
     /**
@@ -210,17 +219,6 @@ public interface CamelPropertiesPackage extends EPackage {
     EClass getBeanItem();
 
     /**
-     * Returns the meta object for the containment reference list '{@link org.talend.camel.core.model.camelProperties.BeanItem#getImports <em>Imports</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Imports</em>'.
-     * @see org.talend.camel.core.model.camelProperties.BeanItem#getImports()
-     * @see #getBeanItem()
-     * @generated
-     */
-    EReference getBeanItem_Imports();
-
-    /**
      * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.CamelProcessItem <em>Camel Process Item</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -261,14 +259,6 @@ public interface CamelPropertiesPackage extends EPackage {
          * @generated
          */
         EClass BEAN_ITEM = eINSTANCE.getBeanItem();
-
-        /**
-         * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference BEAN_ITEM__IMPORTS = eINSTANCE.getBeanItem_Imports();
 
         /**
          * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.CamelProcessItemImpl <em>Camel Process Item</em>}' class.

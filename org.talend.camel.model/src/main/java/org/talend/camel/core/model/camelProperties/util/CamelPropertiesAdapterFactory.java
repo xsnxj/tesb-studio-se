@@ -18,6 +18,7 @@ import org.talend.camel.core.model.camelProperties.*;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.RoutineItem;
 
 /**
  * <!-- begin-user-doc -->
@@ -90,6 +91,10 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
             @Override
             public Adapter caseFileItem(FileItem object) {
                 return createFileItemAdapter();
+            }
+            @Override
+            public Adapter caseRoutineItem(RoutineItem object) {
+                return createRoutineItemAdapter();
             }
             @Override
             public Adapter caseProcessItem(ProcessItem object) {
@@ -168,6 +173,20 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createFileItemAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.RoutineItem <em>Routine Item</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.core.model.properties.RoutineItem
+     * @generated
+     */
+    public Adapter createRoutineItemAdapter() {
         return null;
     }
 

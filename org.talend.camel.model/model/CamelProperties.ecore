@@ -3,10 +3,6 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="camelProperties"
     nsURI="http://www.talend.org/CamelProperties" nsPrefix="CamelProperties">
-  <eClassifiers xsi:type="ecore:EClass" name="BeanItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//FileItem">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
-        eType="ecore:EClass ../../org.talend.model/model/Component.ecore#//IMPORTType"
-        containment="true"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BeanItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//RoutineItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="CamelProcessItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//ProcessItem"/>
 </ecore:EPackage>
