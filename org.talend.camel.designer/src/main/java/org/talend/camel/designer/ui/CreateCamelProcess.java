@@ -38,7 +38,6 @@ import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
-import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -82,7 +81,7 @@ public class CreateCamelProcess extends CreateProcess {
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
         setToolbar(isToolbar);
-        Image folderImg = ImageProvider.getImage(ECoreImage.PROCESS_ICON);
+        Image folderImg = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
         this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 

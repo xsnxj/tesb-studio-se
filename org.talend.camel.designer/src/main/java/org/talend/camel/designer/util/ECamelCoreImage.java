@@ -21,7 +21,7 @@ public enum ECamelCoreImage implements IImage {
     BEAN_ICON("/icons/bean.gif"), //$NON-NLS-1$
     ROUTES_ICON("/icons/route.gif"), //$NON-NLS-1$
     ROUTES_WIZ("/icons/route_wiz.png"),
-    BEAN_WIZ("/icons/bean_siz.png");
+    BEAN_WIZ("/icons/bean_wiz.png");
 
     private String path;
 
