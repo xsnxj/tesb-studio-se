@@ -33,100 +33,101 @@ if (incomingConnections != null && !incomingConnections.isEmpty()) {
 		}
 	}
 }
-
-List<? extends IConnection> conns = node.getOutgoingSortedConnections();
-if (conns != null && conns.size() > 0) {
-	for (int i = 0; i < conns.size(); i++) {
-		IConnection conn = conns.get(i);
-		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-%>
-	<%=conn.getName()%> = null;
-<%
+if (inputConn != null) {
+	List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+	if (conns != null && conns.size() > 0) {
+		for (int i = 0; i < conns.size(); i++) {
+			IConnection conn = conns.get(i);
+			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+	%>
+		<%=conn.getName()%> = null;
+	<%
+			}
 		}
 	}
-}
-
-List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
-List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-IConnection connResponse = null;
-IConnection connFault = null;
-if (connsResponse.size() == 1) {
-	connResponse = connsResponse.get(0);
-}
-if (connsFault.size() == 1) {
-	connFault = connsFault.get(0);
-}
-%>
-	org.dom4j.Document responseDoc_<%=cid%> = null;
-	try {
-		Document requestTalendDoc = <%=inputConn.getName()%>.payload;
-
+	
+	List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+	List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+	IConnection connResponse = null;
+	IConnection connFault = null;
+	if (connsResponse.size() == 1) {
+		connResponse = connsResponse.get(0);
+	}
+	if (connsFault.size() == 1) {
+		connFault = connsFault.get(0);
+	}
+	%>
+		org.dom4j.Document responseDoc_<%=cid%> = null;
 		try {
-			if (consumer_<%=cid%> == null) {
-				responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
-						serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
-						requestTalendDoc.getDocument());
-			} else {
-				responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
-			}
-		} catch (javax.xml.ws.soap.SOAPFaultException e) {
-<%		if (null != connFault) { %>
-			String faultString = e.getFault().getFaultString();
-			Document faultTalendDoc = null;
-			if (null != e.getFault().getDetail()
-				&& null != e.getFault().getDetail().getFirstChild()) {
-				try {
-					javax.xml.transform.Source faultSource =
-						new javax.xml.transform.dom.DOMSource(
-								e.getFault().getDetail().getFirstChild());
-
-					org.dom4j.io.DocumentResult result = new org.dom4j.io.DocumentResult();
-					javax.xml.transform.TransformerFactory.newInstance()
-						.newTransformer().transform(faultSource, result);
-					org.dom4j.Document faultDoc = result.getDocument();
-
-					faultTalendDoc = new Document();
-					faultTalendDoc.setDocument(faultDoc);
-				} catch (Exception e1) {
-					e1.printStackTrace();
+			Document requestTalendDoc = <%=inputConn.getName()%>.payload;
+	
+			try {
+				if (consumer_<%=cid%> == null) {
+					responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
+							serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
+							requestTalendDoc.getDocument());
+				} else {
+					responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
 				}
+			} catch (javax.xml.ws.soap.SOAPFaultException e) {
+	<%		if (null != connFault) { %>
+				String faultString = e.getFault().getFaultString();
+				Document faultTalendDoc = null;
+				if (null != e.getFault().getDetail()
+					&& null != e.getFault().getDetail().getFirstChild()) {
+					try {
+						javax.xml.transform.Source faultSource =
+							new javax.xml.transform.dom.DOMSource(
+									e.getFault().getDetail().getFirstChild());
+	
+						org.dom4j.io.DocumentResult result = new org.dom4j.io.DocumentResult();
+						javax.xml.transform.TransformerFactory.newInstance()
+							.newTransformer().transform(faultSource, result);
+						org.dom4j.Document faultDoc = result.getDocument();
+	
+						faultTalendDoc = new Document();
+						faultTalendDoc.setDocument(faultDoc);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				if (<%=connFault.getName()%> == null) {
+					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+				}
+				<%=connFault.getName()%>.faultString = faultString;
+				<%=connFault.getName()%>.faultDetail = faultTalendDoc;
+	<%		} else { %>
+				e.printStackTrace();
+	<%		} %>
+			} catch(Exception e){
+	<%		if (null != connFault) { %>
+				String faultMessage = e.getMessage();
+				if (<%=connFault.getName()%> == null) {
+					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+				}
+				<%=connFault.getName()%>.faultString = faultMessage;
+				<%=connFault.getName()%>.faultDetail = null;
+	<%		} else { %>
+				e.printStackTrace();
+	<%		} %>
 			}
-			if (<%=connFault.getName()%> == null) {
-				<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
-			}
-			<%=connFault.getName()%>.faultString = faultString;
-			<%=connFault.getName()%>.faultDetail = faultTalendDoc;
-<%		} else { %>
-			e.printStackTrace();
-<%		} %>
 		} catch(Exception e){
-<%		if (null != connFault) { %>
-			String faultMessage = e.getMessage();
-			if (<%=connFault.getName()%> == null) {
-				<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+	<%		if (("true").equals(dieOnError)) { %>
+				throw(e);
+	<%		} else { %>
+				System.err.print(e.getMessage());
+	<%		} %>
+		}
+	
+	<%	if (null != connResponse) { %>
+		if (null != responseDoc_<%=cid%>) {
+			if (<%=connResponse.getName()%> == null) {
+				<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
 			}
-			<%=connFault.getName()%>.faultString = faultMessage;
-			<%=connFault.getName()%>.faultDetail = null;
-<%		} else { %>
-			e.printStackTrace();
-<%		} %>
+	
+			Document responseTalendDoc_<%=cid%> = new Document();
+			responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+			<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
 		}
-	} catch(Exception e){
-<%		if (("true").equals(dieOnError)) { %>
-			throw(e);
-<%		} else { %>
-			System.err.print(e.getMessage());
-<%		} %>
-	}
-
-<%	if (null != connResponse) { %>
-	if (null != responseDoc_<%=cid%>) {
-		if (<%=connResponse.getName()%> == null) {
-			<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
-		}
-
-		Document responseTalendDoc_<%=cid%> = new Document();
-		responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
-		<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
-	}
-<%	} %>
+<%	} 
+}%>

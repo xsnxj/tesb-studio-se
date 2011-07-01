@@ -435,6 +435,39 @@ class HandlerThread_<%=cid%> extends Thread {
 					new javax.xml.namespace.QName(TNS, "<%=portName%>")); //
 		}};
 		endpoint.setProperties(map);
+		//test for busy
+		java.net.ServerSocket ss = null;
+		try {
+			java.net.URL endpointURL = new java.net.URL(endpointUrl);
+			String host = endpointURL.getHost();
+			int port = endpointURL.getPort();
+			if ("localhost".equals(host) || host.startsWith("127.0.0")) {
+				try {
+						ss = new java.net.ServerSocket(port);
+				} catch (IOException e) {
+					throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Port "+port+" already in use."); //rethrow exception
+				} finally {
+					if (ss != null) {
+						try {
+							ss.close();
+						} catch (IOException e) {
+							// ignore
+						}
+					}
+				}
+				try {
+					//ok, let's doublecheck for silent listeners
+					java.net.Socket cs = new java.net.Socket(host, port);
+					//if succeed - somebody silently listening, fail!
+					cs.close();
+					throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Port "+port+" already in use."); //rethrow exception
+				} catch (IOException e) {
+					//ok, nobody listens, proceed
+				}
+			}
+		} catch (java.net.MalformedURLException e) {
+			throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Malformed URL."); //rethrow exception
+		}
 		endpoint.publish(endpointUrl);
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");

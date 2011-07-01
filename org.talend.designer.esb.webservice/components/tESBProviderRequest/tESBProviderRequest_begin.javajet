@@ -18,7 +18,7 @@
 //*** ESB context initialization finish
 
 <%@ include file="tESBProvider.javajet" %>
-
+ 
 //*** external processor(s) initialization
 	ESBProviderCallbackTalendJobInner providerCallback;
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
