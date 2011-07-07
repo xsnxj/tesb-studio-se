@@ -35,10 +35,10 @@ String method = methodTemp.indexOf("(")!=-1?methodTemp.substring(0,methodTemp.in
 String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
 
-Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
-String slStrategy = ElementParameterParser.getValue(node, "__SERVICELOCATOR_STRATEGY__");
+Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
+String slStrategy = ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__");
 
-Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
+Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 %>
 javax.xml.namespace.QName serviceName_<%=cid%> = null;
 javax.xml.namespace.QName portName_<%=cid%> = null;
@@ -56,6 +56,9 @@ if (registry != null) {
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
 				put("defaultOperationName", "<%=method%>");
 				put("defaultOperationNameSpace", "");
+				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
+
 				// use Service Locator
 				put("useServiceLocator", <%=useSl%>);
 				<%if (useSl) { %>
@@ -63,8 +66,6 @@ if (registry != null) {
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
-				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 			}};
 
 			public String getEndpointUri() {

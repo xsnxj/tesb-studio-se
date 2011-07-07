@@ -50,8 +50,8 @@ if (actAsProvider || actAsConsumer) { %>
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
-	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICELOCATOR__"));
-	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICEACTIVITYMONITOR__"));
+	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
+	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 	%>
 		return new ESBEndpointInfo() {
 			private String uri = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
