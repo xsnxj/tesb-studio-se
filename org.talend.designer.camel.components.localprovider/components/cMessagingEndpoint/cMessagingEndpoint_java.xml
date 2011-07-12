@@ -117,6 +117,7 @@
 						<ITEM NAME="SMPP" VALUE="camel-smpp-alldep-2.7.2.jar" />
 						<ITEM NAME="SNMP" VALUE="camel-snmp-alldep-2.7.2.jar" />
 						<ITEM NAME="SOAP" VALUE="camel-soap-alldep-2.7.2.jar" />
+						<ITEM NAME="SPRING" VALUE="camel-spring-2.7.2.jar" />
 						<ITEM NAME="SQL" VALUE="camel-sql-alldep-2.7.2.jar" />
 						<ITEM NAME="STREAM" VALUE="camel-stream-alldep-2.7.2.jar" />
 						<ITEM NAME="STRINGTEMPLATE" VALUE="camel-stringtemplate-alldep-2.7.2.jar" />
@@ -151,6 +152,8 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.7.2.jar"
+				REQUIRED="false" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
