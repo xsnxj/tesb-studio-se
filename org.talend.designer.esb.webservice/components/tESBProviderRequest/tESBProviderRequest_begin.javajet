@@ -10,6 +10,12 @@
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 
+	if (node.getProcess().getNodesOfType("tESBProviderRequest").size() > 1) { %>
+	if (true) {
+		throw new RuntimeException("cannot instantiate web service: job contains more than one tESBProviderRequest component");
+	}
+<%	}
+
 	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
 		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 %>
@@ -18,7 +24,7 @@
 //*** ESB context initialization finish
 
 <%@ include file="tESBProvider.javajet" %>
- 
+
 //*** external processor(s) initialization
 	ESBProviderCallbackTalendJobInner providerCallback;
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;

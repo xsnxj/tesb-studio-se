@@ -10,11 +10,15 @@
 		org.talend.core.model.metadata.types.JavaTypesManager
 		org.talend.core.model.metadata.types.JavaType
 		java.util.List
+		java.util.Map
 	"
 %>
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
+if (node.getProcess().getNodesOfType("tESBProviderRequest").isEmpty()) { %>
+	System.out.println("[WARN] nonsense: tESBProviderFault component used without tESBProviderRequest component on the job");
+<%	}
 String cid = node.getUniqueName();
 List<IMetadataTable> metadatas = node.getMetadataList();
 if (null != metadatas && 0 < metadatas.size()) {
@@ -43,6 +47,21 @@ if (null != metadatas && 0 < metadatas.size()) {
 %>
 	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
+
+<% 				// set SAM custom properties
+				if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_ADD_CUSTOM_PROPERTIES__"))) {
+						List<Map<String, String>> customProperties = (List<Map<String,String>>)
+								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+						if (!customProperties.isEmpty()) { %>
+							esbProviderCallback_<%=cid%>.setCustomProperties(new java.util.HashMap<String, String>() {{
+							<% for (int k = 0; k < customProperties.size(); k++) {
+								String propName = customProperties.get(k).get("PROP_NAME");
+								String propValue = customProperties.get(k).get("PROP_VALUE");
+							%>			put(<%=propName%>, <%=propValue%>);
+							<% } %>	}});
+						<% } %>
+				<% } %>
+
 		esbProviderCallback_<%=cid%>.sendBusinessFault(
 				esbProviderFaultTitle_<%=cid%>,
 				(null == esbProviderFaultDoc_<%=cid%>) ? null

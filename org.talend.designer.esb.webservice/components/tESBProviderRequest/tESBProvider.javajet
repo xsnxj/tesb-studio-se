@@ -356,6 +356,7 @@ class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbac
 			javax.jws.WebService.class).targetNamespace();
 
 	private ESBProviderCallback esbProviderCallback;
+	private java.util.Map<String, String> customProperty;
 
 	public ESBProviderCallbackTalendJobWrapper_<%=cid%>(ESBProviderCallback callback) {
 		esbProviderCallback = callback;
@@ -365,8 +366,12 @@ class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbac
 		return esbProviderCallback.getRequest();
 	}
 
+	public void setCustomProperties(java.util.Map<String, String> props) {
+		customProperty = props;
+	}
+
 	public void sendResponse(Object response) {
-		esbProviderCallback.sendResponse(response);
+		esbProviderCallback.sendResponse(wrapOutput(response));
 	}
 
 	public void sendFault(Throwable error) {
@@ -402,11 +407,17 @@ class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbac
 								faultDetailDom.getDocumentElement(), true));
 			}
 			esbProviderCallback.sendResponse(
-					new javax.xml.ws.soap.SOAPFaultException(soapFault)
-			);
+					wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
 		} catch (Exception e) {
 			this.sendFault(e);
 		}
+	}
+
+	private Object wrapOutput(Object output) {
+		if (esbProviderCallback instanceof QueuedMessageHandlerImpl) {
+			return output;
+		}
+		return wrapPayload(output, customProperty);
 	}
 }
 
