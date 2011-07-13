@@ -2,6 +2,7 @@
 	package="org.talend.designer.codegen.translators.common"
 	imports="
 		java.util.List
+		java.util.Map
 		java.util.Vector
 
 		org.talend.core.model.process.INode
@@ -80,6 +81,20 @@ if (actAsProvider || actAsConsumer) { %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
 
+		<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
+			List<Map<String, String>> customProperties = (List<Map<String,String>>)
+					ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+			if (!customProperties.isEmpty()) { %>
+				// Service Locator custom properties
+				put("SL-PROPS", new java.util.HashMap<String, String>() {{
+				<% for (int i = 0; i < customProperties.size(); i++) {
+					String propName = customProperties.get(i).get("PROP_NAME");
+					String propValue = customProperties.get(i).get("PROP_VALUE");
+				%>		put(<%=propName%>, <%=propValue%>);
+				<% } %>	}});
+			<% } %>
+		<% } %>
+
 			}};
 
 			public String getEndpointKey() {
@@ -100,9 +115,19 @@ if (actAsProvider || actAsConsumer) { %>
 		return null;
 <% } %>
 	}
+
+	private Object wrapPayload(Object payload, Object customProperties) {
+		java.util.Map<String, Object> outputWrapped = new java.util.HashMap<String, Object>();
+		outputWrapped.put("PAYLOAD", payload);
+		if (null != customProperties) {
+			outputWrapped.put("SAM-PROPS", customProperties);
+		}
+		return outputWrapped;
+	}
 <% } %>
 
 	interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
+		void setCustomProperties(java.util.Map<String, String> props);
 		void sendFault(Throwable e);
 		void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
 	}
