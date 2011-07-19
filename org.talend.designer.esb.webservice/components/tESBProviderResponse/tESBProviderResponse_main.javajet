@@ -35,7 +35,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 					JavaType javaType = JavaTypesManager.getJavaTypeFromId(column.getTalendType());
 					if ("payload".equals(column.getLabel())) {
 %>
-	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.<%=column.getLabel()%>;
+	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
 
 	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {

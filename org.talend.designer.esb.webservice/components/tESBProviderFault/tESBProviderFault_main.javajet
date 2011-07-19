@@ -37,9 +37,9 @@ if (null != metadatas && 0 < metadatas.size()) {
 				for (int i = 0; i < sizeColumns; i++) {
 					IMetadataColumn column = columns.get(i);
 					JavaType javaType = JavaTypesManager.getJavaTypeFromId(column.getTalendType());
-					if ("payload".equals(column.getLabel())) {
+					if ("payload".equals(column.getLabel()) && "id_Document".equals(column.getTalendType())) {
 %>
-	esbProviderFaultDoc_<%=cid%> = <%=conn.getName()%>.<%=column.getLabel()%>;
+	esbProviderFaultDoc_<%=cid%> = <%=conn.getName()%>.payload;
 <%
 						break;
 					}
