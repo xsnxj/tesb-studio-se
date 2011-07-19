@@ -54,5 +54,14 @@ public class BeanItemImpl extends RoutineItemImpl implements BeanItem {
     protected EClass eStaticClass() {
         return CamelPropertiesPackage.Literals.BEAN_ITEM;
     }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @Not generated
+     */
+    public String getPackageType() {
+        return "beans";
+    }
 
 } //BeanItemImpl

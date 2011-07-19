@@ -143,6 +143,15 @@ public interface CamelPropertiesPackage extends EPackage {
     int BEAN_ITEM__IMPORTS = PropertiesPackage.ROUTINE_ITEM__IMPORTS;
 
     /**
+     * The feature id for the '<em><b>Package Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int BEAN_ITEM__PACKAGE_TYPE = PropertiesPackage.ROUTINE_ITEM__PACKAGE_TYPE;
+
+    /**
      * The number of structural features of the '<em>Bean Item</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
