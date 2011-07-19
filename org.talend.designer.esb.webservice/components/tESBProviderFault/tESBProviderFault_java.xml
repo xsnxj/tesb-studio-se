@@ -26,8 +26,8 @@
 	</CONNECTORS>
 	<PARAMETERS>
 		<PARAMETER NAME="SCHEMA" FIELD="SCHEMA_TYPE"
-				REQUIRED="true" NUM_ROW="10">
-			<TABLE READONLY="true">
+				REQUIRED="false" NUM_ROW="10">
+			<TABLE>
 				<COLUMN NAME="payload" TYPE="id_Document" />
 			</TABLE>
 		</PARAMETER>
