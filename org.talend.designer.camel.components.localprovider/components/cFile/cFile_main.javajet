@@ -1,0 +1,96 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+
+    String filePath = ElementParameterParser.getValue(node, "__URI__");
+    if (filePath.startsWith("\"")) {
+        filePath = filePath.substring(1);
+    }
+    if (filePath.endsWith("\"")) {
+        filePath = filePath.substring(0, filePath.length() - 1);
+    }
+
+    String noop = ElementParameterParser.getValue(node, "__NOOP__");
+    String delete = ElementParameterParser.getValue(node, "__DELETE__");
+    String append = ElementParameterParser.getValue(node, "__APPEND__");
+    String autoCreate = ElementParameterParser.getValue(node, "__AUTOCREATE__");
+    String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
+
+    if (expression.startsWith("\"")) {
+        expression = expression.substring(1);
+    }
+    if (expression.endsWith("\"")) {
+        expression = expression.substring(0, expression.length() - 1);
+    }
+
+    StringBuffer arguments = new StringBuffer();
+
+    String uri = "\"file:///" + filePath;
+
+    if ("true".equals(noop)) {
+        arguments.append("noop=true");
+    } else {
+        arguments.append("noop=false");
+    }
+
+    if ("true".equals(delete)) {
+
+        arguments.append("&delete=true");
+    }
+
+    if ("false".equals(append)) {// defaul true, ignore.
+        arguments.append("&append=false");
+    }
+
+    if ("false".equals(autoCreate)) {// defaul true, ignore.
+        arguments.append("&autoCreate=false");
+    }
+
+    if (expression != null && expression.length() > 0) {
+        arguments.append("&expression=" + expression);
+    }
+
+    List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node,
+            "__ADVARGUMENTS__");
+    for (Map<String, String> map : tableValues) {
+        String argName = map.get("NAME");
+        String argValue = map.get("VALUE");
+        if (argValue.startsWith("\"")) {
+            argValue = argValue.substring(1);
+        }
+        if (argValue.endsWith("\"")) {
+            argValue = argValue.substring(0, argValue.length() - 1);
+        }
+        if (argName != null && argValue != null) {
+            arguments.append("&" + argName + "=" + argValue);
+        }
+    }
+
+    if (arguments.length() > 0) {
+        uri = uri + "?" + arguments.toString() + "\"";
+    } else {
+        uri = uri + "\"";
+    }
+    
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+		.to(<%=uri%>)
+<%
+	} else {
+%>
+		from(<%=uri%>)
+<%
+	}
+%>
