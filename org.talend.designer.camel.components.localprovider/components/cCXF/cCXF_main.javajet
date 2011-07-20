@@ -1,0 +1,63 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	
+	String url = ElementParameterParser.getValue(node,"__ADDRESS__");
+	String serviceType = ElementParameterParser.getValue(node, "__SERVICE_TYPE__");
+	StringBuilder sb = new StringBuilder();
+	sb.append("\"cxf://");
+	sb.append(url);
+	sb.append("?");
+	sb.append(serviceType);
+	sb.append("=");
+	if("wsdlURL".equals(serviceType)){
+		sb.append("file:///");
+		String filePath = ElementParameterParser.getValue(node, "__WSDL_FILE__");
+		if(filePath.startsWith("\"")){
+			filePath = filePath.substring(1);
+		}
+		if(filePath.endsWith("\"")){
+			filePath = filePath.substring(0,filePath.length()-1);
+		}
+		filePath.replaceAll("\\\\","/");
+		sb.append(filePath);
+	}else {
+		sb.append(ElementParameterParser.getValue(node, "__SERVICE_CLASS__"));
+	}
+	sb.append("&");
+	String dataformat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
+	sb.append("dataFormat=");
+	sb.append(dataformat);
+	
+	String specifyService = ElementParameterParser.getValue(node, "__SPECIFY_SERVICE__");
+	if("true".equals(specifyService)){
+		sb.append("&serviceName=");
+		sb.append(ElementParameterParser.getValue(node, "__SERVICE_NAME__"));
+		sb.append("&portName=");
+		sb.append(ElementParameterParser.getValue(node, "__PORT_NAME__"));
+	}
+	
+	sb.append("\"");
+	
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+		.to(<%=sb.toString()%>)
+<%
+	} else {
+%>
+		from(<%=sb.toString()%>)
+<%
+	}
+%>

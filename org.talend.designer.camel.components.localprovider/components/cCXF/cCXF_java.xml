@@ -1,0 +1,107 @@
+<COMPONENT>
+
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
+			MAX_OUTPUT="1" MIN_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="ADDRESS" FIELD="TEXT" NUM_ROW="2"
+			REQUIRED="true" GROUP="SERVICE">
+			<DEFAULT>http://host:port/service_name</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5"
+			GROUP="SERVICE">
+			<ITEMS DEFAULT="wsdlURL">
+				<ITEM NAME="WSDLURL" VALUE="wsdlURL" />
+				<ITEM NAME="SERVICECLASS" VALUE="serviceClass" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="WSDL_FILE" FIELD="FILE" NUM_ROW="6"
+			REQUIRED="true" GROUP="SERVICE" SHOW_IF="SERVICE_TYPE == 'WSDLURL'">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_CLASS" FIELD="TEXT" NUM_ROW="6"
+			REQUIRED="true" GROUP="SERVICE" SHOW_IF="SERVICE_TYPE == 'SERVICECLASS'">
+			<DEFAULT>beans.ServiceClass</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="DATAFORMAT" FIELD="CLOSED_LIST" NUM_ROW="19"
+			GROUP="SERVICE">
+			<ITEMS DEFAULT="POJO">
+				<ITEM NAME="POJO" VALUE="POJO" />
+				<ITEM NAME="PAYLOAD" VALUE="PAYLOAD" />
+				<ITEM NAME="MESSAGE" VALUE="MESSAGE" />
+			</ITEMS>
+		</PARAMETER>
+		
+		<PARAMETER NAME="SPECIFY_SERVICE" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="20">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" NUM_ROW="21" REQUIRED="true"
+			SHOW_IF="SPECIFY_SERVICE == 'true'">
+			<DEFAULT>{http://www.talend.com}ServiceName</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" NUM_ROW="21" REQUIRED="true"
+			SHOW_IF="SPECIFY_SERVICE == 'true'">
+			<DEFAULT>{http://www.talend.com}PortName</DEFAULT>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.7.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.5.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="talend-camel-cxf" MODULE="camel-cxf-alldep-2.7.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="talend-camel-http" MODULE="camel-http-alldep-2.7.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="talend-camel-jetty" MODULE="camel-jetty-alldep-2.7.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="cxf-bundle" MODULE="cxf-bundle-2.4.1.jar"
+				REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+	<RETURNS />
+</COMPONENT>
