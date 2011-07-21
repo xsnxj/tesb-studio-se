@@ -6,6 +6,8 @@ imports="
     org.talend.designer.codegen.config.CodeGeneratorArgument
     java.util.List
     java.util.Map
+    java.io.UnsupportedEncodingException
+    java.net.URLEncoder
 " 
 %>
 <%
@@ -20,6 +22,7 @@ imports="
     if (filePath.endsWith("\"")) {
         filePath = filePath.substring(0, filePath.length() - 1);
     }
+    
 
     String noop = ElementParameterParser.getValue(node, "__NOOP__");
     String flatten = ElementParameterParser.getValue(node, "__FLATTEN__");
@@ -100,6 +103,12 @@ imports="
         }
         
         argName = argName.trim();
+        
+        try {
+             argValue =  URLEncoder.encode(argValue,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+        
+        }
         
         arguments.append("&" + argName + "=" + argValue);
     }
