@@ -23,7 +23,7 @@
 	<PARAMETERS>
 		<PARAMETER NAME="ADDRESS" FIELD="TEXT" NUM_ROW="2"
 			REQUIRED="true" GROUP="SERVICE">
-			<DEFAULT>http://host:port/service_name</DEFAULT>
+			<DEFAULT>http://localhost:8000/service.endpoint</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5"
 			GROUP="SERVICE">
