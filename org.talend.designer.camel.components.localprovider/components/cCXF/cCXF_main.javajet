@@ -15,10 +15,12 @@ imports="
 	
 	String url = ElementParameterParser.getValue(node,"__ADDRESS__");
 	String serviceType = ElementParameterParser.getValue(node, "__SERVICE_TYPE__");
+	
 	StringBuilder sb = new StringBuilder();
 	sb.append("\"cxf://");
 	sb.append(url);
 	sb.append("?");
+	
 	sb.append(serviceType);
 	sb.append("=");
 	if("wsdlURL".equals(serviceType)){
@@ -35,6 +37,7 @@ imports="
 	}else {
 		sb.append(ElementParameterParser.getValue(node, "__SERVICE_CLASS__"));
 	}
+	
 	sb.append("&");
 	String dataformat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
 	sb.append("dataFormat=");
@@ -47,6 +50,26 @@ imports="
 		sb.append("&portName=");
 		sb.append(ElementParameterParser.getValue(node, "__PORT_NAME__"));
 	}
+	
+	List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node,
+            "__ADVARGUMENTS__");
+    for (Map<String, String> map : tableValues) {
+        String argName = map.get("NAME");
+        String argValue = map.get("VALUE");
+        if (argName.startsWith("\"")) {
+            argName = argName.substring(1);
+        }
+        if (argName.endsWith("\"")) {
+            argName = argName.substring(0, argName.length() - 1);
+        }
+        if (argValue.startsWith("\"")) {
+            argValue = argValue.substring(1);
+        }
+        if (argValue.endsWith("\"")) {
+            argValue = argValue.substring(0, argValue.length() - 1);
+        }
+		sb.append("&" + argName + "=" + argValue);
+    }
 	
 	sb.append("\"");
 	
