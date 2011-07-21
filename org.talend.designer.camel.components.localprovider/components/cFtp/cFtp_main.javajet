@@ -1,0 +1,116 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+    java.io.UnsupportedEncodingException
+    java.net.URLEncoder
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+
+    String type = ElementParameterParser.getValue(node, "__TYPE__");
+    String username = ElementParameterParser.getValue(node, "__USERNAME__");
+    String server = ElementParameterParser.getValue(node, "__SERVER__");
+    String port = ElementParameterParser.getValue(node, "__PORT__");
+    String password = ElementParameterParser.getValue(node, "__PASSWORD__");
+    String directory = ElementParameterParser.getValue(node, "__DIRECTORY__");
+
+    if (directory.startsWith("\"")) {
+        directory = directory.substring(1);
+    }
+    if (directory.endsWith("\"")) {
+        directory = directory.substring(0, directory.length() - 1);
+    }
+
+    if (port.startsWith("\"")) {
+        port = port.substring(1);
+    }
+    if (port.endsWith("\"")) {
+        port = port.substring(0, port.length() - 1);
+    }
+
+    StringBuffer fragments = new StringBuffer();
+    fragments.append("\"");
+    fragments.append(type);
+    fragments.append("://");
+
+    if (username.trim().length() > 0) {
+        fragments.append(username.trim());
+        fragments.append("@");
+    }
+
+    fragments.append(server.trim());
+
+    if (port.trim().length() > 0) {
+        fragments.append(":");
+        fragments.append(port.trim());
+    }
+
+    if (directory.trim().length() > 0) {
+        fragments.append("/");
+        fragments.append(directory.trim());
+    }
+
+    boolean hasArg = false;
+    if (password.trim().length() > 0) {
+        hasArg = true;
+        fragments.append("?");
+        fragments.append("password=" + password);
+    }
+
+    List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node,
+            "__ADVARGUMENTS__");
+    for (Map<String, String> map : tableValues) {
+        String argName = map.get("NAME");
+        String argValue = map.get("VALUE");
+
+        if (argValue.startsWith("\"")) {
+            argValue = argValue.substring(1);
+        }
+        if (argValue.endsWith("\"")) {
+            argValue = argValue.substring(0, argValue.length() - 1);
+        }
+
+        if (argName.startsWith("\"")) {
+            argName = argName.substring(1);
+        }
+        if (argName.endsWith("\"")) {
+            argName = argName.substring(0, argName.length() - 1);
+        }
+
+        argName = argName.trim();
+
+        try {
+            argValue = URLEncoder.encode(argValue, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+
+        }
+
+        if (hasArg) {
+            fragments.append("&" + argName + "=" + argValue);
+        } else {
+            fragments.append("?" + argName + "=" + argValue);
+            hasArg = true;
+        }
+
+    }
+
+    String uri = fragments.toString() + "\"";
+    
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+		.to(<%=uri%>)
+<%
+	} else {
+%>
+		from(<%=uri%>)
+<%
+	}
+%>
