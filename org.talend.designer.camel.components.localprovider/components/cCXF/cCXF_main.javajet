@@ -6,6 +6,7 @@ imports="
     org.talend.designer.codegen.config.CodeGeneratorArgument
     java.util.List
     java.util.Map
+    java.net.URLEncoder
 " 
 %>
 <%
@@ -33,7 +34,11 @@ imports="
 			filePath = filePath.substring(0,filePath.length()-1);
 		}
 		filePath.replaceAll("\\\\","/");
-		sb.append(filePath);
+		try{
+			sb.append(URLEncoder.encode(filePath,"UTF-8"));
+		}catch(Exception e){
+			sb.append(filePath);
+		}
 	}else {
 		sb.append(ElementParameterParser.getValue(node, "__SERVICE_CLASS__"));
 	}
@@ -68,19 +73,26 @@ imports="
         if (argValue.endsWith("\"")) {
             argValue = argValue.substring(0, argValue.length() - 1);
         }
-		sb.append("&" + argName + "=" + argValue);
+        try{
+			argValue = URLEncoder.encode(argValue,"UTF-8");
+			sb.append("&" + argName + "=" + argValue);
+		}catch(Exception e){
+			sb.append("&" + argName + "=" + argValue);
+		}
     }
 	
 	sb.append("\"");
 	
+	url = sb.toString();
+	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.to(<%=sb.toString()%>)
+		.to(<%=url%>)
 <%
 	} else {
 %>
-		from(<%=sb.toString()%>)
+		from(<%=url%>)
 <%
 	}
 %>
