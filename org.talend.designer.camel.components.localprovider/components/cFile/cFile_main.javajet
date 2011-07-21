@@ -99,6 +99,8 @@ imports="
             argName = argName.substring(0, argName.length() - 1);
         }
         
+        argName = argName.trim();
+        
         arguments.append("&" + argName + "=" + argValue);
     }
 
