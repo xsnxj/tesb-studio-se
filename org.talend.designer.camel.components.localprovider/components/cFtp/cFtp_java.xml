@@ -35,7 +35,7 @@
 				<ITEM NAME="SFTP" VALUE="sftp" />
 			</ITEMS>
 		</PARAMETER>
-		<PARAMETER NAME="SERVER" FIELD="TEXT" NUM_ROW="5" GROUP="ARGUMENTS">
+		<PARAMETER NAME="SERVER" FIELD="TEXT" REQUIRED="true" NUM_ROW="5" GROUP="ARGUMENTS">
 			<DEFAULT>hostname</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT" FIELD="TEXT" NUM_ROW="6" GROUP="ARGUMENTS">
@@ -88,6 +88,8 @@
 			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="jsch" MODULE="jsch.jar"
 				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
