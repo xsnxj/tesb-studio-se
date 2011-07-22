@@ -1,6 +1,5 @@
 package org.talend.designer.esb.webservice.ws;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +42,7 @@ public class WSDLDiscoveryHelper {
             ComponentBuilder builder = new ComponentBuilder();
             ServiceInfo serviceInput = new ServiceInfo(wsdlURI, config);
             ServiceInfo[] services = builder.buildserviceinformation(serviceInput);
+//            types = builder.
 
             exceptionMessage = builder.getExceptionMessage();
             for (ServiceInfo serviceInfo : services) {
@@ -65,8 +65,6 @@ public class WSDLDiscoveryHelper {
     }
 
     public List<Function> getFunctionsAvailable(String wsdlURI) throws Exception {
-        ServiceHelperConfiguration config = null;
-        return getFunctionsAvailable(wsdlURI, config);
-
+        return getFunctionsAvailable(wsdlURI, null);
     }
 }

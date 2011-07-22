@@ -35,7 +35,7 @@ public class UIManager {
 
     public UIManager(WebServiceManager webSchemaManager) {
         super();
-        this.webServiceManager = webServiceManager;
+        this.webServiceManager = webSchemaManager;
     }
 
     public int getDialogResponse() {

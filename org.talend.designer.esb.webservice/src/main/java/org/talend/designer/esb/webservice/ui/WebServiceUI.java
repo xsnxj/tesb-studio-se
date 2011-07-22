@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
@@ -34,7 +35,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -63,18 +64,31 @@ import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreatorColumn;
 import org.talend.commons.ui.utils.PathUtils;
+import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
 import org.talend.core.CorePlugin;
+import org.talend.core.context.Context;
+import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
+import org.talend.core.model.metadata.builder.connection.SchemaTarget;
 import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
+import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
+import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.ConnectionItem;
+import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.XmlFileConnectionItem;
+import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.prefs.ITalendCorePrefConstants;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
@@ -87,6 +101,8 @@ import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
+import org.talend.repository.ProjectManager;
+import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
 
 /**
@@ -157,6 +173,10 @@ public class WebServiceUI extends AbstractWebService {
     private Set<String> portNameList = new HashSet<String>();
 
     private Button wizardOkButton;
+    
+    private String parseUrl = "";
+
+    private Button populateCheckbox;
     
     private boolean gotNewData = false;
 
@@ -374,6 +394,13 @@ public class WebServiceUI extends AbstractWebService {
                 if (result != null) {
                     getTextControl().setText(TalendTextUtils.addQuotes(PathUtils.getPortablePath(result)));
                     getDataFromNet();
+                    if (portListTable.getItemCount() > 1) {
+                        portListTable.deselectAll();
+                        setOk(false);
+                    }
+                    if (listTable.getItemCount() == 1) {
+                        selectFirstFunction();
+                    }
                 }
             }
 
@@ -445,6 +472,11 @@ public class WebServiceUI extends AbstractWebService {
         ); 
         
         addListenerForWSDLCom();
+        
+        populateCheckbox = new Button(wsdlComposite, SWT.CHECK | SWT.CENTER);
+        populateCheckbox.setLayoutData(new GridData());
+        populateCheckbox.setText("Populate schema to repository on finish");
+        
         return wsdlComposite;
     }
 
@@ -641,7 +673,6 @@ public class WebServiceUI extends AbstractWebService {
         return funList;
     }
 
-    String parseUrl = "";
     private String parseContextParameter(final String contextValue) {
         Display.getDefault().syncExec(new Runnable() {
 
@@ -707,6 +738,7 @@ public class WebServiceUI extends AbstractWebService {
 
     public void saveProperties() {
         getWebServiceManager().savePropertiesToComponent();
+        populateSchema();
     }
 
     public void prepareClosing(int dialogResponse) {
@@ -791,7 +823,67 @@ public class WebServiceUI extends AbstractWebService {
         }
     }
 
-    private boolean updateConnection() {
+    private void populateSchema() {
+    	if (currentFunction == null || !(populateCheckbox.getSelection())) {
+    		return;
+    	}  	
+    	populateMessage(currentFunction.getInputSchema(), currentFunction.getInputParameters());
+    	populateMessage(currentFunction.getOutputSchema(), currentFunction.getOutputParameters());
+    }
+    
+    private void populateMessage(byte[] schemaContent, List<ParameterInfo> parameters) {
+		if (parameters.isEmpty()) {
+			return;
+		}
+//    	String componentName = connector.getProcess().getName()+"_"+connector.getUniqueName();
+		
+		XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
+		connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
+		XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+        Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
+        connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
+                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
+        connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
+        connectionProperty.setStatusCode(""); //$NON-NLS-1$
+        
+		connectionItem.setProperty(connectionProperty);
+        connectionItem.setConnection(connection);
+
+        connection.setInputModel(true); 
+        //file name
+		//schema content
+		connection.setFileContent(schemaContent);
+        //schema
+		for (ParameterInfo parameter : parameters) {
+            String name = /*componentName + "_"+*/parameter.getName();
+			connection.setXmlFilePath(name+".xsd");
+			connectionProperty.setLabel(name); 
+	        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
+	        connection.getSchema().add(xmlXPathLoopDescriptor);
+	        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/"+parameter.getName());
+	        xmlXPathLoopDescriptor.setLimitBoucle(50);
+	        xmlXPathLoopDescriptor.setConnection(connection);
+	        for (String[] leaf : parameter.getLeafList()) {
+		        SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
+				xmlXPathLoopDescriptor.getSchemaTargets().add(target);
+				target.setRelativeXPathQuery(leaf[0]);
+				target.setTagName(leaf[1]);
+	        }
+        }
+        // save
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        String nextId = factory.getNextId();
+        connectionProperty.setId(nextId);
+        try {
+			factory.create(connectionItem, new Path(""));
+			ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+			RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
+		} catch (PersistenceException e) {
+			openErrorDialog("Error populating schema to XML metadata.", e);
+		}
+	}
+
+	private boolean updateConnection() {
         if (currentPortName != null) {
             connection.setPortName(currentPortName);
         } else if (currentPortName == null && !allPortNames.isEmpty()) {

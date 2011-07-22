@@ -1,7 +1,10 @@
 package org.talend.designer.esb.webservice.ws.wsdlutil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +13,6 @@ import java.util.Vector;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
@@ -52,6 +54,7 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 
+
 /**
  * DOC gcui class global comment. Detailled comment
  */
@@ -59,7 +62,7 @@ public class ComponentBuilder {
 
     WSDLFactory wsdlFactory = null;
 
-    private Vector<XmlSchema> wsdlTypes = new Vector<XmlSchema>();
+    private Map<XmlSchema, byte[]> wsdlSchemas = new HashMap<XmlSchema, byte[]>();
 
     private int inOrOut;
 
@@ -92,75 +95,43 @@ public class ComponentBuilder {
     }
 
     public ServiceInfo[] buildserviceinformation(ServiceInfo serviceinfo) throws Exception {
-        // WSDLReader reader = wsdlFactory.newWSDLReader();
-        // Definition def = reader.readWSDL(null, serviceinfo.getWsdlUri());
         ServiceDiscoveryHelper sdh;
-//        if (serviceinfo.getAuthConfig() != null && serviceinfo.getWsdlUri().indexOf("http") == 0) {
-//            sdh = new ServiceDiscoveryHelper(serviceinfo.getWsdlUri(), serviceinfo.getAuthConfig());
-//        } else {
-            sdh = new ServiceDiscoveryHelper(serviceinfo.getWsdlUri());
-//        }
+        String wsdlUri = serviceinfo.getWsdlUri();
+        sdh = new ServiceDiscoveryHelper(wsdlUri);
         Definition def = sdh.getDefinition();
 
-        wsdlTypes = createSchemaFromTypes(def);
-
-        collectAllXmlSchemaElement();
-
-        collectAllXmlSchemaType();
-
+        wsdlSchemas = createSchemaFromTypes(def);
+        
         Collection<Service> services = def.getServices().values();
         if (services == null) return new ServiceInfo[]{}; 
         ServiceInfo[] value = new ServiceInfo[services.size()];
+
         int i = 0;
         for (Service service : services) {
-            value[i] = populateComponent(serviceinfo, service);
+            value[i] = populateComponent(serviceinfo, service); 
             i++;
         }
         return value;
     }
 
-    /**
-     * DOC gcui Comment method "collectAllElement".
-     *
-     * @return
-     */
-    private void collectAllXmlSchemaElement() {
-        for (int i = 0; i < wsdlTypes.size(); i++) {
-            XmlSchema xmlSchema = (XmlSchema) (wsdlTypes.elementAt(i));
-            if (xmlSchema == null) {
-                continue;
-            }
-            Map<QName, XmlSchemaElement> elements = xmlSchema.getElements();
-            Iterator<XmlSchemaElement> elementsItr = elements.values().iterator();
-            while (elementsItr.hasNext()) {
-                XmlSchemaElement xmlSchemaElement = elementsItr.next();
-                allXmlSchemaElement.add(xmlSchemaElement);
-            }
-        }
+    private void addSchema(Map<XmlSchema, byte[]> map, XmlSchema schema) {
+    	try {
+    		ByteArrayOutputStream fos = new ByteArrayOutputStream();
+    		schema.write(fos);
+    		fos.close();
+    		map.put(schema, fos.toByteArray());
+            allXmlSchemaElement.addAll(schema.getElements().values());
+        	allXmlSchemaType.addAll(schema.getSchemaTypes().values());
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
     }
-
-    /**
-     * DOC gcui Comment method "collectAllXmlSchemaType".
-     */
-    private void collectAllXmlSchemaType() {
-        for (int i = 0; i < wsdlTypes.size(); i++) {
-            XmlSchema xmlSchema = (XmlSchema) (wsdlTypes.elementAt(i));
-            if (xmlSchema == null) {
-                continue;
-            }
-            //XmlSchemaObjectTable
-            Map<QName, XmlSchemaType> xmlSchemaObjectTable = xmlSchema.getSchemaTypes();
-            Iterator<XmlSchemaType> typesItr = xmlSchemaObjectTable.values().iterator();
-            while (typesItr.hasNext()) {
-                XmlSchemaType xmlSchemaType = typesItr.next();
-                allXmlSchemaType.add(xmlSchemaType);
-            }
-        }
-
-    }
-
-    protected Vector<XmlSchema> createSchemaFromTypes(Definition wsdlDefinition) {
-        Vector<XmlSchema> schemas = new Vector<XmlSchema>();
+    
+    protected Map<XmlSchema, byte[]> createSchemaFromTypes(Definition wsdlDefinition) {
+        allXmlSchemaElement.clear();
+    	allXmlSchemaType.clear();
+        Map<XmlSchema, byte[]> schemas = new HashMap<XmlSchema, byte[]>();
         org.w3c.dom.Element schemaElementt = null;
         Map importElement = null;
         if (wsdlDefinition.getTypes() != null) {
@@ -172,7 +143,7 @@ public class ComponentBuilder {
                     String documentBase = ((javax.wsdl.extensions.schema.Schema) schemaElement).getDocumentBaseURI();
                     XmlSchema schema = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
                     if (schema != null) {
-                        schemas.add(schema);
+                        addSchema(schemas, schema);
                         if (schema.getTargetNamespace() != null) {
                             schemaNames.add(schema.getTargetNamespace());
                         }
@@ -189,7 +160,6 @@ public class ComponentBuilder {
                     Boolean isHaveImport = false;
                     importElement = ((javax.wsdl.extensions.schema.Schema) schemaElement).getImports();
                     if (importElement != null && importElement.size() > 0) {
-                        Iterator keyIterator = importElement.keySet().iterator();
                         if (importElement.size() > 0) {
                             isHaveImport = true;
                         }
@@ -197,7 +167,7 @@ public class ComponentBuilder {
 
                     XmlSchema schema = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
                     if (schema != null) {
-                        schemas.add(schema);
+                    	addSchema(schemas, schema);
                         if (schema.getTargetNamespace() != null) {
                             schemaNames.add(schema.getTargetNamespace());
                         }
@@ -220,7 +190,7 @@ public class ComponentBuilder {
      * @param schemas
      * @param includeElement
      */
-    private void findIncludesSchema(Definition wsdlDefinition, Vector schemas, List includeElement) {
+    private void findIncludesSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, List includeElement) {
         org.w3c.dom.Element schemaElementt;
         for (int i = 0; i < includeElement.size(); i++) {
 
@@ -230,7 +200,7 @@ public class ComponentBuilder {
                     .getReferencedSchema().getDocumentBaseURI();
             XmlSchema schemaInclude = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
             if (schemaInclude != null) {
-                schemas.add(schemaInclude);
+            	addSchema(schemas, schemaInclude);
                 if (schemaInclude.getTargetNamespace() != null) {
                     schemaNames.add(schemaInclude.getTargetNamespace());
                 }
@@ -238,7 +208,7 @@ public class ComponentBuilder {
         }
     }
 
-    private void findImportSchema(Definition wsdlDefinition, Vector schemas, Map importElement) {
+    private void findImportSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, Map importElement) {
         org.w3c.dom.Element schemaElementt;
         List includeElement = null;
         Iterator keyIterator = importElement.keySet().iterator();
@@ -270,7 +240,7 @@ public class ComponentBuilder {
 
                     XmlSchema schemaImport = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
                     if (schemaImport != null) {
-                        schemas.add(schemaImport);
+                    	addSchema(schemas, schemaImport);
                         if (schemaImport.getTargetNamespace() != null) {
                             schemaNames.add(schemaImport.getTargetNamespace());
                         }
@@ -335,17 +305,16 @@ public class ComponentBuilder {
         return isHaveSchema;
     }
 
-    private ServiceInfo populateComponent(ServiceInfo component, Service service) {
+    @SuppressWarnings("unchecked")
+	private ServiceInfo populateComponent(ServiceInfo component, Service service) {
         ServiceInfo value = new ServiceInfo(component);
         QName qName = service.getQName();
         String namespace = qName.getNamespaceURI();
         String name = qName.getLocalPart();
         value.setServerName(name);
         value.setServerNameSpace(namespace);
-        Map ports = service.getPorts();
-        Iterator portIter = ports.values().iterator();
-        while (portIter.hasNext()) {
-            Port port = (Port) portIter.next();
+        Collection<Port> ports = service.getPorts().values();
+        for (Port port : ports) {
             Binding binding = port.getBinding();
             if (port.getName() != null) {
                 if (value.getPortNames() == null) {
@@ -353,10 +322,7 @@ public class ComponentBuilder {
                 }
                 value.getPortNames().add(port.getName());
             }
-            List operations = buildOperations(binding);
-            Iterator operIter = operations.iterator();
-            while (operIter.hasNext()) {
-                OperationInfo operation = (OperationInfo) operIter.next();
+            for (OperationInfo operation : buildOperations(binding)) {
                 Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
                 for (ExtensibilityElement element : addrElems) {
                     if (element != null && element instanceof SOAPAddress) {
@@ -370,7 +336,7 @@ public class ComponentBuilder {
         return value;
     }
 
-    private List buildOperations(Binding binding) {
+    private List<OperationInfo> buildOperations(Binding binding) {
         List<OperationInfo> operationInfos = new ArrayList<OperationInfo>();
 
         List<BindingOperation> operations = binding.getBindingOperations();
@@ -428,9 +394,8 @@ public class ComponentBuilder {
         if (inDef != null) {
             Message inMsg = inDef.getMessage();
             if (inMsg != null) {
-                operationInfo.setInputMessageName(inMsg.getQName().getLocalPart());
+                operationInfo.setInputMessage(inMsg, getSchema(inMsg));
                 getParameterFromMessage(operationInfo, inMsg, 1);
-                operationInfo.setInmessage(inMsg);
             }
         }
 
@@ -438,16 +403,29 @@ public class ComponentBuilder {
         if (outDef != null) {
             Message outMsg = outDef.getMessage();
             if (outMsg != null) {
-                operationInfo.setOutputMessageName(outMsg.getQName().getLocalPart());
+                operationInfo.setOutputMessage(outMsg, getSchema(outMsg));
                 getParameterFromMessage(operationInfo, outMsg, 2);
-                operationInfo.setOutmessage(outMsg);
             }
         }
 
         return operationInfo;
     }
 
-    private void getParameterFromMessage(OperationInfo operationInfo, Message msg, int manner) {
+    private byte[] getSchema(Message message) {
+    	for (Part part : (Collection<Part>)message.getParts().values()) {
+    		QName elementQname = part.getElementName();
+    		for (XmlSchema schema : wsdlSchemas.keySet()) {
+    			for (XmlSchemaElement element : schema.getElements().values()) {
+    				if (element.getName().equals(elementQname.getLocalPart())) {//TODO: check namespaces too
+    					return wsdlSchemas.get(schema);
+    				}
+    			}
+    		}
+    	}
+		return null;
+	}
+
+	private void getParameterFromMessage(OperationInfo operationInfo, Message msg, int manner) {
 
         // inOrOut = manner;
         List msgParts = msg.getOrderedParts(null);
@@ -466,7 +444,7 @@ public class ComponentBuilder {
             }
             // add first parameter from message.
             ParameterInfo parameterRoot = new ParameterInfo();
-            parameterRoot.setName(partName);
+            parameterRoot.setName(partElement);
             if (manner == 1) {
                 operationInfo.addInparameter(parameterRoot);
             } else {
@@ -475,7 +453,7 @@ public class ComponentBuilder {
             if (allXmlSchemaElement.size() > 0) {
                 buildParameterFromElements(partElement, parameterRoot, manner);
             } else if (allXmlSchemaType.size() > 0) {
-                buileParameterFromTypes(partElement, parameterRoot, manner);
+                buildParameterFromTypes(partElement, parameterRoot, manner);
             }
         }
     }
@@ -512,7 +490,7 @@ public class ComponentBuilder {
                                 String paraTypeName = xmlSchemaElement.getSchemaTypeName().getLocalPart();
                                 if (paraTypeName != null) {
                                     parameterRoot.setType(paraTypeName);
-                                    buileParameterFromTypes(paraTypeName, parameterRoot, ioOrRecursion);
+                                    buildParameterFromTypes(paraTypeName, parameterRoot, ioOrRecursion);
                                 }
                             }
                         } else if (xmlSchemaElement.getSchemaType() instanceof XmlSchemaSimpleType) {
@@ -524,7 +502,7 @@ public class ComponentBuilder {
                         String paraTypeName = xmlSchemaElement.getSchemaTypeName().getLocalPart();
                         if (paraTypeName != null) {
                             parameterRoot.setType(paraTypeName);
-                            buileParameterFromTypes(paraTypeName, parameterRoot, ioOrRecursion);
+                            buildParameterFromTypes(paraTypeName, parameterRoot, ioOrRecursion);
                         }
                     }
                 }
@@ -541,7 +519,7 @@ public class ComponentBuilder {
      * @param operationInfo
      * @param i
      */
-    private void buileParameterFromTypes(String paraType, ParameterInfo parameter, int ioOrRecursion) {
+    private void buildParameterFromTypes(String paraType, ParameterInfo parameter, int ioOrRecursion) {
         if (ioOrRecursion < 3) {
             parametersName.clear();
             parametersName.add(parameter.getName());
@@ -660,7 +638,7 @@ public class ComponentBuilder {
                     String elementTypeName = xmlSchemaElement.getSchemaTypeName().getLocalPart();
                     parameterSon.setType(elementTypeName);
                     if (!isHave && !WsdlTypeUtil.isJavaBasicType(elementTypeName)) {
-                        buileParameterFromTypes(elementTypeName, parameterSon, ioOrRecursion);
+                        buildParameterFromTypes(elementTypeName, parameterSon, ioOrRecursion);
                     }
 
                 } else if (xmlSchemaElement.getSchemaType() != null) {
@@ -678,7 +656,7 @@ public class ComponentBuilder {
                             String paraTypeName = xmlSchemaElement.getSchemaTypeName().getLocalPart();
                             if (paraTypeName != null && !isHave) {
                                 parameter.setType(paraTypeName);
-                                buileParameterFromTypes(paraTypeName, parameterSon, ioOrRecursion);
+                                buildParameterFromTypes(paraTypeName, parameterSon, ioOrRecursion);
                             }
                         }
                     } else if (xmlSchemaElement.getSchemaType() instanceof XmlSchemaSimpleType) {
@@ -714,7 +692,7 @@ public class ComponentBuilder {
                     String elementTypeName = xmlSchemaAttribute.getSchemaTypeName().getLocalPart();
                     parameterSon.setType(elementTypeName);
                     if (!isHave && !WsdlTypeUtil.isJavaBasicType(elementTypeName)) {
-                        buileParameterFromTypes(elementTypeName, parameterSon, ioOrRecursion);
+                        buildParameterFromTypes(elementTypeName, parameterSon, ioOrRecursion);
                     }
                 } else if (xmlSchemaAttribute.getTargetQName() != null) {
                     String refName = xmlSchemaAttribute.getTargetQName().getLocalPart();

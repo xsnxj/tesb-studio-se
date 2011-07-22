@@ -29,6 +29,11 @@ public class Function {
 
     private List<String> portNames;
     
+    private byte[] inputSchema;
+    private byte[] outputSchema;
+
+
+    
     public Function(String name) {
         this.name = name;
     }
@@ -54,6 +59,7 @@ public class Function {
             inputParameters.add(new ParameterInfo());
             operationName = operationName + "):";
         } else {
+        	inputSchema = oper.getInSchema();
             for (ParameterInfo element : inps ) {
                 getParaFullName(element);
                 inputParameters.add(element);
@@ -74,12 +80,13 @@ public class Function {
             int operationNamelen = operationName.length();
             operationName = operationName.substring(0, operationNamelen - 1) + "):";
         }
-        // output parameters
+        // output parameters 
         outputParameters = new ArrayList<ParameterInfo>();
         List<ParameterInfo> outps = oper.getOutparameters();
         if ((outps == null) || (outps.size() == 0)) {
             //outputParameters.add(new ParameterInfo());
         } else {
+        	outputSchema = oper.getOutSchema();
             for (ParameterInfo element : outps) {
                 getParaFullName(element);
                 outputParameters.add(element);
@@ -101,7 +108,21 @@ public class Function {
         this.name = operationName;
     }
 
-    private final static void getParaFullName(ParameterInfo paraElement) {
+    /**
+	 * @return the inputSchema
+	 */
+	public byte[] getInputSchema() {
+		return inputSchema;
+	}
+
+	/**
+	 * @return the outputSchema
+	 */
+	public byte[] getOutputSchema() {
+		return outputSchema;
+	}
+
+	private final static void getParaFullName(ParameterInfo paraElement) {
         paraElement.setParaFullName(paraElement.getName());
         getAllChildren(paraElement);
 
@@ -123,7 +144,7 @@ public class Function {
         }
         return list;
     }
-
+    
     public List<ParameterInfo> getInputParameters() {
         return inputParameters;
     }

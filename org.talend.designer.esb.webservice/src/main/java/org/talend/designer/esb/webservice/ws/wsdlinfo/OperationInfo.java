@@ -29,18 +29,6 @@ public class OperationInfo {
     /** The name used to when making an invocation. */
     private String targetMethodName = "";
 
-    /** The input message. */
-    private String inputMessageText = "";
-
-    /** The output message. */
-    private String outputMessageText = "";
-
-    /** The name of input message. */
-    private String inputMessageName = "";
-
-    /** The name of output message. */
-    private String outputMessageName = "";
-
     /** The action URI value to use when making a invocation. */
     private String soapActionURI = "";
 
@@ -51,9 +39,12 @@ public class OperationInfo {
 
     private List<ParameterInfo> outparameters = new ArrayList<ParameterInfo>();
 
-    private Message inmessage;
+    private Message inputMessage;
 
-    private Message outmessage;
+    private Message outputMessage;
+    
+    private byte[] inputSchema;
+    private byte[] outputSchema;
 
     private String serviceid;
 
@@ -74,20 +65,22 @@ public class OperationInfo {
         this.serviceid = serviceid;
     }
 
-    public Message getInmessage() {
-        return inmessage;
+    public Message getInputMessage() {
+        return inputMessage;
     }
 
-    public void setInmessage(Message inmessage) {
-        this.inmessage = inmessage;
+    public void setInputMessage(Message message, byte[] schema) {
+        this.inputMessage = message;
+        this.inputSchema = schema;
     }
 
-    public Message getOutmessage() {
-        return outmessage;
+    public Message getOutputMessage() {
+        return outputMessage;
     }
 
-    public void setOutmessage(Message outmessage) {
-        this.outmessage = outmessage;
+    public void setOutputMessage(Message outputMessage, byte[] schema) {
+        this.outputMessage = outputMessage;
+        this.outputSchema = schema;
     }
 
     public void addInparameter(ParameterInfo parameter) {
@@ -154,36 +147,12 @@ public class OperationInfo {
         return targetMethodName;
     }
 
-    public void setInputMessageName(String value) {
-        inputMessageName = value;
-    }
-
     public String getInputMessageName() {
-        return inputMessageName;
-    }
-
-    public void setOutputMessageName(String value) {
-        outputMessageName = value;
+        return inputMessage.getQName().getLocalPart();
     }
 
     public String getOutputMessageName() {
-        return outputMessageName;
-    }
-
-    public void setInputMessageText(String value) {
-        inputMessageText = value;
-    }
-
-    public String getInputMessageText() {
-        return inputMessageText;
-    }
-
-    public void setOutputMessageText(String value) {
-        outputMessageText = value;
-    }
-
-    public String getOutputMessageText() {
-        return outputMessageText;
+        return outputMessage.getQName().getLocalPart();
     }
 
     public void setSoapActionURI(String value) {
@@ -205,4 +174,20 @@ public class OperationInfo {
     public String toString() {
         return getTargetMethodName();
     }
+
+	/**
+	 * @return the inputSchema
+	 */
+	public byte[] getInSchema() {
+		return inputSchema;
+	}
+
+	/**
+	 * @return the outputSchema
+	 */
+	public byte[] getOutSchema() {
+		return outputSchema;
+	}
+    
+    
 }

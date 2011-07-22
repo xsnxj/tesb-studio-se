@@ -137,4 +137,19 @@ public class ParameterInfo {
         this.ParaFullName = paraFullName;
     }
 
+    public final List<String[]> getLeafList() {
+    	List<String[]> value = new ArrayList<String[]>();
+    	for (ParameterInfo kid : getParameterInfos()) {
+    		if (kid.getParameterInfos().size() > 0) {
+    			for (String[] leafEntry : kid.getLeafList()) {
+    				value.add(new String[]{kid.getName()+"/"+leafEntry[0], leafEntry[1]});
+    			}
+    		} else {
+    			value.add(new String[]{kid.getName(), kid.getName()});
+    		}
+    	}
+    	return value;
+    }
+
+
 }
