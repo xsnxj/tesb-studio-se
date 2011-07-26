@@ -176,7 +176,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
             }
             IElementParameter commStyle = wenCom.getElementParameter("COMMUNICATION_STYLE");
             if (commStyle != null) {
-                commStyle.setValue(function.getOutputParameters().size() == 0 ? "one-way":"request-response");
+                commStyle.setValue(function.getOutput() == null ? "one-way":"request-response");
             }
 
         }

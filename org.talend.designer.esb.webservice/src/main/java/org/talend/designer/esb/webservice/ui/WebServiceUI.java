@@ -99,6 +99,7 @@ import org.talend.designer.esb.webservice.data.ExternalWebServiceUIProperties;
 import org.talend.designer.esb.webservice.i18n.Messages;
 import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
+import org.talend.designer.esb.webservice.ws.wsdlinfo.FlowInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.repository.ProjectManager;
@@ -780,24 +781,23 @@ public class WebServiceUI extends AbstractWebService {
         if (inputparaValue != null) {
             inputValue.clear();
             if (currentFunction != null) {
-                List<ParameterInfo> inputParameter = currentFunction.getInputParameters();
+                ParameterInfo inputParameter = currentFunction.getInput().getParameterRoot();
                 if (inputParameter != null) {
                     boolean mark = true;
                     List<ParameterInfo> ls = new ArrayList<ParameterInfo>();
-                    for (ParameterInfo element : inputParameter) {
+                    if (inputParameter != null) {
                         WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                        parameter.setParameterInfo(element.getName());
-                        if (element.getParent() == null) {
+                        parameter.setParameterInfo(inputParameter.getName());
+                        if (inputParameter.getParent() == null) {
                             parameter.setParameterInfoParent("");
                         } else {
-                            parameter.setParameterInfoParent(element.getParent().getName());
+                            parameter.setParameterInfoParent(inputParameter.getParent().getName());
                         }
                         inputValue.add(parameter);
                         mark = false;
-                        if (!element.getParameterInfos().isEmpty()) {
-                            ls.addAll(new ParameterInfoUtil().getAllChildren(element));
+                        if (!inputParameter.getParameterInfos().isEmpty()) {
+                            ls.addAll(new ParameterInfoUtil().getAllChildren(inputParameter));
                         }
-                        break;
                     }
                     if (!mark) {
                         for (ParameterInfo para : ls) {
@@ -827,22 +827,28 @@ public class WebServiceUI extends AbstractWebService {
     	if (currentFunction == null || !(populateCheckbox.getSelection())) {
     		return;
     	}  	
-    	populateMessage(currentFunction.getInputSchema(), currentFunction.getInputParameters());
-    	populateMessage(currentFunction.getOutputSchema(), currentFunction.getOutputParameters());
+    	populateMessage(currentFunction.getInput());
+    	populateMessage(currentFunction.getOutput());
+    	for (FlowInfo fault : currentFunction.getFaults()) {
+    		populateMessage(fault);
+    	}
     }
     
-    private void populateMessage(byte[] schemaContent, List<ParameterInfo> parameters) {
-		if (parameters.isEmpty()) {
+    private void populateMessage(FlowInfo message) {
+		if (message == null) {
 			return;
 		}
 //    	String componentName = connector.getProcess().getName()+"_"+connector.getUniqueName();
-		
+        ParameterInfo parameter = message.getParameterRoot();
+        String name = /*componentName + "_"+*/parameter.getName();
 		XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
 		connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
+		connection.setXmlFilePath(name+".xsd");
 		XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
         Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
         connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
                 .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
+		connectionProperty.setLabel(name); 
         connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
         connectionProperty.setStatusCode(""); //$NON-NLS-1$
         
@@ -850,25 +856,18 @@ public class WebServiceUI extends AbstractWebService {
         connectionItem.setConnection(connection);
 
         connection.setInputModel(true); 
-        //file name
-		//schema content
-		connection.setFileContent(schemaContent);
-        //schema
-		for (ParameterInfo parameter : parameters) {
-            String name = /*componentName + "_"+*/parameter.getName();
-			connection.setXmlFilePath(name+".xsd");
-			connectionProperty.setLabel(name); 
-	        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
-	        connection.getSchema().add(xmlXPathLoopDescriptor);
-	        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/"+parameter.getName());
-	        xmlXPathLoopDescriptor.setLimitBoucle(50);
-	        xmlXPathLoopDescriptor.setConnection(connection);
-	        for (String[] leaf : parameter.getLeafList()) {
-		        SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
-				xmlXPathLoopDescriptor.getSchemaTargets().add(target);
-				target.setRelativeXPathQuery(leaf[0]);
-				target.setTagName(leaf[1]);
-	        }
+		//schema
+		connection.setFileContent(message.getSchema());
+        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
+        connection.getSchema().add(xmlXPathLoopDescriptor);
+        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/"+parameter.getName());
+        xmlXPathLoopDescriptor.setLimitBoucle(50);
+        xmlXPathLoopDescriptor.setConnection(connection);
+        for (String[] leaf : parameter.getLeafList()) {
+	        SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
+			xmlXPathLoopDescriptor.getSchemaTargets().add(target);
+			target.setRelativeXPathQuery(leaf[0]);
+			target.setTagName(leaf[1]);
         }
         // save
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -905,31 +904,29 @@ public class WebServiceUI extends AbstractWebService {
         if (outputMap != null) {
             outPutValue.clear();
             if (currentFunction != null) {
-                List<ParameterInfo> outputParameters = currentFunction.getOutputParameters();
-                if (outputParameters != null) {
+                ParameterInfo outputParameter = currentFunction.getOutput().getParameterRoot();
+                if (outputParameter != null) {
                     // for (int i = 0; i < inputParameter.size(); i++) {
                     boolean mark = true;
-                    for (ParameterInfo element : outputParameters) {
-                        WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                        parameter.setParameterInfo(element.getName());
-                        if (element.getParent() == null) {
-                            parameter.setParameterInfoParent("");
-                        } else {
-                            parameter.setParameterInfoParent(element.getParent().getName());
-                        }
-                        outPutValue.add(parameter);
-                        // System.out.println(element.getParent() + " ppp");
-                        mark = false;
-                        if (!element.getParameterInfos().isEmpty()) {
-                            ls.addAll(new ParameterInfoUtil().getAllChildren(element));
-                        }
+                    WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
+                    parameter.setParameterInfo(outputParameter.getName());
+                    if (outputParameter.getParent() == null) {
+                        parameter.setParameterInfoParent("");
+                    } else {
+                        parameter.setParameterInfoParent(outputParameter.getParent().getName());
+                    }
+                    outPutValue.add(parameter);
+                    // System.out.println(element.getParent() + " ppp");
+                    mark = false;
+                    if (!outputParameter.getParameterInfos().isEmpty()) {
+                        ls.addAll(new ParameterInfoUtil().getAllChildren(outputParameter));
                     }
                     if (!mark) {
                         for (ParameterInfo para : ls) {
-                            WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                            parameter.setParameterInfo(para.getName());
-                            parameter.setParameterInfoParent(para.getParent().getName());
-                            outPutValue.add(parameter);
+                            WSDLParameter parameter1 = ConnectionFactory.eINSTANCE.createWSDLParameter();
+                            parameter1.setParameterInfo(para.getName());
+                            parameter1.setParameterInfoParent(para.getParent().getName());
+                            outPutValue.add(parameter1);
                         }
                     }
                 }

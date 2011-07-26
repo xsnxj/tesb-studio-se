@@ -1,9 +1,8 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import javax.wsdl.Message;
 
 /**
  * 
@@ -35,16 +34,9 @@ public class OperationInfo {
     /** The encoding type "document" vs. "rpc" */
     private String style = "document";
 
-    private List<ParameterInfo> inparameters = new ArrayList<ParameterInfo>();
-
-    private List<ParameterInfo> outparameters = new ArrayList<ParameterInfo>();
-
-    private Message inputMessage;
-
-    private Message outputMessage;
-    
-    private byte[] inputSchema;
-    private byte[] outputSchema;
+    private FlowInfo input;
+    private FlowInfo output;
+    private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
     private String serviceid;
 
@@ -65,39 +57,30 @@ public class OperationInfo {
         this.serviceid = serviceid;
     }
 
-    public Message getInputMessage() {
-        return inputMessage;
+    public FlowInfo getInput() {
+        return input;
     }
 
-    public void setInputMessage(Message message, byte[] schema) {
-        this.inputMessage = message;
-        this.inputSchema = schema;
+    public FlowInfo getOutput() {
+        return output;
+    }
+    
+    public List<FlowInfo> getFaults() {
+    	return Collections.unmodifiableList(faults);
     }
 
-    public Message getOutputMessage() {
-        return outputMessage;
+    public void setInput(FlowInfo input) {
+        this.input = input;
     }
 
-    public void setOutputMessage(Message outputMessage, byte[] schema) {
-        this.outputMessage = outputMessage;
-        this.outputSchema = schema;
+    public void setOutput(FlowInfo output) {
+        this.output = output;
     }
 
-    public void addInparameter(ParameterInfo parameter) {
-        this.inparameters.add(parameter);
-    }
 
-    public List<ParameterInfo> getInparameters() {
-        return inparameters;
-    }
-
-    public void addOutparameter(ParameterInfo parameter) {
-        this.outparameters.add(parameter);
-    }
-
-    public List<ParameterInfo> getOutparameters() {
-        return this.outparameters;
-    }
+	public void addFault(FlowInfo fault) {
+		this.faults.add(fault);		
+	}
 
     public String getOperationType() {
         return operationType;
@@ -147,14 +130,6 @@ public class OperationInfo {
         return targetMethodName;
     }
 
-    public String getInputMessageName() {
-        return inputMessage.getQName().getLocalPart();
-    }
-
-    public String getOutputMessageName() {
-        return outputMessage.getQName().getLocalPart();
-    }
-
     public void setSoapActionURI(String value) {
         soapActionURI = value;
     }
@@ -174,20 +149,4 @@ public class OperationInfo {
     public String toString() {
         return getTargetMethodName();
     }
-
-	/**
-	 * @return the inputSchema
-	 */
-	public byte[] getInSchema() {
-		return inputSchema;
-	}
-
-	/**
-	 * @return the outputSchema
-	 */
-	public byte[] getOutSchema() {
-		return outputSchema;
-	}
-    
-    
 }

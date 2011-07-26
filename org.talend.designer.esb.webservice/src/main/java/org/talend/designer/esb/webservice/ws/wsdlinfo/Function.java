@@ -1,6 +1,7 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,10 +9,6 @@ import java.util.List;
  * @author gcui
  */
 public class Function {
-
-    private List<ParameterInfo> inputParameters;
-
-    private List<ParameterInfo> outputParameters;
 
     private String name;
 
@@ -29,8 +26,9 @@ public class Function {
 
     private List<String> portNames;
     
-    private byte[] inputSchema;
-    private byte[] outputSchema;
+    private FlowInfo input;
+    private FlowInfo output;
+    private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
 
     
@@ -53,115 +51,69 @@ public class Function {
         
         
         // input parameters
-        inputParameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> inps = oper.getInparameters();
-        if ((inps == null) || (inps.size() == 0)) {
-            inputParameters.add(new ParameterInfo());
+        input = oper.getInput();
+        if (input == null) {
             operationName = operationName + "):";
         } else {
-        	inputSchema = oper.getInSchema();
-            for (ParameterInfo element : inps ) {
-                getParaFullName(element);
-                inputParameters.add(element);
-                if (element.getType() != null) {
-                    operationName = operationName + element.getType() + ",";
-                } else if (element.getType() == null && element.getName() != null) {
-                    operationName = operationName + element.getName() + ",";
-                } else if (element.getType() == null) {
-                    operationName = operationName + "noType" + ",";
-                }
-                if (element.getType() == null
-                        && (element.getParameterInfos() == null || element.getParameterInfos().isEmpty())
-                        && inps.size() == 1) {
-
-                    element.setName(element.getName());
-                }
+        	input.getSchema();
+            ParameterInfo element = input.getParameterRoot();
+            if (element.getType() != null) {
+                operationName = operationName + element.getType() + ",";
+            } else if (element.getType() == null && element.getName() != null) {
+                operationName = operationName + element.getName() + ",";
+            } else if (element.getType() == null) {
+                operationName = operationName + "noType" + ",";
+            }
+            if (element.getType() == null
+                    && (element.getParameterInfos() == null || element.getParameterInfos().isEmpty())) {
+                element.setName(element.getName());
             }
             int operationNamelen = operationName.length();
             operationName = operationName.substring(0, operationNamelen - 1) + "):";
         }
         // output parameters 
-        outputParameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> outps = oper.getOutparameters();
-        if ((outps == null) || (outps.size() == 0)) {
-            //outputParameters.add(new ParameterInfo());
-        } else {
-        	outputSchema = oper.getOutSchema();
-            for (ParameterInfo element : outps) {
-                getParaFullName(element);
-                outputParameters.add(element);
-                if (element.getType() != null) {
-                    operationName = operationName + element.getType() + ",";
-                } else if (element.getParameterInfos() != null && !element.getParameterInfos().isEmpty()) {
-                    for (ParameterInfo elementBranch : element.getParameterInfos()) {
-                        if (elementBranch.getType() != null) {
-                            operationName = operationName + elementBranch.getType() + ",";
-                        } else {
-                            operationName = operationName + "noType" + ",";
-                        }
+        output = oper.getOutput();
+        if (output != null) {
+            ParameterInfo element = output.getParameterRoot();
+            if (element.getType() != null) {
+                operationName = operationName + element.getType() + ",";
+            } else if (element.getParameterInfos() != null && !element.getParameterInfos().isEmpty()) {
+                for (ParameterInfo elementBranch : element.getParameterInfos()) {
+                    if (elementBranch.getType() != null) {
+                        operationName = operationName + elementBranch.getType() + ",";
+                    } else {
+                        operationName = operationName + "noType" + ",";
                     }
                 }
             }
-            int operationNamelen = operationName.length();
-            operationName = operationName.substring(0, operationNamelen - 1);
+            operationName = operationName.substring(0, operationName.length() - 1);
         }
         this.name = operationName;
+        this.faults = oper.getFaults();
     }
 
     /**
-	 * @return the inputSchema
+	 * @return the input
 	 */
-	public byte[] getInputSchema() {
-		return inputSchema;
+	public FlowInfo getInput() {
+		return input;
 	}
 
 	/**
-	 * @return the outputSchema
+	 * @return the output
 	 */
-	public byte[] getOutputSchema() {
-		return outputSchema;
+	public FlowInfo getOutput() {
+		return output;
 	}
 
-	private final static void getParaFullName(ParameterInfo paraElement) {
-        paraElement.setParaFullName(paraElement.getName());
-        getAllChildren(paraElement);
+	/**
+	 * @return the faults
+	 */
+	public List<FlowInfo> getFaults() {
+		return Collections.unmodifiableList(faults);
+	}
 
-    }
-
-    private final static List<ParameterInfo> getAllChildren(ParameterInfo para) {
-        List<ParameterInfo> list = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> childList = para.getParameterInfos();
-        for (ParameterInfo paraC : childList) {
-            if (paraC.getParent().getParaFullName() != null) {
-                paraC.setParaFullName(paraC.getParent().getParaFullName() + "." + paraC.getName());
-            }
-        }
-        list.addAll(childList);
-        for (ParameterInfo paraC : childList) {
-            if (paraC.getParameterInfos().size() > 0) {
-                list.addAll(getAllChildren(paraC));
-            }
-        }
-        return list;
-    }
-    
-    public List<ParameterInfo> getInputParameters() {
-        return inputParameters;
-    }
-
-    public void setInputParameters(List<ParameterInfo> inputParameters) {
-        this.inputParameters = inputParameters;
-    }
-
-    public List<ParameterInfo> getOutputParameters() {
-        return outputParameters;
-    }
-
-    public void setOutputParameters(List<ParameterInfo> outputParameters) {
-        this.outputParameters = outputParameters;
-    }
-
-    public String getName() {
+	public String getName() {
         return name;
     }
 
