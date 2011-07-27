@@ -1,0 +1,71 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+
+    String name = ElementParameterParser.getValue(node, "__NAME__").trim();
+    name += ElementParameterParser.getValue(node, "__SUBFIX__").trim();
+    String type = ElementParameterParser.getValue(node, "__TYPE__");
+    String destination = ElementParameterParser.getValue(node, "__DESTINATION__").trim();
+
+    boolean hasOptions = false;
+
+    StringBuffer sb = new StringBuffer();
+    sb.append("\"");
+    sb.append(name);
+    sb.append(":");
+    sb.append(type);
+    sb.append(":");
+    sb.append(destination);
+   
+
+    List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node,
+            "__URI_OPTIONS__");
+    for (Map<String, String> map : tableValues) {
+        String argName = map.get("NAME").trim();
+        String argValue = map.get("VALUE").trim();
+
+        if (argValue.startsWith("\"")) {
+            argValue = argValue.substring(1);
+        }
+        if (argValue.endsWith("\"")) {
+            argValue = argValue.substring(0, argValue.length() - 1);
+        }
+
+        if (argName.startsWith("\"")) {
+            argName = argName.substring(1);
+        }
+        if (argName.endsWith("\"")) {
+            argName = argName.substring(0, argName.length() - 1);
+        }
+        if (!hasOptions) {
+            sb.append("?" + argName + "=" + argValue);
+            hasOptions = true;
+        } else {
+            sb.append("&" + argName + "=" + argValue);
+        }
+    }
+    
+    sb.append("\"");
+    String uri = sb.toString();
+    
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+		.to(<%=uri%>)
+<%
+	} else {
+%>
+		from(<%=uri%>)
+<%
+	}
+%>
