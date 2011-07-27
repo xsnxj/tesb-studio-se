@@ -48,7 +48,7 @@
 		</PARAMETER>
 		<PARAMETER NAME="BROKER_URI" FIELD="TEXT" NUM_ROW="8"
 			GROUP="BROKER_GROUP" REQUIRED="true" SHOW_IF="CUSTOMIZED == 'true'">
-			<DEFAULT>schema:(broker:(tcp://localhost)?brokerOptions)?transportOptions
+			<DEFAULT>vm:(broker:(tcp://localhost:6000)?persistent=false)?marshal=false
 			</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROTOCOL" FIELD="CLOSED_LIST" NUM_ROW="8"
@@ -67,11 +67,11 @@
 			<DEFAULT>other</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVER" FIELD="TEXT" NUM_ROW="9" GROUP="BROKER_GROUP"
-			REQUIRED="true" SHOW_IF="CUSTOMIZED == 'false'">
+			REQUIRED="true" SHOW_IF="(PROTOCOL != 'VM') AND (CUSTOMIZED == 'false')">
 			<DEFAULT>localhost</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT" FIELD="TEXT" NUM_ROW="10" GROUP="BROKER_GROUP"
-			REQUIRED="true" SHOW_IF="CUSTOMIZED == 'false'">
+			REQUIRED="true" SHOW_IF="(PROTOCOL != 'VM') AND (CUSTOMIZED == 'false')">
 			<DEFAULT>8000</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="ADDITIONAL_OPTIONS" FIELD="CHECK" NUM_ROW="11"
