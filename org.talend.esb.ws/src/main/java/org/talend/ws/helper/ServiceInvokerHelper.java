@@ -34,6 +34,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -69,12 +70,13 @@ import org.talend.ws.mapper.MessageMapper;
  *
  * @author rlamarche
  */
-public class ServiceInvokerHelper implements ClassMapper {
+public class ServiceInvokerHelper {
 
     private static final String HTTP_PROXY_PASSWORD = "http.proxyPassword";
 	private static final String HTTP_PROXY_USER = "http.proxyUser";
 	private static final String HTTP_PROXY_PORT = "http.proxyPort";
 	private static final String HTTP_PROXY_HOST = "http.proxyHost";
+	private static final QName LOCAL_OVERRIDE_QNAME = QName.valueOf("{local}override");
 
 	private ServiceDiscoveryHelper serviceDiscoveryHelper;
 
@@ -169,116 +171,16 @@ public class ServiceInvokerHelper implements ClassMapper {
                 }
             }
         }
-        // end bchen ,code for bug 9900
-        mapperFactory = new MapperFactory(this, serviceDiscoveryHelper.getSchema());
     }
 
-    public Client getClient(QName service, QName port) {
-        Map<QName, Client> serviceClients = clients.get(service);
-        if (serviceClients == null) {
-            serviceClients = new HashMap<QName, Client>();
-            clients.put(service, serviceClients);
-        }
-
-        if (serviceClients.get(port) == null) {
-            serviceClients.put(port, createClient(service, port));
-        }
-
-        return serviceClients.get(port);
-    }
-
-    protected Client createClient(QName service, QName port) {
-        // bchen bug for 8674
-        Client client = dynamicClientFactory.createClient(serviceDiscoveryHelper.getLocalWsdlUri(), service, Thread
-                .currentThread().getContextClassLoader(), port, bindingFiles);
-        // end
-        HTTPConduit conduit = (HTTPConduit) client.getConduit();
-        if (configuration != null) {
-            configuration.configureHttpConduit(conduit);
-        }
-
-        return client;
-    }
-
-    private MessageMapper getMessageMapper(Message message) throws LocalizedException {
-
-        MessageMapper messageMapper = mappers.get(message);
-        if (messageMapper == null) {
-            messageMapper = createMessageMapper(message);
-            mappers.put(message, messageMapper);
-        }
-
-        return messageMapper;
-    }
-
-    private MessageMapper createMessageMapper(Message message) throws LocalizedException {
-        return mapperFactory.createMessageMapper(message);
-    }
-
-    protected Map<String, Object> invoke(Client client, Operation operation, Object value) throws Exception, LocalizedException {
-
-        Input input = operation.getInput();
-        Output output = operation.getOutput();
-        MessageMapper inMessageMapper = null;
-        MessageMapper outMessageMapper = null;
-
-        BindingOperationInfo bindingOperationInfo = client.getEndpoint().getEndpointInfo().getBinding().getOperation(
-                new QName(client.getEndpoint().getService().getName().getNamespaceURI(), operation.getName()));
-        if (input != null) {
-            inMessageMapper = getMessageMapper(input.getMessage());
-        } else {
-            inMessageMapper = new EmptyMessageMapper();
-        }
-        if (output != null) {
-            outMessageMapper = getMessageMapper(output.getMessage());
-        } else {
-            outMessageMapper = new EmptyMessageMapper();
-        }
-        if (bindingOperationInfo.isUnwrappedCapable()) {
-            inMessageMapper.setUnwrapped(true);
-            outMessageMapper.setUnwrapped(true);
-        }
-
-        Object[] retParams;
-        if (value != null) {
-            Object[] params = inMessageMapper.convertToParams(value);
-            retParams = client.invoke(operation.getName(), params);
-        } else {
-            retParams = client.invoke(operation.getName()/*, new Object[]{new DOMSource(new DOMElement("<req>do something more</req>"))}*/);
-        }
-
-        Map<String, Object> retValues = outMessageMapper.convertToValue(retParams);
-
-        return retValues;
-    }
-
-    public String invoke(QName serviceName, QName portName,
-    		String operationName, String payload)
-    		throws SOAPFaultException, Exception {
-
-    	Source request = new javax.xml.transform.stream.StreamSource(
-    			new java.io.ByteArrayInputStream(payload.getBytes()));
-
-    	Source response = invoke(serviceName, portName, operationName, request);
-
-    	if (null == response) {
-    		return null;
-    	}
-
-    	java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-    	javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
-    			response, new javax.xml.transform.stream.StreamResult(baos));
-
-    	return new String(baos.toByteArray());
-    }
 
     public org.dom4j.Document invoke(QName serviceName, QName portName,
-    		String operationName, org.dom4j.Document payload)
+    		String operationName, org.dom4j.Document payload, String overrideEndpoint)
     		throws SOAPFaultException, Exception {
 
     	Source requestSource = new org.dom4j.io.DocumentSource(payload);
 
-    	Source responseSource = invoke(serviceName, portName, operationName, requestSource);
+    	Source responseSource = invoke(serviceName, portName, operationName, requestSource, overrideEndpoint);
 
     	if (null == responseSource) {
     		return null;
@@ -293,7 +195,7 @@ public class ServiceInvokerHelper implements ClassMapper {
     }
 
     @SuppressWarnings("unchecked")
-	public Source invoke(QName serviceName, QName portName, String operationName, Source payload)
+	public Source invoke(QName serviceName, QName portName, String operationName, Source payload, String overrideEndpoint)
     		throws SOAPFaultException, Exception {
 
     	if (serviceName == null) {
@@ -324,8 +226,15 @@ public class ServiceInvokerHelper implements ClassMapper {
         }
 
     	URL wsdlUrl = new URL(serviceDiscoveryHelper.getLocalWsdlUri());
-    	javax.xml.ws.Service service1 = javax.xml.ws.Service.create(wsdlUrl, serviceName);
-    	javax.xml.ws.Dispatch<javax.xml.transform.Source> disp = service1.createDispatch(portName, javax.xml.transform.Source.class, javax.xml.ws.Service.Mode.PAYLOAD);
+    	javax.xml.ws.Service service1 = javax.xml.ws.Service.create(wsdlUrl, serviceName); 
+    	QName dipatchPortName;
+    	if (null != overrideEndpoint) {
+    		service1.addPort(LOCAL_OVERRIDE_QNAME, SOAPBinding.SOAP11HTTP_BINDING, "http://localhost:8900/airport.service");
+    		dipatchPortName = LOCAL_OVERRIDE_QNAME;
+    	} else {
+    		dipatchPortName = portName;
+    	}
+		javax.xml.ws.Dispatch<javax.xml.transform.Source> disp = service1.createDispatch(dipatchPortName, javax.xml.transform.Source.class, javax.xml.ws.Service.Mode.PAYLOAD);
     	java.util.Map requestContext = disp.getRequestContext();
     	if(requestContext == null) {
     		throw new Exception("setSOAPActionURI:getRequestContext() returned null");
@@ -378,211 +287,4 @@ public class ServiceInvokerHelper implements ClassMapper {
 		}
 	}
 
-    /**
-     * Invoke a service with a simple map of parametes (address.city=LYON, address.zipCode=69003, etc ...) Returned
-     * results are also in this format
-     *
-     * @param serviceName
-     * @param portName
-     * @param operationName
-     * @param params
-     * @return
-     * @throws java.lang.Exception
-     * @throws org.talend.ws.exception.LocalizedException
-     */
-    public Map<String, Object> invokeSimple(QName serviceName, QName portName, String operationName, Object params)
-            throws Exception, LocalizedException {
-//        if (params instanceof Map) {
-//            params = MapConverter.mapToDeepMap((Map<String, Object>) params);
-//        }
-//
-//        Map<String, Object> result = invoke(serviceName, portName, operationName, params);
-//
-//        return MapConverter.deepMapToMap(result);
-    	throw new IllegalStateException("invokeSimple method deprecated");
-    }
-
-    protected String getClassNameForType(XmlSchemaType schemaType) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getPackageForNamespaceURI(schemaType.getQName().getNamespaceURI()));
-        sb.append(".");
-        sb.append(getClassNameForTypeName(schemaType.getName()));
-        String className = sb.toString();
-
-        return className;
-    }
-
-    protected String getPackageForNamespaceURI(String ns) {
-        return namespacePackageMap.get(ns);
-    }
-
-    protected String getNamespaceURIForPackage(String packageName) {
-        return packageNamespaceMap.get(packageName);
-    }
-
-    protected String getClassNameForTypeName(String typeName) {
-        return toCamelCase(org.apache.cxf.jaxb.JAXBUtils.nameToIdentifier(typeName, IdentifierType.CLASS), true);
-    }
-
-    public Class<?> getClassForType(XmlSchemaType xmlSchemaType) {
-        String className = getClassNameForType(xmlSchemaType);
-        try {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-            return checkClass(xmlSchemaType, clazz);
-
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    // if class name conflict, the former will be unchanged "className" ,the latter will be add count++ in the end of
-    // the name "className1,className2"
-    private Class checkClass(XmlSchemaType xmlSchemaType, Class<?> clazz) {
-        // only check for complex type.
-        if (xmlSchemaType instanceof XmlSchemaComplexType) {
-            XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchemaType;
-            XmlSchemaSequence xmlSchemaSequence = null;
-            XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent) xmlSchemaComplexType.getContentModel();
-            if (xmlSchemaComplexContent != null) {
-                XmlSchemaContent xmlSchemaContent = xmlSchemaComplexContent.getContent();
-                if (xmlSchemaContent instanceof XmlSchemaComplexContentExtension) {
-                    XmlSchemaComplexContentExtension xmlSchemaComplexContentExtension = (XmlSchemaComplexContentExtension) xmlSchemaContent;
-                    if (xmlSchemaComplexContentExtension.getParticle() instanceof XmlSchemaSequence) {
-                        xmlSchemaSequence = (XmlSchemaSequence) xmlSchemaComplexContentExtension.getParticle();
-                    }
-                } else if (xmlSchemaContent instanceof XmlSchemaComplexContentRestriction) {
-                    throw new IllegalArgumentException("XmlSchemaComplexContentRestriction is not yet supported.");
-                } else {
-                    throw new IllegalArgumentException("Invalid XmlSchemaContent for a XmlSchemaComplexContent.");
-                }
-            } else {
-                XmlSchemaParticle xmlSchemaParticle = xmlSchemaComplexType.getParticle();
-                if (xmlSchemaParticle instanceof XmlSchemaSequence) {
-                    xmlSchemaSequence = (XmlSchemaSequence) xmlSchemaParticle;
-                }
-            }
-            if (xmlSchemaSequence != null) {
-                Class<?> finalClazz = null;
-                boolean allCorrect = false;
-                int tempSuffix = 0;
-                // bug13001 by bchen, deal with choice in sequence
-                // Iterator<XmlSchemaObject> iterator = MapperFactory.getXmlSchemaObjectIter(xmlSchemaSequence);
-                Iterator<XmlSchemaSequenceMember> iterator = xmlSchemaSequence.getItems().iterator();
-                while (!allCorrect) {
-                    // if (iterator == null) {// bug 14053 created by bchen, handle <any/> tag
-                    // return clazz;
-                    // }
-                    if (!iterator.hasNext()) {
-                        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(clazz);
-                        if (descriptors.length == 1 && "class".equals(descriptors[0].getName())) {
-                            allCorrect = true;
-                        }
-                    }
-                    String propertyName = "";
-                    while (iterator.hasNext()) {
-                        XmlSchemaSequenceMember xmlSchemaObject = iterator.next();
-                        if (xmlSchemaObject instanceof XmlSchemaElement) {
-                            XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) xmlSchemaObject;
-                            propertyName = xmlSchemaElement.getName();
-                            PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(clazz);
-                            for (PropertyDescriptor descriptor : descriptors) {
-                                if (propertyName.equalsIgnoreCase(descriptor.getName())) {
-                                    allCorrect = true;
-                                    break;
-                                } else {
-                                    allCorrect = false;
-                                }
-                            }
-                        } else if (xmlSchemaObject instanceof XmlSchemaChoice) {
-                            XmlSchemaChoice xmlSchemaChoice = (XmlSchemaChoice) xmlSchemaObject;
-                            List<XmlSchemaObject> xmlSchemaObjectCollection = xmlSchemaChoice.getItems();
-                            Iterator<XmlSchemaObject> choiceIterator = xmlSchemaObjectCollection.iterator();
-                            while (choiceIterator.hasNext()) {
-                                XmlSchemaObject choiceXmlSchemaObject = choiceIterator.next();
-                                if (choiceXmlSchemaObject instanceof XmlSchemaElement) {
-                                    XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) choiceXmlSchemaObject;
-                                    propertyName = xmlSchemaElement.getName();
-                                    PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(clazz);
-                                    for (PropertyDescriptor descriptor : descriptors) {
-                                        if (propertyName.equalsIgnoreCase(descriptor.getName())) {
-                                            allCorrect = true;
-                                            break;
-                                        } else {
-                                            allCorrect = false;
-                                        }
-                                    }
-                                    if (allCorrect) {// all correct? or one of them correct
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (xmlSchemaObject instanceof XmlSchemaAny) {
-                            PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(clazz);
-                            for (PropertyDescriptor descriptor : descriptors) {
-                                if ("any".equalsIgnoreCase(descriptor.getName())
-                                        || "content".equalsIgnoreCase(descriptor.getName())) {
-                                    allCorrect = true;
-                                    break;
-                                } else {
-                                    allCorrect = false;
-                                }
-                            }
-                        }
-                        if (!allCorrect) {
-                            break;
-                        }
-                    }
-
-                    if (allCorrect) {
-                        finalClazz = clazz;
-                    } else {
-                        tempSuffix++;
-                        try {
-                            clazz = Thread.currentThread().getContextClassLoader().loadClass(clazz.getName() + tempSuffix);
-                        } catch (ClassNotFoundException e) {
-                            throw new IllegalArgumentException("Unable to get propertyDescriptor for bean " + clazz.getName()
-                                    + " and property " + propertyName);
-                        }
-                    }
-                }
-                if (finalClazz == null) {
-                    throw new IllegalArgumentException("Unable to get propertyDescriptor for bean " + clazz.getName());
-                }
-                return finalClazz;
-            } else {
-                return clazz;
-            }
-        } else {
-            return clazz;
-        }
-    }
-
-    public XmlSchemaType getTypeForClass(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(XmlType.class)) {
-            XmlType type = clazz.getAnnotation(XmlType.class);
-            XmlSchema schema = clazz.getPackage().getAnnotation(XmlSchema.class);
-            QName qname = new QName(schema.namespace(), type.name());
-
-            return serviceDiscoveryHelper.getSchema().getTypeByQName(qname);
-        } else {
-            QName type = MapperFactory.javaTypeToBuiltInType(clazz.getName());
-            if (type != null) {
-                return serviceDiscoveryHelper.getSchema().getTypeByQName(type);
-            } else {
-                throw new IllegalArgumentException("Unmapped class : " + clazz.getName());
-            }
-        }
-    }
-
-    public ServiceDiscoveryHelper getServiceDiscoveryHelper() {
-        return serviceDiscoveryHelper;
-    }
-
-    private String toCamelCase(String value, boolean startWithLowerCase) {
-        String[] strings = StringUtils.split(value, "_");
-        for (int i = startWithLowerCase ? 1 : 0; i < strings.length; i++) {
-            strings[i] = StringUtils.capitalize(strings[i]);
-        }
-        return StringUtils.join(strings);
-    }
 }
