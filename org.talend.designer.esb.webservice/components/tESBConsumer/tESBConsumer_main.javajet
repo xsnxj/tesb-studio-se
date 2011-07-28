@@ -65,7 +65,7 @@ if (inputConn != null) {
 				if (consumer_<%=cid%> == null) {
 					responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
 							serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
-							requestTalendDoc.getDocument());
+							requestTalendDoc.getDocument(), ElementParameterParser.getValue(node, "__ESB_ENDPOINT__"));
 				} else {
 					// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
 					java.util.Map<String, String> customProps = null;
