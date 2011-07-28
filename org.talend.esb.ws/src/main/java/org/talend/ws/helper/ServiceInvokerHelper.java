@@ -229,7 +229,7 @@ public class ServiceInvokerHelper {
     	javax.xml.ws.Service service1 = javax.xml.ws.Service.create(wsdlUrl, serviceName); 
     	QName dipatchPortName;
     	if (null != overrideEndpoint) {
-    		service1.addPort(LOCAL_OVERRIDE_QNAME, SOAPBinding.SOAP11HTTP_BINDING, "http://localhost:8900/airport.service");
+    		service1.addPort(LOCAL_OVERRIDE_QNAME, SOAPBinding.SOAP11HTTP_BINDING, overrideEndpoint);
     		dipatchPortName = LOCAL_OVERRIDE_QNAME;
     	} else {
     		dipatchPortName = portName;
