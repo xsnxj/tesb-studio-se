@@ -9,7 +9,7 @@
     COMPATIBILITY="ALL"
     AUTHOR="Talend"
     RELEASE_DATE="20100401A"
-    STARTABLE="true"
+    STARTABLE="false"
   >
     <SIGNATURE/>
   </HEADER>
