@@ -19,9 +19,6 @@
 	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
 		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 %>
-//*** ESB context initialization
-	final String endpointUrl = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
-//*** ESB context initialization finish
 
 <%@ include file="tESBProvider.javajet" %>
 

@@ -428,6 +428,8 @@ class HandlerThread_<%=cid%> extends Thread {
 
 	private javax.xml.ws.Endpoint endpoint;
 	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
+	
+	final String endpointUrl = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
 
 	public HandlerThread_<%=cid%>(
 			QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
@@ -449,6 +451,7 @@ class HandlerThread_<%=cid%> extends Thread {
 		//test for busy
 		java.net.ServerSocket ss = null;
 		try {
+			
 			java.net.URL endpointURL = new java.net.URL(endpointUrl);
 			String host = endpointURL.getHost();
 			int port = endpointURL.getPort();

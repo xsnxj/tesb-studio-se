@@ -87,22 +87,22 @@ if (inputConn != null) {
 				}
 			} catch (javax.xml.ws.soap.SOAPFaultException e) {
 	<%		if (null != connFault) { %>
-				String faultString = e.getFault().getFaultString();
-				Document faultTalendDoc = null;
+				String faultString_<%=cid%> = e.getFault().getFaultString();
+				Document faultTalendDoc_<%=cid%> = null;
 				if (null != e.getFault().getDetail()
 					&& null != e.getFault().getDetail().getFirstChild()) {
 					try {
-						javax.xml.transform.Source faultSource =
+						javax.xml.transform.Source faultSource_<%=cid%> =
 							new javax.xml.transform.dom.DOMSource(
 									e.getFault().getDetail().getFirstChild());
 
-						org.dom4j.io.DocumentResult result = new org.dom4j.io.DocumentResult();
+						org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
 						javax.xml.transform.TransformerFactory.newInstance()
-							.newTransformer().transform(faultSource, result);
-						org.dom4j.Document faultDoc = result.getDocument();
+							.newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
+						org.dom4j.Document faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
 
-						faultTalendDoc = new Document();
-						faultTalendDoc.setDocument(faultDoc);
+						faultTalendDoc_<%=cid%> = new Document();
+						faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -110,8 +110,8 @@ if (inputConn != null) {
 				if (<%=connFault.getName()%> == null) {
 					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
 				}
-				<%=connFault.getName()%>.faultString = faultString;
-				<%=connFault.getName()%>.faultDetail = faultTalendDoc;
+				<%=connFault.getName()%>.faultString = faultString_<%=cid%>;
+				<%=connFault.getName()%>.faultDetail = faultTalendDoc_<%=cid%>;
 	<%		} else { %>
 				e.printStackTrace();
 	<%		} %>
