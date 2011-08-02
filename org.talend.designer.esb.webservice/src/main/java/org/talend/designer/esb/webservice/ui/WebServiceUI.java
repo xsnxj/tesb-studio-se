@@ -827,6 +827,7 @@ public class WebServiceUI extends AbstractWebService {
     	if (currentFunction == null || !(populateCheckbox.getSelection())) {
     		return;
     	}  	
+    	
     	populateMessage(currentFunction.getInput());
     	populateMessage(currentFunction.getOutput());
     	for (FlowInfo fault : currentFunction.getFaults()) {
@@ -874,7 +875,7 @@ public class WebServiceUI extends AbstractWebService {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-			factory.create(connectionItem, new Path(""));
+			factory.create(connectionItem, new Path(currentFunction.getServerNameSpace()+"/"+currentFunction.getServerName()));
 			ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
 			RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
 		} catch (PersistenceException e) {
