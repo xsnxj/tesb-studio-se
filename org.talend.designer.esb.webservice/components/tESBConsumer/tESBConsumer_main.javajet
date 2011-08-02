@@ -59,22 +59,22 @@ if (inputConn != null) {
 %>
 		org.dom4j.Document responseDoc_<%=cid%> = null;
 		try {
-			Document requestTalendDoc = <%=inputConn.getName()%>.payload;
+			Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
 			try {
 				if (consumer_<%=cid%> == null) {
 					responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
 							serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
-							requestTalendDoc.getDocument(), ElementParameterParser.getValue(node, "__ESB_ENDPOINT__"));
+							requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 				} else {
 					// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
-					java.util.Map<String, String> customProps = null;
+					java.util.Map<String, String> customProps_<%=cid%> = null;
 				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))
 							&& Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_ADD_CUSTOM_PROPERTIES__"))) {
 						List<Map<String, String>> customProperties = (List<Map<String,String>>)
 								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 						if (!customProperties.isEmpty()) { %>
-							customProps = new java.util.HashMap<String, String>() {{
+							customProps_<%=cid%> = new java.util.HashMap<String, String>() {{
 							<% for (int i = 0; i < customProperties.size(); i++) {
 								String propName = customProperties.get(i).get("PROP_NAME");
 								String propValue = customProperties.get(i).get("PROP_VALUE");
@@ -82,8 +82,8 @@ if (inputConn != null) {
 							<% } %>	}};
 						<% } %>
 				<% } %>
-					Object request = wrapPayload(requestTalendDoc.getDocument(), customProps);
-					responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request);
+					Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
+					responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
 				}
 			} catch (javax.xml.ws.soap.SOAPFaultException e) {
 	<%		if (null != connFault) { %>
@@ -117,11 +117,11 @@ if (inputConn != null) {
 	<%		} %>
 			} catch(Exception e){
 	<%		if (null != connFault) { %>
-				String faultMessage = e.getMessage();
+				String faultMessage_<%=cid%> = e.getMessage();
 				if (<%=connFault.getName()%> == null) {
 					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
 				}
-				<%=connFault.getName()%>.faultString = faultMessage;
+				<%=connFault.getName()%>.faultString = faultMessage_<%=cid%>;
 				<%=connFault.getName()%>.faultDetail = null;
 	<%		} else { %>
 				e.printStackTrace();

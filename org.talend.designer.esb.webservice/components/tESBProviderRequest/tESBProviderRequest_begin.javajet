@@ -26,7 +26,7 @@
 <%@ include file="tESBProvider.javajet" %>
 
 //*** external processor(s) initialization
-	ESBProviderCallbackTalendJobInner providerCallback;
+	ESBProviderCallbackTalendJobInner providerCallback_<%=cid%>;
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
 	if (null == callback) {
 		final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
@@ -34,12 +34,12 @@
 		handlerThread_<%=cid%> =
 			new HandlerThread_<%=cid%>(handler); //
 		handlerThread_<%=cid%>.start();
-		providerCallback = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler);
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler);
 	} else {
-		providerCallback = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(callback);
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(callback);
 	}
 
-	globalMap.put("esbHandler", providerCallback);
+	globalMap.put("esbHandler", providerCallback_<%=cid%>);
 //*** external processor(s) initialization finish
 
 int nb_line_<%=cid%> = 0;
