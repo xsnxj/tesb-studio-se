@@ -12,7 +12,7 @@ imports="
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode) codeGenArgument.getArgument();
 
-    String name = ElementParameterParser.getValue(node, "__NAME__").trim();
+    String name = node.getUniqueName().replaceAll("_","");
     String type = ElementParameterParser.getValue(node, "__TYPE__");
     String destination = ElementParameterParser.getValue(node, "__DESTINATION__").trim();
 
