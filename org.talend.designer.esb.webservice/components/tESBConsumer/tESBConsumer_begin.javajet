@@ -45,8 +45,8 @@ javax.xml.namespace.QName portName_<%=cid%> = null;
 org.talend.ws.helper.ServiceInvokerHelper serviceInvokerHelper_<%=cid%> = null ;
 
 ESBConsumer consumer_<%=cid%> = null;
-if (registry != null) {
-	consumer_<%=cid%> = registry.createConsumer(
+if (this.registry != null) {
+	consumer_<%=cid%> = this.registry.createConsumer(
 		new ESBEndpointInfo() {
 			@SuppressWarnings("serial")
 			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{

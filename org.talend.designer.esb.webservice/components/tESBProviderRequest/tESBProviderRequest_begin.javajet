@@ -25,15 +25,15 @@
 //*** external processor(s) initialization
 	ESBProviderCallbackTalendJobInner providerCallback_<%=cid%>;
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
-	if (null == callback) {
-		final QueuedMessageHandlerImpl<org.dom4j.Document> handler =
+	if (null == this.callback) {
+		final QueuedMessageHandlerImpl<org.dom4j.Document> handler_<%=cid%> =
 			new QueuedMessageHandlerImpl<org.dom4j.Document>();
 		handlerThread_<%=cid%> =
-			new HandlerThread_<%=cid%>(handler); //
+			new HandlerThread_<%=cid%>(handler_<%=cid%>); //
 		handlerThread_<%=cid%>.start();
-		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler);
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler_<%=cid%>);
 	} else {
-		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(callback);
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(this.callback);
 	}
 
 	globalMap.put("esbHandler", providerCallback_<%=cid%>);
