@@ -69,8 +69,7 @@ if (inputConn != null) {
 				} else {
 					// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
 					java.util.Map<String, String> customProps_<%=cid%> = null;
-				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))
-							&& Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_ADD_CUSTOM_PROPERTIES__"))) {
+				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
 						List<Map<String, String>> customProperties = (List<Map<String,String>>)
 								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 						if (!customProperties.isEmpty()) { %>
