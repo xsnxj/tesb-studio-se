@@ -47,19 +47,20 @@ if (null != metadatas && 0 < metadatas.size()) {
 %>
 	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
+		java.util.Map<String, String> customProps_<%=cid%> = null;
+<%
+		// set SAM custom properties
+		List<Map<String, String>> customProperties = (List<Map<String,String>>)
+				ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+		if (!customProperties.isEmpty()) { %>
+			customProps_<%=cid%> = new java.util.HashMap<String, String>() {{
+			<% for (int k = 0; k < customProperties.size(); k++) { %>
+					put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+				}};
+		<% } %>
 
-<% 				// set SAM custom properties
-				List<Map<String, String>> customProperties = (List<Map<String,String>>)
-						ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
-				if (!customProperties.isEmpty()) { %>
-					esbProviderCallback_<%=cid%>.setCustomProperties(new java.util.HashMap<String, String>() {{
-					<% for (int k = 0; k < customProperties.size(); k++) {
-						String propName = customProperties.get(k).get("PROP_NAME");
-						String propValue = customProperties.get(k).get("PROP_VALUE");
-					%>			put(<%=propName%>, <%=propValue%>);
-					<% } %>	}});
-				<% } %>
-
+		esbProviderCallback_<%=cid%>.setCustomProperties(customProps_<%=cid%>);
 		esbProviderCallback_<%=cid%>.sendBusinessFault(
 				esbProviderFaultTitle_<%=cid%>,
 				(null == esbProviderFaultDoc_<%=cid%>) ? null
