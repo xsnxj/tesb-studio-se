@@ -66,4 +66,15 @@ public class CamelProcessEditorInput extends JobEditorInput {
     public Process getLoadedProcess() {
         return (Process) loadedProcess;
     }
+    
+    @Override
+    /**
+     * Override for screenshot error
+     * this should be more investigate.
+     *
+     */
+    //TODO
+    protected void loadProcess() throws PersistenceException {
+    	  loadedProcess.loadXmlFile(true);
+    }
 }
