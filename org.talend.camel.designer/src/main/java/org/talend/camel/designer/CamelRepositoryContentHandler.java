@@ -73,13 +73,17 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         ERepositoryObjectType type;
         switch (classifierID) {
         case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-            type = CamelRepositoryNodeType.repositoryRoutesType;
-            itemResource = create(project, (CamelProcessItem) item, path, type);
-            return itemResource;
+            if (item instanceof CamelProcessItem) {
+                type = CamelRepositoryNodeType.repositoryRoutesType;
+                itemResource = create(project, (CamelProcessItem) item, path, type);
+                return itemResource;
+            }
         case CamelPropertiesPackage.BEAN_ITEM:
-            type = CamelRepositoryNodeType.repositoryBeansType;
-            itemResource = create(project, (FileItem) item, path, type);
-            return itemResource;
+            if (item instanceof FileItem) {
+                type = CamelRepositoryNodeType.repositoryBeansType;
+                itemResource = create(project, (FileItem) item, path, type);
+                return itemResource;
+            }
         default:
             return null;
         }
