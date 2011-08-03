@@ -75,6 +75,6 @@ public class CamelProcessEditorInput extends JobEditorInput {
      */
     //TODO
     protected void loadProcess() throws PersistenceException {
-    	  loadedProcess.loadXmlFile(true);
+    	  loadedProcess.loadXmlFile(false);
     }
 }
