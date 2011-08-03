@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="libs/neethi-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-transports-http-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-frontend-simple-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-api-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-frontend-jaxrs-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-common-utilities-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/camel-cxf-2.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-bindings-soap-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-core-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cxf-rt-transports-http-jetty-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/camel-jms-2.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/activemq-camel-5.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hsqldb-1.8.0.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-jdbc-3.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/geronimo-j2ee-management_1.1_spec-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/geronimo-jms_1.1_spec-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xbean-spring-3.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/activemq-core-5.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-aop-3.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-expression-3.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-management-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/slf4j-api-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-asm-3.0.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-core-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-core/3.0.5.RELEASE/spring-core-3.0.5.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-beans-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-beans/3.0.5.RELEASE/spring-beans-3.0.5.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-context-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-context/3.0.5.RELEASE/spring-context-3.0.5.RELEASE-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/camel-spring-2.7.2.jar" sourcepath="D:/M2Repository/org/apache/camel/camel-spring/2.7.2/camel-spring-2.7.2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/camel-core-2.7.2.jar" sourcepath="C:/Documents and Settings/liugang/.m2/repository/org/apache/camel/camel-core/2.7.2/camel-core-2.7.2-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
