@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.talend.core.repositoryContextualsActions">
+      <Action
+            class="org.talend.designer.camel.spring.ui.actions.ImportSpringContextualAction"
+            id="org.talend.camel.designer.spring.ui.importSpringAction"
+            isEditAction="false"
+            isPropertiesAction="false"
+            isReadAction="false"
+            level="9999"
+            name="Import Spring XML">
+      </Action>
+   </extension>
+
+</plugin>
