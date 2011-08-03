@@ -435,8 +435,7 @@
          id="org.eclipse.jdt.debug"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.gmf.runtime.diagram.ui.resources.editor.ide"
@@ -519,15 +518,13 @@
          id="javax.xml.rpc"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.apache.commons.discovery"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.apache.lucene"
@@ -1289,7 +1286,20 @@
          id="org.talend.designer.routines.camelprovider"
          download-size="0"
          install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.talend.designer.camel.spring.core"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
-         unpack="true"/>
+         unpack="false"/>
+
+   <plugin
+         id="org.talend.designer.camel.spring.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
