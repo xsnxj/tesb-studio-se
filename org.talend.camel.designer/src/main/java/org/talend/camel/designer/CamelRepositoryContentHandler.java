@@ -76,6 +76,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             if (item instanceof CamelProcessItem) {
                 type = CamelRepositoryNodeType.repositoryRoutesType;
                 itemResource = create(project, (CamelProcessItem) item, path, type);
+				Resource screenshotsResource = createScreenshotResource(project,
+						(CamelProcessItem) item, path, type);
+				xmiResourceManager.saveResource(screenshotsResource);
                 return itemResource;
             }
         case CamelPropertiesPackage.BEAN_ITEM:
@@ -87,6 +90,15 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         default:
             return null;
         }
+    }
+    
+    //TODO refer to LocalRepositoryFactory
+    private Resource createScreenshotResource(IProject project, Item item, IPath path, ERepositoryObjectType type)
+    throws PersistenceException {
+    	Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path, type, false);
+    	itemResource.getContents().addAll(((CamelProcessItem) item).getProcess().getScreenshots());
+
+    	return itemResource;
     }
 
     private Resource create(IProject project, CamelProcessItem item, IPath path, ERepositoryObjectType type)
