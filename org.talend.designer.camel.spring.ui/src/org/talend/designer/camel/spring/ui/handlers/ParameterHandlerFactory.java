@@ -78,7 +78,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.EXCEPTION];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new COnExceptionrParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.FILTER];
         handlers.put(componentName, new CommonParameterHandler(componentName));
@@ -123,7 +123,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.SETHEADER];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CSetHeaderParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.SPLIT];
         handlers.put(componentName, new CommonParameterHandler(componentName));

@@ -160,11 +160,6 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
             return;
         }
         super.evaluateTextField();
-        
-//        if (nameStatus.getSeverity() == IStatus.OK) {
-//            evaluateNameInRoutine();
-//        }
-        
 
     }
 
@@ -181,21 +176,6 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
             nameStatus = createOkStatus();
         }
         
-    }
-
-    /**
-     *  Comment method "evaluateNameInRoutine".
-     */
-    private void evaluateNameInRoutine() {
-
-        String jobName = nameText.getText().trim();
-        boolean isValid = isNameValidInRountine(jobName);
-
-        if (!isValid) {
-            nameStatus = createStatus(IStatus.ERROR, "Route already exists."); //$NON-NLS-1$
-            updatePageStatus();
-        }
-
     }
 
     /**

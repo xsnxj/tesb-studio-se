@@ -12,7 +12,9 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.layout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.draw2d.geometry.Point;
@@ -20,7 +22,9 @@ import org.eclipse.draw2d.geometry.Point;
 /**
  * DOC LiXP class global comment. Detailled comment
  */
-public class RelativeLayoutManager implements ILayoutManager {
+public class EnhanceRelativeLayoutManager implements ILayoutManager{
+
+    private List<Integer> columnMaxHeights;
 
     private Map<String, RelativeLayoutNode> caches;
 
@@ -28,17 +32,22 @@ public class RelativeLayoutManager implements ILayoutManager {
 
     private Point startPotision;
 
-    public RelativeLayoutManager() {
+    private int column;
+
+    public EnhanceRelativeLayoutManager() {
+        columnMaxHeights = new ArrayList<Integer>();
         caches = new HashMap<String, RelativeLayoutNode>();
         delta = new Point(LayoutConstants.DEFAULT_DELTA_X, LayoutConstants.DEFAULT_DELTA_Y);
         startPotision = new Point(LayoutConstants.DEFAULT_START_POSITION_X, LayoutConstants.DEFAULT_START_POSITION_Y);
     }
 
     public void startLayout() {
+       
     }
 
     public void stopLayout() {
         caches.clear();
+        columnMaxHeights.clear();
     }
 
     /**
@@ -48,16 +57,27 @@ public class RelativeLayoutManager implements ILayoutManager {
      * @return
      */
     private Point getNewLinePotsition(String componentId) {
-        Point position = new Point();
 
-        int maxPositionY = calculateMaxY();
+        column = 0;
+
+        int maxPositionY = safeGetMaxColumnHeight();
+        Point position = new Point();
         position.x = startPotision.x;
         position.y = maxPositionY + delta.y;
+        columnMaxHeights.set(column, position.y);
 
         RelativeLayoutNode node = new RelativeLayoutNode(componentId);
         node.setPosition(position);
         caches.put(componentId, node);
+
         return position;
+    }
+
+    private int safeGetMaxColumnHeight() {
+        if (columnMaxHeights.size() < column + 1) {
+            columnMaxHeights.add(column, 0);
+        }
+        return columnMaxHeights.get(column);
     }
 
     public Point getNextPosition(String componentId, String parentId) {
@@ -69,40 +89,35 @@ public class RelativeLayoutManager implements ILayoutManager {
         RelativeLayoutNode parent = caches.get(parentId);
         if (parent == null) {
             // ????? wrong
-            return startPotision;
+            return getNewLinePotsition(componentId);
         }
 
         RelativeLayoutNode node = new RelativeLayoutNode(componentId);
-        Point nextChildPosition = calculateNextChildPosition(parent, calculateMaxY());
-        parent.setNextChildPosition(nextChildPosition.getCopy());
-        node.setPosition(nextChildPosition.getCopy());
+        Point parentPosition = parent.getPosition();
+        Point nextPosition = parent.getNextChildPosition();
+        if(nextPosition != null){//Multi-cast
+            nextPosition.y += delta.y;
+            columnMaxHeights.add(column, nextPosition.y);
+        }else{
+            column ++;
+            int maxPositionY = safeGetMaxColumnHeight();
+            nextPosition = new Point();
+            if (maxPositionY <= parentPosition.y) {
+                nextPosition.x = parentPosition.x + delta.x;
+                nextPosition.y = parentPosition.y;
+                columnMaxHeights.set(column, nextPosition.y);
+            } else {
+                nextPosition.x = parentPosition.x + delta.x;
+                nextPosition.y = maxPositionY + delta.y;
+                columnMaxHeights.set(column, nextPosition.y);
+            }
+        }
+        
+        parent.setNextChildPosition(nextPosition);
+        node.setPosition(nextPosition);
         caches.put(componentId, node);
 
         return node.getPosition();
     }
-
-    private Point calculateNextChildPosition(RelativeLayoutNode parent, int maxPositionY) {
-        int x, y;
-        Point nextChildPosition = parent.getNextChildPosition();
-        Point position = parent.getPosition();
-        if (nextChildPosition == null) {// first time get child position
-            x = position.x + delta.x;
-            y = position.y;
-        } else {// already has children, so it's multi-cast
-            x = nextChildPosition.x;
-            y = maxPositionY + delta.y;
-        }
-       return new Point(x, y);
-    }
-
-    private int calculateMaxY() {
-        int max = 0;
-        for (RelativeLayoutNode node : caches.values()) {
-            if (node.getPosition().y > max) {
-                max = node.getPosition().y;
-            }
-        }
-        return max;
-    }
-
+    
 }

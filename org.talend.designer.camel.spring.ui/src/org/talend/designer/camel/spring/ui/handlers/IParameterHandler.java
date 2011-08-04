@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.handlers;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,34 +26,6 @@ public interface IParameterHandler {
     String NAME_POSTFIX = ".NAME";
 
     String FIELD_POSTFIX = ".FIELD";
-    
-    /**
-     * 
-     * DOC LiXP Comment method "getComponentName".
-     * @return
-     */
-    String getComponentName();
-    
-    /**
-     * 
-     * DOC LiXP Comment method "getBasicParameters".
-     * @return
-     */
-    Map<String, String> getBasicParameters();
-    
-    /**
-     * 
-     * DOC LiXP Comment method "getAdvancedParameters".
-     * @return
-     */
-    Map<String, String> getAddtionalParameters();
-    
-    /**
-     * 
-     * DOC LiXP Comment method "getTableParameters".
-     * @return
-     */
-    Map<String, List<String>> getTableParameters();
     
     /**
      * 
