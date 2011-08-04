@@ -12,7 +12,7 @@ public interface ICamelSpringConstants {
 	public static final int ROUTE_FINALLY = ROUTE_CATCH << 1;
 	public static final int ROUTE_ENDBLOCK = ROUTE_FINALLY << 1;
 
-	//components
+	// components
 	public static final int INTERCEPT = 0;
 	public static final int EXCEPTION = 1;
 	public static final int TRY = 2;
@@ -47,14 +47,18 @@ public interface ICamelSpringConstants {
 	public static final int LOG = 31;
 	public static final int UNKNOWN = 32;
 
-	//constants
+	// constants
 	public static final String UNIQUE_NAME_ID = "UNIQUE_NAME";
 	public static final String ENDPOINT_URI = "ENDPOINT_URI";
 	public static final String FILE_PATH = "FILE_PATH";
 	public static final String SPLIT_EXPRESS = "SPLIT_EXPRESS";
-	public static final String BEAN_CLASS = "BEAN_CLASS";
 	
-	//LOAD BALANCE
+	//bean
+	public static final String BEAN_CLASS = "BEAN_CLASS";
+	public static final String BEAN_METHOD = "BEAN_METHOD";
+	
+
+	// LOAD BALANCE
 	public static final String BALANCE_STRATEGY = "BALANCE_STRATEGY";
 	public static final String FAILOVER_STRATEGY = "FAILOVER_STRATEGY";
 	public static final String RANDOM_STRATEGY = "RANDOM_STRATEGY";
@@ -73,9 +77,62 @@ public interface ICamelSpringConstants {
 	public static final String MAXIMUM_ATTAMPTS = "MAXIMUM_ATTAMPTS";
 
 	public static final String STICKY_EXPRESSION = "STICKY_EXPRESSION";
+
+	// expression
+	public static final String EXPRESSION_TEXT = "EXPRESSION_TEXT";
+	public static final String EXPRESSION_TYPE = "EXPRESSION_TYPE";
+	public static final String CONSTANT_EXPRESSION = "constant";
+	public static final String EL_EXPRESSION = "el";
+	public static final String GROOVY_EXPRESSION = "groovy";
+	public static final String HEADER_EXPRESSION = "header";
+	public static final String JS_EXPRESSION = "javascript";
+	public static final String JXPATH_EXPRESSION = "jxpath";
+	public static final String LANGUAGE_EXPRESSION = "language";
+	public static final String METHODCALL_EXPRESSION = "methodcall";
+	public static final String MVEL_EXPRESSION = "mvel";
+	public static final String XPATH_EXPRESSION = "xpath";
+	public static final String XQUERY_EXPRESSION = "xquery";
+	public static final String OGNL_EXPRESSION = "ognl";
+	public static final String PHP_EXPRESSION = "php";
+	public static final String PROPERTY_EXPRESSION = "property";
+	public static final String PYTHON_EXPRESSION = "python";
+	public static final String RUBY_EXPRESSION = "ruby";
+	public static final String SIMPLE_EXPRESSION = "simple";
+	public static final String SPEL_EXPRESSION = "spel";
+	public static final String SQL_EXPRESSION = "sql";
+	public static final String TOKENIZER_EXPRESSION = "tokenizer";
 	
+	//onexception
+	public static final String MAX_REDELIVER_TIMES = "redeliver_times";
+	public static final String MAX_REDELIVER_DELAY = "redeliver_delay";
+	public static final String USE_ORIGINAL_MSG = "use_original_msg";
+	public static final String ASYNC_DELAY_REDELIVER = "async_delay_redeliver";
+	public static final String EXCEPTION_BEHAVIOR = "exception_behavior";
+	public static final String HANDLE_EXCEPTION = "handle_exception";
+	public static final String CONTINUE_EXCEPTION = "continue_exception";
 	
+	//set header
+	public static final String HEADER_NAME = "header_name";
+
+	//convert
+	public static final String TARGET_TYPE_CLASS = "target_type_class";
 	
+	//throttler
+	public static final String TIME_PERIOD_MILL = "time_period_mill";
+	public static final String MAX_REQUEST_PER_PERIOD = "max_request_per_period";
+	public static final String ASYNC_DELAY = "async_delay";
 	
+	//routing slip
+	public static final String URI_DELIMITER = "uri_delimitr";
 	
+	//exchange pattern
+	public static final String EXCHANGE_TYPE = "exchange_type";
+	public static final String INONLY = "InOnly";
+	public static final String ROBUST_INONLY="RobustInOnly";
+	public static final String INOUT = "InOut";
+	public static final String INOPTIONOUT= "InOptionalOut";
+	public static final String OUTONLY = "OutOnly";
+	public static final String ROBUSTOUTONLY= "RobustOutOnly";
+	public static final String OUTIN = "OutIn";
+	public static final String OUTOPTIONALIN = "OutOptionalIn";
 }

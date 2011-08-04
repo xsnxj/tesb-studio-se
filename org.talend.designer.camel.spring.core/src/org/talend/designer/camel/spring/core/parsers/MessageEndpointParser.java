@@ -16,7 +16,7 @@ public class MessageEndpointParser extends AbstractComponentParser {
 			uri = ((ToDefinition) fd).getUri();
 		}
 		assert uri != null;
-		map.put(ENDPOINT_URI, uri);
+		map.put(ENDPOINT_URI, "\""+uri+"\"");
 	}
 
 	public int getType() {

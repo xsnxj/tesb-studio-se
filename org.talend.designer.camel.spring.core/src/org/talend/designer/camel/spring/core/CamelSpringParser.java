@@ -1,6 +1,7 @@
 package org.talend.designer.camel.spring.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +42,10 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WireTapDefinition;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spring.SpringCamelContext;
+import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 import org.talend.designer.camel.spring.core.parsers.AbstractComponentParser;
 import org.talend.designer.camel.spring.core.parsers.ActiveMQComponentParser;
@@ -175,7 +178,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 						(OnExceptionDefinition) pd);
 			} else {
 				fromId = parseProcessorDefinition(nodeIdFactory, fromId,
-						keepFrom, pd, connectionType);
+						keepFrom, pd, connectionType, null);
 				if (pd instanceof SplitDefinition
 						|| pd instanceof LoadBalanceDefinition
 						|| pd instanceof ChoiceDefinition
@@ -219,87 +222,87 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	private String parseProcessorDefinition(NodeIdFactory nodeIdFactory,
 			String fromId, boolean keepFrom, ProcessorDefinition pd,
-			int connectionType) {
+			int connectionType,Map<String, String> connectionMap) {
 		System.out.println(pd.getClass().getName());
 		String id = null;
 		if (pd instanceof ToDefinition) {
 			id = parseToDefinition(nodeIdFactory, fromId, (ToDefinition) pd,
-					connectionType);
+					connectionType,connectionMap);
 		} else if (pd instanceof LogDefinition) {
 			id = parseLogDefinition(nodeIdFactory, fromId, (LogDefinition) pd,
-					connectionType);
+					connectionType,connectionMap);
 		} else if (pd instanceof SplitDefinition) {
 			id = parseSplitDefinition(nodeIdFactory, fromId,
-					(SplitDefinition) pd, connectionType);
+					(SplitDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof BeanDefinition) {
 			id = parseBeanDefinition(nodeIdFactory, fromId,
-					(BeanDefinition) pd, connectionType);
+					(BeanDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof LoadBalanceDefinition) {
 			id = parseLoadBalanceDefinition(nodeIdFactory, fromId,
-					(LoadBalanceDefinition) pd, connectionType);
+					(LoadBalanceDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof FilterDefinition) {
 			id = parseFilterDefinition(nodeIdFactory, fromId,
-					(FilterDefinition) pd, connectionType);
+					(FilterDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof ChoiceDefinition) {
 			id = parseMsgRouterDefinition(nodeIdFactory, fromId,
-					(ChoiceDefinition) pd, connectionType);
+					(ChoiceDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof SetHeaderDefinition) {
 			id = parseSetHeaderDefinition(nodeIdFactory, fromId,
-					(SetHeaderDefinition) pd, connectionType);
+					(SetHeaderDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof RoutingSlipDefinition) {
 			id = parseRoutingSlipDefinition(nodeIdFactory, fromId,
-					(RoutingSlipDefinition) pd, connectionType);
+					(RoutingSlipDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof SetBodyDefinition) {
 			id = parseSetBodyDefinition(nodeIdFactory, fromId,
-					(SetBodyDefinition) pd, connectionType);
+					(SetBodyDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof EnrichDefinition) {
 			id = parseEnrichDefinition(nodeIdFactory, fromId,
-					(EnrichDefinition) pd, connectionType);
+					(EnrichDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof PollEnrichDefinition) {
 			id = parsePollEnrichDefinition(nodeIdFactory, fromId,
-					(PollEnrichDefinition) pd, connectionType);
+					(PollEnrichDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof ConvertBodyDefinition) {
 			id = parseConvertBodyDefinition(nodeIdFactory, fromId,
-					(ConvertBodyDefinition) pd, connectionType);
+					(ConvertBodyDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof DelayDefinition) {
 			id = parseDelayDefinition(nodeIdFactory, fromId,
-					(DelayDefinition) pd, connectionType);
+					(DelayDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof AggregateDefinition) {
 			id = parseAggregateDefinition(nodeIdFactory, fromId,
-					(AggregateDefinition) pd, connectionType);
+					(AggregateDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof ProcessDefinition) {
 			id = parseProcessDefinition(nodeIdFactory, fromId,
-					(ProcessDefinition) pd, connectionType);
+					(ProcessDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof MulticastDefinition) {
 			id = parseMulticastDefinition(nodeIdFactory, fromId,
-					(MulticastDefinition) pd, connectionType);
+					(MulticastDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof WireTapDefinition) {
 			id = parseWireTapDefinition(nodeIdFactory, fromId,
-					(WireTapDefinition) pd, connectionType);
+					(WireTapDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof DynamicRouterDefinition) {
 			id = parseDynamicDefinition(nodeIdFactory, fromId,
-					(DynamicRouterDefinition) pd, connectionType);
+					(DynamicRouterDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof IdempotentConsumerDefinition) {
 			id = parseIdempoDefinition(nodeIdFactory, fromId,
-					(IdempotentConsumerDefinition) pd, connectionType);
+					(IdempotentConsumerDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof SetExchangePatternDefinition) {
 			id = parseExchangePatternDefinition(nodeIdFactory, fromId,
-					(SetExchangePatternDefinition) pd, connectionType);
+					(SetExchangePatternDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof ThrottleDefinition) {
 			id = parseThrottleDefinition(nodeIdFactory, fromId,
-					(ThrottleDefinition) pd, connectionType);
+					(ThrottleDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof LoopDefinition) {
 			id = parseLoopDefinition(nodeIdFactory, fromId,
-					(LoopDefinition) pd, connectionType);
+					(LoopDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof StopDefinition) {
 			id = parseStopDefinition(nodeIdFactory, fromId,
-					(StopDefinition) pd, connectionType);
+					(StopDefinition) pd, connectionType,connectionMap);
 		} else if (pd instanceof TryDefinition) {
 			id = parseTryDefinition(nodeIdFactory, fromId, (TryDefinition) pd,
-					connectionType);
+					connectionType,connectionMap);
 		} else if (pd instanceof PipelineDefinition){
 			id = parsePipeDefinition(nodeIdFactory, fromId, (PipelineDefinition) pd,
-					connectionType);
+					connectionType,connectionMap);
 		}
 		if (!keepFrom) {
 			fromId = id;
@@ -308,20 +311,20 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	}
 
 	private String parsePipeDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, PipelineDefinition pd, int connectionType) {
+			String fromId, PipelineDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[PF];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(PF, map, connectionType, fromId, null);
+		fireProcessEvent(PF, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseTryDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, TryDefinition pd, int connectionType) {
+			String fromId, TryDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[TRY];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(TRY, map, connectionType, fromId, null);
+		fireProcessEvent(TRY, map, connectionType, fromId, connectionMap);
 		List<ProcessorDefinition> outputs = pd.getOutputs();
 		fromId = id;
 		for (ProcessorDefinition out : outputs) {
@@ -331,202 +334,216 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			}
 			if (fromId == id) {
 				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
-						out, ROUTE_TRY);
+						out, ROUTE_TRY, null);
 			} else {
 				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
-						out, ROUTE);
+						out, ROUTE, null);
 			}
 		}
 		List<CatchDefinition> catchClauses = pd.getCatchClauses();
 		if (catchClauses != null) {
 			for (CatchDefinition cd : catchClauses) {
-				parseCatchDefinition(nodeIdFactory, id, cd);
+				parseCatchDefinition(nodeIdFactory, id, cd,null);
 			}
 		}
 		FinallyDefinition finallyClause = pd.getFinallyClause();
 		if (finallyClause != null) {
-			parseFinallyDefinition(nodeIdFactory, id, finallyClause);
+			parseFinallyDefinition(nodeIdFactory, id, finallyClause,null);
 		}
 		return id;
 	}
 
 	private void parseFinallyDefinition(NodeIdFactory nodeIdFactory, String id,
-			FinallyDefinition finallyClause) {
+			FinallyDefinition finallyClause,Map<String, String> connectionMap) {
 		List<ProcessorDefinition> outputs = finallyClause.getOutputs();
 		for (ProcessorDefinition pd : outputs) {
-			parseProcessorDefinition(nodeIdFactory, id, true, pd, ROUTE_FINALLY);
+			parseProcessorDefinition(nodeIdFactory, id, true, pd, ROUTE_FINALLY,connectionMap);
 		}
 	}
 
 	private void parseCatchDefinition(NodeIdFactory nodeIdFactory, String id,
-			CatchDefinition cd) {
+			CatchDefinition cd,Map<String, String> connectionMap) {
+		List<String> exceptions = cd.getExceptions();
+		StringBuilder sb = new StringBuilder();
+		if(exceptions!=null&&exceptions.size()>0){
+			for(String e:exceptions){
+				sb.append(e);
+				sb.append(".class");
+				sb.append(",");
+			}
+			if(sb.length()>1){
+				sb.deleteCharAt(sb.length()-1);
+			}
+		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(EXCEPTIONS, sb.toString());
 		List<ProcessorDefinition> outputs = cd.getOutputs();
 		for (ProcessorDefinition pd : outputs) {
-			parseProcessorDefinition(nodeIdFactory, id, true, pd, ROUTE_CATCH);
+			parseProcessorDefinition(nodeIdFactory, id, true, pd, ROUTE_CATCH,map);
 		}
 	}
 
 	private String parseStopDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, StopDefinition pd, int connectionType) {
+			String fromId, StopDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[STOP];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(STOP, map, connectionType, fromId, null);
+		fireProcessEvent(STOP, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseLoopDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, LoopDefinition pd, int connectionType) {
+			String fromId, LoopDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[LOOP];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(LOOP, map, connectionType, fromId, null);
+		fireProcessEvent(LOOP, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseThrottleDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, ThrottleDefinition pd, int connectionType) {
+			String fromId, ThrottleDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[THROTTLER];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(THROTTLER, map, connectionType, fromId, null);
+		fireProcessEvent(THROTTLER, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseExchangePatternDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, SetExchangePatternDefinition pd, int connectionType) {
+			String fromId, SetExchangePatternDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[PATTERN];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(PATTERN, map, connectionType, fromId, null);
+		fireProcessEvent(PATTERN, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseIdempoDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, IdempotentConsumerDefinition pd, int connectionType) {
+			String fromId, IdempotentConsumerDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[IDEM];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(IDEM, map, connectionType, fromId, null);
+		fireProcessEvent(IDEM, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseDynamicDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, DynamicRouterDefinition pd, int connectionType) {
+			String fromId, DynamicRouterDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[DYNAMIC];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(DYNAMIC, map, connectionType, fromId, null);
+		fireProcessEvent(DYNAMIC, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseWireTapDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, WireTapDefinition pd, int connectionType) {
+			String fromId, WireTapDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[WIRETAP];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(WIRETAP, map, connectionType, fromId, null);
+		fireProcessEvent(WIRETAP, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseMulticastDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, MulticastDefinition pd, int connectionType) {
+			String fromId, MulticastDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[MULTICAST];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(MULTICAST, map, connectionType, fromId, null);
+		fireProcessEvent(MULTICAST, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseProcessDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, ProcessDefinition pd, int connectionType) {
+			String fromId, ProcessDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[PROCESSOR];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(PROCESSOR, map, connectionType, fromId, null);
+		fireProcessEvent(PROCESSOR, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseAggregateDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, AggregateDefinition pd, int connectionType) {
+			String fromId, AggregateDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[AGGREGATE];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(AGGREGATE, map, connectionType, fromId, null);
+		fireProcessEvent(AGGREGATE, map, connectionType, fromId, connectionMap);
 		List<ProcessorDefinition> outputs = pd.getOutputs();
 		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
 	private String parseDelayDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, DelayDefinition pd, int connectionType) {
+			String fromId, DelayDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[DELAY];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(DELAY, map, connectionType, fromId, null);
+		fireProcessEvent(DELAY, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseConvertBodyDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, ConvertBodyDefinition pd, int connectionType) {
+			String fromId, ConvertBodyDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[CONVERT];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(CONVERT, map, connectionType, fromId, null);
+		fireProcessEvent(CONVERT, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parsePollEnrichDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, PollEnrichDefinition pd, int connectionType) {
+			String fromId, PollEnrichDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[ENRICH];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(ENRICH, map, connectionType, fromId, null);
+		fireProcessEvent(ENRICH, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseEnrichDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, EnrichDefinition pd, int connectionType) {
+			String fromId, EnrichDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[ENRICH];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(ENRICH, map, connectionType, fromId, null);
+		fireProcessEvent(ENRICH, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseSetBodyDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, SetBodyDefinition pd, int connectionType) {
+			String fromId, SetBodyDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[SETBODY];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(SETBODY, map, connectionType, fromId, null);
+		fireProcessEvent(SETBODY, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseRoutingSlipDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, RoutingSlipDefinition pd, int connectionType) {
+			String fromId, RoutingSlipDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[ROUTINGSLIP];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(ROUTINGSLIP, map, connectionType, fromId, null);
+		fireProcessEvent(ROUTINGSLIP, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseSetHeaderDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, SetHeaderDefinition pd, int connectionType) {
+			String fromId, SetHeaderDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[SETHEADER];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(SETHEADER, map, connectionType, fromId, null);
+		fireProcessEvent(SETHEADER, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseMsgRouterDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, ChoiceDefinition pd, int connectionType) {
+			String fromId, ChoiceDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[MSGROUTER];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(MSGROUTER, map, connectionType, fromId, null);
+		fireProcessEvent(MSGROUTER, map, connectionType, fromId, connectionMap);
 		List<WhenDefinition> whenClauses = pd.getWhenClauses();
 		if (whenClauses != null)
 			for (WhenDefinition wd : whenClauses) {
@@ -543,77 +560,79 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		List<ProcessorDefinition> outputs = otherwise.getOutputs();
 		for (ProcessorDefinition pd : outputs) {
 			parseProcessorDefinition(nodeIdFactory, fromId, true, pd,
-					ROUTE_OTHER);
+					ROUTE_OTHER,null);
 		}
 	}
 
 	private void parseWhenDefinition(NodeIdFactory nodeIdFactory,
 			String fromId, WhenDefinition wd) {
+		ExpressionDefinition expression = wd.getExpression();
+		Map<String, String> connectionMap = ExpressionProcessor.getExpressionMap(expression);
 		List<ProcessorDefinition> outputs = wd.getOutputs();
 		for (ProcessorDefinition pd : outputs) {
 			parseProcessorDefinition(nodeIdFactory, fromId, true, pd,
-					ROUTE_WHEN);
+					ROUTE_WHEN, connectionMap);
 		}
 	}
 
 	private String parseFilterDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, FilterDefinition pd, int connectionType) {
+			String fromId, FilterDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[FILTER];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(FILTER, map, connectionType, fromId, null);
+		fireProcessEvent(FILTER, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseLoadBalanceDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, LoadBalanceDefinition pd, int connectionType) {
+			String fromId, LoadBalanceDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[BALANCE];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(BALANCE, map, connectionType, fromId, null);
+		fireProcessEvent(BALANCE, map, connectionType, fromId, connectionMap);
 		List<ProcessorDefinition> outputs = pd.getOutputs();
 		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
 	private String parseSplitDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, SplitDefinition pd, int connectionType) {
+			String fromId, SplitDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[SPLIT];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(SPLIT, map, connectionType, fromId, null);
+		fireProcessEvent(SPLIT, map, connectionType, fromId, connectionMap);
 		List<ProcessorDefinition> outputs = pd.getOutputs();
 		parseProcessorDefinition(outputs, nodeIdFactory, id, false);
 		return id;
 	}
 
 	private String parseLogDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, LogDefinition pd, int connectionType) {
+			String fromId, LogDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[LOG];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(MSGENDPOINT, map, connectionType, fromId, null);
+		fireProcessEvent(MSGENDPOINT, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseBeanDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, BeanDefinition pd, int connectionType) {
+			String fromId, BeanDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[BEAN];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
-		fireProcessEvent(BEAN, map, connectionType, fromId, null);
+		fireProcessEvent(BEAN, map, connectionType, fromId, connectionMap);
 		return id;
 	}
 
 	private String parseToDefinition(NodeIdFactory nodeIdFactory,
-			String fromId, ToDefinition pd, int connectionType) {
+			String fromId, ToDefinition pd, int connectionType,Map<String, String> connectionMap) {
 		String uri = pd.getUri();
 		assert uri != null;
 		AbstractComponentParser componentParser = getDefinitionParser(uri);
 		Map<String, String> map = componentParser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(componentParser.getType(), map, connectionType,
-				fromId, null);
+				fromId, connectionMap);
 		return id;
 	}
 
@@ -654,6 +673,11 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	}
 
 	protected void beforeProcessEvent() {
+		for(AbstractComponentParser p:parsers){
+			if(p!=null){
+				p.initial();
+			}
+		}
 		for (ISpringParserListener l : listeners) {
 			l.preProcess();
 		}
@@ -672,6 +696,10 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		for (ISpringParserListener l : listeners) {
 			l.postProcess();
 		}
-		((InterceptComponentParser) parsers[INTERCEPT]).clear();
+		for(AbstractComponentParser p:parsers){
+			if(p!=null){
+				p.clear();
+			}
+		}
 	}
 }

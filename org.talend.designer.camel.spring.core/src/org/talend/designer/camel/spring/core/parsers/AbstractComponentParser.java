@@ -17,7 +17,15 @@ public abstract class AbstractComponentParser implements ICamelSpringConstants{
 		return map;
 	}
 	
+	public void initial(){
+		
+	}
+	
 	protected abstract void parse(OptionalIdentifiedDefinition oid, Map<String, String> map);
 
 	public abstract int getType();
+	
+	public void clear(){
+		
+	}
 }

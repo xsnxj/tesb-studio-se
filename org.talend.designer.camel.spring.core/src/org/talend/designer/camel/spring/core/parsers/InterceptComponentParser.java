@@ -26,6 +26,7 @@ public class InterceptComponentParser extends AbstractComponentParser {
 		return INTERCEPT;
 	}
 
+	@Override
 	public void clear() {
 		ids.clear();
 	}

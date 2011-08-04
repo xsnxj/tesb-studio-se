@@ -13,6 +13,7 @@ import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
+import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
 
 public class LoadBalanceComponentParser extends AbstractComponentParser {
 
@@ -51,8 +52,9 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 			StickyLoadBalancerDefinition slbd = (StickyLoadBalancerDefinition) balancerType;
 			ExpressionSubElementDefinition expression = slbd
 					.getCorrelationExpression();
-			map.put(STICKY_EXPRESSION, ExpressionProcessor
-					.getExpresstionText(expression.getExpressionType()));
+			Map<String, String> expressionMap = ExpressionProcessor
+					.getExpressionMap(expression.getExpressionType());
+			map.put(STICKY_EXPRESSION, expressionMap.get(EXPRESSION_TEXT));
 		} else if (balancerType instanceof TopicLoadBalancerDefinition) {
 			map.put(BALANCE_STRATEGY, TOPIC_STRATEGY);
 		}
