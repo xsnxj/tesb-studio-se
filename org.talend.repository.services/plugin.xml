@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+ <extension
+       point="org.talend.core.runtime.service">
+    <Service
+          class="org.talend.repository.services.ESBProviderService"
+          serviceId="IESBProviderService">
+    </Service>
+ </extension>
+ <extension
+       point="org.talend.core.repositoryContextualsActions">
+    <Action
+          class="org.talend.repository.services.action.CreateESBAction"
+          id="org.talend.repository.services.action.CreateESBAction"
+          level="1"
+          name="Metadata/Copy to Generic schema action">
+    </Action>
+    <Action
+          class="org.talend.repository.services.action.OpenWSDLAction"
+          id="org.talend.repository.services.action.OpenWSDLAction"
+          level="1"
+          name="open wsdl">
+    </Action>
+    <Action
+          class="org.talend.repository.services.action.ServiceEditPropertiesAction"
+          id="org.talend.repository.services.action.ServiceEditPropertiesAction"
+          name="Edit Properties">
+    </Action>
+ </extension>
+ <extension
+       point="org.talend.core.repository.repository_node_provider">
+    <repositoryNode
+          class="org.talend.repository.services.utils.ServiceExtendNode"
+          folder="services"
+          isResouce="true"
+          label="Services"
+          products="CAMEL|DI"
+          type="SERVICES">
+    </repositoryNode>
+ </extension>
+ <extension
+       point="org.talend.core.repository.repository_content">
+    <RepositoryContent
+          class="org.talend.repository.services.utils.ESBRepositoryContentHandler">
+    </RepositoryContent>
+ </extension>
+</plugin>
