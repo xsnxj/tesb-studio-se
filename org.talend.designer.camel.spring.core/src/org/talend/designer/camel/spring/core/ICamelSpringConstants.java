@@ -135,4 +135,29 @@ public interface ICamelSpringConstants {
 	public static final String ROBUSTOUTONLY= "RobustOutOnly";
 	public static final String OUTIN = "OutIn";
 	public static final String OUTOPTIONALIN = "OutOptionalIn";
+	
+	//activemq
+	public static final String MESSAGE_TYPE = "message_type";
+	public static final String MSG_DESTINATION = "msg_destination";
+	
+	//ftp
+	public static final String FTP_SCHEMA_TYPE = "ftp_schema_type";
+	public static final String FTP_USERNAME = "ftp_username";
+	public static final String FTP_PASSWORD = "ftp_password";
+	public static final String FTP_SERVER = "ftp_server";
+	public static final String FTP_PORT = "ftp_PORT";
+	public static final String FTP_DIRECTORY = "ftp_directory";
+	
+	//idem
+	public static final String REPOSITORY_TYPE = "repository_type";
+	public static final String FILE_REPOSITORY = "File";
+	public static final String FILE_STORE = "file_store";
+	public static final String MEMORY_REPOSITORY = "Memory";
+	public static final String CACHE_SIZE = "cache_size";
+	
+	//wiretap
+	public static final String WIRETAP_COPY="wireTap_copy";
+	public static final String POPULATE_TYPE="populate_type";
+	public static final String NEW_EXPRESSION_POP="new_expression_pop";
+	public static final String NEW_PROCESSOR_POP="new_processor_pop";
 }

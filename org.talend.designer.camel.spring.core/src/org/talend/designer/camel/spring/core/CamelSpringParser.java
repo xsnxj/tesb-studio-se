@@ -182,7 +182,11 @@ public class CamelSpringParser implements ICamelSpringConstants {
 				if (pd instanceof SplitDefinition
 						|| pd instanceof LoadBalanceDefinition
 						|| pd instanceof ChoiceDefinition
-						|| pd instanceof AggregateDefinition) {
+						|| pd instanceof AggregateDefinition
+						|| pd instanceof FilterDefinition
+						|| pd instanceof DynamicRouterDefinition
+						|| pd instanceof RoutingSlipDefinition
+						|| pd instanceof IdempotentConsumerDefinition) {
 					connectionType = ROUTE_ENDBLOCK;
 				}
 			}
@@ -425,6 +429,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(IDEM, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
@@ -434,6 +440,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(DYNAMIC, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
@@ -526,6 +534,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(ROUTINGSLIP, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
@@ -581,6 +591,17 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(FILTER, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		fromId = id;
+		for (ProcessorDefinition out : outputs) {
+			if(fromId==id){
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						out, ROUTE, null);
+			}else{
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						out, ROUTE_ENDBLOCK, null);
+			}
+		}
 		return id;
 	}
 
@@ -651,9 +672,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 				String beanClassName = appContext
 						.getRegisterBeanClassName(schema);
 				if (ActiveMQComponent.class.getName().equals(beanClassName)) {
-					return new ActiveMQComponentParser();
+					return new ActiveMQComponentParser(appContext.getBeanFactory().getBeanDefinition(schema), uri);
 				} else if (JmsComponent.class.getName().equals(beanClassName)) {
-					return new JMSComponentParser();
+					return new JMSComponentParser(appContext.getBeanFactory().getBeanDefinition(schema), uri);
 				}
 			}
 			return new MessageEndpointParser();

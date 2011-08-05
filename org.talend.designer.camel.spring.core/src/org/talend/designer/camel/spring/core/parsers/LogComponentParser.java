@@ -9,7 +9,7 @@ public class LogComponentParser extends AbstractComponentParser {
 
 	protected void parse(OptionalIdentifiedDefinition d, Map<String, String> map) {
 		LogDefinition ld = (LogDefinition) d;
-		map.put(ENDPOINT_URI, "log://"+ld.getMessage());
+		map.put(ENDPOINT_URI, "\"log://"+ld.getMessage()+"\"");
 	}
 
 	public int getType() {
