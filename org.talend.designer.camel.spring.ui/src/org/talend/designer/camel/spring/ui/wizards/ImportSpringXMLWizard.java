@@ -205,7 +205,18 @@ public class ImportSpringXMLWizard extends Wizard {
                 try {
                     parser.startParse(springXMLPath);
                     
-                    openEditor();
+                    getShell().getDisplay().asyncExec(new Runnable() {
+						
+						public void run() {
+							try {
+								openEditor();
+							} catch (PartInitException e) {
+								e.printStackTrace();
+							} catch (PersistenceException e) {
+								e.printStackTrace();
+							}
+						}
+					});
                 } catch (Exception e) {
                     throw new InvocationTargetException(e);
                 }

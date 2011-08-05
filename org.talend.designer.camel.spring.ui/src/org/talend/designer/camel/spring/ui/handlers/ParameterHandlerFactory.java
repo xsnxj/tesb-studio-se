@@ -51,7 +51,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CFileParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.ACTIVEMQ];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CActiveMQParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.AGGREGATE];
         handlers.put(componentName, new CommonParameterHandler(componentName));
@@ -84,10 +84,10 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.FTP];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CFtpParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.IDEM];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CIdempotentConsumerParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.INTERCEPT];
         handlers.put(componentName, new CommonParameterHandler(componentName));

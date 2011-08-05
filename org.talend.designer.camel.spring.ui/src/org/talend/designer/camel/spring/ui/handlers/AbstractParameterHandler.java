@@ -94,6 +94,8 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
 
             String key = param.getKey();
             String value = param.getValue();
+            
+            System.out.println(value);
 
             if (key.equals(ICamelSpringConstants.UNIQUE_NAME_ID)) {// Add UNIQUE_NAME parameter
                 paramType.setField("TEXT");
@@ -158,8 +160,13 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
                 valueType.setValue(value);
                 valueTypes.add(valueType);
 
-                ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
-                ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                ElementParameterType nodeProperty = ComponentUtilities.getNodeProperty(nodeType, tableParam.getKey());
+                if(nodeProperty == null){
+                    ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
+                  ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                }else{
+                    nodeProperty.getElementValue().addAll(valueTypes);
+                }
             }
 
         } else {

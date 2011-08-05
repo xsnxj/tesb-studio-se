@@ -42,6 +42,14 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
         paramType.setValue(uniqueName);
         elemParams.add(paramType);
         
+        if(!name.startsWith("\"")){
+            name = "\"" + name;
+        }
+        
+        if(!name.endsWith("\"")){
+            name = name + "\"";
+        }
+        
         paramType = fileFact.createElementParameterType();
         paramType.setField("TEXT");
         paramType.setName("HEADER");

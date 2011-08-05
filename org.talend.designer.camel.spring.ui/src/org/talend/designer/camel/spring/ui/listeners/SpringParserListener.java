@@ -28,6 +28,7 @@ import org.talend.designer.camel.spring.ui.layout.ILayoutManager;
 import org.talend.designer.camel.spring.ui.layout.RelativeLayoutManager;
 import org.talend.designer.camel.spring.ui.utils.RouteMapping;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
+import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
@@ -47,16 +48,19 @@ public class SpringParserListener implements ISpringParserListener {
 
     private Map<Integer, EConnectionType> connectionStyleMap;
 
-    private Map<String, String> nodeCache;
-
     private Map<String, IParameterHandler> paramHandlers;
+    
+    private Map<String, ComponentNode> nodes;
+    
+    private int routingId;
 
     public SpringParserListener(CamelProcessItem camelProcessItem) {
         this.camelProcessItem = camelProcessItem;
         layoutManager = new RelativeLayoutManager();
         connectionStyleMap = RouteMapping.getConnectionMapping();
-        nodeCache = new HashMap<String, String>();
         paramHandlers = ParameterHandlerFactory.INSTANCE.getHandlers();
+        nodes = new HashMap<String, ComponentNode>();
+        routingId = 0;
     }
 
     /**
@@ -70,7 +74,6 @@ public class SpringParserListener implements ISpringParserListener {
     private void addElementParameters(NodeType nodeType, int componentType, Map<String, String> parameters) {
 
         String componentName = RouteMapping.COMPOMENT_NAMES[componentType];
-        String uniqueId = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
         String uniqueName = ComponentUtilities.generateUniqueNodeName(componentName, processType);
 
         IParameterHandler handler = paramHandlers.get(componentName);
@@ -81,7 +84,6 @@ public class SpringParserListener implements ISpringParserListener {
         handler.handle(nodeType, uniqueName, parameters);
         ComponentUtilities.setNodeUniqueName(nodeType, uniqueName);
         nodeType.setComponentName(componentName);
-        nodeCache.put(uniqueId, uniqueName);
     }
 
     /**
@@ -96,7 +98,7 @@ public class SpringParserListener implements ISpringParserListener {
     @SuppressWarnings("unchecked")
     private void addPossibleConnections(NodeType nodeType, int connectionId, String sourceId, Map<String, String> connParameters) {
         if (sourceId != null) {// has a route connection
-            String sourceNodeName = nodeCache.get(sourceId);
+            String sourceNodeName = getUniqueName(sourceId);
             if (sourceNodeName != null) {
                 EConnectionType eConnectionType = connectionStyleMap.get(connectionId);
                 ConnectionType connectionType = fileFact.createConnectionType();
@@ -114,6 +116,27 @@ public class SpringParserListener implements ISpringParserListener {
             }
         }
 
+    }
+
+    /**
+     * 
+     * DOC LiXP Comment method "getUniqueName".
+     * @param sourceId
+     * @return
+     */
+    private String getUniqueName(String sourceId) {
+        ComponentNode node = nodes.get(sourceId);
+        if(node == null){
+            return null;
+        }
+        
+        for(Object obj: node.getNodeType().getElementParameter()){
+            ElementParameterType param = (ElementParameterType) obj;
+            if(param.getName().equals("UNIQUE_NAME")){
+                return param.getValue();
+            }
+        }
+        return null;
     }
 
     /**
@@ -145,6 +168,24 @@ public class SpringParserListener implements ISpringParserListener {
         nodeType.setSizeX(32);
         nodeType.setSizeY(32);
 
+        String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
+        ComponentNode componentNode = new ComponentNode(name);
+        componentNode.setNodeType(nodeType);
+        componentNode.setRoutingId(routingId);
+        
+        if(sourceId == null){
+            routingId ++;
+        }else{
+            ComponentNode parent = nodes.get(sourceId);
+            if(parent != null){
+                componentNode.setParent(componentNode);
+                componentNode.setRoutingId(routingId);
+                parent.getChildren().add(componentNode);
+            }
+        }
+        
+        nodes.put(name, componentNode);
+        
         return nodeType;
     }
 
@@ -155,6 +196,7 @@ public class SpringParserListener implements ISpringParserListener {
      */
     public void postProcess() {
         layoutManager.stopLayout();
+//        LayoutUtils.simpleLayout(nodes.values());
     }
 
     /*
