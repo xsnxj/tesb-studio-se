@@ -73,12 +73,10 @@ if (inputConn != null) {
 						List<Map<String, String>> customProperties = (List<Map<String,String>>)
 								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 						if (!customProperties.isEmpty()) { %>
-							customProps_<%=cid%> = new java.util.HashMap<String, String>() {{
-							<% for (int i = 0; i < customProperties.size(); i++) {
-								String propName = customProperties.get(i).get("PROP_NAME");
-								String propValue = customProperties.get(i).get("PROP_VALUE");
-							%>		put(<%=propName%>, <%=propValue%>);
-							<% } %>	}};
+							customProps_<%=cid%> = new java.util.HashMap<String, String>();
+							<% for (int k = 0; k < customProperties.size(); k++) { %>
+							customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+							<% } %>
 						<% } %>
 				<% } %>
 					Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);

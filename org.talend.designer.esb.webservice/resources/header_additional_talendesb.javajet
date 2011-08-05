@@ -38,6 +38,7 @@ if (actAsProvider || actAsConsumer) { %>
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
 	INode node = process.getNodesOfType("tESBProviderRequest").get(0);
+	String cid = node.getUniqueName();
 
 	String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
 	if ("--DEFAULT--".equals(serviceName)) {
@@ -86,12 +87,11 @@ if (actAsProvider || actAsConsumer) { %>
 					ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
 			if (!customProperties.isEmpty()) { %>
 				// Service Locator custom properties
-				put("SL-PROPS", new java.util.HashMap<String, String>() {{
-				<% for (int i = 0; i < customProperties.size(); i++) {
-					String propName = customProperties.get(i).get("PROP_NAME");
-					String propValue = customProperties.get(i).get("PROP_VALUE");
-				%>		put(<%=propName%>, <%=propValue%>);
-				<% } %>	}});
+				java.util.Map<String, String> customProps_<%=cid%> = new java.util.HashMap<String, String>();
+				<% for (int k = 0; k < customProperties.size(); k++) { %>
+				customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+				<% } %>
+				put("SL-PROPS", customProps_<%=cid%>);
 			<% } %>
 		<% } %>
 

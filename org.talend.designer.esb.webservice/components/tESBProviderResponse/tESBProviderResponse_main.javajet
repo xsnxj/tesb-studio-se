@@ -45,11 +45,10 @@ if (null != metadatas && 0 < metadatas.size()) {
 		List<Map<String, String>> customProperties = (List<Map<String,String>>)
 				ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 		if (!customProperties.isEmpty()) { %>
-			customProps_<%=cid%> = new java.util.HashMap<String, String>() {{
+			customProps_<%=cid%> = new java.util.HashMap<String, String>();
 			<% for (int k = 0; k < customProperties.size(); k++) { %>
-					put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+			customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 			<% } %>
-				}};
 		<% } %>
 
 		esbProviderCallback_<%=cid%>.setCustomProperties(customProps_<%=cid%>);
