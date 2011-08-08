@@ -6,8 +6,14 @@ import java.util.Map;
 
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class InterceptComponentParser extends AbstractComponentParser {
+
+	public InterceptComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+		// TODO Auto-generated constructor stub
+	}
 
 	private List<InterceptDefinition> ids = new ArrayList<InterceptDefinition>();
 

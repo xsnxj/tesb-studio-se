@@ -5,8 +5,14 @@ import java.util.Map;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class FileComponentParser extends AbstractComponentParser {
+
+	public FileComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+		// TODO Auto-generated constructor stub
+	}
 
 	protected void parse(OptionalIdentifiedDefinition fd, Map<String,String> map) {
 		String uri = null;

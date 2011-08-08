@@ -89,47 +89,13 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	private XmlFileApplicationContext appContext;
 
-	public CamelSpringParser() {
-		initialize();
-	}
-
-	private void initialize() {
-		parsers[FILE] = new FileComponentParser();
-		parsers[MSGENDPOINT] = new MessageEndpointParser();
-		parsers[SPLIT] = new SplitComponentParser();
-		parsers[BEAN] = new BeanComponentParser();
-		parsers[BALANCE] = new LoadBalanceComponentParser();
-		parsers[FILTER] = new FilterComponentParser();
-		parsers[MSGROUTER] = new MessageRouterComponentParser();
-		parsers[ROUTINGSLIP] = new RoutingSlipComponentParser();
-		parsers[SETHEADER] = new SetHeaderComponentParser();
-		parsers[ENRICH] = new EnrichComponentParser();
-		parsers[CONVERT] = new ConvertBodyComponentParser();
-		parsers[DELAY] = new DelayComponentParser();
-		parsers[PROCESSOR] = new ProcessorComponentParser();
-		parsers[AGGREGATE] = new AggregateComponentParser();
-		parsers[MULTICAST] = new MulticastComponentParser();
-		parsers[SETBODY] = new SetBodyComponentParser();
-		parsers[DYNAMIC] = new DynamicComponentParser();
-		parsers[IDEM] = new IdempoComponentParser();
-		parsers[PATTERN] = new ExchangePatternComponentParser();
-		parsers[THROTTLER] = new ThrottlerComponentParser();
-		parsers[LOOP] = new LoopComponentParser();
-		parsers[STOP] = new StopComponentParser();
-		parsers[INTERCEPT] = new InterceptComponentParser();
-		parsers[EXCEPTION] = new OnExceptionComponentParser();
-		parsers[TRY] = new TryComponentParser();
-		parsers[PF] = new PipeLineComponentParser();
-		parsers[WIRETAP] = new WireTapComponentParser();
-		parsers[LOG] = new LogComponentParser();
-	}
-
 	public void startParse(String filePath) throws Exception {
 		try {
 			appContext = new XmlFileApplicationContext(filePath);
 			SpringCamelContext camelContext = SpringCamelContext
 					.springCamelContext(appContext);
 
+			initialize();
 			beforeProcessEvent();
 
 			List<RouteDefinition> routeDefinitions = camelContext
@@ -142,9 +108,46 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			throw e;
 		} finally {
 			endProcessEvent();
+			if(appContext!=null){
+				appContext.destroy();
+				appContext = null;
+			}
 		}
 	}
 
+	private void initialize() {
+		parsers[FILE] = new FileComponentParser(appContext);
+		parsers[FTP] = new FTPComponentParser(appContext);
+		parsers[CXF] = new CXFComponentParser(appContext);
+		parsers[MSGENDPOINT] = new MessageEndpointParser(appContext);
+		parsers[SPLIT] = new SplitComponentParser(appContext);
+		parsers[BEAN] = new BeanComponentParser(appContext);
+		parsers[BALANCE] = new LoadBalanceComponentParser(appContext);
+		parsers[FILTER] = new FilterComponentParser(appContext);
+		parsers[MSGROUTER] = new MessageRouterComponentParser(appContext);
+		parsers[ROUTINGSLIP] = new RoutingSlipComponentParser(appContext);
+		parsers[SETHEADER] = new SetHeaderComponentParser(appContext);
+		parsers[ENRICH] = new EnrichComponentParser(appContext);
+		parsers[CONVERT] = new ConvertBodyComponentParser(appContext);
+		parsers[DELAY] = new DelayComponentParser(appContext);
+		parsers[PROCESSOR] = new ProcessorComponentParser(appContext);
+		parsers[AGGREGATE] = new AggregateComponentParser(appContext);
+		parsers[MULTICAST] = new MulticastComponentParser(appContext);
+		parsers[SETBODY] = new SetBodyComponentParser(appContext);
+		parsers[DYNAMIC] = new DynamicComponentParser(appContext);
+		parsers[IDEM] = new IdempoComponentParser(appContext);
+		parsers[PATTERN] = new ExchangePatternComponentParser(appContext);
+		parsers[THROTTLER] = new ThrottlerComponentParser(appContext);
+		parsers[LOOP] = new LoopComponentParser(appContext);
+		parsers[STOP] = new StopComponentParser(appContext);
+		parsers[INTERCEPT] = new InterceptComponentParser(appContext);
+		parsers[EXCEPTION] = new OnExceptionComponentParser(appContext);
+		parsers[TRY] = new TryComponentParser(appContext);
+		parsers[PF] = new PipeLineComponentParser(appContext);
+		parsers[WIRETAP] = new WireTapComponentParser(appContext);
+		parsers[LOG] = new LogComponentParser(appContext);
+	}
+	
 	private void parseRouteDefinitions(RouteDefinition rd,
 			SpringCamelContext camelContext) throws UnsupportedElementException {
 		NodeIdFactory nodeIdFactory = camelContext.getNodeIdFactory();
@@ -186,7 +189,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 						|| pd instanceof FilterDefinition
 						|| pd instanceof DynamicRouterDefinition
 						|| pd instanceof RoutingSlipDefinition
-						|| pd instanceof IdempotentConsumerDefinition) {
+						|| pd instanceof IdempotentConsumerDefinition
+						|| pd instanceof LoopDefinition
+						|| pd instanceof ThrottleDefinition) {
 					connectionType = ROUTE_ENDBLOCK;
 				}
 			}
@@ -380,7 +385,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			}
 		}
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(EXCEPTIONS, sb.toString());
+		map.put(LB_EXCEPTIONS, sb.toString());
 		List<ProcessorDefinition> outputs = cd.getOutputs();
 		for (ProcessorDefinition pd : outputs) {
 			parseProcessorDefinition(nodeIdFactory, id, true, pd, ROUTE_CATCH,map);
@@ -402,6 +407,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(LOOP, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
@@ -411,6 +418,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
 		fireProcessEvent(THROTTLER, map, connectionType, fromId, connectionMap);
+		List<ProcessorDefinition> outputs = pd.getOutputs();
+		parseProcessorDefinition(outputs, nodeIdFactory, id, true);
 		return id;
 	}
 
@@ -659,12 +668,12 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	private AbstractComponentParser getDefinitionParser(String uri) {
 		if (uri.startsWith("file:")) {
-			return new FileComponentParser();
+			return parsers[FILE];
 		} else if (uri.startsWith("cxf")) {
-			return new CXFComponentParser();
+			return parsers[CXF];
 		} else if (uri.startsWith("ftp") || uri.startsWith("ftps")
 				|| uri.startsWith("sftp")) {
-			return new FTPComponentParser();
+			return parsers[FTP];
 		} else {
 			int index = uri.indexOf(":");
 			if (index != -1) {
@@ -672,12 +681,12 @@ public class CamelSpringParser implements ICamelSpringConstants {
 				String beanClassName = appContext
 						.getRegisterBeanClassName(schema);
 				if (ActiveMQComponent.class.getName().equals(beanClassName)) {
-					return new ActiveMQComponentParser(appContext.getBeanFactory().getBeanDefinition(schema), uri);
+					return new ActiveMQComponentParser(appContext, schema, uri);
 				} else if (JmsComponent.class.getName().equals(beanClassName)) {
-					return new JMSComponentParser(appContext.getBeanFactory().getBeanDefinition(schema), uri);
+					return new JMSComponentParser(appContext, schema, uri);
 				}
 			}
-			return new MessageEndpointParser();
+			return parsers[MSGENDPOINT];
 		}
 	}
 

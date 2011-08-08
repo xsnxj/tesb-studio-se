@@ -4,8 +4,13 @@ import java.util.Map;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ThrottleDefinition;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class ThrottlerComponentParser extends AbstractComponentParser {
+
+	public ThrottlerComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
@@ -15,9 +20,9 @@ public class ThrottlerComponentParser extends AbstractComponentParser {
 		Long maximumRequestsPerPeriod = td.getMaximumRequestsPerPeriod();
 		Boolean asyncDelayed = td.getAsyncDelayed();
 		
-		map.put(TIME_PERIOD_MILL, timePeriodMillis+"");
-		map.put(MAX_REQUEST_PER_PERIOD, maximumRequestsPerPeriod+"");
-		map.put(ASYNC_DELAY, asyncDelayed==null?null:asyncDelayed.toString());
+		map.put(TH_TIME_PERIOD_MILL, timePeriodMillis+"");
+		map.put(TH_MAX_REQUEST_PER_PERIOD, maximumRequestsPerPeriod+"");
+		map.put(TH_ASYNC_DELAY, asyncDelayed==null?null:asyncDelayed.toString());
 	}
 
 	@Override

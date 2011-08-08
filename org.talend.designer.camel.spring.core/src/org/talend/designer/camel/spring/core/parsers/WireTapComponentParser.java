@@ -7,8 +7,13 @@ import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.WireTapDefinition;
 import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class WireTapComponentParser extends AbstractComponentParser {
+
+	public WireTapComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
@@ -19,24 +24,24 @@ public class WireTapComponentParser extends AbstractComponentParser {
 		
 		Boolean copy = wtd.getCopy();
 		if(copy!=null){
-			map.put(WIRETAP_COPY, copy.toString());
+			map.put(WT_WIRETAP_COPY, copy.toString());
 		}
 		
 		ExpressionSubElementDefinition newExchangeExpression = wtd.getNewExchangeExpression();
 		if(newExchangeExpression!=null){
-			map.put(POPULATE_TYPE, NEW_EXPRESSION_POP);
+			map.put(WT_POPULATE_TYPE, WT_NEW_EXPRESSION_POP);
 			Map<String, String> expressionMap = ExpressionProcessor.getExpressionMap(newExchangeExpression.getExpressionType());
 			map.putAll(expressionMap);
 			return;
 		}
 		Processor newExchangeProcessor = wtd.getNewExchangeProcessor();
 		if(newExchangeProcessor != null){
-			map.put(POPULATE_TYPE, NEW_PROCESSOR_POP);
+			map.put(WT_POPULATE_TYPE, WT_NEW_PROCESSOR_POP);
 			return;
 		}
 		String newExchangeProcessorRef = wtd.getNewExchangeProcessorRef();
 		if(newExchangeProcessorRef!=null){
-			map.put(POPULATE_TYPE, NEW_PROCESSOR_POP);
+			map.put(WT_POPULATE_TYPE, WT_NEW_PROCESSOR_POP);
 			return;
 		}
 	}

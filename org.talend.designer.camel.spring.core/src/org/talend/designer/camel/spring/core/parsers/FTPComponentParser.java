@@ -5,8 +5,14 @@ import java.util.Map;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class FTPComponentParser extends AbstractComponentParser {
+
+	public FTPComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,

@@ -6,6 +6,7 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.TypedStringValue;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 
@@ -14,8 +15,9 @@ public class ActiveMQComponentParser extends AbstractComponentParser {
 	private BeanDefinition beanDefinition;
 	private String uri;
 
-	public ActiveMQComponentParser(BeanDefinition beanDefinition, String uri) {
-		this.beanDefinition = beanDefinition;
+	public ActiveMQComponentParser(XmlFileApplicationContext appContext,String schema, String uri) {
+		super(appContext);
+		this.beanDefinition = getBeanDefinition(schema);
 		this.uri = uri;
 	}
 
@@ -45,16 +47,16 @@ public class ActiveMQComponentParser extends AbstractComponentParser {
 		if (uri != null) {
 			String[] parts = uri.split(":");
 			if (parts.length > 2) {
-				map.put(MESSAGE_TYPE, parts[1]);
+				map.put(AMQ_MESSAGE_TYPE, parts[1]);
 			} else {
-				map.put(MESSAGE_TYPE, "queue");
+				map.put(AMQ_MESSAGE_TYPE, "queue");
 			}
 			String remain = parts[parts.length - 1];
 			int index = remain.indexOf("?");
 			if (index == -1) {
-				map.put(MSG_DESTINATION, remain);
+				map.put(AMQ_MSG_DESTINATION, remain);
 			} else {
-				map.put(MSG_DESTINATION, remain.substring(0, index));
+				map.put(AMQ_MSG_DESTINATION, remain.substring(0, index));
 			}
 			if (index != -1) {
 				String[] parameters = remain.substring(index + 1).split("&");

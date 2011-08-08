@@ -6,8 +6,14 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class RoutingSlipComponentParser extends AbstractComponentParser {
+
+	public RoutingSlipComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
@@ -16,7 +22,7 @@ public class RoutingSlipComponentParser extends AbstractComponentParser {
 		ExpressionDefinition expression = rsd.getExpression();
 		String uriDelimiter = rsd.getUriDelimiter();
 		Map<String, String> expressionMap = ExpressionProcessor.getExpressionMap(expression);
-		map.put(URI_DELIMITER, uriDelimiter);
+		map.put(RS_URI_DELIMITER, uriDelimiter);
 		map.putAll(expressionMap);
 	}
 

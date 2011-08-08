@@ -9,8 +9,14 @@ import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
+import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class IdempoComponentParser extends AbstractComponentParser {
+
+	public IdempoComponentParser(XmlFileApplicationContext appContext) {
+		super(appContext);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
@@ -19,17 +25,17 @@ public class IdempoComponentParser extends AbstractComponentParser {
 		IdempotentRepository<?> messageIdRepository = icd.getMessageIdRepository();
 		if(messageIdRepository!=null){
 			if(messageIdRepository instanceof FileIdempotentRepository){
-				map.put(REPOSITORY_TYPE, FILE_REPOSITORY);
+				map.put(ID_REPOSITORY_TYPE, ID_FILE_REPOSITORY);
 				FileIdempotentRepository fir = (FileIdempotentRepository) messageIdRepository;
 				String filePath = fir.getFilePath();
 				int cacheSize = fir.getCacheSize();
-				map.put(FILE_STORE, filePath);
-				map.put(CACHE_SIZE, cacheSize+"");
+				map.put(ID_FILE_STORE, filePath);
+				map.put(ID_CACHE_SIZE, cacheSize+"");
 			}else if(messageIdRepository instanceof MemoryIdempotentRepository){
-				map.put(REPOSITORY_TYPE, MEMORY_REPOSITORY);
+				map.put(ID_REPOSITORY_TYPE, ID_MEMORY_REPOSITORY);
 				MemoryIdempotentRepository mir = (MemoryIdempotentRepository) messageIdRepository;
 				int cacheSize = mir.getCacheSize();
-				map.put(CACHE_SIZE, cacheSize+"");
+				map.put(ID_CACHE_SIZE, cacheSize+"");
 			}
 		}
 		ExpressionDefinition expression = icd.getExpression();

@@ -22,11 +22,11 @@ public class ExpressionProcessor implements ICamelSpringConstants {
 			} else {
 				ex = "body().tokenize(\"" + token + "\")";
 			}
-			map.put(EXPRESSION_TYPE, TOKENIZER_EXPRESSION);
-			map.put(EXPRESSION_TEXT, ex);
+			map.put(EP_EXPRESSION_TYPE, EP_TOKENIZER_EXPRESSION);
+			map.put(EP_EXPRESSION_TEXT, ex);
 		}else{
-			map.put(EXPRESSION_TYPE, expression.getLanguage());
-			map.put(EXPRESSION_TEXT, "\""+expression.getExpression()+"\"");
+			map.put(EP_EXPRESSION_TYPE, expression.getLanguage());
+			map.put(EP_EXPRESSION_TEXT, "\""+expression.getExpression()+"\"");
 		}
 //		else if (expression instanceof XPathExpression) {
 //			XPathExpression xp = (XPathExpression) expression;
