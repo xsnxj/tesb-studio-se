@@ -13,35 +13,20 @@
 package org.talend.designer.camel.spring.ui.handlers;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-
 /**
- * DOC LiXP  class global comment. Detailled comment
+ * DOC LiXP class global comment. Detailled comment
  */
-public interface IParameterHandler {
+public class CDynamicRouterParameterHandler extends AbstractParameterHandler {
 
-    String NAME_POSTFIX = ".NAME";
+    public CDynamicRouterParameterHandler(String componentName) {
+        super(componentName);
+    }
 
-    String FIELD_POSTFIX = ".FIELD";
-    
-    String REF_POSTFIX = ".REF_CHECK";
-    /**
-     * 
-     * DOC LiXP Comment method "handle".
-     * @param nodeType
-     * @param uniqueName
-     * @param parameters
-     */
-    void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters);
-    
-    /**
-     * 
-     * DOC LiXP Comment method "handleAddtionalParam".
-     * @param nodeType
-     * @param param
-     */
-    void handleAddtionalParam(NodeType nodeType, Entry<String, String> param);
+    @Override
+    public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
+        super.handle(nodeType, uniqueName, parameters);
+    }
 }

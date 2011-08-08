@@ -23,9 +23,9 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 /**
  * DOC LiXP class global comment. Detailled comment
  */
-public class CSetHeaderParameterHandler extends AbstractParameterHandler {
+public class CThrottlerParameterHandler extends AbstractParameterHandler {
 
-    public CSetHeaderParameterHandler(String componentName) {
+    public CThrottlerParameterHandler(String componentName) {
         super(componentName);
     }
 
@@ -33,9 +33,9 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         
-        String name = parameters.get(ICamelSpringConstants.SH_HEADER_NAME);
-        String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
-        String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
+        String timePreiodMill = parameters.get(ICamelSpringConstants.TH_TIME_PERIOD_MILL);
+        String maxRequestPerPeriod = parameters.get(ICamelSpringConstants.TH_MAX_REQUEST_PER_PERIOD);
+        String delay = parameters.get(ICamelSpringConstants.TH_ASYNC_DELAY);
         
         ElementParameterType paramType = fileFact.createElementParameterType();
         paramType.setField("TEXT");
@@ -43,43 +43,29 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
         paramType.setValue(uniqueName);
         elemParams.add(paramType);
         
-        if(!name.startsWith("\"")){
-            name = "\"" + name;
-        }
-        
-        if(!name.endsWith("\"")){
-            name = name + "\"";
-        }
+        paramType = fileFact.createElementParameterType();
+        paramType.setField("TEXT");
+        paramType.setName("MESSAGE_COUNT");
+        paramType.setValue(timePreiodMill);
+        elemParams.add(paramType);
         
         paramType = fileFact.createElementParameterType();
         paramType.setField("TEXT");
-        paramType.setName("HEADER");
-        paramType.setValue(name);
+        paramType.setName("TIME_PERIOD");
+        paramType.setValue(maxRequestPerPeriod);
         elemParams.add(paramType);
         
-        if("bean".equals(type)){//Use bean?
+        paramType = fileFact.createElementParameterType();
+        paramType.setField("CHECK");
+        paramType.setName("USE_ASYNC_DELAYING");
+        paramType.setValue(delay);
+        elemParams.add(paramType);
+        
+        if(maxRequestPerPeriod != null && !maxRequestPerPeriod.isEmpty()){
             paramType = fileFact.createElementParameterType();
             paramType.setField("CHECK");
-            paramType.setName("USE_BEAN");
+            paramType.setName("SET_TIME_PERIOD");
             paramType.setValue("true");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("BEAN");
-            paramType.setValue(text);
-            elemParams.add(paramType);
-        }else{
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("COLSED_LIST");
-            paramType.setName("LANGUAGES");
-            paramType.setValue(type);
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("EXPRESSION");
-            paramType.setValue(text);
             elemParams.add(paramType);
         }
         

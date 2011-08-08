@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.talend.core.model.components.ComponentUtilities;
@@ -40,6 +41,8 @@ import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
  */
 public abstract class AbstractParameterHandler implements IParameterHandler {
 
+    private static final org.apache.commons.logging.Log log = LogFactory.getLog(AbstractParameterHandler.class);
+    
     private String componentName;
 
     protected TalendFileFactory fileFact;
@@ -84,20 +87,21 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
     @SuppressWarnings("unchecked")
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
 
+        log.info("node:" + uniqueName + " params: " +parameters);
+        
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
 
         for (Entry<String, String> param : parameters.entrySet()) {
 
-            ElementParameterType paramType = fileFact.createElementParameterType();
+            ElementParameterType paramType;
 
             Map<String, String> params = getBasicParameters();
 
             String key = param.getKey();
             String value = param.getValue();
             
-            System.out.println(value);
-
             if (key.equals(ICamelSpringConstants.UNIQUE_NAME_ID)) {// Add UNIQUE_NAME parameter
+                paramType = fileFact.createElementParameterType();
                 paramType.setField("TEXT");
                 paramType.setName("UNIQUE_NAME");
                 paramType.setValue(uniqueName);
@@ -107,8 +111,18 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
 
             String field = params.get(key + FIELD_POSTFIX);
             String name = params.get(key + NAME_POSTFIX);
-
+            String ref = params.get(key + REF_POSTFIX);
+            
+            if(ref != null){ //Handle reference check
+                paramType = fileFact.createElementParameterType();
+                paramType.setField("CHECK");
+                paramType.setName(ref);
+                paramType.setValue("true");
+                elemParams.add(paramType);
+            }
+            
             if (field != null && name != null) { // Basic parameters
+                paramType = fileFact.createElementParameterType();
                 paramType.setField(field);
                 paramType.setName(name);
                 paramType.setValue(value);
@@ -117,6 +131,8 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
             } else {
                 handleAddtionalParam(nodeType, param);
             }
+            
+           
         }
 
         nodeType.getElementParameter().addAll(elemParams);

@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Point;
 import org.talend.designer.camel.spring.ui.listeners.ComponentNode;
 
 /**

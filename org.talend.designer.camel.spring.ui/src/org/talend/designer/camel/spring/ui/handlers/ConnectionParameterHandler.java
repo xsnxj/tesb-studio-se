@@ -40,13 +40,13 @@ public class ConnectionParameterHandler {
     private static final Map<String, String> CATCH_CONN_PARAMS = new HashMap<String, String>();
 
     static {
-        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EXPRESSION_TYPE + IParameterHandler.FIELD_POSTFIX, "CLOSED_LIST");
-        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EXPRESSION_TYPE + IParameterHandler.NAME_POSTFIX, "ROUTETYPE");
-        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EXPRESSION_TEXT + IParameterHandler.FIELD_POSTFIX, "MEMO_JAVA");
-        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EXPRESSION_TEXT + IParameterHandler.NAME_POSTFIX, "CONDITION");
+        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EP_EXPRESSION_TYPE + IParameterHandler.FIELD_POSTFIX, "CLOSED_LIST");
+        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EP_EXPRESSION_TYPE + IParameterHandler.NAME_POSTFIX, "ROUTETYPE");
+        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EP_EXPRESSION_TEXT + IParameterHandler.FIELD_POSTFIX, "MEMO_JAVA");
+        WHEN_CONN_PARAMS.put(ICamelSpringConstants.EP_EXPRESSION_TEXT + IParameterHandler.NAME_POSTFIX, "CONDITION");
 
-        CATCH_CONN_PARAMS.put(ICamelSpringConstants.EXCEPTIONS + IParameterHandler.FIELD_POSTFIX, "TEXT");
-        CATCH_CONN_PARAMS.put(ICamelSpringConstants.EXCEPTIONS + IParameterHandler.NAME_POSTFIX, "EXCEPTIONLIST");
+        CATCH_CONN_PARAMS.put(ICamelSpringConstants.LB_EXCEPTIONS + IParameterHandler.FIELD_POSTFIX, "TEXT");
+        CATCH_CONN_PARAMS.put(ICamelSpringConstants.LB_EXCEPTIONS + IParameterHandler.NAME_POSTFIX, "EXCEPTIONLIST");
 
     }
 

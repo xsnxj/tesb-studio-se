@@ -66,19 +66,19 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.CXF];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CCXFParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.DELAY];
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.DYNAMIC];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CDynamicRouterParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.ENRICH];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CContentEnricherParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.EXCEPTION];
-        handlers.put(componentName, new COnExceptionrParameterHandler(componentName));
+        handlers.put(componentName, new COnExceptionParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.FILTER];
         handlers.put(componentName, new CommonParameterHandler(componentName));
@@ -93,16 +93,16 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.JMS];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CCXFParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.LOOP];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CLoopParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.MSGENDPOINT];
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.MULTICAST];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CMulticastParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.MSGROUTER];
         handlers.put(componentName, new CommonParameterHandler(componentName));
@@ -111,7 +111,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.PF];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CPipeAndFiltersParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.PROCESSOR];
         handlers.put(componentName, new CommonParameterHandler(componentName));
@@ -132,13 +132,13 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.THROTTLER];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CThrottlerParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.TRY];
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.WIRETAP];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CWireTapParameterHandler(componentName));
 
     }
 

@@ -19,15 +19,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.talend.core.model.components.ComponentUtilities;
+import org.talend.designer.camel.spring.core.ICamelSpringConstants;
+import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
 /**
  * DOC LiXP class global comment. Detailled comment
  */
-public class COnExceptionrParameterHandler extends AbstractParameterHandler {
+public class CMulticastParameterHandler extends AbstractParameterHandler {
 
-    public COnExceptionrParameterHandler(String componentName) {
+    public CMulticastParameterHandler(String componentName) {
         super(componentName);
     }
 
@@ -36,8 +38,8 @@ public class COnExceptionrParameterHandler extends AbstractParameterHandler {
 
         Map<String, List<String>> tableParams = new HashMap<String, List<String>>();
         List<String> columns = new ArrayList<String>();
-        columns.add("EXCEPTION");
-        tableParams.put("EXCEPTIONS", columns);
+        columns.add("URI");
+        tableParams.put("URIS", columns);
 
         return tableParams;
     }
@@ -58,17 +60,25 @@ public class COnExceptionrParameterHandler extends AbstractParameterHandler {
                 String key = param.getKey();
                 String value = param.getValue();
 
-                if (key.equals("EXCEPTIONS")) {
-                    String[] exceptions = value.split(";");
+                if (key.equals(ICamelSpringConstants.ML_DESTINATIONS)) {
+                    String[] values = value.split(";");
                     List<ElementValueType> valueTypes = new ArrayList<ElementValueType>();
-                    for (String ex : exceptions) {
+                    for (String ex : values) {
+                        if(!ex.startsWith("\"")){
+                            ex = "\"" + ex + "\"";
+                        }
                         ElementValueType valueType = fileFact.createElementValueType();
                         valueType.setElementRef(tableParam.getValue().get(0));
                         valueType.setValue(ex);
                         valueTypes.add(valueType);
                     }
-                    ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
-                    ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                    ElementParameterType nodeProperty = ComponentUtilities.getNodeProperty(nodeType, tableParam.getKey());
+                    if(nodeProperty == null){
+                        ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
+                      ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                    }else{
+                        nodeProperty.getElementValue().addAll(valueTypes);
+                    }
                 }
             }
 

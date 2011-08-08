@@ -23,9 +23,9 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 /**
  * DOC LiXP class global comment. Detailled comment
  */
-public class CSetHeaderParameterHandler extends AbstractParameterHandler {
+public class CLoopParameterHandler extends AbstractParameterHandler {
 
-    public CSetHeaderParameterHandler(String componentName) {
+    public CLoopParameterHandler(String componentName) {
         super(componentName);
     }
 
@@ -33,7 +33,6 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         
-        String name = parameters.get(ICamelSpringConstants.SH_HEADER_NAME);
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
         
@@ -43,35 +42,41 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
         paramType.setValue(uniqueName);
         elemParams.add(paramType);
         
-        if(!name.startsWith("\"")){
-            name = "\"" + name;
-        }
-        
-        if(!name.endsWith("\"")){
-            name = name + "\"";
-        }
-        
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("HEADER");
-        paramType.setValue(name);
-        elemParams.add(paramType);
-        
-        if("bean".equals(type)){//Use bean?
+        if("constant".equals(type)){
             paramType = fileFact.createElementParameterType();
-            paramType.setField("CHECK");
-            paramType.setName("USE_BEAN");
-            paramType.setValue("true");
+            paramType.setField("CLOSED_LIST");
+            paramType.setName("LOOP_TYPE");
+            paramType.setValue("VALUE_TYPE");
             elemParams.add(paramType);
             
+            text = removeQuotes(text);
             paramType = fileFact.createElementParameterType();
             paramType.setField("TEXT");
-            paramType.setName("BEAN");
+            paramType.setName("VALUE");
+            paramType.setValue(text);
+            elemParams.add(paramType);
+        }else if("header".equals(type)){
+            paramType = fileFact.createElementParameterType();
+            paramType.setField("CLOSED_LIST");
+            paramType.setName("LOOP_TYPE");
+            paramType.setValue("HEADER_TYPE");
+            elemParams.add(paramType);
+            
+            text = removeQuotes(text);
+            paramType = fileFact.createElementParameterType();
+            paramType.setField("TEXT");
+            paramType.setName("HEADER");
             paramType.setValue(text);
             elemParams.add(paramType);
         }else{
             paramType = fileFact.createElementParameterType();
-            paramType.setField("COLSED_LIST");
+            paramType.setField("CLOSED_LIST");
+            paramType.setName("LOOP_TYPE");
+            paramType.setValue("EXPRESSION_TYPE");
+            elemParams.add(paramType);
+            
+            paramType = fileFact.createElementParameterType();
+            paramType.setField("TEXT");
             paramType.setName("LANGUAGES");
             paramType.setValue(type);
             elemParams.add(paramType);
@@ -84,5 +89,23 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
         }
         
         nodeType.getElementParameter().addAll(elemParams);
+    }
+
+    /**
+     * 
+     * DOC LiXP Comment method "removeQuotes".
+     * @param text
+     * @return
+     */
+    private String removeQuotes(String text) {
+        String result = "";
+        if(text.startsWith("\"")){
+            result = text.substring(1);
+        }
+        
+        if(text.endsWith("\"")){
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
     }
 }
