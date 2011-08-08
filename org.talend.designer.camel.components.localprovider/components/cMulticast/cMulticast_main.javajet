@@ -57,7 +57,7 @@ imports="
 <%
 				} else {
 %>
-					+","+<%=anUri.get("URI")%>
+					,<%=anUri.get("URI")%>
 <%
 				}
 			}
