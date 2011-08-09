@@ -47,6 +47,8 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
 
     protected TalendFileFactory fileFact;
 
+    private HashMap<String, String> map;
+
     private static final String PROPERTY_FOLDER = "mappings";
 
     private static final String PROPERTY_POSTFIX = ".properties";
@@ -56,8 +58,13 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
         fileFact = TalendFileFactory.eINSTANCE;
     }
 
-    public Map<String, String> getBasicParameters() {
-        Map<String, String> map = new HashMap<String, String>();
+    protected Map<String, String> getBasicParameters() {
+        
+        if(map != null){
+            return map;
+        }
+        
+        map = new HashMap<String, String>();
 
         try {
             Path propPath = new Path(File.separator + PROPERTY_FOLDER + File.separator + componentName + PROPERTY_POSTFIX);
@@ -76,11 +83,11 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
         return map;
     }
 
-    public Map<String, String> getAddtionalParameters() {
+    protected Map<String, String> getAddtionalParameters() {
         return Collections.emptyMap();
     }
 
-    public Map<String, List<String>> getTableParameters() {
+    protected Map<String, List<String>> getTableParameters() {
         return Collections.emptyMap();
     }
 
@@ -90,12 +97,13 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
         log.info("node:" + uniqueName + " params: " +parameters);
         
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
+       
+        Map<String, String> params = getBasicParameters();
 
         for (Entry<String, String> param : parameters.entrySet()) {
 
             ElementParameterType paramType;
 
-            Map<String, String> params = getBasicParameters();
 
             String key = param.getKey();
             String value = param.getValue();

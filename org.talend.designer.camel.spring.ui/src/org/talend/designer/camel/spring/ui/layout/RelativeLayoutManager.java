@@ -28,6 +28,8 @@ public class RelativeLayoutManager implements ILayoutManager {
 
     private Point startPotision;
 
+    private int max = 0;
+
     public RelativeLayoutManager() {
         caches = new HashMap<String, RelativeLayoutNode>();
         delta = new Point(LayoutConstants.DEFAULT_DELTA_X, LayoutConstants.DEFAULT_DELTA_Y);
@@ -50,9 +52,10 @@ public class RelativeLayoutManager implements ILayoutManager {
     private Point getNewLinePotsition(String componentId) {
         Point position = new Point();
 
-        int maxPositionY = calculateMaxY();
+        int maxPositionY = max;
         position.x = startPotision.x;
         position.y = maxPositionY + delta.y;
+        max = position.y;
 
         RelativeLayoutNode node = new RelativeLayoutNode(componentId);
         node.setPosition(position);
@@ -73,7 +76,7 @@ public class RelativeLayoutManager implements ILayoutManager {
         }
 
         RelativeLayoutNode node = new RelativeLayoutNode(componentId);
-        Point nextChildPosition = calculateNextChildPosition(parent, calculateMaxY());
+        Point nextChildPosition = calculateNextChildPosition(parent, max);
         parent.setNextChildPosition(nextChildPosition.getCopy());
         node.setPosition(nextChildPosition.getCopy());
         caches.put(componentId, node);
@@ -91,18 +94,18 @@ public class RelativeLayoutManager implements ILayoutManager {
         } else {// already has children, so it's multi-cast
             x = nextChildPosition.x;
             y = maxPositionY + delta.y;
+            max = y;
         }
        return new Point(x, y);
     }
 
-    private int calculateMaxY() {
-        int max = 0;
-        for (RelativeLayoutNode node : caches.values()) {
-            if (node.getPosition().y > max) {
-                max = node.getPosition().y;
-            }
-        }
-        return max;
-    }
+//    private int calculateMaxY() {
+//        for (RelativeLayoutNode node : caches.values()) {
+//            if (node.getPosition().y > max) {
+//                max = node.getPosition().y;
+//            }
+//        }
+//        return max;
+//    }
 
 }
