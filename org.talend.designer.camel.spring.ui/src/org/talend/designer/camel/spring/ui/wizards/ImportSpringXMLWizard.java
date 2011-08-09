@@ -139,10 +139,16 @@ public class ImportSpringXMLWizard extends Wizard {
             repositoryFactory.executeRepositoryWorkUnit(workUnit);
             parseAndOpen();
 
+        } catch (InvocationTargetException e) {
+            ExceptionHandler.process(e);
+            deleteItem();
+            MessageDialog.openError(getShell(), "Error", "Import Spring XML failed, check the Error Log Viewer for more details.");
+            return false;
         } catch (Exception e) {
             ExceptionHandler.process(e);
             deleteItem();
             MessageDialog.openError(getShell(), "Error", "Import Spring XML failed, details: " + e.getMessage());
+            return false;
         }
         return processItem != null;
     }
@@ -208,13 +214,13 @@ public class ImportSpringXMLWizard extends Wizard {
                     getShell().getDisplay().asyncExec(new Runnable() {
 						
 						public void run() {
-							try {
-								openEditor();
-							} catch (PartInitException e) {
-								e.printStackTrace();
-							} catch (PersistenceException e) {
-								e.printStackTrace();
-							}
+								try {
+                                    openEditor();
+                                } catch (PartInitException e) {
+                                    e.printStackTrace();
+                                } catch (PersistenceException e) {
+                                    e.printStackTrace();
+                                }
 						}
 					});
                 } catch (Exception e) {

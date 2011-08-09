@@ -69,13 +69,19 @@ public class CWireTapParameterHandler extends AbstractParameterHandler {
             paramType.setValue(copy);
             elemParams.add(paramType);
             
+            paramType = fileFact.createElementParameterType();
+            paramType.setField("RADIO");
+            paramType.setName("EXPRESSION");
+            paramType.setValue(ICamelSpringConstants.WT_NEW_EXPRESSION_POP.equals(populateType)?"true":"false");
+            elemParams.add(paramType);
+            
+            paramType = fileFact.createElementParameterType();
+            paramType.setField("RADIO");
+            paramType.setName("PROCESSOR");
+            paramType.setValue(ICamelSpringConstants.WT_NEW_PROCESSOR_POP.equals(populateType)?"true":"false");
+            elemParams.add(paramType);
+            
             if(ICamelSpringConstants.WT_NEW_EXPRESSION_POP.equals(populateType)){
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("RADIO");
-                paramType.setName("EXPRESSION");
-                paramType.setValue("true");
-                elemParams.add(paramType);
-                
                 paramType = fileFact.createElementParameterType();
                 paramType.setField("CLOSED_LIST");
                 paramType.setName("LANGUAGES");
@@ -87,14 +93,6 @@ public class CWireTapParameterHandler extends AbstractParameterHandler {
                 paramType.setName("EXPRESSIONTXT");
                 paramType.setValue(expression);
                 elemParams.add(paramType);
-            }else{
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("RADIO");
-                paramType.setName("PROCESSOR");
-                paramType.setValue("true");
-                elemParams.add(paramType);
-                
-                //no processor content in Spring XML
             }
         }
         

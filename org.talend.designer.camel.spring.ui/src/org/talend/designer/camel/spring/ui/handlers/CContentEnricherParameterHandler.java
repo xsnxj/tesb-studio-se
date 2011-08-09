@@ -51,32 +51,20 @@ public class CContentEnricherParameterHandler extends AbstractParameterHandler {
         paramType.setValue(uri == null ? "" : uri);
         elemParams.add(paramType);
 
-        if (ICamelSpringConstants.ER_PRODUCER.equals(mergeData)) {
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("ENRICH");
-            paramType.setValue("true");
-            elemParams.add(paramType);
+        paramType = fileFact.createElementParameterType();
+        paramType.setField("RADIO");
+        paramType.setName("ENRICH");
+        paramType.setValue(ICamelSpringConstants.ER_PRODUCER.equals(mergeData) ? "true" : "false");
+        elemParams.add(paramType);
 
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("POLLENRICH");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-        } else if (ICamelSpringConstants.ER_CONSUMER.equals(mergeData)) {
+        paramType = fileFact.createElementParameterType();
+        paramType.setField("RADIO");
+        paramType.setName("POLLENRICH");
+        paramType.setValue(ICamelSpringConstants.ER_CONSUMER.equals(mergeData) ? "true" : "false");
+        elemParams.add(paramType);
+
+        if (ICamelSpringConstants.ER_CONSUMER.equals(mergeData)) {
             // Consumer
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("POLLENRICH");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("ENRICH");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-
             if (timeoutStyle != null) {
                 paramType = fileFact.createElementParameterType();
                 paramType.setField("CHECK");
@@ -84,64 +72,29 @@ public class CContentEnricherParameterHandler extends AbstractParameterHandler {
                 paramType.setValue("true");
                 elemParams.add(paramType);
 
-                if (ICamelSpringConstants.ER_POLL_IMMED.equals(timeoutStyle)) {
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("IMMEDIATE");
-                    paramType.setValue("true");
-                    elemParams.add(paramType);
+                paramType = fileFact.createElementParameterType();
+                paramType.setField("RADIO");
+                paramType.setName("IMMEDIATE");
+                paramType.setValue(ICamelSpringConstants.ER_POLL_IMMED.equals(timeoutStyle)?"true":"false");
+                elemParams.add(paramType);
 
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("WAIT");
-                    paramType.setValue("false");
-                    elemParams.add(paramType);
-
-                    paramType.setField("RADIO");
-                    paramType.setName("TRIGGER");
-                    paramType.setValue("false");
-                    elemParams.add(paramType);
-
-                } else if (ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle)) {
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("TRIGGER");
-                    paramType.setValue("true");
-                    elemParams.add(paramType);
-
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("IMMEDIATE");
-                    paramType.setValue("false");
-                    elemParams.add(paramType);
-
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("WAIT");
-                    paramType.setValue("false");
-                    elemParams.add(paramType);
-
+                paramType = fileFact.createElementParameterType();
+                paramType.setField("RADIO");
+                paramType.setName("WAIT");
+                paramType.setValue(ICamelSpringConstants.ER_WAIT_UNTIL.equals(timeoutStyle)?"true":"false");
+                elemParams.add(paramType);
+                
+                paramType = fileFact.createElementParameterType();
+                paramType.setField("RADIO");
+                paramType.setName("TRIGGER");
+                paramType.setValue(ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle)?"true":"false");
+                elemParams.add(paramType);
+                
+                if (ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle)) {
                     paramType = fileFact.createElementParameterType();
                     paramType.setField("TEXT");
                     paramType.setName("TIMEOUT_TRIGGER");
                     paramType.setValue(waitTimeout);
-                    elemParams.add(paramType);
-                } else if (ICamelSpringConstants.ER_WAIT_UNTIL.equals(timeoutStyle)) {
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("WAIT");
-                    paramType.setValue("true");
-                    elemParams.add(paramType);
-
-                    paramType.setField("RADIO");
-                    paramType.setName("TRIGGER");
-                    paramType.setValue("false");
-                    elemParams.add(paramType);
-
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("RADIO");
-                    paramType.setName("IMMEDIATE");
-                    paramType.setValue("false");
                     elemParams.add(paramType);
                 }
             }

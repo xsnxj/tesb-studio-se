@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
@@ -35,8 +36,8 @@ public class CIdempotentConsumerParameterHandler extends AbstractParameterHandle
         
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         
-        String type = parameters.get("EXPRESSION_TYPE");
-        String text = parameters.get("EXPRESSION_TEXT");
+        String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
+        String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
         
         ElementParameterType paramType ;
         
@@ -60,7 +61,7 @@ public class CIdempotentConsumerParameterHandler extends AbstractParameterHandle
             elemParams.add(paramType);
             
             paramType = fileFact.createElementParameterType();
-            paramType.setField("COLSED_LIST");
+            paramType.setField("CLOSED_LIST");
             paramType.setName("LANGUAGES");
             paramType.setValue(type);
             elemParams.add(paramType);

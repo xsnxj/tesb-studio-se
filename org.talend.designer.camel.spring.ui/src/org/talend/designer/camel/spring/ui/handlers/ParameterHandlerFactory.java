@@ -69,7 +69,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CCXFParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.DELAY];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CDelayerParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.DYNAMIC];
         handlers.put(componentName, new CDynamicRouterParameterHandler(componentName));

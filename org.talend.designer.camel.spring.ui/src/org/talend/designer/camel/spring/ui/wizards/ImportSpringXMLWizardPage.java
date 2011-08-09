@@ -117,6 +117,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
 
     protected void openFileBrowseDialog() {
         FileDialog dialog = new FileDialog(getControl().getShell(), SWT.OPEN);
+        dialog.setFilterPath(xmlPathText.getText());
         String path = dialog.open();
         if (path != null) {
             xmlPathText.setText(path);
