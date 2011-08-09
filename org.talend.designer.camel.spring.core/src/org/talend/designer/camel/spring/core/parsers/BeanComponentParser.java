@@ -17,9 +17,9 @@ public class BeanComponentParser extends AbstractComponentParser {
 	protected void parse(OptionalIdentifiedDefinition oid,
 			Map<String, String> map) {
 		BeanDefinition bd = (BeanDefinition) oid;
-		map.put(BN_BEAN_CLASS, bd.getLabel());
+		map.put(BN_BEAN_CLASS, bd.getLabel() + ".class");
 		String method = bd.getMethod();
-		map.put(BN_BEAN_METHOD, method);
+		map.put(BN_BEAN_METHOD, "\"" + method + "\"");
 	}
 
 	@Override

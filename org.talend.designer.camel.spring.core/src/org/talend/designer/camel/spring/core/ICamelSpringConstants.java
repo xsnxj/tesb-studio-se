@@ -65,13 +65,13 @@ public interface ICamelSpringConstants {
 
 	// load balance
 	public static final String LB_BALANCE_STRATEGY = "balance_strategy";
-	public static final String LB_FAILOVER_STRATEGY = "failover_strategy";
-	public static final String LB_RANDOM_STRATEGY = "random_strategy";
-	public static final String LB_ROUND_STRATEGY = "round_strategy";
-	public static final String LB_STICKY_STRATEGY = "sticky_strategy";
-	public static final String LB_TOPIC_STRATEGY = "topic_strategy";
+	public static final String LB_FAILOVER_STRATEGY = "failover";
+	public static final String LB_RANDOM_STRATEGY = "random";
+	public static final String LB_ROUND_STRATEGY = "roundRobin";
+	public static final String LB_STICKY_STRATEGY = "sticky";
+	public static final String LB_TOPIC_STRATEGY = "topic";
 	public static final String LB_WEIGHT_STRATEGY = "weight_strategy";
-	public static final String LB_CUSTOM_STRATEGY = "custom_strategy";
+	public static final String LB_CUSTOM_STRATEGY = "custom";
 
 	public static final String LB_FAILOVER_TYPE = "failover_type";
 	public static final String LB_BASIC_TYPE = "basic_type";
@@ -79,7 +79,12 @@ public interface ICamelSpringConstants {
 	public static final String LB_EXCEPTIONS = "exceptions";
 	public static final String LB_ROUND_ROBIN_TYPE = "round_robin_type";
 	public static final String LB_IS_ROUND_ROBIN = "is_round_robin";
+	public static final String LB_ATTAMPT_TYPE = "attampt_type";
+	public static final String LB_ATTAMPT_FOREVER = "ALWAYS";
+	public static final String LB_ATTAMPT_NEVER = "NEVER";
+	public static final String LB_ATTAMPT_NUMBERS = "SOMETIMES";
 	public static final String LB_MAXIMUM_ATTAMPTS = "maximum_attampts";
+	public static final String LB_INHERIT_HANDLE = "inherit_handle";
 
 	public static final String LB_STICKY_EXPRESSION = "sticky_expression";
 
@@ -171,6 +176,7 @@ public interface ICamelSpringConstants {
 	public static final String AG_COMPLETION_SIEZE = "completion_size";
 	public static final String AG_COMPLETION_TIMEOUT = "completion_timeout";
 	public static final String AG_COMPLETION_INTERVAL = "completion_interval";
+	public static final String AG_COMPLETION_PREDICATE = "completion_predicate";
 	public static final String AG_COMPLETION_FROM_BATCH = "completion_from_batch";
 	public static final String AG_CHECK_COMPLETION = "check_completion";
 	public static final String AG_IGNORE_INVALID = "ignore_invalid";

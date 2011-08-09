@@ -55,10 +55,13 @@ public class CXFComponentParser extends AbstractComponentParser {
 					if(nextValue instanceof TypedStringValue){
 						v = ((TypedStringValue)nextValue).getValue();
 					}
-					map.put(k, v);
+					if(!"beanId".equals(k))
+						map.put(k, v);
 				}
 			}else{
-				map.put(name, value.toString());
+				//hide bus
+				if(!"bus".equals(name))
+					map.put(name, value.toString());
 			}
 		}
 	}

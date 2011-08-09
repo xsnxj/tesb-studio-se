@@ -32,7 +32,7 @@ public class AggregateComponentParser extends AbstractComponentParser {
 		}else{
 			String aggregationStrategyRef = ad.getAggregationStrategyRef();
 			if(aggregationStrategyRef!=null){
-				map.put(AG_AGGREGATE_STRATEGY, aggregationStrategyRef);
+				map.put(AG_AGGREGATE_STRATEGY, getRegisteredBeanClass(aggregationStrategyRef));
 			}
 		}
 		
@@ -54,7 +54,11 @@ public class AggregateComponentParser extends AbstractComponentParser {
 		ExpressionSubElementDefinition completionPredicate = ad.getCompletionPredicate();
 		if(completionPredicate!=null){
 			ExpressionDefinition expressionType = completionPredicate.getExpressionType();
-			map.putAll(ExpressionProcessor.getExpressionMap(expressionType));
+			if(expressionType!=null){
+				String language = expressionType.getLanguage();
+				String ex = expressionType.getExpression();
+				map.put(AG_COMPLETION_PREDICATE, language+"(\""+ex+"\")");
+			}
 		}
 		
 		Boolean completionFromBatchConsumer = ad.getCompletionFromBatchConsumer();

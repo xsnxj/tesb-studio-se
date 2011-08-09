@@ -28,9 +28,9 @@ public class DynamicComponentParser extends AbstractComponentParser {
 				String ref = mce.getRef();
 				b = getRegisteredBeanClass(ref);
 			}
-			map.put(DY_BEAN_CLASS, b);
+			map.put(DY_BEAN_CLASS, b+".class");
 			String method = mce.getMethod();
-			map.put(DY_BEAN_METHOD, method);
+			map.put(DY_BEAN_METHOD, "\""+method+"\"");
 		}
 	}
 

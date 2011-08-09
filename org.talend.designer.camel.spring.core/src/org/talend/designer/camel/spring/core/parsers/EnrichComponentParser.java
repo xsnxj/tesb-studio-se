@@ -28,11 +28,13 @@ public class EnrichComponentParser extends AbstractComponentParser {
 			}else{
 				String aggregationStrategyRef = ed.getAggregationStrategyRef();
 				if(aggregationStrategyRef!=null){
-					map.put(ER_AGGREGATE_STRATEGY, aggregationStrategyRef);
+					String registeredBeanClass = getRegisteredBeanClass(aggregationStrategyRef);
+					registeredBeanClass = registeredBeanClass==null?aggregationStrategyRef:registeredBeanClass;
+					map.put(ER_AGGREGATE_STRATEGY, registeredBeanClass);
 				}
 			}
 			String resourceUri = ed.getResourceUri();
-			map.put(ER_RESOUCE_URI, resourceUri);
+			map.put(ER_RESOUCE_URI, "\""+resourceUri+"\"");
 		} else if (oid instanceof PollEnrichDefinition) {
 			map.put(ER_MERGE_DATA, ER_CONSUMER);
 			
@@ -44,7 +46,9 @@ public class EnrichComponentParser extends AbstractComponentParser {
 			}else{
 				String aggregationStrategyRef = ped.getAggregationStrategyRef();
 				if(aggregationStrategyRef!=null){
-					map.put(ER_AGGREGATE_STRATEGY, aggregationStrategyRef);
+					String registeredBeanClass = getRegisteredBeanClass(aggregationStrategyRef);
+					registeredBeanClass = registeredBeanClass==null?aggregationStrategyRef:registeredBeanClass;
+					map.put(ER_AGGREGATE_STRATEGY, registeredBeanClass);
 				}
 			}
 			
@@ -61,7 +65,7 @@ public class EnrichComponentParser extends AbstractComponentParser {
 				}
 			}
 			String resourceUri = ped.getResourceUri();
-			map.put(ER_RESOUCE_URI, resourceUri);
+			map.put(ER_RESOUCE_URI,  "\""+resourceUri+"\"");
 		}
 	}
 

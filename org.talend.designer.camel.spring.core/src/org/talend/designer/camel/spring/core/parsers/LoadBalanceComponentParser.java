@@ -46,13 +46,29 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 			} else if (roundRobin) {
 				map.put(LB_FAILOVER_TYPE, LB_ROUND_ROBIN_TYPE);
 				map.put(LB_IS_ROUND_ROBIN, fld.isRoundRobin() + "");
-				map.put(LB_MAXIMUM_ATTAMPTS, maximumFailoverAttempts.intValue()
-						+ "");
+				if(maximumFailoverAttempts!=null){
+					int intValue = maximumFailoverAttempts.intValue();
+					if(intValue==-1){
+						map.put(LB_ATTAMPT_TYPE, LB_ATTAMPT_FOREVER);
+					}else if(intValue==0){
+						map.put(LB_ATTAMPT_TYPE, LB_ATTAMPT_NEVER);
+					}else{
+						map.put(LB_ATTAMPT_TYPE, LB_ATTAMPT_NUMBERS);
+						map.put(LB_MAXIMUM_ATTAMPTS, maximumFailoverAttempts.intValue()
+								+ "");
+					}
+				}else{
+					map.put(LB_ATTAMPT_TYPE, LB_ATTAMPT_NEVER);
+				}
+				Boolean inheritErrorHandler = lbd.isInheritErrorHandler();
+				if(inheritErrorHandler!=null){
+					map.put(LB_INHERIT_HANDLE, inheritErrorHandler.toString());
+				}
 			}
 		} else if (balancerType instanceof RandomLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_RANDOM_STRATEGY);
 		} else if (balancerType instanceof RoundRobinLoadBalancerDefinition) {
-			map.put(LB_BALANCE_STRATEGY, LB_ROUND_ROBIN_TYPE);
+			map.put(LB_BALANCE_STRATEGY, LB_ROUND_STRATEGY);
 		} else if (balancerType instanceof StickyLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_STICKY_STRATEGY);
 			StickyLoadBalancerDefinition slbd = (StickyLoadBalancerDefinition) balancerType;
