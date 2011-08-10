@@ -57,7 +57,6 @@ public class ConnectionParameterHandler {
      * @param connectionType
      * @param connParameters
      */
-    @SuppressWarnings("unchecked")
     public static void addConnectionParameters(ConnectionType connectionType, Map<String, String> connParameters) {
 
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
@@ -68,6 +67,9 @@ public class ConnectionParameterHandler {
             params = WHEN_CONN_PARAMS;
         } else if (lineStyle == EConnectionType.ROUTE_CATCH.getId()) {
             params = CATCH_CONN_PARAMS;
+        }else{
+            //abnormal, just for exception
+            params = new HashMap<String, String>();
         }
 
         TalendFileFactory fileFact = TalendFileFactory.eINSTANCE;
@@ -88,7 +90,6 @@ public class ConnectionParameterHandler {
                 elemParams.add(paramType);
             }
         }
-
         connectionType.getElementParameter().addAll(elemParams);
     }
 

@@ -23,14 +23,24 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
  */
 public interface IParameterHandler {
 
+    /**
+     * represent parameter name in Component_java.XML
+     */
     String NAME_POSTFIX = ".NAME";
 
+    /**
+     * represent parameter field in Component_java.XML
+     */
     String FIELD_POSTFIX = ".FIELD";
     
+    /**
+     * represent related check field, such as cAggregate's AGGREGATION_STRATEGY and USE_AGGREGATION_STRATEGY
+     */
     String REF_POSTFIX = ".REF_CHECK";
+    
     /**
      * 
-     * DOC LiXP Comment method "handle".
+     * Handle details parameters of node
      * @param nodeType
      * @param uniqueName
      * @param parameters

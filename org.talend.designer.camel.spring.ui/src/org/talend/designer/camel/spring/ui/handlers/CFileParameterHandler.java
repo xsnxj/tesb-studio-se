@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -48,35 +49,24 @@ public class CFileParameterHandler extends AbstractParameterHandler {
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
+        Properties params = getBasicParameters();
 
         for (Entry<String, String> param : parameters.entrySet()) {
-
-            ElementParameterType paramType;
-
-            Map<String, String> params = getBasicParameters();
-
+            
             String key = param.getKey();
             String value = param.getValue();
             
             if (key.equals(ICamelSpringConstants.UNIQUE_NAME_ID)) {// Add UNIQUE_NAME parameter
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("TEXT");
-                paramType.setName("UNIQUE_NAME");
-                paramType.setValue(uniqueName);
-                elemParams.add(paramType);
+                addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
                 continue;
             }
 
-            String field = params.get(key + FIELD_POSTFIX);
-            String name = params.get(key + NAME_POSTFIX);
-            String ref = params.get(key + REF_POSTFIX);
+            String field = params.getProperty(key + FIELD_POSTFIX);
+            String name = params.getProperty(key + NAME_POSTFIX);
+            String ref = params.getProperty(key + REF_POSTFIX);
             
             if(ref != null){ //Handle reference check
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("CHECK");
-                paramType.setName(ref);
-                paramType.setValue("true");
-                elemParams.add(paramType);
+                addParamType(elemParams, FIELD_CHECK, ref, VALUE_TRUE);
             }
             
             if (field != null && name != null) { // Basic parameters
@@ -86,12 +76,7 @@ public class CFileParameterHandler extends AbstractParameterHandler {
                         value = value.substring(1);
                     }
                 }
-                
-                paramType = fileFact.createElementParameterType();
-                paramType.setField(field);
-                paramType.setName(name);
-                paramType.setValue(value);
-                elemParams.add(paramType);
+                addParamType(elemParams, field, name, value);
                 continue;
             } else {
                 handleAddtionalParam(nodeType, param);

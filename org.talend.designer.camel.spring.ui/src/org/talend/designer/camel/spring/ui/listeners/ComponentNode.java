@@ -32,6 +32,8 @@ public class ComponentNode {
     private List<ComponentNode> children = new ArrayList<ComponentNode>();
     
     private NodeType nodeType;
+    
+    private int column;
 
     /**
      * DOC LiXP ComponentNode constructor comment.
@@ -129,6 +131,24 @@ public class ComponentNode {
      */
     public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
+    }
+
+
+    /**
+     * Sets the column.
+     * @param column the column to set
+     */
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+
+    /**
+     * Getter for column.
+     * @return the column
+     */
+    public int getColumn() {
+        return column;
     }
     
     

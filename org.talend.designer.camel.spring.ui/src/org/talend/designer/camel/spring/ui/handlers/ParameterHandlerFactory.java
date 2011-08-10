@@ -132,7 +132,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.THROTTLER];
-        handlers.put(componentName, new CThrottlerParameterHandler(componentName));
+        handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.TRY];
         handlers.put(componentName, new CommonParameterHandler(componentName));

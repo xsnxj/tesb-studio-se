@@ -46,84 +46,26 @@ public class COnExceptionParameterHandler extends AbstractParameterHandler {
 
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
-       
-        ElementParameterType paramType;
-        String exceptionBehavor = parameters.get(ICamelSpringConstants.OE_EXCEPTION_BEHAVIOR);
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
-        if(ICamelSpringConstants.OE_CONTINUE_EXCEPTION.equals(exceptionBehavor)){
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("CONTINUE");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("HANDLE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("NONE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-        }else  if(ICamelSpringConstants.OE_HANDLE_EXCEPTION.equals(exceptionBehavor)){
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("CONTINUE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("HANDLE");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("NONE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-        }else{
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("CONTINUE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("HANDLE");
-            paramType.setValue("false");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("NONE");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-        }
-        
+        String exceptionBehavor = parameters.get(ICamelSpringConstants.OE_EXCEPTION_BEHAVIOR);
+        addParamType(elemParams, FIELD_RADIO, "CONTINUE",
+                ICamelSpringConstants.OE_CONTINUE_EXCEPTION.equals(exceptionBehavor) ? VALUE_TRUE : VALUE_FALSE);
+        addParamType(elemParams, FIELD_RADIO, "HANDLE",
+                ICamelSpringConstants.OE_HANDLE_EXCEPTION.equals(exceptionBehavor) ? VALUE_TRUE : VALUE_FALSE);
+        addParamType(elemParams, FIELD_RADIO, "NONE", ICamelSpringConstants.OE_CONTINUE_EXCEPTION.equals(exceptionBehavor)
+                || ICamelSpringConstants.OE_HANDLE_EXCEPTION.equals(exceptionBehavor) ? VALUE_FALSE : VALUE_TRUE);
         nodeType.getElementParameter().addAll(elemParams);
-        
+
         parameters.remove(ICamelSpringConstants.OE_EXCEPTION_BEHAVIOR);
-        
+
         super.handle(nodeType, uniqueName, parameters);
-        
-        
+
     }
-    
+
     @Override
     public void handleAddtionalParam(NodeType nodeType, Entry<String, String> param) {
 
         Map<String, List<String>> tableParameters = getTableParameters();
-
-        if (tableParameters.size() == 0) {
-            return;
-        }
 
         if (tableParameters.size() == 1) {
 
@@ -142,10 +84,10 @@ public class COnExceptionParameterHandler extends AbstractParameterHandler {
                         valueTypes.add(valueType);
                     }
                     ElementParameterType nodeProperty = ComponentUtilities.getNodeProperty(nodeType, tableParam.getKey());
-                    if(nodeProperty == null){
+                    if (nodeProperty == null) {
                         ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
-                      ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
-                    }else{
+                        ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                    } else {
                         nodeProperty.getElementValue().addAll(valueTypes);
                     }
                 }

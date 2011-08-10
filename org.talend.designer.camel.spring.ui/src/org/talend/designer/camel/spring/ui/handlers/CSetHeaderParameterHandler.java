@@ -37,50 +37,16 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
         
-        ElementParameterType paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("UNIQUE_NAME");
-        paramType.setValue(uniqueName);
-        elemParams.add(paramType);
-        
-        if(!name.startsWith("\"")){
-            name = "\"" + name;
-        }
-        
-        if(!name.endsWith("\"")){
-            name = name + "\"";
-        }
-        
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("HEADER");
-        paramType.setValue(name);
-        elemParams.add(paramType);
+        addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
+        name = quotes(name);
+        addParamType(elemParams, FIELD_TEXT, "HEADER", name);
         
         if("bean".equals(type)){//Use bean?
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CHECK");
-            paramType.setName("USE_BEAN");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("BEAN");
-            paramType.setValue(text);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_CHECK, "USE_BEAN", VALUE_TRUE);
+            addParamType(elemParams, FIELD_TEXT, "BEAN", text);
         }else{
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("COLSED_LIST");
-            paramType.setName("LANGUAGES");
-            paramType.setValue(type);
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("EXPRESSION");
-            paramType.setValue(text);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", type);
+            addParamType(elemParams, FIELD_TEXT, "EXPRESSION", text);
         }
         
         nodeType.getElementParameter().addAll(elemParams);

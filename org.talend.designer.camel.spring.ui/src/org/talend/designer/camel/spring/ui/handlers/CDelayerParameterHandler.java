@@ -35,19 +35,8 @@ public class CDelayerParameterHandler extends AbstractParameterHandler {
         
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
         
-        ElementParameterType paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("UNIQUE_NAME");
-        paramType.setValue(uniqueName);
-        elemParams.add(paramType);
-        
-        if(text.startsWith("\"")){
-            text = text.substring(1);
-        }
-        
-        if(text.endsWith("\"")){
-            text = text.substring(0, text.length() -1);
-        }
+        addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
+        text = unquotes(text);
         
         try{
             Integer.decode(text);
@@ -55,12 +44,8 @@ public class CDelayerParameterHandler extends AbstractParameterHandler {
             text = "2000";
         }
         
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("WAIT");
-        paramType.setValue(text);
-        elemParams.add(paramType);
-      
+        addParamType(elemParams, FIELD_TEXT, "WAIT", text);
+        
         nodeType.getElementParameter().addAll(elemParams);
     }
 }

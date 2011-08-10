@@ -38,61 +38,20 @@ public class CWireTapParameterHandler extends AbstractParameterHandler {
         String copy = parameters.get(ICamelSpringConstants.WT_WIRETAP_COPY);
         String language = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String expression = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
-      
-        ElementParameterType paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("UNIQUE_NAME");
-        paramType.setValue(uniqueName);
-        elemParams.add(paramType);
         
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("URI");
-        
-        if(!uri.startsWith("\"")){
-            uri = "\"" + uri + "\"";
-        }
-        
-        paramType.setValue(uri);
-        elemParams.add(paramType);
+        uri = quotes(uri);
+        addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
+        addParamType(elemParams, FIELD_TEXT, "URI", uri);
         
         if(populateType != null){
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CHECK");
-            paramType.setName("NEW_EXCHANGE");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CHECK");
-            paramType.setName("COPY_ORIGINAL_MESSAGE");
-            paramType.setValue(copy);
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("EXPRESSION");
-            paramType.setValue(ICamelSpringConstants.WT_NEW_EXPRESSION_POP.equals(populateType)?"true":"false");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("RADIO");
-            paramType.setName("PROCESSOR");
-            paramType.setValue(ICamelSpringConstants.WT_NEW_PROCESSOR_POP.equals(populateType)?"true":"false");
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_CHECK, "NEW_EXCHANGE", VALUE_TRUE);
+            addParamType(elemParams, FIELD_CHECK, "COPY_ORIGINAL_MESSAGE", copy);
+            addParamType(elemParams, FIELD_RADIO, "EXPRESSION", ICamelSpringConstants.WT_NEW_EXPRESSION_POP.equals(populateType)?VALUE_TRUE:VALUE_FALSE);
+            addParamType(elemParams, FIELD_RADIO, "PROCESSOR", ICamelSpringConstants.WT_NEW_PROCESSOR_POP.equals(populateType)?VALUE_TRUE:VALUE_FALSE);
             
             if(ICamelSpringConstants.WT_NEW_EXPRESSION_POP.equals(populateType)){
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("CLOSED_LIST");
-                paramType.setName("LANGUAGES");
-                paramType.setValue(language);
-                elemParams.add(paramType);
-                
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("TEXT");
-                paramType.setName("EXPRESSIONTXT");
-                paramType.setValue(expression);
-                elemParams.add(paramType);
+                addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", language);
+                addParamType(elemParams, FIELD_TEXT, "EXPRESSIONTXT", expression);
             }
         }
         

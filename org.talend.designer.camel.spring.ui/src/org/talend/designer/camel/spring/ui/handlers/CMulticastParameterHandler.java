@@ -49,14 +49,9 @@ public class CMulticastParameterHandler extends AbstractParameterHandler {
 
         Map<String, List<String>> tableParameters = getTableParameters();
 
-        if (tableParameters.size() == 0) {
-            return;
-        }
-
         if (tableParameters.size() == 1) {
 
             for (Entry<String, List<String>> tableParam : tableParameters.entrySet()) {
-
                 String key = param.getKey();
                 String value = param.getValue();
 
@@ -64,9 +59,7 @@ public class CMulticastParameterHandler extends AbstractParameterHandler {
                     String[] values = value.split(";");
                     List<ElementValueType> valueTypes = new ArrayList<ElementValueType>();
                     for (String ex : values) {
-                        if(!ex.startsWith("\"")){
-                            ex = "\"" + ex + "\"";
-                        }
+                        ex = quotes(ex);
                         ElementValueType valueType = fileFact.createElementValueType();
                         valueType.setElementRef(tableParam.getValue().get(0));
                         valueType.setValue(ex);

@@ -28,14 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
-import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -136,7 +130,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
         String name = DEFAULT_NEW_NAME;
         int newNamePostfix = 1;
         while(!isValid(name)){
-            name = DEFAULT_NEW_NAME + newNamePostfix;
+            name = DEFAULT_NEW_NAME + "_" + newNamePostfix;
             newNamePostfix++;
         }
         return name;
@@ -177,29 +171,6 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
             nameStatus = createOkStatus();
         }
         
-    }
-
-    /**
-     * ftang Comment method "isNameExistingInRountine".
-     * 
-     * @param jobName
-     */
-    private boolean isNameValidInRountine(String jobName) {
-        Property property = PropertiesFactory.eINSTANCE.createProperty();
-
-        IProxyRepositoryFactory repositoryFactory = DesignerPlugin.getDefault().getRepositoryService()
-                .getProxyRepositoryFactory();
-        property.setId(repositoryFactory.getNextId());
-        RoutineItem routineItem = PropertiesFactory.eINSTANCE.createRoutineItem();
-        routineItem.setProperty(property);
-        boolean isValid = false;
-        try {
-            isValid = repositoryFactory.isNameAvailable(property.getItem(), jobName);
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-            return false;
-        }
-        return isValid;
     }
 
     @Override

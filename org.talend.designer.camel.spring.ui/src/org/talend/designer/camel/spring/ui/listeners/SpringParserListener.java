@@ -129,14 +129,14 @@ public class SpringParserListener implements ISpringParserListener {
         if(node == null){
             return null;
         }
-        
-        for(Object obj: node.getNodeType().getElementParameter()){
-            ElementParameterType param = (ElementParameterType) obj;
-            if(param.getName().equals("UNIQUE_NAME")){
-                return param.getValue();
-            }
-        }
-        return null;
+        return ComponentUtilities.getNodeUniqueName(node.getNodeType());
+//        for(Object obj: node.getNodeType().getElementParameter()){
+//            ElementParameterType param = (ElementParameterType) obj;
+//            if(param.getName().equals("UNIQUE_NAME")){
+//                return param.getValue();
+//            }
+//        }
+//        return null;
     }
 
     /**
@@ -161,14 +161,14 @@ public class SpringParserListener implements ISpringParserListener {
 
         NodeType nodeType = fileFact.createNodeType();
 
-        Point position = layoutManager.getNextPosition(parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID), sourceId);
+        String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
+		Point position = layoutManager.getNextPosition(name, sourceId);
 
         nodeType.setPosX(position.x);
         nodeType.setPosY(position.y);
         nodeType.setSizeX(32);
         nodeType.setSizeY(32);
 
-        String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
         ComponentNode componentNode = new ComponentNode(name);
         componentNode.setNodeType(nodeType);
         componentNode.setRoutingId(routingId);
@@ -179,7 +179,6 @@ public class SpringParserListener implements ISpringParserListener {
             ComponentNode parent = nodes.get(sourceId);
             if(parent != null){
                 componentNode.setParent(componentNode);
-                componentNode.setRoutingId(routingId);
                 parent.getChildren().add(componentNode);
             }
         }

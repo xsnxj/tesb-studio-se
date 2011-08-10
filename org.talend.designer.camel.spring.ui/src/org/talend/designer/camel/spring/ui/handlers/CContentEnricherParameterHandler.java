@@ -39,79 +39,33 @@ public class CContentEnricherParameterHandler extends AbstractParameterHandler {
         String timeoutStyle = parameters.get(ICamelSpringConstants.ER_TIMEOUT_STYLE);
         String waitTimeout = parameters.get(ICamelSpringConstants.ER_WAIT_TIMEOUT);
 
-        ElementParameterType paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("UNIQUE_NAME");
-        paramType.setValue(uniqueName);
-        elemParams.add(paramType);
-
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("RESOURCE_URI");
-        paramType.setValue(uri == null ? "" : uri);
-        elemParams.add(paramType);
-
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("RADIO");
-        paramType.setName("ENRICH");
-        paramType.setValue(ICamelSpringConstants.ER_PRODUCER.equals(mergeData) ? "true" : "false");
-        elemParams.add(paramType);
-
-        paramType = fileFact.createElementParameterType();
-        paramType.setField("RADIO");
-        paramType.setName("POLLENRICH");
-        paramType.setValue(ICamelSpringConstants.ER_CONSUMER.equals(mergeData) ? "true" : "false");
-        elemParams.add(paramType);
+        addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
+        addParamType(elemParams, FIELD_TEXT, "RESOURCE_URI", uri == null ? "" : uri);
+        addParamType(elemParams, FIELD_RADIO, "ENRICH", ICamelSpringConstants.ER_PRODUCER.equals(mergeData) ? VALUE_TRUE
+                : VALUE_FALSE);
+        addParamType(elemParams, FIELD_RADIO, "POLLENRICH", ICamelSpringConstants.ER_CONSUMER.equals(mergeData) ? VALUE_TRUE
+                : VALUE_FALSE);
 
         if (ICamelSpringConstants.ER_CONSUMER.equals(mergeData)) {
             // Consumer
             if (timeoutStyle != null) {
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("CHECK");
-                paramType.setName("SPECIFY_TIMEOUT");
-                paramType.setValue("true");
-                elemParams.add(paramType);
+                addParamType(elemParams, FIELD_CHECK, "SPECIFY_TIMEOUT", VALUE_TRUE);
+                addParamType(elemParams, FIELD_RADIO, "IMMEDIATE",
+                        ICamelSpringConstants.ER_POLL_IMMED.equals(timeoutStyle) ? VALUE_TRUE : VALUE_FALSE);
+                addParamType(elemParams, FIELD_RADIO, "WAIT",
+                        ICamelSpringConstants.ER_WAIT_UNTIL.equals(timeoutStyle) ? VALUE_TRUE : VALUE_FALSE);
+                addParamType(elemParams, FIELD_RADIO, "TRIGGER",
+                        ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle) ? VALUE_TRUE : VALUE_FALSE);
 
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("RADIO");
-                paramType.setName("IMMEDIATE");
-                paramType.setValue(ICamelSpringConstants.ER_POLL_IMMED.equals(timeoutStyle)?"true":"false");
-                elemParams.add(paramType);
-
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("RADIO");
-                paramType.setName("WAIT");
-                paramType.setValue(ICamelSpringConstants.ER_WAIT_UNTIL.equals(timeoutStyle)?"true":"false");
-                elemParams.add(paramType);
-                
-                paramType = fileFact.createElementParameterType();
-                paramType.setField("RADIO");
-                paramType.setName("TRIGGER");
-                paramType.setValue(ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle)?"true":"false");
-                elemParams.add(paramType);
-                
                 if (ICamelSpringConstants.ER_WAIT_TIMEOUT.equals(timeoutStyle)) {
-                    paramType = fileFact.createElementParameterType();
-                    paramType.setField("TEXT");
-                    paramType.setName("TIMEOUT_TRIGGER");
-                    paramType.setValue(waitTimeout);
-                    elemParams.add(paramType);
+                    addParamType(elemParams, FIELD_TEXT, "TIMEOUT_TRIGGER", waitTimeout);
                 }
             }
         }
 
         if (strategy != null) {
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CHECK");
-            paramType.setName("USE_AGG_STRATEGY");
-            paramType.setValue("true");
-            elemParams.add(paramType);
-
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("AGGREGATION_STRATEGY");
-            paramType.setValue(strategy);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_CHECK, "USE_AGG_STRATEGY", VALUE_TRUE);
+            addParamType(elemParams, FIELD_TEXT, "AGGREGATION_STRATEGY", strategy);
         }
 
         nodeType.getElementParameter().addAll(elemParams);

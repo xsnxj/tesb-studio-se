@@ -36,56 +36,20 @@ public class CLoopParameterHandler extends AbstractParameterHandler {
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
         
-        ElementParameterType paramType = fileFact.createElementParameterType();
-        paramType.setField("TEXT");
-        paramType.setName("UNIQUE_NAME");
-        paramType.setValue(uniqueName);
-        elemParams.add(paramType);
+        addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
         
         if("constant".equals(type)){
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CLOSED_LIST");
-            paramType.setName("LOOP_TYPE");
-            paramType.setValue("VALUE_TYPE");
-            elemParams.add(paramType);
-            
+            addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "VALUE_TYPE");
             text = removeQuotes(text);
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("VALUE");
-            paramType.setValue(text);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_TEXT, "VALUE", text);
         }else if("header".equals(type)){
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CLOSED_LIST");
-            paramType.setName("LOOP_TYPE");
-            paramType.setValue("HEADER_TYPE");
-            elemParams.add(paramType);
-            
+            addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "HEADER_TYPE");
             text = removeQuotes(text);
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("HEADER");
-            paramType.setValue(text);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_TEXT, "HEADER", text);
         }else{
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("CLOSED_LIST");
-            paramType.setName("LOOP_TYPE");
-            paramType.setValue("EXPRESSION_TYPE");
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("LANGUAGES");
-            paramType.setValue(type);
-            elemParams.add(paramType);
-            
-            paramType = fileFact.createElementParameterType();
-            paramType.setField("TEXT");
-            paramType.setName("EXPRESSION");
-            paramType.setValue(text);
-            elemParams.add(paramType);
+            addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "EXPRESSION_TYPE");
+            addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", type);
+            addParamType(elemParams, FIELD_TEXT, "EXPRESSION", type);
         }
         
         nodeType.getElementParameter().addAll(elemParams);
