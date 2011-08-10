@@ -2,28 +2,34 @@ package org.talend.designer.camel.spring.core.parsers;
 
 import java.util.Map;
 
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
-import org.apache.camel.model.OptionalIdentifiedDefinition;
-
 public class ActiveMQComponentParser extends AbstractComponentParser {
 
-	private BeanDefinition beanDefinition;
-	private String uri;
-
-	public ActiveMQComponentParser(XmlFileApplicationContext appContext,String schema, String uri) {
+	public ActiveMQComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		this.beanDefinition = getBeanDefinition(schema);
-		this.uri = uri;
 	}
 
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
 			Map<String, String> map) {
+		String uri = null;
+		if(oid instanceof FromDefinition){
+			uri = ((FromDefinition)oid).getUri();
+		}else if(oid instanceof ToDefinition){
+			uri = ((ToDefinition)oid).getUri();
+		}
+		assert uri != null;
+		int index = uri.indexOf(":");
+		String schema = uri.substring(0, index);
+		BeanDefinition beanDefinition = getBeanDefinition(schema);
 		if (beanDefinition != null) {
 			MutablePropertyValues propertyValues = beanDefinition
 					.getPropertyValues();
@@ -52,7 +58,7 @@ public class ActiveMQComponentParser extends AbstractComponentParser {
 				map.put(AMQ_MESSAGE_TYPE, "queue");
 			}
 			String remain = parts[parts.length - 1];
-			int index = remain.indexOf("?");
+			index = remain.indexOf("?");
 			if (index == -1) {
 				map.put(AMQ_MSG_DESTINATION, remain);
 			} else {

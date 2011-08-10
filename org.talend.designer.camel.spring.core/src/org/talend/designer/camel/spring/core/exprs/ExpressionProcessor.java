@@ -9,6 +9,13 @@ import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 
 public class ExpressionProcessor implements ICamelSpringConstants {
 
+	/**
+	 * this method used to process the expression
+	 * There are many expression types there.
+	 * this method may be improved in future
+	 * @param expression
+	 * @return
+	 */
 	public static Map<String, String> getExpressionMap(
 			ExpressionDefinition expression) {
 		Map<String, String> map = new HashMap<String, String>();

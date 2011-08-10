@@ -43,7 +43,7 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 					sb.append(";");
 				}
 				map.put(LB_EXCEPTIONS, sb.toString());
-			} else if (roundRobin) {
+			} else if (roundRobin!=null && roundRobin) {
 				map.put(LB_FAILOVER_TYPE, LB_ROUND_ROBIN_TYPE);
 				map.put(LB_IS_ROUND_ROBIN, fld.isRoundRobin() + "");
 				if(maximumFailoverAttempts!=null){
@@ -76,7 +76,8 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 					.getCorrelationExpression();
 			Map<String, String> expressionMap = ExpressionProcessor
 					.getExpressionMap(expression.getExpressionType());
-			map.put(LB_STICKY_EXPRESSION, expressionMap.get(EP_EXPRESSION_TEXT));
+//			map.put(LB_STICKY_EXPRESSION, expressionMap.get(EP_EXPRESSION_TEXT));
+			map.putAll(expressionMap);
 		} else if (balancerType instanceof TopicLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_TOPIC_STRATEGY);
 		}

@@ -1,5 +1,6 @@
 package org.talend.designer.camel.spring.core.intl;
 
+import org.apache.camel.spring.CamelContextFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -24,7 +25,7 @@ public class XmlFileApplicationContext extends
 	@Override
 	protected void finishBeanFactoryInitialization(
 			ConfigurableListableBeanFactory beanFactory) {
-		// Initialize conversion service for this context.
+		// create a dummy bean
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME)
 				&& beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME,
 						ConversionService.class)) {
@@ -50,13 +51,34 @@ public class XmlFileApplicationContext extends
 				try {
 					return super.resolveBeanClass(mbd, beanName, typesToMatch);
 				} catch (CannotLoadBeanClassException e) {
+					/*
+					 * if the bean can't be resolved or not exist
+					 * replace it by using dummy bean
+					 */
 					mbd.setBeanClass(DummyBean.class);
 					return super.resolveBeanClass(mbd, beanName, typesToMatch);
 				}
 			}
+
+			@Override
+			protected Object initializeBean(String beanName, Object bean,
+					RootBeanDefinition mbd) {
+				if(bean instanceof CamelContextFactoryBean){
+					//clear to avoid load typeConverters, else there's problem when load typeConverter
+					((CamelContextFactoryBean)bean).setTrace(null);
+					((CamelContextFactoryBean)bean).setThreadPoolProfiles(null);
+				}
+				return super.initializeBean(beanName, bean, mbd);
+			}
 		};
 	}
 
+	/**
+	 * get registered bean class name
+	 * according to the id
+	 * @param schema
+	 * @return
+	 */
 	public String getRegisterBeanClassName(String schema) {
 		try {
 			BeanDefinition beanDefinition = getBeanFactory().getBeanDefinition(

@@ -2,6 +2,13 @@ package org.talend.designer.camel.spring.core.intl;
 
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * 
+ * @author liugang
+ * This bean class used to create a dummy bean object
+ * if the expected bean can't be resolved or not exist. 
+ *
+ */
 public class DummyBean implements FactoryBean{
 
 	private String camelId = "camel_Spring_id";

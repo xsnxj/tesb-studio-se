@@ -3,7 +3,7 @@ package org.talend.designer.camel.spring.core;
 public interface ICamelSpringConstants {
 
 	// connections
-	public static final int NULL = 0x0;
+	public static final int NULL_ROUTE = 0x0;
 	public static final int ROUTE = 0x1;
 	public static final int ROUTE_WHEN = ROUTE << 1;
 	public static final int ROUTE_OTHER = ROUTE_WHEN << 1;

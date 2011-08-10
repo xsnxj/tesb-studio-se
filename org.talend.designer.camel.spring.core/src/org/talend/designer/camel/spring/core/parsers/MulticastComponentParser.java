@@ -46,6 +46,14 @@ public class MulticastComponentParser extends AbstractComponentParser {
 		AggregationStrategy aggregationStrategy = md.getAggregationStrategy();
 		if(aggregationStrategy!=null){
 			map.put(ML_AGGREGATE_STRATEGY, aggregationStrategy.getClass().getName());
+		}else{
+			String strategyRef = md.getStrategyRef();
+			if(strategyRef!=null){
+				String registeredBeanClass = getRegisteredBeanClass(strategyRef);
+				if(registeredBeanClass!=null){
+					map.put(ML_AGGREGATE_STRATEGY, registeredBeanClass);
+				}
+			}
 		}
 		
 		Long timeout = md.getTimeout();
