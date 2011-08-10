@@ -146,6 +146,9 @@ public class ImportSpringXMLWizard extends Wizard {
     private String handle(InvocationTargetException e) {
         Throwable targetException = e.getTargetException();
         String message = targetException.getMessage();
+        if(message == null){
+            return targetException.toString();
+        }
         if(message.length() < 500){
             return message;
         }else{

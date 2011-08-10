@@ -123,7 +123,7 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
 
         try {
             basicParameters = new Properties();
-            String propFile = File.separator + PROPERTY_FOLDER + File.separator + componentName + PROPERTY_POSTFIX;
+            String propFile = PROPERTY_FOLDER + "/" + componentName + PROPERTY_POSTFIX;
             InputStream inputStream = AbstractParameterHandler.class.getResourceAsStream(propFile);
             basicParameters.load(inputStream);
             inputStream.close();
