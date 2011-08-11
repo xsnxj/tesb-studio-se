@@ -21,6 +21,9 @@ public class DynamicComponentParser extends AbstractComponentParser {
 			Map<String, String> map) {
 		DynamicRouterDefinition drd = (DynamicRouterDefinition) oid;
 		ExpressionDefinition expression = drd.getExpression();
+		if(expression==null){
+			return;
+		}
 		if(expression instanceof MethodCallExpression){
 			MethodCallExpression mce = (MethodCallExpression) expression;
 			String b = mce.getBean();

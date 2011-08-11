@@ -12,6 +12,16 @@ public class Tester implements ISpringParserListener{
 //	private static final String FILE_PATH = "tests/BigFileParallelTest.xml";
 //	private static final String FILE_PATH = "tests/loadbalancer.xml";
 	private static final String FILE_PATH = "tests/activemq/camel-context.xml";
+//	private static final String FILE_PATH = "tests/blueprint/test.xml";
+//	private static final String FILE_PATH = "F:/StudyResources/Camel/camelinaction-source/chapter12/tracer/src/test/resources/camelinaction/TracerSpringTest.xml";
+//	private static final String FILE_PATH = "tests/activemq/wireTap.xml";
+//	private static final String FILE_PATH = "tests/activemq/dynamic.xml";
+//	private static final String FILE_PATH = "tests/activemq/pipes.xml";
+//	private static final String FILE_PATH = "tests/activemq/cxf.xml";
+//	private static final String FILE_PATH = "tests/activemq/setHeader.xml";
+//	private static final String FILE_PATH = "tests/activemq/enrich.xml";
+//	private static final String FILE_PATH = "tests/activemq/aggregate.xml";
+//	private static final String FILE_PATH = "E:/work/items/SpringImport/tests/activemq/camel-context.xml";
 //	private static final String FILE_PATH = "tests/others/camel-fliproute.xml";
 //	private static final String FILE_PATH = "tests/others/routingslip-header.xml";
 //	private static final String FILE_PATH = "tests/xmlOrderNamespace.xml";
@@ -36,6 +46,7 @@ public class Tester implements ISpringParserListener{
 		System.out.println(parameters);
 		System.out.println(connectionType);
 		System.out.println(sourceId);
+		System.out.println("----------------");
 	}
 
 	public void postProcess() {

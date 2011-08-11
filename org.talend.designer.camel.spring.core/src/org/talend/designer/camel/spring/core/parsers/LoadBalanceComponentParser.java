@@ -12,7 +12,6 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
-import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
@@ -28,6 +27,10 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 			Map<String, String> map) {
 		LoadBalanceDefinition lbd = (LoadBalanceDefinition) oid;
 		LoadBalancerDefinition balancerType = lbd.getLoadBalancerType();
+		if(balancerType==null){
+			map.put(LB_BALANCE_STRATEGY, LB_CUSTOM_STRATEGY);
+			return;
+		}
 		if (balancerType instanceof FailoverLoadBalancerDefinition) {
 			FailoverLoadBalancerDefinition fld = (FailoverLoadBalancerDefinition) balancerType;
 			List<String> exceptions = fld.getExceptions();
@@ -74,10 +77,11 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 			StickyLoadBalancerDefinition slbd = (StickyLoadBalancerDefinition) balancerType;
 			ExpressionSubElementDefinition expression = slbd
 					.getCorrelationExpression();
-			Map<String, String> expressionMap = ExpressionProcessor
-					.getExpressionMap(expression.getExpressionType());
-//			map.put(LB_STICKY_EXPRESSION, expressionMap.get(EP_EXPRESSION_TEXT));
-			map.putAll(expressionMap);
+			if(expression!=null){
+				Map<String, String> expressionMap = ExpressionProcessor
+				.getExpressionMap(expression.getExpressionType());
+				map.putAll(expressionMap);
+			}
 		} else if (balancerType instanceof TopicLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_TOPIC_STRATEGY);
 		}

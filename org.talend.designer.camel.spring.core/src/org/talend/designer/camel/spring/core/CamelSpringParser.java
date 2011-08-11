@@ -201,7 +201,6 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			List<FromDefinition> inputs) {
 		FromDefinition fd = inputs.get(0);
 		String uri = fd.getUri();
-		assert uri != null;
 		String id = processIsolateDefinition(getDefinitionParser(uri),
 				nodeIdFactory, null, fd, NULL_ROUTE, null);
 		return id;
@@ -552,7 +551,6 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			String fromId, ToDefinition pd, int connectionType,
 			Map<String, String> connectionMap) {
 		String uri = pd.getUri();
-		assert uri != null;
 		String id = processIsolateDefinition(getDefinitionParser(uri),
 				nodeIdFactory, fromId, pd, connectionType, connectionMap);
 		return id;
@@ -565,6 +563,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	 * @return componentType
 	 */
 	private int getDefinitionParser(String uri) {
+		if(uri==null){
+			return MSGENDPOINT;
+		}
 		if (uri.startsWith("file:")) {
 			return FILE;
 		} else if (uri.startsWith("cxf")) {

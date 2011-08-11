@@ -34,6 +34,9 @@ public class CXFComponentParser extends AbstractComponentParser {
 		}
 		String bean = uri;
 		BeanDefinition beanDefinition = getBeanDefinition(bean);
+		if(beanDefinition==null){
+			return;
+		}
 		MutablePropertyValues propertyValues = beanDefinition.getPropertyValues();
 		PropertyValue[] properties = propertyValues.getPropertyValues();
 		for(PropertyValue pv:properties){

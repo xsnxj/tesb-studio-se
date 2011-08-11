@@ -23,7 +23,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/commons-management-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/slf4j-api-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-asm-3.0.5.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar" sourcepath="C:/Users/LiXP/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-core-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-core/3.0.5.RELEASE/spring-core-3.0.5.RELEASE-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-beans-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-beans/3.0.5.RELEASE/spring-beans-3.0.5.RELEASE-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-context-3.0.5.RELEASE.jar" sourcepath="D:/M2Repository/org/springframework/spring-context/3.0.5.RELEASE/spring-context-3.0.5.RELEASE-sources.jar"/>
@@ -32,5 +32,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

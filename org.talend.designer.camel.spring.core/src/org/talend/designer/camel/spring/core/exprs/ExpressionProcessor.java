@@ -19,6 +19,9 @@ public class ExpressionProcessor implements ICamelSpringConstants {
 	public static Map<String, String> getExpressionMap(
 			ExpressionDefinition expression) {
 		Map<String, String> map = new HashMap<String, String>();
+		if(expression==null){
+			return map;
+		}
 		if (expression instanceof TokenizerExpression) {
 			TokenizerExpression te = (TokenizerExpression) expression;
 			String headerName = te.getHeaderName();

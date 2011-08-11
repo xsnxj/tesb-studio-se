@@ -21,7 +21,7 @@ public class RoutingSlipComponentParser extends AbstractComponentParser {
 		RoutingSlipDefinition rsd = (RoutingSlipDefinition) oid;
 		ExpressionDefinition expression = rsd.getExpression();
 		String uriDelimiter = rsd.getUriDelimiter();
-		if(uriDelimiter.equals("")){
+		if(uriDelimiter==null||uriDelimiter.equals("")){
 			uriDelimiter = ",";
 		}
 		map.put(RS_URI_DELIMITER, "\""+uriDelimiter+"\"");

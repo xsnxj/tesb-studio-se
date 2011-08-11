@@ -34,11 +34,13 @@ public class OnExceptionComponentParser extends AbstractComponentParser {
 		map.put(LB_EXCEPTIONS, sb.toString());
 		
 		RedeliveryPolicyDefinition redeliveryPolicy = oed.getRedeliveryPolicy();
-		String maximumRedeliveries = redeliveryPolicy.getMaximumRedeliveries();
-		String maximumRedeliveryDelay = redeliveryPolicy.getMaximumRedeliveryDelay();
-		
-		map.put(OE_MAX_REDELIVER_DELAY, maximumRedeliveryDelay);
-		map.put(OE_MAX_REDELIVER_TIMES, maximumRedeliveries);
+		if(redeliveryPolicy!=null){
+			String maximumRedeliveries = redeliveryPolicy.getMaximumRedeliveries();
+			String maximumRedeliveryDelay = redeliveryPolicy.getMaximumRedeliveryDelay();
+			
+			map.put(OE_MAX_REDELIVER_DELAY, maximumRedeliveryDelay);
+			map.put(OE_MAX_REDELIVER_TIMES, maximumRedeliveries);
+		}
 		
 		boolean useOriginalMessage = oed.isUseOriginalMessage();
 		map.put(OE_USE_ORIGINAL_MSG, useOriginalMessage+"");
@@ -53,16 +55,14 @@ public class OnExceptionComponentParser extends AbstractComponentParser {
 		
 		String asyncDelayedRedelivery = redeliveryPolicy.getAsyncDelayedRedelivery();
 		map.put(OE_ASYNC_DELAY_REDELIVER, asyncDelayedRedelivery);
-		
 	}
 
 	public boolean hasProcessed(OnExceptionDefinition id) {
 		return ids.contains(id);
 	}
 
-	@Override
 	public int getType() {
-		return INTERCEPT;
+		return EXCEPTION;
 	}
 
 	@Override

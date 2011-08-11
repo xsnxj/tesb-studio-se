@@ -2,7 +2,6 @@ package org.talend.designer.camel.spring.core.parsers;
 
 import java.util.Map;
 
-import org.apache.camel.Predicate;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
