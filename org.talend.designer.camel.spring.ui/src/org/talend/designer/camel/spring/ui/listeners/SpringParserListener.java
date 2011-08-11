@@ -15,8 +15,9 @@ package org.talend.designer.camel.spring.ui.listeners;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.draw2d.geometry.Point;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.core.model.components.ComponentUtilities;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
@@ -28,7 +29,6 @@ import org.talend.designer.camel.spring.ui.layout.ILayoutManager;
 import org.talend.designer.camel.spring.ui.layout.RelativeLayoutManager;
 import org.talend.designer.camel.spring.ui.utils.RouteMapping;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
-import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
@@ -37,8 +37,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
  * DOC LiXP class global comment. Detailled comment
  */
 public class SpringParserListener implements ISpringParserListener {
-
-    private CamelProcessItem camelProcessItem;
 
     private ProcessType processType;
 
@@ -54,8 +52,10 @@ public class SpringParserListener implements ISpringParserListener {
     
     private int routingId;
 
-    public SpringParserListener(CamelProcessItem camelProcessItem) {
-        this.camelProcessItem = camelProcessItem;
+    private static final Log log = LogFactory.getLog(SpringParserListener.class);
+
+    public SpringParserListener(ProcessType processType) {
+        this.processType = processType;
         layoutManager = new RelativeLayoutManager();
         connectionStyleMap = RouteMapping.getConnectionMapping();
         paramHandlers = ParameterHandlerFactory.INSTANCE.getHandlers();
@@ -72,7 +72,6 @@ public class SpringParserListener implements ISpringParserListener {
      * @param parameters
      */
     private void addElementParameters(NodeType nodeType, int componentType, Map<String, String> parameters) {
-
         String componentName = RouteMapping.COMPOMENT_NAMES[componentType];
         String uniqueName = ComponentUtilities.generateUniqueNodeName(componentName, processType);
 
@@ -95,7 +94,6 @@ public class SpringParserListener implements ISpringParserListener {
      * @param sourceId
      * @param connParameters 
      */
-    @SuppressWarnings("unchecked")
     private void addPossibleConnections(NodeType nodeType, int connectionId, String sourceId, Map<String, String> connParameters) {
         if (sourceId != null) {// has a route connection
             String sourceNodeName = getUniqueName(sourceId);
@@ -109,7 +107,7 @@ public class SpringParserListener implements ISpringParserListener {
                 connectionType.setLineStyle(eConnectionType.getId());
                 
                 if(connParameters != null){
-                    addConnectionParameters(connectionType, connParameters);
+                    ConnectionParameterHandler.addConnectionParameters(connectionType, connParameters);
                 }
                 processType.getConnection().add(connectionType);
 
@@ -141,16 +139,6 @@ public class SpringParserListener implements ISpringParserListener {
 
     /**
      * 
-     * DOC LiXP Comment method "addConnectionParameters".
-     * @param connectionType
-     * @param connParameters
-     */
-    private void addConnectionParameters(ConnectionType connectionType, Map<String, String> connParameters) {
-        ConnectionParameterHandler.addConnectionParameters(connectionType, connParameters);
-    }
-
-    /**
-     * 
      * DOC LiXP Comment method "createNode".
      * 
      * @param componentType
@@ -158,7 +146,6 @@ public class SpringParserListener implements ISpringParserListener {
      * @return
      */
     private NodeType createNode(int componentType, Map<String, String> parameters, String sourceId) {
-
         NodeType nodeType = fileFact.createNodeType();
 
         String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
@@ -204,14 +191,7 @@ public class SpringParserListener implements ISpringParserListener {
      * @see org.talend.designer.camel.spring.core.ISpringParserListener#preProcess()
      */
     public void preProcess() {
-
-        if (camelProcessItem == null) {
-            throw new IllegalArgumentException("CamelProcessItem can not be null");
-        }
-
         fileFact = TalendFileFactory.eINSTANCE;
-        processType = camelProcessItem.getProcess();
-
         layoutManager.startLayout();
     }
 
@@ -224,11 +204,10 @@ public class SpringParserListener implements ISpringParserListener {
     @SuppressWarnings("unchecked")
     public void process(int componentType, Map<String, String> parameters, int connectionId, String sourceId,
             Map<String, String> connParameters) {
-
+        log.info("[" + RouteMapping.COMPOMENT_NAMES[componentType] + "] " + parameters + " connection: " +connParameters);
+        
         NodeType nodeType = createNode(componentType, parameters, sourceId);
-
         addElementParameters(nodeType, componentType, parameters);
-
         addPossibleConnections(nodeType, connectionId, sourceId, connParameters);
 
         processType.getNode().add(nodeType);

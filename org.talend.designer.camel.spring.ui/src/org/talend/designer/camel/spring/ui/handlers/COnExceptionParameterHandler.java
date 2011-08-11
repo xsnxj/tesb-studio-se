@@ -85,7 +85,7 @@ public class COnExceptionParameterHandler extends AbstractParameterHandler {
                     }
                     ElementParameterType nodeProperty = ComponentUtilities.getNodeProperty(nodeType, tableParam.getKey());
                     if (nodeProperty == null) {
-                        ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
+                        ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), FIELD_TABLE);
                         ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
                     } else {
                         nodeProperty.getElementValue().addAll(valueTypes);

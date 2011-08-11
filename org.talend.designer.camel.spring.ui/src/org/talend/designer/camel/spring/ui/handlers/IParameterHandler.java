@@ -13,7 +13,6 @@
 package org.talend.designer.camel.spring.ui.handlers;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
@@ -47,11 +46,4 @@ public interface IParameterHandler {
      */
     void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters);
     
-    /**
-     * 
-     * DOC LiXP Comment method "handleAddtionalParam".
-     * @param nodeType
-     * @param param
-     */
-    void handleAddtionalParam(NodeType nodeType, Entry<String, String> param);
 }

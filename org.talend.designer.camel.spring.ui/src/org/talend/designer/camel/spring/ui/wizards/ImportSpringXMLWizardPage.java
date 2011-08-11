@@ -40,7 +40,7 @@ import org.talend.repository.ui.wizards.PropertiesWizardPage;
  */
 public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
 
-    private static final String DESC = "Add a Route in the repository";
+    private static final String DESC = "Add a Route from Spring XML";
 
     private static final String DEFAULT_NEW_NAME = "newRoute";
 

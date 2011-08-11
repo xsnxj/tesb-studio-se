@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.handlers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.commons.logging.LogFactory;
 import org.talend.core.model.components.ComponentUtilities;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -54,8 +52,6 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
     private static final String PROPERTY_FOLDER = "mappings";
 
     private static final String PROPERTY_POSTFIX = ".properties";
-
-    private static final org.apache.commons.logging.Log log = LogFactory.getLog(AbstractParameterHandler.class);
 
     /**
      * Component name, and also the properties file name.
@@ -116,7 +112,6 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
     }
 
     protected Properties getBasicParameters() {
-
         if (basicParameters != null) {
             return basicParameters;
         }
@@ -127,7 +122,6 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
             InputStream inputStream = AbstractParameterHandler.class.getResourceAsStream(propFile);
             basicParameters.load(inputStream);
             inputStream.close();
-
         } catch (IOException e) {
             basicParameters = null;
             return basicParameters;
@@ -160,8 +154,6 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
      */
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
 
-        log.info("node:" + uniqueName + " params: " + parameters);
-
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         Properties params = getBasicParameters();
         if(params == null){//If no mapping properties file found, do nothing.
@@ -174,14 +166,14 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
             String value = param.getValue();
 
             if (key.equals(ICamelSpringConstants.UNIQUE_NAME_ID)) {// Add UNIQUE_NAME parameter
-                addParamType(elemParams, "TEXT", "UNIQUE_NAME", uniqueName);
+                addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
             } else {
                 String field = params.getProperty(key + FIELD_POSTFIX);
                 String name = params.getProperty(key + NAME_POSTFIX);
                 String ref = params.getProperty(key + REF_POSTFIX);
 
                 if (ref != null) { // Handle reference check
-                    addParamType(elemParams, "TEXT", ref, "true");
+                    addParamType(elemParams, FIELD_CHECK, ref, VALUE_TRUE);
                 }
 
                 if (field != null && name != null) { // Basic parameters
@@ -199,7 +191,7 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
      * Handle additional parameters, currently only TABLE FIELD are supported, and only one TABLE parameter is supported
      * for a component. This method only for table with two columns, and if different, subclass may override it.
      */
-    public void handleAddtionalParam(NodeType nodeType, Entry<String, String> param) {
+    protected void handleAddtionalParam(NodeType nodeType, Entry<String, String> param) {
         Map<String, List<String>> tableParameters = getTableParameters();
 
         if (tableParameters.size() == 1) {

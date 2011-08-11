@@ -27,7 +27,6 @@ import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
@@ -73,9 +72,8 @@ public class ImportSpringXMLWizard extends Wizard {
 
     private String springXMLPath;
 
-    private IPath destinationPath;
+    private ProcessType processType;
     
-    private boolean created;
     /**
      * Constructs a new NewProjectWizard.
      * 
@@ -86,7 +84,6 @@ public class ImportSpringXMLWizard extends Wizard {
     public ImportSpringXMLWizard(IPath path) {
         super();
         this.path = path;
-        this.created = false;
         initialProcess();
         this.repositoryFactory = DesignerPlugin.getDefault().getRepositoryService().getProxyRepositoryFactory();
         this.setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_WIZ));
@@ -115,17 +112,18 @@ public class ImportSpringXMLWizard extends Wizard {
             getContainer().run(false, false, new IRunnableWithProgress() {
 
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    monitor.beginTask("Import Spring XML...", 3);
+                    monitor.beginTask("Import Spring XML...", 5);
                     monitor.worked(1);
                     try {
-                        createNewItem();
-                        monitor.worked(1);
                         parsrXMLFile();
+                        monitor.worked(2);
+                        createNewItem();
+                        monitor.worked(2);
                         openEditor();
-                        monitor.done();
                     } catch (Exception e) {
-                        monitor.done();
                         throw new InvocationTargetException(e);
+                    }finally{
+                        monitor.done();
                     }
                 }
             });
@@ -143,7 +141,13 @@ public class ImportSpringXMLWizard extends Wizard {
         return processItem != null;
     }
 
-    private String handle(InvocationTargetException e) {
+    /**
+     * 
+     * Handle exception message.
+     * @param e
+     * @return
+     */
+    private String handle(InvocationTargetException e) {                                                                                                                                                                                                                                                                                                                                                                                                                                                               
         Throwable targetException = e.getTargetException();
         String message = targetException.getMessage();
         if(message == null){
@@ -152,101 +156,99 @@ public class ImportSpringXMLWizard extends Wizard {
         if(message.length() < 500){
             return message;
         }else{
-            message = message.substring(0, 200) + "......";
+            message = message.substring(0, 500) + "......";
         }
         return message;
     }
 
+    /**
+     * Create new process item and refresh the Repository View
+     */
     private void createNewItem() {
-        
-        if(created){
-            return;
-        }
-        
-        springXMLPath = mainPage.getXMLPath();
-        destinationPath = mainPage.getDestinationPath();
         property.setId(repositoryFactory.getNextId());
-        ProcessType process = TalendFileFactory.eINSTANCE.createProcessType();
-        processItem.setProcess(process);
+        processItem.setProcess(processType);
         RepositoryWorkUnit<Object> workUnit = new RepositoryWorkUnit<Object>(ImportSpringXMLWizard.this
                 .getWindowTitle(), this) {
             @Override
             protected void run() throws LoginException, PersistenceException {
-                repositoryFactory.create(processItem, destinationPath);
+                repositoryFactory.create(processItem, path);
                 RelationshipItemBuilder.getInstance().addOrUpdateItem(processItem);
             }
         };
         workUnit.setAvoidUnloadResources(true);
         repositoryFactory.executeRepositoryWorkUnit(workUnit);
-        created = true;
     }
     
-    @Override
-    public boolean performCancel() {
-        deleteItem();
-        return true;
-    }
+//    /**
+//     * Delete created item if import fails.
+//     */
+//    private void deleteItem() {
+//        getViewPart().refresh(CamelRepositoryNodeType.repositoryRoutesType);
+//        IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(processItem.getProperty().getId(), false);
+//        try {
+//            repositoryFactory.deleteObjectPhysical(repositoryNode.getObject());
+//            getViewPart().refresh(repositoryNode.getObjectType());
+//        } catch (PersistenceException pe) {
+//            // ignore
+//        }
+//
+//    }
 
     /**
-     * Delete created item if import fails.
+     * Initial new route Property, Process Item, and Process Type.
      */
-    private void deleteItem() {
-        
-        if(!created){
-            return;
-        }
-        
-        getViewPart().refresh(CamelRepositoryNodeType.repositoryRoutesType);
-        IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(processItem.getProperty().getId(), false);
-        try {
-            repositoryFactory.deleteObjectPhysical(repositoryNode.getObject());
-            getViewPart().refresh(repositoryNode.getObjectType());
-        } catch (PersistenceException pe) {
-            // ignore
-        }
-
-    }
-
     private void initialProcess() {
         this.property = PropertiesFactory.eINSTANCE.createProperty();
         this.property.setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
                 .getUser());
         this.property.setVersion(VersionUtils.DEFAULT_VERSION);
-        this.property.setStatusCode(""); //$NON-NLS-1$
+        this.property.setStatusCode(""); 
         this.processItem = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
         this.processItem.setProperty(property);
-        
+        this.processType = TalendFileFactory.eINSTANCE.createProcessType();
     }
 
     /**
-     * Open editor. DOC LiXP Comment method "openEditor".
+     * Open editor. 
      * 
      * @throws PersistenceException
      * @throws PartInitException
      */
-    private void openEditor() throws PersistenceException, PartInitException {
-        repositoryFactory.save(processItem, true);
-        CamelProcessEditorInput fileEditorInput;
-        // Set readonly to false since created job will always be editable.
-        fileEditorInput = new CamelProcessEditorInput(processItem, true, true, false);
-        fileEditorInput.setView(getViewPart());
-        IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem().getProperty()
-                .getId(), false);
-        fileEditorInput.setRepositoryNode(repositoryNode);
-        IWorkbenchPage page = getViewPart().getViewSite().getPage();
-        page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
+    private void openEditor(){
+    	getShell().getDisplay().asyncExec(new Runnable() {
+			
+			public void run() {
+				try {
+					repositoryFactory.save(processItem, true);
+					CamelProcessEditorInput fileEditorInput;
+					// Set readonly to false since created job will always be editable.
+					fileEditorInput = new CamelProcessEditorInput(processItem, true, true, false);
+					fileEditorInput.setView(getViewPart());
+					IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem().getProperty()
+							.getId(), false);
+					fileEditorInput.setRepositoryNode(repositoryNode);
+					IWorkbenchPage page = getViewPart().getViewSite().getPage();
+					page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
+				} catch (PersistenceException e) {
+					e.printStackTrace();
+				} catch (PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
     }
 
     /**
      * 
-     * DOC LiXP Comment method "parseAndImportContent".
+     * Using {@code CamelSpringParser} to parse the XML.
      * 
      * @throws Exception
      */
     private void parsrXMLFile() throws Exception {
+        springXMLPath = mainPage.getXMLPath();
         CamelSpringParser parser = new CamelSpringParser();
-        parser.addListener(new SpringParserListener(processItem));
+        parser.addListener(new SpringParserListener(processType));
         parser.startParse(springXMLPath);
     }
 
@@ -269,12 +271,5 @@ public class ImportSpringXMLWizard extends Wizard {
      */
     public CamelProcessItem getProcess() {
         return this.processItem;
-    }
-
-    /*
-     * 
-     */
-    public String getSpringXMLPath() {
-        return springXMLPath;
     }
 }
