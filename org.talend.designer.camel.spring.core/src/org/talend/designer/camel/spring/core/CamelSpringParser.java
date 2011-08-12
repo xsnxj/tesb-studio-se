@@ -169,8 +169,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		endBlockComponentTypes.add(ChoiceDefinition.class);
 		endBlockComponentTypes.add(AggregateDefinition.class);
 		endBlockComponentTypes.add(FilterDefinition.class);
-		endBlockComponentTypes.add(DynamicRouterDefinition.class);
-		endBlockComponentTypes.add(RoutingSlipDefinition.class);
+//		endBlockComponentTypes.add(DynamicRouterDefinition.class);
+//		endBlockComponentTypes.add(RoutingSlipDefinition.class);
 		endBlockComponentTypes.add(IdempotentConsumerDefinition.class);
 		endBlockComponentTypes.add(LoopDefinition.class);
 		endBlockComponentTypes.add(ThrottleDefinition.class);
