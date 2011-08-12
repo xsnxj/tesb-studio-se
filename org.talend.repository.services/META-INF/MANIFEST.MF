@@ -20,4 +20,5 @@ Require-Bundle: org.eclipse.ui.workbench,
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: lib/wsdl4j-1.6.2.jar,
- lib/XmlSchema-1.4.5.jar
+ lib/XmlSchema-1.4.5.jar,
+ .
