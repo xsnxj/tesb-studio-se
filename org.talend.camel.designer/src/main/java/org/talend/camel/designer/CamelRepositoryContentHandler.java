@@ -29,7 +29,9 @@ import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryContentHandler;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.utils.XmiResourceManager;
+import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -76,9 +78,8 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             if (item instanceof CamelProcessItem) {
                 type = CamelRepositoryNodeType.repositoryRoutesType;
                 itemResource = create(project, (CamelProcessItem) item, path, type);
-				Resource screenshotsResource = createScreenshotResource(project,
-						(CamelProcessItem) item, path, type);
-				xmiResourceManager.saveResource(screenshotsResource);
+                Resource screenshotsResource = createScreenshotResource(project, (CamelProcessItem) item, path, type);
+                xmiResourceManager.saveResource(screenshotsResource);
                 return itemResource;
             }
         case CamelPropertiesPackage.BEAN_ITEM:
@@ -91,14 +92,14 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             return null;
         }
     }
-    
-    //TODO refer to LocalRepositoryFactory
-    private Resource createScreenshotResource(IProject project, Item item, IPath path, ERepositoryObjectType type)
-    throws PersistenceException {
-    	Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path, type, false);
-    	itemResource.getContents().addAll(((CamelProcessItem) item).getProcess().getScreenshots());
 
-    	return itemResource;
+    // TODO refer to LocalRepositoryFactory
+    private Resource createScreenshotResource(IProject project, Item item, IPath path, ERepositoryObjectType type)
+            throws PersistenceException {
+        Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path, type, false);
+        itemResource.getContents().addAll(((CamelProcessItem) item).getProcess().getScreenshots());
+
+        return itemResource;
     }
 
     private Resource create(IProject project, CamelProcessItem item, IPath path, ERepositoryObjectType type)
@@ -200,6 +201,19 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             }
         }
         return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.repository.IRepositoryContentHandler#addNode(org.talend.core.model.repository.
+     * ERepositoryObjectType, org.talend.repository.model.RepositoryNode,
+     * org.talend.core.model.repository.IRepositoryViewObject, org.talend.repository.model.RepositoryNode)
+     */
+    public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
+            RepositoryNode node) {
+        // TODO Auto-generated method stub
+
     }
 
 }
