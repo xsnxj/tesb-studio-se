@@ -23,6 +23,7 @@ import org.talend.commons.ui.swt.actions.ITreeContextualAction;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.spring.ui.CamelSpringUIPlugin;
+import org.talend.designer.camel.spring.ui.i18n.Messages;
 import org.talend.designer.camel.spring.ui.wizards.ImportSpringXMLWizard;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
@@ -41,9 +42,9 @@ public class ImportSpringContextualAction extends AContextualAction implements I
 
     public ImportSpringContextualAction() {
         super();
-        this.setText("Import Spring XML");
-        this.setToolTipText("Import Spring XML");
-        this.setImageDescriptor(CamelSpringUIPlugin.getDefault().getImageDescriptor("icons/import.gif"));
+        this.setText(Messages.getString("ImportSpringContextualAction_actionText")); //$NON-NLS-1$
+        this.setToolTipText(Messages.getString("ImportSpringContextualAction_actionTooltip")); //$NON-NLS-1$
+        this.setImageDescriptor(CamelSpringUIPlugin.getDefault().getImageDescriptor("icons/import.gif")); //$NON-NLS-1$
     }
 
     public void init(TreeViewer viewer, IStructuredSelection selection) {

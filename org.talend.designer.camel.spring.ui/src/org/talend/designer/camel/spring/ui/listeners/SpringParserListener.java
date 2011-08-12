@@ -12,12 +12,13 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.draw2d.geometry.Point;
 import org.talend.core.model.components.ComponentUtilities;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
@@ -25,8 +26,9 @@ import org.talend.designer.camel.spring.core.ISpringParserListener;
 import org.talend.designer.camel.spring.ui.handlers.ConnectionParameterHandler;
 import org.talend.designer.camel.spring.ui.handlers.IParameterHandler;
 import org.talend.designer.camel.spring.ui.handlers.ParameterHandlerFactory;
-import org.talend.designer.camel.spring.ui.layout.ILayoutManager;
-import org.talend.designer.camel.spring.ui.layout.RelativeLayoutManager;
+import org.talend.designer.camel.spring.ui.layout.Routing;
+import org.talend.designer.camel.spring.ui.layout.RoutingLayoutManager;
+import org.talend.designer.camel.spring.ui.layout.RoutingNode;
 import org.talend.designer.camel.spring.ui.utils.RouteMapping;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -42,25 +44,24 @@ public class SpringParserListener implements ISpringParserListener {
 
     private TalendFileFactory fileFact;
 
-    private ILayoutManager layoutManager;
-
     private Map<Integer, EConnectionType> connectionStyleMap;
 
     private Map<String, IParameterHandler> paramHandlers;
     
-    private Map<String, ComponentNode> nodes;
+    private List<Routing> routings;
     
-    private int routingId;
-
+    private Map<String, RoutingNode> routingNodes;
+    
+    private RoutingLayoutManager layoutManager;
+    
     private static final Log log = LogFactory.getLog(SpringParserListener.class);
 
     public SpringParserListener(ProcessType processType) {
         this.processType = processType;
-        layoutManager = new RelativeLayoutManager();
         connectionStyleMap = RouteMapping.getConnectionMapping();
         paramHandlers = ParameterHandlerFactory.INSTANCE.getHandlers();
-        nodes = new HashMap<String, ComponentNode>();
-        routingId = 0;
+        routings = new ArrayList<Routing>();
+        routingNodes = new HashMap<String, RoutingNode>();
     }
 
     /**
@@ -123,7 +124,7 @@ public class SpringParserListener implements ISpringParserListener {
      * @return
      */
     private String getUniqueName(String sourceId) {
-        ComponentNode node = nodes.get(sourceId);
+        RoutingNode node = routingNodes.get(sourceId);
         if(node == null){
             return null;
         }
@@ -147,30 +148,27 @@ public class SpringParserListener implements ISpringParserListener {
      */
     private NodeType createNode(int componentType, Map<String, String> parameters, String sourceId) {
         NodeType nodeType = fileFact.createNodeType();
-
-        String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
-		Point position = layoutManager.getNextPosition(name, sourceId);
-
-        nodeType.setPosX(position.x);
-        nodeType.setPosY(position.y);
         nodeType.setSizeX(32);
         nodeType.setSizeY(32);
-
-        ComponentNode componentNode = new ComponentNode(name);
-        componentNode.setNodeType(nodeType);
-        componentNode.setRoutingId(routingId);
+     
+        String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
+        RoutingNode routingNode = new RoutingNode(name);
+        routingNode.setNodeType(nodeType);
+        routingNodes.put(name, routingNode);
         
         if(sourceId == null){
-            routingId ++;
+            Routing routing = new Routing();
+            routing.setRoutingId(routings.size());
+            routing.setFromNode(routingNode);
+            routingNode.setRouting(routing);
+            routings.add(routing);
         }else{
-            ComponentNode parent = nodes.get(sourceId);
-            if(parent != null){
-                componentNode.setParent(componentNode);
-                parent.getChildren().add(componentNode);
+            RoutingNode parant = routingNodes.get(sourceId);
+            if(parant != null){
+                routingNode.setParant(parant);
+                parant.getChildren().add(routingNode);
             }
         }
-        
-        nodes.put(name, componentNode);
         
         return nodeType;
     }
@@ -181,8 +179,9 @@ public class SpringParserListener implements ISpringParserListener {
      * @see org.talend.designer.camel.spring.core.ISpringParserListener#postProcess()
      */
     public void postProcess() {
-        layoutManager.stopLayout();
-//        LayoutUtils.simpleLayout(nodes.values());
+        layoutManager.layout(routings);
+        routingNodes.clear();
+        routings.clear();
     }
 
     /*
@@ -192,7 +191,7 @@ public class SpringParserListener implements ISpringParserListener {
      */
     public void preProcess() {
         fileFact = TalendFileFactory.eINSTANCE;
-        layoutManager.startLayout();
+        layoutManager =  new RoutingLayoutManager();
     }
 
     /*
@@ -204,7 +203,8 @@ public class SpringParserListener implements ISpringParserListener {
     @SuppressWarnings("unchecked")
     public void process(int componentType, Map<String, String> parameters, int connectionId, String sourceId,
             Map<String, String> connParameters) {
-        log.info("[" + RouteMapping.COMPOMENT_NAMES[componentType] + "] " + parameters + " connection: " +connParameters);
+        log.info("[" + RouteMapping.COMPOMENT_NAMES[componentType] + "] " + parameters + " | Connection ["
+                + connectionStyleMap.get(connectionId) + "] " + connParameters + " Source " + sourceId);
         
         NodeType nodeType = createNode(componentType, parameters, sourceId);
         addElementParameters(nodeType, componentType, parameters);

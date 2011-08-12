@@ -29,7 +29,6 @@ public class Routing {
     public Routing() {
     }
 
-    
     /**
      * Getter for routingId.
      * @return the routingId

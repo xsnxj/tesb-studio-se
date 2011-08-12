@@ -26,5 +26,5 @@ public final class LayoutConstants {
     
     public static final int DEFAULT_DELTA_X = 150;
     
-    public static final int DEFAULT_DELTA_Y = 100;
+    public static final int DEFAULT_DELTA_Y = 75;
 }

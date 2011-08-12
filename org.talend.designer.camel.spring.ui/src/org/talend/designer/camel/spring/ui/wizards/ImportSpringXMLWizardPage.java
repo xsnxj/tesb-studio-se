@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.designer.camel.spring.ui.i18n.Messages;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -40,9 +41,9 @@ import org.talend.repository.ui.wizards.PropertiesWizardPage;
  */
 public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
 
-    private static final String DESC = "Add a Route from Spring XML";
+    private static final String DESC = Messages.getString("ImportSpringXMLWizardPage_desc"); //$NON-NLS-1$
 
-    private static final String DEFAULT_NEW_NAME = "newRoute";
+    private static final String DEFAULT_NEW_NAME = Messages.getString("ImportSpringXMLWizardPage_defaultName"); //$NON-NLS-1$
 
     private Text xmlPathText;
     
@@ -53,7 +54,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
     public ImportSpringXMLWizardPage(Property property, IPath destinationPath) {
         super("WizardPage", property, destinationPath); //$NON-NLS-1$
 
-        setTitle("Import Routes From Spring XML"); 
+        setTitle(Messages.getString("ImportSpringXMLWizardPage_title"));  //$NON-NLS-1$
         setDescription(DESC);
         
     }
@@ -83,7 +84,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
      */
     private void createFileBrowser(Composite container) {
         Label label = new Label(container, SWT.NONE);
-        label.setText("XML Path");
+        label.setText(Messages.getString("ImportSpringXMLWizardPage_filePathLabel")); //$NON-NLS-1$
         Composite composite = new Composite(container, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
@@ -99,7 +100,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
         Button button = new Button(composite, SWT.PUSH);
         gd = new GridData();
         button.setLayoutData(gd);
-        button.setText("Browse");
+        button.setText(Messages.getString("ImportSpringXMLWizardPage_browseBtnLabel")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -130,7 +131,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
         String name = DEFAULT_NEW_NAME;
         int newNamePostfix = 1;
         while(!isValid(name)){
-            name = DEFAULT_NEW_NAME + "_" + newNamePostfix;
+            name = DEFAULT_NEW_NAME + "_" + newNamePostfix; //$NON-NLS-1$
             newNamePostfix++;
         }
         return name;
@@ -165,7 +166,7 @@ public class ImportSpringXMLWizardPage extends PropertiesWizardPage {
         String xmlPath = xmlPathText.getText().trim();
         boolean isValid = xmlPath != null && new File(xmlPath).exists();
         if (!isValid) {
-            nameStatus = createStatus(IStatus.ERROR, "Spring XML file path is invalid."); //$NON-NLS-1$
+            nameStatus = createStatus(IStatus.ERROR, Messages.getString("ImportSpringXMLWizardPage.errorPathMsg")); //$NON-NLS-1$
             updatePageStatus();
         }else{
             nameStatus = createOkStatus();

@@ -25,15 +25,28 @@ public class RoutingNode {
 
     private String name;
     
-    private int positionX;
+    /**
+     * X delta grid.
+     */
+    private int deltaX;
     
-    private int positionY;
+    /**
+     * Y delta grid.
+     */
+    private double deltaY;
     
     private List<RoutingNode> children = new ArrayList<RoutingNode>();
     
     private Routing routing;
     
     private NodeType nodeType;
+    
+    private RoutingNode parant;
+    
+    /**
+     * Routing node height, size of direct children minus 1 and add all heights of children
+     */
+    private int height;
 
     /**
      * DOC LiXP RoutingNode constructor comment.
@@ -63,20 +76,20 @@ public class RoutingNode {
 
     
     /**
-     * Getter for positionX.
-     * @return the positionX
+     * Getter for deltaX.
+     * @return the deltaX
      */
-    public int getPositionX() {
-        return positionX;
+    public int getDeltaX() {
+        return deltaX;
     }
 
     
     /**
-     * Sets the positionX.
-     * @param positionX the positionX to set
+     * Sets the deltaX.
+     * @param deltaX the deltaX to set
      */
-    public void setPositionX(int positionX) {
-        this.positionX = positionX;
+    public void setDeltaX(int deltaX) {
+        this.deltaX = deltaX;
     }
 
     
@@ -84,17 +97,17 @@ public class RoutingNode {
      * Getter for positionY.
      * @return the positionY
      */
-    public int getPositionY() {
-        return positionY;
+    public double getDeltaY() {
+        return deltaY;
     }
 
     
     /**
-     * Sets the positionY.
-     * @param positionY the positionY to set
+     * Sets the deltaY.
+     * @param deltaY the deltaY to set
      */
-    public void setPositionY(int positionY) {
-        this.positionY = positionY;
+    public void setDeltaY(double deltaY) {
+        this.deltaY = deltaY;
     }
 
     
@@ -149,6 +162,42 @@ public class RoutingNode {
      */
     public NodeType getNodeType() {
         return nodeType;
+    }
+
+
+    /**
+     * Sets the height.
+     * @param height the height to set
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+
+    /**
+     * Getter for height.
+     * @return the height
+     */
+    public int getHeight() {
+        return height;
+    }
+
+
+    /**
+     * Sets the parant.
+     * @param parant the parant to set
+     */
+    public void setParant(RoutingNode parant) {
+        this.parant = parant;
+    }
+
+
+    /**
+     * Getter for parant.
+     * @return the parant
+     */
+    public RoutingNode getParant() {
+        return parant;
     }
     
 }

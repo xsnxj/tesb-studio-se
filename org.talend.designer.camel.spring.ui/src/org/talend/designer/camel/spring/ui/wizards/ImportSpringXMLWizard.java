@@ -40,6 +40,7 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.designer.camel.spring.core.CamelSpringParser;
+import org.talend.designer.camel.spring.ui.i18n.Messages;
 import org.talend.designer.camel.spring.ui.listeners.SpringParserListener;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -99,7 +100,7 @@ public class ImportSpringXMLWizard extends Wizard {
     public void addPages() {
         mainPage = new ImportSpringXMLWizardPage(property, path);
         addPage(mainPage);
-        setWindowTitle("Import Routes From Spring XML");
+        setWindowTitle(Messages.getString("ImportSpringXMLWizard_title")); //$NON-NLS-1$
     }
 
     /**
@@ -112,7 +113,7 @@ public class ImportSpringXMLWizard extends Wizard {
             getContainer().run(false, false, new IRunnableWithProgress() {
 
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    monitor.beginTask("Import Spring XML...", 5);
+                    monitor.beginTask(Messages.getString("ImportSpringXMLWizard_taskLabel"), 5); //$NON-NLS-1$
                     monitor.worked(1);
                     try {
                         parsrXMLFile();
@@ -130,11 +131,11 @@ public class ImportSpringXMLWizard extends Wizard {
         } catch (InvocationTargetException e1) {
             ExceptionHandler.process(e1);
             MessageDialog
-                    .openError(getShell(), "Error", "Import Spring XML failed, details: \n" + handle(e1));
+                    .openError(getShell(), Messages.getString("ImportSpringXMLWizard_errorTitle"), Messages.getString("ImportSpringXMLWizard_errorMessage") + handle(e1)); //$NON-NLS-1$ //$NON-NLS-2$
             return false;
         } catch (InterruptedException e1) {
             ExceptionHandler.process(e1);
-            MessageDialog.openError(getShell(), "Error", "Import Spring XML failed, details: " + e1.getMessage());
+            MessageDialog.openError(getShell(), Messages.getString("ImportSpringXMLWizard_errorTitle"), Messages.getString("ImportSpringXMLWizard_exceptionMessage") + e1.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             return false;
         }
        
@@ -156,7 +157,7 @@ public class ImportSpringXMLWizard extends Wizard {
         if(message.length() < 500){
             return message;
         }else{
-            message = message.substring(0, 500) + "......";
+            message = message.substring(0, 500) + "..."; //$NON-NLS-1$
         }
         return message;
     }
@@ -202,7 +203,7 @@ public class ImportSpringXMLWizard extends Wizard {
         this.property.setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
                 .getUser());
         this.property.setVersion(VersionUtils.DEFAULT_VERSION);
-        this.property.setStatusCode(""); 
+        this.property.setStatusCode("");  //$NON-NLS-1$
         this.processItem = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
         this.processItem.setProperty(property);
         this.processType = TalendFileFactory.eINSTANCE.createProcessType();
