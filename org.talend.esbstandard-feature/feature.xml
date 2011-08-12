@@ -29,4 +29,8 @@
          id="org.talend.tos_feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.talend.repository.services_feature"
+         version="0.0.0"/>
+
 </feature>
