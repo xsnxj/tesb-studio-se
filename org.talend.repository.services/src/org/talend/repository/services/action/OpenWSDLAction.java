@@ -85,11 +85,11 @@ public class OpenWSDLAction extends AbstractCreateAction {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         switch (node.getType()) {
         case REPOSITORY_ELEMENT:
-            if (factory.isPotentiallyEditable(node.getObject())) {
-
-                collectSiblingNames(node);
-            }
-            collectSiblingNames(node);
+            // if (factory.isPotentiallyEditable(node.getObject())) {
+            //
+            // collectSiblingNames(node);
+            // }
+            // collectSiblingNames(node);
             creation = false;
             break;
         default:

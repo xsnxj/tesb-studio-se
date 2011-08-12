@@ -107,7 +107,7 @@ public class ESBWizard extends Wizard {
         IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();
         try {
             property.setId(repositoryFactory.getNextId());
-            // repositoryFactory.create(routineItem, mainPage.getDestinationPath());
+            serviceItem.setServiceConnection(ServicesFactory.eINSTANCE.createServiceConnection());
             repositoryFactory.create(serviceItem, mainPage.getDestinationPath());
         } catch (PersistenceException e) {
             MessageDialog.openError(getShell(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$

@@ -6,6 +6,7 @@
  */
 package org.talend.repository.services.model.services;
 
+import org.eclipse.emf.common.util.EList;
 import org.talend.core.model.properties.Item;
 
 /**
@@ -16,8 +17,7 @@ import org.talend.core.model.properties.Item;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.ServiceItem#getWSDLPath <em>WSDL Path</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.ServiceItem#getWSDLContent <em>WSDL Content</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServiceItem#getServiceConnection <em>Service Connection</em>}</li>
  * </ul>
  * </p>
  *
@@ -27,55 +27,29 @@ import org.talend.core.model.properties.Item;
  */
 public interface ServiceItem extends Item {
     /**
-     * Returns the value of the '<em><b>WSDL Path</b></em>' attribute.
+     * Returns the value of the '<em><b>Service Connection</b></em>' reference.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>WSDL Path</em>' attribute isn't clear,
+     * If the meaning of the '<em>Service Connection</em>' reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>WSDL Path</em>' attribute.
-     * @see #setWSDLPath(String)
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceItem_WSDLPath()
+     * @return the value of the '<em>Service Connection</em>' reference.
+     * @see #setServiceConnection(ServiceConnection)
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceItem_ServiceConnection()
      * @model
      * @generated
      */
-    String getWSDLPath();
+    ServiceConnection getServiceConnection();
 
     /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceItem#getWSDLPath <em>WSDL Path</em>}' attribute.
+     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceItem#getServiceConnection <em>Service Connection</em>}' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>WSDL Path</em>' attribute.
-     * @see #getWSDLPath()
+     * @param value the new value of the '<em>Service Connection</em>' reference.
+     * @see #getServiceConnection()
      * @generated
      */
-    void setWSDLPath(String value);
-
-    /**
-     * Returns the value of the '<em><b>WSDL Content</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>WSDL Content</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>WSDL Content</em>' attribute.
-     * @see #setWSDLContent(byte[])
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceItem_WSDLContent()
-     * @model
-     * @generated
-     */
-    byte[] getWSDLContent();
-
-    /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceItem#getWSDLContent <em>WSDL Content</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>WSDL Content</em>' attribute.
-     * @see #getWSDLContent()
-     * @generated
-     */
-    void setWSDLContent(byte[] value);
+    void setServiceConnection(ServiceConnection value);
 
 } // ServiceItem

@@ -4,8 +4,7 @@ Bundle-Name: Services
 Bundle-SymbolicName: org.talend.repository.services;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.repository.services.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui.workbench,
+Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.gef,
  org.talend.core,
  org.talend.core.repository,
@@ -14,9 +13,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.repository,
  org.talend.metadata.managment.ui,
  org.talend.designer.esb.webservice,
- org.eclipse.core.runtime,
  org.eclipse.emf.ecore.xmi;bundle-version="2.5.0",
  org.eclipse.ui.intro,
- org.eclipse.ui.views.properties.tabbed
+ org.eclipse.ui.views.properties.tabbed,
+ org.eclipse.ui.ide;bundle-version="3.6.1"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
+Bundle-ClassPath: .,
+ lib/wsdl4j-1.6.2.jar,
+ lib/XmlSchema-1.4.5.jar

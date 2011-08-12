@@ -13,9 +13,17 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
 import org.eclipse.emf.ecore.EObject;
 
+import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
+import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.properties.Item;
 
 import org.talend.repository.services.model.services.*;
+import orgomg.cwm.foundation.softwaredeployment.DataManager;
+import orgomg.cwm.foundation.softwaredeployment.DataProvider;
+import orgomg.cwm.foundation.softwaredeployment.DeployedComponent;
+import orgomg.cwm.objectmodel.core.Element;
+import orgomg.cwm.objectmodel.core.ModelElement;
+import orgomg.cwm.objectmodel.core.Namespace;
 
 /**
  * <!-- begin-user-doc -->
@@ -78,8 +86,52 @@ public class ServicesAdapterFactory extends AdapterFactoryImpl {
                 return createServiceItemAdapter();
             }
             @Override
+            public Adapter caseServiceOperation(ServiceOperation object) {
+                return createServiceOperationAdapter();
+            }
+            @Override
+            public Adapter caseServiceConnection(ServiceConnection object) {
+                return createServiceConnectionAdapter();
+            }
+            @Override
             public Adapter caseItem(Item object) {
                 return createItemAdapter();
+            }
+            @Override
+            public Adapter caseElement(Element object) {
+                return createElementAdapter();
+            }
+            @Override
+            public Adapter caseModelElement(ModelElement object) {
+                return createModelElementAdapter();
+            }
+            @Override
+            public Adapter caseAbstractMetadataObject(AbstractMetadataObject object) {
+                return createAbstractMetadataObjectAdapter();
+            }
+            @Override
+            public Adapter caseNamespace(Namespace object) {
+                return createNamespaceAdapter();
+            }
+            @Override
+            public Adapter casePackage(orgomg.cwm.objectmodel.core.Package object) {
+                return createPackageAdapter();
+            }
+            @Override
+            public Adapter caseDeployedComponent(DeployedComponent object) {
+                return createDeployedComponentAdapter();
+            }
+            @Override
+            public Adapter caseDataManager(DataManager object) {
+                return createDataManagerAdapter();
+            }
+            @Override
+            public Adapter caseDataProvider(DataProvider object) {
+                return createDataProviderAdapter();
+            }
+            @Override
+            public Adapter caseConnection(Connection object) {
+                return createConnectionAdapter();
             }
             @Override
             public Adapter defaultCase(EObject object) {
@@ -116,6 +168,34 @@ public class ServicesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
+     * Creates a new adapter for an object of class '{@link org.talend.repository.services.model.services.ServiceOperation <em>Service Operation</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.repository.services.model.services.ServiceOperation
+     * @generated
+     */
+    public Adapter createServiceOperationAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.talend.repository.services.model.services.ServiceConnection <em>Service Connection</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.repository.services.model.services.ServiceConnection
+     * @generated
+     */
+    public Adapter createServiceConnectionAdapter() {
+        return null;
+    }
+
+    /**
      * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.Item <em>Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
@@ -126,6 +206,132 @@ public class ServicesAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createItemAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.objectmodel.core.Element <em>Element</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.objectmodel.core.Element
+     * @generated
+     */
+    public Adapter createElementAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.objectmodel.core.ModelElement <em>Model Element</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.objectmodel.core.ModelElement
+     * @generated
+     */
+    public Adapter createModelElementAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.talend.core.model.metadata.builder.connection.AbstractMetadataObject <em>Abstract Metadata Object</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.core.model.metadata.builder.connection.AbstractMetadataObject
+     * @generated
+     */
+    public Adapter createAbstractMetadataObjectAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.objectmodel.core.Namespace <em>Namespace</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.objectmodel.core.Namespace
+     * @generated
+     */
+    public Adapter createNamespaceAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.objectmodel.core.Package <em>Package</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.objectmodel.core.Package
+     * @generated
+     */
+    public Adapter createPackageAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.foundation.softwaredeployment.DeployedComponent <em>Deployed Component</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.foundation.softwaredeployment.DeployedComponent
+     * @generated
+     */
+    public Adapter createDeployedComponentAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.foundation.softwaredeployment.DataManager <em>Data Manager</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.foundation.softwaredeployment.DataManager
+     * @generated
+     */
+    public Adapter createDataManagerAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link orgomg.cwm.foundation.softwaredeployment.DataProvider <em>Data Provider</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see orgomg.cwm.foundation.softwaredeployment.DataProvider
+     * @generated
+     */
+    public Adapter createDataProviderAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.talend.core.model.metadata.builder.connection.Connection <em>Connection</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.core.model.metadata.builder.connection.Connection
+     * @generated
+     */
+    public Adapter createConnectionAdapter() {
         return null;
     }
 

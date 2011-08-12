@@ -14,7 +14,12 @@ package org.talend.repository.services.ui;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.repository.ProjectManager;
+import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.ServiceItem;
 
 /**
  * hwang class global comment. Detailled comment
@@ -32,7 +37,17 @@ public class OpenWSDLWizard extends Wizard {
 
     @Override
     public boolean performFinish() {
-        return false;
+        wsdlPage.finish();
+        ServiceItem item = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        try {
+            factory.save(item);
+            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override

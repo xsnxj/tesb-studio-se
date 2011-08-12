@@ -4,7 +4,18 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="services"
     nsURI="http://www.talend.org/Services" nsPrefix="Services">
   <eClassifiers xsi:type="ecore:EClass" name="ServiceItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//Item">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="WSDLPath" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="serviceConnection" eType="#//ServiceConnection"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceOperation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="referenceJobId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operationName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="documentation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceConnection" eSuperTypes="../../org.talend.model/model/metadata.ecore#//Connection">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="WSDLContent" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EByteArray"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="WSDLPath" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="serviceOperation" upperBound="-1"
+        eType="#//ServiceOperation"/>
   </eClassifiers>
 </ecore:EPackage>

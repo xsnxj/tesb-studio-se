@@ -35,6 +35,24 @@ public interface ServicesFactory extends EFactory {
     ServiceItem createServiceItem();
 
     /**
+     * Returns a new object of class '<em>Service Operation</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Service Operation</em>'.
+     * @generated
+     */
+    ServiceOperation createServiceOperation();
+
+    /**
+     * Returns a new object of class '<em>Service Connection</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Service Connection</em>'.
+     * @generated
+     */
+    ServiceConnection createServiceConnection();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

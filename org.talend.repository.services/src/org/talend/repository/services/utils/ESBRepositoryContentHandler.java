@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EClass;
@@ -21,11 +23,15 @@ import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryContentHandler;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.StableRepositoryNode;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
 
@@ -57,7 +63,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     private Resource create(IProject project, ServiceItem item, IPath path, ERepositoryObjectType type)
             throws PersistenceException {
         Resource itemResource = xmiResourceManager.createItemResource(project, item, path, type, false);
-        itemResource.getContents().add(item.getProperty());
+        itemResource.getContents().add(item.getServiceConnection());
 
         return itemResource;
     }
@@ -80,7 +86,10 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     private Resource save(ServiceItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
         itemResource.getContents().clear();
-        itemResource.getContents().add(item.getProperty());
+        itemResource.getContents().add(item.getServiceConnection());
+        for (ServiceOperation operation : item.getServiceConnection().getServiceOperation()) {
+            itemResource.getContents().add(operation);
+        }
         return itemResource;
     }
 
@@ -135,6 +144,23 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     public ERepositoryObjectType getCodeType() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
+            RepositoryNode node) {
+        if (type == ESBRepositoryNodeType.SERVICES) {
+            ServiceConnection serviceConnection = ((ServiceItem) repositoryObject.getProperty().getItem()).getServiceConnection();
+            List<ServiceOperation> listOperation = serviceConnection.getServiceOperation();
+            for (ServiceOperation operation : listOperation) {
+                // RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(((ServiceItem)
+                // repositoryObject
+                // .getProperty().getItem()).getProperty()), node, ENodeType.REPOSITORY_ELEMENT);
+                RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), ESBImage.SERVICE_ICON); //$NON-NLS-1$
+                operationNode.setProperties(EProperties.LABEL, operation.getLabel());
+                operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
+                node.getChildren().add(operationNode);
+            }
+        }
     }
 
 }

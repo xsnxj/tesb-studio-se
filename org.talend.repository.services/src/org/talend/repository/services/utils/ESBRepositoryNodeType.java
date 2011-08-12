@@ -21,4 +21,5 @@ public class ESBRepositoryNodeType {
 
     public static ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, "SERVICES");
+
 }

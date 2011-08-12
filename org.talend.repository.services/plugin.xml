@@ -28,6 +28,16 @@
           id="org.talend.repository.services.action.ServiceEditPropertiesAction"
           name="Edit Properties">
     </Action>
+    <Action
+          class="org.talend.repository.services.action.AssignJobAction"
+          id="org.talend.repository.services.action.AssignJobAction"
+          name="Assign Job">
+    </Action>
+    <Action
+          class="org.talend.repository.services.action.CreateNewJobAction"
+          id="org.talend.repository.services.Action2"
+          name="Create New Job">
+    </Action>
  </extension>
  <extension
        point="org.talend.core.repository.repository_node_provider">
