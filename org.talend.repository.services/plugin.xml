@@ -35,12 +35,12 @@
     </Action>
     <Action
           class="org.talend.repository.services.action.CreateNewJobAction"
-          id="org.talend.repository.services.Action2"
+          id="org.talend.repository.services.action.CreateNewJobAction"
           name="Create New Job">
     </Action>
     <Action
           class="org.talend.repository.services.action.OpenWSDLEditorAction"
-          id="org.talend.repository.services.Action1"
+          id="org.talend.repository.services.action.OpenWSDLEditorAction"
           name="Open WSDL Editor">
     </Action>
  </extension>
