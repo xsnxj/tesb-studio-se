@@ -1,0 +1,84 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		java.util.List
+	"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+
+	boolean isOneWay = node.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
+%>
+	ESBProviderCallback esbHandler_<%=cid%> =
+			(ESBProviderCallback) globalMap.get("esbHandler");
+
+	java.util.Map<String, Object> requestMessage_<%=cid%> =
+			(java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
+			
+<% if (isOneWay) { %>
+			// esbHandler_<%=cid%>.sendResponse(null);
+<% } %>
+
+	String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
+	String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
+	String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
+	String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
+	String body_<%=cid%> = (String) requestMessage_<%=cid%>.get("BODY");
+	java.util.Map<String, String> params_<%=cid%> =
+		(java.util.Map<String, String>) requestMessage_<%=cid%>.get("PARAMS");
+<%	
+
+	List<IMetadataTable> metadatas = node.getMetadataList();
+	if (null != metadatas && 0 < metadatas.size()) {
+		IMetadataTable metadata = metadatas.get(0);
+		if (null != metadata) {
+			List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+			if (null != conns && !conns.isEmpty()) {
+				for (IConnection conn : conns) {
+					if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+						continue;
+					}
+%>
+					if (matchedFlow_<%=cid%>.equals("<%=conn.getName()%>")) {
+						<%=conn.getName()%> = new <%=conn.getName()%>Struct();
+						<%=conn.getName()%>.uri = uri_<%=cid%>;
+						<%
+						IMetadataTable connMetadata = conn.getMetadataTable();
+						List<IMetadataColumn> connColumnList = connMetadata.getListColumns();
+						for (IMetadataColumn connColumn : connColumnList) {
+							String columnName = connColumn.getLabel();
+							// TODO: check on talend type = string
+							if (!"uri".equals(columnName) && !"body".equals(columnName)) {
+							%>
+								if (params_<%=cid%>.containsKey("<%=columnName%>")) {
+									<%=conn.getName()%>.<%=columnName%> = params_<%=cid%>.get("<%=columnName%>");
+								}
+							<%
+							}
+						}
+						%>
+						<%
+							if (null != connMetadata.getColumn("body")) {
+							%>
+								<%=conn.getName()%>.body = body_<%=cid%>;
+							<%
+							}
+						%>
+					} else {
+						<%=conn.getName()%> = null;
+					}
+<%
+				}
+			}
+		}
+	}
+%>
+
