@@ -126,8 +126,12 @@ if (actAsProvider || actAsConsumer) { %>
 	}
 <% } %>
 
+<% if (actAsProvider || actAsConsumer
+	|| !process.getNodesOfType("tESBProviderResponse").isEmpty()
+	|| !process.getNodesOfType("tESBProviderFault").isEmpty()) { %>
 	interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
 		void setCustomProperties(java.util.Map<String, String> props);
 		void sendFault(Throwable e);
 		void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
 	}
+<% } %>
