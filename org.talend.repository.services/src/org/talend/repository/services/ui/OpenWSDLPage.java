@@ -149,7 +149,9 @@ public class OpenWSDLPage extends WizardPage {
                         operationNode.setProperties(EProperties.LABEL, repositoryNode.getObject().getLabel());
                         operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                         serviceOperation.setOperationName(operation.getName());
-                        serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
+                        if (operation.getDocumentationElement() != null) {
+                            serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
+                        }
                         serviceOperation.setLabel(operation.getName());
                         item.getServiceConnection().getServiceOperation().add(serviceOperation);
                     }

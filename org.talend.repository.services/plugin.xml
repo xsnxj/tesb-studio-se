@@ -38,6 +38,11 @@
           id="org.talend.repository.services.Action2"
           name="Create New Job">
     </Action>
+    <Action
+          class="org.talend.repository.services.action.OpenWSDLEditorAction"
+          id="org.talend.repository.services.Action1"
+          name="Open WSDL Editor">
+    </Action>
  </extension>
  <extension
        point="org.talend.core.repository.repository_node_provider">

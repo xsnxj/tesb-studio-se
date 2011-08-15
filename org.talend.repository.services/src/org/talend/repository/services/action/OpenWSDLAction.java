@@ -25,7 +25,6 @@ import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.ui.OpenWSDLWizard;
 import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
@@ -96,10 +95,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
             return;
         }
         setEnabled(true);
-    }
-
-    public Class getClassForDoubleClick() {
-        return ServiceItem.class;
     }
 
     protected void doRun() {
