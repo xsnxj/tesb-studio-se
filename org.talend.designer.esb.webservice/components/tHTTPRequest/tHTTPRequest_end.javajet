@@ -28,7 +28,6 @@
 		globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
 	} // This is the end of the ESB Provider loop
 } finally {
-/*
 	// for "keep listening" == false web service need a time to serve response
 	Thread.currentThread();
 	Thread.sleep(500);
@@ -37,5 +36,4 @@
 		// stop endpoint in case it was opened by job
 		handlerThread_<%=cid%>.stopEndpoint();
 	}
-*/
 }

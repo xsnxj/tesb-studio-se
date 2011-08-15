@@ -31,7 +31,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 			IConnection conn = conns.get(0);
 			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 %>
-	String restProviderStatusCode_<%=cid%> = "<%= ElementParameterParser.getValue(node, "__STATUS_CODE__")%>";
+	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__STATUS_CODE__")%>;
 	String restProviderResponse_<%=cid%> = null;
 
 <%

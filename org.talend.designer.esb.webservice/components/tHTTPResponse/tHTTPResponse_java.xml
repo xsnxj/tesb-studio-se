@@ -39,7 +39,6 @@
 				REQUIRED="true" NUM_ROW="20">
 			<ITEMS DEFAULT="200">
 				<ITEM NAME="200" VALUE="200" />
-				<ITEM NAME="302" VALUE="302" />
 				<ITEM NAME="400" VALUE="400" />
 				<ITEM NAME="404" VALUE="404" />
 				<ITEM NAME="500" VALUE="500" />

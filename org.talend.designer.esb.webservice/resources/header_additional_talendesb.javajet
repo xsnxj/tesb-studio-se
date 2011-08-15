@@ -7,6 +7,8 @@
 
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IProcess
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
 		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 	"
@@ -15,7 +17,7 @@
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
-IProcess process = (IProcess)v.get(0);
+IProcess process = (IProcess) v.get(0);
 
 boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
@@ -37,14 +39,14 @@ if (actAsProvider || actAsConsumer) { %>
 <% if (actAsProvider) {
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
-	INode node = process.getNodesOfType("tESBProviderRequest").get(0);
-	String cid = node.getUniqueName();
+	INode tESBProviderRequestNode = process.getNodesOfType("tESBProviderRequest").get(0);
+	String tESBProviderRequestNodeCid = tESBProviderRequestNode.getUniqueName();
 
-	String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
+	String serviceName = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NAME__");
 	if ("--DEFAULT--".equals(serviceName)) {
 		serviceName = projectName + "_" + processName;
 	}
-	String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
+	String portName = ElementParameterParser.getValue(tESBProviderRequestNode, "__PORT_NAME__");
 	if ("--DEFAULT--".equals(portName)) {
 		portName = serviceName + "_Port";
 	}
@@ -52,11 +54,11 @@ if (actAsProvider || actAsConsumer) { %>
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
-	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
-	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
+	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_LOCATOR__"));
+	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_ACTIVITY_MONITOR__"));
 	%>
 		return new ESBEndpointInfo() {
-			private String uri = <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>;
+			private String uri = <%=ElementParameterParser.getValue(tESBProviderRequestNode, "__ESB_ENDPOINT__")%>;
 			@SuppressWarnings("serial")
 			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
 				// "request-response" or "one-way"
@@ -64,12 +66,12 @@ if (actAsProvider || actAsConsumer) { %>
 				//
 				put("dataFormat", "PAYLOAD");
 				// static
-				put("portName", "{<%=ElementParameterParser.getValue(node, "__PORT_NS__")%>}<%=portName%>");
+				put("portName", "{<%=ElementParameterParser.getValue(tESBProviderRequestNode, "__PORT_NS__")%>}<%=portName%>");
 				// default local part is: projectName + "_" + processName
-				put("serviceName", "{<%=ElementParameterParser.getValue(node, "__SERVICE_NS__")%>}<%=serviceName%>");
+				put("serviceName", "{<%=ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NS__")%>}<%=serviceName%>");
 				// static
 				<%
-					String methodName = ElementParameterParser.getValue(node,"__METHOD__");
+					String methodName = ElementParameterParser.getValue(tESBProviderRequestNode,"__METHOD__");
 					methodName = methodName.split("\\(")[0];
 				%>
 				put("defaultOperationName", "<%=methodName%>");
@@ -82,16 +84,16 @@ if (actAsProvider || actAsConsumer) { %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
 
-		<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
+		<% if (Boolean.valueOf(ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_LOCATOR__"))) {
 			List<Map<String, String>> customProperties = (List<Map<String,String>>)
-					ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+					ElementParameterParser.getObjectValue(tESBProviderRequestNode, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
 			if (!customProperties.isEmpty()) { %>
 				// Service Locator custom properties
-				java.util.Map<String, String> customProps_<%=cid%> = new java.util.HashMap<String, String>();
+				java.util.Map<String, String> customProps_<%=tESBProviderRequestNodeCid%> = new java.util.HashMap<String, String>();
 				<% for (int k = 0; k < customProperties.size(); k++) { %>
-				customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+				customProps_<%=tESBProviderRequestNodeCid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 				<% } %>
-				put("SL-PROPS", customProps_<%=cid%>);
+				put("SL-PROPS", customProps_<%=tESBProviderRequestNodeCid%>);
 			<% } %>
 		<% } %>
 
@@ -135,3 +137,310 @@ if (actAsProvider || actAsConsumer) { %>
 		void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
 	}
 <% } %>
+
+
+
+
+
+<% // REST
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tHTTPRequest");
+if (!httpRequestComponentsList.isEmpty()) {
+	if (httpRequestComponentsList.size() > 1) { %>
+		if (true) {
+			throw new RuntimeException("cannot instantiate REST service: job contains more than one tHTTPRequest component");
+		}
+<%	}
+	INode tHTTPRequestNode = httpRequestComponentsList.get(0);
+	String tHTTPRequestNodeCid = tHTTPRequestNode.getUniqueName();
+%>
+/**
+ * queued message exchange
+ */
+class QueuedExchangeContextImpl<T> {
+
+	/**
+	 * Exchange timeout in seconds
+	 */
+	private static final long EXCHANGE_TIMEOUT = 50;
+
+	private final java.util.concurrent.Exchanger<Exception> exceptionExchange =
+		new java.util.concurrent.Exchanger<Exception>();
+	private final java.util.concurrent.CountDownLatch latch =
+		new java.util.concurrent.CountDownLatch(1);
+
+	private final T input;
+
+	private T output = null;
+
+	public QueuedExchangeContextImpl(T input) {
+		this.input = input;
+	}
+
+	/**
+	 * Don't forget to call this method when you are done
+	 * with processing of the {@link QueuedExchangeContext}
+	 */
+	public void release() throws Exception {
+		latch.countDown();
+		Exception exception;
+		try {
+			exception = exceptionExchange.exchange(null, EXCHANGE_TIMEOUT,
+					java.util.concurrent.TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			throw new Exception(e);
+		} catch (java.util.concurrent.TimeoutException e) {
+			throw new Exception(e);
+		}
+		if (exception != null) {
+			throw exception;
+		}
+	}
+
+	/**
+	 * This operation have to be called on the Web Service
+	 * thread to send response if required
+	 *
+	 * @throws InterruptedException
+	 */
+	public void completeQueuedProcessing() throws InterruptedException {
+		exceptionExchange.exchange(null);
+	}
+
+	/**
+	 * @throws InterruptedException
+	 */
+	void waitForRelease(long timeout, java.util.concurrent.TimeUnit unit)
+			throws InterruptedException {
+		latch.await(timeout, unit);
+	}
+
+	public T getInput() {
+		return input;
+	}
+
+	public void serveOutput(T response) {
+		output = response;
+	}
+
+	public T getResponse() {
+		return output;
+	}
+}
+
+/**
+ * message exchange controller
+ */
+class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
+	private final int MAX_QUEUE_SIZE = 1000;
+
+	private final int WAIT_TIMEOUT_SECONDS = 120;
+
+	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl<?>> queue =
+		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl<?>>(MAX_QUEUE_SIZE);
+
+	/**
+	 * This method add a newly created
+	 * {@link QueuedExchangeContextImpl} into the internal
+	 * blocking queue where consumer thread is waiting for it.
+	 * Then it waits until the {@link QueuedExchangeContextImpl}
+	 * will be completed for request-response operations
+	 */
+	public QueuedExchangeContextImpl<T> invoke(T request) {
+		QueuedExchangeContextImpl<T> context =
+			new QueuedExchangeContextImpl<T>(request);
+		boolean inserted = queue.offer(context);
+		if (!inserted) {
+			try {
+				context.release();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			throw new RuntimeException(
+					"Can't queue request, queue size of "
+							+ MAX_QUEUE_SIZE + " is exceeded");
+		} else {
+			try {
+				context.waitForRelease(WAIT_TIMEOUT_SECONDS,
+						java.util.concurrent.TimeUnit.SECONDS);
+			} catch (InterruptedException ie) {
+				throw new RuntimeException(
+						"job execution timeout: " + ie.getMessage());
+			}
+		}
+		return context;
+	}
+
+	QueuedExchangeContextImpl<T> currentExchangeContext;
+
+	public T getRequest() throws ESBJobInterruptedException {
+		currentExchangeContext = null;
+		try {
+			currentExchangeContext = (QueuedExchangeContextImpl<T>) queue.take();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		return currentExchangeContext.getInput();
+	}
+
+	public void sendResponse(Object output) {
+		if (null == currentExchangeContext) {
+			throw new RuntimeException("sendResponse() invoked before getRequest()");
+		}
+
+		currentExchangeContext.serveOutput((T) output);
+
+		try {
+			currentExchangeContext.release();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+}
+
+/**
+ * REST provider implementation
+ */
+@javax.ws.rs.Path("/")
+@javax.ws.rs.Produces("text/plain")
+@javax.ws.rs.Consumes("text/plain")
+public class RESTProvider_<%=tHTTPRequestNodeCid%> {
+
+	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler;
+
+	public RESTProvider_<%=tHTTPRequestNodeCid%>(
+			QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler) {
+		this.messageHandler = messageHandler;
+	}
+
+	private java.util.Map<String, String> getPathParameters(javax.ws.rs.core.UriInfo uriInfo) {
+		java.util.Map<String, String> params = new java.util.HashMap<String, String>();
+		javax.ws.rs.core.MultivaluedMap<String, String> pathParams = uriInfo.getPathParameters();
+		for (String paramName : pathParams.keySet()) {
+			params.put(paramName, pathParams.getFirst(paramName));
+		}
+		return params;
+	}
+
+<%
+List<? extends IConnection> conns = tHTTPRequestNode.getOutgoingSortedConnections();
+if (null != conns && !conns.isEmpty()) {
+	boolean isOneWay2 = tHTTPRequestNode.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
+	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tHTTPRequestNode, "__SCHEMAS__");
+	for (IConnection conn : conns) {
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+			String connName = conn.getName();
+			String httpWord = null;
+			String uriPattern = null;
+
+			boolean foundMapping = false;
+			for (Map<String, String> mapping : mappings) {
+				String outputConn = mapping.get("SCHEMA");
+				if (connName.equals(outputConn)) {
+					foundMapping = true;
+					httpWord = mapping.get("HTTP_WORD");
+					uriPattern = mapping.get("URI_PATTERN");
+				}
+			}
+			if (!foundMapping) {
+				continue;
+			}
+%>
+	@javax.ws.rs.<%=httpWord%>()
+<% if (null != uriPattern) { %>
+	@javax.ws.rs.Path(<%=uriPattern%>)
+<% } %>
+	public javax.ws.rs.core.Response <%=connName%>(
+			@javax.ws.rs.core.Context javax.ws.rs.core.UriInfo uriInfo, String body) {
+
+		try {
+			java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
+			request.put("WORD", "<%=httpWord%>");
+			request.put("OPERATION", "<%=connName%>");
+			request.put("URI", uriInfo.getPath());
+			request.put("PATTERN", <%=uriPattern%>);
+			request.put("PARAMS", getPathParameters(uriInfo));
+			request.put("BODY", body);
+
+			QueuedExchangeContextImpl<java.util.Map<String, Object>> messageExchange =
+				messageHandler.invoke(request);
+
+			try {
+<% if (isOneWay2) { %>
+				// return null;
+				return javax.ws.rs.core.Response.status(200).build();
+<% } else { %>
+				java.util.Map<String, Object> responseMap = messageExchange.getResponse();
+				String responseBody = (String) responseMap.get("BODY");
+				Integer status = (Integer) responseMap.get("STATUS");
+				if (null == status) {
+					status = 200;
+				}
+
+				return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
+<% } %>
+			} finally {
+				messageExchange.completeQueuedProcessing();
+			}
+
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
+			throw new javax.ws.rs.WebApplicationException(ex, 500);
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			throw new javax.ws.rs.WebApplicationException(ex, 500);
+		} finally {
+			// System.out.println(System.currentTimeMillis() + " <- handleMessage");
+		}
+	}
+<%
+		}
+	}
+}
+%>
+}
+
+
+class HandlerThread_<%=tHTTPRequestNodeCid%> extends Thread {
+
+	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler;
+
+	private final String endpointUrl = <%=ElementParameterParser.getValue(tHTTPRequestNode, "__REST_ENDPOINT__")%>;
+
+	private org.apache.cxf.endpoint.Server server;
+
+	public HandlerThread_<%=tHTTPRequestNodeCid%>(QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler) {
+		this.handler = handler;
+	}
+
+	public void run() {
+		try {
+			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
+					new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
+			sf.setTransportId("http://cxf.apache.org/transports/http");
+			sf.setResourceClasses(RESTProvider_<%=tHTTPRequestNodeCid%>.class);
+			sf.setResourceProvider(RESTProvider_<%=tHTTPRequestNodeCid%>.class,
+					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(
+							new RESTProvider_<%=tHTTPRequestNodeCid%>(handler)));
+			sf.setAddress(endpointUrl);
+			server = sf.create();
+
+			System.out.println("rest service [endpoint: " + endpointUrl + "] published");
+		} catch (Throwable e) {
+			e.printStackTrace();
+//			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+//			e.printStackTrace(new java.io.PrintStream(baos));
+//			System.out.println("error:\n" + baos.toString());
+		}
+	}
+
+	public void stopEndpoint() {
+		if (null != server) {
+			server.stop();
+			server.destroy();
+			System.out.println("rest service [endpoint: " + endpointUrl + "] unpublished");
+		}
+	}
+}
+<%
+}
+%>
