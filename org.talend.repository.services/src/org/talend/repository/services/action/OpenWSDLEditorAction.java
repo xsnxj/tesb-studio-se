@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -84,22 +85,21 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
             return;
         }
         ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
-        String wsdlFile = serviceItem.getServiceConnection().getWSDLContent().toString();
         try {
             IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-            IFile file = currentProject.getFolder("temp").getFile(repositoryNode.getObject().getProperty().getLabel());
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(wsdlFile.getBytes());
+            IFile file = currentProject.getFolder("temp").getFile(repositoryNode.getObject().getProperty().getLabel() + ".wsdl");
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serviceItem.getServiceConnection()
+                    .getWSDLContent());
             if (!file.exists()) {
                 file.create(byteArrayInputStream, true, null);
-                file.setContents(byteArrayInputStream, 0, null);
             } else {
                 file.delete(true, null);
                 file.create(byteArrayInputStream, true, null);
-                file.setContents(byteArrayInputStream, 0, null);
             }
             IEditorInput editorInput = new FileEditorInput(file);
             WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            page.openEditor(editorInput, ID, true);
+            IEditorPart editor = page.openEditor(editorInput, ID, true);
+
         } catch (PersistenceException e) {
             e.printStackTrace();
         } catch (CoreException e) {
