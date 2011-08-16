@@ -44,7 +44,7 @@
 //	for (Map<String, String> mapping : mappings) {
 //		String outpuFlow = mapping.get("SCHEMA");
 //		String uriPattern = mapping.get("URI_PATTERN");
-//		String httpWord = mapping.get("HTTP_WORD");
+//		String httpWord = mapping.get("HTTP_VERB");
 //		
 //		restMapping.put(outpuFlow, uriPattern);  // TODO: !!! now last win !!!
 		

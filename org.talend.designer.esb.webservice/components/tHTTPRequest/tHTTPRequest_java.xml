@@ -43,7 +43,7 @@
 		<PARAMETER NAME="SCHEMAS" FIELD="TABLE" NUM_ROW="10" REQUIRED="true" NB_LINES="5">
 			<ITEMS>
 				<ITEM NAME="SCHEMA" FIELD="SCHEMA_TYPE" />
-				<ITEM NAME="HTTP_WORD" FIELD="CLOSED_LIST">
+				<ITEM NAME="HTTP_VERB" FIELD="CLOSED_LIST">
 					<ITEMS DEFAULT="GET">
 						<ITEM NAME="GET" VALUE="GET" />
 						<ITEM NAME="POST" VALUE="POST" />
@@ -149,12 +149,12 @@
 			<IMPORT NAME="jetty-util"
 					MODULE="jetty-util-7.4.2.v20110526.jar"
 					REQUIRED="true"/>
-			<IMPORT NAME="slf4j-api"
+			<!--IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.6.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="slf4j-jdk14"
 					MODULE="slf4j-jdk14-1.6.1.jar"
-					REQUIRED="true"/>
+					REQUIRED="true"/-->
 
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.5.RELEASE.jar"
