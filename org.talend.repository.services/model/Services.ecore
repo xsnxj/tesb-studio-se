@@ -13,7 +13,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ServiceConnection" eSuperTypes="../../org.talend.model/model/metadata.ecore#//Connection">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="WSDLContent" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EByteArray"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="WSDLPath" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="serviceOperation" upperBound="-1"
         eType="#//ServiceOperation"/>

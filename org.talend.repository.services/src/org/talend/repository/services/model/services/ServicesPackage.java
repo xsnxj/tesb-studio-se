@@ -89,6 +89,15 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_ITEM__PARENT = PropertiesPackage.ITEM__PARENT;
 
     /**
+     * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_ITEM__REFERENCE_RESOURCES = PropertiesPackage.ITEM__REFERENCE_RESOURCES;
+
+    /**
      * The feature id for the '<em><b>Service Connection</b></em>' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -538,22 +547,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__CONTEXT_ID = ConnectionPackage.CONNECTION__CONTEXT_ID;
 
     /**
-     * The feature id for the '<em><b>WSDL Content</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_CONNECTION__WSDL_CONTENT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 0;
-
-    /**
      * The feature id for the '<em><b>WSDL Path</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__WSDL_PATH = ConnectionPackage.CONNECTION_FEATURE_COUNT + 1;
+    int SERVICE_CONNECTION__WSDL_PATH = ConnectionPackage.CONNECTION_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Service Operation</b></em>' reference list.
@@ -562,7 +562,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__SERVICE_OPERATION = ConnectionPackage.CONNECTION_FEATURE_COUNT + 2;
+    int SERVICE_CONNECTION__SERVICE_OPERATION = ConnectionPackage.CONNECTION_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Service Connection</em>' class.
@@ -571,7 +571,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION_FEATURE_COUNT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 3;
+    int SERVICE_CONNECTION_FEATURE_COUNT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 2;
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceItem <em>Service Item</em>}'.
@@ -652,17 +652,6 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EClass getServiceConnection();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLContent <em>WSDL Content</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>WSDL Content</em>'.
-     * @see org.talend.repository.services.model.services.ServiceConnection#getWSDLContent()
-     * @see #getServiceConnection()
-     * @generated
-     */
-    EAttribute getServiceConnection_WSDLContent();
 
     /**
      * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLPath <em>WSDL Path</em>}'.
@@ -774,14 +763,6 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EClass SERVICE_CONNECTION = eINSTANCE.getServiceConnection();
-
-        /**
-         * The meta object literal for the '<em><b>WSDL Content</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute SERVICE_CONNECTION__WSDL_CONTENT = eINSTANCE.getServiceConnection_WSDLContent();
 
         /**
          * The meta object literal for the '<em><b>WSDL Path</b></em>' attribute feature.

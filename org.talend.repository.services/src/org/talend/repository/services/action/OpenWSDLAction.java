@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
@@ -52,7 +53,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
 
         currentNodeType = ESBRepositoryNodeType.SERVICES;
     }

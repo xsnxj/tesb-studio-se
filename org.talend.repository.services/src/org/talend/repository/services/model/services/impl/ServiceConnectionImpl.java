@@ -31,7 +31,6 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getWSDLContent <em>WSDL Content</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getWSDLPath <em>WSDL Path</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getServiceOperation <em>Service Operation</em>}</li>
  * </ul>
@@ -40,26 +39,6 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * @generated
  */
 public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConnection {
-    /**
-     * The default value of the '{@link #getWSDLContent() <em>WSDL Content</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getWSDLContent()
-     * @generated
-     * @ordered
-     */
-    protected static final byte[] WSDL_CONTENT_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getWSDLContent() <em>WSDL Content</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getWSDLContent()
-     * @generated
-     * @ordered
-     */
-    protected byte[] wsdlContent = WSDL_CONTENT_EDEFAULT;
-
     /**
      * The default value of the '{@link #getWSDLPath() <em>WSDL Path</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -114,27 +93,6 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * <!-- end-user-doc -->
      * @generated
      */
-    public byte[] getWSDLContent() {
-        return wsdlContent;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setWSDLContent(byte[] newWSDLContent) {
-        byte[] oldWSDLContent = wsdlContent;
-        wsdlContent = newWSDLContent;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_CONNECTION__WSDL_CONTENT, oldWSDLContent, wsdlContent));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public String getWSDLPath() {
         return wsdlPath;
     }
@@ -171,8 +129,6 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_CONTENT:
-                return getWSDLContent();
             case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
                 return getWSDLPath();
             case ServicesPackage.SERVICE_CONNECTION__SERVICE_OPERATION:
@@ -190,9 +146,6 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_CONTENT:
-                setWSDLContent((byte[])newValue);
-                return;
             case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
                 setWSDLPath((String)newValue);
                 return;
@@ -212,9 +165,6 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_CONTENT:
-                setWSDLContent(WSDL_CONTENT_EDEFAULT);
-                return;
             case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
                 setWSDLPath(WSDL_PATH_EDEFAULT);
                 return;
@@ -233,8 +183,6 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_CONTENT:
-                return WSDL_CONTENT_EDEFAULT == null ? wsdlContent != null : !WSDL_CONTENT_EDEFAULT.equals(wsdlContent);
             case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
                 return WSDL_PATH_EDEFAULT == null ? wsdlPath != null : !WSDL_PATH_EDEFAULT.equals(wsdlPath);
             case ServicesPackage.SERVICE_CONNECTION__SERVICE_OPERATION:
@@ -253,9 +201,7 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (WSDLContent: ");
-        result.append(wsdlContent);
-        result.append(", WSDLPath: ");
+        result.append(" (WSDLPath: ");
         result.append(wsdlPath);
         result.append(')');
         return result.toString();

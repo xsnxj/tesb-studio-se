@@ -16,10 +16,7 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ui.intro,
  org.eclipse.ui.views.properties.tabbed,
- org.eclipse.ui.ide,
- org.eclipse.wst.wsdl.ui,
- org.eclipse.wst.xsd.ui,
- org.eclipse.xsd
+ org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: lib/wsdl4j-1.6.2.jar,

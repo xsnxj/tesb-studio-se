@@ -13,6 +13,7 @@
 package org.talend.repository.services.ui;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,15 +32,24 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
+import org.talend.core.model.properties.ByteArray;
+import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryViewObject;
+import org.talend.core.repository.model.ResourceModelUtils;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -125,7 +135,36 @@ public class OpenWSDLPage extends WizardPage {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            item.getServiceConnection().setWSDLContent(buffer.toString().getBytes());
+            // copy file to item
+            try {
+                IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+                IFile fileTemp = currentProject.getFolder("services").getFile(
+                        repositoryNode.getObject().getProperty().getLabel() + "_"
+                                + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer.toString().getBytes());
+                if (!fileTemp.exists()) {
+                    fileTemp.create(byteArrayInputStream, true, null);
+                } else {
+                    fileTemp.delete(true, null);
+                    fileTemp.create(byteArrayInputStream, true, null);
+                }
+            } catch (PersistenceException e1) {
+                e1.printStackTrace();
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
+            //
+            ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+            createReferenceFileItem.setContent(byteArray);
+            createReferenceFileItem.setExtension("wsdl");
+            if (item.getReferenceResources().size() == 0) {
+                item.getReferenceResources().add(createReferenceFileItem);
+                createReferenceFileItem.getContent().setInnerContent(buffer.toString().getBytes());
+            } else {
+                ((ReferenceFileItem) item.getReferenceResources().get(0)).getContent().setInnerContent(
+                        buffer.toString().getBytes());
+            }
             //
             WSDLFactory wsdlFactory;
             try {

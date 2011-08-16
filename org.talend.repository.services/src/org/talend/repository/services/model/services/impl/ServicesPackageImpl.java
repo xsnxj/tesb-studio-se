@@ -177,7 +177,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServiceConnection_WSDLContent() {
+    public EAttribute getServiceConnection_WSDLPath() {
         return (EAttribute)serviceConnectionEClass.getEStructuralFeatures().get(0);
     }
 
@@ -186,17 +186,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServiceConnection_WSDLPath() {
-        return (EAttribute)serviceConnectionEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EReference getServiceConnection_ServiceOperation() {
-        return (EReference)serviceConnectionEClass.getEStructuralFeatures().get(2);
+        return (EReference)serviceConnectionEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -234,7 +225,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__LABEL);
 
         serviceConnectionEClass = createEClass(SERVICE_CONNECTION);
-        createEAttribute(serviceConnectionEClass, SERVICE_CONNECTION__WSDL_CONTENT);
         createEAttribute(serviceConnectionEClass, SERVICE_CONNECTION__WSDL_PATH);
         createEReference(serviceConnectionEClass, SERVICE_CONNECTION__SERVICE_OPERATION);
     }
@@ -284,7 +274,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEAttribute(getServiceOperation_Label(), ecorePackage.getEString(), "label", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getServiceConnection_WSDLContent(), theEcorePackage.getEByteArray(), "WSDLContent", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceConnection_WSDLPath(), theEcorePackage.getEString(), "WSDLPath", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServiceConnection_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

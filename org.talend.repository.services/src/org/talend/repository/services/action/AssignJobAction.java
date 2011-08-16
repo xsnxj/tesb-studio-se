@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -37,7 +38,7 @@ public class AssignJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
 
         currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
     }

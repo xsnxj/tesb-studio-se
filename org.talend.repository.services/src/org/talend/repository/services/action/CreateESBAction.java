@@ -29,11 +29,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
@@ -60,7 +60,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         this.setToolTipText(CREATE_LABEL);
 
         Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
 
     public CreateESBAction(boolean isToolbar) {

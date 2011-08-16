@@ -18,7 +18,6 @@ import org.talend.core.model.metadata.builder.connection.Connection;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLContent <em>WSDL Content</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLPath <em>WSDL Path</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getServiceOperation <em>Service Operation</em>}</li>
  * </ul>
@@ -29,32 +28,6 @@ import org.talend.core.model.metadata.builder.connection.Connection;
  * @generated
  */
 public interface ServiceConnection extends Connection {
-    /**
-     * Returns the value of the '<em><b>WSDL Content</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>WSDL Content</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>WSDL Content</em>' attribute.
-     * @see #setWSDLContent(byte[])
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceConnection_WSDLContent()
-     * @model
-     * @generated
-     */
-    byte[] getWSDLContent();
-
-    /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLContent <em>WSDL Content</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>WSDL Content</em>' attribute.
-     * @see #getWSDLContent()
-     * @generated
-     */
-    void setWSDLContent(byte[] value);
-
     /**
      * Returns the value of the '<em><b>WSDL Path</b></em>' attribute.
      * <!-- begin-user-doc -->
