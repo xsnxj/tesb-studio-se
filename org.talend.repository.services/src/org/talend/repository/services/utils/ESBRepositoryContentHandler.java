@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -95,7 +96,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
 
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == ESBRepositoryNodeType.SERVICES) {
-            return ESBImage.SERVICE_ICON;
+            return EImage.DEFAULT_IMAGE;
         }
         return null;
     }
@@ -155,7 +156,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
                 // RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(((ServiceItem)
                 // repositoryObject
                 // .getProperty().getItem()).getProperty()), node, ENodeType.REPOSITORY_ELEMENT);
-                RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), ESBImage.SERVICE_ICON); //$NON-NLS-1$
+                RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
                 operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                 operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                 node.getChildren().add(operationNode);

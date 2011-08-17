@@ -17,7 +17,7 @@ import org.eclipse.ui.PartInitException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
-import org.talend.commons.ui.runtime.image.ECoreImage;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
@@ -30,7 +30,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
-import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.MultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
@@ -74,7 +73,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_WIZ));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
 
         currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
 
@@ -105,7 +104,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
         //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();

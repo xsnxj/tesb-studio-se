@@ -15,6 +15,7 @@ package org.talend.repository.services.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.repository.IExtendRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -27,7 +28,7 @@ public class ServiceExtendNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getNodeImage()
      */
     public IImage getNodeImage() {
-        return ESBImage.SERVICE_ICON;
+        return EImage.DEFAULT_IMAGE;
     }
 
     /*
