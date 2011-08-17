@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
@@ -42,7 +41,6 @@ import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.ui.ESBWizard;
-import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
 import org.talend.repository.ui.views.RepositoryView;
@@ -59,7 +57,6 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
 
-        Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
 

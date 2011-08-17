@@ -61,4 +61,13 @@
           class="org.talend.repository.services.utils.ESBRepositoryContentHandler">
     </RepositoryContent>
  </extension>
+ <extension
+       point="org.eclipse.ui.editors">
+    <editor
+          class="org.talend.repository.services.utils.LocalWSDLEditor"
+          default="false"
+          id="org.talend.repository.services.utils.LocalWSDLEditor"
+          name="WSDLEditor">
+    </editor>
+ </extension>
 </plugin>

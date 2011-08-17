@@ -31,12 +31,13 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.services.utils.LocalWSDLEditor;
 
 public class OpenWSDLEditorAction extends AbstractCreateAction {
 
     private ERepositoryObjectType currentNodeType;
 
-    private final static String ID = "org.eclipse.wst.wsdl.ui.internal.WSDLEditor";
+    private final static String ID = "org.talend.repository.services.utils.LocalWSDLEditor";
 
     private Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
 
@@ -107,18 +108,32 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
             for (ReferenceFileItem item : list) {
                 IPath path = Path.fromOSString(item.eResource().getURI().path());
             }
-            IFile file = currentProject.getFolder("services").getFile(
+            String foldPath = serviceItem.getState().getPath();
+            String folder = "";
+            if (!foldPath.equals("")) {
+                folder = "/" + foldPath;
+            }
+            IFile file = currentProject.getFolder("services" + folder).getFile(
                     repositoryNode.getObject().getProperty().getLabel() + "_"
                             + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
             if (file.exists()) {
                 IEditorInput editorInput = new FileEditorInput(file);
                 WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.openEditor(editorInput, ID, true);
+                if (editor instanceof LocalWSDLEditor) {
+                    LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
+                    wsdlEditor.setServiceItem(serviceItem);
+                    wsdlEditor.setRepositoryNode(repositoryNode);
+                }
             } else {
                 // copy file to item
                 IFile fileTemp = null;
                 try {
-                    fileTemp = currentProject.getFolder("services").getFile(
+                    folder = "";
+                    if (!foldPath.equals("")) {
+                        folder = "/" + foldPath;
+                    }
+                    fileTemp = currentProject.getFolder("services" + folder).getFile(
                             repositoryNode.getObject().getProperty().getLabel() + "_"
                                     + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
@@ -147,6 +162,11 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                 IEditorInput editorInput = new FileEditorInput(fileTemp);
                 WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.openEditor(editorInput, ID, true);
+                if (editor instanceof LocalWSDLEditor) {
+                    LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
+                    wsdlEditor.setServiceItem(serviceItem);
+                    wsdlEditor.setRepositoryNode(repositoryNode);
+                }
             }
         } catch (PersistenceException e) {
             e.printStackTrace();

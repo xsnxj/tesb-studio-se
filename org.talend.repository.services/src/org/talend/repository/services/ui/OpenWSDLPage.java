@@ -138,7 +138,12 @@ public class OpenWSDLPage extends WizardPage {
             // copy file to item
             try {
                 IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-                IFile fileTemp = currentProject.getFolder("services").getFile(
+                String foldPath = item.getState().getPath();
+                String folder = "";
+                if (!foldPath.equals("")) {
+                    folder = "/" + foldPath;
+                }
+                IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
                         repositoryNode.getObject().getProperty().getLabel() + "_"
                                 + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer.toString().getBytes());
