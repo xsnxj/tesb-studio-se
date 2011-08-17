@@ -13,7 +13,6 @@
             name="%importAction.name">
       </Action>
    </extension>
-   <!--
    <extension
          point="org.talend.core.repositoryContextualsActions">
       <Action
@@ -26,5 +25,4 @@
             name="%exportAction.name">
       </Action>
    </extension>
-   -->
 </plugin>

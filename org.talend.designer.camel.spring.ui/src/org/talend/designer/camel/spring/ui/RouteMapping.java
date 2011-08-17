@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.camel.spring.ui.utils;
+package org.talend.designer.camel.spring.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.talend.designer.camel.spring.core.ICamelSpringConstants;
  */
 public final class RouteMapping {
 
-    public static final String[] COMPOMENT_NAMES = new String[33];
+    public static final String[] COMPOMENT_NAMES = new String[ICamelSpringConstants.LENGTH];
 
     /**
      * Connection style mapping
@@ -123,6 +123,11 @@ public final class RouteMapping {
         COMPOMENT_NAMES[ICamelSpringConstants.TRY] = "cTry";
         COMPOMENT_NAMES[ICamelSpringConstants.WIRETAP] = "cWireTap";
         COMPOMENT_NAMES[ICamelSpringConstants.UNKNOWN] = "cMessagingEndpoint";
+        
+        COMPOMENT_NAMES[ICamelSpringConstants.WHEN] = "when";
+        COMPOMENT_NAMES[ICamelSpringConstants.CATCH] = "catch";
+        COMPOMENT_NAMES[ICamelSpringConstants.OTHER] = "other";
+        COMPOMENT_NAMES[ICamelSpringConstants.FINALLY] = "finally";
     }
 
     /**

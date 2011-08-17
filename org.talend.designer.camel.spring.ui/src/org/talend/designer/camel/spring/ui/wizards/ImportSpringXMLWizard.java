@@ -154,10 +154,10 @@ public class ImportSpringXMLWizard extends Wizard {
         if(message == null){
             return targetException.toString();
         }
-        if(message.length() < 500){
+        if(message.length() < 1000){
             return message;
         }else{
-            message = message.substring(0, 500) + "..."; //$NON-NLS-1$
+            message = message.substring(0, 1000) + "..."; //$NON-NLS-1$
         }
         return message;
     }

@@ -23,13 +23,13 @@ import org.talend.core.model.components.ComponentUtilities;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.camel.spring.core.ISpringParserListener;
-import org.talend.designer.camel.spring.ui.handlers.ConnectionParameterHandler;
-import org.talend.designer.camel.spring.ui.handlers.IParameterHandler;
-import org.talend.designer.camel.spring.ui.handlers.ParameterHandlerFactory;
+import org.talend.designer.camel.spring.ui.RouteMapping;
+import org.talend.designer.camel.spring.ui.imports.ConnectionParameterHandler;
+import org.talend.designer.camel.spring.ui.imports.IParameterHandler;
+import org.talend.designer.camel.spring.ui.imports.ParameterHandlerFactory;
 import org.talend.designer.camel.spring.ui.layout.Routing;
 import org.talend.designer.camel.spring.ui.layout.RoutingLayoutManager;
 import org.talend.designer.camel.spring.ui.layout.RoutingNode;
-import org.talend.designer.camel.spring.ui.utils.RouteMapping;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -58,10 +58,12 @@ public class SpringParserListener implements ISpringParserListener {
 
     public SpringParserListener(ProcessType processType) {
         this.processType = processType;
-        connectionStyleMap = RouteMapping.getConnectionMapping();
-        paramHandlers = ParameterHandlerFactory.INSTANCE.getHandlers();
-        routings = new ArrayList<Routing>();
-        routingNodes = new HashMap<String, RoutingNode>();
+        this.connectionStyleMap = RouteMapping.getConnectionMapping();
+        this.paramHandlers = ParameterHandlerFactory.INSTANCE.getHandlers();
+        this.routings = new ArrayList<Routing>();
+        this.routingNodes = new HashMap<String, RoutingNode>();
+        this.fileFact = TalendFileFactory.eINSTANCE;
+        this.layoutManager =  new RoutingLayoutManager();
     }
 
     /**
@@ -190,8 +192,7 @@ public class SpringParserListener implements ISpringParserListener {
      * @see org.talend.designer.camel.spring.core.ISpringParserListener#preProcess()
      */
     public void preProcess() {
-        fileFact = TalendFileFactory.eINSTANCE;
-        layoutManager =  new RoutingLayoutManager();
+        
     }
 
     /*
