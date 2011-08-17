@@ -42,6 +42,7 @@ GPL2 w/ CPE :
 
 MIT License : 
   * SLF4J API Module (org.slf4j:slf4j-api:1.6.1 - http://www.slf4j.org)
+  * SLF4J JDK14 Binding (org.slf4j:slf4j-jdk14:1.6.1 - http://www.slf4j.org)
 
 Mozilla Public License : 
   * Rhino (rhino:js:1.7R2 - http://www.mozilla.org/rhino/)
