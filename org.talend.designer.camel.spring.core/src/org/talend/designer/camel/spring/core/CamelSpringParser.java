@@ -86,7 +86,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	private List<ISpringParserListener> listeners = new ArrayList<ISpringParserListener>();
 
-	private AbstractComponentParser[] parsers = new AbstractComponentParser[33];
+	private AbstractComponentParser[] parsers = new AbstractComponentParser[LENGTH];
 
 	private XmlFileApplicationContext appContext;
 
@@ -169,6 +169,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		endBlockComponentTypes.add(ChoiceDefinition.class);
 		endBlockComponentTypes.add(AggregateDefinition.class);
 		endBlockComponentTypes.add(FilterDefinition.class);
+		endBlockComponentTypes.add(TryDefinition.class);
 //		endBlockComponentTypes.add(DynamicRouterDefinition.class);
 //		endBlockComponentTypes.add(RoutingSlipDefinition.class);
 		endBlockComponentTypes.add(IdempotentConsumerDefinition.class);
@@ -232,6 +233,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			else {
 				fromId = parseProcessorDefinition(nodeIdFactory, fromId,
 						keepFrom, pd, connectionType, null);
+				connectionType = ROUTE;
 				for(Class c:endBlockComponentTypes){
 					if(c == pd.getClass()){
 						connectionType = ROUTE_ENDBLOCK;

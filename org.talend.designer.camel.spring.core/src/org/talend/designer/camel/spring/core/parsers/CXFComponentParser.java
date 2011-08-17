@@ -27,12 +27,17 @@ public class CXFComponentParser extends AbstractComponentParser {
 		String prefix = "cxf:bean:";
 		if(uri.startsWith(prefix)){
 			uri = uri.substring(prefix.length());
+		}else{
+			return;
 		}
 		int index = uri.indexOf("?");
 		if(index!=-1){
 			uri = uri.substring(0,index);
 		}
 		String bean = uri;
+		if(bean.trim().equals("")){
+			return;
+		}
 		BeanDefinition beanDefinition = getBeanDefinition(bean);
 		if(beanDefinition==null){
 			return;

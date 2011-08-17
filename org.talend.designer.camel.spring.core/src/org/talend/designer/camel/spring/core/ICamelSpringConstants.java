@@ -44,9 +44,16 @@ public interface ICamelSpringConstants {
 	public static final int SETBODY = 28;
 	public static final int SETHEADER = 29;
 	public static final int PATTERN = 30;
-	public static final int LOG = 31;
-	public static final int UNKNOWN = 32;
+	public static final int WHEN = 31;
+	public static final int CATCH = 32;
+	public static final int FINALLY = 33;
+	public static final int OTHER = 34;
+	public static final int LOG = 35;
+	public static final int UNKNOWN = 36;
+	public static final int LENGTH = 37;
 
+	public static final int TMP_TRY = -1;
+	
 	// constants
 	public static final String UNIQUE_NAME_ID = "unique_name";
 	public static final String ENDPOINT_URI = "endpoint_uri";
@@ -120,6 +127,7 @@ public interface ICamelSpringConstants {
 	public static final String OE_EXCEPTION_BEHAVIOR = "exception_behavior";
 	public static final String OE_HANDLE_EXCEPTION = "handle_exception";
 	public static final String OE_CONTINUE_EXCEPTION = "continue_exception";
+	public static final String OE_EXCEPTIONS = LB_EXCEPTIONS;
 	
 	//set header
 	public static final String SH_HEADER_NAME = "header_name";
@@ -209,4 +217,69 @@ public interface ICamelSpringConstants {
 	public static final String JMS_SCHEMA_NAME = "jms_schema";
 	public static final String JMS_TYPE = "jms_type";
 	public static final String JMS_DESTINATION = "jms_destination";
+	
+	
+	//output xml elements
+	
+	//ns
+	public static final String BEANS_NS = "http://www.springframework.org/schema/beans";
+	public static final String BEANS_XSD = "http://www.springframework.org/schema/beans/spring-beans-3.0.xsd";
+	public static final String CAMEL_NS = "http://camel.apache.org/schema/spring";
+	public static final String CAMEL_XSD = "http://camel.apache.org/schema/spring/camel-spring.xsd";
+	public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
+	public static final String AMQ_NS = "http://activemq.apache.org/schema/core";
+	public static final String AMQ_XSD = "http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd";
+	public static final String CXF_NS = "http://camel.apache.org/schema/cxf";
+	public static final String CXF_XSD = "http://camel.apache.org/schema/cxf/camel-cxf.xsd";
+	public static final String XMLNS = "xmlns";
+	public static final String XMLNS_XSI = "xmlns:xsi";
+	public static final String XMLNS_CXF = "xmlns:cxf";
+	public static final String XMLNS_AMQ = "xmlns:broker";
+	public static final String NS_LOCATION = "xsi:schemaLocation";
+	
+	//cxf imports
+	public static final String IMPORT_CXF= "classpath:META-INF/cxf/cxf.xml";
+	public static final String IMPORT_SOAP= "classpath:META-INF/cxf/cxf-extension-soap.xml";
+	public static final String IMPORT_JETTY= "classpath:META-INF/cxf/cxf-extension-http-jetty.xml";
+	
+	//elements and attributes
+	public static final String BEANS_ELE = "beans";
+	public static final String IMPORT_ELE = "import";
+	public static final String CAMEL_CONTEXT_ELE = "camelContext";
+	public static final String ROUTE_ELE = "route";
+	public static final String BEAN_ELE = "bean";
+	public static final String FROM_ELE = "from";
+	public static final String TO_ELE = "to";
+	public static final String URI_ATT = "uri";
+	public static final String RESOURCE_ATT = "resource";
+	public static final String SPLIT_ELE = "split";
+	public static final String SETHEADER_ELE = "setHeader";
+	public static final String SETBODY_ELE = "setBody";
+	public static final String CONVERT_ELE = "convertBodyTo";
+	public static final String ENRICH_ELE = "enrich";
+	public static final String POLLENRICH_ELE = "pollEnrich";
+	public static final String WIRETAP_ELE = "wireTap";
+	public static final String AGGREGATE_ELE = "aggregate";
+	public static final String DYNAMIC_ELE = "dynamicRouter";
+	public static final String ROUTINGSLIP_ELE = "routingSlip";
+	public static final String MSGROUTER_ELE = "choice";
+	public static final String MSGFILTER_ELE = "filter";
+	public static final String MULTICAST_ELE = "multicast";
+	public static final String LOADBALANCE_ELE = "loadBalance";
+	public static final String IDEMPOTENT_ELE = "idempotentConsumer";
+	public static final String LOOP_ELE = "loop";
+	public static final String STOP_ELE = "stop";
+	public static final String DELAYER_ELE = "delay";
+	public static final String EXCHANGEPATTERN_ELE = "setExchangePattern";
+	public static final String PROCESSOR_ELE = "process";
+	public static final String THROTTLER_ELE = "throttle";
+	public static final String PIPES_ELE = "pipeline";
+	public static final String INTERCEPT_ELE = "intercept";
+	public static final String ONEXCEPTION_ELE = "onException";
+	public static final String TRY_ELE = "doTry";
+	public static final String CATCH_ELE = "doCatch";
+	public static final String FINALLY_ELE = "doFinally";
+	public static final String WHEN_ELE = "when";
+	public static final String OTHERWISE_ELE = "otherwise";
+	
 }

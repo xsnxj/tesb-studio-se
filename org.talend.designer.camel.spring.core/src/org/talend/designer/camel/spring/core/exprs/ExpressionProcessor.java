@@ -22,22 +22,22 @@ public class ExpressionProcessor implements ICamelSpringConstants {
 		if(expression==null){
 			return map;
 		}
-		if (expression instanceof TokenizerExpression) {
-			TokenizerExpression te = (TokenizerExpression) expression;
-			String headerName = te.getHeaderName();
-			String token = te.getToken();
-			String ex = "";
-			if (headerName != null) {
-				ex = "header(\""+headerName+"\").tokenize" + "(\"" + token + "\")";
-			} else {
-				ex = "body().tokenize(\"" + token + "\")";
-			}
-			map.put(EP_EXPRESSION_TYPE, EP_TOKENIZER_EXPRESSION);
-			map.put(EP_EXPRESSION_TEXT, ex);
-		}else{
+//		if (expression instanceof TokenizerExpression) {
+//			TokenizerExpression te = (TokenizerExpression) expression;
+//			String headerName = te.getHeaderName();
+//			String token = te.getToken();
+//			String ex = "";
+//			if (headerName != null) {
+//				ex = "header(\""+headerName+"\").tokenize" + "(\"" + token + "\")";
+//			} else {
+//				ex = "body().tokenize(\"" + token + "\")";
+//			}
+//			map.put(EP_EXPRESSION_TYPE, EP_TOKENIZER_EXPRESSION);
+//			map.put(EP_EXPRESSION_TEXT, ex);
+//		}else{
 			map.put(EP_EXPRESSION_TYPE, expression.getLanguage());
 			map.put(EP_EXPRESSION_TEXT, "\""+expression.getExpression()+"\"");
-		}
+//		}
 //		else if (expression instanceof XPathExpression) {
 //			XPathExpression xp = (XPathExpression) expression;
 //			String ex = xp.getExpression();
