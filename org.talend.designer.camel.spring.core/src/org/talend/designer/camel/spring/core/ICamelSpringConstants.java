@@ -168,9 +168,9 @@ public interface ICamelSpringConstants {
 	
 	//idem
 	public static final String ID_REPOSITORY_TYPE = "repository_type";
-	public static final String ID_FILE_REPOSITORY = "File";
+	public static final String ID_FILE_REPOSITORY = "FILE";
 	public static final String ID_FILE_STORE = "file_store";
-	public static final String ID_MEMORY_REPOSITORY = "Memory";
+	public static final String ID_MEMORY_REPOSITORY = "MEMORY";
 	public static final String ID_CACHE_SIZE = "cache_size";
 	
 	//wiretap

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.springframework.beans.MutablePropertyValues;
@@ -22,8 +23,13 @@ public class CXFComponentParser extends AbstractComponentParser {
 	@Override
 	protected void parse(OptionalIdentifiedDefinition oid,
 			Map<String, String> map) {
-		ToDefinition td = (ToDefinition) oid;
-		String uri = td.getUri();
+		String uri = "";
+		if(oid instanceof ToDefinition){
+			uri = ((ToDefinition)oid).getUri();
+		}else if(oid instanceof FromDefinition){
+			uri = ((FromDefinition)oid).getUri();
+		}
+		
 		String prefix = "cxf:bean:";
 		if(uri.startsWith(prefix)){
 			uri = uri.substring(prefix.length());
@@ -31,7 +37,9 @@ public class CXFComponentParser extends AbstractComponentParser {
 			return;
 		}
 		int index = uri.indexOf("?");
+		String additionalParameters = "";
 		if(index!=-1){
+			additionalParameters = uri.substring(index+1);
 			uri = uri.substring(0,index);
 		}
 		String bean = uri;
@@ -70,6 +78,15 @@ public class CXFComponentParser extends AbstractComponentParser {
 				//hide bus
 				if(!"bus".equals(name))
 					map.put(name, value.toString());
+			}
+		}
+		
+		//process additional parameter
+		if(!"".equals(additionalParameters)){
+			String[] splits = additionalParameters.split("&");
+			for(String s:splits){
+				String[] kv = s.split("=");
+				map.put(kv[0], kv[1]);
 			}
 		}
 	}
