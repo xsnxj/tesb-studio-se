@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
@@ -28,7 +29,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServicesFactory;
-import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.wizards.metadata.connection.Step0WizardPage;
 
@@ -95,7 +95,7 @@ public class ESBWizard extends Wizard {
         mainPage = new Step0WizardPage(property, path, ESBRepositoryNodeType.SERVICES, false, true);
         addPage(mainPage);
         setWindowTitle(""); //$NON-NLS-1$
-        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ESBImage.SERVICE_ICON));
+        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
 
     /**

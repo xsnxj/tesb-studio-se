@@ -2,7 +2,6 @@ package org.talend.repository.services.action;
 
 import java.util.List;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -18,7 +17,6 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
-import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 
 public class AssignJobAction extends AbstractCreateAction {
@@ -28,8 +26,6 @@ public class AssignJobAction extends AbstractCreateAction {
     private ERepositoryObjectType currentNodeType;
 
     private boolean creation = false;
-
-    private Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
 
     public AssignJobAction() {
         super();

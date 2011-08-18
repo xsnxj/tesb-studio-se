@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
@@ -29,7 +28,6 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.LocalWSDLEditor;
 
@@ -38,8 +36,6 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
     private ERepositoryObjectType currentNodeType;
 
     private final static String ID = "org.talend.repository.services.utils.LocalWSDLEditor";
-
-    private Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
 
     public OpenWSDLEditorAction() {
         this.setText("Open WSDL Editor");

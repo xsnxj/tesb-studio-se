@@ -9,7 +9,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -48,7 +47,6 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
-import org.talend.repository.services.utils.ESBImage;
 
 public class CreateNewJobAction extends AbstractCreateAction {
 
@@ -57,8 +55,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
     private ERepositoryObjectType currentNodeType;
 
     private boolean creation = false;
-
-    private Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
 
     /** Created project. */
     private ProcessItem processItem;

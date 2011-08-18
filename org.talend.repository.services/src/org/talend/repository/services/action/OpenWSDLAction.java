@@ -13,7 +13,6 @@
 package org.talend.repository.services.action;
 
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -26,7 +25,6 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.ui.OpenWSDLWizard;
-import org.talend.repository.services.utils.ESBImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 
 /**
@@ -39,8 +37,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
     private ERepositoryObjectType currentNodeType;
 
     private boolean creation = false;
-
-    private Image folderImg = ImageProvider.getImage(ESBImage.SERVICE_ICON);
 
     protected static final int WIZARD_WIDTH = 800;
 
