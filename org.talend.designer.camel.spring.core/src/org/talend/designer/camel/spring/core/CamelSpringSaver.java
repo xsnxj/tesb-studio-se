@@ -3,6 +3,7 @@ package org.talend.designer.camel.spring.core;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,7 +72,7 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 
 	public boolean save(SpringRoute[] routes, boolean hasActiveMQ,
 			boolean hasCxf) throws ParserConfigurationException,
-			FileNotFoundException, TransformerException {
+			TransformerException, IOException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory
 					.newInstance();
@@ -92,6 +93,8 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 		} catch (FileNotFoundException e) {
 			throw e;
 		} catch (TransformerException e) {
+			throw e;
+		} catch (IOException e) {
 			throw e;
 		} finally {
 			afterSaved();
@@ -276,14 +279,17 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 	}
 
 	private void outputDocument(Document document)
-			throws FileNotFoundException, TransformerException {
+			throws TransformerException, IOException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		tf.setAttribute("indent-number", new Integer(4));
 		Transformer transformer = tf.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		FileOutputStream fileOutput = new FileOutputStream(outputPath);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fileOutput));
 		transformer.transform(new DOMSource(document), new StreamResult(
-				new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-						outputPath)))));
+				writer));
+		writer.close();
+		fileOutput.close();
 	}
 
 	private void afterSaved() {
@@ -292,11 +298,5 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 				s.afterSaved();
 			}
 		}
-	}
-
-	public static void main(String[] args) throws FileNotFoundException,
-			ParserConfigurationException, TransformerException {
-		CamelSpringSaver saver = new CamelSpringSaver("output/output.xml");
-		saver.save(null, true, true);
 	}
 }
