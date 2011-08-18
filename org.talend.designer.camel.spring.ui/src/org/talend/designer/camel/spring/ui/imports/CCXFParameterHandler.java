@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.talend.designer.camel.spring.core.ICamelSpringConstants;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+
 
 /**
  * DOC LiXP  class global comment. Detailled comment
@@ -37,5 +40,24 @@ public class CCXFParameterHandler extends AbstractParameterHandler {
         tableParams.put("ADVARGUMENTS", columns);
         
         return tableParams;
+    }
+    
+    @Override
+    public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
+        
+        String wsdlURL = parameters.get("wsdlURL");
+        String serviceClass = parameters.get("serviceClass");
+        if(wsdlURL != null){
+            addParamType(nodeType.getElementParameter(), FIELD_CLOSED_LIST, "SERVICE_TYPE", "wsdlURL");
+            addParamType(nodeType.getElementParameter(), FIELD_TEXT, "WSDL_FILE", wsdlURL);
+            parameters.remove("wsdlURL");
+        }else{
+            addParamType(nodeType.getElementParameter(), FIELD_CLOSED_LIST, "SERVICE_TYPE", "serviceClass");
+            addParamType(nodeType.getElementParameter(), FIELD_TEXT, "SERVICE_CLASS", serviceClass);
+            parameters.remove("wsdlURL");
+            parameters.remove("serviceClass");
+        }
+        
+        super.handle(nodeType, uniqueName, parameters);
     }
 }

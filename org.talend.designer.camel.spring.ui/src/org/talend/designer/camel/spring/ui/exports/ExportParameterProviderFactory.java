@@ -61,7 +61,7 @@ public class ExportParameterProviderFactory {
         exportHandlers.put(componentName, new CommonParameterProvider(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.CXF];
-        exportHandlers.put(componentName, new CommonParameterProvider(componentName));
+        exportHandlers.put(componentName, new CCXFExParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.DELAY];
         exportHandlers.put(componentName, new CommonParameterProvider(componentName));

@@ -41,6 +41,7 @@ public class CIdempotentConsumerParameterHandler extends AbstractParameterHandle
         
         if("".equals(type)){//Use bean?
             addParamType(elemParams, FIELD_CHECK, "USE_LANGUAGE", VALUE_FALSE);
+            text = unquotes(text);
             addParamType(elemParams, FIELD_TEXT, "EXPRESSION", text);
         }else{
             addParamType(elemParams, FIELD_CHECK, "USE_LANGUAGE", VALUE_TRUE);

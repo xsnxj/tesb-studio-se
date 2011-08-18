@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.exports;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -36,7 +37,7 @@ public class CLoadBalancerExParameterHandler extends AbstractExParameterHandler 
             return parameters;
         }
         
-        parameters = super.getAvaiableParameters();
+        parameters = new HashMap<String, String>();
         parameters.put("EXCEPTION", "exceptions");
         return parameters;
     }
@@ -63,7 +64,7 @@ public class CLoadBalancerExParameterHandler extends AbstractExParameterHandler 
                 String inherit_error_handler = computeTextElementValue("INHERIT_ERROR_HANDLER", elementParameterTypes);
                 String maxfailattempt = computeTextElementValue("MAXFAILATTEMPT", elementParameterTypes);
                 String attempt_number = computeTextElementValue("ATTEMPT_NUMBER", elementParameterTypes);
-                String use_round_robin = computeTextElementValue("ATTEMPT_NUMBER", elementParameterTypes);
+                String use_round_robin = computeTextElementValue("USE_ROUND_ROBIN", elementParameterTypes);
                 parameters.put(ICamelSpringConstants.LB_INHERIT_HANDLE, inherit_error_handler);
                 parameters.put(ICamelSpringConstants.LB_ATTAMPT_TYPE, maxfailattempt);
                 parameters.put(ICamelSpringConstants.LB_MAXIMUM_ATTAMPTS, attempt_number);
