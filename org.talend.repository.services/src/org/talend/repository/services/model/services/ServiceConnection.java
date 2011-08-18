@@ -19,7 +19,7 @@ import org.talend.core.model.metadata.builder.connection.Connection;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLPath <em>WSDL Path</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getServiceOperation <em>Service Operation</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServiceConnection#getServicePort <em>Service Port</em>}</li>
  * </ul>
  * </p>
  *
@@ -55,19 +55,19 @@ public interface ServiceConnection extends Connection {
     void setWSDLPath(String value);
 
     /**
-     * Returns the value of the '<em><b>Service Operation</b></em>' reference list.
-     * The list contents are of type {@link org.talend.repository.services.model.services.ServiceOperation}.
+     * Returns the value of the '<em><b>Service Port</b></em>' reference list.
+     * The list contents are of type {@link org.talend.repository.services.model.services.ServicePort}.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Service Operation</em>' reference list isn't clear,
+     * If the meaning of the '<em>Service Port</em>' reference isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Service Operation</em>' reference list.
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceConnection_ServiceOperation()
+     * @return the value of the '<em>Service Port</em>' reference list.
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceConnection_ServicePort()
      * @model
      * @generated
      */
-    EList<ServiceOperation> getServiceOperation();
+    EList<ServicePort> getServicePort();
 
 } // ServiceConnection

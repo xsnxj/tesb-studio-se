@@ -556,13 +556,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__WSDL_PATH = ConnectionPackage.CONNECTION_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Service Operation</b></em>' reference list.
+     * The feature id for the '<em><b>Service Port</b></em>' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__SERVICE_OPERATION = ConnectionPackage.CONNECTION_FEATURE_COUNT + 1;
+    int SERVICE_CONNECTION__SERVICE_PORT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Service Connection</em>' class.
@@ -572,6 +572,43 @@ public interface ServicesPackage extends EPackage {
      * @ordered
      */
     int SERVICE_CONNECTION_FEATURE_COUNT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 2;
+
+    /**
+     * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.talend.repository.services.model.services.impl.ServicePortImpl
+     * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServicePort()
+     * @generated
+     */
+    int SERVICE_PORT = 3;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_PORT__NAME = 0;
+
+    /**
+     * The feature id for the '<em><b>Service Operation</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_PORT__SERVICE_OPERATION = 1;
+
+    /**
+     * The number of structural features of the '<em>Service Port</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_PORT_FEATURE_COUNT = 2;
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceItem <em>Service Item</em>}'.
@@ -665,15 +702,47 @@ public interface ServicesPackage extends EPackage {
     EAttribute getServiceConnection_WSDLPath();
 
     /**
-     * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServiceConnection#getServiceOperation <em>Service Operation</em>}'.
+     * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServiceConnection#getServicePort <em>Service Port</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the reference list '<em>Service Operation</em>'.
-     * @see org.talend.repository.services.model.services.ServiceConnection#getServiceOperation()
+     * @return the meta object for the reference list '<em>Service Port</em>'.
+     * @see org.talend.repository.services.model.services.ServiceConnection#getServicePort()
      * @see #getServiceConnection()
      * @generated
      */
-    EReference getServiceConnection_ServiceOperation();
+    EReference getServiceConnection_ServicePort();
+
+    /**
+     * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServicePort <em>Service Port</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Service Port</em>'.
+     * @see org.talend.repository.services.model.services.ServicePort
+     * @generated
+     */
+    EClass getServicePort();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.talend.repository.services.model.services.ServicePort#getName()
+     * @see #getServicePort()
+     * @generated
+     */
+    EAttribute getServicePort_Name();
+
+    /**
+     * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Service Operation</em>'.
+     * @see org.talend.repository.services.model.services.ServicePort#getServiceOperation()
+     * @see #getServicePort()
+     * @generated
+     */
+    EReference getServicePort_ServiceOperation();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -773,12 +842,38 @@ public interface ServicesPackage extends EPackage {
         EAttribute SERVICE_CONNECTION__WSDL_PATH = eINSTANCE.getServiceConnection_WSDLPath();
 
         /**
+         * The meta object literal for the '<em><b>Service Port</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference SERVICE_CONNECTION__SERVICE_PORT = eINSTANCE.getServiceConnection_ServicePort();
+
+        /**
+         * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.talend.repository.services.model.services.impl.ServicePortImpl
+         * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServicePort()
+         * @generated
+         */
+        EClass SERVICE_PORT = eINSTANCE.getServicePort();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_PORT__NAME = eINSTANCE.getServicePort_Name();
+
+        /**
          * The meta object literal for the '<em><b>Service Operation</b></em>' reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EReference SERVICE_CONNECTION__SERVICE_OPERATION = eINSTANCE.getServiceConnection_ServiceOperation();
+        EReference SERVICE_PORT__SERVICE_OPERATION = eINSTANCE.getServicePort_ServiceOperation();
 
     }
 

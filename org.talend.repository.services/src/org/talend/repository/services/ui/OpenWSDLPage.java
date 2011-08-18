@@ -55,6 +55,7 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 
 /**
@@ -181,10 +182,12 @@ public class OpenWSDLPage extends WizardPage {
                 Map portTypes = definition.getAllPortTypes();
                 Iterator it = portTypes.keySet().iterator();
                 repositoryNode.getChildren().clear();
-                item.getServiceConnection().getServiceOperation().clear();
+                item.getServiceConnection().getServicePort().clear();
                 while (it.hasNext()) {
                     QName key = (QName) it.next();
                     PortType portType = (PortType) portTypes.get(key);
+                    ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
+                    port.setName(portType.getQName().getLocalPart());
                     List<Operation> list = portType.getOperations();
                     for (Operation operation : list) {
                         ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
@@ -197,8 +200,9 @@ public class OpenWSDLPage extends WizardPage {
                             serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                         }
                         serviceOperation.setLabel(operation.getName());
-                        item.getServiceConnection().getServiceOperation().add(serviceOperation);
+                        port.getServiceOperation().add(serviceOperation);
                     }
+                    item.getServiceConnection().getServicePort().add(port);
                 }
             } catch (WSDLException e) {
                 e.printStackTrace();

@@ -14,69 +14,66 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
-import org.talend.core.model.metadata.builder.connection.impl.ConnectionImpl;
-
-import org.talend.repository.services.model.services.ServiceConnection;
-import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesPackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Service Connection</b></em>'.
+ * An implementation of the model object '<em><b>Service Port</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getWSDLPath <em>WSDL Path</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getServicePort <em>Service Port</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getServiceOperation <em>Service Operation</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConnection {
+public class ServicePortImpl extends EObjectImpl implements ServicePort {
     /**
-     * The default value of the '{@link #getWSDLPath() <em>WSDL Path</em>}' attribute.
+     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getWSDLPath()
+     * @see #getName()
      * @generated
      * @ordered
      */
-    protected static final String WSDL_PATH_EDEFAULT = null;
+    protected static final String NAME_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getWSDLPath() <em>WSDL Path</em>}' attribute.
+     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getWSDLPath()
+     * @see #getName()
      * @generated
      * @ordered
      */
-    protected String wsdlPath = WSDL_PATH_EDEFAULT;
+    protected String name = NAME_EDEFAULT;
 
     /**
-     * The cached value of the '{@link #getServicePort() <em>Service Port</em>}' reference list.
+     * The cached value of the '{@link #getServiceOperation() <em>Service Operation</em>}' reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getServicePort()
+     * @see #getServiceOperation()
      * @generated
      * @ordered
      */
-    protected EList<ServicePort> servicePort;
+    protected EList<ServiceOperation> serviceOperation;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected ServiceConnectionImpl() {
+    protected ServicePortImpl() {
         super();
     }
 
@@ -87,7 +84,7 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      */
     @Override
     protected EClass eStaticClass() {
-        return ServicesPackage.Literals.SERVICE_CONNECTION;
+        return ServicesPackage.Literals.SERVICE_PORT;
     }
 
     /**
@@ -95,8 +92,8 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getWSDLPath() {
-        return wsdlPath;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -104,11 +101,11 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setWSDLPath(String newWSDLPath) {
-        String oldWSDLPath = wsdlPath;
-        wsdlPath = newWSDLPath;
+    public void setName(String newName) {
+        String oldName = name;
+        name = newName;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_CONNECTION__WSDL_PATH, oldWSDLPath, wsdlPath));
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__NAME, oldName, name));
     }
 
     /**
@@ -116,11 +113,11 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<ServicePort> getServicePort() {
-        if (servicePort == null) {
-            servicePort = new EObjectResolvingEList<ServicePort>(ServicePort.class, this, ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT);
+    public EList<ServiceOperation> getServiceOperation() {
+        if (serviceOperation == null) {
+            serviceOperation = new EObjectResolvingEList<ServiceOperation>(ServiceOperation.class, this, ServicesPackage.SERVICE_PORT__SERVICE_OPERATION);
         }
-        return servicePort;
+        return serviceOperation;
     }
 
     /**
@@ -131,10 +128,10 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
-                return getWSDLPath();
-            case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
-                return getServicePort();
+            case ServicesPackage.SERVICE_PORT__NAME:
+                return getName();
+            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+                return getServiceOperation();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -148,12 +145,12 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
-                setWSDLPath((String)newValue);
+            case ServicesPackage.SERVICE_PORT__NAME:
+                setName((String)newValue);
                 return;
-            case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
-                getServicePort().clear();
-                getServicePort().addAll((Collection<? extends ServicePort>)newValue);
+            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+                getServiceOperation().clear();
+                getServiceOperation().addAll((Collection<? extends ServiceOperation>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -167,11 +164,11 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
-                setWSDLPath(WSDL_PATH_EDEFAULT);
+            case ServicesPackage.SERVICE_PORT__NAME:
+                setName(NAME_EDEFAULT);
                 return;
-            case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
-                getServicePort().clear();
+            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+                getServiceOperation().clear();
                 return;
         }
         super.eUnset(featureID);
@@ -185,10 +182,10 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_CONNECTION__WSDL_PATH:
-                return WSDL_PATH_EDEFAULT == null ? wsdlPath != null : !WSDL_PATH_EDEFAULT.equals(wsdlPath);
-            case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
-                return servicePort != null && !servicePort.isEmpty();
+            case ServicesPackage.SERVICE_PORT__NAME:
+                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+                return serviceOperation != null && !serviceOperation.isEmpty();
         }
         return super.eIsSet(featureID);
     }
@@ -203,10 +200,10 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (WSDLPath: ");
-        result.append(wsdlPath);
+        result.append(" (name: ");
+        result.append(name);
         result.append(')');
         return result.toString();
     }
 
-} //ServiceConnectionImpl
+} //ServicePortImpl

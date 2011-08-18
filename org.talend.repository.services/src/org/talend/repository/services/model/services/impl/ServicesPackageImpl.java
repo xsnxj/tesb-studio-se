@@ -16,6 +16,7 @@ import org.talend.core.model.properties.PropertiesPackage;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
 
@@ -43,6 +44,13 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * @generated
      */
     private EClass serviceConnectionEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass servicePortEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
@@ -186,8 +194,35 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getServiceConnection_ServiceOperation() {
+    public EReference getServiceConnection_ServicePort() {
         return (EReference)serviceConnectionEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getServicePort() {
+        return servicePortEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getServicePort_Name() {
+        return (EAttribute)servicePortEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getServicePort_ServiceOperation() {
+        return (EReference)servicePortEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -226,7 +261,11 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         serviceConnectionEClass = createEClass(SERVICE_CONNECTION);
         createEAttribute(serviceConnectionEClass, SERVICE_CONNECTION__WSDL_PATH);
-        createEReference(serviceConnectionEClass, SERVICE_CONNECTION__SERVICE_OPERATION);
+        createEReference(serviceConnectionEClass, SERVICE_CONNECTION__SERVICE_PORT);
+
+        servicePortEClass = createEClass(SERVICE_PORT);
+        createEAttribute(servicePortEClass, SERVICE_PORT__NAME);
+        createEReference(servicePortEClass, SERVICE_PORT__SERVICE_OPERATION);
     }
 
     /**
@@ -275,7 +314,11 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceConnection_WSDLPath(), theEcorePackage.getEString(), "WSDLPath", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getServiceConnection_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getServiceConnection_ServicePort(), this.getServicePort(), null, "servicePort", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(servicePortEClass, ServicePort.class, "ServicePort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getServicePort_Name(), ecorePackage.getEString(), "name", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getServicePort_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);

@@ -53,6 +53,15 @@ public interface ServicesFactory extends EFactory {
     ServiceConnection createServiceConnection();
 
     /**
+     * Returns a new object of class '<em>Service Port</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Service Port</em>'.
+     * @generated
+     */
+    ServicePort createServicePort();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

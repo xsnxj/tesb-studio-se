@@ -33,6 +33,7 @@ import org.talend.repository.model.StableRepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
 
@@ -88,8 +89,11 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         Resource itemResource = xmiResourceManager.getItemResource(item);
         itemResource.getContents().clear();
         itemResource.getContents().add(item.getServiceConnection());
-        for (ServiceOperation operation : item.getServiceConnection().getServiceOperation()) {
-            itemResource.getContents().add(operation);
+        for (ServicePort port : item.getServiceConnection().getServicePort()) {
+            itemResource.getContents().add(port);
+            for (ServiceOperation operation : port.getServiceOperation()) {
+                itemResource.getContents().add(operation);
+            }
         }
         return itemResource;
     }
@@ -151,15 +155,20 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
             RepositoryNode node) {
         if (type == ESBRepositoryNodeType.SERVICES) {
             ServiceConnection serviceConnection = ((ServiceItem) repositoryObject.getProperty().getItem()).getServiceConnection();
-            List<ServiceOperation> listOperation = serviceConnection.getServiceOperation();
-            for (ServiceOperation operation : listOperation) {
-                // RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(((ServiceItem)
-                // repositoryObject
-                // .getProperty().getItem()).getProperty()), node, ENodeType.REPOSITORY_ELEMENT);
-                RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
-                operationNode.setProperties(EProperties.LABEL, operation.getLabel());
-                operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
-                node.getChildren().add(operationNode);
+            List<ServicePort> listPort = serviceConnection.getServicePort();
+            for (ServicePort port : listPort) {
+                RepositoryNode portNode = new StableRepositoryNode(node, port.getName(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
+                portNode.setProperties(EProperties.LABEL, port.getName());
+                portNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESPORT);
+                node.getChildren().add(portNode);
+                //
+                List<ServiceOperation> listOperation = port.getServiceOperation();
+                for (ServiceOperation operation : listOperation) {
+                    RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
+                    operationNode.setProperties(EProperties.LABEL, operation.getLabel());
+                    operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
+                    portNode.getChildren().add(operationNode);
+                }
             }
         }
     }

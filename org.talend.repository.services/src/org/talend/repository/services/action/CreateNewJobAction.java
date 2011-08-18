@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,6 +48,7 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 
 public class CreateNewJobAction extends AbstractCreateAction {
 
@@ -104,11 +106,14 @@ public class CreateNewJobAction extends AbstractCreateAction {
         //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
-        List<ServiceOperation> listOperation = serviceItem.getServiceConnection().getServiceOperation();
-        for (ServiceOperation operation : listOperation) {
-            if (operation.getLabel().equals(node.getLabel())) {
-                if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                    flag = false;
+        EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+        for (ServicePort port : listPort) {
+            List<ServiceOperation> listOperation = port.getServiceOperation();
+            for (ServiceOperation operation : listOperation) {
+                if (operation.getLabel().equals(node.getLabel())) {
+                    if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
+                        flag = false;
+                    }
                 }
             }
         }
@@ -182,11 +187,14 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 String jobName = processWizard.getProcess().getProperty().getLabel();
                 String jobID = processWizard.getProcess().getProperty().getId();
                 ServiceItem serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
-                List<ServiceOperation> listOperation = serviceItem.getServiceConnection().getServiceOperation();
-                for (ServiceOperation operation : listOperation) {
-                    if (operation.getLabel().equals(node.getLabel())) {
-                        operation.setReferenceJobId(jobID);
-                        operation.setLabel(operation.getOperationName() + "-" + jobName);
+                EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+                for (ServicePort port : listPort) {
+                    List<ServiceOperation> listOperation = port.getServiceOperation();
+                    for (ServiceOperation operation : listOperation) {
+                        if (operation.getLabel().equals(node.getLabel())) {
+                            operation.setReferenceJobId(jobID);
+                            operation.setLabel(operation.getOperationName() + "-" + jobName);
+                        }
                     }
                 }
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();

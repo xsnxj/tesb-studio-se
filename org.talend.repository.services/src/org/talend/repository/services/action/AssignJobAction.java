@@ -17,6 +17,7 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 
 public class AssignJobAction extends AbstractCreateAction {
@@ -92,11 +93,14 @@ public class AssignJobAction extends AbstractCreateAction {
             String jobID = item.getProperty().getId();
             String jobName = item.getProperty().getLabel();
             ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getObject().getProperty().getItem();
-            List<ServiceOperation> listOperation = serviceItem.getServiceConnection().getServiceOperation();
-            for (ServiceOperation operation : listOperation) {
-                if (operation.getLabel().equals(repositoryNode.getLabel())) {
-                    operation.setReferenceJobId(jobID);
-                    operation.setLabel(operation.getOperationName() + "-" + jobName);
+            List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+            for (ServicePort port : listPort) {
+                List<ServiceOperation> listOperation = port.getServiceOperation();
+                for (ServiceOperation operation : listOperation) {
+                    if (operation.getLabel().equals(repositoryNode.getLabel())) {
+                        operation.setReferenceJobId(jobID);
+                        operation.setLabel(operation.getOperationName() + "-" + jobName);
+                    }
                 }
             }
             IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();

@@ -63,6 +63,7 @@ public class ServicesFactoryImpl extends EFactoryImpl implements ServicesFactory
             case ServicesPackage.SERVICE_ITEM: return createServiceItem();
             case ServicesPackage.SERVICE_OPERATION: return createServiceOperation();
             case ServicesPackage.SERVICE_CONNECTION: return createServiceConnection();
+            case ServicesPackage.SERVICE_PORT: return createServicePort();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -96,6 +97,16 @@ public class ServicesFactoryImpl extends EFactoryImpl implements ServicesFactory
     public ServiceConnection createServiceConnection() {
         ServiceConnectionImpl serviceConnection = new ServiceConnectionImpl();
         return serviceConnection;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public ServicePort createServicePort() {
+        ServicePortImpl servicePort = new ServicePortImpl();
+        return servicePort;
     }
 
     /**

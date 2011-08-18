@@ -28,6 +28,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 
 public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
@@ -77,10 +78,12 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             Definition definition = newWSDLReader.readWSDL(path);
             Map portTypes = definition.getAllPortTypes();
             Iterator it = portTypes.keySet().iterator();
-            serviceItem.getServiceConnection().getServiceOperation().clear();
+            serviceItem.getServiceConnection().getServicePort().clear();
             while (it.hasNext()) {
                 QName key = (QName) it.next();
                 PortType portType = (PortType) portTypes.get(key);
+                ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
+                port.setName(portType.getQName().getLocalPart());
                 List<Operation> list = portType.getOperations();
                 for (Operation operation : list) {
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
@@ -89,8 +92,9 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                     }
                     serviceOperation.setLabel(operation.getName());
-                    serviceItem.getServiceConnection().getServiceOperation().add(serviceOperation);
+                    port.getServiceOperation().add(serviceOperation);
                 }
+                serviceItem.getServiceConnection().getServicePort().add(port);
             }
         } catch (WSDLException e) {
             e.printStackTrace();
