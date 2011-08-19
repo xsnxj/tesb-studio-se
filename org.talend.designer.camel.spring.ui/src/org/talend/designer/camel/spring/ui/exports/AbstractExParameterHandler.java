@@ -182,7 +182,7 @@ public abstract class AbstractExParameterHandler implements IExportParameterHand
             return false;
         }
         String isNone = cpType.getValue();
-        return isNone.equals(VALUE_TRUE);
+        return VALUE_TRUE.equals(isNone);
     }
     
     protected String computeTextElementValue(String paramName, EList<?> elementParameterTypes) {
@@ -190,7 +190,7 @@ public abstract class AbstractExParameterHandler implements IExportParameterHand
         if(cpType == null){
             return "";
         }
-        return cpType.getValue();
+        return cpType.getValue()==null?"":cpType.getValue();
     }
     
     /**
