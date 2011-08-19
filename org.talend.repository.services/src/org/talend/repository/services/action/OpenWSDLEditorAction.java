@@ -1,6 +1,8 @@
 package org.talend.repository.services.action;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -10,19 +12,26 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
+import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -37,12 +46,56 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 
     private final static String ID = "org.talend.repository.services.utils.LocalWSDLEditor";
 
+    private List<ServiceItem> scriptList = new ArrayList<ServiceItem>();
+
     public OpenWSDLEditorAction() {
         this.setText("Open WSDL Editor");
         this.setToolTipText("Open WSDL Editor");
 
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
+
+            public void partActivated(IWorkbenchPart part) {
+
+            }
+
+            public void partBroughtToTop(IWorkbenchPart part) {
+
+            }
+
+            public void partClosed(IWorkbenchPart part) {
+                if (part instanceof InternalWSDLMultiPageEditor) {
+                    InternalWSDLMultiPageEditor editor = (InternalWSDLMultiPageEditor) part;
+                    String editorName = editor.getEditorInput().getName();
+                    IProxyRepositoryFactory repFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
+                    Iterator it = scriptList.iterator();
+                    try {
+                        while (it.hasNext()) {
+                            ServiceItem serviceItem = (ServiceItem) it.next();
+                            String name = editorName.substring(0, editorName.lastIndexOf("_"));
+                            if (name.equals(serviceItem.getProperty().getLabel())) {
+                                repFactory.unlock(serviceItem);
+                                it.remove();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    RepositoryManager.getRepositoryView().refreshView();
+                }
+            }
+
+            public void partDeactivated(IWorkbenchPart part) {
+
+            }
+
+            public void partOpened(IWorkbenchPart part) {
+
+            }
+
+        });
     }
 
     /*
@@ -112,12 +165,13 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
             IFile file = currentProject.getFolder("services" + folder).getFile(
                     repositoryNode.getObject().getProperty().getLabel() + "_"
                             + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
+            LocalWSDLEditor wsdlEditor = null;
             if (file.exists()) {
                 IEditorInput editorInput = new FileEditorInput(file);
                 WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.openEditor(editorInput, ID, true);
                 if (editor instanceof LocalWSDLEditor) {
-                    LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
+                    wsdlEditor = (LocalWSDLEditor) editor;
                     wsdlEditor.setServiceItem(serviceItem);
                     wsdlEditor.setRepositoryNode(repositoryNode);
                 }
@@ -159,16 +213,24 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                 WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.openEditor(editorInput, ID, true);
                 if (editor instanceof LocalWSDLEditor) {
-                    LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
+                    wsdlEditor = (LocalWSDLEditor) editor;
                     wsdlEditor.setServiceItem(serviceItem);
                     wsdlEditor.setRepositoryNode(repositoryNode);
                 }
             }
+            // lock
+            if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
+                DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
+                scriptList.add(serviceItem);
+            } else {
+                wsdlEditor.setReadOnly(true);
+            }
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         } catch (CoreException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
+        } catch (LoginException e) {
+            ExceptionHandler.process(e);
         }
     }
-
 }

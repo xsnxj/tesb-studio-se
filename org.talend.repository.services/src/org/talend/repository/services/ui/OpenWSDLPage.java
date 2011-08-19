@@ -151,8 +151,7 @@ public class OpenWSDLPage extends WizardPage {
                 if (!fileTemp.exists()) {
                     fileTemp.create(byteArrayInputStream, true, null);
                 } else {
-                    fileTemp.delete(true, null);
-                    fileTemp.create(byteArrayInputStream, true, null);
+                    fileTemp.setContents(byteArrayInputStream, 0, null);
                 }
             } catch (PersistenceException e1) {
                 e1.printStackTrace();
@@ -160,11 +159,11 @@ public class OpenWSDLPage extends WizardPage {
                 e.printStackTrace();
             }
             //
-            ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-            createReferenceFileItem.setContent(byteArray);
-            createReferenceFileItem.setExtension("wsdl");
             if (item.getReferenceResources().size() == 0) {
+                ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+                createReferenceFileItem.setContent(byteArray);
+                createReferenceFileItem.setExtension("wsdl");
                 item.getReferenceResources().add(createReferenceFileItem);
                 createReferenceFileItem.getContent().setInnerContent(buffer.toString().getBytes());
             } else {

@@ -15,6 +15,8 @@ import javax.xml.namespace.QName;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -141,6 +143,97 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     public void setServiceItem(ServiceItem serviceItem) {
         this.serviceItem = serviceItem;
+    }
+
+    public void setReadOnly(boolean isReadOnly) {
+        if (isReadOnly) {
+            IAction addMessage = getActionRegistry().getAction("ASDAddMessageAction");
+            getActionRegistry().removeAction(addMessage);
+
+            IAction addPart = getActionRegistry().getAction("ASDAddPartAction");
+            getActionRegistry().removeAction(addPart);
+
+            IAction setNewMessage = getActionRegistry().getAction("ASDSetNewMessageAction");
+            getActionRegistry().removeAction(setNewMessage);
+
+            IAction setMessageInterface = getActionRegistry().getAction("ASDSetMessageInterfaceAction");
+            getActionRegistry().removeAction(setMessageInterface);
+
+            IAction setNewType = getActionRegistry().getAction("ASDSetNewTypeAction");
+            getActionRegistry().removeAction(setNewType);
+
+            IAction setExistingType = getActionRegistry().getAction("ASDSetExistingTypeAction");
+            getActionRegistry().removeAction(setExistingType);
+
+            IAction setNewElement = getActionRegistry().getAction("ASDSetNewElementAction");
+            getActionRegistry().removeAction(setNewElement);
+
+            IAction setExistingElement = getActionRegistry().getAction("ASDSetExistingElementAction");
+            getActionRegistry().removeAction(setExistingElement);
+
+            IAction directEdit = getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT);
+            getActionRegistry().removeAction(directEdit);
+            // --
+            IAction addService = getActionRegistry().getAction("ASDAddServiceAction");
+            getActionRegistry().removeAction(addService);
+
+            IAction addBinding = getActionRegistry().getAction("ASDAddBindingAction");
+            getActionRegistry().removeAction(addBinding);
+
+            IAction addInterface = getActionRegistry().getAction("ASDAddInterfaceAction");
+            getActionRegistry().removeAction(addInterface);
+
+            IAction addEndPoint = getActionRegistry().getAction("ASDAddEndPointAction");
+            getActionRegistry().removeAction(addEndPoint);
+
+            IAction addOperation = getActionRegistry().getAction("ASDAddOperationAction");
+            getActionRegistry().removeAction(addOperation);
+
+            IAction addInput = getActionRegistry().getAction("ASDAddInputActionn");
+            getActionRegistry().removeAction(addInput);
+
+            IAction addOutput = getActionRegistry().getAction("ASDAddOutputActionn");
+            getActionRegistry().removeAction(addOutput);
+
+            IAction addFault = getActionRegistry().getAction("ASDAddFaultActionn");
+            getActionRegistry().removeAction(addFault);
+
+            IAction addDelete = getActionRegistry().getAction("ASDDeleteAction");
+            getActionRegistry().removeAction(addDelete);
+
+            IAction setNewBinding = getActionRegistry().getAction("ASDSetNewBindingAction");
+            getActionRegistry().removeAction(setNewBinding);
+
+            IAction setExistingBinding = getActionRegistry().getAction("ASDSetExistingBindingAction");
+            getActionRegistry().removeAction(setExistingBinding);
+
+            IAction setNewInterface = getActionRegistry().getAction("ASDSetNewInterfaceAction");
+            getActionRegistry().removeAction(setNewInterface);
+
+            IAction setExistingInterface = getActionRegistry().getAction("ASDSetExistingInterfaceAction");
+            getActionRegistry().removeAction(setExistingInterface);
+
+            IAction generateBinding = getActionRegistry().getAction("ASDGenerateBindingActionn");
+            getActionRegistry().removeAction(generateBinding);
+
+            IAction addImport = getActionRegistry().getAction("ASDAddImportAction");
+            getActionRegistry().removeAction(addImport);
+
+            IAction addParameter = getActionRegistry().getAction("ASDAddParameterAction");
+            getActionRegistry().removeAction(addParameter);
+
+            IAction addSchema = getActionRegistry().getAction("ASDAddSchemaAction");
+            getActionRegistry().removeAction(addSchema);
+
+            IAction openSchema = getActionRegistry().getAction("ASDOpenSchemaAction");
+            getActionRegistry().removeAction(openSchema);
+
+            IAction openImport = getActionRegistry().getAction("ASDOpenImportAction");
+            getActionRegistry().removeAction(openImport);
+
+            IAction openInNewEditor = getActionRegistry().getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
+            getActionRegistry().removeAction(openInNewEditor);
+        }
     }
 
 }
