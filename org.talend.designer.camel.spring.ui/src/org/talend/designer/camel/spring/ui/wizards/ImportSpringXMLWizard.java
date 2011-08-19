@@ -128,18 +128,22 @@ public class ImportSpringXMLWizard extends Wizard {
                     }
                 }
             });
-        } catch (InvocationTargetException e1) {
-            ExceptionHandler.process(e1);
-            MessageDialog
-                    .openError(getShell(), Messages.getString("ImportSpringXMLWizard_errorTitle"), Messages.getString("ImportSpringXMLWizard_errorMessage") + handle(e1)); //$NON-NLS-1$ //$NON-NLS-2$
-            return false;
-        } catch (InterruptedException e1) {
-            ExceptionHandler.process(e1);
-            MessageDialog.openError(getShell(), Messages.getString("ImportSpringXMLWizard_errorTitle"), Messages.getString("ImportSpringXMLWizard_exceptionMessage") + e1.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (Exception e) {
+            handleException(e);
             return false;
         }
        
         return processItem != null;
+    }
+
+    private void handleException(Exception e) {
+        ExceptionHandler.process(e);
+        MessageDialog
+                .openError(
+                        getShell(),
+                        Messages.getString("ImportSpringXMLWizard_errorTitle"), Messages.getString("ImportSpringXMLWizard_errorMessage") + handleMessage(e)); //$NON-NLS-1$ //$NON-NLS-2$
+        processType.getNode().clear();
+        processType.getConnection().clear();
     }
 
     /**
@@ -148,15 +152,20 @@ public class ImportSpringXMLWizard extends Wizard {
      * @param e
      * @return
      */
-    private String handle(InvocationTargetException e) {                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-        Throwable targetException = e.getTargetException();
-        String message = targetException.getMessage();
-        if(message == null){
-            return targetException.toString();
+    private String handleMessage(Exception e) {
+
+        String message = e.getMessage();
+        if (e instanceof InvocationTargetException) {
+            Throwable targetException = ((InvocationTargetException) e).getTargetException();
+            message = targetException.getMessage();
+            if (message == null) {
+                return targetException.toString();
+            }
         }
-        if(message.length() < 1000){
+
+        if (message.length() < 1000) {
             return message;
-        }else{
+        } else {
             message = message.substring(0, 1000) + "..."; //$NON-NLS-1$
         }
         return message;

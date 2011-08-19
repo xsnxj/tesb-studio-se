@@ -49,7 +49,7 @@ public class ExportParameterProviderFactory {
         exportHandlers.put(componentName, new CommonParameterProvider(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.AGGREGATE];
-        exportHandlers.put(componentName, new CommonParameterProvider(componentName));
+        exportHandlers.put(componentName, new CAggregateParameterExHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.BALANCE];
         exportHandlers.put(componentName, new CLoadBalancerExParameterHandler(componentName));
@@ -148,10 +148,12 @@ public class ExportParameterProviderFactory {
         exportHandlers.put(componentName, new CFinallyParameterExHandler(componentName));
     }
     
-    
+    /**
+     * 
+     * DOC LiXP Comment method "getExParameterHandlers".
+     * @return
+     */
     public Map<String, IExportParameterHandler> getExParameterHandlers() {
-        ///FIXME
-        init();
         return exportHandlers;
     }
 }

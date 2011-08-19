@@ -78,6 +78,11 @@ public abstract class AbstractExParameterHandler implements IExportParameterHand
                 if (key.endsWith(SpringUIConstants.NAME_POSTFIX)) {
                     key = key.replace(SpringUIConstants.NAME_POSTFIX, "");
                     parameters.put(value, key);
+                }else if(key.endsWith(SpringUIConstants.REF_POSTFIX)){
+                    //REF_CHECK
+                    key = key.replace(SpringUIConstants.REF_POSTFIX, "");
+                    String refName = prop.getProperty(key + SpringUIConstants.NAME_POSTFIX);
+                    parameters.put(refName + SpringUIConstants.REF_POSTFIX, value);
                 }
             }
             inputStream.close();
@@ -88,18 +93,28 @@ public abstract class AbstractExParameterHandler implements IExportParameterHand
     }
 
     public void handleParameters(EList<?> elementParameterTypes, Map<String, String> parameters) {
-
+        
+        Map<String, String> avaiableParamMapping = getAvaiableParameters();
         for (Object obj : elementParameterTypes) {
             ElementParameterType param = (ElementParameterType) obj;
             if (param.getField().equals(TABLE)) {
                 handleTableParameter(param, parameters);
             } else {
-                Map<String, String> avaiableParamMapping = getAvaiableParameters();
                 String paramName = param.getName();
                 String paramValue = param.getValue();
                 String matchParam = avaiableParamMapping.get(paramName);
-                if (matchParam != null) {
-                    parameters.put(matchParam, paramValue);
+                String paramRef = avaiableParamMapping.get(paramName + SpringUIConstants.REF_POSTFIX);
+                if(paramRef != null){
+                    boolean paramRefChecked = computeCheckElementValue(paramRef, elementParameterTypes);
+                    if(paramRefChecked){
+                        if (matchParam != null) {
+                            parameters.put(matchParam, paramValue);
+                        }
+                    }
+                }else{
+                    if (matchParam != null) {
+                        parameters.put(matchParam, paramValue);
+                    }
                 }
             }
 
@@ -176,5 +191,43 @@ public abstract class AbstractExParameterHandler implements IExportParameterHand
             return "";
         }
         return cpType.getValue();
+    }
+    
+    /**
+     * 
+     * Ensure that the string is surrounded by quotes.
+     * 
+     * @param string
+     * @return
+     */
+    protected String quotes(String string) {
+        String result = string;
+        if (!result.startsWith("\"")) {
+            result = "\"" + result;
+        }
+
+        if (!result.endsWith("\"")) {
+            result = result + "\"";
+        }
+        return result;
+    }
+
+    /**
+     * 
+     * Ensure that the string is not surrounded by quotes.
+     * 
+     * @param string
+     * @return
+     */
+    protected String unquotes(String string) {
+        String result = string;
+        if (result.startsWith("\"")) {
+            result = result.substring(1);
+        }
+
+        if (result.endsWith("\"")) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
     }
 }

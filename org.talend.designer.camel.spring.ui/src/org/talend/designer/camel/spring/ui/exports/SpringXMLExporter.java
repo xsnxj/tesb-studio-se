@@ -50,8 +50,6 @@ public class SpringXMLExporter {
      * @return
      */
     public static SpringXMLExporter getInstance() {
-        // /FIXME
-        instance = new SpringXMLExporter();
         return instance;
     }
 
@@ -378,23 +376,5 @@ public class SpringXMLExporter {
             return;
         }
         provider.handleParameters(elementParameterTypes, parameters);
-    }
-
-    /**
-     * Sets the hasActiveMQ.
-     * 
-     * @param hasActiveMQ the hasActiveMQ to set
-     */
-    public void setHasActiveMQ(boolean hasActiveMQ) {
-        this.hasActiveMQ = hasActiveMQ;
-    }
-
-    /**
-     * Sets the hasCXF.
-     * 
-     * @param hasCXF the hasCXF to set
-     */
-    public void setHasCXF(boolean hasCXF) {
-        this.hasCXF = hasCXF;
     }
 }

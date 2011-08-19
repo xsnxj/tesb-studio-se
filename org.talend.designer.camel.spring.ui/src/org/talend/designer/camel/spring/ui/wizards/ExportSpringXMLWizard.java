@@ -12,12 +12,11 @@
 // ============================================================================
 package org.talend.designer.camel.spring.ui.wizards;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.designer.camel.spring.core.CamelSpringSaver;
 import org.talend.designer.camel.spring.core.models.SpringRoute;
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
@@ -54,22 +53,24 @@ public class ExportSpringXMLWizard extends Wizard {
     public boolean performFinish() {
         
         SpringRoute[] routes = exporter.buildSpringRoute1(process);
+        String outputPath = exportPage.getOutputPath();
+        if (new File(outputPath).exists()) {
+            if (!MessageDialog.openQuestion(getShell(), "Question", "File '" + outputPath
+                    + "' exists, would you like to overwrite it? ")) {
+                return false;
+            }
+        }
+        
         testPrint(routes);
         CamelSpringSaver saver = new CamelSpringSaver(exportPage.getOutputPath());
         try {
             saver.save(routes, exporter.isHasActiveMQ(), exporter.isHasCXF());
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-      
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            MessageDialog
+                    .openError(getShell(), "Error", "Export to Spring XML failed, details:" + e.getMessage());
+            return false;
+        } 
         
         return true;
     }
@@ -100,7 +101,6 @@ public class ExportSpringXMLWizard extends Wizard {
             System.out.println(tab + "[Next child " + nextChild.getUniqueName() + " ]");
             print(nextChild, tab);
         }
-
     }
   
 }

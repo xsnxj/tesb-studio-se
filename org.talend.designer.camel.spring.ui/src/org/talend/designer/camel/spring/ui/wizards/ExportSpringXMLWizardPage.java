@@ -44,13 +44,13 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 
 	protected ExportSpringXMLWizardPage(String pageName) {
 		super(pageName);
-		setTitle("Export As Spring");
-		setDescription("Export Selected Route as a Spring XML file");
+		setTitle("Export As Spring XML");
+		setDescription("Export Selected Route As a Spring XML file");
 	}
 
 	public void createControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Spring File");
+		group.setText("Spring XML File");
 		group.setLayout(new GridLayout(3, false));
 
 		Label pathLabel = new Label(group, SWT.NONE);

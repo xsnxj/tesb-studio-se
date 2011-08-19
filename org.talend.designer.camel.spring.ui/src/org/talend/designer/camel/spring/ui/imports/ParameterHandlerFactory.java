@@ -54,7 +54,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CActiveMQParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.AGGREGATE];
-        handlers.put(componentName, new CommonParameterHandler(componentName));
+        handlers.put(componentName, new CAggregateParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.BALANCE];
         handlers.put(componentName, new CLoadBalancerParameterHandler(componentName));
