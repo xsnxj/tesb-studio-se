@@ -34,12 +34,12 @@
 				<COLUMN NAME="body" TYPE="id_String" READONLY="true"/>
 			</TABLE>
 		</PARAMETER -->
-		
+
 		<!-- rest service endpoint -->
 		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
 			<DEFAULT>"http://localhost:8088/"</DEFAULT>
 		</PARAMETER>
-	
+
 		<PARAMETER NAME="SCHEMAS" FIELD="TABLE" NUM_ROW="10" REQUIRED="true" NB_LINES="5">
 			<ITEMS>
 				<ITEM NAME="SCHEMA" FIELD="SCHEMA_TYPE" />
@@ -51,13 +51,13 @@
 						<ITEM NAME="DELETE" VALUE="DELETE" />
 					</ITEMS>
 				</ITEM>
-				<!-- 
+				<!--
 				<ITEM NAME="INPUT_COLUMN" FIELD="PREV_COLUMN_LIST" />
 				 -->
-				 <!-- 
+				 <!--
 				<ITEM NAME="COLUMNS" FIELD="COLUMN_LIST" />
 				 -->
-				
+
 				<ITEM NAME="URI_PATTERN" FIELD="TEXT" VALUE='"/"'/>
 				<!-- ITEM NAME="MAPPING" FIELD="SCHEMA_XPATH_QUERYS" / -->
 			</ITEMS>
@@ -70,14 +70,14 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
-	
-	<ADVANCED_PARAMETERS> 
-	</ADVANCED_PARAMETERS>  
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.1.jar"
+					MODULE="cxf-bundle-2.4.2.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="jsr311-api"
 					MODULE="jsr311-api-1.1.1.jar"
@@ -125,7 +125,7 @@
 					MODULE="xmlschema-core-2.0.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.0.jar"
+					MODULE="neethi-3.0.1.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
 					MODULE="wsdl4j-1.6.2.jar"
@@ -135,26 +135,26 @@
 					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-continuation"
-					MODULE="jetty-continuation-7.4.2.v20110526.jar"
+					MODULE="jetty-continuation-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-http"
-					MODULE="jetty-http-7.4.2.v20110526.jar"
+					MODULE="jetty-http-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-io"
-					MODULE="jetty-io-7.4.2.v20110526.jar"
+					MODULE="jetty-io-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-server"
-					MODULE="jetty-server-7.4.2.v20110526.jar"
+					MODULE="jetty-server-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-util"
-					MODULE="jetty-util-7.4.2.v20110526.jar"
+					MODULE="jetty-util-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
-			<!--IMPORT NAME="slf4j-api"
+			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.6.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="slf4j-jdk14"
 					MODULE="slf4j-jdk14-1.6.1.jar"
-					REQUIRED="true"/-->
+					REQUIRED="true"/>
 
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.5.RELEASE.jar"
@@ -180,9 +180,9 @@
 
 		</IMPORTS>
 	</CODEGENERATION>
-  
-	<RETURNS> 
-		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer"/> 
+
+	<RETURNS>
+		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer"/>
 	</RETURNS>
-	 
+
 </COMPONENT>
