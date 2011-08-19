@@ -13,6 +13,10 @@ public class BeanComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean beanType="class" [method="method"] />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Map<String, String> parameter = srn.getParameter();
 		String beanClass = parameter.get(BN_BEAN_CLASS);
@@ -27,7 +31,9 @@ public class BeanComponentSaver extends AbstractComponentSaver {
 		
 		Element element = document.createElement(BEAN_ELE);
 		element.setAttribute("beanType", beanClass);
-		element.setAttribute("method", beanMethod);
+		if(beanMethod!=null&&!"".equals(beanMethod)){
+			element.setAttribute("method", beanMethod);
+		}
 		parent.appendChild(element);
 		return element;
 	}

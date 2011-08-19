@@ -14,12 +14,21 @@ public class SetHeaderComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <setHeader headerName="headerName">
+	 * 		<method beanType="beanClass"/>
+	 * 		or
+	 * 		<expressionType>expressionValue</expressionType>
+	 * </setHeader>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(SETHEADER_ELE);
 		parent.appendChild(element);
 		
 		Map<String, String> parameter = srn.getParameter();
 		
+		//set header attribute
 		String headerName = parameter.get(SH_HEADER_NAME);
 		if(headerName==null){
 			headerName = "";
@@ -28,6 +37,7 @@ public class SetHeaderComponentSaver extends AbstractComponentSaver {
 		}
 		element.setAttribute("headerName", headerName);
 		
+		//create expression type
 		String type = parameter.get(EP_EXPRESSION_TYPE);
 		if(type!=null){
 			String text = parameter.get(EP_EXPRESSION_TEXT);

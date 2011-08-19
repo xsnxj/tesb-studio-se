@@ -192,6 +192,16 @@ public interface ICamelSpringConstants {
 	public static final String AG_USE_PERSISTENCE = "use_persistance";
 	public static final String AG_CLOSE_ON_COMPLETION = "close_on_completion";
 	
+	public static final String AG_REPOSITORY_TYPE = "repository_type";
+	public static final String AG_AGGREGATION_REPO = "AGGREGATION";
+	public static final String AG_RECOVERABLE_REPO = "RECOVERABLE";
+	public static final String AG_REPOSITORY_NAME = "repository_name";
+	public static final String AG_HAWTDB_REPO = "HAWTDB";
+	public static final String AG_HAWTDB_PERSISFILE = "persistent_file";
+	public static final String AG_RECOVER_INTERVAL = "recover_interval";
+	public static final String AG_DEAD_LETTER_CHANNEL = "dead_letter_channel";
+	public static final String AG_MAXIMUM_REDELIVERIES = "maximum_redeliveries";
+	
 	//content enrich
 	public static final String ER_AGGREGATE_STRATEGY = AG_AGGREGATE_STRATEGY;
 	public static final String ER_MERGE_DATA = "merge_data";

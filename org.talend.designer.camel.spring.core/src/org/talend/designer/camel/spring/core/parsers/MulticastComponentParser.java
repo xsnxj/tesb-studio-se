@@ -15,7 +15,6 @@ public class MulticastComponentParser extends AbstractComponentParser {
 
 	public MulticastComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

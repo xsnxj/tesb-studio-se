@@ -47,6 +47,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spring.SpringCamelContext;
 import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
+import org.talend.designer.camel.spring.core.intl.SpringNodeIdFactory;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 import org.talend.designer.camel.spring.core.parsers.AbstractComponentParser;
 import org.talend.designer.camel.spring.core.parsers.ActiveMQComponentParser;
@@ -112,8 +113,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			//parse
 			List<RouteDefinition> routeDefinitions = camelContext
 					.getRouteDefinitions();
+			NodeIdFactory nodeIdFactory = new SpringNodeIdFactory();
 			for (RouteDefinition rd : routeDefinitions) {
-				parseRouteDefinitions(rd, camelContext);
+				parseRouteDefinitions(rd, camelContext,nodeIdFactory);
 			}
 			
 		} catch (Exception e) {
@@ -184,8 +186,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	 * @throws UnsupportedElementException
 	 */
 	private void parseRouteDefinitions(RouteDefinition rd,
-			SpringCamelContext camelContext) throws UnsupportedElementException {
-		NodeIdFactory nodeIdFactory = camelContext.getNodeIdFactory();
+			SpringCamelContext camelContext, NodeIdFactory nodeIdFactory) throws UnsupportedElementException {
 		List<FromDefinition> inputs = rd.getInputs();
 		if (inputs.size() < 1) {
 			throw new UnsupportedElementException(rd);
@@ -221,7 +222,6 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	
 	private void parseProcessorDefinition(List<ProcessorDefinition> outputs,
 			NodeIdFactory nodeIdFactory, String fromId, boolean keepFrom, int connectionType, Map<String,String> connectionMap) {
-//		int connectionType = ROUTE;
 		for (ProcessorDefinition pd : outputs) {
 			/*
 			 * the intercept component and onException component
@@ -516,16 +516,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		String id = processIsolateDefinition(FILTER, nodeIdFactory, fromId, pd,
 				connectionType, connectionMap);
 		List<ProcessorDefinition> outputs = pd.getOutputs();
-		fromId = id;
-		for (ProcessorDefinition out : outputs) {
-			if (fromId == id) {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
-						out, ROUTE, null);
-			} else {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
-						out, ROUTE_ENDBLOCK, null);
-			}
-		}
+		parseProcessorDefinition(outputs, nodeIdFactory, id, false, ROUTE);
 		return id;
 	}
 

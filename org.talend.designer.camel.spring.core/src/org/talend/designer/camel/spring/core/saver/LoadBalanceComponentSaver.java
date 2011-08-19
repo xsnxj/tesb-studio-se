@@ -18,6 +18,28 @@ public class LoadBalanceComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <loadBalance ref="customStrategy">
+	 * 		<random/>
+	 * 		or
+	 * 		<topic/>
+	 * 		or
+	 * 		<roundRobin/>
+	 * 		or
+	 * 		<sticky>
+	 * 			<correlationExpression>
+	 * 				<expressionType>value</expressionType
+	 * 			</correlationExpression>
+	 * 		</sticky>
+	 * 		or
+	 * 		<failover roundRobin="true/false" maximumFailoverAttempts="count">
+	 * 			<exception>exceptionClass</exception>
+	 * 			...
+	 * 			<exception>exceptionClass</exception>
+	 * 		</failover>
+	 * </loadBalance>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(LOADBALANCE_ELE);
 		parent.appendChild(element);

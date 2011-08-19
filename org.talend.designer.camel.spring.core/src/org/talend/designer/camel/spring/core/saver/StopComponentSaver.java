@@ -11,6 +11,10 @@ public class StopComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <stop/>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(STOP_ELE);
 		parent.appendChild(element);

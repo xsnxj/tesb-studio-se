@@ -10,7 +10,6 @@ public class ConvertBodyComponentParser extends AbstractComponentParser {
 
 	public ConvertBodyComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -11,7 +11,6 @@ public class FileComponentParser extends AbstractComponentParser {
 
 	public FileComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	protected void parse(OptionalIdentifiedDefinition fd, Map<String,String> map) {

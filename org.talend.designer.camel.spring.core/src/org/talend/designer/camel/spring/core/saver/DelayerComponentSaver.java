@@ -14,6 +14,12 @@ public class DelayerComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <delay>
+	 * 		<constant>value</constant>
+	 * </delay>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(DELAYER_ELE);
 		parent.appendChild(element);

@@ -11,6 +11,12 @@ public class TryComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <doTry>
+	 * 	...
+	 * </doTry>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(TRY_ELE);
 		parent.appendChild(element);

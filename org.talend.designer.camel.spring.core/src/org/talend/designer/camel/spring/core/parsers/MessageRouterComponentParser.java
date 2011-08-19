@@ -9,7 +9,6 @@ public class MessageRouterComponentParser extends AbstractComponentParser {
 
 	public MessageRouterComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

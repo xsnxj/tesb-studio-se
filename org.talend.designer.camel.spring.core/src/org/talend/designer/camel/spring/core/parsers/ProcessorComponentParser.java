@@ -9,7 +9,6 @@ public class ProcessorComponentParser extends AbstractComponentParser {
 
 	public ProcessorComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

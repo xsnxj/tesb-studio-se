@@ -14,22 +14,31 @@ public class RoutingSlipComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <routingSlip uriDelimiter="delimiter">
+	 * 		<header>headerName</header>
+	 * </routingSlip>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Map<String, String> parameter = srn.getParameter();
 		String delimiter = parameter.get(RS_URI_DELIMITER);
 		String express = parameter.get(EP_EXPRESSION_TEXT);
 		
 		Element element = document.createElement(ROUTINGSLIP_ELE);
+		parent.appendChild(element);
 		if(delimiter!=null){
 			element.setAttribute("uriDelimiter", removeQuote(delimiter));
 		}
+		
+		//create header element
 		Element header = document.createElement("header");
 		element.appendChild(header);
-		if(express!=null){
-			Text expressNode = document.createTextNode(removeQuote(express));
-			header.appendChild(expressNode);
+		if(express==null){
+			express = "";
 		}
-		parent.appendChild(element);
+		Text expressNode = document.createTextNode(removeQuote(express));
+		header.appendChild(expressNode);
 		return element;
 	}
 

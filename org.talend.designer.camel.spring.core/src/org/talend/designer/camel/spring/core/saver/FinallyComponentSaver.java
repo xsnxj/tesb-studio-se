@@ -11,6 +11,12 @@ public class FinallyComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <finally>
+	 * 	...
+	 * </finally>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(FINALLY_ELE);
 		parent.appendChild(element);

@@ -16,21 +16,34 @@ public class MulticastComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean id="beanId" class="AggregateStrategyClass/>
+	 * ...
+	 * <multicast parallelProcessing="true/false" timeout="count" strategyRef="beanId">
+	 * 		<to uri="uri"/>
+	 * 		...
+	 * 		<to uri="uri"/>
+	 * </multicast>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(MULTICAST_ELE);
 		parent.appendChild(element);
 		
 		Map<String, String> parameter = srn.getParameter();
+		//set timeout attribute
 		String timeout = parameter.get(ML_TIMEOUT);
 		if(timeout!=null){
 			element.setAttribute("timeout", timeout);
 		}
 		
+		//set parallel attribute
 		String parallel = parameter.get(ML_IS_PARALLEL);
 		if(parallel!=null){
 			element.setAttribute("parallelProcessing", parallel);
 		}
 		
+		//create strategy bean
 		String strategy = parameter.get(ML_AGGREGATE_STRATEGY);
 		if(strategy!=null){
 			index++;
@@ -41,6 +54,7 @@ public class MulticastComponentSaver extends AbstractComponentSaver {
 			element.setAttribute("strategyRef", ID+index);
 		}
 		
+		//create to elements
 		String destinations = parameter.get(ML_DESTINATIONS);
 		if(destinations!=null&&!"".equals(destinations)){
 			String[] splits = destinations.split(";");

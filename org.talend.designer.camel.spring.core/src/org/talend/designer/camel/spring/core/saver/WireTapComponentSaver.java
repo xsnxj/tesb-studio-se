@@ -13,11 +13,20 @@ public class WireTapComponentSaver extends AbstractComponentSaver {
 		super(document, rootElement, contextElement);
 	}
 
+	/**
+	 * the generated xml format looks like:
+	 * <wireTap processorRef="beanId" uri="uri" copy="true/false">
+	 * 		<body>
+	 * 			<expressionDefinition></expressionDefinition>
+	 * 		</body>
+	 * </wireTap>
+	 */
 	@Override
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(WIRETAP_ELE);
 		parent.appendChild(element);
 		
+		//set uri attribute
 		Map<String, String> parameter = srn.getParameter();
 		String uri = parameter.get(ENDPOINT_URI);
 		if(uri==null){
@@ -27,11 +36,13 @@ public class WireTapComponentSaver extends AbstractComponentSaver {
 		}
 		element.setAttribute("uri", uri);
 		
+		//set copy attribute
 		String copy = parameter.get(WT_WIRETAP_COPY);
 		if(copy!=null){
 			element.setAttribute("copy", copy);
 		}
 		
+		//create expression element or processorRef attribute
 		String populateType = parameter.get(WT_POPULATE_TYPE);
 		if(WT_NEW_EXPRESSION_POP.equals(populateType)){
 			String type = parameter.get(EP_EXPRESSION_TYPE);
@@ -43,6 +54,8 @@ public class WireTapComponentSaver extends AbstractComponentSaver {
 				bodyElement.appendChild(sub);
 				if(text==null){
 					text = "";
+				}else{
+					text = removeQuote(text);
 				}
 				Text textNode = document.createTextNode(text);
 				sub.appendChild(textNode);

@@ -11,7 +11,6 @@ public class MessageEndpointParser extends AbstractComponentParser {
 
 	public MessageEndpointParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	protected void parse(OptionalIdentifiedDefinition fd, Map<String, String> map) {

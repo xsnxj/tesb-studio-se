@@ -14,6 +14,12 @@ public class FileComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <from uri="file:directoryName[?options]" />
+	 * or 
+	 * <to uri="file:directoryName[?options]" />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
 		Element element = null;
@@ -30,6 +36,10 @@ public class FileComponentSaver extends AbstractComponentSaver {
 				continue;
 			}
 			String value = parameter.get(key);
+			value = removeQuote(value);
+			if(null==value||"".equals(value)){
+				continue;
+			}
 			sb.append(key);
 			sb.append("=");
 			sb.append(value);

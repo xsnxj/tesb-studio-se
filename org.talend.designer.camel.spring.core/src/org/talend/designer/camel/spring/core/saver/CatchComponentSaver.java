@@ -14,6 +14,14 @@ public class CatchComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <doCatch>
+	 * 		<exception>exceptionClass</exception>
+	 * 		....
+	 * 		<exception>exceptionClass</exception>
+	 * </doCatch>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(CATCH_ELE);
 		parent.appendChild(element);

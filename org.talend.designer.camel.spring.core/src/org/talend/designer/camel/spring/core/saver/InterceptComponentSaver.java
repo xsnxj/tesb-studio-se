@@ -11,6 +11,12 @@ public class InterceptComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <intercept>
+	 * 		...
+	 * </intercept>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(INTERCEPT_ELE);
 		parent.insertBefore(element, parent.getFirstChild());

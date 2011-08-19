@@ -18,6 +18,20 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <cxf:cxfEndpoint id="cxfEndpointId" [wsdlURL="uri"] [serviceClass="serviceClass"]
+	 * 			address="address" [endpointName="ns:portName"] [serviceName="ns:serviceName]
+	 * 			[xmlns:ns="namespace"] >
+	 * 		<cxf:properties>
+	 * 			<entry key="dataFormat" value="(MESSAGE|POJO|PAYLOAD)" />
+	 * 		</cxf:properties>
+	 * </cxf:cxfEndpoint>
+	 * ...
+	 * <from uri="cxf:bean:cxfEndpointId?options"/>
+	 * or
+	 * <to uri="cxf:bean:cxfEndpointId?options"/>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
 
@@ -35,12 +49,14 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 		endpointElement.setAttribute("address", address);
 		parameter.remove("address");
 
+		//set wsdlURI attribute or serviceClass attribute
 		String type = parameter.get("type");
 		if (type != null) {
 			if ("wsdlURL".equals(type)) {
 				String wsdlURL = parameter.get("wsdlURL");
 				endpointElement.setAttribute("wsdlURL", removeQuote(wsdlURL));
-			} else if ("serviceClass".equals(type)) {
+			} 
+			if ("serviceClass".equals(type)) {
 				String serviceClass = parameter.get("serviceClass");
 				endpointElement.setAttribute("serviceClass", serviceClass);
 			}
@@ -50,6 +66,7 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 		parameter.remove("wsdlURL");
 		parameter.remove("type");
 
+		//process endpointName and serviceName
 		String portName = parameter.get("endpointName");
 		parameter.remove("endpointName");
 		String serviceName = parameter.get("serviceName");
@@ -63,6 +80,8 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 			}
 			portName = portName.substring(lastCurve + 1);
 		}
+		
+		//calculate namespace
 		if (serviceName != null) {
 			int firstCurve = serviceName.indexOf("{");
 			int lastCurve = serviceName.indexOf("}");
@@ -84,6 +103,7 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 			ns = "";
 		}
 
+		//set endpointName and serviceName attribute
 		if (portName != null) {
 			endpointElement.setAttribute("endpointName", ns + portName);
 		}
@@ -91,6 +111,7 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 			endpointElement.setAttribute("serviceName", ns + serviceName);
 		}
 		
+		//create dataFormat property
 		String dataFormat = parameter.get("dataFormat");
 		if(dataFormat!=null){
 			Element propertiesElement = document.createElement("cxf:properties");
@@ -104,6 +125,7 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 		}
 		parameter.remove("dataFormat");
 		
+		//construct uri
 		StringBuilder sb = new StringBuilder();
 		sb.append("cxf:bean:");
 		sb.append(ID);
@@ -115,16 +137,21 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 		}
 		for(String s:keySet){
 			String value = parameter.get(s);
+			value = removeQuote(value);
+			if(value==null||"".equals(value)){
+				continue;
+			}
 			sb.append(removeQuote(s));
 			sb.append("=");
 			sb.append(removeQuote(value));
 			sb.append("&");
 		}
 		
-		if(keySet.size()>0){
+		if(sb.charAt(sb.length()-1)=='&'){
 			sb.deleteCharAt(sb.length()-1);
 		}
 		
+		//create element
 		Element element = null;
 		if (preNode == null) {
 			element = document.createElement(FROM_ELE);

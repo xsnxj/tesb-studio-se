@@ -12,7 +12,6 @@ public class LoopComponentParser extends AbstractComponentParser {
 
 	public LoopComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

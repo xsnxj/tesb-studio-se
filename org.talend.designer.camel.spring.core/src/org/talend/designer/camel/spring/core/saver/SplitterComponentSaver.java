@@ -14,12 +14,19 @@ public class SplitterComponentSaver extends AbstractComponentSaver {
 	}
 	
 	@Override
+	/**
+	 * generated xml format:
+	 * <split>
+	 * 		<expressionType>expressionValue</expressionType>
+	 * 		...
+	 * </split>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(SPLIT_ELE);
 		parent.appendChild(element);
 		Map<String, String> parameter = srn.getParameter();
 		String express = parameter.get(SP_SPLIT_EXPRESS);
-		if(express!=null){
+		if(express!=null&&!"".equals(express)){
 			int index = express.indexOf(".");
 			int leftB = express.indexOf("(", index);
 			if(leftB!=-1){

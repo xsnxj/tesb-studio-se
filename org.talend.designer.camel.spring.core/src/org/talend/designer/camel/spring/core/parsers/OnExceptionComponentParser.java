@@ -14,7 +14,6 @@ public class OnExceptionComponentParser extends AbstractComponentParser {
 
 	public OnExceptionComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	private List<OnExceptionDefinition> ids = new ArrayList<OnExceptionDefinition>();
@@ -40,6 +39,9 @@ public class OnExceptionComponentParser extends AbstractComponentParser {
 			
 			map.put(OE_MAX_REDELIVER_DELAY, maximumRedeliveryDelay);
 			map.put(OE_MAX_REDELIVER_TIMES, maximumRedeliveries);
+			
+			String asyncDelayedRedelivery = redeliveryPolicy.getAsyncDelayedRedelivery();
+	        map.put(OE_ASYNC_DELAY_REDELIVER, asyncDelayedRedelivery);
 		}
 		
 		boolean useOriginalMessage = oed.isUseOriginalMessage();
@@ -47,14 +49,13 @@ public class OnExceptionComponentParser extends AbstractComponentParser {
 		
 		ExpressionSubElementDefinition continued = oed.getContinued();
 		ExpressionSubElementDefinition handled = oed.getHandled();
-		if(handled!=null&&"true".equals(handled.toString())){
+		
+		//Using Handler Expression test condition instead of toString()
+		if(handled!=null&&"true".equals(handled.getExpressionType().getExpression())){
 			map.put(OE_EXCEPTION_BEHAVIOR, OE_HANDLE_EXCEPTION);
-		}else if(continued!=null&&"true".equals(continued.toString())){
+		}else if(continued!=null&&"true".equals(continued.getExpressionType().getExpression())){
 			map.put(OE_EXCEPTION_BEHAVIOR, OE_CONTINUE_EXCEPTION);
 		}
-		
-		String asyncDelayedRedelivery = redeliveryPolicy.getAsyncDelayedRedelivery();
-		map.put(OE_ASYNC_DELAY_REDELIVER, asyncDelayedRedelivery);
 	}
 
 	public boolean hasProcessed(OnExceptionDefinition id) {

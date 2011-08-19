@@ -11,6 +11,10 @@ public class ConvertBodyComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <convertBodyTo type="typeClass" />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(CONVERT_ELE);
 		parent.appendChild(element);

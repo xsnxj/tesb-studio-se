@@ -33,7 +33,8 @@ Bundle-ClassPath: .,
  libs/cxf-api-2.4.1.jar,
  libs/cxf-rt-frontend-simple-2.4.1.jar,
  libs/cxf-rt-transports-http-2.4.1.jar,
- libs/neethi-3.0.0.jar
+ libs/neethi-3.0.0.jar,
+ libs/camel-hawtdb-2.7.2.jar
 Export-Package: org.talend.designer.camel.spring.core,
  org.talend.designer.camel.spring.core.models
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -11,6 +11,12 @@ public class OtherwiseComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <otherwise>
+	 * 		....
+	 * </otherwise>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(OTHERWISE_ELE);
 		parent.appendChild(element);

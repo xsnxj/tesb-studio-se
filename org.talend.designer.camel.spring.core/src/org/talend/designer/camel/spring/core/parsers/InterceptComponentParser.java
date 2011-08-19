@@ -12,7 +12,6 @@ public class InterceptComponentParser extends AbstractComponentParser {
 
 	public InterceptComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	private List<InterceptDefinition> ids = new ArrayList<InterceptDefinition>();

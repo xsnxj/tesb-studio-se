@@ -14,7 +14,6 @@ public class PipeLineComponentParser extends AbstractComponentParser {
 
 	public PipeLineComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

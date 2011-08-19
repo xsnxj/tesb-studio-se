@@ -13,7 +13,6 @@ public class SplitComponentParser extends AbstractComponentParser {
 
 	public SplitComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	protected void parse(OptionalIdentifiedDefinition d, Map<String, String> map) {

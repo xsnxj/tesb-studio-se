@@ -11,7 +11,6 @@ public class FTPComponentParser extends AbstractComponentParser {
 
 	public FTPComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

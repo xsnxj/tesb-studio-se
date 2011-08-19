@@ -12,7 +12,6 @@ public class DelayComponentParser extends AbstractComponentParser {
 
 	public DelayComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

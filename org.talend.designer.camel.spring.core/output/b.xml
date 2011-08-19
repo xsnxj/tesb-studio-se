@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="MyAggregationStrategy" id="aggregateStrategy1"/>
+    <bean class="sdfasfsaff" id="repo1">
+        <property name="recoveryInterval" value="555"/>
+        <property name="maximumRedeliveries" value="44"/>
+        <property name="deadLetterUri" value="mock:deadeee"/>
+    </bean>
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel-1">
+        <route>
+            <from uri=""/>
+            <aggregate aggregationRepositoryRef="repo1" closeCorrelationKeyOnCompletion="2" completionFromBatchConsumer="true" completionInterval="10009" completionSize="3" completionTimeout="10000" eagerCheckCompletion="true" groupExchanges="true" ignoreInvalidCorrelationKeys="true" strategyRef="aggregateStrategy1">
+                <correlationExpression>
+                    <constant>true</constant>
+                </correlationExpression>
+                <completionPredicate>
+                    <expressionDefinition>fff</expressionDefinition>
+                </completionPredicate>
+                <to uri="Transform[simple{The result is: ${body}}]"/>
+                <to uri="stream:out"/>
+            </aggregate>
+            <wireTap copy="false" uri="direct:incoming">
+                <body>
+                    <xpath>""""""</xpath>
+                </body>
+            </wireTap>
+            <to uri=""/>
+        </route>
+    </camelContext>
+</beans>

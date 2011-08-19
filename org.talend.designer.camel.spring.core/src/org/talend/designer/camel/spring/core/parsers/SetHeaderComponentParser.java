@@ -12,7 +12,6 @@ public class SetHeaderComponentParser extends AbstractComponentParser {
 
 	public SetHeaderComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

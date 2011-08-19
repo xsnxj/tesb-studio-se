@@ -9,21 +9,30 @@ import org.w3c.dom.Text;
 
 public class OnExceptionComponentSaver extends AbstractComponentSaver {
 
-	private String ASYNC_DELAY = "asyncDelay";
-	private int index = 0;
-	
 	public OnExceptionComponentSaver(Document document, Element rootElement, Element contextElement) {
 		super(document, rootElement, contextElement);
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <onException useOriginalMessage="true/false">
+	 * 		<exception>exceptionClass</exception>
+	 * 		....
+	 * 		<exception>exceptionClass</exception>
+	 * 		<redeliveryPolicy maximumRedeliveries="count" asyncDelayedRedelivery="true/false"/>
+	 * 		<handled><constant>true/false</constant></handled>
+	 * 		or
+	 * 		<continued><constant>true/false</constant><continued>
+	 * </onException>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
-		index++;
 		Element element = document.createElement(ONEXCEPTION_ELE);
 		parent.insertBefore(element, parent.getFirstChild());
 		
 		Map<String, String> parameter = srn.getParameter();
 		
+		//create exceptions
 		String exceptions = parameter.get(OE_EXCEPTIONS);
 		if(exceptions!=null&&!"".equals(exceptions)){
 			String[] splits = exceptions.split(";");
@@ -34,24 +43,30 @@ public class OnExceptionComponentSaver extends AbstractComponentSaver {
 				exceptionElement.appendChild(textNode);
 			}
 		}
+		
+		//set useOriginalMessage attributes
 		String useOriginal = parameter.get(OE_USE_ORIGINAL_MSG);
 		if(useOriginal!=null&&!"".equals(useOriginal)){
 			element.setAttribute("useOriginalMessage", useOriginal);
 		}
+		
+		//set redelivireryPolicy
 		String redeliveryTimes = parameter.get(OE_MAX_REDELIVER_TIMES);
+		Element redeliveryPolicy = null;
 		if(redeliveryTimes!=null&&!"".equals(redeliveryTimes)){
-			Element redeliveryPolicy = document.createElement("redeliveryPolicy");
+			redeliveryPolicy = document.createElement("redeliveryPolicy");
 			redeliveryPolicy.setAttribute("maximumRedeliveries", redeliveryTimes);
 			element.appendChild(redeliveryPolicy);
 		}
 		String asyncDelay = parameter.get(OE_ASYNC_DELAY_REDELIVER);
 		if(asyncDelay!=null&&!"".equals(asyncDelay)){
-			element.setAttribute("redeliveryPolicyRef", ASYNC_DELAY+index);
-			Element profile = document.createElement("redeliveryPolicyProfile");
-			profile.setAttribute("id", ASYNC_DELAY+index);
-			profile.setAttribute("asyncDelayedRedelivery", asyncDelay);
-			parent.insertBefore(profile, element);
+			if(redeliveryPolicy==null){
+				redeliveryPolicy = document.createElement("redeliveryPolicy");
+			}
+			redeliveryPolicy.setAttribute("asyncDelayedRedelivery", asyncDelay);
 		}
+		
+		//create handled/continued element
 		String exceptionBehavior = parameter.get(OE_EXCEPTION_BEHAVIOR);
 		if(exceptionBehavior!=null&&!"".equals(exceptionBehavior)){
 			String elementName = null;

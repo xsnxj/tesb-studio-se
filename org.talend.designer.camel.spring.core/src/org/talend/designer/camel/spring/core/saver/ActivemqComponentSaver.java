@@ -19,9 +19,18 @@ public class ActivemqComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean id="activemqId" class="org.apache.activemq.camel.component.ActiveMQComponent">
+	 * 		<property name="brokerURL" value="brokerUrl" />
+	 * </bean>
+	 * ...
+	 * <from uri="activemqId:(queue|topic):destination?options" />
+	 * or
+	 * <to uri="activemqId:(queue|topic):destination?options" />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
-		
 		
 		Map<String, String> parameter = srn.getParameter();
 		String brokerUrl = parameter.get("brokerURL");
@@ -58,10 +67,15 @@ public class ActivemqComponentSaver extends AbstractComponentSaver {
 			if(AMQ_MESSAGE_TYPE.equals(s)||AMQ_MSG_DESTINATION.equals(s)||"brokerURL".equals(s)){
 				continue;
 			}
+			String value = parameter.get(s);
+			value = removeQuote(value);
+			if(value==null||"".equals(value)){
+				continue;
+			}
 			sb.append("&");
 			sb.append(s);
 			sb.append("=");
-			sb.append(parameter.get(s));
+			sb.append(value);
 		}
 		if(sb.length()>0){
 			sb.deleteCharAt(0);

@@ -17,7 +17,6 @@ public class CXFComponentParser extends AbstractComponentParser {
 
 	public CXFComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

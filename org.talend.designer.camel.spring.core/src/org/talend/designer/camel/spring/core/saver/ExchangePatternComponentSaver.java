@@ -11,6 +11,10 @@ public class ExchangePatternComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <setExchangePattern pattern="type" />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(EXCHANGEPATTERN_ELE);
 		parent.appendChild(element);

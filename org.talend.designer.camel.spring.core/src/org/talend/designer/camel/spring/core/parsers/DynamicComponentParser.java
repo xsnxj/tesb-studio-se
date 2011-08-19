@@ -6,14 +6,12 @@ import org.apache.camel.model.DynamicRouterDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 
 public class DynamicComponentParser extends AbstractComponentParser {
 
 	public DynamicComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -20,7 +20,6 @@ public class IdempoComponentParser extends AbstractComponentParser {
 
 	public IdempoComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

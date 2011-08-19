@@ -14,6 +14,13 @@ public class ThrottlerComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <throttle timePeriodMillis="times" maximumRequestsPerPeriod="count" 
+	 * 					asyncDelayed="true/false">
+	 * 			...
+	 * </throttle>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(THROTTLER_ELE);
 		parent.appendChild(element);

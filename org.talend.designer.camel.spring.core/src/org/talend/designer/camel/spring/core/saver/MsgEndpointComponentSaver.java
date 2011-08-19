@@ -11,6 +11,12 @@ public class MsgEndpointComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <from uri="uri"/>
+	 * or
+	 * <to uri="uri"/>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
 		Element element = null;
@@ -20,6 +26,9 @@ public class MsgEndpointComponentSaver extends AbstractComponentSaver {
 			element = document.createElement(TO_ELE);
 		}
 		String uri = srn.getParameter().get(ENDPOINT_URI);
+		if(uri==null){
+			uri = "";
+		}
 		element.setAttribute(URI_ATT, removeQuote(uri));
 		parent.appendChild(element);
 		return element;

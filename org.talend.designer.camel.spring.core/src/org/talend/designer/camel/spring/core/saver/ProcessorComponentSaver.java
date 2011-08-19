@@ -11,6 +11,10 @@ public class ProcessorComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <process ref="beanId"/>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(PROCESSOR_ELE);
 		parent.appendChild(element);

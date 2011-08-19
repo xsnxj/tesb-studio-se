@@ -14,6 +14,13 @@ public class WhenComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * The generated xml format looks like:
+	 * <when>
+	 * 		<expressionType>expressionValue</expressionType>
+	 * 		...
+	 * </when>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(WHEN_ELE);
 		parent.appendChild(element);

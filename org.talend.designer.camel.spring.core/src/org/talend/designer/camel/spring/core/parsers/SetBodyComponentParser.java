@@ -12,7 +12,6 @@ public class SetBodyComponentParser extends AbstractComponentParser {
 
 	public SetBodyComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

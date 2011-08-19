@@ -14,6 +14,12 @@ public class MsgFilterComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <filter>
+	 * 		<expressionType>expressionValue</expressionType>
+	 * </filter>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(MSGFILTER_ELE);
 		parent.appendChild(element);
@@ -22,9 +28,14 @@ public class MsgFilterComponentSaver extends AbstractComponentSaver {
 		String type = parameter.get(EP_EXPRESSION_TYPE);
 		if(type!=null){
 			String text = parameter.get(EP_EXPRESSION_TEXT);
+			if(text==null){
+				text = "";
+			}else{
+				text = removeQuote(text);
+			}
 			Element sub = document.createElement(type);
 			element.appendChild(sub);
-			Text textNode = document.createTextNode(removeQuote(text));
+			Text textNode = document.createTextNode(text);
 			sub.appendChild(textNode);
 		}
 		return element;

@@ -12,7 +12,6 @@ public class FilterComponentParser extends AbstractComponentParser {
 
 	public FilterComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -10,7 +10,6 @@ public class BeanComponentParser extends AbstractComponentParser {
 
 	public BeanComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

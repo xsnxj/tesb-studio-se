@@ -14,6 +14,12 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <to uri="(ftp|ftps|sftp)://[username@]hostname[:port]/directoryname[?options]" />
+	 * or
+	 * <from uri="(ftp|ftps|sftp)://[username@]hostname[:port]/directoryname[?options]" />
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
 		
@@ -54,12 +60,16 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 		}
 		for(String s:keySet){
 			String value = parameter.get(s);
+			value = removeQuote(value);
+			if(value==null||"".equals(value)){
+				continue;
+			}
 			sb.append(s);
 			sb.append("=");
 			sb.append(value);
 			sb.append("&");
 		}
-		if(keySet.size()>0){
+		if(sb.charAt(sb.length()-1)=='&'){
 			sb.deleteCharAt(sb.length()-1);
 		}
 		

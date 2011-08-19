@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -14,6 +15,18 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean class="org.apache.camel.component.jms.JmsComponent" id="jmsId">
+	 * 		<!-- Auto generated property -->
+	 * 		<property name="connectionFactory" 
+	 * 				value="vm://localhost?broker.persistent=false&amp;amp;broker.useJmx=false"/>
+	 * </bean>
+	 * ...
+	 * <to uri="jmsId:(queue|topic):destination?k=v&k=v&...&k=v"/>
+	 * or
+	 * <from uri="jmsId:(queue|topic):destination?k=v&k=v&...&k=v"/>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
 		//create element
@@ -63,13 +76,21 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 		//create bean
 		Element beanElement = document.createElement(BEAN_ELE);
 		root.insertBefore(beanElement, context);
-		
+	
 		beanElement.setAttribute("id", schema);
 		beanElement.setAttribute("class", "org.apache.camel.component.jms.JmsComponent");
 		
+		//Comment on element
+		Comment brokerPropertyComment = document.createComment("Auto generated property.");
+        beanElement.appendChild(brokerPropertyComment);
+        
 		Element brokerProperty = document.createElement("property");
 		brokerProperty.setAttribute("name", "connectionFactory");
+		//Add a url attribute
+		brokerProperty.setAttribute("value", "vm://localhost?broker.persistent=false&amp;broker.useJmx=false");
 		beanElement.appendChild(brokerProperty);
+		
+		
 		return element;
 	}
 

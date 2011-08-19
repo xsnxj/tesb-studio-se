@@ -9,18 +9,27 @@ import org.w3c.dom.Element;
 public class DynamicComponentSaver extends AbstractComponentSaver {
 
 	private String dynamicId = "dynamic";
-	private int index = 1;
+	private int index = 0;
 	
 	public DynamicComponentSaver(Document document, Element rootElement, Element contextElement) {
 		super(document, rootElement, contextElement);
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean id="beanId" class="beanclass" />
+	 * ...
+	 * <dynamicRouter>
+	 * 		<method ref="beanId" [method="beanmethod"] />
+	 * </dynamicRouter>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(DYNAMIC_ELE);
 		parent.appendChild(element);
 		
 		//create bean element
+		index++;
 		Element beanElement = document.createElement(BEAN_ELE);
 		root.insertBefore(beanElement, context);
 		beanElement.setAttribute("id", dynamicId+index);
@@ -37,8 +46,12 @@ public class DynamicComponentSaver extends AbstractComponentSaver {
 		element.appendChild(methodEle);
 		
 		methodEle.setAttribute("ref", dynamicId+index);
-		methodEle.setAttribute("method", removeQuote(parameter.get(BN_BEAN_METHOD)));
-		index++;
+		
+		String method = parameter.get(BN_BEAN_METHOD);
+		method = removeQuote(method);
+		if(method!=null&&!"".equals(method)){
+			methodEle.setAttribute("method", method);
+		}
 		return element;
 	}
 

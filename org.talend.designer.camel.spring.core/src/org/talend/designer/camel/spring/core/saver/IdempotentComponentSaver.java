@@ -17,6 +17,18 @@ public class IdempotentComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <bean id="idemRepoId" class="RepositoryClass">
+	 * 		<constructor-arg type="argType" value="argValue"/>
+	 * 		...
+	 * 		<constructor-arg type="argType" value="argValue"/>
+	 * </bean>
+	 * ...
+	 * <idempotentConsumer messageIdRepositoryRef="idemRepoId">
+	 * 		<expressionType>value</expressionType>
+	 * </idempotentConsumer>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(IDEMPOTENT_ELE);
 		parent.appendChild(element);
@@ -52,6 +64,7 @@ public class IdempotentComponentSaver extends AbstractComponentSaver {
 			beanElement.appendChild(constructorElement);
 		}
 		
+		//create expression
 		String type = parameter.get(EP_EXPRESSION_TYPE);
 		String text = parameter.get(EP_EXPRESSION_TEXT);
 		if(text==null){

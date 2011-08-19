@@ -11,6 +11,12 @@ public class MsgRouterComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <choice>
+	 * 		...
+	 * </choice>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(MSGROUTER_ELE);
 		parent.appendChild(element);

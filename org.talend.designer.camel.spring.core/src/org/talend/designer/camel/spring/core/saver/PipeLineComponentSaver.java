@@ -13,6 +13,15 @@ public class PipeLineComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <pipeline>
+	 * 		<to uri="uri"/>
+	 * 		....
+	 * 		or
+	 * 		<bean ref="beanId"/>
+	 * </pipeline>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(PIPES_ELE);
 		parent.appendChild(element);

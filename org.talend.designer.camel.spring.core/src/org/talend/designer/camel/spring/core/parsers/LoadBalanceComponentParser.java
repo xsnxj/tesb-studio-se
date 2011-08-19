@@ -19,7 +19,6 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 
 	public LoadBalanceComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -27,11 +26,7 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 			Map<String, String> map) {
 		LoadBalanceDefinition lbd = (LoadBalanceDefinition) oid;
 		LoadBalancerDefinition balancerType = lbd.getLoadBalancerType();
-		if(balancerType==null){
-			map.put(LB_BALANCE_STRATEGY, LB_CUSTOM_STRATEGY);
-			return;
-		}
-		if (balancerType instanceof FailoverLoadBalancerDefinition) {
+		if (balancerType!=null&&balancerType instanceof FailoverLoadBalancerDefinition) {
 			FailoverLoadBalancerDefinition fld = (FailoverLoadBalancerDefinition) balancerType;
 			List<String> exceptions = fld.getExceptions();
 			Boolean roundRobin = fld.getRoundRobin();
@@ -68,11 +63,11 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 					map.put(LB_INHERIT_HANDLE, inheritErrorHandler.toString());
 				}
 			}
-		} else if (balancerType instanceof RandomLoadBalancerDefinition) {
+		} else if (balancerType!=null&&balancerType instanceof RandomLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_RANDOM_STRATEGY);
-		} else if (balancerType instanceof RoundRobinLoadBalancerDefinition) {
+		} else if (balancerType!=null&&balancerType instanceof RoundRobinLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_ROUND_STRATEGY);
-		} else if (balancerType instanceof StickyLoadBalancerDefinition) {
+		} else if (balancerType!=null&&balancerType instanceof StickyLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_STICKY_STRATEGY);
 			StickyLoadBalancerDefinition slbd = (StickyLoadBalancerDefinition) balancerType;
 			ExpressionSubElementDefinition expression = slbd
@@ -82,12 +77,19 @@ public class LoadBalanceComponentParser extends AbstractComponentParser {
 				.getExpressionMap(expression.getExpressionType());
 				map.putAll(expressionMap);
 			}
-		} else if (balancerType instanceof TopicLoadBalancerDefinition) {
+		} else if (balancerType!=null&&balancerType instanceof TopicLoadBalancerDefinition) {
 			map.put(LB_BALANCE_STRATEGY, LB_TOPIC_STRATEGY);
 		}
 		// else if(balancerType instanceof WeightedLoadBalancerDefinition){
 		// }
 		else {
+			String ref = lbd.getRef();
+			if(ref!=null){
+				String beanClass = getRegisteredBeanClass(ref);
+				if(beanClass!=null){
+					map.put(LB_CUSTOM_STRATEGY, beanClass);
+				}
+			}
 			map.put(LB_BALANCE_STRATEGY, LB_CUSTOM_STRATEGY);
 		}
 	}

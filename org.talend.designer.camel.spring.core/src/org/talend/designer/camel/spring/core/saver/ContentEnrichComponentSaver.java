@@ -16,6 +16,17 @@ public class ContentEnrichComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * 
+	 * <bean id="beanId" class="aggregateClass"/>
+	 * ...
+	 * <enrich uri="uri" strategyRef="beanId">
+	 * </enrich>
+	 * or
+	 * <pollEnrich uri="uri" strategyRef="beanId" timeout="value">
+	 * </pollEnrich>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Map<String, String> parameter = srn.getParameter();
 		String mergeData = parameter.get(ER_MERGE_DATA);
@@ -28,10 +39,14 @@ public class ContentEnrichComponentSaver extends AbstractComponentSaver {
 		Element element = document.createElement(elementName);
 		parent.appendChild(element);
 		
+		//set uri
 		String uri = parameter.get(ER_RESOUCE_URI);
-		if(null!=uri){
-			element.setAttribute("uri", uri);
+		if(uri==null){
+			uri="";
+		}else{
+			uri=removeQuote(uri);
 		}
+		element.setAttribute("uri", uri);
 		
 		String aggregateStrategy = parameter.get(ER_AGGREGATE_STRATEGY);
 		if(null!=aggregateStrategy){

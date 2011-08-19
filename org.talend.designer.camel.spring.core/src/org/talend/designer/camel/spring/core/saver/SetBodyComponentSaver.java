@@ -14,6 +14,12 @@ public class SetBodyComponentSaver extends AbstractComponentSaver {
 	}
 
 	@Override
+	/**
+	 * generated xml format:
+	 * <setBody>
+	 * 		<expressionType>expressionValue</expressionType>
+	 * </setBody>
+	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		Element element = document.createElement(SETBODY_ELE);
 		parent.appendChild(element);
@@ -24,10 +30,11 @@ public class SetBodyComponentSaver extends AbstractComponentSaver {
 		if(type!=null){
 			Element typeElement = document.createElement(type);
 			element.appendChild(typeElement);
-			if(text!=null){
-				Text textNode = document.createTextNode(removeQuote(text));
-				typeElement.appendChild(textNode);
+			if(text==null){
+				text = "";
 			}
+			Text textNode = document.createTextNode(removeQuote(text));
+			typeElement.appendChild(textNode);
 		}
 		
 		return element;

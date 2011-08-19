@@ -11,7 +11,6 @@ public class ExchangePatternComponentParser extends AbstractComponentParser {
 
 	public ExchangePatternComponentParser(XmlFileApplicationContext appContext) {
 		super(appContext);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
