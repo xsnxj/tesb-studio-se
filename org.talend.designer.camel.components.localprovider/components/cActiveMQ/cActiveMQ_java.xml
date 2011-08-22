@@ -106,11 +106,11 @@
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.2.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.3.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.5.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.7.2.jar"
+			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.7.3.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.5.RELEASE.jar"
 				REQUIRED="true" />
@@ -132,7 +132,7 @@
 				REQUIRED="true" />
 			<IMPORT NAME="activemq" MODULE="activemq-all-5.1.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.7.2.jar"
+			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.7.3.jar"
 				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>

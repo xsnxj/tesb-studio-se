@@ -195,7 +195,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-2.7.2.jar"
+			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-2.7.3.jar"
 				REQUIRED="false" />
 		</IMPORTS>
 	</CODEGENERATION>

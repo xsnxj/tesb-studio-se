@@ -89,7 +89,7 @@
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.2.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.3.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.5.RELEASE.jar"
 				REQUIRED="true" />
