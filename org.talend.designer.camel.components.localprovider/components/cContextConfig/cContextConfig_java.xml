@@ -32,12 +32,10 @@ COMPATIBILITY="ALL"
 *	Please write java codes of manipulate CamelContext here. 
 *   Here are some defined variables: 
 *     1 camelContext: for manipulate CamelContext
-*     2 beanRegistry: for bean Registry
-*     3 typeConverterRegistry: for type TypeConverter registry
+*     2 typeConverterRegistry: for type TypeConverter registry
 *   Examples:
 *     1 camelContext.addComponent("component", new  org.apache.camel.component.dataset.DataSetComponent());
-*     2 beanRegistry.put("bean", new java.lang.String());
-*     3 typeConverterRegistry.addTypeConverter(String.class, Object.class, new org.apache.camel.impl.converter.ToStringTypeConverter());
+*     2 typeConverterRegistry.addTypeConverter(String.class, Object.class, new org.apache.camel.impl.converter.ToStringTypeConverter());
 */
 
 </DEFAULT>
