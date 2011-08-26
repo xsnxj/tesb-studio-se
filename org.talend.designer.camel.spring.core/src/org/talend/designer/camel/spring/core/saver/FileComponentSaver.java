@@ -45,7 +45,7 @@ public class FileComponentSaver extends AbstractComponentSaver {
 			sb.append(value);
 			sb.append("&");
 		}
-		String filePath = "file:"+parameter.get(FILE_PATH);
+		String filePath = "file:"+removeQuote(parameter.get(FILE_PATH));
 		if(sb.length()>1){
 			sb.deleteCharAt(sb.length()-1);
 			filePath += "?"+sb.toString();
