@@ -51,7 +51,14 @@ public class CCXFExParameterHandler extends AbstractExParameterHandler {
         }else if(SERVICE_TYPE.equals("serviceClass")){
             parameters.put("serviceClass", SERVICE_CLASS);
         }
-        
+        parameters.put("type", SERVICE_TYPE);
+      
         super.handleParameters(elementParameterTypes, parameters);
+        
+        boolean SPECIFY_SERVICE = computeCheckElementValue("SPECIFY_SERVICE", elementParameterTypes);
+        if(!SPECIFY_SERVICE){
+            parameters.remove("serviceName");
+            parameters.remove("endpointName");
+        }
     }
 }
