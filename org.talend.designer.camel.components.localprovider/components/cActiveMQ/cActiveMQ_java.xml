@@ -132,7 +132,7 @@
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="activemq" MODULE="activemq-all-5.5.0.jar"
+			<IMPORT NAME="activemq" MODULE="activemq-all-5.1.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.7.3.jar"
 				REQUIRED="true" />
