@@ -21,6 +21,7 @@ import org.talend.designer.camel.spring.core.CamelSpringSaver;
 import org.talend.designer.camel.spring.core.models.SpringRoute;
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
 import org.talend.designer.camel.spring.ui.exports.SpringXMLExporter;
+import org.talend.designer.camel.spring.ui.i18n.Messages;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 
 /**
@@ -44,9 +45,9 @@ public class ExportSpringXMLWizard extends Wizard {
 
     @Override
     public void addPages() {
-        exportPage = new ExportSpringXMLWizardPage("Export As Spring XML");
+        exportPage = new ExportSpringXMLWizardPage(Messages.getString("ExportSpringXMLWizard_PageTitle")); //$NON-NLS-1$
         addPage(exportPage);
-        setWindowTitle("Export Spring");
+        setWindowTitle(Messages.getString("ExportSpringXMLWizard_WindowTitle")); //$NON-NLS-1$
     }
 
     @Override
@@ -55,8 +56,8 @@ public class ExportSpringXMLWizard extends Wizard {
         SpringRoute[] routes = exporter.buildSpringRoute1(process);
         String outputPath = exportPage.getOutputPath();
         if (new File(outputPath).exists()) {
-            if (!MessageDialog.openQuestion(getShell(), "Question", "File '" + outputPath
-                    + "' exists, would you like to overwrite it? ")) {
+            if (!MessageDialog.openQuestion(getShell(), Messages.getString("ExportSpringXMLWizard_OverwriteQuestion"), Messages.getString("ExportSpringXMLWizard_OverwriteInfo1") + outputPath //$NON-NLS-1$ //$NON-NLS-2$
+                    + Messages.getString("ExportSpringXMLWizard_OverwriteInfo2"))) { //$NON-NLS-1$
                 return false;
             }
         }
@@ -68,7 +69,7 @@ public class ExportSpringXMLWizard extends Wizard {
         } catch (Exception e) {
             ExceptionHandler.process(e);
             MessageDialog
-                    .openError(getShell(), "Error", "Export to Spring XML failed, details:" + e.getMessage());
+                    .openError(getShell(), Messages.getString("ExportSpringXMLWizard_ExportError"), Messages.getString("ExportSpringXMLWizard_ExportErrorInfo") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
             return false;
         } 
         
@@ -76,29 +77,29 @@ public class ExportSpringXMLWizard extends Wizard {
     }
 
     private void testPrint(SpringRoute[] springRoutes) {
-        System.out.println("==========start============");
-        String tab = "";
+        System.out.println("==========start============"); //$NON-NLS-1$
+        String tab = ""; //$NON-NLS-1$
         for (SpringRoute route : springRoutes) {
-            tab = "";
-            System.out.println("*********[Route " + route.getRouteId() + " ]**********");
+            tab = ""; //$NON-NLS-1$
+            System.out.println("*********[Route " + route.getRouteId() + " ]**********"); //$NON-NLS-1$ //$NON-NLS-2$
             SpringRouteNode routeNode = route.getFrom();
             print(routeNode, tab);
         }
-        System.out.println("==========stop============\n");
+        System.out.println("==========stop============\n"); //$NON-NLS-1$
     }
 
     private void print(SpringRouteNode routeNode, String tab) {
-        System.out.println(tab + "[Node " + routeNode.getUniqueName() + " ] " + routeNode.getParameter());
+        System.out.println(tab + "[Node " + routeNode.getUniqueName() + " ] " + routeNode.getParameter()); //$NON-NLS-1$ //$NON-NLS-2$
         SpringRouteNode nextChild = routeNode.getFirstChild();
         SpringRouteNode nextSibling = routeNode.getSibling();
         if (nextSibling != null) {
-            System.out.println(tab + "[Next sibling " + nextSibling.getUniqueName() + " ]");
+            System.out.println(tab + "[Next sibling " + nextSibling.getUniqueName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
             print(nextSibling, tab);
         }
         if (nextChild != null) {
-            tab += " ";
-            System.out.println(tab + "[Parent " + routeNode.getUniqueName() + " ]");
-            System.out.println(tab + "[Next child " + nextChild.getUniqueName() + " ]");
+            tab += " "; //$NON-NLS-1$
+            System.out.println(tab + "[Parent " + routeNode.getUniqueName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println(tab + "[Next child " + nextChild.getUniqueName() + " ]"); //$NON-NLS-1$ //$NON-NLS-2$
             print(nextChild, tab);
         }
     }

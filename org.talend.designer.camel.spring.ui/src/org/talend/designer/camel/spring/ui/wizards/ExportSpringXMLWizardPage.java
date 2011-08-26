@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.talend.designer.camel.spring.ui.i18n.Messages;
 
 /**
  * Page for new project details. <br/>
@@ -44,17 +45,17 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 
 	protected ExportSpringXMLWizardPage(String pageName) {
 		super(pageName);
-		setTitle("Export As Spring XML");
-		setDescription("Export Selected Route As a Spring XML file");
+		setTitle(Messages.getString("ExportSpringXMLWizardPage.Title")); //$NON-NLS-1$
+		setDescription(Messages.getString("ExportSpringXMLWizardPage.Description")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText("Spring XML File");
+		group.setText(Messages.getString("ExportSpringXMLWizardPage.GroupText")); //$NON-NLS-1$
 		group.setLayout(new GridLayout(3, false));
 
 		Label pathLabel = new Label(group, SWT.NONE);
-		pathLabel.setText("Path:");
+		pathLabel.setText(Messages.getString("ExportSpringXMLWizardPage.Path")); //$NON-NLS-1$
 
 		pathText = new Text(group, SWT.BORDER);
 		pathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -66,7 +67,7 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 		});
 
 		Button pathBtn = new Button(group, SWT.PUSH);
-		pathBtn.setText("Browse...");
+		pathBtn.setText(Messages.getString("ExportSpringXMLWizardPage.Browse")); //$NON-NLS-1$
 		pathBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -85,7 +86,7 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 	protected void openAndSpecifyOutput() {
 		FileDialog fileDialog = new FileDialog(getShell());
 		fileDialog.setFilterPath(pathText.getText());
-		fileDialog.setFilterExtensions(new String[] { "*.xml" });
+		fileDialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
 		String open = fileDialog.open();
 		if (null != open) {
 			pathText.setText(open);
@@ -94,18 +95,18 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 
 	protected boolean validate() {
 		String outputPath = pathText.getText().trim();
-		if (outputPath.equals("")) {
-			setErrorMessage("Please specify output spring file path");
+		if (outputPath.equals("")) { //$NON-NLS-1$
+			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputIsEmpty")); //$NON-NLS-1$
 			return false;
 		}
 		File file = new File(outputPath);
 		File parentFile = file.getParentFile();
 		if (parentFile == null) {
-			setErrorMessage("The specified path is invalid, please check!");
+			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputIsInvalid")); //$NON-NLS-1$
 			return false;
 		}
 		if (!parentFile.exists()) {
-			setErrorMessage("The destination folder doesn't exist, please check!");
+			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputFolderError")); //$NON-NLS-1$
 			return false;
 		}
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(
@@ -120,8 +121,8 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 
 	public String getOutputPath() {
 		String trim = pathText.getText().trim();
-		if (!trim.endsWith(".xml")) {
-			trim += ".xml";
+		if (!trim.endsWith(".xml")) { //$NON-NLS-1$
+			trim += ".xml"; //$NON-NLS-1$
 		}
 		return trim;
 	}
