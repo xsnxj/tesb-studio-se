@@ -67,7 +67,7 @@
 				NAME="KEEPLISTENING"
 				DYNAMIC_SETTINGS="true"
 				SHOW="true" NUM_ROW="250">
-			<DEFAULT>false</DEFAULT>
+			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
 
