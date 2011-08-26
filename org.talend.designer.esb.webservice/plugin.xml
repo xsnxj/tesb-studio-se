@@ -24,5 +24,4 @@
 			serviceId="IWebService">
 		</Service>
 	</extension>
-
 </plugin>
