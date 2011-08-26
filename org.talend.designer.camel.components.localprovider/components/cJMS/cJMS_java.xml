@@ -60,7 +60,7 @@
 /*
 * this is a sample, to run it
 * you have to add following jars in below table:
-*	activemq-all-5.1.0.jar/spring-tx-3.0.5.RELEASE.jar/spring-jms-3.0.5.RELEASE.jar
+*	activemq-all-5.5.0.jar/spring-tx-3.0.5.RELEASE.jar/spring-jms-3.0.5.RELEASE.jar
 */
 connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
 			</DEFAULT>
