@@ -25,7 +25,7 @@ imports="
 <%
 		} else if("HEADER_TYPE".equals(type)) {
 %>
-			.loop(<%=header%>)
+			.loop(header(<%=header%>))
 <%	
 		} else if("EXPRESSION_TYPE".equals(type)) {
 			if(!("none".equals(language))) {
