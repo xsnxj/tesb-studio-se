@@ -93,7 +93,7 @@ public final class ParameterHandlerFactory {
         handlers.put(componentName, new CommonParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.JMS];
-        handlers.put(componentName, new CCXFParameterHandler(componentName));
+        handlers.put(componentName, new CJmsParameterHandler(componentName));
 
         componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.LOOP];
         handlers.put(componentName, new CLoopParameterHandler(componentName));
