@@ -74,14 +74,13 @@ public class OpenWSDLPage extends WizardPage {
     protected OpenWSDLPage(RepositoryNode repositoryNode, String pageName) {
         super(pageName);
         this.repositoryNode = repositoryNode;
+        this.setTitle("Edit WSDL");
+        this.setMessage("choose a WSDL file");
     }
 
     public void createControl(Composite parent) {
         Composite parentArea = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
-        // layout.marginLeft = 100;
-        // layout.marginWidth = 10;
-        // layout.marginHeight = 10;
         layout.numColumns = 5;
         parentArea.setLayout(layout);
 
@@ -94,8 +93,7 @@ public class OpenWSDLPage extends WizardPage {
         }
         path = wsdlText.getText();
 
-        // boolean canFinish = checkFieldsValue();
-        // this.setPageComplete(canFinish);
+        setPageComplete(false);
         addListener();
         setControl(parentArea);
 
