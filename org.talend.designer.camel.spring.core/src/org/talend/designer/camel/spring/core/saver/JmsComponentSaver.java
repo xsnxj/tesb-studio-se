@@ -63,7 +63,7 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 		}
 		for(String s:keySet){
 			String value = parameter.get(s);
-			sb.append(s);
+			sb.append(removeQuote(s));
 			sb.append("=");
 			sb.append(removeQuote(value));
 			sb.append("&");
@@ -83,7 +83,7 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 		Element brokerProperty = document.createElement("property");
 		brokerProperty.setAttribute("name", "connectionFactory");
 		//Add a url attribute
-		brokerProperty.setAttribute("value", "vm://localhost?broker.persistent=false&amp;broker.useJmx=false");
+		brokerProperty.setAttribute("value", "vm://localhost?broker.persistent=false&broker.useJmx=false");
 		beanElement.appendChild(brokerProperty);
 		
 		

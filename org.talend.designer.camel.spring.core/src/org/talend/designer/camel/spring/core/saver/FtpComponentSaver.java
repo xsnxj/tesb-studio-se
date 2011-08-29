@@ -71,7 +71,7 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 			if(value==null||"".equals(value)){
 				continue;
 			}
-			sb.append(s);
+			sb.append(removeQuote(s));
 			sb.append("=");
 			sb.append(value);
 			sb.append("&");

@@ -89,7 +89,7 @@ public class ActivemqComponentSaver extends AbstractComponentSaver {
 				continue;
 			}
 			sb.append("&");
-			sb.append(s);
+			sb.append(removeQuote(s));
 			sb.append("=");
 			sb.append(value);
 		}

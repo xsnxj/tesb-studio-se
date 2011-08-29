@@ -40,7 +40,7 @@ public class FileComponentSaver extends AbstractComponentSaver {
 			if(null==value||"".equals(value)){
 				continue;
 			}
-			sb.append(key);
+			sb.append(removeQuote(key));
 			sb.append("=");
 			sb.append(value);
 			sb.append("&");

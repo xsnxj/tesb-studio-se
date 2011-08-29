@@ -21,21 +21,31 @@ public class JMSComponentParser extends AbstractComponentParser {
 		}else if(oid instanceof ToDefinition){
 			uri = ((ToDefinition)oid).getUri();
 		}
-		assert uri != null;
 		int index = uri.indexOf(":");
 		String schema = uri.substring(0, index);
 		map.put(JMS_SCHEMA_NAME, schema);
+		uri = uri.substring(index+1);
 		index = uri.indexOf(":");
+		String jmsType = "queue";
 		if(index!=-1){
+			jmsType = uri.substring(0,index);
 			uri = uri.substring(index+1);
-			index = uri.indexOf(":");
-			if(index!=-1){
-				map.put(JMS_TYPE, uri.substring(0,index));
-				map.put(JMS_DESTINATION, uri.substring(index+1));
-			}else{
-				map.put(JMS_TYPE, "queue");
-				map.put(JMS_DESTINATION, uri);
+		}
+		map.put(JMS_TYPE, jmsType);
+		
+		index = uri.indexOf("?");
+		if(index!=-1){
+			map.put(JMS_DESTINATION, uri.substring(0,index));
+			uri = uri.substring(index+1);
+			String[] parameters = uri.split("&");
+			for(String s:parameters){
+				String[] kv = s.split("=");
+				if(!"".equals(kv[0])){
+					map.put(kv[0], kv[1]);
+				}
 			}
+		}else{
+			map.put(JMS_DESTINATION, uri);
 		}
 	}
 
