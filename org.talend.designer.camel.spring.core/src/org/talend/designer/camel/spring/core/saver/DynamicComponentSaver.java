@@ -29,17 +29,13 @@ public class DynamicComponentSaver extends AbstractComponentSaver {
 		parent.appendChild(element);
 		
 		//create bean element
-		index++;
-		Element beanElement = document.createElement(BEAN_ELE);
-		root.insertBefore(beanElement, context);
-		beanElement.setAttribute("id", dynamicId+index);
-		
 		Map<String, String> parameter = srn.getParameter();
 		String beanClass = parameter.get(BN_BEAN_CLASS);
 		if(beanClass!=null&&beanClass.endsWith(".class")){
 			beanClass = beanClass.substring(0,beanClass.length()-".class".length());
 		}
-		beanElement.setAttribute("class", beanClass);
+		index++;
+		addBeanElement(dynamicId+index,beanClass);
 		
 		//create sub method element
 		Element methodEle = document.createElement("method");

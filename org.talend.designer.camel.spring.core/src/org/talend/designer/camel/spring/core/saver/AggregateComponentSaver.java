@@ -68,11 +68,8 @@ public class AggregateComponentSaver extends AbstractComponentSaver {
 		String aggregateStrategy = parameter.get(AG_AGGREGATE_STRATEGY);
 		if(aggregateStrategy!=null&&!"".equals(aggregateStrategy)){
 			index++;
-			Element beanElement = document.createElement(BEAN_ELE);
-			root.insertBefore(beanElement, context);
-			beanElement.setAttribute("id", ID+index);
-			beanElement.setAttribute("class", aggregateStrategy);
-			element.setAttribute("strategyRef", ID+index);
+			addBeanElement(ID+index, aggregateStrategy);
+			addAttribute("strategyRef", ID+index, element);
 		}
 		
 		String completionSize = parameter.get(AG_COMPLETION_SIEZE);
@@ -141,10 +138,7 @@ public class AggregateComponentSaver extends AbstractComponentSaver {
 			}
 			//create bean
 			repoIndex++;
-			Element beanElement = document.createElement(BEAN_ELE);
-			root.insertBefore(beanElement, context);
-			beanElement.setAttribute("id", REPOID+repoIndex);
-			beanElement.setAttribute("class", name);
+			Element beanElement = addBeanElement(REPOID+repoIndex,name);
 			element.setAttribute("aggregationRepositoryRef", REPOID+repoIndex);
 			
 			//add properties

@@ -47,7 +47,7 @@ public class LoadBalanceComponentSaver extends AbstractComponentSaver {
 		Map<String, String> parameter = srn.getParameter();
 		String strategy = parameter.get(LB_BALANCE_STRATEGY);
 		if (LB_RANDOM_STRATEGY.equals(strategy)
-				|| LB_ROUND_ROBIN_TYPE.equals(strategy)
+				|| LB_ROUND_STRATEGY.equals(strategy)
 				|| LB_TOPIC_STRATEGY.equals(strategy)) {
 			Element strategyElement = document.createElement(strategy);
 			element.appendChild(strategyElement);
@@ -111,10 +111,7 @@ public class LoadBalanceComponentSaver extends AbstractComponentSaver {
 			String customStrategy = parameter.get(LB_CUSTOM_STRATEGY);
 			if (customStrategy != null) {
 				index++;
-				Element beanElement = document.createElement(BEAN_ELE);
-				root.insertBefore(beanElement, context);
-				beanElement.setAttribute("id", ID + index);
-				beanElement.setAttribute("class", customStrategy);
+				addBeanElement(ID+index, customStrategy);
 				element.setAttribute("ref", ID + index);
 			}
 		}

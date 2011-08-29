@@ -30,6 +30,26 @@ public class ActivemqComponentSaver extends AbstractComponentSaver {
 	 * <to uri="activemqId:(queue|topic):destination?options" />
 	 */
 	public Element save(SpringRouteNode srn, Element parent) {
+		//check attribute of activemq
+		String attribute = root.getAttribute(XMLNS_AMQ);
+		if(attribute==null||!AMQ_NS.equals(attribute)){
+			//add namespace definition
+			root.setAttribute(XMLNS_AMQ, AMQ_NS);
+			
+			//add schema location definition
+			StringBuilder sb = new StringBuilder();
+			String nsLocations = root.getAttribute(NS_LOCATION);
+			if(nsLocations!=null&&!"".equals(nsLocations)){
+				sb.append(nsLocations);
+				sb.append(" ");
+			}
+			sb.append(AMQ_NS);
+			sb.append(" ");
+			sb.append(AMQ_XSD);
+			root.setAttribute(NS_LOCATION, sb.toString());
+		}
+		
+		//create element
 		SpringRouteNode preNode = srn.getParent();
 		
 		Map<String, String> parameter = srn.getParameter();
@@ -42,15 +62,11 @@ public class ActivemqComponentSaver extends AbstractComponentSaver {
 			//create bean
 			id = "activemq"+index;
 			index ++;
-			Element beanElement = document.createElement(BEAN_ELE);
-			root.insertBefore(beanElement, context);
-			beanElement.setAttribute("id", id);
-			beanElement.setAttribute("class", "org.apache.activemq.camel.component.ActiveMQComponent");
-			
-			Element brokerProperty = document.createElement("property");
-			brokerProperty.setAttribute("name", "brokerURL");
-			brokerProperty.setAttribute("value", brokerUrl);
-			beanElement.appendChild(brokerProperty);
+			Element beanElement = addBeanElement(id,
+					"org.apache.activemq.camel.component.ActiveMQComponent");
+			Element brokerProperty = addElement("property", beanElement);
+			addAttribute("name", "brokerURL", brokerProperty);
+			addAttribute("value", brokerUrl, brokerProperty);
 			if(brokerUrl!=null){
 				brokerMap.put(brokerUrl, id);
 			}

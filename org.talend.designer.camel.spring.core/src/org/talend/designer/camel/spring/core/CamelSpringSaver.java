@@ -59,35 +59,25 @@ import org.w3c.dom.Element;
 public class CamelSpringSaver implements ICamelSpringConstants {
 
 	private String outputPath;
-	private Element rootElement;
+	
+	private Document document;
+	private Element beansElement;
 	private Element contextElement;
 
 	private AbstractComponentSaver[] savers = new AbstractComponentSaver[LENGTH];
-	private Document document;
 
 	public CamelSpringSaver(String outputPath) {
-		super();
 		this.outputPath = outputPath;
 	}
 
-	public boolean save(SpringRoute[] routes, boolean hasActiveMQ,
-			boolean hasCxf) throws ParserConfigurationException,
+	public boolean save(SpringRoute[] routes) throws ParserConfigurationException,
 			TransformerException, IOException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			factory.setNamespaceAware(false);
-			document = factory.newDocumentBuilder().newDocument();
-
-			initialDocument(document, hasActiveMQ, hasCxf);
+			initialDocument();
 			initialSavers();
 			beforeSave();
-			if (routes != null) {
-				for (SpringRoute sr : routes) {
-					save(sr, document, rootElement, contextElement);
-				}
-			}
-			outputDocument(document);
+			handleRoutes(routes);
+			saveDocument();
 		} catch (ParserConfigurationException e) {
 			throw e;
 		} catch (FileNotFoundException e) {
@@ -102,111 +92,29 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 		return true;
 	}
 
-	private void beforeSave() {
-		for (AbstractComponentSaver s : savers) {
-			if (s != null) {
-				s.beforeSave();
-			}
-		}
-	}
+	/**
+	 * create Doucment, "beans" element and "camelContext" element.
+	 * config the basic namespace and schema locations of "beans" element
+	 * @throws ParserConfigurationException
+	 */
+	private void initialDocument() throws ParserConfigurationException {
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory
+		.newInstance();
+		factory.setNamespaceAware(false);
+		document = factory.newDocumentBuilder().newDocument();
 
-	private void initialSavers() {
-		savers[FILE] = new FileComponentSaver(document, rootElement,
-				contextElement);
-		savers[CXF] = new CxfComponentSaver(document, rootElement,
-				contextElement);
-		savers[JMS] = new JmsComponentSaver(document, rootElement,
-				contextElement);
-		savers[FTP] = new FtpComponentSaver(document, rootElement,
-				contextElement);
-		savers[ACTIVEMQ] = new ActivemqComponentSaver(document, rootElement,
-				contextElement);
-		savers[MSGENDPOINT] = new MsgEndpointComponentSaver(document,
-				rootElement, contextElement);
-		savers[SPLIT] = new SplitterComponentSaver(document, rootElement,
-				contextElement);
-		savers[SETHEADER] = new SetHeaderComponentSaver(document, rootElement,
-				contextElement);
-		savers[SETBODY] = new SetBodyComponentSaver(document, rootElement,
-				contextElement);
-		savers[CONVERT] = new ConvertBodyComponentSaver(document, rootElement,
-				contextElement);
-		savers[ENRICH] = new ContentEnrichComponentSaver(document, rootElement,
-				contextElement);
-		savers[INTERCEPT] = new InterceptComponentSaver(document, rootElement,
-				contextElement);
-		savers[EXCEPTION] = new OnExceptionComponentSaver(document,
-				rootElement, contextElement);
-		savers[TRY] = new TryComponentSaver(document, rootElement,
-				contextElement);
-		savers[BEAN] = new BeanComponentSaver(document, rootElement,
-				contextElement);
-		savers[PF] = new PipeLineComponentSaver(document, rootElement,
-				contextElement);
-		savers[LOOP] = new LoopComponentSaver(document, rootElement,
-				contextElement);
-		savers[STOP] = new StopComponentSaver(document, rootElement,
-				contextElement);
-		savers[DELAY] = new DelayerComponentSaver(document, rootElement,
-				contextElement);
-		savers[PROCESSOR] = new ProcessorComponentSaver(document, rootElement,
-				contextElement);
-		savers[THROTTLER] = new ThrottlerComponentSaver(document, rootElement,
-				contextElement);
-		savers[AGGREGATE] = new AggregateComponentSaver(document, rootElement,
-				contextElement);
-		savers[DYNAMIC] = new DynamicComponentSaver(document, rootElement,
-				contextElement);
-		savers[IDEM] = new IdempotentComponentSaver(document, rootElement,
-				contextElement);
-		savers[BALANCE] = new LoadBalanceComponentSaver(document, rootElement,
-				contextElement);
-		savers[FILTER] = new MsgFilterComponentSaver(document, rootElement,
-				contextElement);
-		savers[MSGROUTER] = new MsgRouterComponentSaver(document, rootElement,
-				contextElement);
-		savers[MULTICAST] = new MulticastComponentSaver(document, rootElement,
-				contextElement);
-		savers[ROUTINGSLIP] = new RoutingSlipComponentSaver(document,
-				rootElement, contextElement);
-		savers[WIRETAP] = new WireTapComponentSaver(document, rootElement,
-				contextElement);
-		savers[PATTERN] = new ExchangePatternComponentSaver(document,
-				rootElement, contextElement);
-		savers[WHEN] = new WhenComponentSaver(document, rootElement,
-				contextElement);
-		savers[CATCH] = new CatchComponentSaver(document, rootElement,
-				contextElement);
-		savers[FINALLY] = new FinallyComponentSaver(document, rootElement,
-				contextElement);
-		savers[OTHER] = new OtherwiseComponentSaver(document, rootElement,
-				contextElement);
-
-	}
-
-	private void initialDocument(Document document, boolean hasActiveMQ,
-			boolean hasCxf) {
 		// create beans
-		rootElement = document.createElement(BEANS_ELE);
-		document.appendChild(rootElement);
+		beansElement = document.createElement(BEANS_ELE);
+		document.appendChild(beansElement);
 
-		// add xmlns
-		rootElement.setAttribute(XMLNS, BEANS_NS);
+		// add xmlns for beans
+		beansElement.setAttribute(XMLNS, BEANS_NS);
 
-		// add xmlns:xsi
-		rootElement.setAttribute(XMLNS_XSI, XSI_NS);
+		// add xmlns:xsi for beans
+		beansElement.setAttribute(XMLNS_XSI, XSI_NS);
 
-		// add xmlns:cxf
-		if (hasCxf) {
-			rootElement.setAttribute(XMLNS_CXF, CXF_NS);
-		}
-
-		// add xmlns:broker
-		if (hasActiveMQ) {
-			rootElement.setAttribute(XMLNS_AMQ, AMQ_NS);
-		}
-
-		// add xsi:schemaLocation
+		// add xsi:schemaLocation for beans
 		StringBuilder sb = new StringBuilder();
 		sb.append(BEANS_NS);
 		sb.append(" ");
@@ -215,70 +123,132 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 		sb.append(CAMEL_NS);
 		sb.append(" ");
 		sb.append(CAMEL_XSD);
-		if (hasActiveMQ) {
-			sb.append(" ");
-			sb.append(AMQ_NS);
-			sb.append(" ");
-			sb.append(AMQ_XSD);
-		}
-		if (hasCxf) {
-			sb.append(" ");
-			sb.append(CXF_NS);
-			sb.append(" ");
-			sb.append(CXF_XSD);
-		}
-		rootElement.setAttribute(NS_LOCATION, sb.toString());
-
-		// add imports
-		if (hasCxf) {
-			Element importEle = document.createElement(IMPORT_ELE);
-			importEle.setAttribute(RESOURCE_ATT, IMPORT_CXF);
-			rootElement.appendChild(importEle);
-
-			importEle = document.createElement(IMPORT_ELE);
-			importEle.setAttribute(RESOURCE_ATT, IMPORT_SOAP);
-			rootElement.appendChild(importEle);
-
-			importEle = document.createElement(IMPORT_ELE);
-			importEle.setAttribute(RESOURCE_ATT, IMPORT_JETTY);
-			rootElement.appendChild(importEle);
-		}
+		beansElement.setAttribute(NS_LOCATION, sb.toString());
 
 		// create camelContext
 		contextElement = document.createElement(CAMEL_CONTEXT_ELE);
-
 		contextElement.setAttribute("id", "camel-1");
 		contextElement.setAttribute(XMLNS, CAMEL_NS);
-		rootElement.appendChild(contextElement);
+		
+		beansElement.appendChild(contextElement);
+	}
+	
+	private void initialSavers() {
+		savers[FILE] = new FileComponentSaver(document, beansElement,
+				contextElement);
+		savers[CXF] = new CxfComponentSaver(document, beansElement,
+				contextElement);
+		savers[JMS] = new JmsComponentSaver(document, beansElement,
+				contextElement);
+		savers[FTP] = new FtpComponentSaver(document, beansElement,
+				contextElement);
+		savers[ACTIVEMQ] = new ActivemqComponentSaver(document, beansElement,
+				contextElement);
+		savers[MSGENDPOINT] = new MsgEndpointComponentSaver(document,
+				beansElement, contextElement);
+		savers[SPLIT] = new SplitterComponentSaver(document, beansElement,
+				contextElement);
+		savers[SETHEADER] = new SetHeaderComponentSaver(document, beansElement,
+				contextElement);
+		savers[SETBODY] = new SetBodyComponentSaver(document, beansElement,
+				contextElement);
+		savers[CONVERT] = new ConvertBodyComponentSaver(document, beansElement,
+				contextElement);
+		savers[ENRICH] = new ContentEnrichComponentSaver(document, beansElement,
+				contextElement);
+		savers[INTERCEPT] = new InterceptComponentSaver(document, beansElement,
+				contextElement);
+		savers[EXCEPTION] = new OnExceptionComponentSaver(document,
+				beansElement, contextElement);
+		savers[TRY] = new TryComponentSaver(document, beansElement,
+				contextElement);
+		savers[BEAN] = new BeanComponentSaver(document, beansElement,
+				contextElement);
+		savers[PF] = new PipeLineComponentSaver(document, beansElement,
+				contextElement);
+		savers[LOOP] = new LoopComponentSaver(document, beansElement,
+				contextElement);
+		savers[STOP] = new StopComponentSaver(document, beansElement,
+				contextElement);
+		savers[DELAY] = new DelayerComponentSaver(document, beansElement,
+				contextElement);
+		savers[PROCESSOR] = new ProcessorComponentSaver(document, beansElement,
+				contextElement);
+		savers[THROTTLER] = new ThrottlerComponentSaver(document, beansElement,
+				contextElement);
+		savers[AGGREGATE] = new AggregateComponentSaver(document, beansElement,
+				contextElement);
+		savers[DYNAMIC] = new DynamicComponentSaver(document, beansElement,
+				contextElement);
+		savers[IDEM] = new IdempotentComponentSaver(document, beansElement,
+				contextElement);
+		savers[BALANCE] = new LoadBalanceComponentSaver(document, beansElement,
+				contextElement);
+		savers[FILTER] = new MsgFilterComponentSaver(document, beansElement,
+				contextElement);
+		savers[MSGROUTER] = new MsgRouterComponentSaver(document, beansElement,
+				contextElement);
+		savers[MULTICAST] = new MulticastComponentSaver(document, beansElement,
+				contextElement);
+		savers[ROUTINGSLIP] = new RoutingSlipComponentSaver(document,
+				beansElement, contextElement);
+		savers[WIRETAP] = new WireTapComponentSaver(document, beansElement,
+				contextElement);
+		savers[PATTERN] = new ExchangePatternComponentSaver(document,
+				beansElement, contextElement);
+		savers[WHEN] = new WhenComponentSaver(document, beansElement,
+				contextElement);
+		savers[CATCH] = new CatchComponentSaver(document, beansElement,
+				contextElement);
+		savers[FINALLY] = new FinallyComponentSaver(document, beansElement,
+				contextElement);
+		savers[OTHER] = new OtherwiseComponentSaver(document, beansElement,
+				contextElement);
+
 	}
 
-	private void save(SpringRoute sr, Document document, Element rootElement,
-			Element parentElement) {
+	private void beforeSave() {
+		for (AbstractComponentSaver s : savers) {
+			if (s != null) {
+				s.beforeSave();
+			}
+		}
+	}
+	
+	private void handleRoutes(SpringRoute[] routes) {
+		if (routes != null) {
+			for (SpringRoute sr : routes) {
+				handleRoute(sr);
+			}
+		}
+	}
+	
+	private void handleRoute(SpringRoute sr) {
 		SpringRouteNode from = sr.getFrom();
-		Element routeElement = parentElement;
+		Element routeElement = contextElement;
 		if (from.getType() != INTERCEPT && from.getType() != EXCEPTION) {
 			routeElement = document.createElement(ROUTE_ELE);
-			parentElement.appendChild(routeElement);
+			contextElement.appendChild(routeElement);
 		}
-		save(from, document, rootElement, routeElement);
+		handleNode(from, document, beansElement, routeElement);
 
 	}
 
-	private void save(SpringRouteNode node, Document document,
-			Element rootElement, Element parentElement) {
+	private void handleNode(SpringRouteNode node, Document document,
+			Element beansElement, Element parentElement) {
 		Element save = savers[node.getType()].save(node, parentElement);
 		SpringRouteNode firstChild = node.getFirstChild();
 		if (firstChild != null) {
-			save(firstChild, document, rootElement, save);
+			handleNode(firstChild, document, beansElement, save);
 		}
 		SpringRouteNode next = node.getSibling();
 		if (next != null) {
-			save(next, document, rootElement, parentElement);
+			handleNode(next, document, beansElement, parentElement);
 		}
 		return;
 	}
 
-	private void outputDocument(Document document)
+	private void saveDocument()
 			throws TransformerException, IOException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		tf.setAttribute("indent-number", new Integer(4));

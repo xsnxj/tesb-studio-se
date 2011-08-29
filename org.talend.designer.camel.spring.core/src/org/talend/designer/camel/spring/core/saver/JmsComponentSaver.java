@@ -74,12 +74,8 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 		element.setAttribute(URI_ATT, sb.toString());
 		
 		//create bean
-		Element beanElement = document.createElement(BEAN_ELE);
-		root.insertBefore(beanElement, context);
-	
-		beanElement.setAttribute("id", schema);
-		beanElement.setAttribute("class", "org.apache.camel.component.jms.JmsComponent");
-		
+		Element beanElement = addBeanElement(schema, "org.apache.camel.component.jms.JmsComponent");
+
 		//Comment on element
 		Comment brokerPropertyComment = document.createComment("Auto generated property.");
         beanElement.appendChild(brokerPropertyComment);

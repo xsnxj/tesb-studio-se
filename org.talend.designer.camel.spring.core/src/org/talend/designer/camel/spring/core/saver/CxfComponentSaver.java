@@ -6,6 +6,7 @@ import java.util.Set;
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class CxfComponentSaver extends AbstractComponentSaver {
 
@@ -33,6 +34,40 @@ public class CxfComponentSaver extends AbstractComponentSaver {
 	 * <to uri="cxf:bean:cxfEndpointId?options"/>
 	 */
 	public Element save(SpringRouteNode srn, Element parent) {
+		
+		//check attribute of cxf namespace
+		String attribute = root.getAttribute(XMLNS_CXF);
+		if(attribute==null||!CXF_NS.equals(attribute)){
+			//add cxf namespace
+			root.setAttribute(XMLNS_CXF, CXF_NS);
+			
+			//add schema location
+			StringBuilder sb = new StringBuilder();
+			String nsLocations = root.getAttribute(NS_LOCATION);
+			if(nsLocations!=null&&!"".equals(nsLocations)){
+				sb.append(nsLocations);
+				sb.append(" ");
+			}
+			sb.append(CXF_NS);
+			sb.append(" ");
+			sb.append(CXF_XSD);
+			root.setAttribute(NS_LOCATION, sb.toString());
+			
+			//add import elements list
+			Node firstChild = root.getFirstChild();
+			Element importEle = document.createElement(IMPORT_ELE);
+			importEle.setAttribute(RESOURCE_ATT, IMPORT_CXF);
+			root.insertBefore(importEle, firstChild);
+
+			importEle = document.createElement(IMPORT_ELE);
+			importEle.setAttribute(RESOURCE_ATT, IMPORT_SOAP);
+			root.insertBefore(importEle, firstChild);
+
+			importEle = document.createElement(IMPORT_ELE);
+			importEle.setAttribute(RESOURCE_ATT, IMPORT_JETTY);
+			root.insertBefore(importEle, firstChild);
+		}
+		
 		SpringRouteNode preNode = srn.getParent();
 
 		// create cxf Endpoint

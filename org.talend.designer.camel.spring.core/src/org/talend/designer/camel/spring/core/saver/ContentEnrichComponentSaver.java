@@ -51,11 +51,8 @@ public class ContentEnrichComponentSaver extends AbstractComponentSaver {
 		String aggregateStrategy = parameter.get(ER_AGGREGATE_STRATEGY);
 		if(null!=aggregateStrategy){
 			index ++;
-			Element beanElement = document.createElement(BEAN_ELE);
-			root.insertBefore(beanElement, context);
-			beanElement.setAttribute("id", ID+index);
-			beanElement.setAttribute("class", aggregateStrategy);
-			element.setAttribute("strategyRef", ID+index);
+			addBeanElement(ID+index, aggregateStrategy);
+			addAttribute("strategyRef", ID+index, element);
 		}
 		
 		if(ER_CONSUMER.equals(mergeData)){

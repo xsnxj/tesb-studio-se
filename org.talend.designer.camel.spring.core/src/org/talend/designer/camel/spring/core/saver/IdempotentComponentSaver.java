@@ -42,10 +42,7 @@ public class IdempotentComponentSaver extends AbstractComponentSaver {
 		}
 		
 		//create bean
-		Element beanElement = document.createElement(BEAN_ELE);
-		root.insertBefore(beanElement, context);
-		beanElement.setAttribute("id", ID+index);
-		beanElement.setAttribute("class", repoClass);
+		Element beanElement = addBeanElement(ID+index, repoClass);
 		element.setAttribute("messageIdRepositoryRef", ID+index);
 		
 		if(ID_FILE_REPOSITORY.equals(repositoryType)){

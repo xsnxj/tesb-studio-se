@@ -33,7 +33,7 @@ public abstract class AbstractComponentSaver implements ICamelSpringConstants{
 	protected Attr addAttribute(String name, String value, Element element) {
 		Attr attribute = document.createAttribute(name);
 		attribute.setValue(value);
-		element.appendChild(attribute);
+		element.setAttributeNode(attribute);
 		return attribute;
 	}
 	
@@ -48,6 +48,14 @@ public abstract class AbstractComponentSaver implements ICamelSpringConstants{
 			s = s.substring(0,s.length()-1);
 		}
 		return s;
+	}
+	
+	protected Element addBeanElement(String id, String className){
+		Element beanElement = document.createElement(BEAN_ELE);
+		root.insertBefore(beanElement, context);
+		beanElement.setAttribute("id", id);
+		beanElement.setAttribute("class", className);
+		return beanElement;
 	}
 	
 	public void afterSaved(){

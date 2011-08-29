@@ -58,6 +58,13 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 		if(keySet.size()>0){
 			sb.append("?");
 		}
+		String password = parameter.get("password");
+		if(password!=null){
+			sb.append("password=");
+			sb.append(removeQuote(password));
+			sb.append("&");
+			keySet.remove("password");
+		}
 		for(String s:keySet){
 			String value = parameter.get(s);
 			value = removeQuote(value);

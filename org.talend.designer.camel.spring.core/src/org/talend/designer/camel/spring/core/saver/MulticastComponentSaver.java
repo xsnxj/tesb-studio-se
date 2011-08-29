@@ -47,10 +47,7 @@ public class MulticastComponentSaver extends AbstractComponentSaver {
 		String strategy = parameter.get(ML_AGGREGATE_STRATEGY);
 		if(strategy!=null){
 			index++;
-			Element beanElement = document.createElement(BEAN_ELE);
-			root.insertBefore(beanElement, context);
-			beanElement.setAttribute("id", ID+index);
-			beanElement.setAttribute("class", strategy);
+			addBeanElement(ID+index, strategy);
 			element.setAttribute("strategyRef", ID+index);
 		}
 		
