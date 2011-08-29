@@ -65,7 +65,7 @@ public class ExportSpringXMLWizard extends Wizard {
         testPrint(routes);
         CamelSpringSaver saver = new CamelSpringSaver(exportPage.getOutputPath());
         try {
-            saver.save(routes, exporter.isHasActiveMQ(), exporter.isHasCXF());
+            saver.save(routes);
         } catch (Exception e) {
             ExceptionHandler.process(e);
             MessageDialog

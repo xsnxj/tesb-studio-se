@@ -35,8 +35,6 @@ public class SpringXMLExporter {
 
     private static final int TMP_TRY = ICamelSpringConstants.TMP_TRY;
 
-    private boolean hasCXF, hasActiveMQ;
-
     private List<SpringRoute> springRoutes;
 
     private Map<String, SpringRouteNode> routeNodes;
@@ -59,8 +57,6 @@ public class SpringXMLExporter {
         this.providers = ExportParameterProviderFactory.ISNTANCE.getExParameterHandlers();
         this.routeNodes = new HashMap<String, SpringRouteNode>();
         this.springRoutes = new ArrayList<SpringRoute>();
-        this.hasCXF = false;
-        this.hasActiveMQ = false;
     }
 
     public SpringRoute[] buildSpringRoute1(ProcessType process) {
@@ -186,14 +182,6 @@ public class SpringXMLExporter {
             NodeType node = (NodeType) obj;
             String uniqueName = ComponentUtilities.getNodeUniqueName(node);
             uniqueNodes.put(uniqueName, node);
-
-            if (!hasCXF && RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.CXF].equals(node.getComponentName())) {
-                hasCXF = true;
-            }
-
-            if (!hasActiveMQ && RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.ACTIVEMQ].equals(node.getComponentName())) {
-                hasActiveMQ = true;
-            }
         }
         return uniqueNodes;
     }
@@ -317,24 +305,6 @@ public class SpringXMLExporter {
                 || componentType == ICamelSpringConstants.LOOP || componentType == ICamelSpringConstants.IDEM
                 || componentType == ICamelSpringConstants.FILTER || componentType == ICamelSpringConstants.SPLIT
                 || componentType == ICamelSpringConstants.THROTTLER;
-    }
-
-    /**
-     * Getter for hasActiveMQ.
-     * 
-     * @return the hasActiveMQ
-     */
-    public boolean isHasActiveMQ() {
-        return hasActiveMQ;
-    }
-
-    /**
-     * Getter for hasCXF.
-     * 
-     * @return the hasCXF
-     */
-    public boolean isHasCXF() {
-        return hasCXF;
     }
 
     private boolean isOnExceptionOrIntercept(int sourceType) {
