@@ -38,9 +38,9 @@ public class OpenWSDLAction extends AbstractCreateAction {
 
     private boolean creation = false;
 
-    protected static final int WIZARD_WIDTH = 600;
+    protected static final int WIZARD_WIDTH = 500;
 
-    protected static final int WIZARD_HEIGHT = 340;
+    protected static final int WIZARD_HEIGHT = 140;
 
     public OpenWSDLAction() {
         super();
