@@ -225,6 +225,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
             } else {
                 wsdlEditor.setReadOnly(true);
             }
+            RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
         } catch (PersistenceException e) {
             ExceptionHandler.process(e);
         } catch (CoreException e) {
