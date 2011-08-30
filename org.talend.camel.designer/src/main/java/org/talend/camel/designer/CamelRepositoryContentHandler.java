@@ -12,9 +12,12 @@
 // ============================================================================
 package org.talend.camel.designer;
 
+import java.util.Collection;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
@@ -212,6 +215,17 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
      */
     public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
             RepositoryNode node) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.repository.IRepositoryContentHandler#addContents(java.util.Collection,
+     * org.eclipse.emf.ecore.resource.Resource)
+     */
+    public void addContents(Collection<EObject> collection, Resource resource) {
         // TODO Auto-generated method stub
 
     }

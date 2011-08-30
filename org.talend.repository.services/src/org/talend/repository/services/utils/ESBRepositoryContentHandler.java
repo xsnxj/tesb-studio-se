@@ -12,11 +12,13 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -168,6 +170,24 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
                     operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                     portNode.getChildren().add(operationNode);
+                }
+            }
+        }
+    }
+
+    public void addContents(Collection<EObject> collection, Resource resource) {
+        if (collection != null && collection.size() > 0) {
+            for (EObject object : collection) {
+                if (object instanceof ServiceConnection) {
+                    ServiceConnection serviceConnection = (ServiceConnection) object;
+                    List<ServicePort> listPort = serviceConnection.getServicePort();
+                    for (ServicePort port : listPort) {
+                        resource.getContents().add(port);
+                        List<ServiceOperation> listOperation = port.getServiceOperation();
+                        for (ServiceOperation operation : listOperation) {
+                            resource.getContents().add(operation);
+                        }
+                    }
                 }
             }
         }
