@@ -24,16 +24,12 @@ List<IMetadataTable> metadatas = node.getMetadataList();
 if (null != metadatas && 0 < metadatas.size()) {
 	IMetadataTable metadata = metadatas.get(0);
 	if (null != metadata) {
-		List< ? extends IConnection> conns = node.getIncomingConnections();
-		if(null != conns && 0 < conns.size()) {
+		List<? extends IConnection> conns = node.getIncomingConnections();
+		if (null != conns && 0 < conns.size()) {
 			IConnection conn = conns.get(0);
-			if(conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-				List<IMetadataColumn> columns = metadata.getListColumns();
-				int sizeColumns = columns.size();
-				for (int i = 0; i < sizeColumns; i++) {
-					IMetadataColumn column = columns.get(i);
-					JavaType javaType = JavaTypesManager.getJavaTypeFromId(column.getTalendType());
-					if ("payload".equals(column.getLabel())) {
+			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+				IMetadataColumn column = conn.getMetadataTable().getColumn("payload"); 
+				if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
 	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
 
@@ -55,8 +51,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 		esbProviderCallback_<%=cid%>.sendResponse(esbProviderResponseDoc_<%=cid%>.getDocument());
 	}
 <%
-						break;
-					}
 				}
 			}
 		}

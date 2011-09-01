@@ -21,7 +21,7 @@ String cid = node.getUniqueName();
 
 String dieOnError = ElementParameterParser.getValue(node, "__DIE_ON_ERROR__");
 String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
-String method = methodTemp.indexOf("(")!=-1?methodTemp.substring(0,methodTemp.indexOf("(")):methodTemp;
+String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
@@ -132,7 +132,7 @@ if (inputConn != null) {
 	<%		} %>
 		}
 
-	<%	if (null != connResponse) { %>
+<%	if (null != connResponse) { %>
 		if (null != responseDoc_<%=cid%>) {
 			if (<%=connResponse.getName()%> == null) {
 				<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
@@ -142,5 +142,7 @@ if (inputConn != null) {
 			responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
 			<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
 		}
-<%	}
-}%>
+<%
+	}
+}
+%>

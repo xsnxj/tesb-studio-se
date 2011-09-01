@@ -10,23 +10,23 @@
 	"
 %>
 <%
-	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-	INode node = (INode)codeGenArgument.getArgument();
-	String cid = node.getUniqueName();
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode)codeGenArgument.getArgument();
+String cid = node.getUniqueName();
 
-	boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
-		&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
+boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
+	&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
 
-	List<IMetadataTable> metadatas = node.getMetadataList();
-	if (null != metadatas && 0 < metadatas.size()) {
-		IMetadataTable metadata = metadatas.get(0);
-		if (null != metadata) {
-			List<? extends IConnection> conns = node.getOutgoingSortedConnections();
-			if(null != conns && 0 < conns.size()) {
-				for(IConnection conn : conns) {
-					if(!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-						continue;
-					}
+List<IMetadataTable> metadatas = node.getMetadataList();
+if (null != metadatas && 0 < metadatas.size()) {
+	IMetadataTable metadata = metadatas.get(0);
+	if (null != metadata) {
+		List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+		if(null != conns && 0 < conns.size()) {
+			for(IConnection conn : conns) {
+				if(!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+					continue;
+				}
 %>
 			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
 				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
@@ -42,9 +42,9 @@
 			talendDocument_<%=cid%>.setDocument(requestMessage_<%=cid%>);
 			<%=conn.getName()%>.payload = talendDocument_<%=cid%>;
 <%
-				}
 			}
 		}
 	}
+}
 %>
 

@@ -18,7 +18,8 @@
 	</DOCUMENTATION>
 
 	<CONNECTORS>
-		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="1" MULTI_SCHEMA="true"/>
+		<!-- CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="1" MULTI_SCHEMA="true" BUILTIN="true" / -->
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="1" MULTI_SCHEMA="true" />
 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
 		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" MAX_OUTPUT="1" />
 		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" MAX_OUTPUT="1" />
@@ -149,12 +150,12 @@
 			<IMPORT NAME="jetty-util"
 					MODULE="jetty-util-7.4.5.v20110725.jar"
 					REQUIRED="true"/>
-			<IMPORT NAME="slf4j-api"
+			<!-- IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.6.1.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="slf4j-jdk14"
 					MODULE="slf4j-jdk14-1.6.1.jar"
-					REQUIRED="true"/>
+					REQUIRED="true"/ -->
 
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.5.RELEASE.jar"

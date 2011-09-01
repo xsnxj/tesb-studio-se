@@ -20,7 +20,7 @@ String cid = node.getUniqueName();
 
 if (node.getProcess().getNodesOfType("tHTTPRequest").isEmpty()) { %>
 	System.out.println("[WARN] nonsense: tHTTPResponse component used without tHTTPRequest component on the job");
-<%	}
+<% }
 
 List<IMetadataTable> metadatas = node.getMetadataList();
 if (null != metadatas && 0 < metadatas.size()) {
@@ -33,10 +33,9 @@ if (null != metadatas && 0 < metadatas.size()) {
 %>
 	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__STATUS_CODE__")%>;
 	String restProviderResponse_<%=cid%> = null;
-
 <%
-				if (null != conn.getMetadataTable().getColumn("body")) {
-				// TODO: check field type
+				IMetadataColumn column = conn.getMetadataTable().getColumn("body"); 
+				if (null != column && "id_String".equals(column.getTalendType())) {
 %>
 	restProviderResponse_<%=cid%> = <%=conn.getName()%>.body;
 <%
