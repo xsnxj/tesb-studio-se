@@ -172,7 +172,8 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
 
     private String allVersions = "all"; //$NON-NLS-1$
 
-    private String outputFileSuffix = ".zip"; //$NON-NLS-1$
+    
+//    private String outputFileSuffix = ".zip"; //$NON-NLS-1$
 
     private String selectedJobVersion;
 
@@ -308,7 +309,7 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
             } else if (length > 1) {
                 // i changed here ..
                 path = path.append(this.getDefaultFileName().get(0)
-                        + "_" + this.getDefaultFileName().get(1) + this.outputFileSuffix); //$NON-NLS-1$
+                        + "_" + this.getDefaultFileName().get(1) + getOutputSuffix()); //$NON-NLS-1$
             }
         } else {
             // path = new Path(destinationFile);
@@ -317,7 +318,7 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
                 path = new Path(destinationFile);
             } else {
                 path = path.append(this.getDefaultFileName().get(0)
-                        + "_" + this.getDefaultFileName().get(1) + this.outputFileSuffix); //$NON-NLS-1$
+                        + "_" + this.getDefaultFileName().get(1) + getOutputSuffix()); //$NON-NLS-1$
             }
         }
         setInitDestinationFilePath(path.toOSString());
@@ -1094,7 +1095,7 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
             if (this.originalRootFolderName == null) {
                 this.originalRootFolderName = getRootFolderName();
             }
-            String newFileName = this.originalRootFolderName + manager.getSelectedJobVersion() + outputFileSuffix;
+            String newFileName = this.originalRootFolderName + manager.getSelectedJobVersion() + getOutputSuffix();
             targetPath = targetPath.substring(0, targetPath.lastIndexOf(File.separator) + 1) + newFileName;
             setDestinationValue(targetPath);
         }
@@ -1630,7 +1631,8 @@ public abstract class JobCamelScriptsExportWizardPage extends WizardFileSystemRe
      * 
      */
     protected String getOutputSuffix() {
-        return outputFileSuffix; //$NON-NLS-1$
+        //TESB-2944 set default suffix to .jar
+        return ".jar"; //$NON-NLS-1$
     }
 
     /**

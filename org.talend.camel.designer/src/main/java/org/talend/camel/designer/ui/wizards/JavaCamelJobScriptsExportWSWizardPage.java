@@ -178,7 +178,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 return settings.get(STORE_EXPORTTYPE_ID);
             }
         }
-        return EXPORTTYPE_POJO;
+        //Fix but TESB-2944 set default export type to OSGI
+        return EXPORTTYPE_OSGI;
     }
 
     /*
