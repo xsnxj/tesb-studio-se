@@ -20,7 +20,7 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 	 * <bean class="org.apache.camel.component.jms.JmsComponent" id="jmsId">
 	 * 		<!-- Auto generated property -->
 	 * 		<property name="connectionFactory" 
-	 * 				value="vm://localhost?broker.persistent=false&amp;amp;broker.useJmx=false"/>
+	 * 				value="vm://localhost?broker.persistent=false&ampbroker.useJmx=false"/>
 	 * </bean>
 	 * ...
 	 * <to uri="jmsId:(queue|topic):destination?k=v&k=v&...&k=v"/>
