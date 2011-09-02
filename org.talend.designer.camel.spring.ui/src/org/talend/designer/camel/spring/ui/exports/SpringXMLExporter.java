@@ -51,15 +51,15 @@ public class SpringXMLExporter {
         return instance;
     }
 
-    private Map<String, IExportParameterHandler> providers;
+    private Map<String, IExportParameterHandler> handlers;
 
     private SpringXMLExporter() {
-        this.providers = ExportParameterProviderFactory.ISNTANCE.getExParameterHandlers();
+        this.handlers = ExportParameterProviderFactory.ISNTANCE.getExParameterHandlers();
         this.routeNodes = new HashMap<String, SpringRouteNode>();
         this.springRoutes = new ArrayList<SpringRoute>();
     }
 
-    public SpringRoute[] buildSpringRoute1(ProcessType process) {
+    public SpringRoute[] buildSpringRoute(ProcessType process) {
         // Clear cache.
         springRoutes.clear();
         routeNodes.clear();
@@ -88,10 +88,16 @@ public class SpringXMLExporter {
                 doTryConnection(connection, routeSourceNode, routeTargetNode);
                 break;
             case ICamelSpringConstants.WHEN:
+                doWhenConnection(connection, routeSourceNode, routeTargetNode);
+                break;
             case ICamelSpringConstants.OTHER:
+                doOtherConnection(connection, routeSourceNode, routeTargetNode);
+                break;
             case ICamelSpringConstants.CATCH:
+                doCatchConnection(connection, routeSourceNode, routeTargetNode);
+                break;
             case ICamelSpringConstants.FINALLY:
-                doComplexConnection(connection, routeSourceNode, routeTargetNode);
+                doFinallyConnection(connection, routeSourceNode, routeTargetNode);
                 break;
             case ICamelSpringConstants.ROUTE:
                 doRouteConnection(routeSourceNode, routeTargetNode);
@@ -119,6 +125,76 @@ public class SpringXMLExporter {
         return springRoutes.toArray(new SpringRoute[0]);
     }
 
+    private void doOtherConnection(ConnectionType connection, SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
+        int sourceType = routeSourceNode.getType();
+        if (sourceType != ICamelSpringConstants.MSGROUTER) {
+            throw new IllegalStateException("ROUTE_OTHER doesn't come from cMessageRoute but " + routeSourceNode.getUniqueName());
+        }
+        SpringRouteNode routeOtherConnectionNode = createSpringNode(connection);
+        SpringRouteNode choiceFisrtChild = routeSourceNode.getFirstChild();
+        if(choiceFisrtChild == null){//this is the right situation
+            routeSourceNode.setFirstChild(routeOtherConnectionNode);
+        }else{
+            SpringRouteNode nullSibling= getNullSibling(choiceFisrtChild);
+            doSibling(nullSibling, routeOtherConnectionNode);
+        }
+        // Set the target to the child of route_try
+        routeOtherConnectionNode.setFirstChild(routeTargetNode);
+        routeNodes.put(routeOtherConnectionNode.getUniqueName(), routeOtherConnectionNode);
+    }
+
+    private void doCatchConnection(ConnectionType connection, SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
+        int sourceType = routeSourceNode.getType();
+        if (sourceType != ICamelSpringConstants.TRY) {
+            throw new IllegalStateException("ROUTE_CATCH doesn't come from cMessageRoute but " + routeSourceNode.getUniqueName());
+        }
+        SpringRouteNode routeCatchConnectionNode = createSpringNode(connection);
+        SpringRouteNode choiceFisrtChild = routeSourceNode.getFirstChild();
+        if(choiceFisrtChild == null){
+            routeSourceNode.setFirstChild(routeCatchConnectionNode);
+        }else{
+            SpringRouteNode nullSibling= getNullSibling(choiceFisrtChild);
+            if(nullSibling.getType() == ICamelSpringConstants.TMP_TRY){
+                doSibling(nullSibling, routeCatchConnectionNode);
+            }else if(nullSibling.getType() == ICamelSpringConstants.FINALLY){
+                doSibling(nullSibling.getParent(), routeCatchConnectionNode);
+                doSibling(routeCatchConnectionNode,nullSibling);
+            }else if(nullSibling.getType() == ICamelSpringConstants.CATCH){
+                doSibling(nullSibling, routeCatchConnectionNode);
+            }
+        }
+        // Set the target to the child of route_try
+        routeCatchConnectionNode.setFirstChild(routeTargetNode);
+        routeNodes.put(routeCatchConnectionNode.getUniqueName(), routeCatchConnectionNode);
+        
+    }
+
+    private void doWhenConnection(ConnectionType connection, SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
+        int sourceType = routeSourceNode.getType();
+        if (sourceType != ICamelSpringConstants.MSGROUTER && sourceType != ICamelSpringConstants.INTERCEPT) {
+            throw new IllegalStateException("ROUTE_WHEN doesn't come from cMessageRoute but " + routeSourceNode.getUniqueName());
+        }
+        SpringRouteNode routeWhenConnectionNode = createSpringNode(connection);
+        SpringRouteNode choiceFisrtChild = routeSourceNode.getFirstChild();
+        if(choiceFisrtChild == null){//this is the right situation
+            routeSourceNode.setFirstChild(routeWhenConnectionNode);
+        }else{
+            SpringRouteNode nullSibling= getNullSibling(choiceFisrtChild);
+            if(nullSibling.getType() == ICamelSpringConstants.WHEN){
+                doSibling(nullSibling, routeWhenConnectionNode);
+            }else if(nullSibling.getType() == ICamelSpringConstants.OTHER){
+                doSibling(nullSibling.getParent(), routeWhenConnectionNode);
+                doSibling(routeWhenConnectionNode,nullSibling);
+            }else{
+               //no way, ignore
+            }
+        }
+        // Set the target to the child of route_try
+        routeWhenConnectionNode.setFirstChild(routeTargetNode);
+        routeNodes.put(routeWhenConnectionNode.getUniqueName(), routeWhenConnectionNode);
+        
+    }
+
     private void doRouteConnection(SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
         int sourceType = routeSourceNode.getType();
         if (isOnExceptionOrIntercept(sourceType)) {
@@ -137,7 +213,7 @@ public class SpringXMLExporter {
         doSibling(routeSourceNode, routeTargetNode);
     }
 
-    private void doComplexConnection(ConnectionType connection, SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
+    private void doFinallyConnection(ConnectionType connection, SpringRouteNode routeSourceNode, SpringRouteNode routeTargetNode) {
         SpringRouteNode routeTryConnectionNode = createSpringNode(connection);
         doChild(routeSourceNode, routeTryConnectionNode);
         doChild(routeTryConnectionNode, routeTargetNode);
@@ -195,7 +271,7 @@ public class SpringXMLExporter {
             if (node.getType() == TMP_TRY) {
                 SpringRouteNode parent = node.getParent();
                 parent.setFirstChild(node.getFirstChild());
-                SpringRouteNode nullSiblingNode = getNullSiblingChild(node.getFirstChild());
+                SpringRouteNode nullSiblingNode = getNullSibling(node.getFirstChild());
                 nullSiblingNode.setSibling(node.getSibling());
             }
         }
@@ -246,7 +322,7 @@ public class SpringXMLExporter {
         SpringRouteNode child = routeSourceNode.getFirstChild();
         if (child != null) {// it seems someone has taken the first place, bad to be a next sibling of his/her end
                             // sibling
-            SpringRouteNode nullSiblingChild = getNullSiblingChild(child);
+            SpringRouteNode nullSiblingChild = getNullSibling(child);
             nullSiblingChild.setSibling(routeTargetNode);
         } else {// this is the best situation, take the first place.
             routeSourceNode.setFirstChild(routeTargetNode);
@@ -311,12 +387,12 @@ public class SpringXMLExporter {
         return sourceType == ICamelSpringConstants.EXCEPTION || sourceType == ICamelSpringConstants.INTERCEPT;
     }
 
-    private SpringRouteNode getNullSiblingChild(SpringRouteNode node) {
+    private SpringRouteNode getNullSibling(SpringRouteNode node) {
         SpringRouteNode sibling = node.getSibling();
         if (sibling == null) {
             return node;
         }
-        return getNullSiblingChild(sibling);
+        return getNullSibling(sibling);
     }
 
     private void loadParameters(ConnectionType connection, SpringRouteNode routeNode) {
@@ -340,11 +416,11 @@ public class SpringXMLExporter {
     }
 
     private void loadParameters(String component, EList<?> elementParameterTypes, Map<String, String> parameters) {
-        IExportParameterHandler provider = providers.get(component);
-        if (provider == null) {
+        IExportParameterHandler handler = handlers.get(component);
+        if (handler == null) {
             // Not support.
             return;
         }
-        provider.handleParameters(elementParameterTypes, parameters);
+        handler.handleParameters(elementParameterTypes, parameters);
     }
 }

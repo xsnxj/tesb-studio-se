@@ -53,7 +53,7 @@ public class ExportSpringXMLWizard extends Wizard {
     @Override
     public boolean performFinish() {
         
-        SpringRoute[] routes = exporter.buildSpringRoute1(process);
+        SpringRoute[] routes = exporter.buildSpringRoute(process);
         String outputPath = exportPage.getOutputPath();
         if (new File(outputPath).exists()) {
             if (!MessageDialog.openQuestion(getShell(), Messages.getString("ExportSpringXMLWizard_OverwriteQuestion"), Messages.getString("ExportSpringXMLWizard_OverwriteInfo1") + outputPath //$NON-NLS-1$ //$NON-NLS-2$
