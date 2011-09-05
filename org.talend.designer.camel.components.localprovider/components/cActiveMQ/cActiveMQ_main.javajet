@@ -3,6 +3,7 @@ imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
     org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
     java.util.List
     java.util.Map
@@ -11,7 +12,14 @@ imports="
 <%
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode) codeGenArgument.getArgument();
-
+   	String cid = "";
+   	IElementParameter param = node.getElementParameter("LABEL");
+   	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+   		cid = (String)param.getValue();	
+   	}else{
+   		cid = node.getUniqueName();
+   	}
+   
     String name = node.getUniqueName().replaceAll("_","");
     String type = ElementParameterParser.getValue(node, "__TYPE__");
     String destination = ElementParameterParser.getValue(node, "__DESTINATION__").trim();
@@ -57,14 +65,15 @@ imports="
     sb.append("\"");
     String uri = sb.toString();
     
+    String uriRef = "uriMap.get(\"" + cid + "\")";
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.to(<%=uri%>)
+		.to(<%=uriRef%>)
 <%
 	} else {
 %>
-		from(<%=uri%>)
+		from(<%=uriRef%>)
 <%
 	}
 %>
