@@ -43,6 +43,12 @@
           id="org.talend.repository.services.action.OpenWSDLEditorAction"
           name="Open WSDL Editor">
     </Action>
+    <Action
+            class="org.talend.repository.services.action.ExportServiceAction"
+            id="org.talend.repository.services.action.ExportServiceAction"
+            level="99"
+            name="Export Service"/>
+    
  </extension>
  <extension
        point="org.talend.core.repository.repository_node_provider">
