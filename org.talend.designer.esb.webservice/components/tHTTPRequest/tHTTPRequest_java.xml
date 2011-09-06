@@ -178,7 +178,6 @@
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.0.5.RELEASE.jar"
 					REQUIRED="true"/>
-
 		</IMPORTS>
 	</CODEGENERATION>
 

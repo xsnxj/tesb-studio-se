@@ -5,7 +5,7 @@
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-		
+
 		java.util.List
 		java.util.Map
 		java.util.HashMap
@@ -38,26 +38,7 @@
 		if (true) {
 			throw new RuntimeException("cannot instantiate REST service: tHTTPRequest component has no any output connections");
 		}
-<%	}
-//	Map<String, String> restMapping = new HashMap<String, String>();
-//	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
-//	for (Map<String, String> mapping : mappings) {
-//		String outpuFlow = mapping.get("SCHEMA");
-//		String uriPattern = mapping.get("URI_PATTERN");
-//		String httpWord = mapping.get("HTTP_VERB");
-//		
-//		restMapping.put(outpuFlow, uriPattern);  // TODO: !!! now last win !!!
-		
-		// TODO: validation:
-		// 1. uri != null && uri.trim().length() > 0 && ??? uri.trim().startsWith("/")
-		// 2. ??? uri format by REST API
-		// 3. ??? uri parameters unique
-		// 4. ??? uris in set are not interfere
-		// N. ??? uri parameters reflected as corresponding flow fields
-//	}
-
-	boolean isOneWay = node.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
-%>
+<%	} %>
 
 //*** external processor(s) initialization
 

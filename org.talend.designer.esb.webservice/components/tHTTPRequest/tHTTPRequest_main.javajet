@@ -1,13 +1,17 @@
 <%@ jet
 	imports="
-		org.talend.core.model.process.INode
+		java.util.List
+
 		org.talend.core.model.process.ElementParameterParser
-		org.talend.core.model.metadata.IMetadataColumn
-		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
+
+		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.metadata.types.JavaTypesManager
+
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-		java.util.List
 	"
 %>
 <%
@@ -30,12 +34,11 @@
 	String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
 	String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
 	String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
-	String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
+	// String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
 	String body_<%=cid%> = (String) requestMessage_<%=cid%>.get("BODY");
-	java.util.Map<String, String> params_<%=cid%> =
-		(java.util.Map<String, String>) requestMessage_<%=cid%>.get("PARAMS");
+	java.util.Map<String, Object> params_<%=cid%> =
+		(java.util.Map<String, Object>) requestMessage_<%=cid%>.get("PARAMS");
 <%
-
 	List<IMetadataTable> metadatas = node.getMetadataList();
 	if (null != metadatas && 0 < metadatas.size()) {
 		IMetadataTable metadata = metadatas.get(0);
@@ -55,20 +58,17 @@
 						<% if (null != connMetadata.getColumn("body")) { %>
 							<%=connectionName%>.body = body_<%=cid%>;
 						<% } %>
-						<% if (null != connMetadata.getColumn("uri")) { %>
-							<%=connectionName%>.uri = uri_<%=cid%>;
-						<% } %>
-
 <%
 						List<IMetadataColumn> connColumnList = connMetadata.getListColumns();
 						for (IMetadataColumn connColumn : connColumnList) {
 							String columnName = connColumn.getLabel();
-							// TODO: check on talend type = string
-							if (!"uri".equals(columnName) && !"body".equals(columnName)) {
+
+							if (!"body".equals(columnName)) {
+								String javaTypeFull = JavaTypesManager.getTypeToGenerate(connColumn.getTalendType(), true);
 %>
-								if (params_<%=cid%>.containsKey("<%=columnName%>")) {
-									<%=connectionName%>.<%=columnName%> = params_<%=cid%>.get("<%=columnName%>");
-								}
+							if (params_<%=cid%>.containsKey("<%=columnName%>")) {
+								<%=connectionName%>.<%=columnName%> = (<%=javaTypeFull%>) params_<%=cid%>.get("<%=columnName%>");
+							}
 <%
 							}
 						}
