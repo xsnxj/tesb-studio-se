@@ -80,7 +80,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        ExceptionHandler.process(e);
                     }
 
                     RepositoryManager.getRepositoryView().refreshView();
@@ -194,7 +194,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                         fileTemp.create(byteArrayInputStream, true, null);
                     }
                 } catch (CoreException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
                 //
                 ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
@@ -207,7 +207,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                 try {
                     factory.save(serviceItem);
                 } catch (PersistenceException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
                 IEditorInput editorInput = new FileEditorInput(fileTemp);
                 WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();

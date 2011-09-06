@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
@@ -167,11 +168,11 @@ public class OpenWSDLPage extends WizardPage {
                         buffer.append(temp);
                     }
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
                 // copy file to item
                 try {
@@ -191,9 +192,9 @@ public class OpenWSDLPage extends WizardPage {
                         fileTemp.setContents(byteArrayInputStream, 0, null);
                     }
                 } catch (PersistenceException e1) {
-                    e1.printStackTrace();
+                    ExceptionHandler.process(e1);
                 } catch (CoreException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
                 //
                 if (item.getReferenceResources().size() == 0) {
@@ -241,7 +242,7 @@ public class OpenWSDLPage extends WizardPage {
                         item.getServiceConnection().getServicePort().add(port);
                     }
                 } catch (WSDLException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
             }
         } else { // create new wsdl file
@@ -265,9 +266,9 @@ public class OpenWSDLPage extends WizardPage {
                     fileTemp.setContents(byteArrayInputStream, 0, null);
                 }
             } catch (PersistenceException e1) {
-                e1.printStackTrace();
+                ExceptionHandler.process(e1);
             } catch (CoreException e) {
-                e.printStackTrace();
+                ExceptionHandler.process(e);
             }
             //
             if (item.getReferenceResources().size() == 0) {
