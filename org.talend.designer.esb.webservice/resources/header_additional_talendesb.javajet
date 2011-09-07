@@ -1367,6 +1367,27 @@ if (null != conns && !conns.isEmpty()) {
 	}
 }
 %>
+	public void handleWrongRequest(String uri, int status, String error) {
+		System.out.println("wrong call [uri: " + uri + " ; status: " + status + " ; error: " + error + "]");
+	}
+}
+
+class RestExceptionMapper_<%=tHTTPRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
+
+	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
+
+	private RESTProvider_<%=tHTTPRequestNodeCid%> provider;
+
+	public RestExceptionMapper_<%=tHTTPRequestNodeCid%>(RESTProvider_<%=tHTTPRequestNodeCid%> provider) {
+		this.provider = provider;
+	}
+
+	public javax.ws.rs.core.Response toResponse(javax.ws.rs.WebApplicationException ex) {
+		javax.ws.rs.core.Response response = super.toResponse(ex);
+		provider.handleWrongRequest(ui.getPath(), response.getStatus(), ex.getMessage());
+		return response;
+	}
+
 }
 
 
@@ -1384,13 +1405,16 @@ class HandlerThread_<%=tHTTPRequestNodeCid%> extends Thread {
 
 	public void run() {
 		try {
+			RESTProvider_<%=tHTTPRequestNodeCid%> provider =
+					new RESTProvider_<%=tHTTPRequestNodeCid%>(handler);
+
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
 					new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
+			sf.setProvider(new RestExceptionMapper_<%=tHTTPRequestNodeCid%>(provider));
 			sf.setTransportId("http://cxf.apache.org/transports/http");
 			sf.setResourceClasses(RESTProvider_<%=tHTTPRequestNodeCid%>.class);
 			sf.setResourceProvider(RESTProvider_<%=tHTTPRequestNodeCid%>.class,
-					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(
-							new RESTProvider_<%=tHTTPRequestNodeCid%>(handler)));
+					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 			server = sf.create();
 
