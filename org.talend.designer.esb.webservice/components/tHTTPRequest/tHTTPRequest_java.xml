@@ -20,6 +20,7 @@
 	<CONNECTORS>
 		<!-- CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="1" MULTI_SCHEMA="true" BUILTIN="true" / -->
 		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="1" MULTI_SCHEMA="true" />
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MAX_OUTPUT="1" NAME="WRONG_CALLS" />
 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
 		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" MAX_OUTPUT="1" />
 		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" MAX_OUTPUT="1" />
@@ -35,6 +36,15 @@
 				<COLUMN NAME="body" TYPE="id_String" READONLY="true"/>
 			</TABLE>
 		</PARAMETER -->
+
+		<PARAMETER NAME="SCHEMA_WRONG_CALLS" FIELD="SCHEMA_TYPE" NUM_ROW="1" CONTEXT="WRONG_CALLS" SHOW="false">
+			<TABLE READONLY="true">
+				<COLUMN NAME="uri" TYPE="id_String" LENGTH="255" READONLY="true"/>
+				<COLUMN NAME="status" TYPE="id_Integer" READONLY="true"/>
+				<COLUMN NAME="error" TYPE="id_String" LENGTH="1024" READONLY="true"/>
+			</TABLE>
+		</PARAMETER>
+
 
 		<!-- rest service endpoint -->
 		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
@@ -89,6 +99,11 @@
 			<IMPORT NAME="jra"
 					MODULE="jra-1.0-alpha-4.jar"
 					REQUIRED="true" />
+
+			<!--IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					BundleID="org.apache.servicemix.bundles.dom4j"
+					REQUIRED="true"/-->
 
 			<IMPORT NAME="commons-logging"
 					MODULE="commons-logging-1.1.1.jar"
@@ -178,6 +193,7 @@
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.0.5.RELEASE.jar"
 					REQUIRED="true"/>
+
 		</IMPORTS>
 	</CODEGENERATION>
 

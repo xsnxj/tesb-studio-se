@@ -1048,7 +1048,7 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode tHTTPRequestNode = httpRequestComponentsList.get(0);
 	String tHTTPRequestNodeCid = tHTTPRequestNode.getUniqueName();
-	boolean isOneWay2 = tHTTPRequestNode.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
+	boolean isOneWayRest = tHTTPRequestNode.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
 %>
 /**
  * queued message exchange
@@ -1224,7 +1224,7 @@ public class RESTProvider_<%=tHTTPRequestNodeCid%> {
 				messageHandler.invoke(request);
 
 			try {
-<% if (isOneWay2) { %>
+<% if (isOneWayRest) { %>
 				// return null;
 				return javax.ws.rs.core.Response.status(200).build();
 <% } else { %>
@@ -1300,8 +1300,6 @@ if (null != conns && !conns.isEmpty()) {
 
 				if (JavaTypesManager.STRING == javaType
 
-					|| JavaTypesManager.CHARACTER == javaType
-
 					|| JavaTypesManager.BOOLEAN == javaType
 
 					|| JavaTypesManager.BYTE == javaType
@@ -1322,6 +1320,7 @@ if (null != conns && !conns.isEmpty()) {
 					//	JavaTypesManager.DATE
 					//	JavaTypesManager.LIST
 					//	JavaTypesManager.OBJECT
+					//	JavaTypesManager.CHARACTER
 
 					// not presented for flow field scheme
 					// JavaTypesManager.DIRECTORY
@@ -1369,6 +1368,13 @@ if (null != conns && !conns.isEmpty()) {
 %>
 	public void handleWrongRequest(String uri, int status, String error) {
 		System.out.println("wrong call [uri: " + uri + " ; status: " + status + " ; error: " + error + "]");
+
+		java.util.Map<String, Object> wrongRequest = new java.util.HashMap<String, Object>();
+		wrongRequest.put("ERROR", error);
+		wrongRequest.put("URI", uri);
+		wrongRequest.put("STATUS", status);
+
+		processRequest(wrongRequest);
 	}
 }
 
@@ -1383,8 +1389,20 @@ class RestExceptionMapper_<%=tHTTPRequestNodeCid%> extends org.apache.cxf.jaxrs.
 	}
 
 	public javax.ws.rs.core.Response toResponse(javax.ws.rs.WebApplicationException ex) {
-		javax.ws.rs.core.Response response = super.toResponse(ex);
-		provider.handleWrongRequest(ui.getPath(), response.getStatus(), ex.getMessage());
+		String error = null;
+		javax.ws.rs.core.Response response = ex.getResponse();
+		if (null != response && null != response.getEntity()) {
+			error = response.getEntity().toString();
+		}
+		response = super.toResponse(ex);
+		if (null == error) {
+			if (null != response && null != response.getEntity()) {
+				error = response.getEntity().toString();
+			} else {
+				error = null == ex.getCause() ? ex.getMessage() : ex.getCause().getMessage();
+			}
+		}
+		provider.handleWrongRequest(ui.getPath(), response.getStatus(), error);
 		return response;
 	}
 
