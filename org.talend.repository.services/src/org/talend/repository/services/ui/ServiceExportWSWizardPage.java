@@ -19,12 +19,15 @@ import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Composite;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.action.OpenWSDLEditorAction;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -61,7 +64,8 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
             {
                 IRepositoryViewObject repositoryObject = node.getObject();
                 ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-                EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
+				EList<ServicePort> listPort = serviceConnection.getServicePort();
                 for (ServicePort port : listPort) {
                     List<ServiceOperation> listOperation = port.getServiceOperation();
                     for (ServiceOperation operation : listOperation) {
@@ -74,9 +78,9 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
         }
 		return new StructuredSelection(value);
 	}
-
-    public JobScriptsManager createJobScriptsManager() {
-        return new ServiceExportManager(serviceName);
+	
+	public JobScriptsManager createJobScriptsManager() {
+        return new ServiceExportManager(serviceName, selection);
     }
 
     protected List<String> getDefaultFileName() {

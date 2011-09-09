@@ -2,6 +2,8 @@ package org.talend.repository.services.ui.scriptmanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Manifest;
 
@@ -17,9 +19,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,9 +45,11 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 	
 	private String serviceName;
+	private IStructuredSelection selection;
 
-	public ServiceExportManager(String serviceName) {
+	public ServiceExportManager(String serviceName, IStructuredSelection selection) {
 		this.serviceName = serviceName;
+		this.selection = selection;
 	}
 
 	/* (non-Javadoc)
@@ -131,5 +139,24 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		return super.getManifest(libResource, itemToBeExport, serviceName);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager#getOsgiResource()
+	 */
+	@Override
+	protected ExportFileResource getOsgiResource() {
+		ExportFileResource osgiResource = new ExportFileResource(null, ""); //$NON-NLS-1$;
+		List<RepositoryNode> nodes = selection.toList();
+		List<RepositoryNode> value = new ArrayList<RepositoryNode>();
+		for (RepositoryNode node : nodes) {
+			try {
+				osgiResource.addResource("", OpenWSDLEditorAction.getWsdlFile(node).getLocationURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.error(e);
+			}
+		}
+		return osgiResource;
+	}
+
+	
 	
 }
