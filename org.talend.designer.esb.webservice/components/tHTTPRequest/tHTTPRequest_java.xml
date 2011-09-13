@@ -88,7 +88,7 @@
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.2.jar"
+					MODULE="cxf-bundle-2.5.0-SNAPSHOT.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="jsr311-api"
 					MODULE="jsr311-api-1.1.1.jar"
@@ -117,14 +117,14 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.0.jar"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					REQUIRED="true"/>
 
 			<IMPORT NAME="jaxb-api"
-					MODULE="jaxb-api-2.2.1.jar"
+					MODULE="jaxb-api-2.2.3.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.2.1.1.jar"
+					MODULE="jaxb-impl-2.2.4-1.jar"
 					REQUIRED="true" />
 
 			<IMPORT NAME="geronimo-stax_api_1.0_spec"
@@ -173,25 +173,25 @@
 					REQUIRED="true"/ -->
 
 			<IMPORT NAME="spring-aop"
-					MODULE="spring-aop-3.0.5.RELEASE.jar"
+					MODULE="spring-aop-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-asm"
-					MODULE="spring-asm-3.0.5.RELEASE.jar"
+					MODULE="spring-asm-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-beans"
-					MODULE="spring-beans-3.0.5.RELEASE.jar"
+					MODULE="spring-beans-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-context"
-					MODULE="spring-context-3.0.5.RELEASE.jar"
+					MODULE="spring-context-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-core"
-					MODULE="spring-core-3.0.5.RELEASE.jar"
+					MODULE="spring-core-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-web"
-					MODULE="spring-web-3.0.5.RELEASE.jar"
+					MODULE="spring-web-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-expression"
-					MODULE="spring-expression-3.0.5.RELEASE.jar"
+					MODULE="spring-expression-3.0.6.RELEASE.jar"
 					REQUIRED="true"/>
 
 		</IMPORTS>

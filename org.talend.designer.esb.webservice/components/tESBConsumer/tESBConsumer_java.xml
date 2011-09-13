@@ -303,7 +303,7 @@
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true"/>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.4.2.jar"
+					MODULE="cxf-bundle-2.5.0-SNAPSHOT.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true"/>
 			<IMPORT NAME="neethi"
@@ -320,15 +320,15 @@
 					REQUIRED="true"/>
 
 			<IMPORT NAME="jaxb-api"
-					MODULE="jaxb-api-2.2.1.jar"
+					MODULE="jaxb-api-2.2.3.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.2.1.1.jar"
+					MODULE="jaxb-impl-2.2.4-1.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jaxb-xjc"
-					MODULE="jaxb-xjc-2.2.1.1.jar"
+					MODULE="jaxb-xjc-2.2.4-1.jar"
 					BundleID=""
 					REQUIRED="true"/>
 
@@ -353,7 +353,7 @@
 					BundleID="org.apache.geronimo.specs.geronimo-ws-metadata_2.0_spec"
 					REQUIRED="true"/>
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.0.jar"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID="org.apache.servicemix.specs.jaxws-api-2.2"
 					REQUIRED="true"/>
 			<IMPORT NAME="stax2-api"
@@ -366,36 +366,36 @@
 					REQUIRED="true"/>
 
 			<IMPORT NAME="saaj-api"
-					MODULE="saaj-api-1.3.jar"
+					MODULE="saaj-api-1.3.4.jar"
 					BundleID="org.apache.servicemix.specs.saaj-api-1.3"
 					REQUIRED="true"/>
 			<IMPORT NAME="saaj-impl"
-					MODULE="saaj-impl-1.3.2.jar"
+					MODULE="saaj-impl-1.3.12.jar"
 					BundleID=""
 					REQUIRED="true"/>
 
 			<IMPORT NAME="spring-aop"
-					MODULE="spring-aop-3.0.5.RELEASE.jar"
+					MODULE="spring-aop-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-asm"
-					MODULE="spring-asm-3.0.5.RELEASE.jar"
+					MODULE="spring-asm-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-beans"
-					MODULE="spring-beans-3.0.5.RELEASE.jar"
+					MODULE="spring-beans-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-context"
-					MODULE="spring-context-3.0.5.RELEASE.jar"
+					MODULE="spring-context-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-core"
-					MODULE="spring-core-3.0.5.RELEASE.jar"
+					MODULE="spring-core-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="spring-expression"
-					MODULE="spring-expression-3.0.5.RELEASE.jar"
+					MODULE="spring-expression-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
 		</IMPORTS>
