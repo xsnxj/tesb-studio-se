@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -27,6 +29,7 @@ import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -89,8 +92,11 @@ public class CamelNewProcessWizardPage extends PropertiesWizardPage {
         String jobName = nameText.getText().trim();
         boolean isValid = isNameValidInRountine(jobName);
 
-        if (!isValid) {
-            nameStatus = createStatus(IStatus.ERROR, Messages.getString("PropertiesWizardPage.ItemExistsInRoutineError")); //$NON-NLS-1$
+        //Fix the name evaluate bug temporary LiXP TESB-2591
+        // New Route Wizard input name validation fails to notify an invalid name
+        if (!isValid || !Pattern.matches(RepositoryConstants.getPattern(ERepositoryObjectType.PROCESS), nameText.getText())
+                || nameText.getText().trim().contains(" ")) {
+            nameStatus = createStatus(IStatus.ERROR, "Name contains incorrect characters."); 
             updatePageStatus();
         }
     }

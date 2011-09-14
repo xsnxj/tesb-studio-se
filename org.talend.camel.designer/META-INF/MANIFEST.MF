@@ -26,5 +26,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.talend.camel.designer.ui.editor,
+ org.talend.camel.designer.ui.wizards,
  org.talend.camel.designer.util
 Bundle-Vendor: .Talend SA.
