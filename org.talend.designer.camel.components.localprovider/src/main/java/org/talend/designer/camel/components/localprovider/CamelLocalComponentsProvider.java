@@ -13,15 +13,11 @@
 package org.talend.designer.camel.components.localprovider;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.components.AbstractComponentsProvider;
 import org.talend.core.model.components.IComponentsFactory;
@@ -84,30 +80,6 @@ public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
     // }
     // }
     // }
-
-    @Override
-    public File getInstallationFolder() throws IOException {
-        IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
-                IBrandingService.class);
-        if (brandingService.isPoweredOnlyCamel()) {
-            Bundle b = Platform.getBundle(IComponentsFactory.CAMEL_COMPONENTS_LOCATION);
-
-            File installationFolder = null;
-            IPath nullPath = new Path(""); //$NON-NLS-1$
-            URL url = FileLocator.find(b, nullPath, null);
-            URL fileUrl = FileLocator.toFileURL(url);
-            File bundleFolder = new File(fileUrl.getPath());
-
-            IPath path = new Path(IComponentsFactory.COMPONENTS_INNER_FOLDER);
-            // path = path.append(ComponentUtilities.getExtFolder(getFolderName()));
-
-            installationFolder = new File(bundleFolder, path.toOSString());
-
-            return installationFolder;
-        } else {
-            return super.getInstallationFolder();
-        }
-    }
 
     @Override
     public String getComponentsLocation() {

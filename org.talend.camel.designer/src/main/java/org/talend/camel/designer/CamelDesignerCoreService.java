@@ -93,10 +93,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return new CamelJavaRoutesSychronizer();
     }
 
-    public ITalendSynchronizer createCamelPerlSynchronizer() {
-        return new CamelPerlBeanSychronizer();
-    }
-
     public boolean isCamelRepObjType(ERepositoryObjectType type) {
         boolean isCamelType = false;
         if (type == CamelRepositoryNodeType.repositoryRoutesType || type == CamelRepositoryNodeType.repositoryBeansType) {
