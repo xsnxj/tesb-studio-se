@@ -16,6 +16,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.esb.webservice.data.ExternalWebServiceUIProperties;
 import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ui.dialog.WebServiceDialog;
@@ -47,7 +49,12 @@ public class WebServiceComponentMain {
 
     public Dialog createDialog(Shell parentShell) {
         dialog = new WebServiceDialog(parentShell, this);
-        dialog.setTitle("Talend Integration Suite - " + connector.getUniqueName());
+        IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
+                IBrandingService.class);
+        String productName = brandingService.getFullProductName();
+        dialog.setTitle(productName + 
+        		" - " + connector.getComponent().getName() + 
+        		" - " + connector.getUniqueName());
 
         Rectangle boundsMapper = ExternalWebServiceUIProperties.getBoundsMapper();
         if (ExternalWebServiceUIProperties.isShellMaximized()) {
