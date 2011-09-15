@@ -85,21 +85,21 @@
 
 <CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.7.3.jar"
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.9-SNAPSHOT.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.7.3.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.9-SNAPSHOT.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.5.RELEASE.jar"
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.5.RELEASE.jar"
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.5.RELEASE.jar"
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.5.RELEASE.jar"
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
 				REQUIRED="true" />
