@@ -162,4 +162,14 @@
             class="org.talend.camel.designer.DragAndDropServiceHandler">
       </RepositoryHandler>
    </extension>
+ <extension
+         point="org.talend.core.migrationTask">
+      <projecttask
+            beforeLogon="false"
+            class="org.talend.camel.designer.migration.SwitchCamelCXFLibraryVersionMigrationTask"
+            description="SwitchCamelCXFLibraryVersionMigrationTask"
+            id="org.talend.camel.designer.switchCamelCXFLibraryVersionMigrationTask"
+            name="SwitchCamelCXFLibraryVersionMigrationTask">
+      </projecttask>
+      </extension>
 </plugin>
