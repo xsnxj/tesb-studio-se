@@ -12,42 +12,46 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.Wizard;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbench;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
-import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.ui.utils.ConnectionContextHelper;
+import org.talend.repository.ui.wizards.CheckLastVersionRepositoryWizard;
 import org.talend.repository.ui.wizards.metadata.connection.Step0WizardPage;
 
 /**
  * hwang class global comment. Detailled comment
  */
-public class ESBWizard extends Wizard {
+public class ESBWizard extends CheckLastVersionRepositoryWizard {
 
     /** Main page. */
     private Step0WizardPage mainPage;
+
+    private OpenWSDLPage wsdlPage;
 
     /** Created project. */
     private ServiceItem serviceItem;
 
     private Property property;
 
-    private IPath path;
-
     private IProxyRepositoryFactory repositoryFactory;
+
+    private RepositoryNode node = null;
 
     /**
      * Constructs a new NewProjectWizard.
@@ -56,35 +60,54 @@ public class ESBWizard extends Wizard {
      * @param server
      * @param password
      */
-    public ESBWizard(IPath path) {
-        super();
-        this.path = path;
+    public ESBWizard(IWorkbench workbench, boolean creation, ISelection selection) {
+        super(workbench, creation);
+        this.selection = selection;
+        setNeedsProgressMonitor(true);
+        Object obj = ((IStructuredSelection) selection).getFirstElement();
+        if (obj instanceof RepositoryNode) {
+            node = (RepositoryNode) obj;
+        } else {
+            return;
+        }
 
-        this.property = PropertiesFactory.eINSTANCE.createProperty();
-        this.property.setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
-                .getUser());
-        this.property.setVersion(VersionUtils.DEFAULT_VERSION);
-        this.property.setStatusCode(""); //$NON-NLS-1$
+        switch (node.getType()) {
+        case SIMPLE_FOLDER:
+        case REPOSITORY_ELEMENT:
+            pathToSave = RepositoryNodeUtilities.getPath(node);
+            break;
+        case SYSTEM_FOLDER:
+            pathToSave = new Path(""); //$NON-NLS-1$
+            break;
+        }
 
-        serviceItem = ServicesFactory.eINSTANCE.createServiceItem();
+        switch (node.getType()) {
+        case SIMPLE_FOLDER:
+        case SYSTEM_FOLDER:
+            this.property = PropertiesFactory.eINSTANCE.createProperty();
+            this.property.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
+                    .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
+            this.property.setVersion(VersionUtils.DEFAULT_VERSION);
+            this.property.setStatusCode(""); //$NON-NLS-1$
 
-        serviceItem.setProperty(property);
+            serviceItem = ServicesFactory.eINSTANCE.createServiceItem();
 
-        // ILibrariesService service = CorePlugin.getDefault().getLibrariesService();
-        // URL url = service.getBeanTemplate();
-        // ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-        // InputStream stream = null;
-        // try {
-        // stream = url.openStream();
-        // byte[] innerContent = new byte[stream.available()];
-        // stream.read(innerContent);
-        // stream.close();
-        // byteArray.setInnerContent(innerContent);
-        // } catch (IOException e) {
-        // RuntimeExceptionHandler.process(e);
-        // }
-        //
-        // serviceItem.setWSDLContent(byteArray);
+            serviceItem.setProperty(property);
+            property.setItem(serviceItem);
+            break;
+
+        case REPOSITORY_ELEMENT:
+            this.property = node.getObject().getProperty();
+            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
+            // set the repositoryObject, lock and set isRepositoryObjectEditable
+            setRepositoryObject(node.getObject());
+            isRepositoryObjectEditable();
+            initLockStrategy();
+            break;
+        }
+        // initialize the context mode
+        ConnectionContextHelper.checkContextMode(connectionItem);
+
     }
 
     /**
@@ -92,8 +115,10 @@ public class ESBWizard extends Wizard {
      */
     @Override
     public void addPages() {
-        mainPage = new Step0WizardPage(property, path, ESBRepositoryNodeType.SERVICES, false, true);
+        mainPage = new Step0WizardPage(property, pathToSave, ESBRepositoryNodeType.SERVICES, false, true);
+        wsdlPage = new OpenWSDLPage(node, pathToSave, serviceItem, "Edit WSDL", creation);
         addPage(mainPage);
+        addPage(wsdlPage);
         setWindowTitle(""); //$NON-NLS-1$
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
@@ -104,17 +129,16 @@ public class ESBWizard extends Wizard {
     @SuppressWarnings("unchecked")
     @Override
     public boolean performFinish() {
-        IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();
-        try {
-            property.setId(repositoryFactory.getNextId());
-            serviceItem.setServiceConnection(ServicesFactory.eINSTANCE.createServiceConnection());
-            repositoryFactory.create(serviceItem, mainPage.getDestinationPath());
-        } catch (PersistenceException e) {
-            MessageDialog.openError(getShell(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
-            ExceptionHandler.process(e);
-        }
-
-        return serviceItem != null;
+        // IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();
+        // try {
+        // property.setId(repositoryFactory.getNextId());
+        // serviceItem.setServiceConnection(ServicesFactory.eINSTANCE.createServiceConnection());
+        // repositoryFactory.create(serviceItem, mainPage.getDestinationPath());
+        // } catch (PersistenceException e) {
+        //            MessageDialog.openError(getShell(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        // ExceptionHandler.process(e);
+        // }
+        return wsdlPage.finish();
     }
 
     /**

@@ -14,7 +14,6 @@ package org.talend.repository.services.action;
 
 import java.util.Properties;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -23,6 +22,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroSite;
@@ -39,7 +39,6 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.ui.ESBWizard;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -119,16 +118,14 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
                 beanNode = getRepositoryNodeForDefault(ESBRepositoryNodeType.SERVICES);
             }
         }
-        RepositoryNode node = null;
-        IPath path = null;
-        if (!isToolbar()) {
-            ISelection selection = getSelection();
-            Object obj = ((IStructuredSelection) selection).getFirstElement();
-            node = (RepositoryNode) obj;
-            path = RepositoryNodeUtilities.getPath(node);
+        ISelection selection;
+        IWorkbenchPage activePage = getActivePage();
+        if (activePage == null) {
+            selection = getSelection();
+        } else {
+            selection = getRepositorySelection();
         }
-
-        ESBWizard beanWizard = new ESBWizard(path);
+        ESBWizard beanWizard = new ESBWizard(PlatformUI.getWorkbench(), true, selection);
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), beanWizard);
 
         if (dlg.open() == Window.OK) {

@@ -12,13 +12,12 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.repository.ProjectManager;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 
 /**
@@ -30,29 +29,32 @@ public class OpenWSDLWizard extends Wizard {
 
     private RepositoryNode repositoryNode;
 
+    private IPath pathToSave;
+
     public OpenWSDLWizard(IWorkbench bench, RepositoryNode repositoryNode) {
         this.repositoryNode = repositoryNode;
         this.setWindowTitle(" Edit WSDL");
+        switch (repositoryNode.getType()) {
+        case SIMPLE_FOLDER:
+        case REPOSITORY_ELEMENT:
+            pathToSave = RepositoryNodeUtilities.getPath(repositoryNode);
+            break;
+        case SYSTEM_FOLDER:
+            pathToSave = new Path(""); //$NON-NLS-1$
+            break;
+        }
     }
 
     @Override
     public boolean performFinish() {
-        wsdlPage.finish();
-        ServiceItem item = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        try {
-            factory.save(item);
-            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+
+        return wsdlPage.finish();
     }
 
     @Override
     public void addPages() {
-        wsdlPage = new OpenWSDLPage(repositoryNode, "Edit WSDL");
+        wsdlPage = new OpenWSDLPage(repositoryNode, pathToSave, (ServiceItem) repositoryNode.getObject().getProperty().getItem(),
+                "Edit WSDL", false);
         addPage(wsdlPage);
         super.addPages();
     }
