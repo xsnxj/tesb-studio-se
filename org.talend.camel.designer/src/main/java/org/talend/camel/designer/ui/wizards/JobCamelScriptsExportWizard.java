@@ -35,7 +35,6 @@ import org.talend.core.model.repository.RepositoryManager;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWizardPage;
-import org.talend.repository.ui.wizards.exportjob.PerlJobScriptsExportWizardPage;
 
 /**
  * Job scripts export wizard. <br/>
@@ -60,14 +59,6 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
         IDialogSettings section = workbenchSettings.getSection("JobCamelScriptsExportWizard"); //$NON-NLS-1$
         if (section == null) {
             section = workbenchSettings.addNewSection("JobCamelScriptsExportWizard"); //$NON-NLS-1$
-            section.put(PerlJobScriptsExportWizardPage.STORE_SHELL_LAUNCHER_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.STORE_SYSTEM_ROUTINE_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.STORE_USER_ROUTINE_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.STORE_MODEL_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.STORE_JOB_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.STORE_DEPENDENCIES_ID, false);
-            section.put(PerlJobScriptsExportWizardPage.STORE_CONTEXT_ID, true);
-            section.put(PerlJobScriptsExportWizardPage.APPLY_TO_CHILDREN_ID, false);
 
             section.put(JavaJobScriptsExportWizardPage.STORE_SHELL_LAUNCHER_ID, true);
             section.put(JavaJobScriptsExportWizardPage.STORE_SYSTEM_ROUTINE_ID, true);

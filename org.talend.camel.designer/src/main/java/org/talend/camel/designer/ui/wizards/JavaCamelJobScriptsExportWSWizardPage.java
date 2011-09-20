@@ -370,9 +370,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
      */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        ECodeLanguage language = LanguageManager.getCurrentLanguage();
-
-        return JobScriptsManagerFactory.getInstance().createManagerInstance(language,
+        return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), contextCombo.getText(), launcherCombo.getText(),
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES,
                 JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(getCurrentExportType()));
     }
 
@@ -514,8 +513,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             zipOption = "false"; // Do not extract the ZIP //$NON-NLS-1$
         }
 
-        if (process.length > 0) {
-            List<String> contextNames = manager.getJobContexts((CamelProcessItem) this.process[0].getItem());
+        if (getProcessItem() != null) {
+            List<String> contextNames = getJobContexts(getProcessItem());
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             contextCombo.setVisibleItemCount(contextNames.size());
             if (contextNames.size() > 0)
@@ -574,14 +573,14 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             }
         }
 
-        if (process.length > 0 && contextCombo != null) {
+        if (getProcessItem() != null && contextCombo != null) {
             try {
-                process[0].setProcess((ProcessItem) ProxyRepositoryFactory.getInstance()
-                        .getUptodateProperty(process[0].getItem().getProperty()).getItem());
+                setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance()
+                        .getUptodateProperty(getProcessItem().getProperty()).getItem());
             } catch (PersistenceException e) {
                 e.printStackTrace();
             }
-            List<String> contextNames = manager.getJobContexts((ProcessItem) process[0].getItem());
+            List<String> contextNames = getJobContexts(getProcessItem());
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             if (contextNames.size() > 0) {
                 contextCombo.select(0);
@@ -629,14 +628,14 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
         }
 
-        if (process.length > 0 && contextCombo != null) {
+        if (getProcessItem() != null && contextCombo != null) {
             try {
-                process[0].setProcess((ProcessItem) ProxyRepositoryFactory.getInstance()
-                        .getUptodateProperty(process[0].getItem().getProperty()).getItem());
+                setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance()
+                        .getUptodateProperty(getProcessItem().getProperty()).getItem());
             } catch (PersistenceException e) {
                 e.printStackTrace();
             }
-            List<String> contextNames = manager.getJobContexts((ProcessItem) process[0].getItem());
+            List<String> contextNames = getJobContexts((ProcessItem) getProcessItem());
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             if (contextNames.size() > 0) {
                 contextCombo.select(0);
@@ -679,16 +678,16 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         if (manager.getLauncher().length > 0) {
             launcherCombo.select(0);
         }
-        if (process.length > 0 && contextCombo != null) {
+        if (getProcessItem() != null && contextCombo != null) {
             // don't update the property, this one will be automatically updated if needed when call the getItem()
 
             // try {
-            // process[0].setProcess((ProcessItem) ProxyRepositoryFactory.getInstance().getUptodateProperty(
-            // process[0].getItem().getProperty()).getItem());
+            // setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance().getUptodateProperty(
+            // getProcessItem().getProperty()).getItem());
             // } catch (PersistenceException e) {
             // ExceptionHandler.process(e);
             // }
-            ProcessItem item = (ProcessItem) process[0].getItem();
+            ProcessItem item = (ProcessItem) getProcessItem();
             try {
                 String id = item.getProperty().getId();
                 IRepositoryViewObject lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(id);
@@ -697,7 +696,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 throw new RuntimeException(e);
             }
             List<String> contextNames;
-            contextNames = manager.getJobContexts(item);
+            contextNames = getJobContexts(item);
 
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             if (contextNames.size() > 0) {
@@ -725,12 +724,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             if (directoryNames == null) {
                 directoryNames = new String[0];
             }
-            String destinationValue = null;
-            if (manager instanceof PetalsJobJavaScriptsManager) {
-                destinationValue = getSuDestinationFilePath();
-            } else {
-                destinationValue = getDestinationValue();
-            }
+            String destinationValue = manager.getDestinationPath();
             directoryNames = addToHistory(directoryNames, destinationValue);
 
             settings.put(STORE_EXPORTTYPE_ID, getCurrentExportType());
@@ -1000,8 +994,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         gd.widthHint = 180;
         contextCombo.setLayoutData(gd);
 
-        if (this.process.length > 0) {
-            List<String> contextNames = this.manager.getJobContexts((ProcessItem) this.process[0].getItem());
+        if (this.getProcessItem() != null) {
+            List<String> contextNames = this.getJobContexts((ProcessItem) this.getProcessItem());
             this.contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
         }
 
@@ -1050,7 +1044,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 currentCtxTypes = ctxToTypeDefs.get(value);
                 if (currentCtxTypes == null) {
                     try {
-                        currentCtxTypes = TalendUtils.getWsdlSchemaForContexts((ProcessItem) process[0].getItem(), value);
+                        currentCtxTypes = TalendUtils.getWsdlSchemaForContexts((ProcessItem) getProcessItem(), value);
 
                     } catch (PetalsExportException e1) {
 
@@ -1117,15 +1111,15 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
         String jobLabel = ""; //$NON-NLS-1$
         contextCombo = new Combo(left, SWT.PUSH);
-        if (process.length > 0) {
+        if (getProcessItem() != null) {
             try {
-                process[0].setProcess((ProcessItem) ProxyRepositoryFactory.getInstance()
-                        .getUptodateProperty(process[0].getItem().getProperty()).getItem());
+                setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance()
+                        .getUptodateProperty(getProcessItem().getProperty()).getItem());
             } catch (PersistenceException e) {
                 e.printStackTrace();
             }
-            jobLabel = (process[0].getItem()).getProperty().getLabel();
-            List<String> contextNames = manager.getJobContexts((ProcessItem) process[0].getItem());
+            jobLabel = (getProcessItem()).getProperty().getLabel();
+            List<String> contextNames = getJobContexts((ProcessItem) getProcessItem());
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             if (contextNames.size() > 0) {
                 contextCombo.select(0);
@@ -1285,28 +1279,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWizardPage#getExportResources()
-     */
-    @Override
-    public List<ExportFileResource> getExportResources() throws ProcessorException {
-        Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
-        if (getCurrentExportType().equals(EXPORTTYPE_POJO)) {
-            return manager.getExportResources(process, exportChoiceMap, contextCombo.getText(), launcherCombo.getText(),
-                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-        } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
-            return manager.getExportResources(process, exportChoiceMap,
-                    (contextCombo == null || contextCombo.isDisposed()) ? "Default" : contextCombo.getText(), "all", //$NON-NLS-1$  //$NON-NLS-2$
-                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-        } else {
-            return manager.getExportResources(process, exportChoiceMap,
-                    contextCombo == null ? "Default" : contextCombo.getText(), "all", //$NON-NLS-1$  //$NON-NLS-2$
-                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#setTopFolder(java.util.List,
      * java.lang.String)
      */
@@ -1405,21 +1377,17 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     @Override
     public boolean finish() {
+    	manager.setDestinationPath(getDestinationValue());
         if (exportTypeCombo != null && exportTypeCombo.getText().equals(EXPORTTYPE_PETALSESB)) {
             if (!ensureTargetFileIsValid(new File(saDestinationFilePath)))
                 return true;
-            File suFile = null;
-            String directory = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
-            String suName = UUID.randomUUID().toString() + ".zip"; //$NON-NLS-1$
-            String suDestinationFilePath = new File(directory, suName).getAbsolutePath();
-            setSuDestinationFilePath(suDestinationFilePath);
-            suFile = new File(getSuDestinationFilePath());
+            File suFile = new File(manager.getDestinationPath());
             // suFile = new File(new File(directory, suName).getAbsolutePath());
             suFile.exists();
             boolean ok = true;
             try {
                 // Get the job description
-                String desc = ((ProcessItem) this.process[0].getItem()).getProperty().getDescription();
+                String desc = ((ProcessItem) this.getProcessItem()).getProperty().getDescription();
 
                 // The super class packages the job in the SU file
                 if ((ok = super.finish()) == true) {

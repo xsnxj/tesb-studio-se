@@ -21,6 +21,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager;
@@ -67,7 +68,8 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
      */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        return new JobJavaScriptsManager();
+        return new JobJavaScriptsManager(getExportChoiceMap(), contextCombo.getText(), launcherCombo.getText(),
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 
     /**
@@ -77,33 +79,6 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
      */
     public JavaCamelJobScriptsExportWizardPage(IStructuredSelection selection) {
         super("JavaJobscriptsExportPage1", selection); //$NON-NLS-1$
-    }
-
-    /**
-     * Returns resources to be exported. This returns file - for just the files use getSelectedResources.
-     * 
-     * @return a collection of resources currently selected for export (element type: <code>IResource</code>)
-     */
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#getExportResources()
-     */
-    @Override
-    public List<ExportFileResource> getExportResources() throws ProcessorException {
-        final List<ExportFileResource>[] resourcesToExportxx = new List[1];
-
-        BusyIndicator.showWhile(this.getShell().getDisplay(), new Runnable() {
-
-            public void run() {
-                try {
-                    resourcesToExportxx[0] = JavaCamelJobScriptsExportWizardPage.super.getExportResources();
-                } catch (ProcessorException e) {
-                    ExceptionHandler.process(e);
-                }
-            }
-        });
-        return resourcesToExportxx[0];
     }
 
     /**
@@ -166,19 +141,18 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
         if (manager.getLauncher().length > 0) {
             launcherCombo.select(0);
         }
-        if (process.length > 0) {
+        if (getProcessItem() != null) {
             try {
-                process[0].setProcess((ProcessItem) ProxyRepositoryFactory.getInstance()
-                        .getUptodateProperty(process[0].getItem().getProperty()).getItem());
+                setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance()
+                        .getUptodateProperty(getProcessItem().getProperty()).getItem());
             } catch (PersistenceException e) {
                 e.printStackTrace();
             }
-            List<String> contextNames = manager.getJobContexts((ProcessItem) process[0].getItem());
+            List<String> contextNames = getJobContexts(getProcessItem());
             contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
             if (contextNames.size() > 0) {
                 contextCombo.select(0);
             }
         }
-    }
-
+    }    
 }
