@@ -16,21 +16,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Composite;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
@@ -45,6 +46,7 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
 	private IStructuredSelection selection;
 	private List<ServiceItem> services = new ArrayList<ServiceItem>();
 	private String serviceName = "";
+    private static Logger log = Logger.getLogger(ServiceExportWSWizardPage.class);
 
     public static final String PETALS_EXPORT_DESTINATIONS = "org.ow2.petals.esbexport.destinations"; //$NON-NLS-1$
 
@@ -126,7 +128,12 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
 //
     @Override
     public boolean finish() {
-        return super.finish();
+        try {
+			new ExportServiceAction("Exporting service").runInWorkspace(null);
+		} catch (CoreException e) {
+			log.error(e);
+		}
+        return true;
     }
 
 }

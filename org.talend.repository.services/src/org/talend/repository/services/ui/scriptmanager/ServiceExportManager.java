@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
@@ -48,6 +49,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	private IStructuredSelection selection;
 
 	public ServiceExportManager(String serviceName, IStructuredSelection selection) {
+		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 		this.serviceName = serviceName;
 		this.selection = selection;
 	}
