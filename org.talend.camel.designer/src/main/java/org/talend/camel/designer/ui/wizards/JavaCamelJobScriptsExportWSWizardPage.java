@@ -18,7 +18,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -46,19 +45,15 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.language.ECodeLanguage;
-import org.talend.core.language.LanguageManager;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.runprocess.IProcessor;
-import org.talend.designer.runprocess.ProcessorException;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
@@ -69,7 +64,6 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextE
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextExportType;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextTypeDefinition;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsExportException;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsJobJavaScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsTemporaryOptionsKeeper;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.SaUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.TalendUtils;
@@ -165,8 +159,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         super(selection);
         // there assign the manager again
         exportTypeFixed = exportType;
-        manager = createJobScriptsManager();
-        manager.setMultiNodes(isMultiNodes());
     }
 
     public String getCurrentExportType() {
@@ -178,7 +170,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 return settings.get(STORE_EXPORTTYPE_ID);
             }
         }
-        //Fix but TESB-2944 set default export type to OSGI
+        // Fix but TESB-2944 set default export type to OSGI
         return EXPORTTYPE_OSGI;
     }
 
@@ -370,8 +362,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
      */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), contextCombo.getText(), launcherCombo.getText(),
-                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES,
+        return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), contextCombo.getText(),
+                launcherCombo.getText(), IProcessor.NO_STATISTICS, IProcessor.NO_TRACES,
                 JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(getCurrentExportType()));
     }
 
@@ -1377,7 +1369,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     @Override
     public boolean finish() {
-    	manager.setDestinationPath(getDestinationValue());
+        manager = createJobScriptsManager();
+        manager.setMultiNodes(isMultiNodes());
+        manager.setDestinationPath(getDestinationValue());
         if (exportTypeCombo != null && exportTypeCombo.getText().equals(EXPORTTYPE_PETALSESB)) {
             if (!ensureTargetFileIsValid(new File(saDestinationFilePath)))
                 return true;
