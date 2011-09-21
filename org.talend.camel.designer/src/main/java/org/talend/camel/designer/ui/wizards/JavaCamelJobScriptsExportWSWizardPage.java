@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
@@ -65,7 +64,6 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextE
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextTypeDefinition;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsExportException;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsTemporaryOptionsKeeper;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.SaUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.TalendUtils;
 
 /**
@@ -362,9 +360,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
      */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), contextCombo.getText(),
-                launcherCombo.getText(), IProcessor.NO_STATISTICS, IProcessor.NO_TRACES,
-                JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(getCurrentExportType()));
+        String launcher = (launcherCombo == null || launcherCombo.isDisposed()) ? "all" : launcherCombo.getText();
+        String context = (contextCombo == null || contextCombo.isDisposed()) ? "Default" : contextCombo.getText();
+        return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), context, launcher, IProcessor.NO_STATISTICS,
+                IProcessor.NO_TRACES, JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(getCurrentExportType()));
     }
 
     @Override
@@ -1372,63 +1371,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         manager = createJobScriptsManager();
         manager.setMultiNodes(isMultiNodes());
         manager.setDestinationPath(getDestinationValue());
-        if (exportTypeCombo != null && exportTypeCombo.getText().equals(EXPORTTYPE_PETALSESB)) {
-            if (!ensureTargetFileIsValid(new File(saDestinationFilePath)))
-                return true;
-            File suFile = new File(manager.getDestinationPath());
-            // suFile = new File(new File(directory, suName).getAbsolutePath());
-            suFile.exists();
-            boolean ok = true;
-            try {
-                // Get the job description
-                String desc = ((ProcessItem) this.getProcessItem()).getProperty().getDescription();
 
-                // The super class packages the job in the SU file
-                if ((ok = super.finish()) == true) {
-                    if (desc == null)
-                        desc = ""; //$NON-NLS-1$
-                    else {
-                        // Replace XML mark-up characters
-                        desc = desc.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-                        desc = desc.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    suFile.exists();
-
-                    // We now have to package it in the SA
-                    File saFile = SaUtils.createSaForTalend(suFile, saDestinationFilePath, desc);
-                    if (saFile == null || !saFile.exists()) {
-                        ok = false;
-                        MessageDialog.openError(getShell(), Messages.getString("PetalsJobScriptsExportWizardPage.SaExportError"), //$NON-NLS-1$
-                                Messages.getString("PetalsJobScriptsExportWizardPage.SaExportErrorDetails")); //$NON-NLS-1$
-                    }
-                }
-
-            } catch (Exception e) {
-                ExceptionHandler.process(e);
-
-            } finally {
-
-                // Remove the temporary file
-                if (suFile != null && suFile.exists() && !suFile.delete())
-                    suFile.deleteOnExit();
-            }
-
-            return ok;
-        }
-
-        if (exportTypeCombo != null && exportTypeCombo.getText().equals(EXPORTTYPE_JBOSSESB)) {
-            if (getDialogSettings() != null) {
-                IDialogSettings section = getDialogSettings().getSection(DESTINATION_FILE);//$NON-NLS-1$ 
-                if (section == null) {
-                    section = getDialogSettings().addNewSection(DESTINATION_FILE);//$NON-NLS-1$ 
-                }
-                section.put(ESB_EXPORT_TYPE, this.esbTypeCombo.getText());//$NON-NLS-1$//$NON-NLS-1$ 
-                section.put(ESB_SERVICE_NAME, this.esbServiceName.getText());
-                section.put(ESB_CATEGORY, this.esbCategory.getText());
-                section.put(QUERY_MESSAGE_NAME, this.esbQueueMessageName.getText());
-            }
-
-        }
         return super.finish();
     }
 

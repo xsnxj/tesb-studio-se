@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
@@ -25,6 +24,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
@@ -36,7 +36,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  */
 public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWizardPage {
 
-    private ExportCamelTreeViewer treeViewer;
+    // private ExportCamelTreeViewer treeViewer;
 
     /**
      * Create an instance of this class.
@@ -80,10 +80,9 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
         return null;
     }
 
-    protected SashForm createExportTree(Composite parent) {
-        SashForm sashForm = super.createExportTree(parent);
-        treeViewer = new ExportCamelTreeViewer(selection, this);
-        return sashForm;
+    @Override
+    protected ExportTreeViewer getExportTree() {
+        return new ExportCamelTreeViewer(selection, this);
     }
 
     /**

@@ -16,15 +16,9 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.runprocess.IProcessor;
-import org.talend.designer.runprocess.ProcessorException;
-import org.talend.repository.documentation.ExportFileResource;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 
 /**
@@ -68,8 +62,7 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
      */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        return new JobJavaScriptsManager(getExportChoiceMap(), contextCombo.getText(), launcherCombo.getText(),
-                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        return null;
     }
 
     /**
@@ -154,5 +147,5 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
                 contextCombo.select(0);
             }
         }
-    }    
+    }
 }
