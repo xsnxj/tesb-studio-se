@@ -32,7 +32,7 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 		parameter.remove(FTP_SCHEMA_TYPE);
 		
 		String userName = parameter.get(FTP_USERNAME);
-		if(userName!=null){
+		if (userName != null && !"".equals(userName)) {
 			sb.append(userName);
 			sb.append("@");
 		}
@@ -43,15 +43,17 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 		parameter.remove(FTP_SERVER);
 		
 		String port = parameter.get(FTP_PORT);
-		if(port!=null){
+		if (port != null && !"".equals(port)) {
 			sb.append(":");
 			sb.append(port);
 		}
 		parameter.remove(FTP_PORT);
 		
 		String directory = parameter.get(FTP_DIRECTORY);
-		sb.append("/");
-		sb.append(directory);
+		if (directory != null && !"".equals(directory)) {
+			sb.append("/");
+			sb.append(directory);
+		}
 		parameter.remove(FTP_DIRECTORY);
 		
 		Set<String> keySet = parameter.keySet();
@@ -59,7 +61,7 @@ public class FtpComponentSaver extends AbstractComponentSaver {
 			sb.append("?");
 		}
 		String password = parameter.get("password");
-		if(password!=null){
+		if (password != null && !"".equals(password)) {
 			sb.append("password=");
 			sb.append(removeQuote(password));
 			sb.append("&");
