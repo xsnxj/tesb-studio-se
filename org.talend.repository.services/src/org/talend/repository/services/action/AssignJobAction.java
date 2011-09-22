@@ -113,4 +113,8 @@ public class AssignJobAction extends AbstractCreateAction {
         }
     }
 
+    public Class getClassForDoubleClick() {
+        return ServiceOperation.class;
+    }
+
 }

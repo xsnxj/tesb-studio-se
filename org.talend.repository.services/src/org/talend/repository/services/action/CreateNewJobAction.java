@@ -146,8 +146,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // Not allowed to create in system folder.
                 return;
             }
-
-            processWizard = new NewProcessWizard(path);
+            String label = initLabel((RepositoryNode) node);
+            processWizard = new NewProcessWizard(path, label);
         }
 
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), processWizard);
@@ -179,9 +179,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 node2 = new Node(ComponentsFactoryProvider.getInstance().get("tESBProviderResponse"),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
+                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
                 // openEditor.doSave(new NullProgressMonitor());
                 String jobName = processWizard.getProcess().getProperty().getLabel();
@@ -212,6 +211,20 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 MessageBoxExceptionHandler.process(e);
             }
         }
+    }
+
+    private String initLabel(RepositoryNode node) {
+        RepositoryNode parent = node.getParent();
+        String parentName = "";
+        out: for (IRepositoryNode cp : parent.getChildren()) {
+            for (IRepositoryNode child : cp.getChildren()) {
+                if (child.getLabel().equals(node.getLabel())) {
+                    parentName = cp.getLabel();
+                    break out;
+                }
+            }
+        }
+        return parentName + "_" + node.getLabel();
     }
 
 }
