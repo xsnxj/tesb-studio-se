@@ -71,7 +71,6 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
       NUM_ROW="30"
       NB_LINES="2" 
       REPOSITORY_VALUE="DRIVER_JAR"
-      REQUIRED="true"
       GROUP="BROKER_GROUP">
       	<ITEMS> 
 			<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
