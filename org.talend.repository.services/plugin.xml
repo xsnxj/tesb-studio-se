@@ -57,7 +57,7 @@
           folder="services"
           isResouce="true"
           label="Services"
-          products="CAMEL|DI"
+          products="DI"
           type="SERVICES">
     </repositoryNode>
  </extension>
