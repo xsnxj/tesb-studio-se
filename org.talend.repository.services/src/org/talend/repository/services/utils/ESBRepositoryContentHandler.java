@@ -56,9 +56,11 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         ERepositoryObjectType type;
         switch (classifierID) {
         case ServicesPackage.SERVICE_ITEM:
-            type = ESBRepositoryNodeType.SERVICES;
-            itemResource = create(project, (ServiceItem) item, path, type);
-            return itemResource;
+			if (item != null && item instanceof ServiceItem) {
+				type = ESBRepositoryNodeType.SERVICES;
+				itemResource = create(project, (ServiceItem) item, path, type);
+				return itemResource;
+			}
         default:
             return null;
         }
