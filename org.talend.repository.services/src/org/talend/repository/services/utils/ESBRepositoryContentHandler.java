@@ -56,11 +56,11 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         ERepositoryObjectType type;
         switch (classifierID) {
         case ServicesPackage.SERVICE_ITEM:
-			if (item != null && item instanceof ServiceItem) {
-				type = ESBRepositoryNodeType.SERVICES;
-				itemResource = create(project, (ServiceItem) item, path, type);
-				return itemResource;
-			}
+            if (item != null && item instanceof ServiceItem) {
+                type = ESBRepositoryNodeType.SERVICES;
+                itemResource = create(project, (ServiceItem) item, path, type);
+                return itemResource;
+            }
         default:
             return null;
         }
@@ -168,7 +168,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
                 //
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-                    RepositoryNode operationNode = new StableRepositoryNode(node, operation.getLabel(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
+                    RepositoryNode operationNode = new StableRepositoryNode(portNode, operation.getLabel(), EImage.DEFAULT_IMAGE); //$NON-NLS-1$
                     operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                     portNode.getChildren().add(operationNode);

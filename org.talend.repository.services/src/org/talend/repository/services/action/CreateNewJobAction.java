@@ -105,7 +105,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
         //
         boolean flag = true;
-        ServiceItem serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
+        ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
         for (ServicePort port : listPort) {
             List<ServiceOperation> listOperation = port.getServiceOperation();
@@ -185,7 +185,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // openEditor.doSave(new NullProgressMonitor());
                 String jobName = processWizard.getProcess().getProperty().getLabel();
                 String jobID = processWizard.getProcess().getProperty().getId();
-                ServiceItem serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
+                ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
                 EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
                 for (ServicePort port : listPort) {
                     List<ServiceOperation> listOperation = port.getServiceOperation();

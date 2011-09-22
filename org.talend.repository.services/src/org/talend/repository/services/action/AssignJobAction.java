@@ -92,15 +92,21 @@ public class AssignJobAction extends AbstractCreateAction {
             final Item item = repositoryObject.getProperty().getItem();
             String jobID = item.getProperty().getId();
             String jobName = item.getProperty().getLabel();
-            ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getObject().getProperty().getItem();
+            String parentPortName = repositoryNode.getParent().getLabel();
+            ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty().getItem();
             List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
             for (ServicePort port : listPort) {
-                List<ServiceOperation> listOperation = port.getServiceOperation();
-                for (ServiceOperation operation : listOperation) {
-                    if (operation.getLabel().equals(repositoryNode.getLabel())) {
-                        operation.setReferenceJobId(jobID);
-                        operation.setLabel(operation.getOperationName() + "-" + jobName);
+                if (port.getName().equals(parentPortName)) {
+                    List<ServiceOperation> listOperation = port.getServiceOperation();
+                    for (ServiceOperation operation : listOperation) {
+                        if (operation.getLabel().equals(repositoryNode.getLabel())) {
+                            operation.setReferenceJobId(jobID);
+                            operation.setLabel(operation.getOperationName() + "-" + jobName);
+                            break;
+                        }
                     }
+
+                    break;
                 }
             }
             IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
