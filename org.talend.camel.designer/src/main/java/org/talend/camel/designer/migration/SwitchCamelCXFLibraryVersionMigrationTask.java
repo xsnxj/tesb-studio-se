@@ -20,36 +20,35 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 
-
 /**
- * DOC LiXP  class global comment. Detailled comment
+ * DOC LiXP class global comment. Detailled comment
  */
-public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigrationTask{
+public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigrationTask {
 
     private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory.getInstance();
-    
+
     @Override
     public List<ERepositoryObjectType> getTypes() {
         List<ERepositoryObjectType> toReturn = new ArrayList<ERepositoryObjectType>();
         toReturn.add(CamelRepositoryNodeType.repositoryRoutesType);
         return toReturn;
     }
-    
+
     public ProcessType getProcessType(Item item) {
         if (item instanceof ProcessItem) {
             return ((ProcessItem) item).getProcess();
         }
         return null;
     }
-    
+
     public Date getOrder() {
-        GregorianCalendar gc = new GregorianCalendar(2011, 9, 15, 13, 44, 00);
+        GregorianCalendar gc = new GregorianCalendar(2011, 9, 23, 10, 00, 00);
         return gc.getTime();
     }
 
     @Override
     public ExecutionResult execute(Item item) {
-        
+
         try {
             switchVersion(item);
             return ExecutionResult.SUCCESS_NO_ALERT;
@@ -57,7 +56,7 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
             ExceptionHandler.process(e);
             return ExecutionResult.FAILURE;
         }
-        
+
     }
 
     private void switchVersion(Item item) throws PersistenceException {
@@ -70,7 +69,7 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
                         ElementParameterType p = (ElementParameterType) e;
                         if ("HOTLIBS".equals(p.getName())) {
                             EList elementValue = p.getElementValue();
-                            for(Object pv: elementValue){
+                            for (Object pv : elementValue) {
                                 ElementValueType evt = (ElementValueType) pv;
                                 String evtValue = evt.getValue();
                                 evtValue = switchVersion(evtValue);
@@ -81,33 +80,34 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
                 }
             }
         }
-        
+
         FACTORY.save(item, true);
-        
+
     }
 
     /**
      * 
      * DOC LiXP Comment method "switchVersion".
+     * 
      * @param evtValue
      * @return
      */
     private String switchVersion(String evtValue) {
-       if(evtValue == null){
-           return evtValue;
-       }
-       
-       String result = "";
-       if(evtValue.contains("camel-")){
-           result = evtValue.replaceAll("2.7.\\d", "2.9-SNAPSHOT");
-       }
-       if(evtValue.contains("spring-")){
-           result = evtValue.replace("3.0.5", "3.0.6");
-       }
-       if(evtValue.contains("cxf-bundle")){
-           result = evtValue.replaceAll("2.4.\\d", "2.5.0-SNAPSHOT");
-       }
-       return result;
+        if (evtValue == null) {
+            return evtValue;
+        }
+
+        String result = "";
+        if (evtValue.contains("camel-")) {
+            result = evtValue.replaceAll("2.7.\\d", "2.8.2-SNAPSHOT");
+        }
+        if (evtValue.contains("spring-")) {
+            result = evtValue.replace("3.0.5", "3.0.6");
+        }
+        if (evtValue.contains("cxf-bundle")) {
+            result = evtValue.replaceAll("2.4.\\d", "2.5.0-SNAPSHOT");
+        }
+        return result;
     }
 
 }
