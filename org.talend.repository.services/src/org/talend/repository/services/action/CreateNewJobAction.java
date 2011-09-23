@@ -1,6 +1,7 @@
 package org.talend.repository.services.action;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.draw2d.geometry.Point;
@@ -23,6 +24,7 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
@@ -46,24 +48,30 @@ import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.utils.WSDLUtils;
 
 public class CreateNewJobAction extends AbstractCreateAction {
+
+    private static final String T_ESB_PROVIDER_REQUEST = "tESBProviderRequest"; //$NON-NLS-1$
+
+    private static final String T_ESB_PROVIDER_RESPONSE = "tESBProviderResponse"; //$NON-NLS-1$
+
+    private static final String METHOD = "METHOD"; //$NON-NLS-1$
+
+    private static final String PORT_NAME = "PORT_NAME"; //$NON-NLS-1$
 
     private String createLabel = "Create New Job";
 
     private ERepositoryObjectType currentNodeType;
 
-    private boolean creation = false;
-
     /** Created project. */
     private ProcessItem processItem;
 
     private Property property;
-
-    private IProxyRepositoryFactory repositoryFactory;
 
     public CreateNewJobAction() {
         super();
@@ -85,7 +93,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
         processItem.setProperty(property);
 
-        repositoryFactory = DesignerPlugin.getDefault().getRepositoryService().getProxyRepositoryFactory();
     }
 
     /*
@@ -169,24 +176,70 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 IEditorPart openEditor = page.openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
                 CommandStack commandStack = (CommandStack) openEditor.getAdapter(CommandStack.class);
 
-                Node node2 = new Node(ComponentsFactoryProvider.getInstance().get("tESBProviderRequest"),
+                String jobName = processWizard.getProcess().getProperty().getLabel();
+                String jobID = processWizard.getProcess().getProperty().getId();
+                RepositoryNode portNode = node.getParent();
+                ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
+                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
+
+                Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
+
+                String wsdlPath = serviceConnection.getWSDLPath();
+                Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
+                String portName = String.valueOf(portNode.getProperties(EProperties.LABEL));
+                String methodName = String.valueOf(node.getProperties(EProperties.LABEL));
+
+                IElementParameter parameter = node2.getElementParameter(WSDLUtils.ENDPOINT);
+                if (parameter != null) {
+                    parameter.setValue(serviceParameters.get(WSDLUtils.ENDPOINT));
+                }
+
+                parameter = node2.getElementParameter(WSDLUtils.ESB_ENDPOINT);
+                if (parameter != null) {
+                    parameter.setValue(serviceParameters.get(WSDLUtils.ESB_ENDPOINT));
+                }
+
+                parameter = node2.getElementParameter(WSDLUtils.SERVICE_NS);
+                if (parameter != null) {
+                    parameter.setValue(serviceParameters.get(WSDLUtils.SERVICE_NS));
+                }
+
+                parameter = node2.getElementParameter(WSDLUtils.SERVICE_NAME);
+                if (parameter != null) {
+                    parameter.setValue(serviceParameters.get(WSDLUtils.SERVICE_NAME));
+                }
+
+                parameter = node2.getElementParameter(WSDLUtils.PORT_NS);
+                if (parameter != null) {
+                    parameter.setValue(serviceParameters.get(WSDLUtils.PORT_NS));
+                }
+
+                parameter = node2.getElementParameter(PORT_NAME);
+                if (parameter != null) {
+                    parameter.setValue(portName);
+                }
+
+                parameter = node2.getElementParameter(METHOD);
+                if (parameter != null) {
+                    parameter.setValue(methodName);
+                }
+
                 NodeContainer nc = new NodeContainer(node2);
                 CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
                                 3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 cNcc.execute();
-                node2 = new Node(ComponentsFactoryProvider.getInstance().get("tESBProviderResponse"),
+                node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
-                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(
+                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
                 // openEditor.doSave(new NullProgressMonitor());
-                String jobName = processWizard.getProcess().getProperty().getLabel();
-                String jobID = processWizard.getProcess().getProperty().getId();
-                ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
-                EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+
+                EList<ServicePort> listPort = serviceConnection.getServicePort();
                 for (ServicePort port : listPort) {
                     List<ServiceOperation> listOperation = port.getServiceOperation();
                     for (ServiceOperation operation : listOperation) {
@@ -209,6 +262,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 ExceptionHandler.process(e);
             } catch (PersistenceException e) {
                 MessageBoxExceptionHandler.process(e);
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             }
         }
     }
