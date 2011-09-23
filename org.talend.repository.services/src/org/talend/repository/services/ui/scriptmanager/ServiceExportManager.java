@@ -1,12 +1,29 @@
 package org.talend.repository.services.ui.scriptmanager;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,17 +36,28 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.talend.core.model.properties.Item;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.ide.StatusUtil;
+import org.osgi.framework.Bundle;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
-import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.RepositoryPlugin;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
-import org.talend.repository.services.action.OpenWSDLEditorAction;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
@@ -46,53 +74,105 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 	
 	private String serviceName;
-	private IStructuredSelection selection;
-
-	public ServiceExportManager(String serviceName, IStructuredSelection selection) {
+	private String serviceVersion;
+	
+	public ServiceExportManager(String serviceName, String serviceVersion) {
 		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 		this.serviceName = serviceName;
-		this.selection = selection;
+		this.serviceVersion = serviceVersion;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager#readAndReplaceInXmlTemplate(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	protected void readAndReplaceInXmlTemplate(String inputFile,
-			String outputFile, String jobName, String jobClassName,
-			String itemType) {
+	public Definition getDefinition(String pathToWsdl) throws CoreException {
+		Definition definition = null;
+		try {
+			WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+			WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+
+			newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+			newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+			definition = newWSDLReader.readWSDL(pathToWsdl);
+		} catch (WSDLException e) {
+			throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+		}
+		return definition;
+	}
+
+	public void createSpringBeans(String outputFile, Map<String, String> operations, File wsdl) throws IOException, CoreException {
+		String inputFile = FileLocator.toFileURL(
+                FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
+                .getFile();
+		Definition def = getDefinition(wsdl.getAbsolutePath());
+		String serviceName = null;
+		String serviceNS = null;
+		String endpointAddress = null;
+		String endpointName = null;
+		Map services = def.getServices();
+		Iterator serviceIter = services.keySet().iterator();
+		if (serviceIter.hasNext()) { //TODO: support multiservice
+			QName serviceQName = (QName) serviceIter.next();
+			Service service = (Service) services.get(serviceQName);
+			serviceName = serviceQName.getLocalPart();
+			serviceNS = serviceQName.getNamespaceURI();
+			Iterator portIter = service.getPorts().values().iterator(); //TODO: support multiport
+			if (portIter.hasNext()) {
+				Port port = (Port) portIter.next();
+				endpointName = port.getName();
+                Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
+                for (ExtensibilityElement element : addrElems) {
+                    if (element != null && element instanceof SOAPAddress) {
+                    	endpointAddress = ((SOAPAddress) element).getLocationURI();
+                    }
+                }
+			}
+		}
+        FileReader fr = null;
+        try {
+            fr = new FileReader(inputFile);
+            BufferedReader br = new BufferedReader(fr);
+
+            FileWriter fw = new FileWriter(outputFile);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            String line = br.readLine();
+            while (line != null) {
+				line = line.replace("@Service.NS@", serviceNS)
+                .replace("@Service.Name@", serviceName)
+                .replace("@Endpoint.Name@", endpointName)
+                .replace("@Endpoint.Address@", endpointAddress)
+                .replace("@Service.Studio.Name@", this.serviceName)
+                .replace("@Wsdl.Location@", wsdl.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+                bw.write(line + "\n"); //$NON-NLS-1$
+                line = br.readLine();
+            }
+            bw.flush();
+            fr.close();
+            fw.close();
+        } catch (FileNotFoundException e) {
+            ExceptionHandler.process(e);
+            logger.error(e);
+        } catch (IOException e) {
+            ExceptionHandler.process(e);
+            logger.error(e);
+        }
+       
+        //create mapping operation-job
 		File out = new File(outputFile);
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder;
 		try {
-			// read/create
 			docBuilder = docFactory.newDocumentBuilder();
-			Document doc;
-			Element blueprint;
-			if (out.exists()) {
-				doc = docBuilder.parse(out);
-				blueprint = (Element) doc.getFirstChild();
-				if ((!BLUEPRINT_NODE.equalsIgnoreCase(blueprint.getNodeName())) /*||
-						(!BLUEPRINT_NS.equalsIgnoreCase(blueprint.getNamespaceURI()))*/){
-					throw new IOException(Messages.ServiceExportManager_Exception_invalid_blueprint_xml);
+			Document doc = docBuilder.parse(out);
+			NodeList mapEls = doc.getElementsByTagName("map");
+			if (mapEls.getLength() > 0) {
+				Element map = (Element) mapEls.item(0);
+				for (Map.Entry<String, String> operation : operations.entrySet()) {
+					Element entry = createKid(map, "entry");
+					Element key = createKid(createKid(entry, "key"), "value");
+					key.setTextContent(operation.getValue());
+					Element value = createKid(entry, "value");
+					value.setTextContent(operation.getKey());
 				}
-			} else {
-				doc = docBuilder.newDocument();
-				blueprint = doc.createElementNS(BLUEPRINT_NS, BLUEPRINT_NODE);
-				doc.appendChild(blueprint);
 			}
-			//add
-			Element bean = createKid(blueprint, BEAN_NODE);
-			bean.setAttribute(ID, jobName);
-			bean.setAttribute(CLASS, jobClassName);
-			
-			Element service = createKid(blueprint, SERVICE_NODE);
-			service.setAttribute("ref", jobName); //$NON-NLS-1$
-			service.setAttribute("interface", TALEND_JOB_API); //$NON-NLS-1$
-			
-			Element serviceProperties = createKid(service, SERVICE_PROPERTIES_NODE);
-			addProperty(serviceProperties, "name", jobName); //$NON-NLS-1$
-			addProperty(serviceProperties, "type", itemType); //$NON-NLS-1$
 			
 			//output
 			TransformerFactory tfactory = TransformerFactory.newInstance();
@@ -118,47 +198,86 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
 	}
 	
-	private void addProperty(Element props, String key,
-			String value) {
-		Element prop = createKid(props, "entry"); //$NON-NLS-1$
-		prop.setAttribute("key", key); //$NON-NLS-1$
-		prop.setAttribute("value", value); //$NON-NLS-1$
-	}
-
+//	private void addProperty(Element props, String key,
+//			String value) {
+//		Element prop = createKid(props, "entry"); //$NON-NLS-1$
+//		prop.setAttribute("key", key); //$NON-NLS-1$
+//		prop.setAttribute("value", value); //$NON-NLS-1$
+//	}
+//
 	private Element createKid(Element parent, String kidsName) {
 		Element kid = parent.getOwnerDocument().createElement(kidsName);
 		parent.appendChild(kid);
 		return kid;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager#getManifest(org.talend.repository.documentation.ExportFileResource, java.util.List, java.lang.String)
-	 */
-	@Override
-	protected Manifest getManifest(ExportFileResource libResource,
-			List<ProcessItem> itemToBeExport, String bundleName)
-			throws IOException {
-		return super.getManifest(libResource, itemToBeExport, serviceName);
+	private Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
+        List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
+        if (extensibilityElements != null) {
+            for (ExtensibilityElement elment : extensibilityElements) {
+                if (elment.getElementType().getLocalPart().equalsIgnoreCase(elementType)) {
+                    elements.add(elment);
+                }
+            }
+        }
+        return elements;
+    }
+
+
+	public Manifest getManifest(String artefactName) {
+	    Manifest manifest = new Manifest();
+	    Attributes a = manifest.getMainAttributes();
+	    a.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+	    a.put(new Attributes.Name("Bundle-Name"), artefactName); //$NON-NLS-1$
+	    a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
+	    a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
+	    a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
+	    a.put(new Attributes.Name("Import-Package"), "javax.xml.ws,org.talend.esb.job.controller");
+	    a.put(new Attributes.Name("Require-Bundle"), "org.apache.cxf.bundle,org.springframework.beans,org.springframework.context,org.springframework.osgi.core,locator,sam-agent,sam-common");
+	    return manifest;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager#getOsgiResource()
+	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager#getOutputSuffix()
 	 */
 	@Override
-	protected ExportFileResource getOsgiResource() {
-		ExportFileResource osgiResource = new ExportFileResource(null, ""); //$NON-NLS-1$;
-		List<RepositoryNode> nodes = selection.toList();
-		List<RepositoryNode> value = new ArrayList<RepositoryNode>();
-		for (RepositoryNode node : nodes) {
-			try {
-				osgiResource.addResource("", OpenWSDLEditorAction.getWsdlFile(node).getLocationURI().toURL());
-			} catch (MalformedURLException e) {
-				logger.error(e);
-			}
+	public String getOutputSuffix() {
+		return "/";
+	}
+
+	public JobScriptsManager getJobManager(RepositoryNode node, String groupId, String serviceVersion) {
+		JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(getDefaultExportChoiseMap(), "Default", serviceVersion, statisticPort, tracePort);
+		String artefactName = getNodeLabel(node);
+		File path = getFilePath(groupId, artefactName, serviceVersion);
+		File file = new File(path, artefactName+"-"+serviceVersion+manager.getOutputSuffix());
+		manager.setDestinationPath(file.getAbsolutePath());
+		return manager;
+	}
+
+	public File getFilePath(String groupId, String artefactName, String serviceVersion) {
+		File folderFile = new File(getDestinationPath());
+		folderFile.mkdir();
+		String path = groupId.replace('.', File.separatorChar);
+		File group = new File(folderFile, path);
+		File artefact = new File(group, artefactName);
+		File version = new File(artefact, serviceVersion);
+		version.mkdirs();
+		return version;
+	}
+
+	public String getNodeLabel(RepositoryNode node) {
+		if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
+            IRepositoryViewObject repositoryObject = node.getObject();
+            if (repositoryObject.getProperty().getItem() instanceof ProcessItem) {
+                ProcessItem processItem = (ProcessItem) repositoryObject.getProperty().getItem();
+                return processItem.getProperty().getLabel();
+            }
 		}
-		return osgiResource;
+		return "Job";
 	}
 
-	
+	public String getServiceName() {
+		return serviceName;
+	}
 	
 }

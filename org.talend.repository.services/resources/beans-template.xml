@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+	"
+>
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+    <!-- (1) SL
+    <import resource="classpath:META-INF/tesb/locator/beans-osgi.xml" />
+     -->
+    <!-- (2) SAM
+    <import resource="classpath:META-INF/tesb/agent-osgi.xml" />
+     -->
+
+	<jaxws:endpoint
+		xmlns:serviceNamespace="@Service.NS@"
+		serviceName="serviceNamespace:@Service.Name@"
+		endpointName="serviceNamespace:@Endpoint.Name@"
+		address="@Endpoint.Address@"
+		wsdlLocation="classpath:/@Wsdl.Location@"
+		implementor="#genericServiceProvider"
+		id="service"
+		publish="false"
+	>
+	    <jaxws:features>
+		    <!-- (1) SL
+			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
+		     -->
+		    <!-- (2) SAM
+			<ref bean="eventFeature"/>
+		     -->
+	    </jaxws:features>
+    </jaxws:endpoint>
+
+	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
+		<property name="operations">
+			<map></map>
+		</property>
+        <property name="jobLauncher">
+		    <osgi:reference interface="org.talend.esb.job.controller.JobLauncher"/>
+        </property>
+	    <!-- (2) SAM
+        <property name="eventFeature" ref="eventFeature"/>
+	     -->
+	</bean>
+
+	<osgi:service ref="service" interface="javax.xml.ws.Endpoint">
+		<osgi:service-properties>
+			<entry key="name" value="@Service.Studio.Name@" />
+			<entry key="type" value="service" />
+		</osgi:service-properties>
+	</osgi:service>
+
+</beans>

@@ -5,7 +5,9 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
-	private static BundleContext context;
+    public static final String PLUGIN_ID = "org.talend.repository.services"; //$NON-NLS-1$
+
+    private static BundleContext context;
 
 	static BundleContext getContext() {
 		return context;

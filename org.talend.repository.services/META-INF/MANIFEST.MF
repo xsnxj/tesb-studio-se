@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.ui.ide,
  org.eclipse.wst.wsdl.ui,
  org.eclipse.wst.xsd.ui,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.talend.designer.publish.core
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: lib/wsdl4j-1.6.2.jar,

@@ -14,9 +14,12 @@ package org.talend.repository.services.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +30,7 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -36,6 +40,7 @@ import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
@@ -47,6 +52,9 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
 	private List<ServiceItem> services = new ArrayList<ServiceItem>();
 	private String serviceName = "";
     private static Logger log = Logger.getLogger(ServiceExportWSWizardPage.class);
+    private String serviceVersion = ALL_VERSIONS;
+	private IFile serviceWsdl = null;
+	private Map<String, String> operations = new HashMap<String, String>();
 
     public static final String PETALS_EXPORT_DESTINATIONS = "org.ow2.petals.esbexport.destinations"; //$NON-NLS-1$
 
@@ -54,9 +62,10 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
         super(getJobsSelection(selection), "OSGI Bundle For ESB");
         this.selection = selection;
         this.serviceName = serviceName;
-
+        getJobs(selection);
     }
 
+    //TODO: remove this patch!!!!
 	private final static IStructuredSelection getJobsSelection(IStructuredSelection selection) { //DO NOT OVERRIDE!!! CALLED FROM CONSTRUCTOR!
 		List<RepositoryNode> nodes = selection.toList();
 		List<RepositoryNode> value = new ArrayList<RepositoryNode>();
@@ -80,9 +89,33 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
         }
 		return new StructuredSelection(value);
 	}
+
+	private final void getJobs(IStructuredSelection selection) { //DO NOT OVERRIDE!!! CALLED FROM CONSTRUCTOR!
+		List<RepositoryNode> nodes = selection.toList();
+		for (RepositoryNode node : nodes) {
+            if ((node.getType() == ENodeType.REPOSITORY_ELEMENT) &&
+            		(node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) 
+            {
+                IRepositoryViewObject repositoryObject = node.getObject();
+                ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
+                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
+				EList<ServicePort> listPort = serviceConnection.getServicePort();
+                for (ServicePort port : listPort) {
+                    List<ServiceOperation> listOperation = port.getServiceOperation();
+                    for (ServiceOperation operation : listOperation) {
+                        if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
+                            String[] label = operation.getLabel().split("-"); //TODO: do it correct way!!!
+							operations.put(label[0], label[1]);
+                        }
+                    }
+                }
+            }
+        }
+	}
+
 	
 	public JobScriptsManager createJobScriptsManager() {
-        return new ServiceExportManager(serviceName, selection);
+        return new ServiceExportManager(serviceName, serviceVersion);
     }
 
     protected List<String> getDefaultFileName() {
@@ -95,7 +128,10 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
                 if (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
 					value = new ArrayList<String>();
                     value.add(repositoryObject.getLabel());
-                    value.add(repositoryObject.getVersion());
+                    String version = repositoryObject.getVersion();
+					value.add(version);
+                    serviceVersion = version;
+                    serviceWsdl  = OpenWSDLEditorAction.getWsdlFile(node);
                 }
             }
         }
@@ -104,7 +140,7 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
     
 	@Override
 	protected String getOutputSuffix() {
-		return ".jar";
+		return "/";
 	}
 
     /*
@@ -117,11 +153,11 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
         boolean noError = true;
         this.setErrorMessage(null);
         this.setPageComplete(true);
-        if (getCheckNodes().length == 0) {
-            this.setErrorMessage(Messages.getString("ServiceExportWSWizardPage.needOneJobSelected"));
-            this.setPageComplete(false);
-            noError = false;
-        }
+//        if (getCheckNodes().length == 0) {
+//            this.setErrorMessage(Messages.getString("ServiceExportWSWizardPage.needOneJobSelected"));
+//            this.setPageComplete(false);
+//            noError = false;
+//        }
 
         return noError;
     }
@@ -129,7 +165,9 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
     @Override
     public boolean finish() {
         try {
-			new ExportServiceAction("Exporting service").runInWorkspace(null);
+        	ServiceExportManager manager = new ServiceExportManager(serviceName, serviceVersion);
+        	manager.setDestinationPath(getDestinationValue());
+			new ExportServiceAction("Exporting service", Arrays.asList(nodes), serviceVersion, manager, serviceWsdl, operations).runInWorkspace(null);
 		} catch (CoreException e) {
 			log.error(e);
 		}
