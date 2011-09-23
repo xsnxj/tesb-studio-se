@@ -22,9 +22,14 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
+
+import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -66,13 +71,35 @@ public class WSDLUtils {
                 Port port = (Port) ports.get(portKey);
                 List extElements = port.getExtensibilityElements();
                 if (extElements != null && extElements.size() > 0) {
-                    SOAPAddress address = (SOAPAddress) extElements.get(0);
-                    map.put(ESB_ENDPOINT, address.getLocationURI());
+                    Object obj = extElements.get(0);
+                    if (obj instanceof SOAPAddress) {
+                        SOAPAddress address = (SOAPAddress) extElements.get(0);
+                        map.put(ESB_ENDPOINT, address.getLocationURI());
+                    } else if (obj instanceof SOAP12Address) {
+                        SOAP12Address address = (SOAP12Address) extElements.get(0);
+                        map.put(ESB_ENDPOINT, address.getLocationURI());
+                    }
                 }
             }
         }
 
         return map;
+    }
+
+    public static boolean isValidService(ServiceItem serviceItem) {
+        boolean isValid = false;
+        List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+        for (ServicePort port : listPort) {
+            List<ServiceOperation> listOperation = port.getServiceOperation();
+            for (ServiceOperation operation : listOperation) {
+                if (operation.getReferenceJobId() != null) {
+                    isValid = true;
+                    break;
+                }
+            }
+        }
+
+        return isValid;
     }
 
 }

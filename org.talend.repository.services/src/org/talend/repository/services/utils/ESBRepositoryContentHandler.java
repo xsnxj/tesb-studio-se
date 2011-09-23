@@ -13,17 +13,23 @@
 package org.talend.repository.services.utils;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
+import org.talend.core.model.properties.Information;
+import org.talend.core.model.properties.InformationLevel;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -81,6 +87,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
             switch (eClass.getClassifierID()) {
             case ServicesPackage.SERVICE_ITEM:
                 itemResource = save((ServiceItem) item);
+                checkService((ServiceItem) item);
                 return itemResource;
             default:
                 return null;
@@ -195,4 +202,37 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         }
     }
 
+    private void computePropertyMaxInformationLevel(Property property) {
+        EList<Information> informations = property.getInformations();
+        InformationLevel maxLevel = null;
+        for (Information information : informations) {
+            int value = information.getLevel().getValue();
+            if (maxLevel == null || value > maxLevel.getValue()) {
+                maxLevel = information.getLevel();
+            }
+        }
+        property.setMaxInformationLevel(maxLevel);
+    }
+
+    private void checkService(ServiceItem serviceItem) {
+        if (serviceItem == null || serviceItem.getProperty() == null)
+            return;
+        Property property = serviceItem.getProperty();
+        EList<Information> informations = property.getInformations();
+        if (!WSDLUtils.isValidService(serviceItem)) {
+            Information info = PropertiesFactory.eINSTANCE.createInformation();
+            info.setLevel(InformationLevel.WARN_LITERAL);
+            info.setText("Invalid item");
+            informations.add(info);
+        } else {
+            Iterator<Information> iter = informations.iterator();
+            while (iter.hasNext()) {
+                Information info = iter.next();
+                if (info != null && (info.getLevel() == InformationLevel.WARN_LITERAL)) {
+                    iter.remove();
+                }
+            }
+        }
+        computePropertyMaxInformationLevel(property);
+    }
 }
