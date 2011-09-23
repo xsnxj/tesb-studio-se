@@ -240,13 +240,18 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // openEditor.doSave(new NullProgressMonitor());
 
                 EList<ServicePort> listPort = serviceConnection.getServicePort();
+                String parentPortName = node.getParent().getLabel();
                 for (ServicePort port : listPort) {
-                    List<ServiceOperation> listOperation = port.getServiceOperation();
-                    for (ServiceOperation operation : listOperation) {
-                        if (operation.getLabel().equals(node.getLabel())) {
-                            operation.setReferenceJobId(jobID);
-                            operation.setLabel(operation.getOperationName() + "-" + jobName);
+                    if (port.getName().equals(parentPortName)) {
+                        List<ServiceOperation> listOperation = port.getServiceOperation();
+                        for (ServiceOperation operation : listOperation) {
+                            if (operation.getLabel().equals(node.getLabel())) {
+                                operation.setReferenceJobId(jobID);
+                                operation.setLabel(operation.getOperationName() + "-" + jobName);
+                                break;
+                            }
                         }
+                        break;
                     }
                 }
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
