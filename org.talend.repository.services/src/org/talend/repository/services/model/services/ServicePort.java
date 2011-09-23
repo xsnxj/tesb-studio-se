@@ -8,6 +8,7 @@ package org.talend.repository.services.model.services;
 
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServicePort#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,5 +71,22 @@ public interface ServicePort extends EObject {
      * @generated
      */
     EList<ServiceOperation> getServiceOperation();
+
+    /**
+     * Returns the value of the '<em><b>Additional Info</b></em>' map.
+     * The key is of type {@link java.lang.String},
+     * and the value is of type {@link java.lang.String},
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Additional Info</em>' map isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Additional Info</em>' map.
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_AdditionalInfo()
+     * @model mapType="org.talend.repository.services.model.services.AdditionalInfoMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+     * @generated
+     */
+    EMap<String, String> getAdditionalInfo();
 
 } // ServicePort
