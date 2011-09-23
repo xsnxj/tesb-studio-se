@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -244,9 +245,25 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	public String getOutputSuffix() {
 		return "/";
 	}
+	
+    public static Map<ExportChoice, Object> getDefaultExportChoiceMap() {
+        Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
+        exportChoiceMap.put(ExportChoice.needLauncher, true);
+        exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
+        exportChoiceMap.put(ExportChoice.needUserRoutine, true);
+        exportChoiceMap.put(ExportChoice.needTalendLibraries, true);
+        exportChoiceMap.put(ExportChoice.needJobItem, true);
+        exportChoiceMap.put(ExportChoice.needJobScript, true);
+        exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.needSourceCode, true);
+        exportChoiceMap.put(ExportChoice.applyToChildren, false);
+        exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
+        return exportChoiceMap;
+    }
+
 
 	public JobScriptsManager getJobManager(RepositoryNode node, String groupId, String serviceVersion) {
-		JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(getDefaultExportChoiseMap(), "Default", serviceVersion, statisticPort, tracePort);
+		JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(getDefaultExportChoiceMap(), "Default", serviceVersion, statisticPort, tracePort);
 		String artefactName = getNodeLabel(node);
 		File path = getFilePath(groupId, artefactName, serviceVersion);
 		File file = new File(path, artefactName+"-"+serviceVersion+manager.getOutputSuffix());
