@@ -277,18 +277,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.POJO + ".hide")) { //$NON-NLS-1$ //$NON-NLS-2$
             exportTypeCombo.add(EXPORTTYPE_POJO);
         }
-        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSWAR + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-            exportTypeCombo.add(EXPORTTYPE_WSWAR);
-        }
-        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSZIP + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-            exportTypeCombo.add(EXPORTTYPE_WSZIP);
-        }
-        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.JBOSSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-            exportTypeCombo.add(EXPORTTYPE_JBOSSESB);
-        }
-        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.PETALSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-            exportTypeCombo.add(EXPORTTYPE_PETALSESB);
-        }
+        
+        // TESB-3222 Remove unnecessary export type in export wizard page LiXiaopeng
+        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSWAR + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
+        // exportTypeCombo.add(EXPORTTYPE_WSWAR);
+        // }
+        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSZIP + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
+        // exportTypeCombo.add(EXPORTTYPE_WSZIP);
+        // }
+        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.JBOSSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
+        // exportTypeCombo.add(EXPORTTYPE_JBOSSESB);
+        // }
+        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.PETALSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
+        // exportTypeCombo.add(EXPORTTYPE_PETALSESB);
+        // }
         if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.OSGI + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
             exportTypeCombo.add(EXPORTTYPE_OSGI);
         }
