@@ -32,12 +32,8 @@ public class CamelBrandingService extends AbstractTalendBrandingService {
 
     protected IBrandingConfiguration brandingConfigure;
 
-    public String getFullProductName() {
-        return Messages.getString("productfullname"); //$NON-NLS-1$
-    }
-
     public String getShortProductName() {
-        return Messages.getString("productshortname"); //$NON-NLS-1$
+        return getProductName();
     }
 
     public String getCorporationName() {
@@ -82,5 +78,13 @@ public class CamelBrandingService extends AbstractTalendBrandingService {
 
     public boolean isPoweredOnlyCamel() {
         return true;
+    }
+
+    public String getProductName() {
+        return "Talend Open Studio";
+    }
+
+    public String getOptionName() {
+        return "for Camel";
     }
 }
