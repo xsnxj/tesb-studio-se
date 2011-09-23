@@ -8,17 +8,24 @@ package org.talend.repository.services.model.services.impl;
 
 import java.util.Collection;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
+import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.talend.core.model.metadata.builder.connection.impl.ConnectionImpl;
 
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -35,6 +42,7 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * <ul>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getWSDLPath <em>WSDL Path</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getServicePort <em>Service Port</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
  * </p>
  *
@@ -70,6 +78,16 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * @ordered
      */
     protected EList<ServicePort> servicePort;
+
+    /**
+     * The cached value of the '{@link #getAdditionalInfo() <em>Additional Info</em>}' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getAdditionalInfo()
+     * @generated
+     * @ordered
+     */
+    protected EMap<String, String> additionalInfo;
 
     /**
      * <!-- begin-user-doc -->
@@ -128,6 +146,32 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      * <!-- end-user-doc -->
      * @generated
      */
+    public EMap<String, String> getAdditionalInfo() {
+        if (additionalInfo == null) {
+            additionalInfo = new EcoreEMap<String,String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO);
+        }
+        return additionalInfo;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO:
+                return ((InternalEList<?>)getAdditionalInfo()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
@@ -135,6 +179,9 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
                 return getWSDLPath();
             case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
                 return getServicePort();
+            case ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO:
+                if (coreType) return getAdditionalInfo();
+                else return getAdditionalInfo().map();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -155,6 +202,9 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
                 getServicePort().clear();
                 getServicePort().addAll((Collection<? extends ServicePort>)newValue);
                 return;
+            case ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO:
+                ((EStructuralFeature.Setting)getAdditionalInfo()).set(newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -173,6 +223,9 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
             case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
                 getServicePort().clear();
                 return;
+            case ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO:
+                getAdditionalInfo().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -189,6 +242,8 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
                 return WSDL_PATH_EDEFAULT == null ? wsdlPath != null : !WSDL_PATH_EDEFAULT.equals(wsdlPath);
             case ServicesPackage.SERVICE_CONNECTION__SERVICE_PORT:
                 return servicePort != null && !servicePort.isEmpty();
+            case ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO:
+                return additionalInfo != null && !additionalInfo.isEmpty();
         }
         return super.eIsSet(featureID);
     }

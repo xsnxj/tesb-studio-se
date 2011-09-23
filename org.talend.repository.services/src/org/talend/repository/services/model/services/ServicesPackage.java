@@ -159,13 +159,22 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_OPERATION__LABEL = 3;
 
     /**
+     * The feature id for the '<em><b>Additional Info</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_OPERATION__ADDITIONAL_INFO = 4;
+
+    /**
      * The number of structural features of the '<em>Service Operation</em>' class.
      * <!-- begin-user-doc --> <!--
      * end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION_FEATURE_COUNT = 4;
+    int SERVICE_OPERATION_FEATURE_COUNT = 5;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
@@ -547,6 +556,15 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__CONTEXT_ID = ConnectionPackage.CONNECTION__CONTEXT_ID;
 
     /**
+     * The feature id for the '<em><b>Context Group Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_CONNECTION__CONTEXT_GROUP_NAME = ConnectionPackage.CONNECTION__CONTEXT_GROUP_NAME;
+
+    /**
      * The feature id for the '<em><b>WSDL Path</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -565,13 +583,22 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__SERVICE_PORT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Additional Info</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_CONNECTION__ADDITIONAL_INFO = ConnectionPackage.CONNECTION_FEATURE_COUNT + 2;
+
+    /**
      * The number of structural features of the '<em>Service Connection</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION_FEATURE_COUNT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 2;
+    int SERVICE_CONNECTION_FEATURE_COUNT = ConnectionPackage.CONNECTION_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
@@ -609,6 +636,43 @@ public interface ServicesPackage extends EPackage {
      * @ordered
      */
     int SERVICE_PORT_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl
+     * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getAdditionalInfoMap()
+     * @generated
+     */
+    int ADDITIONAL_INFO_MAP = 4;
+
+    /**
+     * The feature id for the '<em><b>Key</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ADDITIONAL_INFO_MAP__KEY = 0;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ADDITIONAL_INFO_MAP__VALUE = 1;
+
+    /**
+     * The number of structural features of the '<em>Additional Info Map</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ADDITIONAL_INFO_MAP_FEATURE_COUNT = 2;
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceItem <em>Service Item</em>}'.
@@ -681,6 +745,17 @@ public interface ServicesPackage extends EPackage {
     EAttribute getServiceOperation_Label();
 
     /**
+     * Returns the meta object for the map '{@link org.talend.repository.services.model.services.ServiceOperation#getAdditionalInfo <em>Additional Info</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the map '<em>Additional Info</em>'.
+     * @see org.talend.repository.services.model.services.ServiceOperation#getAdditionalInfo()
+     * @see #getServiceOperation()
+     * @generated
+     */
+    EReference getServiceOperation_AdditionalInfo();
+
+    /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceConnection <em>Service Connection</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -713,6 +788,17 @@ public interface ServicesPackage extends EPackage {
     EReference getServiceConnection_ServicePort();
 
     /**
+     * Returns the meta object for the map '{@link org.talend.repository.services.model.services.ServiceConnection#getAdditionalInfo <em>Additional Info</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the map '<em>Additional Info</em>'.
+     * @see org.talend.repository.services.model.services.ServiceConnection#getAdditionalInfo()
+     * @see #getServiceConnection()
+     * @generated
+     */
+    EReference getServiceConnection_AdditionalInfo();
+
+    /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServicePort <em>Service Port</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -743,6 +829,40 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EReference getServicePort_ServiceOperation();
+
+    /**
+     * Returns the meta object for class '{@link java.util.Map.Entry <em>Additional Info Map</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Additional Info Map</em>'.
+     * @see java.util.Map.Entry
+     * @model keyDataType="org.eclipse.emf.ecore.EString"
+     *        valueDataType="org.eclipse.emf.ecore.EString"
+     * @generated
+     */
+    EClass getAdditionalInfoMap();
+
+    /**
+     * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Key</em>'.
+     * @see java.util.Map.Entry
+     * @see #getAdditionalInfoMap()
+     * @generated
+     */
+    EAttribute getAdditionalInfoMap_Key();
+
+    /**
+     * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see java.util.Map.Entry
+     * @see #getAdditionalInfoMap()
+     * @generated
+     */
+    EAttribute getAdditionalInfoMap_Value();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -824,6 +944,14 @@ public interface ServicesPackage extends EPackage {
         EAttribute SERVICE_OPERATION__LABEL = eINSTANCE.getServiceOperation_Label();
 
         /**
+         * The meta object literal for the '<em><b>Additional Info</b></em>' map feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference SERVICE_OPERATION__ADDITIONAL_INFO = eINSTANCE.getServiceOperation_AdditionalInfo();
+
+        /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -850,6 +978,14 @@ public interface ServicesPackage extends EPackage {
         EReference SERVICE_CONNECTION__SERVICE_PORT = eINSTANCE.getServiceConnection_ServicePort();
 
         /**
+         * The meta object literal for the '<em><b>Additional Info</b></em>' map feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference SERVICE_CONNECTION__ADDITIONAL_INFO = eINSTANCE.getServiceConnection_AdditionalInfo();
+
+        /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -874,6 +1010,32 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EReference SERVICE_PORT__SERVICE_OPERATION = eINSTANCE.getServicePort_ServiceOperation();
+
+        /**
+         * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl
+         * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getAdditionalInfoMap()
+         * @generated
+         */
+        EClass ADDITIONAL_INFO_MAP = eINSTANCE.getAdditionalInfoMap();
+
+        /**
+         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ADDITIONAL_INFO_MAP__KEY = eINSTANCE.getAdditionalInfoMap_Key();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ADDITIONAL_INFO_MAP__VALUE = eINSTANCE.getAdditionalInfoMap_Value();
 
     }
 

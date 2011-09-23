@@ -6,13 +6,23 @@
  */
 package org.talend.repository.services.model.services.impl;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicesPackage;
 
@@ -27,6 +37,7 @@ import org.talend.repository.services.model.services.ServicesPackage;
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl#getOperationName <em>Operation Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
  * </p>
  *
@@ -112,6 +123,16 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
      * @ordered
      */
     protected String label = LABEL_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getAdditionalInfo() <em>Additional Info</em>}' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getAdditionalInfo()
+     * @generated
+     * @ordered
+     */
+    protected EMap<String, String> additionalInfo;
 
     /**
      * <!-- begin-user-doc -->
@@ -221,6 +242,32 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
      * <!-- end-user-doc -->
      * @generated
      */
+    public EMap<String, String> getAdditionalInfo() {
+        if (additionalInfo == null) {
+            additionalInfo = new EcoreEMap<String,String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO);
+        }
+        return additionalInfo;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO:
+                return ((InternalEList<?>)getAdditionalInfo()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
@@ -232,6 +279,9 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
                 return getDocumentation();
             case ServicesPackage.SERVICE_OPERATION__LABEL:
                 return getLabel();
+            case ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO:
+                if (coreType) return getAdditionalInfo();
+                else return getAdditionalInfo().map();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -241,6 +291,7 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
      * <!-- end-user-doc -->
      * @generated
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
@@ -255,6 +306,9 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
                 return;
             case ServicesPackage.SERVICE_OPERATION__LABEL:
                 setLabel((String)newValue);
+                return;
+            case ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO:
+                ((EStructuralFeature.Setting)getAdditionalInfo()).set(newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -280,6 +334,9 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
             case ServicesPackage.SERVICE_OPERATION__LABEL:
                 setLabel(LABEL_EDEFAULT);
                 return;
+            case ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO:
+                getAdditionalInfo().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -300,6 +357,8 @@ public class ServiceOperationImpl extends EObjectImpl implements ServiceOperatio
                 return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
             case ServicesPackage.SERVICE_OPERATION__LABEL:
                 return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+            case ServicesPackage.SERVICE_OPERATION__ADDITIONAL_INFO:
+                return additionalInfo != null && !additionalInfo.isEmpty();
         }
         return super.eIsSet(featureID);
     }
