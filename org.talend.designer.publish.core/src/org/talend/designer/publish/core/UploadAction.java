@@ -9,24 +9,32 @@ import org.talend.designer.publish.core.models.FeaturesModel;
 
 public class UploadAction {
 
+	private String repositoryUrl = null;
+	private String username = null;
+	private String password = null;
+
+	public UploadAction(String repositoryUrl, String username, String password) {
+		this.repositoryUrl = repositoryUrl;
+		this.username = username;
+		this.password = password;
+	}
+
 	public boolean deployRoute(String jarFilePath, String groupId,
 			String artifactId, String version,
-			Set<DependencyModel> dependencies, String repositoryUrl,
-			String userName, String password) throws Exception {
+			Set<DependencyModel> dependencies) throws Exception {
 		return deployRoute(new File(jarFilePath), groupId, artifactId, version,
-				dependencies, repositoryUrl, userName, password);
+				dependencies);
 	}
 
 	private boolean deployRoute(File jarFile, String groupId,
 			String artifactId, String version,
-			Set<DependencyModel> dependencies, String repositoryUrl,
-			String userName, String password) throws Exception {
+			Set<DependencyModel> dependencies) throws Exception {
 		BundleModel bundleModel = new BundleModel(jarFile, groupId, artifactId,
-				version, repositoryUrl, userName, password);
+				version, repositoryUrl, username, password);
 		deployBundle(bundleModel);
 
 		FeaturesModel featuresModel = new FeaturesModel(groupId, artifactId,
-				version, repositoryUrl, userName, password);
+				version, repositoryUrl, username, password);
 		featuresModel.addSubBundle(bundleModel);
 		deployFeatures(featuresModel);
 		return true;
@@ -34,7 +42,8 @@ public class UploadAction {
 
 	public void deployFeatures(FeaturesModel featuresModel) throws Exception {
 		if (featuresModel != null) {
-			featuresModel.upload();
+			FeaturesModel model = new FeaturesModel(featuresModel, repositoryUrl, username, password);
+			model.upload();
 		}
 	}
 
@@ -46,7 +55,8 @@ public class UploadAction {
 
 	// for test
 	public static void main(String[] args) throws Exception {
-		UploadAction uploadAction = new UploadAction();
+		UploadAction uploadAction = new UploadAction("http://192.168.0.10:8080/archiva/repository/snapshots/",
+				"talend", "talend123");
 
 		// BundleModel b1 = new BundleModel(new File("userRoutines.jar"),
 		// "org.talend.liugang", "userRoutines1", "1.0",
@@ -76,8 +86,6 @@ public class UploadAction {
 		// uploadAction.deployFeatures(f2);
 
 		uploadAction.deployRoute("TestEERoute_0.1.jar", "org.talend.liugang",
-				"TestEERoute2", "2.0.22-SNAPSHOT", null,
-				"http://192.168.0.10:8080/archiva/repository/snapshots/",
-				"talend", "talend123");
+				"TestEERoute2", "2.0.22-SNAPSHOT", null);
 	}
 }

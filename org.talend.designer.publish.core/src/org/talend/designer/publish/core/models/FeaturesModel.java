@@ -24,6 +24,14 @@ public class FeaturesModel extends UploadableModel {
 				userName, password);
 	}
 
+	public FeaturesModel(FeaturesModel featuresModel, String repositoryUrl,
+			String userName, String password) {
+		super(featuresModel.groupId, featuresModel.artifactId, featuresModel.version, repositoryUrl,
+				userName, password);
+		subFeatures.addAll(featuresModel.subFeatures);
+		subBundles.addAll(featuresModel.subBundles);
+	}
+
 	@Override
 	public void upload() throws Exception {
 		uploadFeature();

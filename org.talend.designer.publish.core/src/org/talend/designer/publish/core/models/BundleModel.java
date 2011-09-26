@@ -22,6 +22,13 @@ public class BundleModel extends UploadableModel {
 			String version) {
 		this(jarFile, groupId, artifactId, version, null, null, null);
 	}
+	
+	public BundleModel(BundleModel model, String repositoryUrl,
+			String userName, String password) {
+		super(model.groupId, model.artifactId, model.version, repositoryUrl,
+				userName, password);
+		this.jarFile = model.jarFile;
+	}
 
 	@Override
 	public void upload() throws Exception {
