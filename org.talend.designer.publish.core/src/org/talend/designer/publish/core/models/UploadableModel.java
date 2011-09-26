@@ -90,37 +90,54 @@ public abstract class UploadableModel {
 				password));
 		String host = targetURL.getHost();
 		int port = targetURL.getPort();
-		HttpURLConnection connection = (HttpURLConnection) targetURL
-				.openConnection();
-		connection.setDoOutput(true);
+		HttpURLConnection connection = null;
+		OutputStream outputStream = null;
+		InputStream inputStream = null;
+		BufferedReader bufferedReader = null;
+		try {
+			connection = (HttpURLConnection) targetURL.openConnection();
+			connection.setDoOutput(true);
 
-		connection.setRequestMethod("PUT");
-		connection.setDoInput(true);
-		connection.addRequestProperty("Host", host + ":" + port);
-		connection.addRequestProperty("Accept",
-				"text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
-		connection.addRequestProperty("Connection", "keep-alive");
+			connection.setRequestMethod("PUT");
+			connection.setDoInput(true);
+			connection.addRequestProperty("Host", host + ":" + port);
+			connection.addRequestProperty("Accept",
+					"text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
+			connection.addRequestProperty("Connection", "keep-alive");
 
-		byte[] contents = new byte[1024];
-		OutputStream outputStream = connection.getOutputStream();
-		int count = -1;
-		while ((count = bis.read(contents)) != -1) {
-			outputStream.write(contents, 0, count);
+			byte[] contents = new byte[1024];
+			outputStream = connection.getOutputStream();
+			int count = -1;
+			while ((count = bis.read(contents)) != -1) {
+				outputStream.write(contents, 0, count);
+			}
+
+			System.out.println("response....");
+			inputStream = connection.getInputStream();
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					inputStream));
+			String s = bufferedReader.readLine();
+			while (s != null) {
+				System.out.println(s);
+				s = bufferedReader.readLine();
+			}
+			System.out.println("end");
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+			if (bufferedReader != null) {
+				bufferedReader.close();
+			}
+			if (outputStream != null) {
+				outputStream.close();
+			}
+			if (connection != null) {
+				connection.disconnect();
+			}
 		}
-		bis.close();
-		outputStream.close();
-
-		System.out.println("response....");
-		InputStream inputStream = connection.getInputStream();
-		BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(inputStream));
-		String s = bufferedReader.readLine();
-		while (s != null) {
-			System.out.println(s);
-			s = bufferedReader.readLine();
-		}
-		bufferedReader.close();
-		System.out.println("end");
 	}
 
 	/**
