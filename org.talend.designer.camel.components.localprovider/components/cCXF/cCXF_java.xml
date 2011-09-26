@@ -29,7 +29,7 @@
 	<PARAMETERS>
 		<PARAMETER NAME="ADDRESS" FIELD="TEXT" NUM_ROW="2"
 			REQUIRED="true" GROUP="SERVICE">
-			<DEFAULT>http://localhost:8000/service.endpoint</DEFAULT>
+			<DEFAULT>"http://localhost:8000/service.endpoint"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5"
 			GROUP="SERVICE">
@@ -44,7 +44,7 @@
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_CLASS" FIELD="TEXT" NUM_ROW="6"
 			REQUIRED="true" GROUP="SERVICE" SHOW_IF="SERVICE_TYPE == 'SERVICECLASS'">
-			<DEFAULT>beans.ServiceClass</DEFAULT>
+			<DEFAULT>"beans.ServiceClass"</DEFAULT>
 		</PARAMETER>
 		
 		<PARAMETER NAME="DATAFORMAT" FIELD="CLOSED_LIST" NUM_ROW="19"
@@ -62,11 +62,11 @@
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" NUM_ROW="21" REQUIRED="true"
 			SHOW_IF="SPECIFY_SERVICE == 'true'">
-			<DEFAULT>{http://www.talend.com}ServiceName</DEFAULT>
+			<DEFAULT>"{http://www.talend.com}ServiceName"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" NUM_ROW="21" REQUIRED="true"
 			SHOW_IF="SPECIFY_SERVICE == 'true'">
-			<DEFAULT>{http://www.talend.com}PortName</DEFAULT>
+			<DEFAULT>"{http://www.talend.com}PortName"</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
 
