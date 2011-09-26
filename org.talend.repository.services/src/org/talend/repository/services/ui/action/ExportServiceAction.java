@@ -21,7 +21,9 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IProgressService;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.service.IGeneratorService;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.ui.utils.ZipToFile;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
@@ -75,6 +77,15 @@ public class ExportServiceAction extends WorkspaceJob {
         try {
             final String artefactName = "control-bundle";
             bundles.put(artefactName, generateControlBundle(groupId, artefactName));
+			if (GlobalServiceRegister.getDefault().isServiceRegistered(
+					IGeneratorService.class)) {
+				IGeneratorService service = (IGeneratorService) GlobalServiceRegister
+						.getDefault().getService(IGeneratorService.class);
+				if (service != null) {
+					service.generateFeature(serviceName, serviceVersion,
+							groupId, bundles, serviceManager);
+				}
+			}
             // String feature = generateFeature(serviceName, groupId, bundles);
         } catch (IOException e) {
             return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
@@ -108,22 +119,6 @@ public class ExportServiceAction extends WorkspaceJob {
         }
         return file.getAbsolutePath();
     }
-
-    // private String generateFeature(final String serviceName, String groupId, Map<String, String> bundles) throws
-    // IOException {
-    // FeaturesModel feature = new FeaturesModel(groupId, serviceName, serviceVersion);
-    // for (Map.Entry<String, String> entry : bundles.entrySet()) {
-    // File jarFile = new File(entry.getValue());
-    // BundleModel model = new BundleModel(jarFile, groupId, entry.getKey(), serviceVersion);
-    // feature.addSubBundle(model);
-    // }
-    // String artefactName = serviceName + "-feature";
-    // File filePath = serviceManager.getFilePath(groupId, artefactName, serviceVersion);
-    // String fileName = artefactName + "-" + serviceVersion + "-feature.xml";
-    // String featureFilePath = new File(filePath, fileName).getAbsolutePath();
-    // SaveAction.saveFeature(featureFilePath, feature);
-    // return featureFilePath;
-    // }
 
     private String getGroupId(String serviceNS, String serviceName) {
         String schemeId;

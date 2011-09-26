@@ -25,3 +25,5 @@ Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: lib/wsdl4j-1.6.2.jar,
  lib/XmlSchema-1.4.5.jar,
  .
+Export-Package: org.talend.repository.services.service,
+ org.talend.repository.services.ui.scriptmanager
