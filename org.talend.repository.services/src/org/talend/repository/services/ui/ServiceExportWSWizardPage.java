@@ -49,20 +49,13 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScri
 public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage {
 
 	private IStructuredSelection selection;
-	private List<ServiceItem> services = new ArrayList<ServiceItem>();
-	private String serviceName = "";
     private static Logger log = Logger.getLogger(ServiceExportWSWizardPage.class);
-    private String serviceVersion = ALL_VERSIONS;
-	private IFile serviceWsdl = null;
-	private Map<String, String> operations = new HashMap<String, String>();
 
     public static final String PETALS_EXPORT_DESTINATIONS = "org.ow2.petals.esbexport.destinations"; //$NON-NLS-1$
 
-    public ServiceExportWSWizardPage(IStructuredSelection selection, String serviceName) {
+    public ServiceExportWSWizardPage(IStructuredSelection selection) {
         super(getJobsSelection(selection), "OSGI Bundle For ESB");
         this.selection = selection;
-        this.serviceName = serviceName;
-        getJobs(selection);
     }
 
     //TODO: remove this patch!!!!
@@ -90,32 +83,8 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
 		return new StructuredSelection(value);
 	}
 
-	private final void getJobs(IStructuredSelection selection) { //DO NOT OVERRIDE!!! CALLED FROM CONSTRUCTOR!
-		List<RepositoryNode> nodes = selection.toList();
-		for (RepositoryNode node : nodes) {
-            if ((node.getType() == ENodeType.REPOSITORY_ELEMENT) &&
-            		(node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) 
-            {
-                IRepositoryViewObject repositoryObject = node.getObject();
-                ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
-				EList<ServicePort> listPort = serviceConnection.getServicePort();
-                for (ServicePort port : listPort) {
-                    List<ServiceOperation> listOperation = port.getServiceOperation();
-                    for (ServiceOperation operation : listOperation) {
-                        if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                            String[] label = operation.getLabel().split("-"); //TODO: do it correct way!!!
-							operations.put(label[0], label[1]);
-                        }
-                    }
-                }
-            }
-        }
-	}
-
-	
 	public JobScriptsManager createJobScriptsManager() {
-        return new ServiceExportManager(serviceName, serviceVersion);
+        return new ServiceExportManager();
     }
 
     protected List<String> getDefaultFileName() {
@@ -130,8 +99,6 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
                     value.add(repositoryObject.getLabel());
                     String version = repositoryObject.getVersion();
 					value.add(version);
-                    serviceVersion = version;
-                    serviceWsdl  = OpenWSDLEditorAction.getWsdlFile(node);
                 }
             }
         }
@@ -165,9 +132,11 @@ public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage 
     @Override
     public boolean finish() {
         try {
-        	ServiceExportManager manager = new ServiceExportManager(serviceName, serviceVersion);
-        	manager.setDestinationPath(getDestinationValue());
-			new ExportServiceAction("Exporting service", Arrays.asList(nodes), serviceVersion, manager, serviceWsdl, operations).runInWorkspace(null);
+        	List<RepositoryNode> nodes = selection.toList();
+        	for (RepositoryNode node : nodes) {
+        		new ExportServiceAction(node, getDestinationValue()).runInWorkspace(null);
+        	}
+//			new ExportServiceAction("Exporting service", Arrays.asList(nodes), serviceVersion, manager, serviceWsdl, operations).runInWorkspace(null);
 		} catch (CoreException e) {
 			log.error(e);
 		}

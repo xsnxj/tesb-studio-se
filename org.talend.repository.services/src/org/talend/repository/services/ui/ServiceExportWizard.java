@@ -87,16 +87,8 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
      */
     public void addPages() {
         super.addPages();
-		@SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = selection.toList();
-		if (nodes.size() >= 1) {
-            RepositoryNode node = nodes.get(0);
-            if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
-                IRepositoryViewObject repositoryObject = node.getObject();
-                mainPage = new ServiceExportWSWizardPage(selection, repositoryObject.getLabel());
-                addPage((IWizardPage) mainPage);
-            }
-		}
+        mainPage = new ServiceExportWSWizardPage(selection);
+        addPage((IWizardPage) mainPage);
     }
 
     /*

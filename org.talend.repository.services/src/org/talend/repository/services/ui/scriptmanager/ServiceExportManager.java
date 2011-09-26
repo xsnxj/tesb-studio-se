@@ -43,12 +43,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.ide.StatusUtil;
-import org.osgi.framework.Bundle;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
-import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
@@ -57,33 +55,18 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
-	private static final String SERVICE_NODE = "service"; //$NON-NLS-1$
-	private static final String CLASS = "class"; //$NON-NLS-1$
-	private static final String ID = "id"; //$NON-NLS-1$
-	private static final String BEAN_NODE = "bean"; //$NON-NLS-1$
-	private static final String BLUEPRINT_NODE = "blueprint"; //$NON-NLS-1$
-	private static final String BLUEPRINT_NS = "http://www.osgi.org/xmlns/blueprint/v1.0.0"; //$NON-NLS-1$
-	private static final String TALEND_JOB_API = "routines.system.api.TalendJob"; //$NON-NLS-1$
-	private static final String SERVICE_PROPERTIES_NODE = "service-properties"; //$NON-NLS-1$
-	
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 	
-	private String serviceName;
-	private String serviceVersion;
-	
-	public ServiceExportManager(String serviceName, String serviceVersion) {
+	public ServiceExportManager() {
 		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-		this.serviceName = serviceName;
-		this.serviceVersion = serviceVersion;
 	}
 
-	public Definition getDefinition(String pathToWsdl) throws CoreException {
+	public static Definition getDefinition(String pathToWsdl) throws CoreException {
 		Definition definition = null;
 		try {
 			WSDLFactory wsdlFactory = WSDLFactory.newInstance();
@@ -98,7 +81,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		return definition;
 	}
 
-	public void createSpringBeans(String outputFile, Map<String, String> operations, File wsdl) throws IOException, CoreException {
+	public void createSpringBeans(String outputFile, Map<String, String> operations, File wsdl, String studioServiceName) throws IOException, CoreException {
 		String inputFile = FileLocator.toFileURL(
                 FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
                 .getFile();
@@ -140,7 +123,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                 .replace("@Service.Name@", serviceName)
                 .replace("@Endpoint.Name@", endpointName)
                 .replace("@Endpoint.Address@", endpointAddress)
-                .replace("@Service.Studio.Name@", this.serviceName)
+                .replace("@Service.Studio.Name@", studioServiceName)
                 .replace("@Wsdl.Location@", wsdl.getName()); //$NON-NLS-1$ //$NON-NLS-2$
                 bw.write(line + "\n"); //$NON-NLS-1$
                 line = br.readLine();
@@ -225,7 +208,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
 
-	public Manifest getManifest(String artefactName) {
+	public Manifest getManifest(String artefactName, String serviceVersion) {
 	    Manifest manifest = new Manifest();
 	    Attributes a = manifest.getMainAttributes();
 	    a.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
@@ -272,10 +255,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	}
 
 	public File getFilePath(String groupId, String artefactName, String serviceVersion) {
-		File folderFile = new File(getDestinationPath());
-		folderFile.mkdir();
+		File folder = new File(getDestinationPath(),"repository");
+		folder.mkdirs();
 		String path = groupId.replace('.', File.separatorChar);
-		File group = new File(folderFile, path);
+		File group = new File(folder, path);
 		File artefact = new File(group, artefactName);
 		File version = new File(artefact, serviceVersion);
 		version.mkdirs();
@@ -293,8 +276,4 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		return "Job";
 	}
 
-	public String getServiceName() {
-		return serviceName;
-	}
-	
 }
