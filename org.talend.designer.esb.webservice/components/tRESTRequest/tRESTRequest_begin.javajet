@@ -16,9 +16,9 @@
 	INode node = (INode) codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 
-	if (node.getProcess().getNodesOfType("tHTTPRequest").size() > 1) { %>
+	if (node.getProcess().getNodesOfType("tRESTRequest").size() > 1) { %>
 		if (true) {
-			throw new RuntimeException("cannot instantiate REST service: job contains more than one tHTTPRequest component");
+			throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
 		}
 <%	}
 
@@ -36,7 +36,7 @@
 	}
 	if (!hasOutputConnection) { %>
 		if (true) {
-			throw new RuntimeException("cannot instantiate REST service: tHTTPRequest component has no any output connections");
+			throw new RuntimeException("cannot instantiate REST service: tRESTRequest component has no any output connections");
 		}
 <%	} %>
 

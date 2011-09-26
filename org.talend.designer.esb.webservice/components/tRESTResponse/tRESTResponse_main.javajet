@@ -17,8 +17,8 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
-if (node.getProcess().getNodesOfType("tHTTPRequest").isEmpty()) { %>
-	System.out.println("[WARN] nonsense: tHTTPResponse component used without tHTTPRequest component on the job");
+if (node.getProcess().getNodesOfType("tRESTRequest").isEmpty()) { %>
+	System.out.println("[WARN] nonsense: tRESTResponse component used without tRESTRequest component on the job");
 <% }
 
 List<IMetadataTable> metadatas = node.getMetadataList();

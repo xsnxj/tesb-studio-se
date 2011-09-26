@@ -575,7 +575,7 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 
 
 <% // REST
-List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tHTTPRequest");
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
 if (!httpRequestComponentsList.isEmpty()) {
 
 
@@ -1046,9 +1046,9 @@ if (!httpRequestComponentsList.isEmpty()) {
 //	}
 
 
-	INode tHTTPRequestNode = httpRequestComponentsList.get(0);
-	String tHTTPRequestNodeCid = tHTTPRequestNode.getUniqueName();
-	boolean isOneWayRest = tHTTPRequestNode.getProcess().getNodesOfType("tHTTPResponse").isEmpty();
+	INode tRESTRequestNode = httpRequestComponentsList.get(0);
+	String tRESTRequestNodeCid = tRESTRequestNode.getUniqueName();
+	boolean isOneWayRest = tRESTRequestNode.getProcess().getNodesOfType("tRESTResponse").isEmpty();
 %>
 /**
  * queued message exchange
@@ -1200,11 +1200,11 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 @javax.ws.rs.Path("/")
 @javax.ws.rs.Produces("text/plain")
 @javax.ws.rs.Consumes("text/plain")
-public class RESTProvider_<%=tHTTPRequestNodeCid%> {
+public class RESTProvider_<%=tRESTRequestNodeCid%> {
 
 	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler;
 
-	public RESTProvider_<%=tHTTPRequestNodeCid%>(
+	public RESTProvider_<%=tRESTRequestNodeCid%>(
 			QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
@@ -1253,9 +1253,9 @@ public class RESTProvider_<%=tHTTPRequestNodeCid%> {
 	}
 
 <%
-List<? extends IConnection> conns = tHTTPRequestNode.getOutgoingSortedConnections();
+List<? extends IConnection> conns = tRESTRequestNode.getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
-	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tHTTPRequestNode, "__SCHEMAS__");
+	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tRESTRequestNode, "__SCHEMAS__");
 	// TODO: validation:
 	// 1. uri != null && uri.trim().length() > 0 && ??? uri.trim().startsWith("/")
 	// 2. ??? uri format by REST API - compile
@@ -1378,13 +1378,13 @@ if (null != conns && !conns.isEmpty()) {
 	}
 }
 
-class RestExceptionMapper_<%=tHTTPRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
+class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
 
 	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
 
-	private RESTProvider_<%=tHTTPRequestNodeCid%> provider;
+	private RESTProvider_<%=tRESTRequestNodeCid%> provider;
 
-	public RestExceptionMapper_<%=tHTTPRequestNodeCid%>(RESTProvider_<%=tHTTPRequestNodeCid%> provider) {
+	public RestExceptionMapper_<%=tRESTRequestNodeCid%>(RESTProvider_<%=tRESTRequestNodeCid%> provider) {
 		this.provider = provider;
 	}
 
@@ -1409,29 +1409,29 @@ class RestExceptionMapper_<%=tHTTPRequestNodeCid%> extends org.apache.cxf.jaxrs.
 }
 
 
-class HandlerThread_<%=tHTTPRequestNodeCid%> extends Thread {
+class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 
 	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler;
 
-	private final String endpointUrl = <%=ElementParameterParser.getValue(tHTTPRequestNode, "__REST_ENDPOINT__")%>;
+	private final String endpointUrl = <%=ElementParameterParser.getValue(tRESTRequestNode, "__REST_ENDPOINT__")%>;
 
 	private org.apache.cxf.endpoint.Server server;
 
-	public HandlerThread_<%=tHTTPRequestNodeCid%>(QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler) {
+	public HandlerThread_<%=tRESTRequestNodeCid%>(QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler) {
 		this.handler = handler;
 	}
 
 	public void run() {
 		try {
-			RESTProvider_<%=tHTTPRequestNodeCid%> provider =
-					new RESTProvider_<%=tHTTPRequestNodeCid%>(handler);
+			RESTProvider_<%=tRESTRequestNodeCid%> provider =
+					new RESTProvider_<%=tRESTRequestNodeCid%>(handler);
 
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
 					new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
-			sf.setProvider(new RestExceptionMapper_<%=tHTTPRequestNodeCid%>(provider));
+			sf.setProvider(new RestExceptionMapper_<%=tRESTRequestNodeCid%>(provider));
 			sf.setTransportId("http://cxf.apache.org/transports/http");
-			sf.setResourceClasses(RESTProvider_<%=tHTTPRequestNodeCid%>.class);
-			sf.setResourceProvider(RESTProvider_<%=tHTTPRequestNodeCid%>.class,
+			sf.setResourceClasses(RESTProvider_<%=tRESTRequestNodeCid%>.class);
+			sf.setResourceProvider(RESTProvider_<%=tRESTRequestNodeCid%>.class,
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 			server = sf.create();
