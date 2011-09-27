@@ -1198,8 +1198,10 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
-@javax.ws.rs.Produces("text/plain")
-@javax.ws.rs.Consumes("text/plain")
+//@javax.ws.rs.Produces("text/plain")
+@javax.ws.rs.Produces({"text/plain", "text/xml"})
+//@javax.ws.rs.Consumes("text/plain")
+@javax.ws.rs.Consumes({"text/plain", "text/xml"})
 public class RESTProvider_<%=tRESTRequestNodeCid%> {
 
 	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler;
