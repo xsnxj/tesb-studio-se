@@ -147,8 +147,13 @@
 					MODULE="wsdl4j-1.6.2.jar"
 					REQUIRED="true" />
 
-			<IMPORT NAME="geronimo-servlet_3.0_spec"
+			<!--IMPORT NAME="geronimo-servlet_3.0_spec"
 					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
+					BundleID=""
+					REQUIRED="true"/-->
+			<IMPORT NAME="geronimo-servlet_2.5_spec"
+					MODULE="geronimo-servlet_2.5_spec-1.1.2.jar"
+					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-continuation"
 					MODULE="jetty-continuation-7.5.1.v20110908.jar"
