@@ -88,6 +88,13 @@ public class FeaturesModel extends UploadableModel {
 			subBundles.add(model);
 		}
 	}
+	
+	/**
+	 * @return the subBundles
+	 */
+	public Set<BundleModel> getSubBundles() {
+		return subBundles;
+	}
 
 	private String toFeatureString(FeaturesModel model) {
 		StringBuilder sb = new StringBuilder();

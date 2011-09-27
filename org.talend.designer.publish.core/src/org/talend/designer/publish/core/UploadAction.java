@@ -49,7 +49,8 @@ public class UploadAction {
 
 	public void deployBundle(BundleModel bundleModel) throws Exception {
 		if (bundleModel != null) {
-			bundleModel.upload();
+			BundleModel model = new BundleModel(bundleModel, repositoryUrl, username, password);
+			model.upload();
 		}
 	}
 
