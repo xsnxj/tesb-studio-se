@@ -124,12 +124,7 @@ public class ExportServiceAction extends WorkspaceJob {
             final String artefactName = "control-bundle";
             bundles.put(artefactName, generateControlBundle(groupId, artefactName));
 			processFeature(generateFeature(bundles));
-	        try {
-	            ZipToFile.zipFile(serviceManager.getDestinationPath(), serviceManager.getDestinationPath()+serviceName+".kar");
-	            //FilesUtils.removeFolder(temp, true);
-	        } catch (Exception e) {
-	            throw new IOException(e.getMessage());
-	        }
+	        processFinalResult();
 
         } catch (IOException e) {
             return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
@@ -137,6 +132,19 @@ public class ExportServiceAction extends WorkspaceJob {
 
         return StatusUtil.newStatus(IStatus.OK, "Done", null);
     }
+
+
+	protected void processFinalResult() throws IOException {
+		try {
+		    String destinationPath = serviceManager.getDestinationPath();
+		    File destination = new File(destinationPath);
+		    String s = destination.getAbsolutePath()+".kar";
+			ZipToFile.zipFile(destinationPath, s);
+		    FilesUtils.removeFolder(destinationPath, true);
+		} catch (Exception e) {
+		    throw new IOException(e.getMessage());
+		}
+	}
 
     private String generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
         File temp = new File(serviceManager.getDestinationPath(), "temp");
@@ -184,7 +192,7 @@ public class ExportServiceAction extends WorkspaceJob {
 		String featureFilePath = new File(filePath, fileName).getAbsolutePath();
 		SaveAction.saveFeature(featureFilePath, feature);
 	}
-
+	
 	//DO NOT OVERRIDE!! CALLED FROM CONSTRUCTOR
     private final String getGroupId(String serviceNS, String serviceName) {  
         String schemeId;
