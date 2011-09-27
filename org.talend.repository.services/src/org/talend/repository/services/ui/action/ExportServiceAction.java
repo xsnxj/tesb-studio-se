@@ -50,7 +50,7 @@ public class ExportServiceAction extends WorkspaceJob {
 
     private String serviceVersion;
 
-    private ServiceExportManager serviceManager;
+	private ServiceExportManager serviceManager;
 
     private IFile serviceWsdl;
 
@@ -99,7 +99,7 @@ public class ExportServiceAction extends WorkspaceJob {
 		this.serviceManager = new ServiceExportManager();
         serviceManager.setDestinationPath(targetPath);
         final String serviceNS = ServiceExportManager.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace();
-        groupId = getGroupId(serviceNS, serviceName);
+        groupId = getGroupId(serviceNS, getServiceName());
     }
     
     @Override
@@ -108,8 +108,8 @@ public class ExportServiceAction extends WorkspaceJob {
         String directoryName = serviceManager.getRootFolderName(serviceManager.getDestinationPath());
         Map<String, String> bundles = new HashMap<String, String>();
         for (RepositoryNode node : nodes) {
-            JobScriptsManager manager = serviceManager.getJobManager(node, groupId, serviceVersion);
-            JobExportAction job = new JobExportAction(Arrays.asList(new RepositoryNode[] { node }), serviceVersion, manager,
+            JobScriptsManager manager = serviceManager.getJobManager(node, getGroupId(), getServiceVersion());
+            JobExportAction job = new JobExportAction(Arrays.asList(new RepositoryNode[] { node }), node.getObject().getVersion(), manager,
                     directoryName);
             try {
                 progressService.run(false, true, job);
@@ -122,9 +122,10 @@ public class ExportServiceAction extends WorkspaceJob {
         }
         try {
             final String artefactName = "control-bundle";
-            bundles.put(artefactName, generateControlBundle(groupId, artefactName));
+            bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
 			processFeature(generateFeature(bundles));
-	        processFinalResult();
+		    String destinationPath = serviceManager.getDestinationPath();
+		    processFinalResult(destinationPath);
 
         } catch (IOException e) {
             return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
@@ -133,26 +134,13 @@ public class ExportServiceAction extends WorkspaceJob {
         return StatusUtil.newStatus(IStatus.OK, "Done", null);
     }
 
-
-	protected void processFinalResult() throws IOException {
-		try {
-		    String destinationPath = serviceManager.getDestinationPath();
-		    File destination = new File(destinationPath);
-		    String s = destination.getAbsolutePath()+".kar";
-			ZipToFile.zipFile(destinationPath, s);
-		    FilesUtils.removeFolder(destinationPath, true);
-		} catch (Exception e) {
-		    throw new IOException(e.getMessage());
-		}
-	}
-
     private String generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
         File temp = new File(serviceManager.getDestinationPath(), "temp");
         File metaInf = new File(temp, "META-INF");
         metaInf.mkdirs();
         // manifest
         FileOutputStream out = new FileOutputStream(new File(metaInf, "MANIFEST.MF"));
-        serviceManager.getManifest(artefactName, serviceVersion).write(out);
+        serviceManager.getManifest(artefactName, getServiceVersion()).write(out);
         out.close();
         // wsdl
         File wsdl = new File(temp, serviceWsdl.getName());
@@ -160,9 +148,9 @@ public class ExportServiceAction extends WorkspaceJob {
         // spring
         File spring = new File(temp, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(temp, "beans.xml").getAbsolutePath(), operations, wsdl, serviceName);
-        String fileName = artefactName + "-" + serviceVersion + ".jar";
-        File file = new File(serviceManager.getFilePath(groupId, artefactName, serviceVersion), fileName);
+        serviceManager.createSpringBeans(new File(temp, "beans.xml").getAbsolutePath(), operations, wsdl, getServiceName());
+        String fileName = artefactName + "-" + getServiceVersion() + ".jar";
+        File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
         try {
             ZipToFile.zipFile(temp.getAbsolutePath(), file.getAbsolutePath());
             FilesUtils.removeFolder(temp, true);
@@ -173,26 +161,52 @@ public class ExportServiceAction extends WorkspaceJob {
     }
 
 	private FeaturesModel generateFeature(Map<String, String> bundles) throws IOException {
-		FeaturesModel feature = new FeaturesModel(groupId, serviceName,
-				serviceVersion);
+		FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(),
+				getServiceVersion());
 		for (Map.Entry<String, String> entry : bundles.entrySet()) {
 			File jarFile = new File(entry.getValue());
-			BundleModel model = new BundleModel(jarFile, groupId,
-					entry.getKey(), serviceVersion);
+			BundleModel model = new BundleModel(jarFile, getGroupId(),
+					entry.getKey(), getServiceVersion());
 			feature.addSubBundle(model);
 		}
 		return feature;
 	}
 	
 	protected void processFeature(FeaturesModel feature) throws IOException {
-		String artefactName = serviceName + "-feature";
-		File filePath = serviceManager.getFilePath(groupId, artefactName,
-				serviceVersion);
-		String fileName = artefactName + "-" + serviceVersion + "-feature.xml";
+		String artefactName = getServiceName() + "-feature";
+		File filePath = serviceManager.getFilePath(getGroupId(), artefactName,
+				getServiceVersion());
+		String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml";
 		String featureFilePath = new File(filePath, fileName).getAbsolutePath();
 		SaveAction.saveFeature(featureFilePath, feature);
 	}
 	
+	protected void processFinalResult(String destinationPath) throws IOException {
+		try {
+		    File destination = new File(destinationPath);
+		    String s = destination.getAbsolutePath()+".kar";
+			ZipToFile.zipFile(destinationPath, s);
+		    FilesUtils.removeFolder(destinationPath, true);
+		} catch (Exception e) {
+		    throw new IOException(e.getMessage());
+		}
+	}
+
+	public String getServiceVersion() {
+		return serviceVersion;
+	}
+
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+
 	//DO NOT OVERRIDE!! CALLED FROM CONSTRUCTOR
     private final String getGroupId(String serviceNS, String serviceName) {  
         String schemeId;
