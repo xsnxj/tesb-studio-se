@@ -76,7 +76,7 @@ The Apache Software License, Version 2.0 :
   * JavaMail 1.4 (org.apache.geronimo.specs:geronimo-javamail_1.4_spec:1.7.1 - http://geronimo.apache.org/maven/specs/geronimo-javamail_1.4_spec/1.7.1)
   * Apache Geronimo JAX-WS Spec 2.2 (org.apache.geronimo.specs:geronimo-jaxws_2.2_spec:1.1 - http://geronimo.apache.org/maven/specs/geronimo-jaxws_2.2_spec/1.1)
   * JMS 1.1 (org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1 - http://geronimo.apache.org/specs/geronimo-jms_1.1_spec)
-  * Servlet 3.0 (org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0 - http://geronimo.apache.org/maven/specs/geronimo-servlet_3.0_spec/1.0)
+  * Servlet 2.5 (org.apache.geronimo.specs:geronimo-servlet_2.5_spec:1.1.2 - http://geronimo.apache.org/specs/geronimo-servlet_2.5_spec)
   * Streaming API for XML (STAX API 1.0) (org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0.1 - http://geronimo.apache.org/specs/geronimo-stax-api_1.0_spec)
   * Web Services Metadata 2.0 (org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec:1.1.3 - http://geronimo.apache.org/maven/specs/geronimo-ws-metadata_2.0_spec/1.1.3)
   * Apache Neethi (org.apache.neethi:neethi:3.0.1 - http://ws.apache.org/neethi/)
