@@ -50,7 +50,7 @@ public class ExportServiceAction extends WorkspaceJob {
 
     private String serviceVersion;
 
-	private ServiceExportManager serviceManager;
+	protected ServiceExportManager serviceManager;
 
     private IFile serviceWsdl;
 
@@ -146,9 +146,9 @@ public class ExportServiceAction extends WorkspaceJob {
         File wsdl = new File(temp, serviceWsdl.getName());
         FilesUtils.copyFile(serviceWsdl.getLocation().toFile(), wsdl);
         // spring
-        File spring = new File(temp, "spring");
+        File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(temp, "beans.xml").getAbsolutePath(), operations, wsdl, getServiceName());
+        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), operations, wsdl, getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + ".jar";
         File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
         try {
