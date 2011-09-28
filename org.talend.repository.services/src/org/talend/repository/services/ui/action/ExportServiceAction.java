@@ -121,7 +121,7 @@ public class ExportServiceAction extends WorkspaceJob {
             bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
         }
         try {
-            final String artefactName = "control-bundle";
+            final String artefactName = getServiceName()+"-control-bundle";
             bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
 			processFeature(generateFeature(bundles));
 		    String destinationPath = serviceManager.getDestinationPath();
