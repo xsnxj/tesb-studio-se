@@ -92,7 +92,7 @@ public abstract class UploadableModel {
 		int port = targetURL.getPort();
 		HttpURLConnection connection = null;
 		OutputStream outputStream = null;
-		InputStream inputStream = null;
+		// InputStream inputStream = null;
 		BufferedReader bufferedReader = null;
 		try {
 			connection = (HttpURLConnection) targetURL.openConnection();
@@ -113,20 +113,16 @@ public abstract class UploadableModel {
 			}
 
 			System.out.println("response....");
-			inputStream = connection.getInputStream();
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					inputStream));
-			String s = bufferedReader.readLine();
-			while (s != null) {
-				System.out.println(s);
-				s = bufferedReader.readLine();
+			int responseCode = connection.getResponseCode();
+			if (responseCode > 399) {
+				throw new IOException(connection.getHeaderField(0));
 			}
 			System.out.println("end");
 		} catch (IOException e) {
 			throw e;
 		} finally {
-			if (inputStream != null) {
-				inputStream.close();
+			if (bis != null) {
+				bis.close();
 			}
 			if (bufferedReader != null) {
 				bufferedReader.close();
