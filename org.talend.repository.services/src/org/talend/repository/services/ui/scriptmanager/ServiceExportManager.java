@@ -152,9 +152,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 				for (Map.Entry<String, String> operation : operations.entrySet()) {
 					Element entry = createKid(map, "entry");
 					Element key = createKid(createKid(entry, "key"), "value");
-					key.setTextContent(operation.getValue());
+					key.setTextContent(operation.getKey());
 					Element value = createKid(entry, "value");
-					value.setTextContent(operation.getKey());
+					value.setTextContent(operation.getValue());
 				}
 			}
 			
