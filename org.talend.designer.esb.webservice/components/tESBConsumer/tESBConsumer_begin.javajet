@@ -66,6 +66,13 @@ if (this.registry != null) {
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
+
+				<% String esbSecurity = ElementParameterParser.getValue(node, "__ESB_SECURITY__"); %>
+				put("esbSecurity", "<%=esbSecurity%>");
+				<% if ("SAML".equals(esbSecurity) || "TOKEN".equals(esbSecurity)) { %>
+					put("username", <%=ElementParameterParser.getValue(node, "__SECURITY_USERNAME__")%>);
+					put("password", <%=ElementParameterParser.getValue(node, "__SECURITY_PASSWORD__")%>);
+				<% } %>
 			}};
 
 			public String getEndpointUri() {
