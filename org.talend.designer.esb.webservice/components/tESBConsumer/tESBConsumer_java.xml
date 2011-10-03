@@ -336,7 +336,7 @@
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.1-20110915.190433-7.jar"
+					MODULE="xmlschema-core-2.0.1.jar"
 					BundleID=""
 					REQUIRED="true"/>
 
