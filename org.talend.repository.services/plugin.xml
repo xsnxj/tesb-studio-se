@@ -34,6 +34,11 @@
           name="Assign Job">
     </Action>
     <Action
+          class="org.talend.repository.services.action.OpenJobAction"
+          id="org.talend.repository.services.action.OpenJobAction"
+          name="Open Assigned Job">
+    </Action>
+    <Action
           class="org.talend.repository.services.action.CreateNewJobAction"
           id="org.talend.repository.services.action.CreateNewJobAction"
           name="Create New Job">

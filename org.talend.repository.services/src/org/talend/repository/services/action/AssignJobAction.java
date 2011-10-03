@@ -26,8 +26,6 @@ public class AssignJobAction extends AbstractCreateAction {
 
     private ERepositoryObjectType currentNodeType;
 
-    private boolean creation = false;
-
     public AssignJobAction() {
         super();
 
@@ -120,7 +118,14 @@ public class AssignJobAction extends AbstractCreateAction {
     }
 
     public Class getClassForDoubleClick() {
+    	try {
+	        RepositoryNode repositoryNode = getCurrentRepositoryNode();
+            return (OpenJobAction.getReferenceJobId(repositoryNode) == null) ? ServiceOperation.class : Object.class;
+    	} catch (Exception e) {
+    		//do nothing just return default
+    	}
         return ServiceOperation.class;
     }
 
+    
 }
