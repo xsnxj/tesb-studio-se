@@ -68,6 +68,7 @@ public class OpenJobAction extends EditProcess {
     	RepositoryNode node = nodes.iterator().next();
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
         if (!currentNodeType.equals(nodeType)) {
+    		setEnabled(false);
             return;
         }
         this.setText(createLabel);
