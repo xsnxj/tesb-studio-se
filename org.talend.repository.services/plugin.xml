@@ -53,6 +53,10 @@
             id="org.talend.repository.services.action.ExportServiceAction"
             level="99"
             name="Export Service"/>
+    <Action
+            class="org.talend.repository.services.action.ServiceMetadataAction"
+            id="org.talend.repository.services.action.ServiceMetadataAction"
+            name="Service Metadata"/>
     
  </extension>
  <extension
