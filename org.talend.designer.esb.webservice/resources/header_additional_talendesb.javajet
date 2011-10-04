@@ -1195,6 +1195,77 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 }
 
 /**
+ * A special Dom4J provider implementation to help conversion in JAX-RS
+ * @see http://jira.talendforge.org/browse/TESB-3329
+ */
+@javax.ws.rs.Produces({"application/xml", "application/json" })
+@javax.ws.rs.Consumes({"application/xml", "application/json" })
+public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>, javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
+
+    private static final Class<org.w3c.dom.Document> DOM_DOC_CLS = org.w3c.dom.Document.class;
+    
+    private javax.ws.rs.ext.Providers providers;
+    
+    @javax.ws.rs.core.Context 
+    public void setProviders(javax.ws.rs.ext.Providers providers) {
+        this.providers = providers;
+    }
+    
+    public boolean isReadable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns,
+    		javax.ws.rs.core.MediaType mt) {
+        return Document.class.isAssignableFrom(cls);
+    }
+
+    public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls, java.lang.reflect.Type type,
+            java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
+            javax.ws.rs.core.MultivaluedMap<String, String> headers, java.io.InputStream is)
+            throws IOException, javax.ws.rs.WebApplicationException {
+    	javax.ws.rs.ext.MessageBodyReader<org.w3c.dom.Document> reader = 
+            providers.getMessageBodyReader(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
+        if (reader == null) {
+            throw new javax.ws.rs.WebApplicationException(415);
+        }
+        org.w3c.dom.Document domDoc = 
+            reader.readFrom(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, is);
+        return new org.dom4j.io.DOMReader().read(domDoc);
+    }
+
+    public long getSize(org.dom4j.Document doc, Class<?> cls, java.lang.reflect.Type type,
+            java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
+        return -1;
+    }
+
+    public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type,
+            java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
+        return Document.class.isAssignableFrom(cls);
+    }
+
+    public void writeTo(org.dom4j.Document doc,Class<?> cls, java.lang.reflect.Type type,
+            java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
+            javax.ws.rs.core.MultivaluedMap<String, Object> headers, java.io.OutputStream os)
+            throws IOException, javax.ws.rs.WebApplicationException {
+        org.w3c.dom.Document domDoc = convertToDOM(doc);
+        
+        javax.ws.rs.ext.MessageBodyWriter<org.w3c.dom.Document> writer = 
+            providers.getMessageBodyWriter(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
+        if (writer == null) {
+            throw new javax.ws.rs.WebApplicationException(406);    
+        }
+        writer.writeTo(domDoc, DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, os);
+    }
+
+    private org.w3c.dom.Document convertToDOM(org.dom4j.Document doc) {
+        String xml = doc.asXML();
+        try {
+            return org.apache.cxf.helpers.DOMUtils.readXml(new java.io.StringReader(xml));
+        } catch (Exception ex) {
+            throw new javax.ws.rs.WebApplicationException(ex);
+        }
+    }
+    
+}
+
+/**
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
@@ -1428,7 +1499,10 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
 					new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
-			sf.setProvider(new RestExceptionMapper_<%=tRESTRequestNodeCid%>(provider));
+			java.util.List<Object> providers = new java.util.ArrayList<Object>();
+			providers.add(new RestExceptionMapper_<%=tRESTRequestNodeCid%>(provider));
+			providers.add(new DOM4JProvider());
+			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
 			sf.setResourceClasses(RESTProvider_<%=tRESTRequestNodeCid%>.class);
 			sf.setResourceProvider(RESTProvider_<%=tRESTRequestNodeCid%>.class,
