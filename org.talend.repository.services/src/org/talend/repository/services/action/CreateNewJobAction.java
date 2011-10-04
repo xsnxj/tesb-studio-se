@@ -20,6 +20,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.commons.utils.StringUtils;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
@@ -197,7 +198,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
                 parameter = node2.getElementParameter(WSDLUtils.ESB_ENDPOINT);
                 if (parameter != null) {
-                    parameter.setValue(serviceParameters.get(WSDLUtils.ESB_ENDPOINT));
+                    parameter.setValue('"'+serviceParameters.get(WSDLUtils.ESB_ENDPOINT)+'"');
                 }
 
                 parameter = node2.getElementParameter(WSDLUtils.SERVICE_NS);
@@ -275,16 +276,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     private String initLabel(RepositoryNode node) {
         RepositoryNode parent = node.getParent();
-        String parentName = "";
-        out: for (IRepositoryNode cp : parent.getChildren()) {
-            for (IRepositoryNode child : cp.getChildren()) {
-                if (child.getLabel().equals(node.getLabel())) {
-                    parentName = cp.getLabel();
-                    break out;
-                }
-            }
-        }
-        return parentName + "_" + node.getLabel();
+        return parent.getLabel() + "_" + node.getLabel();
     }
 
 }
