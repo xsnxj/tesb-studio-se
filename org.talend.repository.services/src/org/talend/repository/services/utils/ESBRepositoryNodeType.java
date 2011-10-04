@@ -22,4 +22,6 @@ public class ESBRepositoryNodeType {
     public static ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, "SERVICES");
 
+    public static ERepositoryObjectType SERVICEPORT = (ERepositoryObjectType) ERepositoryObjectType.SERVICESPORT;
+
 }

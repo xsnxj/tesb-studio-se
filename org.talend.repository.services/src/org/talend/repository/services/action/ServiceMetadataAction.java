@@ -14,14 +14,10 @@ package org.talend.repository.services.action;
 
 import java.util.List;
 
-import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -30,9 +26,9 @@ import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.ui.ServiceExportWizard;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -45,57 +41,68 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ServiceMetadataAction extends AContextualAction {
 
-    protected static final String ACTION_LABEL = "Edit Service Metadata";
-	private ServiceItem serviceItem; 
+	protected static final String ACTION_LABEL = "Edit Service Metadata";
+	private IStructuredSelection selection;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = true;
-        if (selection.isEmpty() || (selection.size() > 1)) {
-            setEnabled(false);
-            return;
-        }
-        
-        @SuppressWarnings("unchecked")
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
+	 * org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public void init(TreeViewer viewer, IStructuredSelection selection) {
+		boolean canWork = true;
+		if (selection.isEmpty() || (selection.size() > 1)) {
+			setEnabled(false);
+			return;
+		}
+
+		@SuppressWarnings("unchecked")
 		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-        for (RepositoryNode node : nodes) {
-            if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-                    || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
-                canWork = false;
-                break;
-            } else if (canWork && node.getObject() != null
-                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
-                canWork = false;
-                break;
-            } else {
-            	serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            }
-        }
-        setEnabled(canWork);
-    }
+		for (RepositoryNode node : nodes) {
+			if (node.getType() != ENodeType.STABLE_SYSTEM_FOLDER
+					|| node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
+				canWork = false;
+				break;
+			} else if (canWork && node.getObject() != null
+					&& ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
+				canWork = false;
+				break;
+			} else {
+				this.selection = selection;
+			}
+		}
+		setEnabled(canWork);
+	}
 
-    public boolean isVisible() {
-        return isEnabled();
-    }
+	public boolean isVisible() {
+		return isEnabled();
+	}
 
-    public ServiceMetadataAction() {
-        super();
-        this.setText(ACTION_LABEL);
-        this.setToolTipText(ACTION_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
-    }
+	public ServiceMetadataAction() {
+		super();
+		this.setText(ACTION_LABEL);
+		this.setToolTipText(ACTION_LABEL);
+		this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
+	}
 
-    protected void doRun() {
-        IWorkbenchWindow window = this.getViewPart().getViewSite().getWorkbenchWindow();
-        
-		Dialog dialog = new ServiceMetadataDialog(window, serviceItem);
-//        workbench.saveAllEditors(true);
-//        dialog.setPageSize(830, 450);
-        dialog.open();
-    }
+	protected void doRun() {
+		IWorkbenchWindow window = this.getViewPart().getViewSite().getWorkbenchWindow();
+		ServicePort port = null;
+		ServiceItem serviceItem = null;
+		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+		for (RepositoryNode node : nodes) {
+			serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
+			ServiceConnection serviceConnection = serviceItem.getServiceConnection();
+			EList<ServicePort> listPort = serviceConnection.getServicePort();
+			for (ServicePort cport : listPort) {
+				if (cport.getName().equals(node.getLabel())) {
+					port = cport;
+				}
+			}
+		}
+
+		Dialog dialog = new ServiceMetadataDialog(window, serviceItem, port);
+		dialog.open();
+	}
 }
