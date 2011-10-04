@@ -31,7 +31,8 @@
 		<PARAMETER NAME="SCHEMA" FIELD="SCHEMA_TYPE"
 				REQUIRED="true" NUM_ROW="10">
 			<TABLE READONLY="true">
-				<COLUMN NAME="body" TYPE="id_String" READONLY="true" NULLABLE="true" />
+				<COLUMN NAME="xml" TYPE="id_Document" READONLY="true" NULLABLE="true" />
+				<COLUMN NAME="string" TYPE="id_String" READONLY="true" NULLABLE="true" />
 			</TABLE>
 		</PARAMETER>
 		

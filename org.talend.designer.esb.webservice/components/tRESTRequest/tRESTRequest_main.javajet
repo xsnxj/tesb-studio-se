@@ -71,7 +71,11 @@ if (null != metadatas && 0 < metadatas.size()) {
 		String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
 		String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
 		// String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
-		String body_<%=cid%> = (String) requestMessage_<%=cid%>.get("BODY");
+		Document body_<%=cid%> = null;
+		if (requestMessage_<%=cid%>.get("BODY") != null) { 
+			body_<%=cid%> = new Document();
+			body_<%=cid%>.setDocument((org.dom4j.Document) requestMessage_<%=cid%>.get("BODY"));
+		}
 		java.util.Map<String, Object> params_<%=cid%> =
 			(java.util.Map<String, Object>) requestMessage_<%=cid%>.get("PARAMS");
 <%

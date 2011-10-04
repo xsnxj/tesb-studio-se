@@ -31,15 +31,24 @@ if (null != metadatas && 0 < metadatas.size()) {
 			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 %>
 	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__STATUS_CODE__")%>;
-	String restProviderResponse_<%=cid%> = null;
+	Object restProviderResponse_<%=cid%> = null;
 <%
-				IMetadataColumn column = conn.getMetadataTable().getColumn("body");
+				IMetadataColumn column = conn.getMetadataTable().getColumn("string");
 				if (null != column && "id_String".equals(column.getTalendType())) {
 %>
-	restProviderResponse_<%=cid%> = <%=conn.getName()%>.body;
+	restProviderResponse_<%=cid%> = <%=conn.getName()%>.string;
 <%
 				}
 %>
+<%
+				column = conn.getMetadataTable().getColumn("xml");
+				if (null != column && "id_Document".equals(column.getTalendType())) {
+%>
+	restProviderResponse_<%=cid%> = <%=conn.getName()%>.xml.getDocument();
+<%
+				}
+%>
+
 	ESBProviderCallback esbHandler_<%=cid%> = (ESBProviderCallback) globalMap.get("esbHandler");
 	if (null != esbHandler_<%=cid%>) {
 		java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
