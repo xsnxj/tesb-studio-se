@@ -1,5 +1,6 @@
 package org.talend.designer.esb.webservice;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -10,6 +11,8 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "org.talend.designer.esb.webservice";
+
+    public static final String WS_HTTP_PORT_PREFERENCE = "wsHttpPort";
 
     // The shared instance
     private static WebServiceComponentPlugin plugin;
@@ -22,7 +25,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
     public void start(BundleContext context) throws Exception {
@@ -32,7 +35,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
@@ -42,11 +45,15 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance
-     * 
+     *
      * @return the shared instance
      */
     public static WebServiceComponentPlugin getDefault() {
         return plugin;
     }
 
+
+    protected void initializeDefaultPreferences(IPreferenceStore store) {
+        store.setDefault(WS_HTTP_PORT_PREFERENCE, 8088);
+    }
 }
