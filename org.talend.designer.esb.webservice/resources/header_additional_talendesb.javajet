@@ -1424,7 +1424,7 @@ if (null != conns && !conns.isEmpty()) {
 		request.put("OPERATION", "<%=connName%>");
 		// request.put("URI", uriInfo.getPath());
 		request.put("PATTERN", <%=uriPattern%>);
-		<% } %>
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { %>
 		request.put("BODY", body);
 		<% } %>		
 
