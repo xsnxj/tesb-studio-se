@@ -1414,15 +1414,19 @@ if (null != conns && !conns.isEmpty()) {
 		<%	for (String parameter : parameters.keySet()) { %>
 			@javax.ws.rs.PathParam("<%=parameter%>") <%=parameters.get(parameter)%> <%=parameter%>,
 		<%	} %>
-			// @javax.ws.rs.core.Context javax.ws.rs.core.UriInfo uriInfo,
-			org.dom4j.Document body) {
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { %>
+			org.dom4j.Document body
+		<% } %>		
+			) {
 
 		java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
 		request.put("VERB", "<%=httpVerb%>");
 		request.put("OPERATION", "<%=connName%>");
 		// request.put("URI", uriInfo.getPath());
 		request.put("PATTERN", <%=uriPattern%>);
+		<% } %>
 		request.put("BODY", body);
+		<% } %>		
 
 		//request.put("PARAMS", getPathParameters(uriInfo));
 		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
