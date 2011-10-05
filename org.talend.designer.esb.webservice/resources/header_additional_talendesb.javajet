@@ -1213,7 +1213,7 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
     
     public boolean isReadable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns,
     		javax.ws.rs.core.MediaType mt) {
-        return Document.class.isAssignableFrom(cls);
+        return org.dom4j.Document.class.isAssignableFrom(cls);
     }
 
     public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls, java.lang.reflect.Type type,
@@ -1237,7 +1237,7 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
 
     public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type,
             java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
-        return Document.class.isAssignableFrom(cls);
+        return org.dom4j.Document.class.isAssignableFrom(cls);
     }
 
     public void writeTo(org.dom4j.Document doc,Class<?> cls, java.lang.reflect.Type type,
