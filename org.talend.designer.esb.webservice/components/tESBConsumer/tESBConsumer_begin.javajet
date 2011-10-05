@@ -70,8 +70,8 @@ if (this.registry != null) {
 				<% String esbSecurity = ElementParameterParser.getValue(node, "__ESB_SECURITY__"); %>
 				put("esbSecurity", "<%=esbSecurity%>");
 				<% if ("SAML".equals(esbSecurity) || "TOKEN".equals(esbSecurity)) { %>
-					put("username", <%=ElementParameterParser.getValue(node, "__SECURITY_USERNAME__")%>);
-					put("password", <%=ElementParameterParser.getValue(node, "__SECURITY_PASSWORD__")%>);
+					put("username", <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
+					put("password", <%=ElementParameterParser.getValue(node, "__AUTH_PASSWORD__")%>);
 				<% } %>
 			}};
 
@@ -95,7 +95,7 @@ boolean useNTLM = ("true").equals(ElementParameterParser.getValue(node,"__USE_NT
 String domain = ElementParameterParser.getValue(node,"__NTLM_DOMAIN__");
 String host = ElementParameterParser.getValue(node,"__NTLM_HOST__");
 
-boolean needAuth = ("true").equals(ElementParameterParser.getValue(node,"__NEED_AUTH__"));
+String authType = ElementParameterParser.getValue(node,"__ESB_SECURITY__");
 String username = ElementParameterParser.getValue(node,"__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node,"__AUTH_PASSWORD__");
 
@@ -251,12 +251,12 @@ if (needSSLtoTrustServer) {
 	System.setProperty("javax.net.ssl.trustStorePassword", <%=trustStorePassword %>);
 <%
 }
-if (needAuth&&!useNTLM) {
+if ("TOKEN".equals(authType) && !useNTLM) {
 %>
 	config_<%=cid%>.setUsername(<%=username%>);
 	config_<%=cid%>.setPassword(<%=password%>);
 <%
-} else if(needAuth&&useNTLM) {
+} else if("TOKEN".equals(authType) && useNTLM) {
 %>
 	jcifs.Config.setProperty("jcifs.smb.client.username", <%=username%>);
 	jcifs.Config.setProperty("jcifs.smb.client.password", <%=password%>);
