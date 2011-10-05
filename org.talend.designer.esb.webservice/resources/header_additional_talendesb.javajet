@@ -1411,10 +1411,21 @@ if (null != conns && !conns.isEmpty()) {
 	@javax.ws.rs.Path(<%=uriPattern%>)
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
-		<%	for (String parameter : parameters.keySet()) { %>
-			@javax.ws.rs.PathParam("<%=parameter%>") <%=parameters.get(parameter)%> <%=parameter%>,
+		<%	
+			boolean paramCommaWritten = false;
+			for (String parameter : parameters.keySet()) { 
+			if (!paramCommaWritten) {
+				paramCommaWritten = true;
+			} else {
+				%>
+				,
+				<%  } %>
+			@javax.ws.rs.PathParam("<%=parameter%>") <%=parameters.get(parameter)%> <%=parameter%>
 		<%	} %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { %>
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { 
+			if (paramCommaWritten) {
+				%> , <%
+			} %>
 			org.dom4j.Document body
 		<% } %>		
 			) {
