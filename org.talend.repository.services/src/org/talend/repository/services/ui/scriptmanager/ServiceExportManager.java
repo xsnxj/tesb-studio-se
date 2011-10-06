@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +58,6 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -199,9 +197,11 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 						value.setTextContent(operation.getValue());
 					}
 				}
-				Element property = createKid((Element) map.getParentNode().getParentNode(), "property");
-				property.setAttribute("name", "eventFeature");
-				property.setAttribute("ref", "eventFeature");
+				if (useSam) {
+					Element property = createKid((Element) map.getParentNode().getParentNode(), "property");
+					property.setAttribute("name", "eventFeature");
+					property.setAttribute("ref", "eventFeature");
+				}
 			}
 			
 			//output
