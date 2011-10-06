@@ -13,6 +13,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
@@ -51,15 +53,19 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
+	private static final String JAXWS_NS = "http://cxf.apache.org/jaxws";
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 	
 	public ServiceExportManager() {
@@ -81,34 +87,40 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		return definition;
 	}
 
-	public void createSpringBeans(String outputFile, Map<String, String> operations, File wsdl, String studioServiceName) throws IOException, CoreException {
+	public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports, File wsdl, String studioServiceName) throws IOException, CoreException {
 		String inputFile = FileLocator.toFileURL(
                 FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
                 .getFile();
+		//TODO: support multiport!!!
+		Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
+		//TODO: do this in looooooooop!!!
+		
 		Definition def = getDefinition(wsdl.getAbsolutePath());
 		String serviceName = null;
 		String serviceNS = null;
 		String endpointAddress = null;
 		String endpointName = null;
-		Map services = def.getServices();
-		Iterator serviceIter = services.keySet().iterator();
-		if (serviceIter.hasNext()) { //TODO: support multiservice
-			QName serviceQName = (QName) serviceIter.next();
-			Service service = (Service) services.get(serviceQName);
-			serviceName = serviceQName.getLocalPart();
-			serviceNS = serviceQName.getNamespaceURI();
-			Iterator portIter = service.getPorts().values().iterator(); //TODO: support multiport
-			if (portIter.hasNext()) {
-				Port port = (Port) portIter.next();
-				endpointName = port.getName();
-                Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
-                for (ExtensibilityElement element : addrElems) {
-                    if (element != null && element instanceof SOAPAddress) {
-                    	endpointAddress = ((SOAPAddress) element).getLocationURI();
-                    }
-                }
+		Map<QName, Service> services = def.getServices();
+		ServicePort servicePort = studioPort.getKey();
+		for (Entry<QName, Service> serviceEntry : services.entrySet()) { //TODO: support multiservice
+			QName serviceQName = serviceEntry.getKey();
+			Service service = serviceEntry.getValue();
+			Collection<Port> servicePorts = service.getPorts().values(); //TODO: support multiport
+			for (Port port : servicePorts) {
+				if (servicePort.getName().equals(port.getBinding().getPortType().getQName().getLocalPart())) {
+					serviceName = serviceQName.getLocalPart();
+					serviceNS = serviceQName.getNamespaceURI();
+					endpointName = port.getName(); 
+	                Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
+	                for (ExtensibilityElement element : addrElems) {
+	                    if (element != null && element instanceof SOAPAddress) {
+	                    	endpointAddress = ((SOAPAddress) element).getLocationURI();
+	                    }
+	                }
+				}
 			}
 		}
+		//TODO: remove template processing
         FileReader fr = null;
         try {
             fr = new FileReader(inputFile);
@@ -142,20 +154,54 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         //create mapping operation-job
 		File out = new File(outputFile);
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		docFactory.setNamespaceAware(true);
 		DocumentBuilder docBuilder;
 		try {
 			docBuilder = docFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(out);
+			//include SAM/SL features
+			EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
+			Element root = doc.getDocumentElement();
+			Element features = null;
+			NodeList endpoints = root.getElementsByTagNameNS(JAXWS_NS,"endpoint");
+			for (int i=0; i<endpoints.getLength(); i++) {
+				Element endpoint = (Element)endpoints.item(i);
+				if (("serviceNamespace:"+endpointName).equals(endpoint.getAttribute("endpointName"))) {
+					NodeList featuresNodes = endpoint.getElementsByTagNameNS(JAXWS_NS, "features");
+					if (featuresNodes.getLength() > 0) {
+						features = (Element) featuresNodes.item(0);
+					}
+				}
+			}
+			if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))) {
+				Element im = createKid(root, "import");
+				im.setAttribute("resource", "classpath:META-INF/tesb/locator/beans-osgi.xml"); //SL
+				Element bean = createKid(features, "bean");//<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
+				bean.setAttribute("class", "org.talend.esb.servicelocator.cxf.LocatorFeature");
+			}			
+			Boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+			if (useSam) {
+				Element im = createKid(root, "import");
+				im.setAttribute("resource", "classpath:META-INF/tesb/agent-osgi.xml"); //SAM
+				Element bean = createKid(features, "ref");//<ref bean="eventFeature"/>
+				bean.setAttribute("bean", "eventFeature");
+			}
 			NodeList mapEls = doc.getElementsByTagName("map");
 			if (mapEls.getLength() > 0) {
 				Element map = (Element) mapEls.item(0);
-				for (Map.Entry<String, String> operation : operations.entrySet()) {
-					Element entry = createKid(map, "entry");
-					Element key = createKid(createKid(entry, "key"), "value");
-					key.setTextContent(operation.getKey());
-					Element value = createKid(entry, "value");
-					value.setTextContent(operation.getValue());
+				for (Map.Entry<ServicePort, Map<String, String>> port : ports.entrySet()) {
+					//TODO: actual port work
+					for (Map.Entry<String, String> operation : port.getValue().entrySet()) {
+						Element entry = createKid(map, "entry");
+						Element key = createKid(createKid(entry, "key"), "value");
+						key.setTextContent(operation.getKey());
+						Element value = createKid(entry, "value");
+						value.setTextContent(operation.getValue());
+					}
 				}
+				Element property = createKid((Element) map.getParentNode().getParentNode(), "property");
+				property.setAttribute("name", "eventFeature");
+				property.setAttribute("ref", "eventFeature");
 			}
 			
 			//output
@@ -195,7 +241,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		return kid;
 	}
 
-	private Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
+	public static Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
         List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
         if (extensibilityElements != null) {
             for (ExtensibilityElement elment : extensibilityElements) {
@@ -216,7 +262,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	    a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
 	    a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
 	    a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
-	    a.put(new Attributes.Name("Import-Package"), "javax.xml.ws,org.talend.esb.job.controller");
+	    a.put(new Attributes.Name("Import-Package"), "javax.xml.ws,org.talend.esb.job.controller,org.osgi.service.cm;version=\"[1.3,2)");
 	    a.put(new Attributes.Name("Require-Bundle"), "org.apache.cxf.bundle,org.springframework.beans,org.springframework.context,org.springframework.osgi.core,locator,sam-agent,sam-common");
 	    return manifest;
 	}

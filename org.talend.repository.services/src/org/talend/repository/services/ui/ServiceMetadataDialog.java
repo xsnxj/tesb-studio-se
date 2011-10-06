@@ -23,8 +23,8 @@ import org.talend.repository.services.model.services.ServicePort;
 public class ServiceMetadataDialog extends Dialog {
 
 	private static final String SECURITY = "Security";
-	private static final String USE_SL = "UseSL";
-	private static final String USE_SAM = "UseSAM";
+	public static final String USE_SL = "UseSL";
+	public static final String USE_SAM = "UseSAM";
 	private static final String SAML = "SAML";
 	private static final String BASIC = "Basic";
 	private Button samCheck;

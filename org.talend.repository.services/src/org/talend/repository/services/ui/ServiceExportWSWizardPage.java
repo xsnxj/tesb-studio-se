@@ -12,135 +12,132 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.services.action.OpenWSDLEditorAction;
-import org.talend.repository.services.model.services.ServiceConnection;
-import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.model.services.ServiceOperation;
-import org.talend.repository.services.model.services.ServicePort;
-import org.talend.repository.services.ui.action.ExportServiceAction;
-import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
-import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
  *
  */
-public class ServiceExportWSWizardPage extends JavaJobScriptsExportWSWizardPage {
+public class ServiceExportWSWizardPage extends WizardPage {
 
-	private IStructuredSelection selection;
-    private static Logger log = Logger.getLogger(ServiceExportWSWizardPage.class);
-
-    public static final String PETALS_EXPORT_DESTINATIONS = "org.ow2.petals.esbexport.destinations"; //$NON-NLS-1$
+	private String serviceName;
+	private String serviceVersion;
+	private String destinationValue;
+	private Text destinationText;
 
     public ServiceExportWSWizardPage(IStructuredSelection selection) {
-        super(getJobsSelection(selection), "OSGI Bundle For ESB");
-        this.selection = selection;
-    }
-
-    //TODO: remove this patch!!!!
-	private final static IStructuredSelection getJobsSelection(IStructuredSelection selection) { //DO NOT OVERRIDE!!! CALLED FROM CONSTRUCTOR!
+        super(org.talend.repository.services.Messages.ServiceExportWizard_Wizard_Title);
+        @SuppressWarnings("unchecked")
 		List<RepositoryNode> nodes = selection.toList();
-		List<RepositoryNode> value = new ArrayList<RepositoryNode>();
-		for (RepositoryNode node : nodes) {
-            if ((node.getType() == ENodeType.REPOSITORY_ELEMENT) &&
-            		(node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) 
-            {
-                IRepositoryViewObject repositoryObject = node.getObject();
-                ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
-				EList<ServicePort> listPort = serviceConnection.getServicePort();
-                for (ServicePort port : listPort) {
-                    List<ServiceOperation> listOperation = port.getServiceOperation();
-                    for (ServiceOperation operation : listOperation) {
-                        if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                            value.add(RepositoryNodeUtilities.getRepositoryNode(operation.getReferenceJobId(), false));
-                        }
-                    }
-                }
-            }
-        }
-		return new StructuredSelection(value);
-	}
-
-	public JobScriptsManager createJobScriptsManager() {
-        return new ServiceExportManager();
-    }
-
-    protected List<String> getDefaultFileName() {
-        List<RepositoryNode> nodes = selection.toList();
-        List<String> value = Arrays.asList(new String[]{"",""});
+        serviceName = "";
+        serviceVersion = "";
 		if (nodes.size() >= 1) {
             RepositoryNode node = nodes.get(0);
             if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
                 IRepositoryViewObject repositoryObject = node.getObject();
                 if (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
-					value = new ArrayList<String>();
-                    value.add(repositoryObject.getLabel());
-                    String version = repositoryObject.getVersion();
-					value.add(version);
+                    serviceName = repositoryObject.getLabel();
+                    serviceVersion = repositoryObject.getVersion();
                 }
             }
         }
-        return value;
+
     }
-    
-	@Override
-	protected String getOutputSuffix() {
-		return "/";
+
+    protected void handleDestinationBrowseButtonPressed() {
+        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
+        dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        File destination = new File(getDestinationValue());
+        dialog.setFileName(destination.getName());
+        dialog.setFilterPath(destination.getParent());
+        String selectedFileName = dialog.open();
+        if (selectedFileName == null) {
+            return;
+        }
+        if (!selectedFileName.endsWith(getOutputSuffix()))
+            selectedFileName += getOutputSuffix();
+        checkDestination(selectedFileName);
+        destinationValue = selectedFileName;
+    }
+
+	private void checkDestination(String fileName) {
+		File destination;
+		destination = new File(fileName);
+        if (destination.exists()) {
+        	setMessage("Destination file exists and will be overwrited!");
+        } else {
+        	setMessage(null);
+        }
 	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#checkExport()
-     */
-    @Override
-    public boolean checkExport() {
-        boolean noError = true;
-        this.setErrorMessage(null);
-        this.setPageComplete(true);
-//        if (getCheckNodes().length == 0) {
-//            this.setErrorMessage(Messages.getString("ServiceExportWSWizardPage.needOneJobSelected"));
-//            this.setPageComplete(false);
-//            noError = false;
-//        }
-
-        return noError;
-    }
-//
-    @Override
-    public boolean finish() {
-        try {
-        	List<RepositoryNode> nodes = selection.toList();
-        	for (RepositoryNode node : nodes) {
-        		new ExportServiceAction(node, getDestinationValue()).runInWorkspace(null);
-        	}
-//			new ExportServiceAction("Exporting service", Arrays.asList(nodes), serviceVersion, manager, serviceWsdl, operations).runInWorkspace(null);
-		} catch (CoreException e) {
-			log.error(e);
+    
+	public String getDestinationValue() {
+		if (null == destinationValue) {
+	        String bundleName = serviceName + "-" + serviceVersion + getOutputSuffix();
+	        String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
+	        IPath path = new Path(userDir).append(bundleName);
+	        destinationValue = path.toOSString();
 		}
-        return true;
-    }
+		return destinationValue;
+	}
+
+	protected String getOutputSuffix() {
+		return ".kar";
+	}
+
+	public void createControl(Composite parent) {
+		setControl(parent);
+		Composite container = new Composite(parent, SWT.NONE);
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		container.setLayout(new GridLayout(1, false));
+
+		Group destinationGroup = new Group(container, SWT.NONE);
+		destinationGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		destinationGroup.setText("Destination");
+		destinationGroup.setLayout(new GridLayout(2, false));
+
+		destinationText = new Text(destinationGroup, SWT.SINGLE | SWT.BORDER);
+		destinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		destinationText.setText(getDestinationValue());
+		destinationText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				destinationValue = destinationText.getText();
+				checkDestination(destinationValue);
+			}
+		});
+		Button browseButton = new Button(destinationGroup, SWT.PUSH);
+		browseButton.setText("Browse");
+		browseButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				handleDestinationBrowseButtonPressed();
+				destinationText.setText(destinationValue);
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {;}
+		});
+
+	}
 
 }

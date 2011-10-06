@@ -14,6 +14,8 @@ package org.talend.repository.services.ui;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,12 +29,10 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.designer.runprocess.ProcessorUtilities;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWizardPage;
+import org.talend.repository.services.ui.action.ExportServiceAction;
 
 /**
  * Job scripts export wizard. <br/>
@@ -48,6 +48,8 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
 
 	private ServiceExportWSWizardPage mainPage;
 
+	private static Logger log = Logger.getLogger(ServiceExportWizard.class);
+
     /**
      * Creates a wizard for exporting workspace resources to a zip file.
      */
@@ -56,29 +58,6 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings.getSection("ServiceExportWizard"); //$NON-NLS-1$
-        if (section == null) {
-            section = workbenchSettings.addNewSection("ServiceExportWizard"); //$NON-NLS-1$
-
-            section.put(JavaJobScriptsExportWizardPage.STORE_SHELL_LAUNCHER_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.STORE_SYSTEM_ROUTINE_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.STORE_USER_ROUTINE_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.STORE_MODEL_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.STORE_JOB_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.STORE_DEPENDENCIES_ID, false);
-            section.put(JavaJobScriptsExportWizardPage.STORE_CONTEXT_ID, true);
-            section.put(JavaJobScriptsExportWizardPage.APPLY_TO_CHILDREN_ID, false);
-            // this is done in the wizard page
-            // section.put(ServiceExportWSWizardPage.STORE_EXPORTTYPE_ID, JobExportType.POJO.toString());
-
-            section.put(ServiceExportWSWizardPage.STORE_WEBXML_ID, true);
-            section.put(ServiceExportWSWizardPage.STORE_CONFIGFILE_ID, true);
-            section.put(ServiceExportWSWizardPage.STORE_AXISLIB_ID, true);
-            section.put(ServiceExportWSWizardPage.STORE_WSDD_ID, true);
-            section.put(ServiceExportWSWizardPage.STORE_WSDL_ID, true);
-            section.put(ServiceExportWSWizardPage.STORE_SOURCE_ID, true);
-
-            // section.put(JobScriptsExportWizardPage.STORE_GENERATECODE_ID, true);
-        }
         setDialogSettings(section);
     }
 
@@ -112,14 +91,17 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
      * (non-Javadoc) Method declared on IWizard.
      */
     public boolean performFinish() {
-        boolean finish = mainPage.finish();
-        if (!finish && !getShell().isDisposed()) {
-            getShell().close();
-        } else {
-            selection = null;
-            mainPage = null;
-        }
-        return finish;
+        try {
+        	@SuppressWarnings("unchecked")
+			List<RepositoryNode> nodes = selection.toList();
+        	for (RepositoryNode node : nodes) {
+        		new ExportServiceAction(node, mainPage.getDestinationValue()).runInWorkspace(null);
+        	}
+		} catch (CoreException e) {
+			log.error(e);
+			return false;
+		}
+        return true;
     }
 
     /*

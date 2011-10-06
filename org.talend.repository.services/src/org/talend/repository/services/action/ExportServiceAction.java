@@ -92,7 +92,7 @@ public class ExportServiceAction extends AContextualAction {
         Shell activeShell = Display.getCurrent().getActiveShell();
         WizardDialog dialog = new WizardDialog(activeShell, processWizard);
         workbench.saveAllEditors(true);
-        dialog.setPageSize(830, 450);
+        dialog.setPageSize(450, 80);
         dialog.open();
     }
 }

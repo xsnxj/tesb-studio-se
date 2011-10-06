@@ -54,7 +54,7 @@ public class ExportServiceAction extends WorkspaceJob {
 
     private IFile serviceWsdl;
 
-    private final Map<String, String> operations = new HashMap<String, String>();
+    private final Map<ServicePort, Map<String, String>> ports = new HashMap<ServicePort, Map<String, String>>();
 
 	private String serviceName;
 
@@ -81,20 +81,29 @@ public class ExportServiceAction extends WorkspaceJob {
 			EList<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort port : listPort) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
+            	Map<String, String> operations = new HashMap<String, String>(listOperation.size());
                 for (ServiceOperation operation : listOperation) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                        String[] label = operation.getLabel().split("-"); //TODO: do it correct way!!!
-						operations.put(label[0], label[1]);
-                        nodes.add(RepositoryNodeUtilities.getRepositoryNode(operation.getReferenceJobId(), false));
+						String operationName = operation.getOperationName();
+                        RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(operation.getReferenceJobId(), false);
+                        String jobName = jobNode.getObject().getLabel();
+						operations.put(operationName, jobName);
+						nodes.add(jobNode);
                     }
                 }
+                ports.put(port, operations);
             }
         }
         if (targetPath == null) {
-            String bundleName = serviceName + "-" + serviceVersion + "/"; //TODO: change / to .kar
+            String bundleName = serviceName + "-" + serviceVersion + File.separator;
             String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
             IPath path = new Path(userDir).append(bundleName);
             targetPath = path.toOSString();
+        } else {
+        	String suffix = ".kar";
+			if (targetPath.endsWith(suffix)) {
+        		targetPath = targetPath.substring(0, targetPath.length()-suffix.length());
+        	}
         }
 		this.serviceManager = new ServiceExportManager();
         serviceManager.setDestinationPath(targetPath);
@@ -148,7 +157,7 @@ public class ExportServiceAction extends WorkspaceJob {
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), operations, wsdl, getServiceName());
+        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, wsdl, getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + ".jar";
         File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
         try {
