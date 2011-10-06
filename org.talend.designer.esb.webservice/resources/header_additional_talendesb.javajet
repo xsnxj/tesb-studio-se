@@ -89,8 +89,6 @@ if (actAsProvider || actAsConsumer) { %>
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
-	Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_LOCATOR__"));
-	Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_ACTIVITY_MONITOR__"));
 	%>
 	public ESBEndpointInfo getEndpoint() {
 		return new ESBEndpointInfo() {
@@ -107,23 +105,6 @@ if (actAsProvider || actAsConsumer) { %>
 				put("defaultOperationNameSpace", "");
 				// endpoint URI configured in tESBProviderInput
 				put("publishedEndpointUrl", <%=endpointUrl%>);
- 				// use Service Locator
-				put("useServiceLocator", <%=useSl%>);
- 				// use Service Activity Monitor
-				put("useServiceActivityMonitor", <%=useSam%>);
-
-		<% if (useSl) {
-			List<Map<String, String>> customProperties = (List<Map<String,String>>)
-					ElementParameterParser.getObjectValue(tESBProviderRequestNode, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
-			if (!customProperties.isEmpty()) { %>
-				// Service Locator custom properties
-				java.util.Map<String, String> customProps_<%=tESBProviderRequestNodeCid%> = new java.util.HashMap<String, String>();
-				<% for (int k = 0; k < customProperties.size(); k++) { %>
-				customProps_<%=tESBProviderRequestNodeCid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-				<% } %>
-				put("SL-PROPS", customProps_<%=tESBProviderRequestNodeCid%>);
-			<% } %>
-		<% } %>
 			}};
 
 			public String getEndpointKey() {
@@ -1203,14 +1184,14 @@ class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>, javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
 
     private static final Class<org.w3c.dom.Document> DOM_DOC_CLS = org.w3c.dom.Document.class;
-    
+
     private javax.ws.rs.ext.Providers providers;
-    
-    @javax.ws.rs.core.Context 
+
+    @javax.ws.rs.core.Context
     public void setProviders(javax.ws.rs.ext.Providers providers) {
         this.providers = providers;
     }
-    
+
     public boolean isReadable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns,
     		javax.ws.rs.core.MediaType mt) {
         return org.dom4j.Document.class.isAssignableFrom(cls);
@@ -1220,12 +1201,12 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
             java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
             javax.ws.rs.core.MultivaluedMap<String, String> headers, java.io.InputStream is)
             throws IOException, javax.ws.rs.WebApplicationException {
-    	javax.ws.rs.ext.MessageBodyReader<org.w3c.dom.Document> reader = 
+    	javax.ws.rs.ext.MessageBodyReader<org.w3c.dom.Document> reader =
             providers.getMessageBodyReader(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
         if (reader == null) {
             throw new javax.ws.rs.WebApplicationException(415);
         }
-        org.w3c.dom.Document domDoc = 
+        org.w3c.dom.Document domDoc =
             reader.readFrom(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, is);
         return new org.dom4j.io.DOMReader().read(domDoc);
     }
@@ -1245,11 +1226,11 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
             javax.ws.rs.core.MultivaluedMap<String, Object> headers, java.io.OutputStream os)
             throws IOException, javax.ws.rs.WebApplicationException {
         org.w3c.dom.Document domDoc = convertToDOM(doc);
-        
-        javax.ws.rs.ext.MessageBodyWriter<org.w3c.dom.Document> writer = 
+
+        javax.ws.rs.ext.MessageBodyWriter<org.w3c.dom.Document> writer =
             providers.getMessageBodyWriter(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
         if (writer == null) {
-            throw new javax.ws.rs.WebApplicationException(406);    
+            throw new javax.ws.rs.WebApplicationException(406);
         }
         writer.writeTo(domDoc, DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, os);
     }
@@ -1262,7 +1243,7 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
             throw new javax.ws.rs.WebApplicationException(ex);
         }
     }
-    
+
 }
 
 /**
@@ -1411,9 +1392,9 @@ if (null != conns && !conns.isEmpty()) {
 	@javax.ws.rs.Path(<%=uriPattern%>)
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
-		<%	
+		<%
 			boolean paramCommaWritten = false;
-			for (String parameter : parameters.keySet()) { 
+			for (String parameter : parameters.keySet()) {
 			if (!paramCommaWritten) {
 				paramCommaWritten = true;
 			} else {
@@ -1422,12 +1403,12 @@ if (null != conns && !conns.isEmpty()) {
 				<%  } %>
 			@javax.ws.rs.PathParam("<%=parameter%>") <%=parameters.get(parameter)%> <%=parameter%>
 		<%	} %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { 
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) {
 			if (paramCommaWritten) {
 				%> , <%
 			} %>
 			org.dom4j.Document body
-		<% } %>		
+		<% } %>
 			) {
 
 		java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
@@ -1437,7 +1418,7 @@ if (null != conns && !conns.isEmpty()) {
 		request.put("PATTERN", <%=uriPattern%>);
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { %>
 		request.put("BODY", body);
-		<% } %>		
+		<% } %>
 
 		//request.put("PARAMS", getPathParameters(uriInfo));
 		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
