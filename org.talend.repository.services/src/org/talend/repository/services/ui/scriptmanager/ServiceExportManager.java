@@ -262,7 +262,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	    a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
 	    a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
 	    a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
-	    a.put(new Attributes.Name("Import-Package"), "javax.xml.ws,org.talend.esb.job.controller,org.osgi.service.cm;version=\"[1.3,2)");
+	    a.put(new Attributes.Name("Import-Package"), "javax.xml.ws,org.talend.esb.job.controller,org.osgi.service.cm;version=\"[1.3,2)\"");
 	    a.put(new Attributes.Name("Require-Bundle"), "org.apache.cxf.bundle,org.springframework.beans,org.springframework.context,org.springframework.osgi.core,locator,sam-agent,sam-common");
 	    return manifest;
 	}
