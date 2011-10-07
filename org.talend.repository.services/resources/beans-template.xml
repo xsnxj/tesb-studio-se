@@ -22,7 +22,6 @@
 		wsdlLocation="classpath:/@Wsdl.Location@"
 		implementor="#genericServiceProvider"
 		id="service"
-		publish="false"
 	>
 	    <jaxws:features/>
     </jaxws:endpoint>
