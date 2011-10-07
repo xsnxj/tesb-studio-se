@@ -57,6 +57,10 @@
             class="org.talend.repository.services.action.ServiceMetadataAction"
             id="org.talend.repository.services.action.ServiceMetadataAction"
             name="Service Metadata"/>
+    <Action
+            class="org.talend.repository.services.action.PublishMetadataAction"
+            id="org.talend.repository.services.action.PublishMetadataAction"
+            name="Publish WSDL Schemas"/>
     
  </extension>
  <extension

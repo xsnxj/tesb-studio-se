@@ -1,16 +1,12 @@
 package org.talend.repository.services.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -24,22 +20,18 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.properties.ByteArray;
-import org.talend.core.model.properties.PropertiesFactory;
-import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.LocalWSDLEditor;
+import org.talend.repository.services.utils.WSDLUtils;
 
 public class OpenWSDLEditorAction extends AbstractCreateAction {
 
@@ -153,7 +145,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 		}
 		ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
 		LocalWSDLEditor wsdlEditor = null;
-		IFile file = getWsdlFile(repositoryNode);
+		IFile file = WSDLUtils.getWsdlFile(repositoryNode);
 		IEditorInput editorInput = new FileEditorInput(file);
 		WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		try {
@@ -178,63 +170,5 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 		} catch (PersistenceException e) {
 			ExceptionHandler.process(e);
 		}
-	}
-
-	public static IFile getWsdlFile(RepositoryNode repositoryNode) {
-		ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
-		try {
-			IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-			List<ReferenceFileItem> list = serviceItem.getReferenceResources();
-			for (ReferenceFileItem item : list) {
-				IPath path = Path.fromOSString(item.eResource().getURI().path());
-			}
-			String foldPath = serviceItem.getState().getPath();
-			String folder = "";
-			if (!foldPath.equals("")) {
-				folder = "/" + foldPath;
-			}
-			IFile file = currentProject.getFolder("services" + folder).getFile(
-					repositoryNode.getObject().getProperty().getLabel() + "_"
-					+ repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
-			if (!file.exists()) {
-				// copy file to item
-				IFile fileTemp = null;
-				try {
-					folder = "";
-					if (!foldPath.equals("")) {
-						folder = "/" + foldPath;
-					}
-					fileTemp = currentProject.getFolder("services" + folder).getFile(
-							repositoryNode.getObject().getProperty().getLabel() + "_"
-							+ repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
-					ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-					if (!fileTemp.exists()) {
-						fileTemp.create(byteArrayInputStream, true, null);
-					} else {
-						fileTemp.delete(true, null);
-						fileTemp.create(byteArrayInputStream, true, null);
-					}
-				} catch (CoreException e) {
-					ExceptionHandler.process(e);
-				}
-				//
-				ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-				ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-				createReferenceFileItem.setContent(byteArray);
-				createReferenceFileItem.setExtension("wsdl");
-				serviceItem.getReferenceResources().add(createReferenceFileItem);
-				createReferenceFileItem.getContent().setInnerContent(new byte[0]);
-				IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-				try {
-					factory.save(serviceItem);
-				} catch (PersistenceException e) {
-					ExceptionHandler.process(e);
-				}
-			}
-			return file;
-		} catch (PersistenceException e) {
-			ExceptionHandler.process(e);
-		}
-		return null;
 	}
 }

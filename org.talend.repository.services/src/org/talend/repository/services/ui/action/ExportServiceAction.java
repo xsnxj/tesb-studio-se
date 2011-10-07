@@ -33,13 +33,13 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.utils.ZipToFile;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
@@ -74,7 +74,7 @@ public class ExportServiceAction extends WorkspaceJob {
             if (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
             	serviceName = repositoryObject.getLabel();
                 serviceVersion = repositoryObject.getVersion();
-                serviceWsdl  = OpenWSDLEditorAction.getWsdlFile(node);
+                serviceWsdl  = WSDLUtils.getWsdlFile(node);
             } 
             ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             ServiceConnection serviceConnection = serviceItem.getServiceConnection();
@@ -107,7 +107,7 @@ public class ExportServiceAction extends WorkspaceJob {
         }
 		this.serviceManager = new ServiceExportManager();
         serviceManager.setDestinationPath(targetPath);
-        final String serviceNS = ServiceExportManager.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace();
+        final String serviceNS = WSDLUtils.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace();
         groupId = getGroupId(serviceNS, getServiceName());
     }
     

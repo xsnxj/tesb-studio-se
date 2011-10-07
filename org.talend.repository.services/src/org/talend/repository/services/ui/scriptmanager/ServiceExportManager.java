@@ -19,11 +19,8 @@ import java.util.jar.Manifest;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,11 +36,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -54,6 +49,7 @@ import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
+import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
@@ -70,21 +66,6 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 	}
 
-	public static Definition getDefinition(String pathToWsdl) throws CoreException {
-		Definition definition = null;
-		try {
-			WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-			WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-
-			newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-			newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-			definition = newWSDLReader.readWSDL(pathToWsdl);
-		} catch (WSDLException e) {
-			throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
-		}
-		return definition;
-	}
-
 	public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports, File wsdl, String studioServiceName) throws IOException, CoreException {
 		String inputFile = FileLocator.toFileURL(
                 FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
@@ -93,7 +74,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
 		//TODO: do this in looooooooop!!!
 		
-		Definition def = getDefinition(wsdl.getAbsolutePath());
+		Definition def = WSDLUtils.getDefinition(wsdl.getAbsolutePath());
 		String serviceName = null;
 		String serviceNS = null;
 		String endpointAddress = null;

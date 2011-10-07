@@ -32,7 +32,7 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
  */
 public class OpenWSDLAction extends AbstractCreateAction {
 
-    private String createLabel = "Open WSDL";
+    private String createLabel = "Assign WSDL";
 
     private ERepositoryObjectType currentNodeType;
 
