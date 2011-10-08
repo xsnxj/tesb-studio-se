@@ -236,7 +236,8 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 
 	private void handleNode(SpringRouteNode node, Document document,
 			Element beansElement, Element parentElement) {
-		Element nodeElement = savers[node.getType()].save(node, parentElement);
+		Element nodeElement = savers[node.getType()].saveToElement(node,
+				parentElement);
 		SpringRouteNode firstChild = node.getFirstChild();
 		if (firstChild != null) {
 			handleNode(firstChild, document, beansElement, nodeElement);

@@ -1,5 +1,8 @@
 package org.talend.designer.camel.spring.core.saver;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
 import org.w3c.dom.Attr;
@@ -22,7 +25,19 @@ public abstract class AbstractComponentSaver implements ICamelSpringConstants{
 		
 	}
 	
-	public abstract Element save(SpringRouteNode srn, Element parent);
+	public Element saveToElement(SpringRouteNode srn, Element parent) {
+		Map<String, String> parameter = srn.getParameter();
+		Iterator<String> iterator = parameter.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			String value = parameter.get(key);
+			value = removeQuote(value);
+			parameter.put(key, value);
+		}
+		return save(srn, parent);
+	};
+
+	protected abstract Element save(SpringRouteNode srn, Element parent);
 
 	protected Element addElement(String elementName, Element parentElement) {
 		Element element = document.createElement(elementName);
