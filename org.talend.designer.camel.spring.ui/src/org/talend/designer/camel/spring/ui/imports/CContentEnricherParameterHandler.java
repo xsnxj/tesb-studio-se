@@ -39,6 +39,8 @@ public class CContentEnricherParameterHandler extends AbstractParameterHandler {
         String timeoutStyle = parameters.get(ICamelSpringConstants.ER_TIMEOUT_STYLE);
         String waitTimeout = parameters.get(ICamelSpringConstants.ER_WAIT_TIMEOUT);
 
+        mergeData = unquotes(mergeData);
+
         addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
         addParamType(elemParams, FIELD_TEXT, "RESOURCE_URI", uri == null ? "" : uri);
         addParamType(elemParams, FIELD_RADIO, "ENRICH", ICamelSpringConstants.ER_PRODUCER.equals(mergeData) ? VALUE_TRUE
@@ -49,6 +51,7 @@ public class CContentEnricherParameterHandler extends AbstractParameterHandler {
         if (ICamelSpringConstants.ER_CONSUMER.equals(mergeData)) {
             // Consumer
             if (timeoutStyle != null) {
+                timeoutStyle = unquotes(timeoutStyle);
                 addParamType(elemParams, FIELD_CHECK, "SPECIFY_TIMEOUT", VALUE_TRUE);
                 addParamType(elemParams, FIELD_RADIO, "IMMEDIATE",
                         ICamelSpringConstants.ER_POLL_IMMED.equals(timeoutStyle) ? VALUE_TRUE : VALUE_FALSE);

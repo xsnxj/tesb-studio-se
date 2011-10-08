@@ -31,24 +31,23 @@ public class CIdempotentConsumerParameterHandler extends AbstractParameterHandle
 
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
-       
+
         super.handle(nodeType, uniqueName, parameters);
-        
+
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
+
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
-        
-        if("".equals(type)){//Use bean?
+        type = unquotes(type);
+        if ("".equals(type)) {// Use bean?
             addParamType(elemParams, FIELD_CHECK, "USE_LANGUAGE", VALUE_FALSE);
-            text = unquotes(text);
             addParamType(elemParams, FIELD_TEXT, "EXPRESSION", text);
-        }else{
+        } else {
             addParamType(elemParams, FIELD_CHECK, "USE_LANGUAGE", VALUE_TRUE);
             addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", type);
             addParamType(elemParams, FIELD_TEXT, "PREDICATE", text);
         }
-        
+
         nodeType.getElementParameter().addAll(elemParams);
     }
 }

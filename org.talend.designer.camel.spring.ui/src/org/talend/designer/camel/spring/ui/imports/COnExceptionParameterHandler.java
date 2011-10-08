@@ -48,6 +48,9 @@ public class COnExceptionParameterHandler extends AbstractParameterHandler {
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         String exceptionBehavor = parameters.get(ICamelSpringConstants.OE_EXCEPTION_BEHAVIOR);
+
+        exceptionBehavor = unquotes(exceptionBehavor);
+
         addParamType(elemParams, FIELD_RADIO, "CONTINUE",
                 ICamelSpringConstants.OE_CONTINUE_EXCEPTION.equals(exceptionBehavor) ? VALUE_TRUE : VALUE_FALSE);
         addParamType(elemParams, FIELD_RADIO, "HANDLE",
@@ -70,11 +73,10 @@ public class COnExceptionParameterHandler extends AbstractParameterHandler {
         if (tableParameters.size() == 1) {
 
             for (Entry<String, List<String>> tableParam : tableParameters.entrySet()) {
-
                 String key = param.getKey();
                 String value = param.getValue();
-
                 if (key.equals("exceptions")) {
+                    value = unquotes(value);
                     String[] exceptions = value.split(";");
                     List<ElementValueType> valueTypes = new ArrayList<ElementValueType>();
                     for (String ex : exceptions) {

@@ -32,20 +32,20 @@ public class CDelayerParameterHandler extends AbstractParameterHandler {
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
+
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
-        
+
         addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
         text = unquotes(text);
-        
-        try{
+
+        try {
             Integer.decode(text);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             text = "2000";
         }
-        
-        addParamType(elemParams, FIELD_TEXT, "WAIT", text);
-        
+
+        addParamType(elemParams, FIELD_TEXT, "WAIT", quotes(text));
+
         nodeType.getElementParameter().addAll(elemParams);
     }
 }

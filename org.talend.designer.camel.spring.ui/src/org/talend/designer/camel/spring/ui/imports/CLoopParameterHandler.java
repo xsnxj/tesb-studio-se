@@ -32,44 +32,26 @@ public class CLoopParameterHandler extends AbstractParameterHandler {
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
+
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
-        
+        type = unquotes(type);
+
         addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
-        
-        if("constant".equals(type)){
+
+        if ("constant".equals(type)) {
             addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "VALUE_TYPE");
-            text = removeQuotes(text);
             addParamType(elemParams, FIELD_TEXT, "VALUE", text);
-        }else if("header".equals(type)){
+        } else if ("header".equals(type)) {
             addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "HEADER_TYPE");
-            text = removeQuotes(text);
             addParamType(elemParams, FIELD_TEXT, "HEADER", text);
-        }else{
+        } else {
             addParamType(elemParams, FIELD_CLOSED_LIST, "LOOP_TYPE", "EXPRESSION_TYPE");
             addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", type);
-            addParamType(elemParams, FIELD_TEXT, "EXPRESSION", type);
+            addParamType(elemParams, FIELD_TEXT, "EXPRESSION", text);
         }
-        
+
         nodeType.getElementParameter().addAll(elemParams);
     }
 
-    /**
-     * 
-     * DOC LiXP Comment method "removeQuotes".
-     * @param text
-     * @return
-     */
-    private String removeQuotes(String text) {
-        String result = "";
-        if(text.startsWith("\"")){
-            result = text.substring(1);
-        }
-        
-        if(text.endsWith("\"")){
-            result = result.substring(0, result.length() - 1);
-        }
-        return result;
-    }
 }

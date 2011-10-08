@@ -32,23 +32,23 @@ public class CSetHeaderParameterHandler extends AbstractParameterHandler {
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
+
         String name = parameters.get(ICamelSpringConstants.SH_HEADER_NAME);
         String type = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TYPE);
         String text = parameters.get(ICamelSpringConstants.EP_EXPRESSION_TEXT);
-        
+        type = unquotes(type);
+
         addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
-        name = quotes(name);
         addParamType(elemParams, FIELD_TEXT, "HEADER", name);
-        
-        if("bean".equals(type)){//Use bean?
+
+        if ("bean".equals(type)) {// Use bean?
             addParamType(elemParams, FIELD_CHECK, "USE_BEAN", VALUE_TRUE);
             addParamType(elemParams, FIELD_TEXT, "BEAN", text);
-        }else{
+        } else {
             addParamType(elemParams, FIELD_CLOSED_LIST, "LANGUAGES", type);
             addParamType(elemParams, FIELD_TEXT, "EXPRESSION", text);
         }
-        
+
         nodeType.getElementParameter().addAll(elemParams);
     }
 }

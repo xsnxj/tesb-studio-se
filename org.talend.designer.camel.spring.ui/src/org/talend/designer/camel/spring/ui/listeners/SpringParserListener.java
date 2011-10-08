@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +31,7 @@ import org.talend.designer.camel.spring.ui.imports.ParameterHandlerFactory;
 import org.talend.designer.camel.spring.ui.layout.Routing;
 import org.talend.designer.camel.spring.ui.layout.RoutingLayoutManager;
 import org.talend.designer.camel.spring.ui.layout.RoutingNode;
+import org.talend.designer.camel.spring.ui.utils.ParameterValueUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -47,13 +49,13 @@ public class SpringParserListener implements ISpringParserListener {
     private Map<Integer, EConnectionType> connectionStyleMap;
 
     private Map<String, IParameterHandler> paramHandlers;
-    
+
     private List<Routing> routings;
-    
+
     private Map<String, RoutingNode> routingNodes;
-    
+
     private RoutingLayoutManager layoutManager;
-    
+
     private static final Log log = LogFactory.getLog(SpringParserListener.class);
 
     public SpringParserListener(ProcessType processType) {
@@ -63,7 +65,7 @@ public class SpringParserListener implements ISpringParserListener {
         this.routings = new ArrayList<Routing>();
         this.routingNodes = new HashMap<String, RoutingNode>();
         this.fileFact = TalendFileFactory.eINSTANCE;
-        this.layoutManager =  new RoutingLayoutManager();
+        this.layoutManager = new RoutingLayoutManager();
     }
 
     /**
@@ -95,7 +97,7 @@ public class SpringParserListener implements ISpringParserListener {
      * @param nodeType
      * @param connectionId
      * @param sourceId
-     * @param connParameters 
+     * @param connParameters
      */
     private void addPossibleConnections(NodeType nodeType, int connectionId, String sourceId, Map<String, String> connParameters) {
         if (sourceId != null) {// has a route connection
@@ -108,8 +110,8 @@ public class SpringParserListener implements ISpringParserListener {
                 connectionType.setTarget(ComponentUtilities.getNodeUniqueName(nodeType));
                 connectionType.setLabel(eConnectionType.getName());
                 connectionType.setLineStyle(eConnectionType.getId());
-                
-                if(connParameters != null){
+
+                if (connParameters != null) {
                     ConnectionParameterHandler.addConnectionParameters(connectionType, connParameters);
                 }
                 processType.getConnection().add(connectionType);
@@ -122,22 +124,23 @@ public class SpringParserListener implements ISpringParserListener {
     /**
      * 
      * DOC LiXP Comment method "getUniqueName".
+     * 
      * @param sourceId
      * @return
      */
     private String getUniqueName(String sourceId) {
         RoutingNode node = routingNodes.get(sourceId);
-        if(node == null){
+        if (node == null) {
             return null;
         }
         return ComponentUtilities.getNodeUniqueName(node.getNodeType());
-//        for(Object obj: node.getNodeType().getElementParameter()){
-//            ElementParameterType param = (ElementParameterType) obj;
-//            if(param.getName().equals("UNIQUE_NAME")){
-//                return param.getValue();
-//            }
-//        }
-//        return null;
+        // for(Object obj: node.getNodeType().getElementParameter()){
+        // ElementParameterType param = (ElementParameterType) obj;
+        // if(param.getName().equals("UNIQUE_NAME")){
+        // return param.getValue();
+        // }
+        // }
+        // return null;
     }
 
     /**
@@ -152,26 +155,26 @@ public class SpringParserListener implements ISpringParserListener {
         NodeType nodeType = fileFact.createNodeType();
         nodeType.setSizeX(32);
         nodeType.setSizeY(32);
-     
+
         String name = parameters.get(ICamelSpringConstants.UNIQUE_NAME_ID);
         RoutingNode routingNode = new RoutingNode(name);
         routingNode.setNodeType(nodeType);
         routingNodes.put(name, routingNode);
-        
-        if(sourceId == null){
+
+        if (sourceId == null) {
             Routing routing = new Routing();
             routing.setRoutingId(routings.size());
             routing.setFromNode(routingNode);
             routingNode.setRouting(routing);
             routings.add(routing);
-        }else{
+        } else {
             RoutingNode parant = routingNodes.get(sourceId);
-            if(parant != null){
+            if (parant != null) {
                 routingNode.setParant(parant);
                 parant.getChildren().add(routingNode);
             }
         }
-        
+
         return nodeType;
     }
 
@@ -192,7 +195,7 @@ public class SpringParserListener implements ISpringParserListener {
      * @see org.talend.designer.camel.spring.core.ISpringParserListener#preProcess()
      */
     public void preProcess() {
-        
+
     }
 
     /*
@@ -204,14 +207,38 @@ public class SpringParserListener implements ISpringParserListener {
     @SuppressWarnings("unchecked")
     public void process(int componentType, Map<String, String> parameters, int connectionId, String sourceId,
             Map<String, String> connParameters) {
+
+        addQuotesToParams(parameters);
+        addQuotesToParams(connParameters);
+
         log.info("[" + RouteMapping.COMPOMENT_NAMES[componentType] + "] " + parameters + " | Connection ["
                 + connectionStyleMap.get(connectionId) + "] " + connParameters + " Source " + sourceId);
-        
+
         NodeType nodeType = createNode(componentType, parameters, sourceId);
         addElementParameters(nodeType, componentType, parameters);
         addPossibleConnections(nodeType, connectionId, sourceId, connParameters);
 
         processType.getNode().add(nodeType);
+    }
+
+    /**
+     * Add quotes to parameter values
+     */
+    private void addQuotesToParams(Map<String, String> parameters) {
+        if (parameters == null) {
+            return;
+        }
+        for (Entry<String, String> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            if (key.equals(ICamelSpringConstants.UNIQUE_NAME_ID)) {
+                continue;
+            }
+            String value = entry.getValue();
+            if (value != null) {
+                value = ParameterValueUtils.quotes(value);
+                parameters.put(entry.getKey(), value);
+            }
+        }
     }
 
 }

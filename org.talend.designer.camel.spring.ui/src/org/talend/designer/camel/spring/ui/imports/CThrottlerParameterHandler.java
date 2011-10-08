@@ -32,20 +32,21 @@ public class CThrottlerParameterHandler extends AbstractParameterHandler {
     @Override
     public void handle(NodeType nodeType, String uniqueName, Map<String, String> parameters) {
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
-        
+
         String timePreiodMill = parameters.get(ICamelSpringConstants.TH_TIME_PERIOD_MILL);
         String maxRequestPerPeriod = parameters.get(ICamelSpringConstants.TH_MAX_REQUEST_PER_PERIOD);
         String delay = parameters.get(ICamelSpringConstants.TH_ASYNC_DELAY);
-        
+
+        delay = unquotes(delay);
         addParamType(elemParams, FIELD_TEXT, "UNIQUE_NAME", uniqueName);
         addParamType(elemParams, FIELD_TEXT, "MESSAGE_COUNT", timePreiodMill);
         addParamType(elemParams, FIELD_TEXT, "TIME_PERIOD", maxRequestPerPeriod);
         addParamType(elemParams, FIELD_CHECK, "USE_ASYNC_DELAYING", delay);
-        
-        if(maxRequestPerPeriod != null && !maxRequestPerPeriod.isEmpty()){
+
+        if (maxRequestPerPeriod != null && !maxRequestPerPeriod.isEmpty()) {
             addParamType(elemParams, FIELD_CHECK, "SET_TIME_PERIOD", delay);
         }
-        
+
         nodeType.getElementParameter().addAll(elemParams);
     }
 }

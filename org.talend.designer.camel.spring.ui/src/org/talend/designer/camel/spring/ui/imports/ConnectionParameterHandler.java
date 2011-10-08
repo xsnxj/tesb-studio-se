@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.camel.spring.ui.SpringUIConstants;
+import org.talend.designer.camel.spring.ui.utils.ParameterValueUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
@@ -68,8 +69,8 @@ public class ConnectionParameterHandler {
             params = WHEN_CONN_PARAMS;
         } else if (lineStyle == EConnectionType.ROUTE_CATCH.getId()) {
             params = CATCH_CONN_PARAMS;
-        }else{
-            //abnormal, just for exception
+        } else {
+            // abnormal, just for exception
             params = new HashMap<String, String>();
         }
 
@@ -85,6 +86,10 @@ public class ConnectionParameterHandler {
             String name = params.get(key + SpringUIConstants.NAME_POSTFIX);
 
             if (field != null && name != null) { // Basic parameters
+
+                if (field.equals(SpringUIConstants.FIELD_CHECK) || field.equals(SpringUIConstants.FIELD_CLOSED_LIST)) {
+                    name = ParameterValueUtils.unquotes(name);
+                }
                 paramType.setField(field);
                 paramType.setName(name);
                 paramType.setValue(value);
@@ -93,5 +98,4 @@ public class ConnectionParameterHandler {
         }
         connectionType.getElementParameter().addAll(elemParams);
     }
-
 }

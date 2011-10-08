@@ -54,8 +54,8 @@ public class CMulticastParameterHandler extends AbstractParameterHandler {
             for (Entry<String, List<String>> tableParam : tableParameters.entrySet()) {
                 String key = param.getKey();
                 String value = param.getValue();
-
                 if (key.equals(ICamelSpringConstants.ML_DESTINATIONS)) {
+                    value = unquotes(value);
                     String[] values = value.split(";");
                     List<ElementValueType> valueTypes = new ArrayList<ElementValueType>();
                     for (String ex : values) {
@@ -66,10 +66,10 @@ public class CMulticastParameterHandler extends AbstractParameterHandler {
                         valueTypes.add(valueType);
                     }
                     ElementParameterType nodeProperty = ComponentUtilities.getNodeProperty(nodeType, tableParam.getKey());
-                    if(nodeProperty == null){
+                    if (nodeProperty == null) {
                         ComponentUtilities.addNodeProperty(nodeType, tableParam.getKey(), "TABLE");
-                      ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
-                    }else{
+                        ComponentUtilities.setNodeProperty(nodeType, tableParam.getKey(), valueTypes);
+                    } else {
                         nodeProperty.getElementValue().addAll(valueTypes);
                     }
                 }

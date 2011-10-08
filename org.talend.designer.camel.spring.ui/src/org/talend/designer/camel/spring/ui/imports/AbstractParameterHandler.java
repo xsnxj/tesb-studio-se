@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.talend.core.model.components.ComponentUtilities;
 import org.talend.designer.camel.spring.core.ICamelSpringConstants;
 import org.talend.designer.camel.spring.ui.SpringUIConstants;
+import org.talend.designer.camel.spring.ui.utils.ParameterValueUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -153,10 +154,10 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
 
         List<ElementParameterType> elemParams = new ArrayList<ElementParameterType>();
         Properties params = getBasicParameters();
-        if(params == null){//If no mapping properties file found, do nothing.
+        if (params == null) {// If no mapping properties file found, do nothing.
             return;
         }
-        
+
         for (Entry<String, String> param : parameters.entrySet()) {
 
             String key = param.getKey();
@@ -174,6 +175,9 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
                 }
 
                 if (field != null && name != null) { // Basic parameters
+                    if (field.equals(FIELD_CHECK) || field.equals(FIELD_CLOSED_LIST)) {
+                        value = unquotes(value);
+                    }
                     addParamType(elemParams, field, name, value);
                 } else {
                     handleAddtionalParam(nodeType, param);
@@ -223,7 +227,7 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
             }
 
         } else {
-            ///Currently don't support more than one table paremeters.
+            // /Currently don't support more than one table paremeters.
         }
 
     }
@@ -236,15 +240,7 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
      * @return
      */
     protected String quotes(String string) {
-        String result = string;
-        if (!result.startsWith("\"")) {
-            result = "\"" + result;
-        }
-
-        if (!result.endsWith("\"")) {
-            result = result + "\"";
-        }
-        return result;
+        return ParameterValueUtils.quotes(string);
     }
 
     /**
@@ -255,14 +251,6 @@ public abstract class AbstractParameterHandler implements IParameterHandler {
      * @return
      */
     protected String unquotes(String string) {
-        String result = string;
-        if (result.startsWith("\"")) {
-            result = result.substring(1);
-        }
-
-        if (result.endsWith("\"")) {
-            result = result.substring(0, result.length() - 1);
-        }
-        return result;
+        return ParameterValueUtils.unquotes(string);
     }
 }
