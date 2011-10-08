@@ -46,7 +46,8 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 	protected ExportSpringXMLWizardPage(String pageName) {
 		super(pageName);
 		setTitle(Messages.getString("ExportSpringXMLWizardPage.Title")); //$NON-NLS-1$
-		setDescription(Messages.getString("ExportSpringXMLWizardPage.Description")); //$NON-NLS-1$
+		setDescription(Messages
+				.getString("ExportSpringXMLWizardPage.Description")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -80,11 +81,11 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-	    return validate();
+		return validate();
 	}
-	
+
 	protected void openAndSpecifyOutput() {
-		FileDialog fileDialog = new FileDialog(getShell());
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE);
 		fileDialog.setFilterPath(pathText.getText());
 		fileDialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$
 		String open = fileDialog.open();
@@ -96,17 +97,20 @@ public class ExportSpringXMLWizardPage extends WizardPage {
 	protected boolean validate() {
 		String outputPath = pathText.getText().trim();
 		if (outputPath.equals("")) { //$NON-NLS-1$
-			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputIsEmpty")); //$NON-NLS-1$
+			setErrorMessage(Messages
+					.getString("ExportSpringXMLWizardPage.OutputIsEmpty")); //$NON-NLS-1$
 			return false;
 		}
 		File file = new File(outputPath);
 		File parentFile = file.getParentFile();
 		if (parentFile == null) {
-			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputIsInvalid")); //$NON-NLS-1$
+			setErrorMessage(Messages
+					.getString("ExportSpringXMLWizardPage.OutputIsInvalid")); //$NON-NLS-1$
 			return false;
 		}
 		if (!parentFile.exists()) {
-			setErrorMessage(Messages.getString("ExportSpringXMLWizardPage.OutputFolderError")); //$NON-NLS-1$
+			setErrorMessage(Messages
+					.getString("ExportSpringXMLWizardPage.OutputFolderError")); //$NON-NLS-1$
 			return false;
 		}
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(

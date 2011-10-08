@@ -92,15 +92,23 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	private XmlFileApplicationContext appContext;
 
 	/*
-	 * this used to store all component classes
-	 * who has end_block connection type 
+	 * this used to store all component classes who has end_block connection
+	 * type
 	 */
 	private List<Class<?>> endBlockComponentTypes = new ArrayList<Class<?>>();
 
 	public void startParse(String filePath) throws Exception {
 		try {
 			// read file
-			appContext = new XmlFileApplicationContext(filePath);
+			String path = filePath;
+
+			// Spring Context loader bug, cannot find file in Linux and Mac.
+			// Must add a "file:" prefix. Added By LiXP.
+			if (filePath != null && !filePath.contains(":")) {
+				path = "file:" + filePath;
+			}
+
+			appContext = new XmlFileApplicationContext(path);
 			SpringCamelContext camelContext = SpringCamelContext
 					.springCamelContext(appContext);
 
@@ -181,12 +189,14 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	/**
 	 * parse a route
+	 * 
 	 * @param rd
 	 * @param camelContext
 	 * @throws UnsupportedElementException
 	 */
 	private void parseRouteDefinitions(RouteDefinition rd,
-			SpringCamelContext camelContext, NodeIdFactory nodeIdFactory) throws UnsupportedElementException {
+			SpringCamelContext camelContext, NodeIdFactory nodeIdFactory)
+			throws UnsupportedElementException {
 		List<FromDefinition> inputs = rd.getInputs();
 		if (inputs.size() < 1) {
 			throw new UnsupportedElementException(rd);
@@ -196,7 +206,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		String id = parseFromDefinition(nodeIdFactory, inputs);
 
 		// process end
-		parseProcessorDefinition(rd.getOutputs(), nodeIdFactory, id, false, ROUTE);
+		parseProcessorDefinition(rd.getOutputs(), nodeIdFactory, id, false,
+				ROUTE);
 	}
 
 	private String parseFromDefinition(NodeIdFactory nodeIdFactory,
@@ -210,22 +221,26 @@ public class CamelSpringParser implements ICamelSpringConstants {
 
 	/**
 	 * parser a route but from node
+	 * 
 	 * @param outputs
 	 * @param nodeIdFactory
 	 * @param fromId
 	 * @param keepFrom
 	 */
 	private void parseProcessorDefinition(List<ProcessorDefinition> outputs,
-			NodeIdFactory nodeIdFactory, String fromId, boolean keepFrom, int connectionType) {
-		parseProcessorDefinition(outputs, nodeIdFactory, fromId, keepFrom, connectionType,null);
+			NodeIdFactory nodeIdFactory, String fromId, boolean keepFrom,
+			int connectionType) {
+		parseProcessorDefinition(outputs, nodeIdFactory, fromId, keepFrom,
+				connectionType, null);
 	}
 
 	private void parseProcessorDefinition(List<ProcessorDefinition> outputs,
-			NodeIdFactory nodeIdFactory, String fromId, boolean keepFrom, int connectionType, Map<String,String> connectionMap) {
+			NodeIdFactory nodeIdFactory, String fromId, boolean keepFrom,
+			int connectionType, Map<String, String> connectionMap) {
 		for (ProcessorDefinition pd : outputs) {
 			/*
-			 * the intercept component and onException component
-			 * should be processed seperately
+			 * the intercept component and onException component should be
+			 * processed seperately
 			 */
 			if (pd instanceof InterceptDefinition) {
 				parseInterceptDefinition(nodeIdFactory,
@@ -290,8 +305,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 				ExpressionDefinition expression = wd.getExpression();
 				Map<String, String> connectionMap = ExpressionProcessor
 						.getExpressionMap(expression);
-				parseProcessorDefinition(wd.getOutputs(), nodeIdFactory, id, false,
-						ROUTE_WHEN, connectionMap);
+				parseProcessorDefinition(wd.getOutputs(), nodeIdFactory, id,
+						false, ROUTE_WHEN, connectionMap);
 			}
 		}
 	}
@@ -379,8 +394,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 			id = processIsolateDefinition(PF, nodeIdFactory, fromId, pd,
 					connectionType, connectionMap);
 		} else {
-			id = processIsolateDefinition(MSGENDPOINT,
-					nodeIdFactory, fromId, pd, connectionType, connectionMap);
+			id = processIsolateDefinition(MSGENDPOINT, nodeIdFactory, fromId,
+					pd, connectionType, connectionMap);
 		}
 		if (!keepFrom) {
 			fromId = id;
@@ -389,8 +404,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	}
 
 	/**
-	 * common parse method, used to process
-	 * isolate node which has only one output
+	 * common parse method, used to process isolate node which has only one
+	 * output
+	 * 
 	 * @param componentType
 	 * @param nodeIdFactory
 	 * @param fromId
@@ -400,8 +416,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	 * @return
 	 */
 	private String processIsolateDefinition(int componentType,
-			NodeIdFactory nodeIdFactory, String fromId, OptionalIdentifiedDefinition pd,
-			int connectionType, Map<String, String> connectionMap) {
+			NodeIdFactory nodeIdFactory, String fromId,
+			OptionalIdentifiedDefinition pd, int connectionType,
+			Map<String, String> connectionMap) {
 		AbstractComponentParser parser = parsers[componentType];
 		Map<String, String> map = parser.parse(nodeIdFactory, pd);
 		String id = map.get(UNIQUE_NAME_ID);
@@ -411,8 +428,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	}
 
 	/**
-	 * common parse method, used to process
-	 * cascade node which may have multi output
+	 * common parse method, used to process cascade node which may have multi
+	 * output
+	 * 
 	 * @param componentType
 	 * @param nodeIdFactory
 	 * @param fromId
@@ -444,7 +462,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		fromId = id;
 		outputs.removeAll(catchClauses);
 		outputs.remove(finallyClause);
-		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false, ROUTE_TRY);
+		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false,
+				ROUTE_TRY);
 		if (catchClauses != null) {
 			for (CatchDefinition cd : catchClauses) {
 				parseCatchDefinition(nodeIdFactory, id, cd, null);
@@ -466,11 +485,11 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		for (int i = 0; i < size; i++) {
 			ProcessorDefinition pd = outputs.get(i);
 			if (i == 0) {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false, pd,
-						ROUTE_FINALLY, connectionMap);
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						pd, ROUTE_FINALLY, connectionMap);
 			} else {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false, pd,
-						connectionType, null);
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						pd, connectionType, null);
 			}
 			connectionType = getFollowedConnectionType(pd.getClass());
 		}
@@ -497,11 +516,11 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		int connectionType = ROUTE;
 		for (ProcessorDefinition pd : outputs) {
 			if (fromId == id) {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false, pd, ROUTE_CATCH,
-						map);
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						pd, ROUTE_CATCH, map);
 			} else {
-				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false, pd, connectionType,
-						null);
+				fromId = parseProcessorDefinition(nodeIdFactory, fromId, false,
+						pd, connectionType, null);
 			}
 			connectionType = getFollowedConnectionType(pd.getClass());
 		}
@@ -523,14 +542,16 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		List<ProcessorDefinition> outputs = pd.getOutputs();
 		outputs.removeAll(whenClauses);
 		outputs.removeAll(outputs);
-		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false, ROUTE_ENDBLOCK);
+		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false,
+				ROUTE_ENDBLOCK);
 		return id;
 	}
 
 	private void parseOtherwiseDefinition(NodeIdFactory nodeIdFactory,
 			String fromId, OtherwiseDefinition otherwise) {
 		List<ProcessorDefinition> outputs = otherwise.getOutputs();
-		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false, ROUTE_OTHER);
+		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false,
+				ROUTE_OTHER);
 	}
 
 	private void parseWhenDefinition(NodeIdFactory nodeIdFactory,
@@ -539,7 +560,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		Map<String, String> connectionMap = ExpressionProcessor
 				.getExpressionMap(expression);
 		List<ProcessorDefinition> outputs = wd.getOutputs();
-		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false, ROUTE_WHEN, connectionMap);
+		parseProcessorDefinition(outputs, nodeIdFactory, fromId, false,
+				ROUTE_WHEN, connectionMap);
 	}
 
 	private String parseFilterDefinition(NodeIdFactory nodeIdFactory,
@@ -562,8 +584,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 	}
 
 	/**
-	 * For ToDefinition or FromDifinition
-	 * return different component type according to the schema
+	 * For ToDefinition or FromDifinition return different component type
+	 * according to the schema
+	 * 
 	 * @param uri
 	 * @return componentType
 	 */
