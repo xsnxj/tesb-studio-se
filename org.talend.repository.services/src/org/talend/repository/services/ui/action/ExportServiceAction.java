@@ -60,6 +60,9 @@ public class ExportServiceAction extends WorkspaceJob {
 
 	private String groupId;
 
+	private static String JOB_CONTROLLER_FEATURE = "talend-job-controller";
+	private static String JOB_CONTROLLER_VERSION = "[5,6)";
+
     public ExportServiceAction(RepositoryNode node) throws CoreException {
     	this(node, null);
     }
@@ -178,6 +181,8 @@ public class ExportServiceAction extends WorkspaceJob {
 					entry.getKey(), getServiceVersion());
 			feature.addSubBundle(model);
 		}
+		// <feature version='[5,6)'>talend-job-controller</feature>
+		feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
 		return feature;
 	}
 	

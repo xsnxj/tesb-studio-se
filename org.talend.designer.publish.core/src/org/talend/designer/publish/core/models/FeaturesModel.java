@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class FeaturesModel extends UploadableModel {
 
-	private Set<FeaturesModel> subFeatures = new HashSet<FeaturesModel>();
+	private Set<String> subFeatures = new HashSet<String>();
 
 	private Set<BundleModel> subBundles = new HashSet<BundleModel>();
 
@@ -55,11 +55,11 @@ public class FeaturesModel extends UploadableModel {
 					bm.getArtifactId(), bm.getVersion());
 			pomModel.addDenpendency(dm);
 		}
-		for (FeaturesModel fm : subFeatures) {
-			DependencyModel dm = new DependencyModel(fm.getGroupId(),
-					fm.getArtifactId(), fm.getVersion(), "pom");
-			pomModel.addDenpendency(dm);
-		}
+		// for (FeaturesModel fm : subFeatures) {
+		// DependencyModel dm = new DependencyModel(fm.getGroupId(),
+		// fm.getArtifactId(), fm.getVersion(), "pom");
+		// pomModel.addDenpendency(dm);
+		// }
 		pomModel.upload();
 	}
 
@@ -77,9 +77,18 @@ public class FeaturesModel extends UploadableModel {
 		uploadMd5AndSha1(filePath, fileName, featureContent);
 	}
 
-	public void addSubFeature(FeaturesModel model) {
-		if (!subFeatures.contains(model)) {
-			subFeatures.add(model);
+	public void addSubFeature(FeaturesModel subFeature) {
+		String s = toFeatureString(subFeature.getVersion(),
+				subFeature.getArtifactId());
+		if (!subFeatures.contains(s)) {
+			subFeatures.add(s);
+		}
+	}
+
+	public void addSubFeature(String featureName, String featureVersion) {
+		String s = toFeatureString(featureVersion, featureName);
+		if (!subFeatures.contains(s)) {
+			subFeatures.add(s);
 		}
 	}
 
@@ -96,12 +105,12 @@ public class FeaturesModel extends UploadableModel {
 		return subBundles;
 	}
 
-	private String toFeatureString(FeaturesModel model) {
+	private String toFeatureString(String featureVersion, String featureName) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<feature version='");
-		sb.append(model.getVersion());
+		sb.append(featureVersion);
 		sb.append("\'>");
-		sb.append(model.getArtifactId());
+		sb.append(featureName);
 		sb.append("</feature>");
 		return sb.toString();
 	}
@@ -129,9 +138,9 @@ public class FeaturesModel extends UploadableModel {
 		sb.append(version);
 		sb.append("\">\n");
 
-		for (FeaturesModel s : subFeatures) {
+		for (String s : subFeatures) {
 			sb.append("\t\t");
-			sb.append(toFeatureString(s));
+			sb.append(s);
 			sb.append("\n");
 		}
 		for (BundleModel s : subBundles) {
