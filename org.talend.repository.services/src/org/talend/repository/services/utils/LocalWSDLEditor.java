@@ -15,6 +15,8 @@ import javax.xml.namespace.QName;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
@@ -22,6 +24,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
@@ -43,9 +46,23 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         // TODO Auto-generated constructor stub
     }
 
+    protected AdapterImpl dirtyListener = new AdapterImpl() {
+
+        @Override
+        public void notifyChanged(Notification notification) {
+            if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
+                save();
+            }
+        }
+    };
+
     @Override
     public void doSave(IProgressMonitor monitor) {
         super.doSave(monitor);
+        save();
+    }
+
+    private void save() {
         if (serviceItem != null) {
             IProject currentProject;
             try {
@@ -145,6 +162,16 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         this.serviceItem = serviceItem;
     }
 
+    public void addListener() {
+        // ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener);
+        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().add(dirtyListener);
+    }
+
+    public void removeListener() {
+        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().remove(dirtyListener);
+        // ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+    }
+
     public void setReadOnly(boolean isReadOnly) {
         if (isReadOnly) {
             IAction addMessage = getActionRegistry().getAction("ASDAddMessageAction");
@@ -235,5 +262,4 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             getActionRegistry().removeAction(openInNewEditor);
         }
     }
-
 }
