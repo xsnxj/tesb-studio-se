@@ -100,10 +100,10 @@
 					MODULE="jra-1.0-alpha-4.jar"
 					REQUIRED="true" />
 
-			<!--IMPORT NAME="dom4j"
+			<IMPORT NAME="dom4j"
 					MODULE="dom4j-1.6.1.jar"
 					BundleID="org.apache.servicemix.bundles.dom4j"
-					REQUIRED="true"/-->
+					REQUIRED="true"/>
 
 			<IMPORT NAME="commons-logging"
 					MODULE="commons-logging-1.1.1.jar"
