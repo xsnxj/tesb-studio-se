@@ -60,17 +60,21 @@ public class WSDLUtils {
 
     public static final String SERVICE_NS = "SERVICE_NS"; //$NON-NLS-1$
 
+    public static final String PORT_NAME = "PORT_NAME"; //$NON-NLS-1$
+
     public static final String PORT_NS = "PORT_NS"; //$NON-NLS-1$
 
-    public static final String ENDPOINT = "ENDPOINT"; //$NON-NLS-1$
+    public static final String OPERATION_NAME = "OPERATION_NAME"; //$NON-NLS-1$
 
-    public static final String ESB_ENDPOINT = "ESB_ENDPOINT"; //$NON-NLS-1$
+    public static final String OPERATION_NS = "OPERATION_NS"; //$NON-NLS-1$
+
+    public static final String ENDPOINT_URI = "ENDPOINT_URI"; //$NON-NLS-1$
 
     public static Map<String, String> getServiceParameters(String wsdlURI) throws WSDLException {
         Map<String, String> map = new HashMap<String, String>();
         if (wsdlURI == null)
             return map;
-        map.put(ENDPOINT, wsdlURI);
+        map.put(ENDPOINT_URI, wsdlURI);
         WSDLFactory wsdlFactory = WSDLFactory.newInstance();
         WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
@@ -94,10 +98,10 @@ public class WSDLUtils {
                     Object obj = extElements.get(0);
                     if (obj instanceof SOAPAddress) {
                         SOAPAddress address = (SOAPAddress) extElements.get(0);
-                        map.put(ESB_ENDPOINT, address.getLocationURI());
+                        map.put(ENDPOINT_URI, address.getLocationURI());
                     } else if (obj instanceof SOAP12Address) {
                         SOAP12Address address = (SOAP12Address) extElements.get(0);
-                        map.put(ESB_ENDPOINT, address.getLocationURI());
+                        map.put(ENDPOINT_URI, address.getLocationURI());
                     }
                 }
             }
@@ -185,7 +189,7 @@ public class WSDLUtils {
 		try {
 			WSDLFactory wsdlFactory = WSDLFactory.newInstance();
 			WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-	
+
 			newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
 			newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
 			definition = newWSDLReader.readWSDL(pathToWsdl);
@@ -194,7 +198,7 @@ public class WSDLUtils {
 		}
 		return definition;
 	}
-	
+
 	public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
 		return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
 	}

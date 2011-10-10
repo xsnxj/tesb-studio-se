@@ -20,12 +20,12 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.commons.utils.StringUtils;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
@@ -57,13 +57,9 @@ import org.talend.repository.services.utils.WSDLUtils;
 
 public class CreateNewJobAction extends AbstractCreateAction {
 
-    private static final String T_ESB_PROVIDER_REQUEST = "tESBProviderRequest"; //$NON-NLS-1$
+    static final String T_ESB_PROVIDER_REQUEST = "tESBProviderRequest"; //$NON-NLS-1$
 
-    private static final String T_ESB_PROVIDER_RESPONSE = "tESBProviderResponse"; //$NON-NLS-1$
-
-    private static final String METHOD = "METHOD"; //$NON-NLS-1$
-
-    private static final String PORT_NAME = "PORT_NAME"; //$NON-NLS-1$
+    static final String T_ESB_PROVIDER_RESPONSE = "tESBProviderResponse"; //$NON-NLS-1$
 
     private String createLabel = "Create New Job";
 
@@ -98,7 +94,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -130,7 +126,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -188,43 +184,10 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
                 String wsdlPath = serviceConnection.getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-                String portName = String.valueOf(portNode.getProperties(EProperties.LABEL));
-                String methodName = String.valueOf(node.getProperties(EProperties.LABEL));
+                serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
 
-                IElementParameter parameter = node2.getElementParameter(WSDLUtils.ENDPOINT);
-                if (parameter != null) {
-                    parameter.setValue(serviceParameters.get(WSDLUtils.ENDPOINT));
-                }
-
-                parameter = node2.getElementParameter(WSDLUtils.ESB_ENDPOINT);
-                if (parameter != null) {
-                    parameter.setValue('"'+serviceParameters.get(WSDLUtils.ESB_ENDPOINT)+'"');
-                }
-
-                parameter = node2.getElementParameter(WSDLUtils.SERVICE_NS);
-                if (parameter != null) {
-                    parameter.setValue(serviceParameters.get(WSDLUtils.SERVICE_NS));
-                }
-
-                parameter = node2.getElementParameter(WSDLUtils.SERVICE_NAME);
-                if (parameter != null) {
-                    parameter.setValue(serviceParameters.get(WSDLUtils.SERVICE_NAME));
-                }
-
-                parameter = node2.getElementParameter(WSDLUtils.PORT_NS);
-                if (parameter != null) {
-                    parameter.setValue(serviceParameters.get(WSDLUtils.PORT_NS));
-                }
-
-                parameter = node2.getElementParameter(PORT_NAME);
-                if (parameter != null) {
-                    parameter.setValue(portName);
-                }
-
-                parameter = node2.getElementParameter(METHOD);
-                if (parameter != null) {
-                    parameter.setValue(methodName);
-                }
+                setProviderRequestComponentConfiguration(node2, serviceParameters);
 
                 NodeContainer nc = new NodeContainer(node2);
                 CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(
@@ -279,4 +242,37 @@ public class CreateNewJobAction extends AbstractCreateAction {
         return parent.getLabel() + "_" + node.getLabel();
     }
 
+    public static void setProviderRequestComponentConfiguration(INode providerRequestComponent,
+            Map<String, String> serviceConfiguration) {
+
+        IElementParameter parameter = providerRequestComponent.getElementParameter(WSDLUtils.ENDPOINT_URI);
+        if (parameter != null) {
+            parameter.setValue('"' + serviceConfiguration.get(WSDLUtils.ENDPOINT_URI) + '"');
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.SERVICE_NS);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.SERVICE_NS));
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.SERVICE_NAME);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.SERVICE_NAME));
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.PORT_NS);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.PORT_NS));
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.PORT_NAME);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.PORT_NS));
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.OPERATION_NAME);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.OPERATION_NAME));
+        }
+    }
 }
