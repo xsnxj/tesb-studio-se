@@ -70,7 +70,7 @@ if (actAsProvider || actAsConsumer) { %>
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
 
-	String endpointUrl = ElementParameterParser.getValue(tESBProviderRequestNode, "__ESB_ENDPOINT__");
+	String endpointUrl = ElementParameterParser.getValue(tESBProviderRequestNode, "__ENDPOINT_URI__");
 
 	String serviceNS = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NS__");
 	String serviceName = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NAME__");
@@ -84,8 +84,7 @@ if (actAsProvider || actAsConsumer) { %>
 		portName = serviceName + "_Port";
 	}
 
-	String methodName = ElementParameterParser.getValue(tESBProviderRequestNode, "__METHOD__");
-	methodName = methodName.split("\\(")[0];
+	String operationName = ElementParameterParser.getValue(tESBProviderRequestNode, "__OPERATION_NAME__");
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
@@ -100,7 +99,7 @@ if (actAsProvider || actAsConsumer) { %>
 				put("dataFormat", "PAYLOAD");
 				put("portName", "{<%=portNS%>}<%=portName%>");
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
-				put("defaultOperationName", "<%=methodName%>");
+				put("defaultOperationName", "<%=operationName%>");
 				// static
 				put("defaultOperationNameSpace", "");
 				// endpoint URI configured in tESBProviderInput
@@ -325,21 +324,21 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 
 	%>
 	@javax.jws.WebMethod(
-			operationName = "<%=methodName%>",
-			action = "<%=serviceNS%>/<%=methodName%>"
+			operationName = "<%=operationName%>",
+			action = "<%=serviceNS%>/<%=operationName%>"
 		)
 <% if (isOneWay) { %>
 	@javax.jws.Oneway()
 <% } else { %>
 	@javax.jws.WebResult(
-			name = "<%=methodName%>Output",
+			name = "<%=operationName%>Output",
 			targetNamespace = "<%=serviceNS%>",
 			partName = "response"
 		)
 <% } %>
 	public javax.xml.transform.Source invoke(
 			@javax.jws.WebParam(
-					name = "<%=methodName%>Input",
+					name = "<%=operationName%>Input",
 					targetNamespace = "<%=serviceNS%>",
 					partName = "request"
 				) javax.xml.transform.Source request) {
