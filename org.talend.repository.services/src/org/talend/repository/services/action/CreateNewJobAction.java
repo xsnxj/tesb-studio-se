@@ -94,7 +94,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -126,7 +126,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -248,7 +248,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
         IElementParameter parameter = providerRequestComponent.getElementParameter(WSDLUtils.ENDPOINT_URI);
         if (parameter != null) {
-            parameter.setValue('"' + serviceConfiguration.get(WSDLUtils.ENDPOINT_URI) + '"');
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.ENDPOINT_URI));
         }
 
         parameter = providerRequestComponent.getElementParameter(WSDLUtils.SERVICE_NS);

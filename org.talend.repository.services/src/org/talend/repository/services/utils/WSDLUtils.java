@@ -74,7 +74,7 @@ public class WSDLUtils {
         Map<String, String> map = new HashMap<String, String>();
         if (wsdlURI == null)
             return map;
-        map.put(ENDPOINT_URI, wsdlURI);
+        map.put(ENDPOINT_URI, '"' + wsdlURI + '"');
         WSDLFactory wsdlFactory = WSDLFactory.newInstance();
         WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
@@ -98,10 +98,10 @@ public class WSDLUtils {
                     Object obj = extElements.get(0);
                     if (obj instanceof SOAPAddress) {
                         SOAPAddress address = (SOAPAddress) extElements.get(0);
-                        map.put(ENDPOINT_URI, address.getLocationURI());
+                        map.put(ENDPOINT_URI, '"' + address.getLocationURI() + '"');
                     } else if (obj instanceof SOAP12Address) {
                         SOAP12Address address = (SOAP12Address) extElements.get(0);
-                        map.put(ENDPOINT_URI, address.getLocationURI());
+                        map.put(ENDPOINT_URI, '"' + address.getLocationURI() + '"');
                     }
                 }
             }

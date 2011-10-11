@@ -3,14 +3,12 @@ package org.talend.repository.services.action;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.process.INode;
-import org.talend.core.model.process.IProcess;
-import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -18,9 +16,9 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
-import org.talend.core.runtime.CoreRuntimePlugin;
-import org.talend.designer.core.IDesignerCoreService;
-import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
+import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -59,7 +57,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -77,7 +75,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -129,29 +127,33 @@ public class AssignJobAction extends AbstractCreateAction {
                     }
                 }
 
-                IDesignerCoreService designerCoreService = CoreRuntimePlugin.getInstance().getDesignerCoreService();
-                if (designerCoreService != null) {
-                    IProcess process = designerCoreService.getProcessFromProcessItem((ProcessItem) item);
-                    List<? extends INode> providerRequestNodes = process
-                            .getNodesOfType(CreateNewJobAction.T_ESB_PROVIDER_REQUEST);
-                    PropertyChangeCommand pcc = null;
-                    if (null != providerRequestNodes && !providerRequestNodes.isEmpty()) {
+                ProcessItem processItem = (ProcessItem) item;
+                ProcessType processType = processItem.getProcess();
+                EList nodeList = processType.getNode();
+                for (Object obj : nodeList) {
+                    NodeType node = (NodeType) obj;
+                    if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
 
-                        // INode providerRequestNode = providerRequestNodes.get(0);
-                        // for (Map.Entry<String, String> property : serviceParameters.entrySet()) {
-                        // pcc = new PropertyChangeCommand(
-                        // providerRequestNode, property.getKey(), property.getValue());
-                        // pcc.execute();
-                        // // ((IProcess2) process).getCommandStack().execute(pcc);
-                        // }
-
-                        CreateNewJobAction.setProviderRequestComponentConfiguration(providerRequestNodes.get(0),
-                                serviceParameters);
+                        EList parameters = node.getElementParameter();
+                        for (Object paramObj : parameters) {
+                            ElementParameterType param = (ElementParameterType) paramObj;
+                            String name = param.getName();
+                            if (serviceParameters.containsKey(name)) {
+                                param.setValue(serviceParameters.get(name));
+                            }
+                        }
+                        break;
                     }
-                    ((IProcess2) process).saveXmlFile();
                 }
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+
+                try {
+                    factory.save(processItem);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+
                 try {
                     factory.save(serviceItem);
                 } catch (PersistenceException e) {
