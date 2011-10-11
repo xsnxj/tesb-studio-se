@@ -59,7 +59,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -77,7 +77,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -93,9 +93,8 @@ public class AssignJobAction extends AbstractCreateAction {
                 repositoryNode = getRepositoryNodeForDefault(currentNodeType);
             }
         }
-        RepositoryReviewDialog dialog = new RepositoryReviewDialog(PlatformUI
-                .getWorkbench().getActiveWorkbenchWindow().getShell(),
-                ERepositoryObjectType.PROCESS, "");
+        RepositoryReviewDialog dialog = new RepositoryReviewDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getShell(), ERepositoryObjectType.PROCESS, "");
         if (dialog.open() == RepositoryReviewDialog.OK) {
             IRepositoryViewObject repositoryObject = dialog.getResult().getObject();
             final Item item = repositoryObject.getProperty().getItem();
@@ -105,8 +104,8 @@ public class AssignJobAction extends AbstractCreateAction {
                 String jobName = item.getProperty().getLabel();
                 String operationName = repositoryNode.getLabel();
                 String parentPortName = repositoryNode.getParent().getLabel();
-                ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent()
-                        .getParent().getObject().getProperty().getItem();
+                ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
+                        .getItem();
 
                 String wsdlPath = serviceItem.getServiceConnection().getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
@@ -116,9 +115,9 @@ public class AssignJobAction extends AbstractCreateAction {
                     if (port.getName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
-                            if (operation.getLabel().equals(operationName)) {
+                            if (operation.getOperationLabel().equals(operationName)) {
                                 operation.setReferenceJobId(jobID);
-                                operation.setLabel(operation.getOperationName() + "-" + jobName);
+                                operation.setOperationLabel(operation.getOperationName() + "-" + jobName);
 
                                 serviceParameters.put(WSDLUtils.PORT_NAME, parentPortName);
                                 serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
@@ -130,26 +129,24 @@ public class AssignJobAction extends AbstractCreateAction {
                     }
                 }
 
-                IDesignerCoreService designerCoreService = CoreRuntimePlugin
-                        .getInstance().getDesignerCoreService();
+                IDesignerCoreService designerCoreService = CoreRuntimePlugin.getInstance().getDesignerCoreService();
                 if (designerCoreService != null) {
-                    IProcess process = designerCoreService
-                            .getProcessFromProcessItem((ProcessItem) item);
+                    IProcess process = designerCoreService.getProcessFromProcessItem((ProcessItem) item);
                     List<? extends INode> providerRequestNodes = process
                             .getNodesOfType(CreateNewJobAction.T_ESB_PROVIDER_REQUEST);
                     PropertyChangeCommand pcc = null;
                     if (null != providerRequestNodes && !providerRequestNodes.isEmpty()) {
 
-//	                    	INode providerRequestNode = providerRequestNodes.get(0);
-//	                    	for (Map.Entry<String, String> property : serviceParameters.entrySet()) {
-//								pcc = new PropertyChangeCommand(
-//										providerRequestNode, property.getKey(), property.getValue());
-//	                    		pcc.execute();
-//	//                        	((IProcess2) process).getCommandStack().execute(pcc);
-//	                    	}
+                        // INode providerRequestNode = providerRequestNodes.get(0);
+                        // for (Map.Entry<String, String> property : serviceParameters.entrySet()) {
+                        // pcc = new PropertyChangeCommand(
+                        // providerRequestNode, property.getKey(), property.getValue());
+                        // pcc.execute();
+                        // // ((IProcess2) process).getCommandStack().execute(pcc);
+                        // }
 
-                        CreateNewJobAction.setProviderRequestComponentConfiguration(
-                                providerRequestNodes.get(0), serviceParameters);
+                        CreateNewJobAction.setProviderRequestComponentConfiguration(providerRequestNodes.get(0),
+                                serviceParameters);
                     }
                     ((IProcess2) process).saveXmlFile();
                 }
@@ -172,10 +169,9 @@ public class AssignJobAction extends AbstractCreateAction {
             RepositoryNode repositoryNode = getCurrentRepositoryNode();
             return (OpenJobAction.getReferenceJobId(repositoryNode) == null) ? ServiceOperation.class : Object.class;
         } catch (Exception e) {
-            //do nothing just return default
+            // do nothing just return default
         }
         return ServiceOperation.class;
     }
-
 
 }

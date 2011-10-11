@@ -8,26 +8,17 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.PlatformUI;
-import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryManager;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.designer.core.ui.action.EditProcess;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
-import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 
 public class OpenJobAction extends EditProcess {
 
@@ -35,7 +26,7 @@ public class OpenJobAction extends EditProcess {
 
     private ERepositoryObjectType currentNodeType;
 
-	private RepositoryNode jobNode;
+    private RepositoryNode jobNode;
 
     public OpenJobAction() {
         super();
@@ -53,78 +44,81 @@ public class OpenJobAction extends EditProcess {
         this.setToolTipText(createLabel);
     }
 
-    
-    
-    /* (non-Javadoc)
-	 * @see org.talend.designer.core.ui.action.EditProcess#init(org.eclipse.jface.viewers.TreeViewer, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	@Override
-	public void init(TreeViewer viewer, IStructuredSelection selection) {
-    	List<RepositoryNode> nodes = selection.toList();
-    	if (nodes == null || nodes.size() != 1) {
-    		setEnabled(false);
-    		return;
-    	}
-    	RepositoryNode node = nodes.iterator().next();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.core.ui.action.EditProcess#init(org.eclipse.jface.viewers.TreeViewer,
+     * org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    @Override
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        List<RepositoryNode> nodes = selection.toList();
+        if (nodes == null || nodes.size() != 1) {
+            setEnabled(false);
+            return;
+        }
+        RepositoryNode node = nodes.iterator().next();
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
         if (!currentNodeType.equals(nodeType)) {
-    		setEnabled(false);
+            setEnabled(false);
             return;
         }
         this.setText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
         String jobId = getReferenceJobId(node);
         if (jobId == null) {
-    		setEnabled(false);
-    		return;
+            setEnabled(false);
+            return;
         }
-		jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
+        jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
         final IStructuredSelection jobSelection = new StructuredSelection(jobNode);
-		setSpecialSelection(new ISelectionProvider() {
-			
-			public void setSelection(ISelection arg0) {
-			}
-			
-			public void removeSelectionChangedListener(ISelectionChangedListener arg0) {
-			}
-			
-			public ISelection getSelection() {
-				return jobSelection;
-			}
-			
-			public void addSelectionChangedListener(ISelectionChangedListener arg0) {
-			}
-		});
-		super.init(viewer, jobSelection);
-	}
-	
-    /* (non-Javadoc)
-	 * @see org.talend.repository.ui.actions.AContextualAction#getCurrentRepositoryNode()
-	 */
-	@Override
-	protected RepositoryNode getCurrentRepositoryNode() {
-		return jobNode;
-	}
+        setSpecialSelection(new ISelectionProvider() {
 
-	public Class getClassForDoubleClick() {
-    	try {
-	        RepositoryNode repositoryNode = super.getCurrentRepositoryNode();
+            public void setSelection(ISelection arg0) {
+            }
+
+            public void removeSelectionChangedListener(ISelectionChangedListener arg0) {
+            }
+
+            public ISelection getSelection() {
+                return jobSelection;
+            }
+
+            public void addSelectionChangedListener(ISelectionChangedListener arg0) {
+            }
+        });
+        super.init(viewer, jobSelection);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.actions.AContextualAction#getCurrentRepositoryNode()
+     */
+    @Override
+    protected RepositoryNode getCurrentRepositoryNode() {
+        return jobNode;
+    }
+
+    public Class getClassForDoubleClick() {
+        try {
+            RepositoryNode repositoryNode = super.getCurrentRepositoryNode();
             return (getReferenceJobId(repositoryNode) != null) ? ServiceOperation.class : Object.class;
-    	} catch (Exception e) {
-    		//do nothing just return default
-    	}
+        } catch (Exception e) {
+            // do nothing just return default
+        }
         return ServiceOperation.class;
     }
 
     protected static String getReferenceJobId(IRepositoryNode node) {
-		String parentPortName = node.getParent().getLabel();
+        String parentPortName = node.getParent().getLabel();
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
         for (ServicePort port : listPort) {
-            if (port.getName().equals(parentPortName)) {
+            if (port.getPortName().equals(parentPortName)) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-                    if (operation.getLabel().equals(node.getLabel())) {
+                    if (operation.getOperationLabel().equals(node.getLabel())) {
                         return operation.getReferenceJobId();
                     }
                 }
@@ -133,6 +127,5 @@ public class OpenJobAction extends EditProcess {
         }
         return null;
     }
-    
-    
+
 }

@@ -175,7 +175,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServiceOperation_Label() {
+    public EAttribute getServiceOperation_OperationLabel() {
         return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(3);
     }
 
@@ -229,7 +229,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServicePort_Name() {
+    public EAttribute getServicePort_PortName() {
         return (EAttribute)servicePortEClass.getEStructuralFeatures().get(0);
     }
 
@@ -310,7 +310,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__REFERENCE_JOB_ID);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__OPERATION_NAME);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__DOCUMENTATION);
-        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__LABEL);
+        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__OPERATION_LABEL);
 
         serviceConnectionEClass = createEClass(SERVICE_CONNECTION);
         createEAttribute(serviceConnectionEClass, SERVICE_CONNECTION__WSDL_PATH);
@@ -318,7 +318,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEReference(serviceConnectionEClass, SERVICE_CONNECTION__ADDITIONAL_INFO);
 
         servicePortEClass = createEClass(SERVICE_PORT);
-        createEAttribute(servicePortEClass, SERVICE_PORT__NAME);
+        createEAttribute(servicePortEClass, SERVICE_PORT__PORT_NAME);
         createEReference(servicePortEClass, SERVICE_PORT__SERVICE_OPERATION);
         createEReference(servicePortEClass, SERVICE_PORT__ADDITIONAL_INFO);
 
@@ -359,7 +359,9 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         // Add supertypes to classes
         serviceItemEClass.getESuperTypes().add(thePropertiesPackage.getItem());
+        serviceOperationEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
         serviceConnectionEClass.getESuperTypes().add(theConnectionPackage.getConnection());
+        servicePortEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
 
         // Initialize classes and features; add operations and parameters
         initEClass(serviceItemEClass, ServiceItem.class, "ServiceItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -369,7 +371,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEAttribute(getServiceOperation_ReferenceJobId(), ecorePackage.getEString(), "referenceJobId", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_OperationName(), ecorePackage.getEString(), "operationName", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getServiceOperation_Label(), ecorePackage.getEString(), "label", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getServiceOperation_OperationLabel(), ecorePackage.getEString(), "operationLabel", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceConnection_WSDLPath(), theEcorePackage.getEString(), "WSDLPath", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -377,7 +379,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEReference(getServiceConnection_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(servicePortEClass, ServicePort.class, "ServicePort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getServicePort_Name(), ecorePackage.getEString(), "name", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getServicePort_PortName(), ecorePackage.getEString(), "portName", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

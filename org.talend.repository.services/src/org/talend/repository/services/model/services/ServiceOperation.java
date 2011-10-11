@@ -6,6 +6,7 @@
  */
 package org.talend.repository.services.model.services;
 
+import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
 import org.eclipse.emf.common.util.EMap;
 import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
@@ -21,7 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getReferenceJobId <em>Reference Job Id</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getOperationName <em>Operation Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getDocumentation <em>Documentation</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -29,7 +30,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ServiceOperation extends EObject {
+public interface ServiceOperation extends AbstractMetadataObject {
     /**
      * Returns the value of the '<em><b>Reference Job Id</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -109,29 +110,29 @@ public interface ServiceOperation extends EObject {
     void setDocumentation(String value);
 
     /**
-     * Returns the value of the '<em><b>Label</b></em>' attribute.
+     * Returns the value of the '<em><b>Operation Label</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Label</em>' attribute isn't clear,
+     * If the meaning of the '<em>Operation Label</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Label</em>' attribute.
-     * @see #setLabel(String)
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceOperation_Label()
+     * @return the value of the '<em>Operation Label</em>' attribute.
+     * @see #setOperationLabel(String)
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceOperation_OperationLabel()
      * @model
      * @generated
      */
-    String getLabel();
+    String getOperationLabel();
 
     /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceOperation#getLabel <em>Label</em>}' attribute.
+     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Label</em>' attribute.
-     * @see #getLabel()
+     * @param value the new value of the '<em>Operation Label</em>' attribute.
+     * @see #getOperationLabel()
      * @generated
      */
-    void setLabel(String value);
+    void setOperationLabel(String value);
 
 } // ServiceOperation

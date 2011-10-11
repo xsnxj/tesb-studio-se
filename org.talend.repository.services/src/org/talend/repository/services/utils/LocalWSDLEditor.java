@@ -124,7 +124,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
                 ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
                 String portName = portType.getQName().getLocalPart();
-                port.setName(portName);
+                port.setPortName(portName);
                 List<Operation> list = portType.getOperations();
                 for (Operation operation : list) {
                     if (operation.isUndefined()) {
@@ -141,14 +141,14 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     if (operationNames != null) {
                         for (String name : operationNames) {
                             if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
-                                serviceOperation.setLabel(name);
+                                serviceOperation.setOperationLabel(name);
                                 hasAssignedjob = true;
                                 break;
                             }
                         }
                     }
                     if (!hasAssignedjob) {
-                        serviceOperation.setLabel(operation.getName());
+                        serviceOperation.setOperationLabel(operation.getName());
                     }
                     port.getServiceOperation().add(serviceOperation);
                 }

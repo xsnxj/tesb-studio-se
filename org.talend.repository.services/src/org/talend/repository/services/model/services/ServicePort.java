@@ -9,6 +9,7 @@ package org.talend.repository.services.model.services;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.common.util.EMap;
+import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -19,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServicePort#getPortName <em>Port Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
@@ -29,32 +30,32 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ServicePort extends EObject {
+public interface ServicePort extends AbstractMetadataObject {
     /**
-     * Returns the value of the '<em><b>Name</b></em>' attribute.
+     * Returns the value of the '<em><b>Port Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Name</em>' attribute isn't clear,
+     * If the meaning of the '<em>Port Name</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Name</em>' attribute.
-     * @see #setName(String)
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_Name()
+     * @return the value of the '<em>Port Name</em>' attribute.
+     * @see #setPortName(String)
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_PortName()
      * @model
      * @generated
      */
-    String getName();
+    String getPortName();
 
     /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}' attribute.
+     * Sets the value of the '{@link org.talend.repository.services.model.services.ServicePort#getPortName <em>Port Name</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Name</em>' attribute.
-     * @see #getName()
+     * @param value the new value of the '<em>Port Name</em>' attribute.
+     * @see #getPortName()
      * @generated
      */
-    void setName(String value);
+    void setPortName(String value);
 
     /**
      * Returns the value of the '<em><b>Service Operation</b></em>' reference list.

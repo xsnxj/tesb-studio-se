@@ -243,7 +243,7 @@ public class OpenWSDLPage extends WizardPage {
                         QName key = (QName) it.next();
                         PortType portType = (PortType) portTypes.get(key);
                         ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
-                        port.setName(portType.getQName().getLocalPart());
+                        port.setPortName(portType.getQName().getLocalPart());
                         List<Operation> list = portType.getOperations();
                         for (Operation operation : list) {
                             ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
@@ -255,7 +255,7 @@ public class OpenWSDLPage extends WizardPage {
                             if (operation.getDocumentationElement() != null) {
                                 serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                             }
-                            serviceOperation.setLabel(operation.getName());
+                            serviceOperation.setOperationLabel(operation.getName());
                             port.getServiceOperation().add(serviceOperation);
                         }
                         item.getServiceConnection().getServicePort().add(port);

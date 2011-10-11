@@ -1,7 +1,6 @@
 /**
- * <copyright>
- * </copyright>
- *
+ * <copyright> </copyright>
+ * 
  * $Id$
  */
 package org.talend.repository.services.model.services.impl;
@@ -9,66 +8,62 @@ package org.talend.repository.services.model.services.impl;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.talend.core.model.metadata.builder.connection.impl.AbstractMetadataObjectImpl;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesPackage;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Service Port</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Service Port</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getServiceOperation <em>Service Operation</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getAdditionalInfo <em>Additional Info</em>}</li>
+ * <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getPortName <em>Port Name</em>}</li>
+ * <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getServiceOperation <em>Service
+ * Operation</em>}</li>
+ * <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getAdditionalInfo <em>Additional Info
+ * </em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
-public class ServicePortImpl extends EObjectImpl implements ServicePort {
+public class ServicePortImpl extends AbstractMetadataObjectImpl implements ServicePort {
+
     /**
-     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getName()
+     * The default value of the '{@link #getPortName() <em>Port Name</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @see #getPortName()
      * @generated
      * @ordered
      */
-    protected static final String NAME_EDEFAULT = null;
+    protected static final String PORT_NAME_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getName()
+     * The cached value of the '{@link #getPortName() <em>Port Name</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @see #getPortName()
      * @generated
      * @ordered
      */
-    protected String name = NAME_EDEFAULT;
+    protected String portName = PORT_NAME_EDEFAULT;
 
     /**
-     * The cached value of the '{@link #getServiceOperation() <em>Service Operation</em>}' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The cached value of the '{@link #getServiceOperation() <em>Service Operation</em>}' reference list. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @see #getServiceOperation()
      * @generated
      * @ordered
@@ -76,9 +71,9 @@ public class ServicePortImpl extends EObjectImpl implements ServicePort {
     protected EList<ServiceOperation> serviceOperation;
 
     /**
-     * The cached value of the '{@link #getAdditionalInfo() <em>Additional Info</em>}' map.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The cached value of the '{@link #getAdditionalInfo() <em>Additional Info</em>}' map. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
      * @see #getAdditionalInfo()
      * @generated
      * @ordered
@@ -86,8 +81,8 @@ public class ServicePortImpl extends EObjectImpl implements ServicePort {
     protected EMap<String, String> additionalInfo;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     protected ServicePortImpl() {
@@ -95,8 +90,8 @@ public class ServicePortImpl extends EObjectImpl implements ServicePort {
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
@@ -105,159 +100,168 @@ public class ServicePortImpl extends EObjectImpl implements ServicePort {
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
-    public String getName() {
-        return name;
+    public String getPortName() {
+        return portName;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
-    public void setName(String newName) {
-        String oldName = name;
-        name = newName;
+    public void setPortName(String newPortName) {
+        String oldPortName = portName;
+        portName = newPortName;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__NAME, oldName, name));
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__PORT_NAME, oldPortName, portName));
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public EList<ServiceOperation> getServiceOperation() {
         if (serviceOperation == null) {
-            serviceOperation = new EObjectResolvingEList<ServiceOperation>(ServiceOperation.class, this, ServicesPackage.SERVICE_PORT__SERVICE_OPERATION);
+            serviceOperation = new EObjectResolvingEList<ServiceOperation>(ServiceOperation.class, this,
+                    ServicesPackage.SERVICE_PORT__SERVICE_OPERATION);
         }
         return serviceOperation;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     public EMap<String, String> getAdditionalInfo() {
         if (additionalInfo == null) {
-            additionalInfo = new EcoreEMap<String,String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO);
+            additionalInfo = new EcoreEMap<String, String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP,
+                    AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO);
         }
         return additionalInfo;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
-                return ((InternalEList<?>)getAdditionalInfo()).basicRemove(otherEnd, msgs);
+        case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
+            return ((InternalEList<?>) getAdditionalInfo()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__NAME:
-                return getName();
-            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
-                return getServiceOperation();
-            case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
-                if (coreType) return getAdditionalInfo();
-                else return getAdditionalInfo().map();
+        case ServicesPackage.SERVICE_PORT__PORT_NAME:
+            return getPortName();
+        case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+            return getServiceOperation();
+        case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
+            if (coreType)
+                return getAdditionalInfo();
+            else
+                return getAdditionalInfo().map();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__NAME:
-                setName((String)newValue);
-                return;
-            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
-                getServiceOperation().clear();
-                getServiceOperation().addAll((Collection<? extends ServiceOperation>)newValue);
-                return;
-            case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
-                ((EStructuralFeature.Setting)getAdditionalInfo()).set(newValue);
-                return;
+        case ServicesPackage.SERVICE_PORT__PORT_NAME:
+            setPortName((String) newValue);
+            return;
+        case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+            getServiceOperation().clear();
+            getServiceOperation().addAll((Collection<? extends ServiceOperation>) newValue);
+            return;
+        case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
+            ((EStructuralFeature.Setting) getAdditionalInfo()).set(newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__NAME:
-                setName(NAME_EDEFAULT);
-                return;
-            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
-                getServiceOperation().clear();
-                return;
-            case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
-                getAdditionalInfo().clear();
-                return;
+        case ServicesPackage.SERVICE_PORT__PORT_NAME:
+            setPortName(PORT_NAME_EDEFAULT);
+            return;
+        case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+            getServiceOperation().clear();
+            return;
+        case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
+            getAdditionalInfo().clear();
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__NAME:
-                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-            case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
-                return serviceOperation != null && !serviceOperation.isEmpty();
-            case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
-                return additionalInfo != null && !additionalInfo.isEmpty();
+        case ServicesPackage.SERVICE_PORT__PORT_NAME:
+            return PORT_NAME_EDEFAULT == null ? portName != null : !PORT_NAME_EDEFAULT.equals(portName);
+        case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
+            return serviceOperation != null && !serviceOperation.isEmpty();
+        case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
+            return additionalInfo != null && !additionalInfo.isEmpty();
         }
         return super.eIsSet(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @generated
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (eIsProxy())
+            return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (name: ");
-        result.append(name);
+        result.append(" (portName: ");
+        result.append(portName);
         result.append(')');
         return result.toString();
     }
 
-} //ServicePortImpl
+    public boolean isReadOnly() {
+        return false;
+    }
+
+} // ServicePortImpl
