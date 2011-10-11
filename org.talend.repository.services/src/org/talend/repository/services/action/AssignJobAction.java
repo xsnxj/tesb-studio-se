@@ -110,7 +110,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
                 List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
                 for (ServicePort port : listPort) {
-                    if (port.getName().equals(parentPortName)) {
+                    if (port.getPortName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
                             if (operation.getOperationLabel().equals(operationName)) {

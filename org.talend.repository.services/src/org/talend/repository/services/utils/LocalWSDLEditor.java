@@ -91,7 +91,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
 
     private void saveModel(String path) {
-
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         WSDLFactory wsdlFactory;
         try {
             wsdlFactory = WSDLFactory.newInstance();
@@ -123,6 +123,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 }
 
                 ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
+                port.setId(factory.getNextId());
                 String portName = portType.getQName().getLocalPart();
                 port.setPortName(portName);
                 List<Operation> list = portType.getOperations();
@@ -132,6 +133,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         continue;
                     }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
+                    serviceOperation.setId(factory.getNextId());
                     serviceOperation.setOperationName(operation.getName());
                     if (operation.getDocumentationElement() != null) {
                         serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
