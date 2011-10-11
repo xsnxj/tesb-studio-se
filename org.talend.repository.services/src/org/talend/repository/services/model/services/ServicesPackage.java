@@ -90,17 +90,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_ITEM__REFERENCE_RESOURCES = PropertiesPackage.ITEM__REFERENCE_RESOURCES;
 
     /**
-     * The feature id for the '<em><b>Service Connection</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Service Connection</b></em>' reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -126,8 +126,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -135,8 +134,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Visibility</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -144,8 +142,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -153,8 +151,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Supplier Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -162,17 +160,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Constraint</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__CONSTRAINT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CONSTRAINT;
 
     /**
-     * The feature id for the '<em><b>Namespace</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Namespace</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -180,8 +177,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Importer</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -189,8 +185,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Stereotype</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -198,8 +193,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Tagged Value</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -207,17 +202,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Document</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__DOCUMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DOCUMENT;
 
     /**
-     * The feature id for the '<em><b>Description</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Description</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -225,17 +219,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Responsible Party</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__RESPONSIBLE_PARTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RESPONSIBLE_PARTY;
 
     /**
-     * The feature id for the '<em><b>Element Node</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Element Node</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -243,8 +237,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Set</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -252,8 +245,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Rendered Object</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -261,35 +254,35 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Vocabulary Element</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__VOCABULARY_ELEMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VOCABULARY_ELEMENT;
 
     /**
-     * The feature id for the '<em><b>Measurement</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Measurement</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__MEASUREMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__MEASUREMENT;
 
     /**
-     * The feature id for the '<em><b>Change Request</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Change Request</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_OPERATION__CHANGE_REQUEST = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CHANGE_REQUEST;
 
     /**
-     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -297,8 +290,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -306,8 +298,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -315,8 +306,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Comment</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -324,8 +314,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Label</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -333,8 +322,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Read Only</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -342,8 +330,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Synchronised</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -351,8 +338,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Divergency</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -385,8 +371,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Operation Label</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -403,8 +388,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @see org.talend.repository.services.model.services.impl.ServiceConnectionImpl
      * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServiceConnection()
      * @generated
@@ -413,8 +397,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -422,8 +405,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Visibility</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -431,8 +413,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -440,8 +422,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Supplier Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -449,17 +431,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Constraint</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__CONSTRAINT = ConnectionPackage.CONNECTION__CONSTRAINT;
 
     /**
-     * The feature id for the '<em><b>Namespace</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Namespace</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -467,8 +448,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Importer</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -476,8 +456,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Stereotype</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -485,8 +464,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Tagged Value</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -494,17 +473,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Document</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__DOCUMENT = ConnectionPackage.CONNECTION__DOCUMENT;
 
     /**
-     * The feature id for the '<em><b>Description</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Description</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -512,17 +490,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Responsible Party</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__RESPONSIBLE_PARTY = ConnectionPackage.CONNECTION__RESPONSIBLE_PARTY;
 
     /**
-     * The feature id for the '<em><b>Element Node</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Element Node</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -530,8 +508,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Set</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -539,8 +516,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Rendered Object</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -548,35 +525,35 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Vocabulary Element</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__VOCABULARY_ELEMENT = ConnectionPackage.CONNECTION__VOCABULARY_ELEMENT;
 
     /**
-     * The feature id for the '<em><b>Measurement</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Measurement</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__MEASUREMENT = ConnectionPackage.CONNECTION__MEASUREMENT;
 
     /**
-     * The feature id for the '<em><b>Change Request</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Change Request</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__CHANGE_REQUEST = ConnectionPackage.CONNECTION__CHANGE_REQUEST;
 
     /**
-     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -584,8 +561,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -593,8 +569,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -602,8 +577,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Comment</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -611,8 +585,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Label</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -620,8 +593,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Read Only</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -629,8 +601,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Synchronised</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -638,8 +609,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Divergency</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -647,8 +617,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Owned Element</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -656,17 +626,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Imported Element</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__IMPORTED_ELEMENT = ConnectionPackage.CONNECTION__IMPORTED_ELEMENT;
 
     /**
-     * The feature id for the '<em><b>Data Manager</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Data Manager</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -674,17 +644,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Pathname</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__PATHNAME = ConnectionPackage.CONNECTION__PATHNAME;
 
     /**
-     * The feature id for the '<em><b>Machine</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Machine</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -692,8 +661,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Deployed Software System</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -701,17 +670,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Component</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__COMPONENT = ConnectionPackage.CONNECTION__COMPONENT;
 
     /**
-     * The feature id for the '<em><b>Is Case Sensitive</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Is Case Sensitive</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -719,17 +687,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Client Connection</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__CLIENT_CONNECTION = ConnectionPackage.CONNECTION__CLIENT_CONNECTION;
 
     /**
-     * The feature id for the '<em><b>Data Package</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Data Package</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -746,17 +714,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Version</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__VERSION = ConnectionPackage.CONNECTION__VERSION;
 
     /**
-     * The feature id for the '<em><b>Queries</b></em>' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Queries</b></em>' containment reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -764,8 +731,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Context Mode</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -773,35 +739,33 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Context Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__CONTEXT_ID = ConnectionPackage.CONNECTION__CONTEXT_ID;
 
     /**
-     * The feature id for the '<em><b>Context Group Name</b></em>' attribute.
+     * The feature id for the '<em><b>Context Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__CONTEXT_GROUP_NAME = ConnectionPackage.CONNECTION__CONTEXT_GROUP_NAME;
+    int SERVICE_CONNECTION__CONTEXT_NAME = ConnectionPackage.CONNECTION__CONTEXT_NAME;
 
     /**
      * The feature id for the '<em><b>WSDL Path</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_CONNECTION__WSDL_PATH = ConnectionPackage.CONNECTION_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Service Port</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Service Port</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -809,8 +773,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Additional Info</b></em>' map.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -818,8 +781,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The number of structural features of the '<em>Service Connection</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -827,8 +790,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @see org.talend.repository.services.model.services.impl.ServicePortImpl
      * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServicePort()
      * @generated
@@ -837,8 +799,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -846,8 +807,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Visibility</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -855,8 +815,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -864,8 +824,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Supplier Dependency</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -873,17 +833,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Constraint</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_PORT__CONSTRAINT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CONSTRAINT;
 
     /**
-     * The feature id for the '<em><b>Namespace</b></em>' container reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Namespace</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -891,8 +850,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Importer</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -900,8 +858,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Stereotype</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -909,8 +866,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Tagged Value</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -918,17 +875,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Document</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_PORT__DOCUMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DOCUMENT;
 
     /**
-     * The feature id for the '<em><b>Description</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Description</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -936,17 +892,17 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Responsible Party</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_PORT__RESPONSIBLE_PARTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RESPONSIBLE_PARTY;
 
     /**
-     * The feature id for the '<em><b>Element Node</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Element Node</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -954,8 +910,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Set</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -963,8 +918,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Rendered Object</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -972,35 +927,35 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Vocabulary Element</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_PORT__VOCABULARY_ELEMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VOCABULARY_ELEMENT;
 
     /**
-     * The feature id for the '<em><b>Measurement</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Measurement</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_PORT__MEASUREMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__MEASUREMENT;
 
     /**
-     * The feature id for the '<em><b>Change Request</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Change Request</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
     int SERVICE_PORT__CHANGE_REQUEST = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CHANGE_REQUEST;
 
     /**
-     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -1008,8 +963,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Properties</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1017,8 +971,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1026,8 +979,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Comment</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1035,8 +987,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Label</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1044,8 +995,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Read Only</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1053,8 +1003,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Synchronised</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1062,8 +1011,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Divergency</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1071,8 +1019,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Port Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1080,8 +1027,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Service Operation</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1089,17 +1036,16 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Additional Info</b></em>' map.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
     int SERVICE_PORT__ADDITIONAL_INFO = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
 
     /**
-     * The number of structural features of the '<em>Service Port</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The number of structural features of the '<em>Service Port</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
      * @generated
      * @ordered
      */
@@ -1107,8 +1053,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @see org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl
      * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getAdditionalInfoMap()
      * @generated
@@ -1117,8 +1062,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Key</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1126,8 +1070,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Value</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1135,8 +1078,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The number of structural features of the '<em>Additional Info Map</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!--
+     * end-user-doc -->
      * @generated
      * @ordered
      */
@@ -1153,8 +1096,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the reference '{@link org.talend.repository.services.model.services.ServiceItem#getServiceConnection <em>Service Connection</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the reference '<em>Service Connection</em>'.
      * @see org.talend.repository.services.model.services.ServiceItem#getServiceConnection()
      * @see #getServiceItem()
@@ -1203,8 +1145,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the attribute '<em>Operation Label</em>'.
      * @see org.talend.repository.services.model.services.ServiceOperation#getOperationLabel()
      * @see #getServiceOperation()
@@ -1214,8 +1155,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceConnection <em>Service Connection</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for class '<em>Service Connection</em>'.
      * @see org.talend.repository.services.model.services.ServiceConnection
      * @generated
@@ -1223,9 +1163,10 @@ public interface ServicesPackage extends EPackage {
     EClass getServiceConnection();
 
     /**
-     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceConnection#getWSDLPath <em>WSDL Path</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Returns the meta object for the attribute '
+     * {@link org.talend.repository.services.model.services.ServiceConnection#getWSDLPath <em>WSDL Path</em>}'. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @return the meta object for the attribute '<em>WSDL Path</em>'.
      * @see org.talend.repository.services.model.services.ServiceConnection#getWSDLPath()
      * @see #getServiceConnection()
@@ -1235,8 +1176,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServiceConnection#getServicePort <em>Service Port</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the reference list '<em>Service Port</em>'.
      * @see org.talend.repository.services.model.services.ServiceConnection#getServicePort()
      * @see #getServiceConnection()
@@ -1246,8 +1186,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the map '{@link org.talend.repository.services.model.services.ServiceConnection#getAdditionalInfo <em>Additional Info</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the map '<em>Additional Info</em>'.
      * @see org.talend.repository.services.model.services.ServiceConnection#getAdditionalInfo()
      * @see #getServiceConnection()
@@ -1257,8 +1196,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServicePort <em>Service Port</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for class '<em>Service Port</em>'.
      * @see org.talend.repository.services.model.services.ServicePort
      * @generated
@@ -1266,9 +1204,10 @@ public interface ServicesPackage extends EPackage {
     EClass getServicePort();
 
     /**
-     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServicePort#getPortName <em>Port Name</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Returns the meta object for the attribute '
+     * {@link org.talend.repository.services.model.services.ServicePort#getPortName <em>Port Name</em>}'. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     * 
      * @return the meta object for the attribute '<em>Port Name</em>'.
      * @see org.talend.repository.services.model.services.ServicePort#getPortName()
      * @see #getServicePort()
@@ -1278,8 +1217,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the reference list '<em>Service Operation</em>'.
      * @see org.talend.repository.services.model.services.ServicePort#getServiceOperation()
      * @see #getServicePort()
@@ -1289,8 +1227,7 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for the map '{@link org.talend.repository.services.model.services.ServicePort#getAdditionalInfo <em>Additional Info</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the map '<em>Additional Info</em>'.
      * @see org.talend.repository.services.model.services.ServicePort#getAdditionalInfo()
      * @see #getServicePort()
@@ -1300,8 +1237,8 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * Returns the meta object for class '{@link java.util.Map.Entry <em>Additional Info Map</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc
+     * --> <!-- end-user-doc -->
      * @return the meta object for class '<em>Additional Info Map</em>'.
      * @see java.util.Map.Entry
      * @model keyDataType="org.eclipse.emf.ecore.EString"
@@ -1364,8 +1301,8 @@ public interface ServicesPackage extends EPackage {
 
         /**
          * The meta object literal for the '<em><b>Service Connection</b></em>' reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc
+         * --> <!-- end-user-doc -->
          * @generated
          */
         EReference SERVICE_ITEM__SERVICE_CONNECTION = eINSTANCE.getServiceItem_ServiceConnection();
@@ -1413,8 +1350,7 @@ public interface ServicesPackage extends EPackage {
 
         /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!-- end-user-doc -->
          * @see org.talend.repository.services.model.services.impl.ServiceConnectionImpl
          * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServiceConnection()
          * @generated
@@ -1423,32 +1359,31 @@ public interface ServicesPackage extends EPackage {
 
         /**
          * The meta object literal for the '<em><b>WSDL Path</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EAttribute SERVICE_CONNECTION__WSDL_PATH = eINSTANCE.getServiceConnection_WSDLPath();
 
         /**
          * The meta object literal for the '<em><b>Service Port</b></em>' reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc
+         * --> <!-- end-user-doc -->
          * @generated
          */
         EReference SERVICE_CONNECTION__SERVICE_PORT = eINSTANCE.getServiceConnection_ServicePort();
 
         /**
          * The meta object literal for the '<em><b>Additional Info</b></em>' map feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EReference SERVICE_CONNECTION__ADDITIONAL_INFO = eINSTANCE.getServiceConnection_AdditionalInfo();
 
         /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServicePortImpl <em>Service Port</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!-- end-user-doc -->
          * @see org.talend.repository.services.model.services.impl.ServicePortImpl
          * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getServicePort()
          * @generated
@@ -1457,32 +1392,31 @@ public interface ServicesPackage extends EPackage {
 
         /**
          * The meta object literal for the '<em><b>Port Name</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EAttribute SERVICE_PORT__PORT_NAME = eINSTANCE.getServicePort_PortName();
 
         /**
-         * The meta object literal for the '<em><b>Service Operation</b></em>' reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * The meta object literal for the '<em><b>Service Operation</b></em>' reference list feature. <!--
+         * begin-user-doc --> <!-- end-user-doc -->
+         * 
          * @generated
          */
         EReference SERVICE_PORT__SERVICE_OPERATION = eINSTANCE.getServicePort_ServiceOperation();
 
         /**
          * The meta object literal for the '<em><b>Additional Info</b></em>' map feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EReference SERVICE_PORT__ADDITIONAL_INFO = eINSTANCE.getServicePort_AdditionalInfo();
 
         /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!-- end-user-doc -->
          * @see org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl
          * @see org.talend.repository.services.model.services.impl.ServicesPackageImpl#getAdditionalInfoMap()
          * @generated
@@ -1491,16 +1425,16 @@ public interface ServicesPackage extends EPackage {
 
         /**
          * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EAttribute ADDITIONAL_INFO_MAP__KEY = eINSTANCE.getAdditionalInfoMap_Key();
 
         /**
          * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
+         * <!-- begin-user-doc --> <!--
+         * end-user-doc -->
          * @generated
          */
         EAttribute ADDITIONAL_INFO_MAP__VALUE = eINSTANCE.getAdditionalInfoMap_Value();
