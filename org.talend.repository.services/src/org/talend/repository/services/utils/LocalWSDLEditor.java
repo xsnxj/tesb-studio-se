@@ -1,5 +1,7 @@
 package org.talend.repository.services.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
@@ -88,6 +91,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
 
     private void saveModel(String path) {
+
         WSDLFactory wsdlFactory;
         try {
             wsdlFactory = WSDLFactory.newInstance();
@@ -97,20 +101,55 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             Definition definition = newWSDLReader.readWSDL(path);
             Map portTypes = definition.getAllPortTypes();
             Iterator it = portTypes.keySet().iterator();
+            EList<ServicePort> oldServicePorts = serviceItem.getServiceConnection().getServicePort();
+
+            // get old service port item names and operation names under them
+            HashMap<String, ArrayList<String>> oldPortItemNames = new HashMap<String, ArrayList<String>>();
+            for (ServicePort servicePort : oldServicePorts) {
+                EList<ServiceOperation> operations = servicePort.getServiceOperation();
+                ArrayList<String> operationNames = new ArrayList<String>();
+                for (ServiceOperation operation : operations) {
+                    operationNames.add(operation.getLabel());
+                }
+                oldPortItemNames.put(servicePort.getName(), operationNames);
+            }
+
             serviceItem.getServiceConnection().getServicePort().clear();
             while (it.hasNext()) {
                 QName key = (QName) it.next();
                 PortType portType = (PortType) portTypes.get(key);
+                if (portType.isUndefined()) {
+                    continue;
+                }
+
                 ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
-                port.setName(portType.getQName().getLocalPart());
+                String portName = portType.getQName().getLocalPart();
+                port.setName(portName);
                 List<Operation> list = portType.getOperations();
                 for (Operation operation : list) {
+                    if (operation.isUndefined()) {
+                        // means the operation has been removed already ,why ?
+                        continue;
+                    }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                     serviceOperation.setOperationName(operation.getName());
                     if (operation.getDocumentationElement() != null) {
                         serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                     }
-                    serviceOperation.setLabel(operation.getName());
+                    boolean hasAssignedjob = false;
+                    ArrayList<String> operationNames = oldPortItemNames.get(portName);
+                    if (operationNames != null) {
+                        for (String name : operationNames) {
+                            if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
+                                serviceOperation.setLabel(name);
+                                hasAssignedjob = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!hasAssignedjob) {
+                        serviceOperation.setLabel(operation.getName());
+                    }
                     port.getServiceOperation().add(serviceOperation);
                 }
                 serviceItem.getServiceConnection().getServicePort().add(port);
