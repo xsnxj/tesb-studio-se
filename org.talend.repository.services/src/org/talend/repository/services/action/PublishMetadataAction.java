@@ -26,10 +26,8 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.PortType;
-import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 
-import org.apache.ws.commons.schema.XmlSchema;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -71,7 +69,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-	protected static final String ACTION_LABEL = "Publish WSDL Schemas";
+	protected static final String ACTION_LABEL = "Import WSDL Schemas";
 	private IStructuredSelection selection;
 
 	/*

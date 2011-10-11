@@ -60,7 +60,7 @@
     <Action
             class="org.talend.repository.services.action.PublishMetadataAction"
             id="org.talend.repository.services.action.PublishMetadataAction"
-            name="Publish WSDL Schemas"/>
+            name="Import WSDL Schemas"/>
     
  </extension>
  <extension
