@@ -45,6 +45,10 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private RepositoryNode repositoryNode;
 
+    private Map portStore = new HashMap();
+
+    private Map operationStore = new HashMap();
+
     public LocalWSDLEditor() {
         // TODO Auto-generated constructor stub
     }
@@ -114,6 +118,16 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 oldPortItemNames.put(servicePort.getName(), operationNames);
             }
 
+            List<ServicePort> portList = serviceItem.getServiceConnection().getServicePort();
+            for (int i = 0; i < portList.size(); i++) {
+                ServicePort port = (ServicePort) portList.get(i);
+                portStore.put(port.getPortName(), port.getId());
+                List<ServiceOperation> operationList = port.getServiceOperation();
+                for (int j = 0; j < operationList.size(); j++) {
+                    ServiceOperation operation = (ServiceOperation) operationList.get(j);
+                    operationStore.put(operation.getOperationName(), operation.getId());
+                }
+            }
             serviceItem.getServiceConnection().getServicePort().clear();
             while (it.hasNext()) {
                 QName key = (QName) it.next();
@@ -123,9 +137,20 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 }
 
                 ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
-                port.setId(factory.getNextId());
                 String portName = portType.getQName().getLocalPart();
                 port.setPortName(portName);
+                // set port id
+                Iterator portIterator = portStore.keySet().iterator();
+                while (portIterator.hasNext()) {
+                    String oldportName = (String) portIterator.next();
+                    if (oldportName.equals(portName)) {
+                        String id = (String) portStore.get(oldportName);
+                        port.setId(id);
+                    }
+                }
+                if (port.getId() == null || port.getId().equals("")) {
+                    port.setId(factory.getNextId());
+                }
                 List<Operation> list = portType.getOperations();
                 for (Operation operation : list) {
                     if (operation.isUndefined()) {
@@ -133,8 +158,18 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         continue;
                     }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
-                    serviceOperation.setId(factory.getNextId());
                     serviceOperation.setOperationName(operation.getName());
+                    Iterator operationIterator = operationStore.keySet().iterator();
+                    while (operationIterator.hasNext()) {
+                        String oldOperationName = (String) operationIterator.next();
+                        String operationId = (String) operationStore.get(oldOperationName);
+                        if (oldOperationName.equals(operation.getName())) {
+                            serviceOperation.setId(operationId);
+                        }
+                    }
+                    if (serviceOperation.getId() == null || serviceOperation.getId().equals("")) {
+                        serviceOperation.setId(factory.getNextId());
+                    }
                     if (operation.getDocumentationElement() != null) {
                         serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                     }
@@ -159,6 +194,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         } catch (WSDLException e) {
             e.printStackTrace();
         }
+        portStore.clear();
+        operationStore.clear();
     }
 
     @Override
