@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getReferenceJobId <em>Reference Job Id</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getOperationName <em>Operation Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getDocumentation <em>Documentation</em>}</li>
- *   <li>{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}</li>
  * </ul>
  * </p>
  *
@@ -108,31 +107,5 @@ public interface ServiceOperation extends AbstractMetadataObject {
      * @generated
      */
     void setDocumentation(String value);
-
-    /**
-     * Returns the value of the '<em><b>Operation Label</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Operation Label</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Operation Label</em>' attribute.
-     * @see #setOperationLabel(String)
-     * @see org.talend.repository.services.model.services.ServicesPackage#getServiceOperation_OperationLabel()
-     * @model
-     * @generated
-     */
-    String getOperationLabel();
-
-    /**
-     * Sets the value of the '{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Operation Label</em>' attribute.
-     * @see #getOperationLabel()
-     * @generated
-     */
-    void setOperationLabel(String value);
 
 } // ServiceOperation

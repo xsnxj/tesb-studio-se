@@ -130,15 +130,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getServiceItem_ServiceConnection() {
-        return (EReference)serviceItemEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
@@ -168,15 +159,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      */
     public EAttribute getServiceOperation_Documentation() {
         return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(2);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getServiceOperation_OperationLabel() {
-        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(3);
     }
 
     /**
@@ -304,13 +286,11 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         // Create classes and their features
         serviceItemEClass = createEClass(SERVICE_ITEM);
-        createEReference(serviceItemEClass, SERVICE_ITEM__SERVICE_CONNECTION);
 
         serviceOperationEClass = createEClass(SERVICE_OPERATION);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__REFERENCE_JOB_ID);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__OPERATION_NAME);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__DOCUMENTATION);
-        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__OPERATION_LABEL);
 
         serviceConnectionEClass = createEClass(SERVICE_CONNECTION);
         createEAttribute(serviceConnectionEClass, SERVICE_CONNECTION__WSDL_PATH);
@@ -358,20 +338,18 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         // Set bounds for type parameters
 
         // Add supertypes to classes
-        serviceItemEClass.getESuperTypes().add(thePropertiesPackage.getItem());
+        serviceItemEClass.getESuperTypes().add(thePropertiesPackage.getConnectionItem());
         serviceOperationEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
         serviceConnectionEClass.getESuperTypes().add(theConnectionPackage.getConnection());
         servicePortEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
 
         // Initialize classes and features; add operations and parameters
         initEClass(serviceItemEClass, ServiceItem.class, "ServiceItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getServiceItem_ServiceConnection(), this.getServiceConnection(), null, "serviceConnection", null, 0, 1, ServiceItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceOperationEClass, ServiceOperation.class, "ServiceOperation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceOperation_ReferenceJobId(), ecorePackage.getEString(), "referenceJobId", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_OperationName(), ecorePackage.getEString(), "operationName", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getServiceOperation_OperationLabel(), ecorePackage.getEString(), "operationLabel", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceConnection_WSDLPath(), theEcorePackage.getEString(), "WSDLPath", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
 import org.talend.core.model.metadata.builder.connection.Connection;
+import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 
 import org.talend.repository.services.model.services.*;
@@ -101,6 +102,7 @@ public class ServicesSwitch<T> {
             case ServicesPackage.SERVICE_ITEM: {
                 ServiceItem serviceItem = (ServiceItem)theEObject;
                 T result = caseServiceItem(serviceItem);
+                if (result == null) result = caseConnectionItem(serviceItem);
                 if (result == null) result = caseItem(serviceItem);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
@@ -235,6 +237,21 @@ public class ServicesSwitch<T> {
      * @generated
      */
     public T caseItem(Item object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Connection Item</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Connection Item</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseConnectionItem(ConnectionItem object) {
         return null;
     }
 

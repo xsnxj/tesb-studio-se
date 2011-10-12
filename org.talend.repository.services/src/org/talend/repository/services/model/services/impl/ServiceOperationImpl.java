@@ -94,26 +94,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     protected String documentation = DOCUMENTATION_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getOperationLabel() <em>Operation Label</em>}' attribute.
-     * <!-- begin-user-doc
-     * --> <!-- end-user-doc -->
-     * @see #getOperationLabel()
-     * @generated
-     * @ordered
-     */
-    protected static final String OPERATION_LABEL_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getOperationLabel() <em>Operation Label</em>}' attribute.
-     * <!-- begin-user-doc
-     * --> <!-- end-user-doc -->
-     * @see #getOperationLabel()
-     * @generated
-     * @ordered
-     */
-    protected String operationLabel = OPERATION_LABEL_EDEFAULT;
-
-    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
@@ -191,25 +171,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
-    public String getOperationLabel() {
-        return operationLabel;
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public void setOperationLabel(String newOperationLabel) {
-        String oldOperationLabel = operationLabel;
-        operationLabel = newOperationLabel;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_OPERATION__OPERATION_LABEL, oldOperationLabel, operationLabel));
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
@@ -219,8 +180,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
                 return getOperationName();
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 return getDocumentation();
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_LABEL:
-                return getOperationLabel();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -242,9 +201,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 setDocumentation((String)newValue);
                 return;
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_LABEL:
-                setOperationLabel((String)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -265,9 +221,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 setDocumentation(DOCUMENTATION_EDEFAULT);
                 return;
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_LABEL:
-                setOperationLabel(OPERATION_LABEL_EDEFAULT);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -285,8 +238,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
                 return OPERATION_NAME_EDEFAULT == null ? operationName != null : !OPERATION_NAME_EDEFAULT.equals(operationName);
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_LABEL:
-                return OPERATION_LABEL_EDEFAULT == null ? operationLabel != null : !OPERATION_LABEL_EDEFAULT.equals(operationLabel);
         }
         return super.eIsSet(featureID);
     }
@@ -306,8 +257,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         result.append(operationName);
         result.append(", documentation: ");
         result.append(documentation);
-        result.append(", operationLabel: ");
-        result.append(operationLabel);
         result.append(')');
         return result.toString();
     }

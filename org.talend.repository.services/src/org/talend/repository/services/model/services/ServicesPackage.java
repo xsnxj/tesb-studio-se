@@ -70,7 +70,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM__PROPERTY = PropertiesPackage.ITEM__PROPERTY;
+    int SERVICE_ITEM__PROPERTY = PropertiesPackage.CONNECTION_ITEM__PROPERTY;
 
     /**
      * The feature id for the '<em><b>State</b></em>' reference.
@@ -78,7 +78,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM__STATE = PropertiesPackage.ITEM__STATE;
+    int SERVICE_ITEM__STATE = PropertiesPackage.CONNECTION_ITEM__STATE;
 
     /**
      * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -86,7 +86,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM__PARENT = PropertiesPackage.ITEM__PARENT;
+    int SERVICE_ITEM__PARENT = PropertiesPackage.CONNECTION_ITEM__PARENT;
 
     /**
      * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
@@ -95,16 +95,16 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM__REFERENCE_RESOURCES = PropertiesPackage.ITEM__REFERENCE_RESOURCES;
+    int SERVICE_ITEM__REFERENCE_RESOURCES = PropertiesPackage.CONNECTION_ITEM__REFERENCE_RESOURCES;
 
     /**
-     * The feature id for the '<em><b>Service Connection</b></em>' reference. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
+     * The feature id for the '<em><b>Connection</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM__SERVICE_CONNECTION = PropertiesPackage.ITEM_FEATURE_COUNT + 0;
+    int SERVICE_ITEM__CONNECTION = PropertiesPackage.CONNECTION_ITEM__CONNECTION;
 
     /**
      * The number of structural features of the '<em>Service Item</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
@@ -113,7 +113,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_ITEM_FEATURE_COUNT = PropertiesPackage.ITEM_FEATURE_COUNT + 1;
+    int SERVICE_ITEM_FEATURE_COUNT = PropertiesPackage.CONNECTION_ITEM_FEATURE_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl <em>Service Operation</em>}' class.
@@ -370,21 +370,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_OPERATION__DOCUMENTATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
 
     /**
-     * The feature id for the '<em><b>Operation Label</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__OPERATION_LABEL = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 3;
-
-    /**
      * The number of structural features of the '<em>Service Operation</em>' class.
      * <!-- begin-user-doc --> <!--
      * end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 4;
+    int SERVICE_OPERATION_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
@@ -746,13 +738,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__CONTEXT_ID = ConnectionPackage.CONNECTION__CONTEXT_ID;
 
     /**
-     * The feature id for the '<em><b>Context Name</b></em>' attribute.
+     * The feature id for the '<em><b>Context Group Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__CONTEXT_NAME = ConnectionPackage.CONNECTION__CONTEXT_NAME;
+    int SERVICE_CONNECTION__CONTEXT_GROUP_NAME = ConnectionPackage.CONNECTION__CONTEXT_GROUP_NAME;
 
     /**
      * The feature id for the '<em><b>WSDL Path</b></em>' attribute.
@@ -1095,16 +1087,6 @@ public interface ServicesPackage extends EPackage {
     EClass getServiceItem();
 
     /**
-     * Returns the meta object for the reference '{@link org.talend.repository.services.model.services.ServiceItem#getServiceConnection <em>Service Connection</em>}'.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Service Connection</em>'.
-     * @see org.talend.repository.services.model.services.ServiceItem#getServiceConnection()
-     * @see #getServiceItem()
-     * @generated
-     */
-    EReference getServiceItem_ServiceConnection();
-
-    /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceOperation <em>Service Operation</em>}'.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for class '<em>Service Operation</em>'.
@@ -1142,16 +1124,6 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EAttribute getServiceOperation_Documentation();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getOperationLabel <em>Operation Label</em>}'.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Operation Label</em>'.
-     * @see org.talend.repository.services.model.services.ServiceOperation#getOperationLabel()
-     * @see #getServiceOperation()
-     * @generated
-     */
-    EAttribute getServiceOperation_OperationLabel();
 
     /**
      * Returns the meta object for class '{@link org.talend.repository.services.model.services.ServiceConnection <em>Service Connection</em>}'.
@@ -1300,14 +1272,6 @@ public interface ServicesPackage extends EPackage {
         EClass SERVICE_ITEM = eINSTANCE.getServiceItem();
 
         /**
-         * The meta object literal for the '<em><b>Service Connection</b></em>' reference feature.
-         * <!-- begin-user-doc
-         * --> <!-- end-user-doc -->
-         * @generated
-         */
-        EReference SERVICE_ITEM__SERVICE_CONNECTION = eINSTANCE.getServiceItem_ServiceConnection();
-
-        /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServiceOperationImpl <em>Service Operation</em>}' class.
          * <!-- begin-user-doc --> <!-- end-user-doc -->
          * @see org.talend.repository.services.model.services.impl.ServiceOperationImpl
@@ -1339,14 +1303,6 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EAttribute SERVICE_OPERATION__DOCUMENTATION = eINSTANCE.getServiceOperation_Documentation();
-
-        /**
-         * The meta object literal for the '<em><b>Operation Label</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute SERVICE_OPERATION__OPERATION_LABEL = eINSTANCE.getServiceOperation_OperationLabel();
 
         /**
          * The meta object literal for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.

@@ -41,68 +41,69 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ServiceMetadataAction extends AContextualAction {
 
-	protected static final String ACTION_LABEL = "Edit Service Metadata";
-	private IStructuredSelection selection;
+    protected static final String ACTION_LABEL = "Edit Service Metadata";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-	 * org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void init(TreeViewer viewer, IStructuredSelection selection) {
-		boolean canWork = true;
-		if (selection.isEmpty() || (selection.size() > 1)) {
-			setEnabled(false);
-			return;
-		}
+    private IStructuredSelection selection;
 
-		@SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-		for (RepositoryNode node : nodes) {
-			if (node.getType() != ENodeType.STABLE_SYSTEM_FOLDER
-					|| node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
-				canWork = false;
-				break;
-			} else if (canWork && node.getObject() != null
-					&& ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
-				canWork = false;
-				break;
-			} else {
-				this.selection = selection;
-			}
-		}
-		setEnabled(canWork);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
+     * org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = true;
+        if (selection.isEmpty() || (selection.size() > 1)) {
+            setEnabled(false);
+            return;
+        }
 
-	public boolean isVisible() {
-		return isEnabled();
-	}
+        @SuppressWarnings("unchecked")
+        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        for (RepositoryNode node : nodes) {
+            if (node.getType() != ENodeType.STABLE_SYSTEM_FOLDER
+                    || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
+                canWork = false;
+                break;
+            } else if (canWork && node.getObject() != null
+                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
+                canWork = false;
+                break;
+            } else {
+                this.selection = selection;
+            }
+        }
+        setEnabled(canWork);
+    }
 
-	public ServiceMetadataAction() {
-		super();
-		this.setText(ACTION_LABEL);
-		this.setToolTipText(ACTION_LABEL);
-		this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
-	}
+    public boolean isVisible() {
+        return isEnabled();
+    }
 
-	protected void doRun() {
-		IWorkbenchWindow window = this.getViewPart().getViewSite().getWorkbenchWindow();
-		ServicePort port = null;
-		ServiceItem serviceItem = null;
-		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-		for (RepositoryNode node : nodes) {
-			serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
-			ServiceConnection serviceConnection = serviceItem.getServiceConnection();
-			EList<ServicePort> listPort = serviceConnection.getServicePort();
-			for (ServicePort cport : listPort) {
-				if (cport.getName().equals(node.getLabel())) {
-					port = cport;
-				}
-			}
-		}
+    public ServiceMetadataAction() {
+        super();
+        this.setText(ACTION_LABEL);
+        this.setToolTipText(ACTION_LABEL);
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
+    }
 
-		Dialog dialog = new ServiceMetadataDialog(window, serviceItem, port);
-		dialog.open();
-	}
+    protected void doRun() {
+        IWorkbenchWindow window = this.getViewPart().getViewSite().getWorkbenchWindow();
+        ServicePort port = null;
+        ServiceItem serviceItem = null;
+        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        for (RepositoryNode node : nodes) {
+            serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
+            ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+            EList<ServicePort> listPort = serviceConnection.getServicePort();
+            for (ServicePort cport : listPort) {
+                if (cport.getName().equals(node.getLabel())) {
+                    port = cport;
+                }
+            }
+        }
+
+        Dialog dialog = new ServiceMetadataDialog(window, serviceItem, port);
+        dialog.open();
+    }
 }

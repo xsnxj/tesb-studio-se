@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
+import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
+import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.properties.Information;
 import org.talend.core.model.properties.InformationLevel;
 import org.talend.core.model.properties.Item;
@@ -78,7 +81,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     private Resource create(IProject project, ServiceItem item, IPath path, ERepositoryObjectType type)
             throws PersistenceException {
         Resource itemResource = xmiResourceManager.createItemResource(project, item, path, type, false);
-        itemResource.getContents().add(item.getServiceConnection());
+        itemResource.getContents().add(item.getConnection());
 
         return itemResource;
     }
@@ -102,8 +105,8 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     private Resource save(ServiceItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
         itemResource.getContents().clear();
-        itemResource.getContents().add(item.getServiceConnection());
-        for (ServicePort port : item.getServiceConnection().getServicePort()) {
+        itemResource.getContents().add(item.getConnection());
+        for (ServicePort port : ((ServiceConnection) item.getConnection()).getServicePort()) {
             itemResource.getContents().add(port);
             for (ServiceOperation operation : port.getServiceOperation()) {
                 itemResource.getContents().add(operation);
@@ -168,7 +171,8 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
             RepositoryNode node) {
         if (type == ESBRepositoryNodeType.SERVICES) {
-            ServiceConnection serviceConnection = ((ServiceItem) repositoryObject.getProperty().getItem()).getServiceConnection();
+            ServiceConnection serviceConnection = (ServiceConnection) ((ServiceItem) repositoryObject.getProperty().getItem())
+                    .getConnection();
             List<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort port : listPort) {
                 PortRepositoryObject portRepositoryObject = new PortRepositoryObject(repositoryObject, port);
@@ -183,7 +187,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
                             operation);
                     RepositoryNode operationNode = new RepositoryNode(operationRepositoryObject, portNode,
                             ENodeType.REPOSITORY_ELEMENT); //$NON-NLS-1$
-                    operationNode.setProperties(EProperties.LABEL, operation.getOperationLabel());
+                    operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                     portNode.getChildren().add(operationNode);
                 }
@@ -241,5 +245,22 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
             }
         }
         computePropertyMaxInformationLevel(property);
+    }
+
+    public AbstractMetadataObject getServicesOperation(Connection connection, String operationName) {
+        List<ServiceOperation> list = new ArrayList<ServiceOperation>();
+        if (connection instanceof ServiceConnection) {
+            ServiceConnection serConnection = (ServiceConnection) connection;
+            EList<ServicePort> serPort = serConnection.getServicePort();
+            for (ServicePort port : serPort) {
+                list.addAll(port.getServiceOperation());
+            }
+        }
+        for (ServiceOperation ope : list) {
+            if (ope.getLabel().equals(operationName)) {
+                return ope;
+            }
+        }
+        return null;
     }
 }

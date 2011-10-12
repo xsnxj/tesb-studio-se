@@ -61,6 +61,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -134,8 +135,8 @@ public class OpenWSDLPage extends WizardPage {
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         wsdlText = new LabelledFileField(parentArea, "WSDL", //$NON-NLS-1$
                 xmlExtensions);
-        if (item.getServiceConnection() != null) {
-            wsdlText.setText(item.getServiceConnection().getWSDLPath());
+        if (item.getConnection() != null) {
+            wsdlText.setText(((ServiceConnection) item.getConnection()).getWSDLPath());
         }
         path = wsdlText.getText();
 
@@ -167,7 +168,7 @@ public class OpenWSDLPage extends WizardPage {
     public boolean finish() {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         if (creation) {
-            item.setServiceConnection(ServicesFactory.eINSTANCE.createServiceConnection());
+            item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
             item.getProperty().setId(factory.getNextId());
             try {
                 factory.create(item, pathToSave);
@@ -177,8 +178,8 @@ public class OpenWSDLPage extends WizardPage {
         }
         if (flag) {
             if (path != null && !path.trim().equals("")) {
-                item.setServiceConnection(ServicesFactory.eINSTANCE.createServiceConnection());
-                item.getServiceConnection().setWSDLPath(path);
+                item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
+                ((ServiceConnection) item.getConnection()).setWSDLPath(path);
                 File file = new File(path);
                 StringBuffer buffer = new StringBuffer();
                 try {
@@ -238,7 +239,7 @@ public class OpenWSDLPage extends WizardPage {
                     Map portTypes = definition.getAllPortTypes();
                     Iterator it = portTypes.keySet().iterator();
                     repositoryNode.getChildren().clear();
-                    item.getServiceConnection().getServicePort().clear();
+                    ((ServiceConnection) item.getConnection()).getServicePort().clear();
                     while (it.hasNext()) {
                         QName key = (QName) it.next();
                         PortType portType = (PortType) portTypes.get(key);
@@ -257,10 +258,10 @@ public class OpenWSDLPage extends WizardPage {
                             if (operation.getDocumentationElement() != null) {
                                 serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                             }
-                            serviceOperation.setOperationLabel(operation.getName());
+                            serviceOperation.setLabel(operation.getName());
                             port.getServiceOperation().add(serviceOperation);
                         }
-                        item.getServiceConnection().getServicePort().add(port);
+                        ((ServiceConnection) item.getConnection()).getServicePort().add(port);
                     }
                 } catch (WSDLException e) {
                     ExceptionHandler.process(e);
@@ -268,8 +269,8 @@ public class OpenWSDLPage extends WizardPage {
             }
         } else { // create new wsdl file
             try {
-                item.getServiceConnection().setWSDLPath("");
-                item.getServiceConnection().getServicePort().clear();
+                ((ServiceConnection) item.getConnection()).setWSDLPath("");
+                ((ServiceConnection) item.getConnection()).getServicePort().clear();
 
                 IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
                 String foldPath = item.getState().getPath();

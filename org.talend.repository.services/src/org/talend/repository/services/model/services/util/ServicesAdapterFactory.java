@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
 import org.talend.core.model.metadata.builder.connection.Connection;
+import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 
 import org.talend.repository.services.model.services.*;
@@ -105,6 +106,10 @@ public class ServicesAdapterFactory extends AdapterFactoryImpl {
             @Override
             public Adapter caseItem(Item object) {
                 return createItemAdapter();
+            }
+            @Override
+            public Adapter caseConnectionItem(ConnectionItem object) {
+                return createConnectionItemAdapter();
             }
             @Override
             public Adapter caseElement(Element object) {
@@ -243,6 +248,20 @@ public class ServicesAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createItemAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.ConnectionItem <em>Connection Item</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.talend.core.model.properties.ConnectionItem
+     * @generated
+     */
+    public Adapter createConnectionItemAdapter() {
         return null;
     }
 

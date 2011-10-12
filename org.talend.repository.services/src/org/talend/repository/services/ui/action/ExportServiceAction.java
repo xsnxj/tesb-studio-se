@@ -50,48 +50,47 @@ public class ExportServiceAction extends WorkspaceJob {
 
     private String serviceVersion;
 
-	protected ServiceExportManager serviceManager;
+    protected ServiceExportManager serviceManager;
 
     private IFile serviceWsdl;
 
     private final Map<ServicePort, Map<String, String>> ports = new HashMap<ServicePort, Map<String, String>>();
 
-	private String serviceName;
+    private String serviceName;
 
-	private String groupId;
+    private String groupId;
 
-	private static String JOB_CONTROLLER_FEATURE = "talend-job-controller";
-	private static String JOB_CONTROLLER_VERSION = "[5,6)";
+    private static String JOB_CONTROLLER_FEATURE = "talend-job-controller";
+
+    private static String JOB_CONTROLLER_VERSION = "[5,6)";
 
     public ExportServiceAction(RepositoryNode node) throws CoreException {
-    	this(node, null);
+        this(node, null);
     }
 
-    	
-	public ExportServiceAction(RepositoryNode node, String targetPath) throws CoreException {
-    	super("Exporting service");
-        if ((node.getType() == ENodeType.REPOSITORY_ELEMENT) &&
-        		(node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) 
-        {
+    public ExportServiceAction(RepositoryNode node, String targetPath) throws CoreException {
+        super("Exporting service");
+        if ((node.getType() == ENodeType.REPOSITORY_ELEMENT)
+                && (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) {
             IRepositoryViewObject repositoryObject = node.getObject();
             if (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
-            	serviceName = repositoryObject.getLabel();
+                serviceName = repositoryObject.getLabel();
                 serviceVersion = repositoryObject.getVersion();
-                serviceWsdl  = WSDLUtils.getWsdlFile(node);
-            } 
+                serviceWsdl = WSDLUtils.getWsdlFile(node);
+            }
             ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            ServiceConnection serviceConnection = serviceItem.getServiceConnection();
-			EList<ServicePort> listPort = serviceConnection.getServicePort();
+            ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+            EList<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort port : listPort) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
-            	Map<String, String> operations = new HashMap<String, String>(listOperation.size());
+                Map<String, String> operations = new HashMap<String, String>(listOperation.size());
                 for (ServiceOperation operation : listOperation) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-						String operationName = operation.getOperationName();
+                        String operationName = operation.getOperationName();
                         RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(operation.getReferenceJobId(), false);
                         String jobName = jobNode.getObject().getLabel();
-						operations.put(operationName, jobName);
-						nodes.add(jobNode);
+                        operations.put(operationName, jobName);
+                        nodes.add(jobNode);
                     }
                 }
                 ports.put(port, operations);
@@ -103,17 +102,17 @@ public class ExportServiceAction extends WorkspaceJob {
             IPath path = new Path(userDir).append(bundleName);
             targetPath = path.toOSString();
         } else {
-        	String suffix = ".kar";
-			if (targetPath.endsWith(suffix)) {
-        		targetPath = targetPath.substring(0, targetPath.length()-suffix.length());
-        	}
+            String suffix = ".kar";
+            if (targetPath.endsWith(suffix)) {
+                targetPath = targetPath.substring(0, targetPath.length() - suffix.length());
+            }
         }
-		this.serviceManager = new ServiceExportManager();
+        this.serviceManager = new ServiceExportManager();
         serviceManager.setDestinationPath(targetPath);
         final String serviceNS = WSDLUtils.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace();
         groupId = getGroupId(serviceNS, getServiceName());
     }
-    
+
     @Override
     public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
         IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -121,8 +120,8 @@ public class ExportServiceAction extends WorkspaceJob {
         Map<String, String> bundles = new HashMap<String, String>();
         for (RepositoryNode node : nodes) {
             JobScriptsManager manager = serviceManager.getJobManager(node, getGroupId(), getServiceVersion());
-            JobExportAction job = new JobExportAction(Arrays.asList(new RepositoryNode[] { node }), node.getObject().getVersion(), manager,
-                    directoryName);
+            JobExportAction job = new JobExportAction(Arrays.asList(new RepositoryNode[] { node }),
+                    node.getObject().getVersion(), manager, directoryName);
             try {
                 progressService.run(false, true, job);
             } catch (InvocationTargetException e) {
@@ -133,11 +132,11 @@ public class ExportServiceAction extends WorkspaceJob {
             bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
         }
         try {
-            final String artefactName = getServiceName()+"-control-bundle";
+            final String artefactName = getServiceName() + "-control-bundle";
             bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
-			processFeature(generateFeature(bundles));
-		    String destinationPath = serviceManager.getDestinationPath();
-		    processFinalResult(destinationPath);
+            processFeature(generateFeature(bundles));
+            String destinationPath = serviceManager.getDestinationPath();
+            processFinalResult(destinationPath);
 
         } catch (IOException e) {
             return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
@@ -172,57 +171,51 @@ public class ExportServiceAction extends WorkspaceJob {
         return file.getAbsolutePath();
     }
 
-	private FeaturesModel generateFeature(Map<String, String> bundles) throws IOException {
-		FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(),
-				getServiceVersion());
-		for (Map.Entry<String, String> entry : bundles.entrySet()) {
-			File jarFile = new File(entry.getValue());
-			BundleModel model = new BundleModel(jarFile, getGroupId(),
-					entry.getKey(), getServiceVersion());
-			feature.addSubBundle(model);
-		}
-		// <feature version='[5,6)'>talend-job-controller</feature>
-		feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
-		return feature;
-	}
-	
-	protected void processFeature(FeaturesModel feature) throws IOException {
-		String artefactName = getServiceName() + "-feature";
-		File filePath = serviceManager.getFilePath(getGroupId(), artefactName,
-				getServiceVersion());
-		String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml";
-		String featureFilePath = new File(filePath, fileName).getAbsolutePath();
-		SaveAction.saveFeature(featureFilePath, feature);
-	}
-	
-	protected void processFinalResult(String destinationPath) throws IOException {
-		try {
-		    File destination = new File(destinationPath);
-		    String s = destination.getAbsolutePath()+".kar";
-			ZipToFile.zipFile(destinationPath, s);
-		    FilesUtils.removeFolder(destinationPath, true);
-		} catch (Exception e) {
-		    throw new IOException(e.getMessage());
-		}
-	}
+    private FeaturesModel generateFeature(Map<String, String> bundles) throws IOException {
+        FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(), getServiceVersion());
+        for (Map.Entry<String, String> entry : bundles.entrySet()) {
+            File jarFile = new File(entry.getValue());
+            BundleModel model = new BundleModel(jarFile, getGroupId(), entry.getKey(), getServiceVersion());
+            feature.addSubBundle(model);
+        }
+        // <feature version='[5,6)'>talend-job-controller</feature>
+        feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
+        return feature;
+    }
 
-	public String getServiceVersion() {
-		return serviceVersion;
-	}
+    protected void processFeature(FeaturesModel feature) throws IOException {
+        String artefactName = getServiceName() + "-feature";
+        File filePath = serviceManager.getFilePath(getGroupId(), artefactName, getServiceVersion());
+        String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml";
+        String featureFilePath = new File(filePath, fileName).getAbsolutePath();
+        SaveAction.saveFeature(featureFilePath, feature);
+    }
 
+    protected void processFinalResult(String destinationPath) throws IOException {
+        try {
+            File destination = new File(destinationPath);
+            String s = destination.getAbsolutePath() + ".kar";
+            ZipToFile.zipFile(destinationPath, s);
+            FilesUtils.removeFolder(destinationPath, true);
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
 
-	public String getServiceName() {
-		return serviceName;
-	}
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
 
+    public String getServiceName() {
+        return serviceName;
+    }
 
-	public String getGroupId() {
-		return groupId;
-	}
+    public String getGroupId() {
+        return groupId;
+    }
 
-
-	//DO NOT OVERRIDE!! CALLED FROM CONSTRUCTOR
-    private final String getGroupId(String serviceNS, String serviceName) {  
+    // DO NOT OVERRIDE!! CALLED FROM CONSTRUCTOR
+    private final String getGroupId(String serviceNS, String serviceName) {
         String schemeId;
         try {
             schemeId = new URI(serviceNS).getScheme() + "://";

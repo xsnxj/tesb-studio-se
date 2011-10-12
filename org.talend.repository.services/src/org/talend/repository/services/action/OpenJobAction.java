@@ -16,6 +16,7 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -113,12 +114,12 @@ public class OpenJobAction extends EditProcess {
     protected static String getReferenceJobId(IRepositoryNode node) {
         String parentPortName = node.getParent().getLabel();
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
-        List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+        List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
         for (ServicePort port : listPort) {
             if (port.getPortName().equals(parentPortName)) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-                    if (operation.getOperationLabel().equals(node.getLabel())) {
+                    if (operation.getLabel().equals(node.getLabel())) {
                         return operation.getReferenceJobId();
                     }
                 }

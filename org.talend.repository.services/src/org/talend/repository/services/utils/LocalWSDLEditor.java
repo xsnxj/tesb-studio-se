@@ -34,6 +34,7 @@ import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -105,7 +106,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             Definition definition = newWSDLReader.readWSDL(path);
             Map portTypes = definition.getAllPortTypes();
             Iterator it = portTypes.keySet().iterator();
-            EList<ServicePort> oldServicePorts = serviceItem.getServiceConnection().getServicePort();
+            EList<ServicePort> oldServicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
 
             // get old service port item names and operation names under them
             HashMap<String, ArrayList<String>> oldPortItemNames = new HashMap<String, ArrayList<String>>();
@@ -118,7 +119,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 oldPortItemNames.put(servicePort.getName(), operationNames);
             }
 
-            List<ServicePort> portList = serviceItem.getServiceConnection().getServicePort();
+            List<ServicePort> portList = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
             for (int i = 0; i < portList.size(); i++) {
                 ServicePort port = (ServicePort) portList.get(i);
                 portStore.put(port.getPortName(), port.getId());
@@ -128,7 +129,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     operationStore.put(operation.getOperationName(), operation.getId());
                 }
             }
-            serviceItem.getServiceConnection().getServicePort().clear();
+            ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
             while (it.hasNext()) {
                 QName key = (QName) it.next();
                 PortType portType = (PortType) portTypes.get(key);
@@ -178,18 +179,18 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     if (operationNames != null) {
                         for (String name : operationNames) {
                             if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
-                                serviceOperation.setOperationLabel(name);
+                                serviceOperation.setLabel(name);
                                 hasAssignedjob = true;
                                 break;
                             }
                         }
                     }
                     if (!hasAssignedjob) {
-                        serviceOperation.setOperationLabel(operation.getName());
+                        serviceOperation.setLabel(operation.getName());
                     }
                     port.getServiceOperation().add(serviceOperation);
                 }
-                serviceItem.getServiceConnection().getServicePort().add(port);
+                ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
             }
         } catch (WSDLException e) {
             e.printStackTrace();
