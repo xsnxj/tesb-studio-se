@@ -730,13 +730,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_CONNECTION__CONTEXT_ID = ConnectionPackage.CONNECTION__CONTEXT_ID;
 
     /**
-     * The feature id for the '<em><b>Context Group Name</b></em>' attribute.
+     * The feature id for the '<em><b>Context Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_CONNECTION__CONTEXT_GROUP_NAME = ConnectionPackage.CONNECTION__CONTEXT_GROUP_NAME;
+    int SERVICE_CONNECTION__CONTEXT_NAME = ConnectionPackage.CONNECTION__CONTEXT_NAME;
 
     /**
      * The feature id for the '<em><b>WSDL Path</b></em>' attribute.
