@@ -110,11 +110,11 @@ public class CreateNewJobAction extends AbstractCreateAction {
         //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
-        EList<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+        EList<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
         for (ServicePort port : listPort) {
             List<ServiceOperation> listOperation = port.getServiceOperation();
             for (ServiceOperation operation : listOperation) {
-                if (operation.getOperationLabel().equals(node.getLabel())) {
+                if (operation.getLabel().equals(node.getLabel())) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
                         flag = false;
                     }
@@ -177,7 +177,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 String jobID = processWizard.getProcess().getProperty().getId();
                 RepositoryNode portNode = node.getParent();
                 ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
-                ServiceConnection serviceConnection = serviceItem.getServiceConnection();
+                ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
 
                 Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
@@ -185,8 +185,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 String wsdlPath = serviceConnection.getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME,
-                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
+                        .getProperties(EProperties.LABEL))));
 
                 setProviderRequestComponentConfiguration(node2, serviceParameters);
 
@@ -198,9 +198,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
+                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
                 // openEditor.doSave(new NullProgressMonitor());
 
@@ -210,9 +209,9 @@ public class CreateNewJobAction extends AbstractCreateAction {
                     if (port.getPortName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
-                            if (operation.getOperationLabel().equals(node.getObject().getLabel())) {
+                            if (operation.getLabel().equals(node.getObject().getLabel())) {
                                 operation.setReferenceJobId(jobID);
-                                operation.setOperationLabel(operation.getOperationName() + "-" + jobName);
+                                operation.setLabel(operation.getName() + "-" + jobName);
                                 break;
                             }
                         }

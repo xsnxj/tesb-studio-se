@@ -22,6 +22,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -105,17 +106,17 @@ public class AssignJobAction extends AbstractCreateAction {
                 ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
                         .getItem();
 
-                String wsdlPath = serviceItem.getServiceConnection().getWSDLPath();
+                String wsdlPath = ((ServiceConnection) serviceItem.getConnection()).getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
 
-                List<ServicePort> listPort = serviceItem.getServiceConnection().getServicePort();
+                List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
                 for (ServicePort port : listPort) {
                     if (port.getPortName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
-                            if (operation.getOperationLabel().equals(operationName)) {
+                            if (operation.getLabel().equals(operationName)) {
                                 operation.setReferenceJobId(jobID);
-                                operation.setOperationLabel(operation.getOperationName() + "-" + jobName);
+                                operation.setLabel(operation.getName() + "-" + jobName);
 
                                 serviceParameters.put(WSDLUtils.PORT_NAME, parentPortName);
                                 serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
