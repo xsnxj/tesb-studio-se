@@ -149,16 +149,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServiceOperation_OperationName() {
-        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
     public EAttribute getServiceOperation_Documentation() {
-        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(2);
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -289,7 +281,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         serviceOperationEClass = createEClass(SERVICE_OPERATION);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__REFERENCE_JOB_ID);
-        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__OPERATION_NAME);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__DOCUMENTATION);
 
         serviceConnectionEClass = createEClass(SERVICE_CONNECTION);
@@ -348,7 +339,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         initEClass(serviceOperationEClass, ServiceOperation.class, "ServiceOperation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceOperation_ReferenceJobId(), ecorePackage.getEString(), "referenceJobId", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getServiceOperation_OperationName(), ecorePackage.getEString(), "operationName", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

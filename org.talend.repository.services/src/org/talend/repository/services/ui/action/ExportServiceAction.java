@@ -86,7 +86,7 @@ public class ExportServiceAction extends WorkspaceJob {
                 Map<String, String> operations = new HashMap<String, String>(listOperation.size());
                 for (ServiceOperation operation : listOperation) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                        String operationName = operation.getOperationName();
+                        String operationName = operation.getName();
                         RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(operation.getReferenceJobId(), false);
                         String jobName = jobNode.getObject().getLabel();
                         operations.put(operationName, jobName);

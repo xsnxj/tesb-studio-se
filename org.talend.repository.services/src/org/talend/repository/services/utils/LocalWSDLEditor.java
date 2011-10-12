@@ -126,7 +126,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 List<ServiceOperation> operationList = port.getServiceOperation();
                 for (int j = 0; j < operationList.size(); j++) {
                     ServiceOperation operation = (ServiceOperation) operationList.get(j);
-                    operationStore.put(operation.getOperationName(), operation.getId());
+                    operationStore.put(operation.getName(), operation.getId());
                 }
             }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
@@ -159,7 +159,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         continue;
                     }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
-                    serviceOperation.setOperationName(operation.getName());
+                    serviceOperation.setName(operation.getName());
                     Iterator operationIterator = operationStore.keySet().iterator();
                     while (operationIterator.hasNext()) {
                         String oldOperationName = (String) operationIterator.next();

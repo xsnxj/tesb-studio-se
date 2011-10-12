@@ -59,7 +59,7 @@ public class OperationRepositoryObject implements ISubRepositoryObject {
      * @see org.talend.core.model.repository.IRepositoryViewObject#getLabel()
      */
     public String getLabel() {
-        return serviceOperation.getOperationName();
+        return serviceOperation.getName();
     }
 
     /*

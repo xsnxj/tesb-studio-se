@@ -10,7 +10,6 @@
     <genClasses ecoreClass="Services.ecore#//ServiceItem"/>
     <genClasses ecoreClass="Services.ecore#//ServiceOperation">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Services.ecore#//ServiceOperation/referenceJobId"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Services.ecore#//ServiceOperation/operationName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Services.ecore#//ServiceOperation/documentation"/>
     </genClasses>
     <genClasses ecoreClass="Services.ecore#//ServiceConnection">

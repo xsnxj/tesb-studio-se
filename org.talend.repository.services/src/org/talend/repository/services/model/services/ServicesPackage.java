@@ -354,20 +354,12 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_OPERATION__REFERENCE_JOB_ID = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Operation Name</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__OPERATION_NAME = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
-
-    /**
      * The feature id for the '<em><b>Documentation</b></em>' attribute.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION__DOCUMENTATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
+    int SERVICE_OPERATION__DOCUMENTATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Service Operation</em>' class.
@@ -376,7 +368,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 3;
+    int SERVICE_OPERATION_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
@@ -1106,16 +1098,6 @@ public interface ServicesPackage extends EPackage {
     EAttribute getServiceOperation_ReferenceJobId();
 
     /**
-     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getOperationName <em>Operation Name</em>}'.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Operation Name</em>'.
-     * @see org.talend.repository.services.model.services.ServiceOperation#getOperationName()
-     * @see #getServiceOperation()
-     * @generated
-     */
-    EAttribute getServiceOperation_OperationName();
-
-    /**
      * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getDocumentation <em>Documentation</em>}'.
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @return the meta object for the attribute '<em>Documentation</em>'.
@@ -1287,14 +1269,6 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EAttribute SERVICE_OPERATION__REFERENCE_JOB_ID = eINSTANCE.getServiceOperation_ReferenceJobId();
-
-        /**
-         * The meta object literal for the '<em><b>Operation Name</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute SERVICE_OPERATION__OPERATION_NAME = eINSTANCE.getServiceOperation_OperationName();
 
         /**
          * The meta object literal for the '<em><b>Documentation</b></em>' attribute feature.

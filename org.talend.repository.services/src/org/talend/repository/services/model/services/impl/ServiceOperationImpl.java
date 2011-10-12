@@ -54,26 +54,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     protected String referenceJobId = REFERENCE_JOB_ID_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getOperationName() <em>Operation Name</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getOperationName()
-     * @generated
-     * @ordered
-     */
-    protected static final String OPERATION_NAME_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getOperationName() <em>Operation Name</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getOperationName()
-     * @generated
-     * @ordered
-     */
-    protected String operationName = OPERATION_NAME_EDEFAULT;
-
-    /**
      * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -133,25 +113,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
-    public String getOperationName() {
-        return operationName;
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public void setOperationName(String newOperationName) {
-        String oldOperationName = operationName;
-        operationName = newOperationName;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_OPERATION__OPERATION_NAME, oldOperationName, operationName));
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
     public String getDocumentation() {
         return documentation;
     }
@@ -176,8 +137,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         switch (featureID) {
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 return getReferenceJobId();
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_NAME:
-                return getOperationName();
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 return getDocumentation();
         }
@@ -194,9 +153,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         switch (featureID) {
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 setReferenceJobId((String)newValue);
-                return;
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_NAME:
-                setOperationName((String)newValue);
                 return;
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 setDocumentation((String)newValue);
@@ -215,9 +171,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 setReferenceJobId(REFERENCE_JOB_ID_EDEFAULT);
                 return;
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_NAME:
-                setOperationName(OPERATION_NAME_EDEFAULT);
-                return;
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 setDocumentation(DOCUMENTATION_EDEFAULT);
                 return;
@@ -234,8 +187,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         switch (featureID) {
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 return REFERENCE_JOB_ID_EDEFAULT == null ? referenceJobId != null : !REFERENCE_JOB_ID_EDEFAULT.equals(referenceJobId);
-            case ServicesPackage.SERVICE_OPERATION__OPERATION_NAME:
-                return OPERATION_NAME_EDEFAULT == null ? operationName != null : !OPERATION_NAME_EDEFAULT.equals(operationName);
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
                 return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
         }
@@ -253,8 +204,6 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (referenceJobId: ");
         result.append(referenceJobId);
-        result.append(", operationName: ");
-        result.append(operationName);
         result.append(", documentation: ");
         result.append(documentation);
         result.append(')');
