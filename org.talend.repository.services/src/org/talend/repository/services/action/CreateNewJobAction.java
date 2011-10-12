@@ -94,7 +94,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -126,7 +126,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -205,14 +205,14 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // openEditor.doSave(new NullProgressMonitor());
 
                 EList<ServicePort> listPort = serviceConnection.getServicePort();
-                String parentPortName = node.getParent().getLabel();
+                String parentPortName = node.getParent().getObject().getLabel();
                 for (ServicePort port : listPort) {
-                    if (port.getName().equals(parentPortName)) {
+                    if (port.getPortName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
-                            if (operation.getLabel().equals(node.getLabel())) {
+                            if (operation.getOperationLabel().equals(node.getObject().getLabel())) {
                                 operation.setReferenceJobId(jobID);
-                                operation.setLabel(operation.getOperationName() + "-" + jobName);
+                                operation.setOperationLabel(operation.getOperationName() + "-" + jobName);
                                 break;
                             }
                         }
@@ -240,7 +240,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     private String initLabel(RepositoryNode node) {
         RepositoryNode parent = node.getParent();
-        return parent.getLabel() + "_" + node.getLabel();
+        return parent.getObject().getLabel() + "_" + node.getObject().getLabel();
     }
 
     public static void setProviderRequestComponentConfiguration(INode providerRequestComponent,

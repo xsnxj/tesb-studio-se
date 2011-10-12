@@ -57,7 +57,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -75,7 +75,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -100,8 +100,8 @@ public class AssignJobAction extends AbstractCreateAction {
             try {
                 String jobID = item.getProperty().getId();
                 String jobName = item.getProperty().getLabel();
-                String operationName = repositoryNode.getLabel();
-                String parentPortName = repositoryNode.getParent().getLabel();
+                String operationName = repositoryNode.getObject().getLabel();
+                String parentPortName = repositoryNode.getParent().getObject().getLabel();
                 ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
                         .getItem();
 
