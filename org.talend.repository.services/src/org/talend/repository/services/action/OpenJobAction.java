@@ -112,14 +112,15 @@ public class OpenJobAction extends EditProcess {
     }
 
     protected static String getReferenceJobId(IRepositoryNode node) {
-        String parentPortName = node.getParent().getLabel();
+		String parentPortName = node.getParent().getObject().getLabel();
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
         for (ServicePort port : listPort) {
             if (port.getName().equals(parentPortName)) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-                    if (operation.getLabel().equals(node.getLabel())) {
+					if (operation.getLabel()
+							.equals(node.getObject().getLabel())) {
                         return operation.getReferenceJobId();
                     }
                 }
