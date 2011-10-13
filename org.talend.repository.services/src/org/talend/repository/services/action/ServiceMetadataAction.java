@@ -23,7 +23,6 @@ import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -61,8 +60,7 @@ public class ServiceMetadataAction extends AContextualAction {
         @SuppressWarnings("unchecked")
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
-            if (node.getType() != ENodeType.STABLE_SYSTEM_FOLDER
-                    || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
+			if (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
                 canWork = false;
                 break;
             } else if (canWork && node.getObject() != null
@@ -97,7 +95,7 @@ public class ServiceMetadataAction extends AContextualAction {
             ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
             EList<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort cport : listPort) {
-                if (cport.getName().equals(node.getLabel())) {
+				if (cport.getName().equals(node.getObject().getLabel())) {
                     port = cport;
                 }
             }
