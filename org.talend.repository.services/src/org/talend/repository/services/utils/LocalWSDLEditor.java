@@ -122,7 +122,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             List<ServicePort> portList = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
             for (int i = 0; i < portList.size(); i++) {
                 ServicePort port = (ServicePort) portList.get(i);
-                portStore.put(port.getPortName(), port.getId());
+                portStore.put(port.getName(), port.getId());
                 List<ServiceOperation> operationList = port.getServiceOperation();
                 for (int j = 0; j < operationList.size(); j++) {
                     ServiceOperation operation = (ServiceOperation) operationList.get(j);
@@ -139,7 +139,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
                 ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
                 String portName = portType.getQName().getLocalPart();
-                port.setPortName(portName);
+                port.setName(portName);
                 // set port id
                 Iterator portIterator = portStore.keySet().iterator();
                 while (portIterator.hasNext()) {

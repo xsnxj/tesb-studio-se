@@ -28,7 +28,6 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getPortName <em>Port Name</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getServiceOperation <em>Service Operation</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
@@ -37,26 +36,6 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * @generated
  */
 public class ServicePortImpl extends AbstractMetadataObjectImpl implements ServicePort {
-
-    /**
-     * The default value of the '{@link #getPortName() <em>Port Name</em>}' attribute.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @see #getPortName()
-     * @generated
-     * @ordered
-     */
-    protected static final String PORT_NAME_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getPortName() <em>Port Name</em>}' attribute.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @see #getPortName()
-     * @generated
-     * @ordered
-     */
-    protected String portName = PORT_NAME_EDEFAULT;
 
     /**
      * The cached value of the '{@link #getServiceOperation() <em>Service Operation</em>}' reference list. <!--
@@ -93,25 +72,6 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     protected EClass eStaticClass() {
         return ServicesPackage.Literals.SERVICE_PORT;
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public String getPortName() {
-        return portName;
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    public void setPortName(String newPortName) {
-        String oldPortName = portName;
-        portName = newPortName;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__PORT_NAME, oldPortName, portName));
     }
 
     /**
@@ -156,8 +116,6 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__PORT_NAME:
-                return getPortName();
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 return getServiceOperation();
             case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
@@ -175,9 +133,6 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__PORT_NAME:
-                setPortName((String)newValue);
-                return;
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 getServiceOperation().clear();
                 getServiceOperation().addAll((Collection<? extends ServiceOperation>)newValue);
@@ -196,9 +151,6 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__PORT_NAME:
-                setPortName(PORT_NAME_EDEFAULT);
-                return;
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 getServiceOperation().clear();
                 return;
@@ -216,29 +168,12 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case ServicesPackage.SERVICE_PORT__PORT_NAME:
-                return PORT_NAME_EDEFAULT == null ? portName != null : !PORT_NAME_EDEFAULT.equals(portName);
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 return serviceOperation != null && !serviceOperation.isEmpty();
             case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
                 return additionalInfo != null && !additionalInfo.isEmpty();
         }
         return super.eIsSet(featureID);
-    }
-
-    /**
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (portName: ");
-        result.append(portName);
-        result.append(')');
-        return result.toString();
     }
 
     public boolean isReadOnly() {

@@ -16,7 +16,6 @@
         eType="#//AdditionalInfoMap" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ServicePort" eSuperTypes="../../org.talend.model/model/metadata.ecore#//AbstractMetadataObject">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="portName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="serviceOperation" upperBound="-1"
         eType="#//ServiceOperation"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="additionalInfo" upperBound="-1"

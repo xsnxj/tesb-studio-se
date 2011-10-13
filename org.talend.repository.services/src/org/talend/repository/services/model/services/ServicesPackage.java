@@ -1002,21 +1002,13 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_PORT__DIVERGENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DIVERGENCY;
 
     /**
-     * The feature id for the '<em><b>Port Name</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__PORT_NAME = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 0;
-
-    /**
      * The feature id for the '<em><b>Service Operation</b></em>' reference list.
      * <!-- begin-user-doc --> <!--
      * end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__SERVICE_OPERATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
+    int SERVICE_PORT__SERVICE_OPERATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Additional Info</b></em>' map.
@@ -1024,7 +1016,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__ADDITIONAL_INFO = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
+    int SERVICE_PORT__ADDITIONAL_INFO = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Service Port</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
@@ -1033,7 +1025,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_PORT_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 3;
+    int SERVICE_PORT_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
@@ -1156,18 +1148,6 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EClass getServicePort();
-
-    /**
-     * Returns the meta object for the attribute '
-     * {@link org.talend.repository.services.model.services.ServicePort#getPortName <em>Port Name</em>}'. <!--
-     * begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @return the meta object for the attribute '<em>Port Name</em>'.
-     * @see org.talend.repository.services.model.services.ServicePort#getPortName()
-     * @see #getServicePort()
-     * @generated
-     */
-    EAttribute getServicePort_PortName();
 
     /**
      * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}'.
@@ -1319,14 +1299,6 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EClass SERVICE_PORT = eINSTANCE.getServicePort();
-
-        /**
-         * The meta object literal for the '<em><b>Port Name</b></em>' attribute feature.
-         * <!-- begin-user-doc --> <!--
-         * end-user-doc -->
-         * @generated
-         */
-        EAttribute SERVICE_PORT__PORT_NAME = eINSTANCE.getServicePort_PortName();
 
         /**
          * The meta object literal for the '<em><b>Service Operation</b></em>' reference list feature. <!--

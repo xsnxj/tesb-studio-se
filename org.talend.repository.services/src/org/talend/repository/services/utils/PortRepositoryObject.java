@@ -59,7 +59,7 @@ public class PortRepositoryObject implements ISubRepositoryObject {
      * @see org.talend.core.model.repository.IRepositoryViewObject#getLabel()
      */
     public String getLabel() {
-        return servicePort.getPortName();
+        return servicePort.getName();
     }
 
     /*

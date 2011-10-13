@@ -116,7 +116,7 @@ public class OpenJobAction extends EditProcess {
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
         for (ServicePort port : listPort) {
-            if (port.getPortName().equals(parentPortName)) {
+            if (port.getName().equals(parentPortName)) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
                     if (operation.getLabel().equals(node.getLabel())) {

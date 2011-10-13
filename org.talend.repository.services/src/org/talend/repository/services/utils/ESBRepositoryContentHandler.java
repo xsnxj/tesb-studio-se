@@ -177,7 +177,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
             for (ServicePort port : listPort) {
                 PortRepositoryObject portRepositoryObject = new PortRepositoryObject(repositoryObject, port);
                 RepositoryNode portNode = new RepositoryNode(portRepositoryObject, node, ENodeType.REPOSITORY_ELEMENT); //$NON-NLS-1$
-                portNode.setProperties(EProperties.LABEL, port.getPortName());
+                portNode.setProperties(EProperties.LABEL, port.getName());
                 portNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESPORT);
                 node.getChildren().add(portNode);
                 //

@@ -203,17 +203,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getServicePort_PortName() {
-        return (EAttribute)servicePortEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EReference getServicePort_ServiceOperation() {
-        return (EReference)servicePortEClass.getEStructuralFeatures().get(1);
+        return (EReference)servicePortEClass.getEStructuralFeatures().get(0);
     }
 
     /**
@@ -222,7 +213,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * @generated
      */
     public EReference getServicePort_AdditionalInfo() {
-        return (EReference)servicePortEClass.getEStructuralFeatures().get(2);
+        return (EReference)servicePortEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -289,7 +280,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEReference(serviceConnectionEClass, SERVICE_CONNECTION__ADDITIONAL_INFO);
 
         servicePortEClass = createEClass(SERVICE_PORT);
-        createEAttribute(servicePortEClass, SERVICE_PORT__PORT_NAME);
         createEReference(servicePortEClass, SERVICE_PORT__SERVICE_OPERATION);
         createEReference(servicePortEClass, SERVICE_PORT__ADDITIONAL_INFO);
 
@@ -347,7 +337,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEReference(getServiceConnection_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(servicePortEClass, ServicePort.class, "ServicePort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getServicePort_PortName(), ecorePackage.getEString(), "portName", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

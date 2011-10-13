@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.CommandStack;
@@ -33,7 +34,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
-import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.MultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
 import org.talend.designer.core.ui.editor.cmd.CreateNodeContainerCommand;
@@ -45,7 +45,6 @@ import org.talend.repository.model.ComponentsFactoryProvider;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
-import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
@@ -53,6 +52,7 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.utils.OperationRepositoryObject;
 import org.talend.repository.services.utils.WSDLUtils;
 
 public class CreateNewJobAction extends AbstractCreateAction {
@@ -144,8 +144,16 @@ public class CreateNewJobAction extends AbstractCreateAction {
             node = (RepositoryNode) obj;
             ItemCacheManager.clearCache();
 
-            IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
-            IPath path = service.getRepositoryPath((RepositoryNode) node);
+            String operationName = ((OperationRepositoryObject) node.getObject()).getName();
+            String portName = "defaultPort";
+            String servicesName = "Services";
+            if (node.getParent() != null) {
+                portName = node.getParent().getObject().getLabel();
+                if (node.getParent().getParent() != null) {
+                    servicesName = node.getParent().getParent().getObject().getLabel();
+                }
+            }
+            IPath path = new Path(servicesName).append(portName).append(operationName);
             if (RepositoryConstants.isSystemFolder(path.toString())) {
                 // Not allowed to create in system folder.
                 return;
@@ -185,8 +193,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 String wsdlPath = serviceConnection.getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
-                        .getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME,
+                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
 
                 setProviderRequestComponentConfiguration(node2, serviceParameters);
 
@@ -198,15 +206,16 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
-                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(
+                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
                 // openEditor.doSave(new NullProgressMonitor());
 
                 EList<ServicePort> listPort = serviceConnection.getServicePort();
                 String parentPortName = node.getParent().getObject().getLabel();
                 for (ServicePort port : listPort) {
-                    if (port.getPortName().equals(parentPortName)) {
+                    if (port.getName().equals(parentPortName)) {
                         List<ServiceOperation> listOperation = port.getServiceOperation();
                         for (ServiceOperation operation : listOperation) {
                             if (operation.getLabel().equals(node.getObject().getLabel())) {
@@ -239,7 +248,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     private String initLabel(RepositoryNode node) {
         RepositoryNode parent = node.getParent();
-        return parent.getObject().getLabel() + "_" + node.getObject().getLabel();
+        return parent.getObject().getLabel() + "_" + ((OperationRepositoryObject) node.getObject()).getName();
     }
 
     public static void setProviderRequestComponentConfiguration(INode providerRequestComponent,
