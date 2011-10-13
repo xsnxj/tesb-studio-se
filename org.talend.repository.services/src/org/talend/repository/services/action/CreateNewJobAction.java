@@ -114,7 +114,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         for (ServicePort port : listPort) {
             List<ServiceOperation> listOperation = port.getServiceOperation();
             for (ServiceOperation operation : listOperation) {
-                if (operation.getLabel().equals(node.getLabel())) {
+				if (operation.getLabel().equals(node.getObject().getLabel())) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
                         flag = false;
                     }
