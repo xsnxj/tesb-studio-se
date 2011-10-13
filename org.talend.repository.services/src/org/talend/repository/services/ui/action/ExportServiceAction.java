@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IProgressService;
@@ -37,6 +38,7 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -156,10 +158,31 @@ public class ExportServiceAction extends WorkspaceJob {
         // wsdl
         File wsdl = new File(temp, serviceWsdl.getName());
         FilesUtils.copyFile(serviceWsdl.getLocation().toFile(), wsdl);
+        // policy
+        //TODO: support multiport!!!
+        String policyReferenceUri = null;
+        boolean useSecurity = false;
+        ServicePort studioPort = ports.entrySet().iterator().next().getKey();
+        EMap<String, String> props = studioPort.getAdditionalInfo();
+        if (props != null) {
+            String security = props.get(ServiceMetadataDialog.SECURITY);
+            if (ServiceMetadataDialog.SAML.equals(security)) {
+                useSecurity = true;
+                policyReferenceUri = "--saml-token-security--";
+            } else if (ServiceMetadataDialog.BASIC.equals(security)) {
+                policyReferenceUri = "--basic-token-security--";
+                useSecurity = true;
+            }
+        }
+        if (useSecurity) {
+            serviceManager.createPolicyAttachment(
+                    new File(temp, "policy.xml").getAbsolutePath(), wsdl,
+                    policyReferenceUri);
+        }
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, wsdl, getServiceName());
+        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, wsdl, getServiceName(), useSecurity);
         String fileName = artefactName + "-" + getServiceVersion() + ".jar";
         File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
         try {

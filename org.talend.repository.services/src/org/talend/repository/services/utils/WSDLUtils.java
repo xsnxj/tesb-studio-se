@@ -69,16 +69,14 @@ public class WSDLUtils {
 
     public static final String ENDPOINT_URI = "ENDPOINT_URI"; //$NON-NLS-1$
 
-    public static Map<String, String> getServiceParameters(String wsdlURI) throws WSDLException {
+    public static Map<String, String> getServiceParameters(String wsdlURI) throws CoreException {
         Map<String, String> map = new HashMap<String, String>();
         if (wsdlURI == null)
             return map;
         map.put(ENDPOINT_URI, '"' + wsdlURI + '"');
-        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-        WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-        newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-        newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        Definition definition = newWSDLReader.readWSDL(wsdlURI);
+
+        Definition definition = getDefinition(wsdlURI);
+
         Map services = definition.getServices();
         Iterator servicesIter = services.keySet().iterator();
         while (servicesIter.hasNext()) {

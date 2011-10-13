@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<attachments xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+	<wsp:PolicyAttachment>
+		<wsp:AppliesTo>
+			<wsa:EndpointReference>
+				<wsa:Address>@endpoint.uri@</wsa:Address>
+			</wsa:EndpointReference>
+		</wsp:AppliesTo>
+		<wsp:PolicyReference URI="@policy.reference@" />
+	</wsp:PolicyAttachment>
+</attachments>

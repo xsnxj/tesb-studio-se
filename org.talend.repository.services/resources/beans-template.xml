@@ -1,51 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:jaxws="http://cxf.apache.org/jaxws"
-    xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:policy="http://cxf.apache.org/policy"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="
 		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-	"
->
+		http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+	">
+
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
-	<jaxws:endpoint
+	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
+		<property name="operations">
+			<map />
+		</property>
+		<property name="jobLauncher">
+			<osgi:reference interface="org.talend.esb.job.controller.JobLauncher" />
+		</property>
+	</bean>
+
+	<jaxws:endpoint id="service"
 		xmlns:serviceNamespace="@Service.NS@"
 		serviceName="serviceNamespace:@Service.Name@"
 		endpointName="serviceNamespace:@Endpoint.Name@"
 		address="@Endpoint.Address@"
 		wsdlLocation="classpath:/@Wsdl.Location@"
-		implementor="#genericServiceProvider"
-		id="service"
-	>
-	    <jaxws:features/>
-    </jaxws:endpoint>
+		implementor="#genericServiceProvider">
+		<jaxws:features />
+	</jaxws:endpoint>
 
-	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
-		<property name="operations">
-			<map></map>
-		</property>
-        <property name="jobLauncher">
-		    <osgi:reference interface="org.talend.esb.job.controller.JobLauncher"/>
-        </property>
-	</bean>
-	
 	<osgi:service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
-        <osgi:service-properties>
-            <entry key="service.pid" value="@Service.Studio.Name@" />
-        </osgi:service-properties>
-    </osgi:service>
-	
+		<osgi:service-properties>
+			<entry key="service.pid" value="@Service.Studio.Name@" />
+		</osgi:service-properties>
+	</osgi:service>
+
 	<osgi:service ref="service" interface="javax.xml.ws.Endpoint">
 		<osgi:service-properties>
 			<entry key="name" value="@Service.Studio.Name@" />
 			<entry key="type" value="service" />
 		</osgi:service-properties>
 	</osgi:service>
+
+	<cxf:bus>
+		<cxf:features>
+			<policy:policies />
+		</cxf:features>
+	</cxf:bus>
+
+	<policy:externalAttachment location="classpath:/policy.xml" />
 
 </beans>
