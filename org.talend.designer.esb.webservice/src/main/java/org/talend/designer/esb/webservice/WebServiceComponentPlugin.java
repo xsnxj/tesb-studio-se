@@ -25,17 +25,27 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+
+        loadCustomProperty();
+    }
+
+    /**
+     * Set WS_HTTP_PORT_PREFERENCE into java system property. DOC LiXP Comment method "loadCustomProperty".
+     */
+    public void loadCustomProperty() {
+        String defaultPort = getPreferenceStore().getString(WS_HTTP_PORT_PREFERENCE);
+        System.getProperties().put(WS_HTTP_PORT_PREFERENCE, defaultPort);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
@@ -45,13 +55,12 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance
-     *
+     * 
      * @return the shared instance
      */
     public static WebServiceComponentPlugin getDefault() {
         return plugin;
     }
-
 
     protected void initializeDefaultPreferences(IPreferenceStore store) {
         store.setDefault(WS_HTTP_PORT_PREFERENCE, 8088);
