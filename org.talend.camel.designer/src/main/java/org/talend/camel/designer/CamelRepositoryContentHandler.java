@@ -230,4 +230,14 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.repository.IRepositoryContentHandler#getIcon(org.talend.core.model.properties.Item)
+     */
+    public IImage getIcon(Item item) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
