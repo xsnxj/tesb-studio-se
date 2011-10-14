@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorInput;
@@ -45,10 +47,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     private ServiceItem serviceItem;
 
     private RepositoryNode repositoryNode;
-
-    private Map portStore = new HashMap();
-
-    private Map operationStore = new HashMap();
 
     public LocalWSDLEditor() {
         // TODO Auto-generated constructor stub
@@ -106,29 +104,43 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             Definition definition = newWSDLReader.readWSDL(path);
             Map portTypes = definition.getAllPortTypes();
             Iterator it = portTypes.keySet().iterator();
-            EList<ServicePort> oldServicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
 
+			// changed for TDI-18005
+			Map<String, String> portNameIdMap = new HashMap<String, String>();
+			Map<String, Map<String, String>> portAdditionalMap = new HashMap<String, Map<String, String>>();
+			Map<String, String> operNameIdMap = new HashMap<String, String>();
+			Map<String, String> operJobMap = new HashMap<String, String>();
+
+            EList<ServicePort> oldServicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
             // get old service port item names and operation names under them
             HashMap<String, ArrayList<String>> oldPortItemNames = new HashMap<String, ArrayList<String>>();
+
             for (ServicePort servicePort : oldServicePorts) {
+				// keep id
+				portNameIdMap.put(servicePort.getName(), servicePort.getId());
+
+				// keep additional infos
+				Map<String, String> additionInfoMap = new HashMap<String, String>();
+				EMap<String, String> oldInfo = servicePort.getAdditionalInfo();
+				Iterator<Entry<String, String>> iterator = oldInfo.iterator();
+				while (iterator.hasNext()) {
+					Entry<String, String> next = iterator.next();
+					additionInfoMap.put(next.getKey(), next.getValue());
+				}
+				portAdditionalMap.put(servicePort.getId(), additionInfoMap);
+
                 EList<ServiceOperation> operations = servicePort.getServiceOperation();
                 ArrayList<String> operationNames = new ArrayList<String>();
                 for (ServiceOperation operation : operations) {
+					operNameIdMap.put(operation.getName(), operation.getId());
                     operationNames.add(operation.getLabel());
+					// record assigned job
+					operJobMap.put(operation.getId(),
+							operation.getReferenceJobId());
                 }
                 oldPortItemNames.put(servicePort.getName(), operationNames);
             }
 
-            List<ServicePort> portList = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-            for (int i = 0; i < portList.size(); i++) {
-                ServicePort port = (ServicePort) portList.get(i);
-                portStore.put(port.getName(), port.getId());
-                List<ServiceOperation> operationList = port.getServiceOperation();
-                for (int j = 0; j < operationList.size(); j++) {
-                    ServiceOperation operation = (ServiceOperation) operationList.get(j);
-                    operationStore.put(operation.getName(), operation.getId());
-                }
-            }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
             while (it.hasNext()) {
                 QName key = (QName) it.next();
@@ -141,12 +153,23 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 String portName = portType.getQName().getLocalPart();
                 port.setName(portName);
                 // set port id
-                Iterator portIterator = portStore.keySet().iterator();
+				Iterator portIterator = portNameIdMap.keySet().iterator();
                 while (portIterator.hasNext()) {
                     String oldportName = (String) portIterator.next();
                     if (oldportName.equals(portName)) {
-                        String id = (String) portStore.get(oldportName);
+						String id = (String) portNameIdMap.get(oldportName);
                         port.setId(id);
+
+						// restore additional infos
+						Map<String, String> storedAdditions = portAdditionalMap
+								.get(id);
+						Iterator<String> keySet = storedAdditions.keySet()
+								.iterator();
+						while (keySet.hasNext()) {
+							String next = keySet.next();
+							String value = storedAdditions.get(next);
+							port.getAdditionalInfo().put(next, value);
+						}
                     }
                 }
                 if (port.getId() == null || port.getId().equals("")) {
@@ -160,12 +183,19 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                     serviceOperation.setName(operation.getName());
-                    Iterator operationIterator = operationStore.keySet().iterator();
+					Iterator operationIterator = operNameIdMap.keySet()
+							.iterator();
                     while (operationIterator.hasNext()) {
                         String oldOperationName = (String) operationIterator.next();
-                        String operationId = (String) operationStore.get(oldOperationName);
+						String operationId = (String) operNameIdMap
+								.get(oldOperationName);
                         if (oldOperationName.equals(operation.getName())) {
                             serviceOperation.setId(operationId);
+							// re-assign job
+							String jobId = operJobMap.get(operationId);
+							if (jobId != null) {
+								serviceOperation.setReferenceJobId(jobId);
+							}
                         }
                     }
                     if (serviceOperation.getId() == null || serviceOperation.getId().equals("")) {
@@ -195,8 +225,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         } catch (WSDLException e) {
             e.printStackTrace();
         }
-        portStore.clear();
-        operationStore.clear();
     }
 
     @Override
