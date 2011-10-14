@@ -70,7 +70,25 @@ if (actAsProvider || actAsConsumer) { %>
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();
 
-	String endpointUrl = ElementParameterParser.getValue(tESBProviderRequestNode, "__ENDPOINT_URI__");
+		String endpointUrl = ElementParameterParser.getValue(tESBProviderRequestNode, "__ENDPOINT_URI__");
+	
+	//Handle relative URL XiaopengLi
+	if(endpointUrl != null && !endpointUrl.contains("://")){
+	 
+	   String defaultPortStr =  (String)System.getProperties().get("wsHttpPort");
+	   String defaultHostStr = "\"http://localhost:" + defaultPortStr;
+	   if(endpointUrl.startsWith("\"")){
+	   		endpointUrl = endpointUrl.substring(1);
+	   }
+	  
+	   if(!endpointUrl.startsWith("/")){
+	   		endpointUrl = "/" + endpointUrl;
+	   }
+	   endpointUrl = defaultHostStr + endpointUrl;	
+	}
+	//End
+
+	
 
 	String serviceNS = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NS__");
 	String serviceName = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NAME__");
