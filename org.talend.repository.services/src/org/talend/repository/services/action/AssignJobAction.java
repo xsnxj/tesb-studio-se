@@ -58,7 +58,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -76,7 +76,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -103,11 +103,13 @@ public class AssignJobAction extends AbstractCreateAction {
                 String jobName = item.getProperty().getLabel();
                 String operationName = repositoryNode.getObject().getLabel();
                 String parentPortName = repositoryNode.getParent().getObject().getLabel();
-                ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
-                        .getItem();
+                ServiceItem serviceItem = (ServiceItem) repositoryNode
+                        .getParent().getParent().getObject().getProperty().getItem();
 
                 String wsdlPath = ((ServiceConnection) serviceItem.getConnection()).getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
+                serviceParameters.put(WSDLUtils.ENDPOINT_URI,
+                        '"' + serviceParameters.get(WSDLUtils.ENDPOINT_URI) + '"');
 
                 List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
                 for (ServicePort port : listPort) {
