@@ -27,9 +27,6 @@ import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.IImage;
-import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
-import org.talend.core.model.metadata.builder.connection.Connection;
-import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
@@ -242,17 +239,5 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         // TODO Auto-generated method stub
         return null;
     }
-
-	public AbstractMetadataObject getServicesOperation(Connection connection,
-			String operationName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void changeOperationLabel(RepositoryNode newNode, INode node,
-			Connection connection) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

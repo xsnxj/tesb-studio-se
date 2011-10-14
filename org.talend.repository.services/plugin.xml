@@ -5,8 +5,8 @@
  <extension
        point="org.talend.core.runtime.service">
     <Service
-          class="org.talend.repository.services.ESBProviderService"
-          serviceId="IESBProviderService">
+          class="org.talend.repository.services.ESBService"
+          serviceId="IESBService">
     </Service>
  </extension>
  <extension
