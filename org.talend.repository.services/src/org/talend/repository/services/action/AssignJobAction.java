@@ -1,5 +1,6 @@
 package org.talend.repository.services.action;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,9 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -94,6 +97,8 @@ public class AssignJobAction extends AbstractCreateAction {
         }
         RepositoryReviewDialog dialog = new RepositoryReviewDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getShell(), ERepositoryObjectType.PROCESS, "");
+        List<String> jobIDList = getAllReferenceJobId(repositoryNode);
+        dialog.setJobIDList(jobIDList);
         if (dialog.open() == RepositoryReviewDialog.OK) {
             IRepositoryViewObject repositoryObject = dialog.getResult().getObject();
             final Item item = repositoryObject.getProperty().getItem();
@@ -177,6 +182,38 @@ public class AssignJobAction extends AbstractCreateAction {
             // do nothing just return default
         }
         return ServiceOperation.class;
+    }
+
+    private RepositoryNode getTopParent(RepositoryNode repositoryNode) {
+        repositoryNode = repositoryNode.getParent();
+        if (repositoryNode.getParent() instanceof ProjectRepositoryNode) {
+            return repositoryNode;
+        }
+        return getTopParent(repositoryNode);
+    }
+
+    private List<String> getAllReferenceJobId(RepositoryNode repositoryNode) {
+        repositoryNode = getTopParent(repositoryNode);
+        List<IRepositoryNode> nodeList = repositoryNode.getChildren();
+        List<ServiceOperation> operaList = new ArrayList<ServiceOperation>();
+        List<String> jobIDList = new ArrayList<String>();
+        for (IRepositoryNode node : nodeList) {
+            if (node.getObject().getProperty().getItem() instanceof ServiceItem) {
+                ServiceItem item = (ServiceItem) node.getObject().getProperty().getItem();
+                ServiceConnection conn = (ServiceConnection) item.getConnection();
+                EList<ServicePort> portList = conn.getServicePort();
+                for (ServicePort port : portList) {
+                    operaList.addAll(port.getServiceOperation());
+                }
+            }
+        }
+        for (ServiceOperation operation : operaList) {
+            String jobID = operation.getReferenceJobId();
+            if (jobID != null) {
+                jobIDList.add(jobID);
+            }
+        }
+        return jobIDList;
     }
 
 }
