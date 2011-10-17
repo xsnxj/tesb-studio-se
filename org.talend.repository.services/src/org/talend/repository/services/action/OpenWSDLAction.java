@@ -49,7 +49,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
 
         currentNodeType = ESBRepositoryNodeType.SERVICES;
     }
@@ -61,7 +61,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
     }
 
     /*
@@ -77,7 +77,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         switch (node.getType()) {
         case REPOSITORY_ELEMENT:

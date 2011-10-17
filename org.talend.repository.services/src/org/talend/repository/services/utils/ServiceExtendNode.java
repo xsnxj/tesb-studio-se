@@ -29,7 +29,7 @@ public class ServiceExtendNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getNodeImage()
      */
     public IImage getNodeImage() {
-        return ECoreImage.METADATA_WSDL_SCHEMA_ICON;
+        return ECoreImage.SERVICE_ICON;
     }
 
     /*

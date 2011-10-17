@@ -57,7 +57,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
     }
 
     public CreateESBAction(boolean isToolbar) {

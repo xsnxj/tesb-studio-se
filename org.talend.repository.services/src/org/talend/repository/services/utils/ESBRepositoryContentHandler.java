@@ -116,7 +116,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == ESBRepositoryNodeType.SERVICES || type == ERepositoryObjectType.SERVICESPORT
                 || type == ERepositoryObjectType.SERVICESOPERATION) {
-            return ECoreImage.METADATA_WSDL_SCHEMA_ICON;
+            return ECoreImage.SERVICE_ICON;
         }
         return null;
     }

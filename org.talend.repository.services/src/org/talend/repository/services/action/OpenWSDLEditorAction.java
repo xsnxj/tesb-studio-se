@@ -45,7 +45,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
         this.setText("Open WSDL Editor");
         this.setToolTipText("Open WSDL Editor");
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
 
