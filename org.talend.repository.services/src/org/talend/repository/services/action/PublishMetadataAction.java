@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.progress.UIJob;
@@ -44,6 +45,7 @@ import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.SchemaTarget;
+import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.properties.PropertiesFactory;
@@ -74,174 +76,167 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-	protected static final String ACTION_LABEL = "Import WSDL Schemas";
-	private IStructuredSelection selection;
+    protected static final String ACTION_LABEL = "Import WSDL Schemas";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-	 * org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public PublishMetadataAction() {
-		super();
-		this.setText(ACTION_LABEL);
-		this.setToolTipText(ACTION_LABEL);
-		this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
-	}
+    private IStructuredSelection selection;
 
-	public void init(TreeViewer viewer, IStructuredSelection selection) {
-		boolean canWork = true;
-		if (selection.isEmpty() || (selection.size() > 1)) {
-			setEnabled(false);
-			return;
-		}
-		this.selection = selection;
-		@SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-		for (RepositoryNode node : nodes) {
-			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-					|| node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
-				canWork = false;
-				break;
-			}
-			if (canWork && node.getObject() != null
-					&& ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
-				canWork = false;
-				break;
-			}
-		}
-		setEnabled(canWork);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
+     * org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public PublishMetadataAction() {
+        super();
+        this.setText(ACTION_LABEL);
+        this.setToolTipText(ACTION_LABEL);
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
+    }
 
-	public boolean isVisible() {
-		return isEnabled();
-	}
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = true;
+        if (selection.isEmpty() || (selection.size() > 1)) {
+            setEnabled(false);
+            return;
+        }
+        this.selection = selection;
+        @SuppressWarnings("unchecked")
+        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        for (RepositoryNode node : nodes) {
+            if (node.getType() != ENodeType.REPOSITORY_ELEMENT
+                    || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
+                canWork = false;
+                break;
+            }
+            if (canWork && node.getObject() != null
+                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
+                canWork = false;
+                break;
+            }
+        }
+        setEnabled(canWork);
+    }
 
-	protected void doRun() {
-		UIJob job = new UIJob("importing...") {
+    public boolean isVisible() {
+        return isEnabled();
+    }
 
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				monitor.beginTask("importing", 100);
-				@SuppressWarnings("unchecked")
-				List<RepositoryNode> nodes = (List<RepositoryNode>) selection
-						.toList();
-				int step = 100;
-				int size = nodes.size();
-				if (size > 0) {
-					step /= size;
-				}
-				for (RepositoryNode node : nodes) {
-					monitor.worked(step);
-					try {
-						Definition wsdlDefinition = WSDLUtils
-								.getWsdlDefinition(node);
-						SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
-						Map<QName, Binding> bindings = wsdlDefinition
-								.getBindings();
-						List<PortType> portTypes = new ArrayList<PortType>(
-								bindings.size());
-						for (Binding binding : bindings.values()) {
-							PortType portType = binding.getPortType();
-							if (!portTypes.contains(portType)) {
-								portTypes.add(portType);
-								List<BindingOperation> operations = binding
-										.getBindingOperations();
-								for (BindingOperation operation : operations) {
-									Operation oper = operation.getOperation();
-									Input inDef = oper.getInput();
-									if (inDef != null) {
-										Message inMsg = inDef.getMessage();
-										if (inMsg != null) {
-											populateMessage(
-													schemaUtil
-															.getParameterFromMessage(inMsg),
-													portType.getQName());
-										}
-									}
+    protected void doRun() {
+        UIJob job = new UIJob("importing...") {
 
-									Output outDef = oper.getOutput();
-									if (outDef != null) {
-										Message outMsg = outDef.getMessage();
-										if (outMsg != null) {
-											populateMessage(
-													schemaUtil
-															.getParameterFromMessage(outMsg),
-													portType.getQName());
-										}
-									}
-									Collection<Fault> faults = oper.getFaults()
-											.values();
-									for (Fault fault : faults) {
-										Message faultMsg = fault.getMessage();
-										if (faultMsg != null) {
-											populateMessage(
-													schemaUtil
-															.getParameterFromMessage(faultMsg),
-													portType.getQName());
-										}
-									}
-								}
-							}
-						}
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                monitor.beginTask("importing", 100);
+                @SuppressWarnings("unchecked")
+                List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+                int step = 100;
+                int size = nodes.size();
+                if (size > 0) {
+                    step /= size;
+                }
+                for (RepositoryNode node : nodes) {
+                    monitor.worked(step);
+                    try {
+                        Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
+                        SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
+                        Map<QName, Binding> bindings = wsdlDefinition.getBindings();
+                        List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
+                        for (Binding binding : bindings.values()) {
+                            PortType portType = binding.getPortType();
+                            if (!portTypes.contains(portType)) {
+                                portTypes.add(portType);
+                                List<BindingOperation> operations = binding.getBindingOperations();
+                                for (BindingOperation operation : operations) {
+                                    Operation oper = operation.getOperation();
+                                    Input inDef = oper.getInput();
+                                    if (inDef != null) {
+                                        Message inMsg = inDef.getMessage();
+                                        if (inMsg != null) {
+                                            populateMessage(schemaUtil.getParameterFromMessage(inMsg), portType.getQName());
+                                        }
+                                    }
 
-					} catch (CoreException e) {
-						e.printStackTrace();
-						monitor.done();
-						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-								e.getMessage(), e);
-					}
-				}
-				monitor.done();
-				return Status.OK_STATUS;
-			}
+                                    Output outDef = oper.getOutput();
+                                    if (outDef != null) {
+                                        Message outMsg = outDef.getMessage();
+                                        if (outMsg != null) {
+                                            populateMessage(schemaUtil.getParameterFromMessage(outMsg), portType.getQName());
+                                        }
+                                    }
+                                    Collection<Fault> faults = oper.getFaults().values();
+                                    for (Fault fault : faults) {
+                                        Message faultMsg = fault.getMessage();
+                                        if (faultMsg != null) {
+                                            populateMessage(schemaUtil.getParameterFromMessage(faultMsg), portType.getQName());
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-		};
-		job.setUser(true);
-		job.schedule();
-	}
+                    } catch (CoreException e) {
+                        e.printStackTrace();
+                        monitor.done();
+                        return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+                    }
+                }
+                monitor.done();
+                return Status.OK_STATUS;
+            }
 
-	private void populateMessage(ParameterInfo parameter, QName portTypeQName) {
-		String name = /*componentName + "_"+*/parameter.getName();
-		XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
-		connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-		connection.setXmlFilePath(name+".xsd");
-		XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-		Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
-		connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
-				.getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
-		connectionProperty.setLabel(name); 
-		connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
-		connectionProperty.setStatusCode(""); //$NON-NLS-1$
+        };
+        job.setUser(true);
+        job.schedule();
+    }
 
-		connectionItem.setProperty(connectionProperty);
-		connectionItem.setConnection(connection);
+    private void populateMessage(ParameterInfo parameter, QName portTypeQName) {
+        String name = /* componentName + "_"+ */parameter.getName();
+        XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
+        connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
+        connection.setXmlFilePath(name + ".xsd");
+        XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+        Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
+        connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
+                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
+        connectionProperty.setLabel(name);
+        connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
+        connectionProperty.setStatusCode(""); //$NON-NLS-1$
 
-		connection.setInputModel(true); 
-		//schema
-		connection.setFileContent(parameter.getSchema());
-		XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
-		connection.getSchema().add(xmlXPathLoopDescriptor);
-		xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/"+parameter.getName());
-		xmlXPathLoopDescriptor.setLimitBoucle(50);
-		xmlXPathLoopDescriptor.setConnection(connection);
-		for (String[] leaf : parameter.getLeafList()) {
-			SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
-			xmlXPathLoopDescriptor.getSchemaTargets().add(target);
-			target.setRelativeXPathQuery(leaf[0]);
-			target.setTagName(leaf[1]);
-		}
-		// save
-		IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-		String nextId = factory.getNextId();
-		connectionProperty.setId(nextId);
-		try {
-			factory.create(connectionItem, new Path(portTypeQName.getNamespaceURI() + "/" + portTypeQName.getLocalPart()));
-			ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-			RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
-		} catch (PersistenceException e) {
-		}
-	}
+        connectionItem.setProperty(connectionProperty);
+        connectionItem.setConnection(connection);
+
+        connection.setInputModel(true);
+        // schema
+        connection.setFileContent(parameter.getSchema());
+        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
+        connection.getSchema().add(xmlXPathLoopDescriptor);
+        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/" + parameter.getName());
+        xmlXPathLoopDescriptor.setLimitBoucle(50);
+        xmlXPathLoopDescriptor.setConnection(connection);
+        for (String[] leaf : parameter.getLeafList()) {
+            SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
+            xmlXPathLoopDescriptor.getSchemaTargets().add(target);
+            target.setRelativeXPathQuery(leaf[0]);
+            target.setTagName(leaf[1]);
+        }
+
+        // TODO: temporary make a fake root for the connection
+        EList root = connection.getRoot();
+        XMLFileNode xmlFileNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
+        String currentPath = "/" + name;
+        xmlFileNode.setXMLPath(currentPath);
+        root.add(xmlFileNode);
+
+        // save
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        String nextId = factory.getNextId();
+        connectionProperty.setId(nextId);
+        try {
+            factory.create(connectionItem, new Path(portTypeQName.getNamespaceURI() + "/" + portTypeQName.getLocalPart()));
+            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+            RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
+        } catch (PersistenceException e) {
+        }
+    }
 
 }
