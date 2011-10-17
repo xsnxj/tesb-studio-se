@@ -27,7 +27,9 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
+import org.talend.core.model.metadata.IMetadataColumn;
 import org.talend.core.model.metadata.IMetadataTable;
+import org.talend.core.model.metadata.MetadataColumn;
 import org.talend.core.model.metadata.MetadataTable;
 import org.talend.core.model.metadata.MetadataTool;
 import org.talend.core.model.process.IElementParameter;
@@ -313,7 +315,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         String schemaParamName = paramName + ":" + EParameterName.SCHEMA_TYPE.getName(); //$NON-NLS-1$
 
         org.talend.core.model.metadata.builder.connection.Connection connection = null;
-        IMetadataTable repositoryMetadata = MetadataTool.getMetadataFromRepository(value);
+        // IMetadataTable repositoryMetadata = MetadataTool.getMetadataFromRepository(value);
         connection = MetadataTool.getConnectionFromRepository(value);
 
         // For validation rule.
@@ -331,9 +333,13 @@ public class CreateNewJobAction extends AbstractCreateAction {
             }
         }
 
-        if (repositoryMetadata == null) {
-            repositoryMetadata = new MetadataTable();
-        }
+        // if (repositoryMetadata == null) {
+        IMetadataTable repositoryMetadata = new MetadataTable();
+        IMetadataColumn column = new MetadataColumn();
+        column.setTalendType("id_Document");
+        column.setLabel("payload");
+        repositoryMetadata.getListColumns().add(column);
+        // }
         if (switchParam != null) {
             switchParam.setValue(Boolean.FALSE);
         }
