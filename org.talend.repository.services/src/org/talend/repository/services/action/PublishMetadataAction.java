@@ -232,7 +232,7 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-            factory.create(connectionItem, new Path(portTypeQName.getNamespaceURI() + "/" + portTypeQName.getLocalPart()));
+            factory.create(connectionItem, new Path(parameter.getNameSpace() + "/" + portTypeQName.getLocalPart()));
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {

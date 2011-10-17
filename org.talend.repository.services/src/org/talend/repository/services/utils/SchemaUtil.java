@@ -44,22 +44,22 @@ import org.w3c.dom.Element;
 import com.ibm.wsdl.extensions.schema.SchemaImportImpl;
 
 public class SchemaUtil {
-	
+
     private List<XmlSchemaElement> allXmlSchemaElement = new ArrayList<XmlSchemaElement>();
 
     private List<XmlSchemaType> allXmlSchemaType = new ArrayList<XmlSchemaType>();
 
-	private HashMap<XmlSchema, byte[]> schemas;
+    private HashMap<XmlSchema, byte[]> schemas;
 
     private List<String> parametersName = new ArrayList<String>();
 
-    
     public SchemaUtil(Definition wsdlDefinition) {
         schemas = new HashMap<XmlSchema, byte[]>();
         org.w3c.dom.Element schemaElementt = null;
         Map importElement = null;
         if (wsdlDefinition.getTypes() != null) {
-            Collection<ExtensibilityElement> schemaExtElem = findExtensibilityElement(wsdlDefinition.getTypes().getExtensibilityElements(), "schema");
+            Collection<ExtensibilityElement> schemaExtElem = findExtensibilityElement(wsdlDefinition.getTypes()
+                    .getExtensibilityElements(), "schema");
             for (ExtensibilityElement schemaElement : schemaExtElem) {
                 if (schemaElement != null && schemaElement instanceof UnknownExtensibilityElement) {
                     schemaElementt = ((UnknownExtensibilityElement) schemaElement).getElement();
@@ -88,7 +88,7 @@ public class SchemaUtil {
 
                     XmlSchema schema = createschemafromtype(schemaElementt, wsdlDefinition, documentBase);
                     if (schema != null) {
-                    	addSchema(schemas, schema);
+                        addSchema(schemas, schema);
                     }
 
                     if (isHaveImport) {
@@ -100,7 +100,8 @@ public class SchemaUtil {
         }
     }
 
-    private static Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
+    private static Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements,
+            String elementType) {
         List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
         if (extensibilityElements != null) {
             for (ExtensibilityElement elment : extensibilityElements) {
@@ -124,24 +125,25 @@ public class SchemaUtil {
     }
 
     private void addSchema(Map<XmlSchema, byte[]> map, XmlSchema schema) {
-    	try {
-    		ByteArrayOutputStream fos = new ByteArrayOutputStream();
-    		schema.write(fos);
-    		fos.close();
-    		map.put(schema, fos.toByteArray());
+        try {
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
+            schema.write(fos);
+            fos.close();
+            map.put(schema, fos.toByteArray());
             allXmlSchemaElement.addAll(schema.getElements().values());
-        	allXmlSchemaType.addAll(schema.getSchemaTypes().values());
-    	} catch (IOException e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
-    	}
+            allXmlSchemaType.addAll(schema.getSchemaTypes().values());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
-    
+
     private void findImportSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, Map importElement) {
-    	findImportSchema(wsdlDefinition, schemas, importElement, new ArrayList<String>());
+        findImportSchema(wsdlDefinition, schemas, importElement, new ArrayList<String>());
     }
-    
-    private void findImportSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, Map importElement, Collection<String> documentBaseList) {
+
+    private void findImportSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, Map importElement,
+            Collection<String> documentBaseList) {
         Iterator keyIterator = importElement.keySet().iterator();
         while (keyIterator.hasNext()) {
             String key = keyIterator.next().toString();
@@ -150,7 +152,7 @@ public class SchemaUtil {
             for (int i = 0; i < importEle.size(); i++) {
                 Map recurseImport = null;
                 SchemaImportImpl schemaImport = (SchemaImportImpl) importEle.elementAt(i);
-				SchemaImportImpl importImpl = schemaImport;
+                SchemaImportImpl importImpl = schemaImport;
                 boolean isHaveImport = false;
                 if (importImpl.getReferencedSchema() != null) {
                     Element refSchema = importImpl.getReferencedSchema().getElement();
@@ -161,14 +163,14 @@ public class SchemaUtil {
                             recurseImport = schemaImport.getReferencedSchema().getImports();
                             if (recurseImport != null && recurseImport.size() > 0 && !documentBaseList.contains(documentBase)) {
                                 isHaveImport = true;
-								documentBaseList.add(documentBase);
+                                documentBaseList.add(documentBase);
                             }
                         }
                     }
 
                     XmlSchema importedSchema = createschemafromtype(refSchema, wsdlDefinition, documentBase);
                     if (importedSchema != null) {
-                    	addSchema(schemas, importedSchema);
+                        addSchema(schemas, importedSchema);
                     }
                 }
 
@@ -178,8 +180,8 @@ public class SchemaUtil {
 
                 if (schemaImport != null) {
                     if (schemaImport.getReferencedSchema() != null) {
-                    	@SuppressWarnings("unchecked")
-						List<SchemaReference> includeElements = schemaImport.getReferencedSchema().getIncludes();
+                        @SuppressWarnings("unchecked")
+                        List<SchemaReference> includeElements = schemaImport.getReferencedSchema().getIncludes();
                         findIncludesSchema(wsdlDefinition, schemas, includeElements);
                     }
                 }
@@ -188,39 +190,40 @@ public class SchemaUtil {
         }
     }
 
-    private void findIncludesSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas, List<SchemaReference> includeElements) {
-    	if (includeElements == null || includeElements.size() == 0) {
-    		return;
-    	}
-    	for (SchemaReference schemaReference : includeElements) {
-			Element schemaElement = schemaReference.getReferencedSchema().getElement();
+    private void findIncludesSchema(Definition wsdlDefinition, Map<XmlSchema, byte[]> schemas,
+            List<SchemaReference> includeElements) {
+        if (includeElements == null || includeElements.size() == 0) {
+            return;
+        }
+        for (SchemaReference schemaReference : includeElements) {
+            Element schemaElement = schemaReference.getReferencedSchema().getElement();
             String documentBase = schemaReference.getReferencedSchema().getDocumentBaseURI();
             XmlSchema schemaInclude = createschemafromtype(schemaElement, wsdlDefinition, documentBase);
             if (schemaInclude != null) {
-            	addSchema(schemas, schemaInclude);
+                addSchema(schemas, schemaInclude);
             }
         }
     }
-    
-    private byte[] getSchema(Message message) {
-    	for (Part part : (Collection<Part>)message.getParts().values()) {
-    		QName elementQname = part.getElementName();
-    		for (XmlSchema schema : schemas.keySet()) {
-    			for (XmlSchemaElement element : schema.getElements().values()) {
-    				if (element.getName().equals(elementQname.getLocalPart())) {//TODO: check namespaces too
-    					return schemas.get(schema);
-    				}
-    			}
-    		}
-    	}
-		return null;
-	}
 
-	public ParameterInfo getParameterFromMessage(Message msg) {
-		List<Part> msgParts = msg.getOrderedParts(null);
-		if (msgParts.size() != 1) {
-			//TODO: warn user
-		}
+    private byte[] getSchema(Message message) {
+        for (Part part : (Collection<Part>) message.getParts().values()) {
+            QName elementQname = part.getElementName();
+            for (XmlSchema schema : schemas.keySet()) {
+                for (XmlSchemaElement element : schema.getElements().values()) {
+                    if (element.getName().equals(elementQname.getLocalPart())) {// TODO: check namespaces too
+                        return schemas.get(schema);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public ParameterInfo getParameterFromMessage(Message msg) {
+        List<Part> msgParts = msg.getOrderedParts(null);
+        if (msgParts.size() != 1) {
+            // TODO: warn user
+        }
         ParameterInfo parameterRoot = new ParameterInfo();
         for (Part part : msgParts) {
             String partName = part.getName();
@@ -244,11 +247,13 @@ public class SchemaUtil {
 
     private void buildParameterFromElements(String partElement, ParameterInfo parameterRoot) {
         parametersName.add(parameterRoot.getName());
+
         Iterator<XmlSchemaElement> elementsItr = allXmlSchemaElement.iterator();
         if (partElement != null) {
             while (elementsItr.hasNext()) {
                 XmlSchemaElement xmlSchemaElement = elementsItr.next();
                 if (partElement.equals(xmlSchemaElement.getName())) {
+                    parameterRoot.setNameSpace(xmlSchemaElement.getQName().getNamespaceURI());
                     // ParameterInfo parameter = new ParameterInfo();
                     // parameter.setName(partName);
                     if (xmlSchemaElement.getSchemaType() != null) {
@@ -256,13 +261,9 @@ public class SchemaUtil {
                             XmlSchemaComplexType xmlElementComplexType = (XmlSchemaComplexType) xmlSchemaElement.getSchemaType();
                             XmlSchemaParticle xmlSchemaParticle = xmlElementComplexType.getParticle();
                             if (xmlSchemaParticle instanceof XmlSchemaGroupParticle) {
-                                Collection<XmlSchemaObjectBase> xmlSchemaObjectCollection =
-                                    getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-                                            (XmlSchemaGroupParticle) xmlSchemaParticle);
+                                Collection<XmlSchemaObjectBase> xmlSchemaObjectCollection = getXmlSchemaObjectsFromXmlSchemaGroupParticle((XmlSchemaGroupParticle) xmlSchemaParticle);
                                 if (xmlSchemaObjectCollection != null) {
-                                    buildParameterFromCollection(
-                                            xmlSchemaObjectCollection,
-                                            parameterRoot);
+                                    buildParameterFromCollection(xmlSchemaObjectCollection, parameterRoot);
                                 }
                             } else if (xmlSchemaElement.getSchemaTypeName() != null) {
                                 String paraTypeName = xmlSchemaElement.getSchemaTypeName().getLocalPart();
@@ -291,7 +292,7 @@ public class SchemaUtil {
 
     /**
      * DOC gcui Comment method "buileParameterFromTypes".
-     *
+     * 
      * @param paraType
      * @param parameter
      * @param operationInfo
@@ -303,6 +304,7 @@ public class SchemaUtil {
             XmlSchemaType type = allXmlSchemaType.get(i);
             String typeName = type.getName();
             if (paraType.equals(typeName)) {
+                parameter.setNameSpace(type.getQName().getNamespaceURI());
                 if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) type;
                     XmlSchemaParticle xmlSchemaParticle = xmlSchemaComplexType.getParticle();
@@ -315,9 +317,7 @@ public class SchemaUtil {
                                 xmlSchemaParticle = xscce.getParticle();
                             }
                             if (xmlSchemaParticle instanceof XmlSchemaGroupParticle) {
-                                xmlSchemaObjectCollection =
-                                    getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-                                            (XmlSchemaGroupParticle) xmlSchemaParticle);
+                                xmlSchemaObjectCollection = getXmlSchemaObjectsFromXmlSchemaGroupParticle((XmlSchemaGroupParticle) xmlSchemaParticle);
                             }
                         } else if (obj instanceof XmlSchemaComplexContentRestriction) {
                             XmlSchemaComplexContentRestriction xsccr = (XmlSchemaComplexContentRestriction) obj;
@@ -327,9 +327,7 @@ public class SchemaUtil {
                             }
                         }
                     } else if (xmlSchemaParticle instanceof XmlSchemaGroupParticle) {
-                        xmlSchemaObjectCollection =
-                            getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-                                    (XmlSchemaGroupParticle) xmlSchemaParticle);
+                        xmlSchemaObjectCollection = getXmlSchemaObjectsFromXmlSchemaGroupParticle((XmlSchemaGroupParticle) xmlSchemaParticle);
                     }
                     if (xmlSchemaObjectCollection != null) {
                         buildParameterFromCollection(xmlSchemaObjectCollection, parameter);
@@ -337,13 +335,13 @@ public class SchemaUtil {
                 } else if (type instanceof XmlSchemaSimpleType) {
                     // Will TO DO if need.
                     // System.out.println("XmlSchemaSimpleType");
+
                 }
             }
         }
     }
 
-    private Collection<XmlSchemaObjectBase> getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-            XmlSchemaGroupParticle xmlSchemaParticle) {
+    private Collection<XmlSchemaObjectBase> getXmlSchemaObjectsFromXmlSchemaGroupParticle(XmlSchemaGroupParticle xmlSchemaParticle) {
         Collection<XmlSchemaObjectBase> xmlSchemaObjectCollection = null;
         if (xmlSchemaParticle instanceof XmlSchemaAll) {
             XmlSchemaAll xmlSchemaAll = (XmlSchemaAll) xmlSchemaParticle;
@@ -367,15 +365,12 @@ public class SchemaUtil {
         return xmlSchemaObjectCollection;
     }
 
-    private void buildParameterFromCollection(Collection<XmlSchemaObjectBase> xmlSchemaObjectCollection,
-            ParameterInfo parameter) {
+    private void buildParameterFromCollection(Collection<XmlSchemaObjectBase> xmlSchemaObjectCollection, ParameterInfo parameter) {
         // XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) xmlSchemaParticle;
         // XmlSchemaObjectCollection xmlSchemaObjectCollection = xmlSchemaSequence.getItems();
         for (XmlSchemaObjectBase xmlSchemaObject : xmlSchemaObjectCollection) {
             if (xmlSchemaObject instanceof XmlSchemaGroupParticle) {
-                Collection<XmlSchemaObjectBase> items =
-                    getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-                            (XmlSchemaGroupParticle) xmlSchemaObject);
+                Collection<XmlSchemaObjectBase> items = getXmlSchemaObjectsFromXmlSchemaGroupParticle((XmlSchemaGroupParticle) xmlSchemaObject);
                 if (null != items && !items.isEmpty()) {
                     buildParameterFromCollection(items, parameter);
                 }
@@ -419,9 +414,7 @@ public class SchemaUtil {
                         XmlSchemaComplexType xmlElementComplexType = (XmlSchemaComplexType) xmlSchemaElement.getSchemaType();
                         XmlSchemaParticle xmlSchemaParticle = xmlElementComplexType.getParticle();
                         if (xmlSchemaParticle instanceof XmlSchemaGroupParticle) {
-                            Collection<XmlSchemaObjectBase> childCollection =
-                                getXmlSchemaObjectsFromXmlSchemaGroupParticle(
-                                        (XmlSchemaGroupParticle) xmlSchemaParticle);
+                            Collection<XmlSchemaObjectBase> childCollection = getXmlSchemaObjectsFromXmlSchemaGroupParticle((XmlSchemaGroupParticle) xmlSchemaParticle);
                             if (childCollection != null && !isHave) {
                                 buildParameterFromCollection(childCollection, parameterSon);
                             }
