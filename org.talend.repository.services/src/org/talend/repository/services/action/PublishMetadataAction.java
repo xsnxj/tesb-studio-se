@@ -29,9 +29,13 @@ import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.progress.UIJob;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -55,6 +59,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.SchemaUtil;
@@ -114,53 +119,87 @@ public class PublishMetadataAction extends AContextualAction {
 	}
 
 	protected void doRun() {
-		@SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = (List<RepositoryNode>)selection.toList();
-		for (RepositoryNode node : nodes) {
-			try {
-				Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
-				SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
-				Map<QName, Binding> bindings = wsdlDefinition.getBindings();
-				List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
-				for (Binding binding : bindings.values()) {
-					PortType portType = binding.getPortType();
-					if (!portTypes.contains(portType)) {
-						portTypes.add(portType);
-						List<BindingOperation> operations = binding.getBindingOperations();
-						for (BindingOperation operation : operations) {
-							Operation oper = operation.getOperation();
-							Input inDef = oper.getInput();
-							if (inDef != null) {
-								Message inMsg = inDef.getMessage();
-								if (inMsg != null) {
-									populateMessage(schemaUtil.getParameterFromMessage(inMsg), portType.getQName());
-								}
-							}
+		UIJob job = new UIJob("importing...") {
 
-							Output outDef = oper.getOutput();
-							if (outDef != null) {
-								Message outMsg = outDef.getMessage();
-								if (outMsg != null) {
-									populateMessage(schemaUtil.getParameterFromMessage(outMsg), portType.getQName());
-								}
-							}
-							Collection<Fault> faults = oper.getFaults().values();
-							for (Fault fault : faults) {
-								Message faultMsg = fault.getMessage();
-								if (faultMsg != null) {
-									populateMessage(schemaUtil.getParameterFromMessage(faultMsg), portType.getQName());
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				monitor.beginTask("importing", 100);
+				@SuppressWarnings("unchecked")
+				List<RepositoryNode> nodes = (List<RepositoryNode>) selection
+						.toList();
+				int step = 100;
+				int size = nodes.size();
+				if (size > 0) {
+					step /= size;
+				}
+				for (RepositoryNode node : nodes) {
+					monitor.worked(step);
+					try {
+						Definition wsdlDefinition = WSDLUtils
+								.getWsdlDefinition(node);
+						SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
+						Map<QName, Binding> bindings = wsdlDefinition
+								.getBindings();
+						List<PortType> portTypes = new ArrayList<PortType>(
+								bindings.size());
+						for (Binding binding : bindings.values()) {
+							PortType portType = binding.getPortType();
+							if (!portTypes.contains(portType)) {
+								portTypes.add(portType);
+								List<BindingOperation> operations = binding
+										.getBindingOperations();
+								for (BindingOperation operation : operations) {
+									Operation oper = operation.getOperation();
+									Input inDef = oper.getInput();
+									if (inDef != null) {
+										Message inMsg = inDef.getMessage();
+										if (inMsg != null) {
+											populateMessage(
+													schemaUtil
+															.getParameterFromMessage(inMsg),
+													portType.getQName());
+										}
+									}
+
+									Output outDef = oper.getOutput();
+									if (outDef != null) {
+										Message outMsg = outDef.getMessage();
+										if (outMsg != null) {
+											populateMessage(
+													schemaUtil
+															.getParameterFromMessage(outMsg),
+													portType.getQName());
+										}
+									}
+									Collection<Fault> faults = oper.getFaults()
+											.values();
+									for (Fault fault : faults) {
+										Message faultMsg = fault.getMessage();
+										if (faultMsg != null) {
+											populateMessage(
+													schemaUtil
+															.getParameterFromMessage(faultMsg),
+													portType.getQName());
+										}
+									}
 								}
 							}
 						}
+
+					} catch (CoreException e) {
+						e.printStackTrace();
+						monitor.done();
+						return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+								e.getMessage(), e);
 					}
 				}
-
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				monitor.done();
+				return Status.OK_STATUS;
 			}
-		}
 
+		};
+		job.setUser(true);
+		job.schedule();
 	}
 
 	private void populateMessage(ParameterInfo parameter, QName portTypeQName) {
