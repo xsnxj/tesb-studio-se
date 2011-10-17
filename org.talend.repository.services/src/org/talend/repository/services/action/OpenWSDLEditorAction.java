@@ -17,6 +17,7 @@ import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -44,7 +45,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
         this.setText("Open WSDL Editor");
         this.setToolTipText("Open WSDL Editor");
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
 

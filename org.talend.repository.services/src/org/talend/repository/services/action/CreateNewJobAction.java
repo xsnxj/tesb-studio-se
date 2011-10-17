@@ -20,6 +20,7 @@ import org.eclipse.ui.PartInitException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
@@ -85,7 +86,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
 
         currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
 
@@ -115,7 +116,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
@@ -202,8 +203,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 String wsdlPath = serviceConnection.getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
-                        .getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME,
+                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
 
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
@@ -216,8 +217,9 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
-                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(
+                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
 
                 // openEditor.doSave(new NullProgressMonitor());

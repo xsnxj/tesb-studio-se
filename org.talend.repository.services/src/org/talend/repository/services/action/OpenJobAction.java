@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -65,7 +66,7 @@ public class OpenJobAction extends EditProcess {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         String jobId = getReferenceJobId(node);
         if (jobId == null) {
             setEnabled(false);
@@ -112,15 +113,14 @@ public class OpenJobAction extends EditProcess {
     }
 
     protected static String getReferenceJobId(IRepositoryNode node) {
-		String parentPortName = node.getParent().getObject().getLabel();
+        String parentPortName = node.getParent().getObject().getLabel();
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
         for (ServicePort port : listPort) {
             if (port.getName().equals(parentPortName)) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-					if (operation.getLabel()
-							.equals(node.getObject().getLabel())) {
+                    if (operation.getLabel().equals(node.getObject().getLabel())) {
                         return operation.getReferenceJobId();
                     }
                 }

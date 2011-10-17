@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.Information;
@@ -113,8 +114,9 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     }
 
     public IImage getIcon(ERepositoryObjectType type) {
-        if (type == ESBRepositoryNodeType.SERVICES) {
-            return EImage.DEFAULT_IMAGE;
+        if (type == ESBRepositoryNodeType.SERVICES || type == ERepositoryObjectType.SERVICESPORT
+                || type == ERepositoryObjectType.SERVICESOPERATION) {
+            return ECoreImage.METADATA_WSDL_SCHEMA_ICON;
         }
         return null;
     }

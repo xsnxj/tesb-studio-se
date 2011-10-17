@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -56,7 +57,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.METADATA_WSDL_SCHEMA_ICON));
     }
 
     public CreateESBAction(boolean isToolbar) {

@@ -8,6 +8,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Item;
@@ -44,7 +45,7 @@ public class AssignJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
 
         currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
     }
@@ -56,12 +57,12 @@ public class AssignJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -73,13 +74,13 @@ public class AssignJobAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         setEnabled(true);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -108,13 +109,12 @@ public class AssignJobAction extends AbstractCreateAction {
                 String jobName = item.getProperty().getLabel();
                 String operationName = repositoryNode.getObject().getLabel();
                 String parentPortName = repositoryNode.getParent().getObject().getLabel();
-                ServiceItem serviceItem = (ServiceItem) repositoryNode
-                        .getParent().getParent().getObject().getProperty().getItem();
+                ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
+                        .getItem();
 
                 String wsdlPath = ((ServiceConnection) serviceItem.getConnection()).getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-                serviceParameters.put(WSDLUtils.ENDPOINT_URI,
-                        '"' + serviceParameters.get(WSDLUtils.ENDPOINT_URI) + '"');
+                serviceParameters.put(WSDLUtils.ENDPOINT_URI, '"' + serviceParameters.get(WSDLUtils.ENDPOINT_URI) + '"');
 
                 List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
                 for (ServicePort port : listPort) {

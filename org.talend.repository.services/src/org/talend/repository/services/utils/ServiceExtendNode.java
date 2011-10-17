@@ -15,6 +15,7 @@ package org.talend.repository.services.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.repository.IExtendRepositoryNode;
@@ -28,7 +29,7 @@ public class ServiceExtendNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getNodeImage()
      */
     public IImage getNodeImage() {
-        return EImage.DEFAULT_IMAGE;
+        return ECoreImage.METADATA_WSDL_SCHEMA_ICON;
     }
 
     /*
