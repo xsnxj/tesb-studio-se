@@ -548,7 +548,8 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 					"Cannot start provider with uri: " + endpointUrl + ". Malformed URL.");
 		}
 
-		endpoint = javax.xml.ws.Endpoint.publish(endpointUrl, new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler));
+		// Endpoint is always null now so that WSDL value should be used
+		endpoint = javax.xml.ws.Endpoint.publish(null, new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler));
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
 	}
