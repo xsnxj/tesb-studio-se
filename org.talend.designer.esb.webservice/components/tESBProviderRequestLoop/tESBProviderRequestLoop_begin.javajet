@@ -40,4 +40,9 @@ try {
 	// This is a beginning of the ESB provider request component cycle
 	while(true) {
 		try {
+			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
+				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
+
+			org.dom4j.Document requestMessage_<%=cid%> =
+					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
 
