@@ -102,14 +102,11 @@ if (actAsProvider || actAsConsumer) { %>
 			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
 				// "request-response" or "one-way"
 				put("COMMUNICATION_STYLE", "<%=(isOneWay)?"one-way":"request-response"%>");
-				//
 				put("dataFormat", "PAYLOAD");
 				put("portName", "{<%=portNS%>}<%=portName%>");
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
 				put("defaultOperationName", "<%=operationName%>");
-				// static
-				put("defaultOperationNameSpace", "<%=operationNs%>");
-				// endpoint URI configured in tESBProviderInput
+				put("defaultOperationNameSpace", "<%=operationNS%>");
 				put("publishedEndpointUrl", "<%=endpointUrl%>");
 			}};
 
@@ -315,7 +312,8 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 		value = javax.xml.ws.Service.Mode.PAYLOAD
 	)
 @javax.xml.ws.WebServiceProvider(
-<% if () { %>	wsdlLocation="<%=wsdlLocation%>",<% } %>
+<% if (null != wsdlLocation && !wsdlLocation.trim().isEmpty()) { %>
+		wsdlLocation="<%=wsdlLocation%>",<% } %>
 		targetNamespace="<%=serviceNS%>",
 		serviceName="<%=serviceName%>",
 		portName="<%=portName%>"
@@ -323,19 +321,19 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 		javax.xml.ws.Provider<javax.xml.transform.Source> {
 
-	private static final javax.xml.ws.WebServiceProvider annotation =
+	private final javax.xml.ws.WebServiceProvider annotation =
 			ESBProvider_<%=tESBProviderRequestNodeCid%>.class.getAnnotation(
 					javax.xml.ws.WebServiceProvider.class);
-	private static final String TARGET_NS = annotation.targetNamespace();
-	private static final String SERVICE_NAME = annotation.serviceName();
-	private static final String PORT_NAME = annotation.portName();
+	private final String TARGET_NS = annotation.targetNamespace();
+	private final String SERVICE_NAME = annotation.serviceName();
+	private final String PORT_NAME = annotation.portName();
 
-	private static final javax.xml.namespace.QName serviceName =
+	private final javax.xml.namespace.QName serviceName =
 			new javax.xml.namespace.QName(TARGET_NS, SERVICE_NAME);
-	private static final javax.xml.namespace.QName portName =
+	private final javax.xml.namespace.QName portName =
 			new javax.xml.namespace.QName(TARGET_NS, PORT_NAME);
-	private static final javax.xml.namespace.QName operationName =
-			new javax.xml.namespace.QName("<%=operationNs%>", "<%=operationName%>");
+	private final javax.xml.namespace.QName operationName =
+			new javax.xml.namespace.QName("<%=operationNS%>", "<%=operationName%>");
 
 	private javax.xml.transform.TransformerFactory factory =
 			javax.xml.transform.TransformerFactory.newInstance();
@@ -485,7 +483,7 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 	private javax.xml.ws.Endpoint endpoint;
 	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
 
-	final String endpointUrl = "<%=endpointUrl%>";
+	String endpointUrl = "<%=endpointUrl%>";
 
 	public HandlerThread_<%=tESBProviderRequestNodeCid%>(
 			QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
