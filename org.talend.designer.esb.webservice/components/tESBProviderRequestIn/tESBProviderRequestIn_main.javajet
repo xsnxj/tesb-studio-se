@@ -29,11 +29,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 					continue;
 				}
 %>
-			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
-				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
-
-			org.dom4j.Document requestMessage_<%=cid%> =
-					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
 
 <% if (isOneWay) { %>
 			// esbHandler_<%=cid%>.sendResponse(null);
