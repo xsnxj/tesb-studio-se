@@ -46,6 +46,7 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
+import org.talend.repository.services.model.services.util.EServiceCoreImage;
 
 /**
  * DOC hwang class global comment. Detailled comment
@@ -116,7 +117,7 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == ESBRepositoryNodeType.SERVICES || type == ERepositoryObjectType.SERVICESPORT
                 || type == ERepositoryObjectType.SERVICESOPERATION) {
-            return ECoreImage.SERVICE_ICON;
+            return EServiceCoreImage.SERVICE_ICON;
         }
         return null;
     }

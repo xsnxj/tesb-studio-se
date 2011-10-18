@@ -17,8 +17,6 @@ import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
@@ -29,6 +27,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.LocalWSDLEditor;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -45,7 +44,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
         this.setText("Open WSDL Editor");
         this.setToolTipText("Open WSDL Editor");
 
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.SERVICE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
 

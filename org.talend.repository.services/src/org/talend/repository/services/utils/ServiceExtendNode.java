@@ -14,12 +14,10 @@ package org.talend.repository.services.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.repository.IExtendRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.util.EServiceCoreImage;
 
 public class ServiceExtendNode implements IExtendRepositoryNode {
 
@@ -29,7 +27,7 @@ public class ServiceExtendNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getNodeImage()
      */
     public IImage getNodeImage() {
-        return ECoreImage.SERVICE_ICON;
+        return EServiceCoreImage.SERVICE_ICON;
     }
 
     /*
