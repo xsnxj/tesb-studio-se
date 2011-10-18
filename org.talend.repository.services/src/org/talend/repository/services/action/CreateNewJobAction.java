@@ -100,7 +100,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -132,7 +132,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -198,7 +198,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
                 String wsdlPath = serviceConnection.getWSDLPath();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-                serviceParameters.put(WSDLUtils.ENDPOINT_URI, '"' + serviceParameters.get(WSDLUtils.ENDPOINT_URI) + '"');
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
                 serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
                         .getProperties(EProperties.LABEL))));
