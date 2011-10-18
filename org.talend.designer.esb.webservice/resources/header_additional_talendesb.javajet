@@ -35,7 +35,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
+boolean actAsProvider = !process.getNodesOfType("tESBProviderRequestLoop").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 
 if (actAsProvider || actAsConsumer
@@ -64,8 +64,9 @@ if (actAsProvider || actAsConsumer) { %>
 
 <% if (actAsProvider) {
 	// Web Service Provider
-	INode tESBProviderRequestNode = process.getNodesOfType("tESBProviderRequest").get(0);
+	INode tESBProviderRequestNode = process.getNodesOfType("tESBProviderRequestLoop").get(0);
 	String tESBProviderRequestNodeCid = tESBProviderRequestNode.getUniqueName();
+	tESBProviderRequestNodeCid = tESBProviderRequestNodeCid.replaceAll("_Loop", "");
 
 	String projectName = codeGenArgument.getCurrentProjectName();
 	String processName = process.getName();

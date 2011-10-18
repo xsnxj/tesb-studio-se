@@ -16,7 +16,7 @@
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
-if (node.getProcess().getNodesOfType("tESBProviderRequest").isEmpty()) { %>
+if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 	System.out.println("[WARN] nonsense: tESBProviderResponse component used without tESBProviderRequest component on the job");
 <%	}
 String cid = node.getUniqueName();
