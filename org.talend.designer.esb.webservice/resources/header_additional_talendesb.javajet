@@ -72,30 +72,8 @@ if (actAsProvider || actAsConsumer) { %>
 	String processName = process.getName();
 
 	String endpointUrl = ElementParameterParser.getValue(tESBProviderRequestNode, "__ENDPOINT_URI__");
-	
-	//Handle relative URL XiaopengLi
-	if(endpointUrl != null && !endpointUrl.contains("://")){
-	 
-	   String defaultPortStr =  (String)System.getProperties().get("wsHttpPort");
-	   String defaultHostStr = "\"http://localhost:" + defaultPortStr;
-	   if(endpointUrl.startsWith("\"")){
-	   		endpointUrl = endpointUrl.substring(1);
-	   }
-	  
-	   if(!endpointUrl.startsWith("/")){
-	   		endpointUrl = "/" + endpointUrl;
-	   }
-	   endpointUrl = defaultHostStr + endpointUrl;	
-	}
-	//Add missing quotes, really don't know why they are missing. LiXiaopeng 2011-10-17
-	if(!endpointUrl.startsWith("\"")){
-	   	endpointUrl = "\"" + endpointUrl;
-	}
-	if(!endpointUrl.endsWith("\"")){
-	   	endpointUrl = endpointUrl + "\"";
-	}
-	//End
-	
+
+	String wsdlLocation = ElementParameterParser.getValue(tESBProviderRequestNode, "__WSDL_LOCATION__");
 
 	String serviceNS = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NS__");
 	String serviceName = ElementParameterParser.getValue(tESBProviderRequestNode, "__SERVICE_NAME__");
@@ -110,6 +88,10 @@ if (actAsProvider || actAsConsumer) { %>
 	}
 
 	String operationName = ElementParameterParser.getValue(tESBProviderRequestNode, "__OPERATION_NAME__");
+	String operationNS = ElementParameterParser.getValue(tESBProviderRequestNode, "__OPERATION_NS__");
+	if (null == operationNS || operationNS.isEmpty()) {
+		operationNS = serviceNS;
+	}
 
 	boolean isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
 		&& process.getNodesOfType("tESBProviderResponse").isEmpty());
@@ -126,9 +108,9 @@ if (actAsProvider || actAsConsumer) { %>
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
 				put("defaultOperationName", "<%=operationName%>");
 				// static
-				put("defaultOperationNameSpace", "");
+				put("defaultOperationNameSpace", "<%=operationNs%>");
 				// endpoint URI configured in tESBProviderInput
-				put("publishedEndpointUrl", <%=endpointUrl%>);
+				put("publishedEndpointUrl", "<%=endpointUrl%>");
 			}};
 
 			public String getEndpointKey() {
@@ -320,64 +302,80 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 /**
  * web service provider implementation
  */
+<% if (null == wsdlLocation || wsdlLocation.isEmpty()) { %>
 @javax.jws.WebService(
-		name = "<%=serviceName%>",
+		name = "<%=serviceName%>PortType",
 		targetNamespace = "<%=serviceNS%>"
 	)
+<% } %>
 @javax.jws.soap.SOAPBinding(
 		parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE
 	)
 @javax.xml.ws.ServiceMode(
 		value = javax.xml.ws.Service.Mode.PAYLOAD
 	)
-@javax.xml.ws.WebServiceProvider()
+@javax.xml.ws.WebServiceProvider(
+<% if () { %>	wsdlLocation="<%=wsdlLocation%>",<% } %>
+		targetNamespace="<%=serviceNS%>",
+		serviceName="<%=serviceName%>",
+		portName="<%=portName%>"
+	)
 public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 		javax.xml.ws.Provider<javax.xml.transform.Source> {
 
+	private static final javax.xml.ws.WebServiceProvider annotation =
+			ESBProvider_<%=tESBProviderRequestNodeCid%>.class.getAnnotation(
+					javax.xml.ws.WebServiceProvider.class);
+	private static final String TARGET_NS = annotation.targetNamespace();
+	private static final String SERVICE_NAME = annotation.serviceName();
+	private static final String PORT_NAME = annotation.portName();
+
+	private static final javax.xml.namespace.QName serviceName =
+			new javax.xml.namespace.QName(TARGET_NS, SERVICE_NAME);
+	private static final javax.xml.namespace.QName portName =
+			new javax.xml.namespace.QName(TARGET_NS, PORT_NAME);
+	private static final javax.xml.namespace.QName operationName =
+			new javax.xml.namespace.QName("<%=operationNs%>", "<%=operationName%>");
+
 	private javax.xml.transform.TransformerFactory factory =
-		javax.xml.transform.TransformerFactory.newInstance();
+			javax.xml.transform.TransformerFactory.newInstance();
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
-	private final String TNS = ESBProvider_<%=tESBProviderRequestNodeCid%>.class.getAnnotation(
-			javax.jws.WebService.class).targetNamespace();
+	@javax.annotation.Resource()
+	private javax.xml.ws.WebServiceContext context;
 
 	public ESBProvider_<%=tESBProviderRequestNodeCid%>(
 			QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
-	<%
 
-	%>
-	@javax.jws.WebMethod(
-			operationName = "<%=operationName%>",
-			action = "<%=serviceNS%>/<%=operationName%>"
-		)
 <% if (isOneWay) { %>
 	@javax.jws.Oneway()
-<% } else { %>
-	@javax.jws.WebResult(
-			name = "<%=operationName%>Output",
-			targetNamespace = "<%=serviceNS%>",
-			partName = "response"
-		)
 <% } %>
-	public javax.xml.transform.Source invoke(
-			@javax.jws.WebParam(
-					name = "<%=operationName%>Input",
-					targetNamespace = "<%=serviceNS%>",
-					partName = "request"
-				) javax.xml.transform.Source request) {
+	public javax.xml.transform.Source invoke(javax.xml.transform.Source request) {
 
 		// System.out.println(System.currentTimeMillis() + " -> handleMessage");
 
 		try {
+			javax.xml.namespace.QName operation = (javax.xml.namespace.QName) context
+					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_OPERATION);
+			javax.xml.namespace.QName port = (javax.xml.namespace.QName) context
+					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_PORT);
+			javax.xml.namespace.QName service = (javax.xml.namespace.QName) context
+					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_SERVICE);
+			if (serviceName.equals(service) && portName.equals(port) && operationName.equals(operation)) {
+				// System.out.println("request to implemented operation");
+			} else {
+				throw new RuntimeException("operation not implemented by job");
+			}
+
 			org.dom4j.io.DocumentResult docResult = new org.dom4j.io.DocumentResult();
 			factory.newTransformer().transform(request, docResult);
 			org.dom4j.Document requestDoc = docResult.getDocument();
 			// System.out.println("request: " + requestDoc.asXML());
 
 			QueuedExchangeContextImpl<org.dom4j.Document> messageExchange =
-				messageHandler.invoke(requestDoc);
+					messageHandler.invoke(requestDoc);
 
 			try {
 <% if (isOneWay) { %>
@@ -414,7 +412,7 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 public class ESBProviderCallbackTalendJobWrapper_<%=tESBProviderRequestNodeCid%> implements ESBProviderCallbackTalendJobInner {
 
 	private final String TNS = ESBProvider_<%=tESBProviderRequestNodeCid%>.class.getAnnotation(
-			javax.jws.WebService.class).targetNamespace();
+			javax.xml.ws.WebServiceProvider.class).targetNamespace();
 
 	private ESBProviderCallback esbProviderCallback;
 	private java.util.Map<String, String> customProperty;
@@ -484,13 +482,10 @@ public class ESBProviderCallbackTalendJobWrapper_<%=tESBProviderRequestNodeCid%>
 
 class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 
-	private final String TNS = ESBProvider_<%=tESBProviderRequestNodeCid%>.class.getAnnotation(
-			javax.jws.WebService.class).targetNamespace();
-
 	private javax.xml.ws.Endpoint endpoint;
 	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
 
-	final String endpointUrl = <%=endpointUrl%>;
+	final String endpointUrl = "<%=endpointUrl%>";
 
 	public HandlerThread_<%=tESBProviderRequestNodeCid%>(
 			QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
@@ -498,29 +493,36 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 	}
 
 	public void run() {
-		ESBProvider_<%=tESBProviderRequestNodeCid%> esbProvider = new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler);
+		// handle relative uri
+		String defaultPort = (String) System.getProperties().get("wsHttpPort");
+		if (null == defaultPort || defaultPort.trim().isEmpty()) {
+			defaultPort = "8088";
+		}
 
-		endpoint = javax.xml.ws.Endpoint.create(esbProvider);
-		@SuppressWarnings("serial")
-		java.util.Map<String, Object> map = new java.util.HashMap<String, Object>() {{
-			put(javax.xml.ws.Endpoint.WSDL_SERVICE,
-					new javax.xml.namespace.QName(TNS, "<%=serviceName%>"));
-			put(javax.xml.ws.Endpoint.WSDL_PORT,
-					new javax.xml.namespace.QName(TNS, "<%=portName%>")); //
-		}};
-		endpoint.setProperties(map);
-		//test for busy
+		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
+			endpointUrl = "http://localhost:" + defaultPort + "/";
+		}
+
+		if (!endpointUrl.contains("://")) {
+			if (!endpointUrl.startsWith("/")) {
+				endpointUrl = "/" + endpointUrl;
+			}
+			endpointUrl = "http://localhost:" + defaultPort + endpointUrl;
+		}
+
+		// test for busy
 		java.net.ServerSocket ss = null;
 		try {
-
 			java.net.URL endpointURL = new java.net.URL(endpointUrl);
 			String host = endpointURL.getHost();
 			int port = endpointURL.getPort();
 			if ("localhost".equals(host) || host.startsWith("127.0.0")) {
 				try {
-						ss = new java.net.ServerSocket(port);
+					ss = new java.net.ServerSocket(port);
 				} catch (IOException e) {
-					throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Port "+port+" already in use."); //rethrow exception
+					// rethrow exception
+					throw new IllegalArgumentException(
+							"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
 				} finally {
 					if (ss != null) {
 						try {
@@ -531,19 +533,24 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 					}
 				}
 				try {
-					//ok, let's doublecheck for silent listeners
+					// ok, let's doublecheck for silent listeners
 					java.net.Socket cs = new java.net.Socket(host, port);
-					//if succeed - somebody silently listening, fail!
+					// if succeed - somebody silently listening, fail!
 					cs.close();
-					throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Port "+port+" already in use."); //rethrow exception
+					// rethrow exception
+					throw new IllegalArgumentException(
+							"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
 				} catch (IOException e) {
 					//ok, nobody listens, proceed
 				}
 			}
 		} catch (java.net.MalformedURLException e) {
-			throw new IllegalArgumentException("Cannot start provider with uri: "+endpointUrl+". Malformed URL."); //rethrow exception
+			 // rethrow exception
+			throw new IllegalArgumentException(
+					"Cannot start provider with uri: " + endpointUrl + ". Malformed URL.");
 		}
-		endpoint.publish(endpointUrl);
+
+		endpoint = javax.xml.ws.Endpoint.publish(endpointUrl, new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler));
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
 	}
