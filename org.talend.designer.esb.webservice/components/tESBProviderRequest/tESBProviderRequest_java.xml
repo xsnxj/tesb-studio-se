@@ -29,14 +29,8 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-	    <PARAMETER
-      	NAME="PROPERTY"
-      	FIELD="PROPERTY_TYPE"
-      	NUM_ROW="1"
-      	REPOSITORY_VALUE="SERVICES:OPERATION"
-    	/>
 		<PARAMETER NAME="SCHEMA" FIELD="SCHEMA_TYPE"
-				REQUIRED="true" NUM_ROW="15" READONLY="true">
+				REQUIRED="true" NUM_ROW="15">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" />
 			</TABLE>
