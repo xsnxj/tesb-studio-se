@@ -138,11 +138,38 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
     }
 
     /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getServiceOperation_Label() {
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getServiceOperation_Name() {
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getServiceOperation_Id() {
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
     public EAttribute getServiceOperation_ReferenceJobId() {
-        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(0);
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(3);
     }
 
     /**
@@ -150,7 +177,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * @generated
      */
     public EAttribute getServiceOperation_Documentation() {
-        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(1);
+        return (EAttribute)serviceOperationEClass.getEStructuralFeatures().get(4);
     }
 
     /**
@@ -203,8 +230,26 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getServicePort_Name() {
+        return (EAttribute)servicePortEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getServicePort_Id() {
+        return (EAttribute)servicePortEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EReference getServicePort_ServiceOperation() {
-        return (EReference)servicePortEClass.getEStructuralFeatures().get(0);
+        return (EReference)servicePortEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -213,7 +258,7 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
      * @generated
      */
     public EReference getServicePort_AdditionalInfo() {
-        return (EReference)servicePortEClass.getEStructuralFeatures().get(1);
+        return (EReference)servicePortEClass.getEStructuralFeatures().get(3);
     }
 
     /**
@@ -271,6 +316,9 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         serviceItemEClass = createEClass(SERVICE_ITEM);
 
         serviceOperationEClass = createEClass(SERVICE_OPERATION);
+        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__LABEL);
+        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__NAME);
+        createEAttribute(serviceOperationEClass, SERVICE_OPERATION__ID);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__REFERENCE_JOB_ID);
         createEAttribute(serviceOperationEClass, SERVICE_OPERATION__DOCUMENTATION);
 
@@ -280,6 +328,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEReference(serviceConnectionEClass, SERVICE_CONNECTION__ADDITIONAL_INFO);
 
         servicePortEClass = createEClass(SERVICE_PORT);
+        createEAttribute(servicePortEClass, SERVICE_PORT__NAME);
+        createEAttribute(servicePortEClass, SERVICE_PORT__ID);
         createEReference(servicePortEClass, SERVICE_PORT__SERVICE_OPERATION);
         createEReference(servicePortEClass, SERVICE_PORT__ADDITIONAL_INFO);
 
@@ -311,8 +361,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         // Obtain other dependent packages
         PropertiesPackage thePropertiesPackage = (PropertiesPackage)EPackage.Registry.INSTANCE.getEPackage(PropertiesPackage.eNS_URI);
-        ConnectionPackage theConnectionPackage = (ConnectionPackage)EPackage.Registry.INSTANCE.getEPackage(ConnectionPackage.eNS_URI);
         EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
+        ConnectionPackage theConnectionPackage = (ConnectionPackage)EPackage.Registry.INSTANCE.getEPackage(ConnectionPackage.eNS_URI);
 
         // Create type parameters
 
@@ -320,14 +370,15 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
 
         // Add supertypes to classes
         serviceItemEClass.getESuperTypes().add(thePropertiesPackage.getConnectionItem());
-        serviceOperationEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
         serviceConnectionEClass.getESuperTypes().add(theConnectionPackage.getConnection());
-        servicePortEClass.getESuperTypes().add(theConnectionPackage.getAbstractMetadataObject());
 
         // Initialize classes and features; add operations and parameters
         initEClass(serviceItemEClass, ServiceItem.class, "ServiceItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(serviceOperationEClass, ServiceOperation.class, "ServiceOperation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getServiceOperation_Label(), theEcorePackage.getEString(), "label", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getServiceOperation_Name(), theEcorePackage.getEString(), "name", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getServiceOperation_Id(), theEcorePackage.getEString(), "id", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_ReferenceJobId(), ecorePackage.getEString(), "referenceJobId", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceOperation_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, ServiceOperation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -337,6 +388,8 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEReference(getServiceConnection_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(servicePortEClass, ServicePort.class, "ServicePort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getServicePort_Name(), theEcorePackage.getEString(), "name", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getServicePort_Id(), theEcorePackage.getEString(), "id", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

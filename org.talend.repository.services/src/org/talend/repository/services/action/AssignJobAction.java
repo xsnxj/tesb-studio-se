@@ -5,12 +5,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.CorePlugin;
+import org.talend.core.model.process.EParameterFieldType;
+import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
+import org.talend.core.model.process.IProcess;
+import org.talend.core.model.process.IProcess2;
+import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -18,9 +25,14 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
+import org.talend.designer.core.IDesignerCoreService;
+import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
+import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
+import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -30,6 +42,8 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.utils.OperationRepositoryObject;
+import org.talend.repository.services.utils.PortRepositoryObject;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 
@@ -162,6 +176,43 @@ public class AssignJobAction extends AbstractCreateAction {
                     e.printStackTrace();
                 }
 
+                IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
+                boolean foundInOpen = false;
+
+                IProcess2 process = null;
+                IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                        .getEditorReferences();
+                List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
+                for (IProcess2 processOpen : processes) {
+                    if (processOpen.getProperty().getItem() == processItem) {
+                        foundInOpen = true;
+                        process = processOpen;
+                        break;
+                    }
+                }
+                if (!foundInOpen) {
+                    IProcess proc = service.getProcessFromProcessItem(processItem);
+                    if (proc instanceof IProcess2) {
+                        process = (IProcess2) proc;
+                    }
+                }
+
+                if (process != null) {
+                    List<? extends INode> nodelist = process.getGraphicalNodes();
+                    for (INode node : nodelist) {
+                        if (node.getComponent().getName().equals("tESBProviderRequest")) {
+                            repositoryChange(repositoryNode, node);
+                        }
+                    }
+                    processItem.setProcess(process.saveXmlFile());
+
+                    try {
+                        factory.save(processItem);
+                    } catch (PersistenceException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 try {
                     factory.save(serviceItem);
                 } catch (PersistenceException e) {
@@ -214,6 +265,21 @@ public class AssignJobAction extends AbstractCreateAction {
             }
         }
         return jobIDList;
+    }
+
+    private void repositoryChange(RepositoryNode repNode, INode node) {
+        IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
+        ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
+        if (param != null) {
+            param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.REPOSITORY);
+            String serviceId = connectionItem.getProperty().getId();
+            String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
+            String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(), param
+                    .getName()
+                    + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            command2.execute();
+        }
     }
 
 }

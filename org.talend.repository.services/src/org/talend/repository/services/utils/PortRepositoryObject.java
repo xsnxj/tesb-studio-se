@@ -15,21 +15,18 @@ package org.talend.repository.services.utils;
 import java.util.Date;
 import java.util.List;
 
-import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.User;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ISubRepositoryObject;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.services.model.services.ServicePort;
-import orgomg.cwm.objectmodel.core.ModelElement;
 
 /**
  * DOC Administrator class global comment. Detailled comment
  */
-public class PortRepositoryObject implements ISubRepositoryObject {
+public class PortRepositoryObject implements IRepositoryViewObject {
 
     protected final IRepositoryViewObject viewObject;
 
@@ -50,7 +47,7 @@ public class PortRepositoryObject implements ISubRepositoryObject {
      * @see org.talend.core.model.repository.IRepositoryViewObject#getId()
      */
     public String getId() {
-        return null;
+        return servicePort.getId();
     }
 
     /*
@@ -211,15 +208,6 @@ public class PortRepositoryObject implements ISubRepositoryObject {
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.core.repository.model.ISubRepositoryObject#getAbstractMetadataObject()
-     */
-    public AbstractMetadataObject getAbstractMetadataObject() {
-        return this.servicePort;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.talend.core.repository.model.ISubRepositoryObject#removeFromParent()
      */
     public void removeFromParent() {
@@ -234,15 +222,6 @@ public class PortRepositoryObject implements ISubRepositoryObject {
      */
     public Property getProperty() {
         return viewObject.getProperty();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.repository.model.ISubRepositoryObject#getModelElement()
-     */
-    public ModelElement getModelElement() {
-        return this.servicePort;
     }
 
 }

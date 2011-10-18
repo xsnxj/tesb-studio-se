@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.ServicePort#getId <em>Id</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.ServicePort#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
@@ -29,7 +31,59 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ServicePort extends AbstractMetadataObject {
+public interface ServicePort extends EObject {
+    /**
+     * Returns the value of the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Name</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Name</em>' attribute.
+     * @see #setName(String)
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_Name()
+     * @model
+     * @generated
+     */
+    String getName();
+
+    /**
+     * Sets the value of the '{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Name</em>' attribute.
+     * @see #getName()
+     * @generated
+     */
+    void setName(String value);
+
+    /**
+     * Returns the value of the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Id</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Id</em>' attribute.
+     * @see #setId(String)
+     * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_Id()
+     * @model
+     * @generated
+     */
+    String getId();
+
+    /**
+     * Sets the value of the '{@link org.talend.repository.services.model.services.ServicePort#getId <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Id</em>' attribute.
+     * @see #getId()
+     * @generated
+     */
+    void setId(String value);
+
     /**
      * Returns the value of the '<em><b>Service Operation</b></em>' reference list.
      * The list contents are of type {@link org.talend.repository.services.model.services.ServiceOperation}.

@@ -125,224 +125,31 @@ public interface ServicesPackage extends EPackage {
     int SERVICE_OPERATION = 1;
 
     /**
+     * The feature id for the '<em><b>Label</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int SERVICE_OPERATION__LABEL = 0;
+
+    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION__NAME = ConnectionPackage.ABSTRACT_METADATA_OBJECT__NAME;
-
-    /**
-     * The feature id for the '<em><b>Visibility</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__VISIBILITY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VISIBILITY;
-
-    /**
-     * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__CLIENT_DEPENDENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CLIENT_DEPENDENCY;
-
-    /**
-     * The feature id for the '<em><b>Supplier Dependency</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__SUPPLIER_DEPENDENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SUPPLIER_DEPENDENCY;
-
-    /**
-     * The feature id for the '<em><b>Constraint</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__CONSTRAINT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CONSTRAINT;
-
-    /**
-     * The feature id for the '<em><b>Namespace</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__NAMESPACE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__NAMESPACE;
-
-    /**
-     * The feature id for the '<em><b>Importer</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__IMPORTER = ConnectionPackage.ABSTRACT_METADATA_OBJECT__IMPORTER;
-
-    /**
-     * The feature id for the '<em><b>Stereotype</b></em>' reference.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__STEREOTYPE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__STEREOTYPE;
-
-    /**
-     * The feature id for the '<em><b>Tagged Value</b></em>' containment reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__TAGGED_VALUE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__TAGGED_VALUE;
-
-    /**
-     * The feature id for the '<em><b>Document</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__DOCUMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DOCUMENT;
-
-    /**
-     * The feature id for the '<em><b>Description</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__DESCRIPTION = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DESCRIPTION;
-
-    /**
-     * The feature id for the '<em><b>Responsible Party</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__RESPONSIBLE_PARTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RESPONSIBLE_PARTY;
-
-    /**
-     * The feature id for the '<em><b>Element Node</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__ELEMENT_NODE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__ELEMENT_NODE;
-
-    /**
-     * The feature id for the '<em><b>Set</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__SET = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SET;
-
-    /**
-     * The feature id for the '<em><b>Rendered Object</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__RENDERED_OBJECT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RENDERED_OBJECT;
-
-    /**
-     * The feature id for the '<em><b>Vocabulary Element</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__VOCABULARY_ELEMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VOCABULARY_ELEMENT;
-
-    /**
-     * The feature id for the '<em><b>Measurement</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__MEASUREMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__MEASUREMENT;
-
-    /**
-     * The feature id for the '<em><b>Change Request</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__CHANGE_REQUEST = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CHANGE_REQUEST;
-
-    /**
-     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__DASDL_PROPERTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DASDL_PROPERTY;
-
-    /**
-     * The feature id for the '<em><b>Properties</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__PROPERTIES = ConnectionPackage.ABSTRACT_METADATA_OBJECT__PROPERTIES;
+    int SERVICE_OPERATION__NAME = 1;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION__ID = ConnectionPackage.ABSTRACT_METADATA_OBJECT__ID;
-
-    /**
-     * The feature id for the '<em><b>Comment</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__COMMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__COMMENT;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__LABEL = ConnectionPackage.ABSTRACT_METADATA_OBJECT__LABEL;
-
-    /**
-     * The feature id for the '<em><b>Read Only</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__READ_ONLY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__READ_ONLY;
-
-    /**
-     * The feature id for the '<em><b>Synchronised</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__SYNCHRONISED = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SYNCHRONISED;
-
-    /**
-     * The feature id for the '<em><b>Divergency</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_OPERATION__DIVERGENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DIVERGENCY;
+    int SERVICE_OPERATION__ID = 2;
 
     /**
      * The feature id for the '<em><b>Reference Job Id</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc
@@ -351,7 +158,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION__REFERENCE_JOB_ID = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 0;
+    int SERVICE_OPERATION__REFERENCE_JOB_ID = 3;
 
     /**
      * The feature id for the '<em><b>Documentation</b></em>' attribute.
@@ -359,7 +166,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION__DOCUMENTATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
+    int SERVICE_OPERATION__DOCUMENTATION = 4;
 
     /**
      * The number of structural features of the '<em>Service Operation</em>' class.
@@ -368,7 +175,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_OPERATION_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
+    int SERVICE_OPERATION_FEATURE_COUNT = 5;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
@@ -783,223 +590,21 @@ public interface ServicesPackage extends EPackage {
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__NAME = ConnectionPackage.ABSTRACT_METADATA_OBJECT__NAME;
-
-    /**
-     * The feature id for the '<em><b>Visibility</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__VISIBILITY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VISIBILITY;
-
-    /**
-     * The feature id for the '<em><b>Client Dependency</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__CLIENT_DEPENDENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CLIENT_DEPENDENCY;
-
-    /**
-     * The feature id for the '<em><b>Supplier Dependency</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__SUPPLIER_DEPENDENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SUPPLIER_DEPENDENCY;
-
-    /**
-     * The feature id for the '<em><b>Constraint</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__CONSTRAINT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CONSTRAINT;
-
-    /**
-     * The feature id for the '<em><b>Namespace</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__NAMESPACE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__NAMESPACE;
-
-    /**
-     * The feature id for the '<em><b>Importer</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__IMPORTER = ConnectionPackage.ABSTRACT_METADATA_OBJECT__IMPORTER;
-
-    /**
-     * The feature id for the '<em><b>Stereotype</b></em>' reference.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__STEREOTYPE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__STEREOTYPE;
-
-    /**
-     * The feature id for the '<em><b>Tagged Value</b></em>' containment reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__TAGGED_VALUE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__TAGGED_VALUE;
-
-    /**
-     * The feature id for the '<em><b>Document</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__DOCUMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DOCUMENT;
-
-    /**
-     * The feature id for the '<em><b>Description</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__DESCRIPTION = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DESCRIPTION;
-
-    /**
-     * The feature id for the '<em><b>Responsible Party</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__RESPONSIBLE_PARTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RESPONSIBLE_PARTY;
-
-    /**
-     * The feature id for the '<em><b>Element Node</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__ELEMENT_NODE = ConnectionPackage.ABSTRACT_METADATA_OBJECT__ELEMENT_NODE;
-
-    /**
-     * The feature id for the '<em><b>Set</b></em>' reference list.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__SET = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SET;
-
-    /**
-     * The feature id for the '<em><b>Rendered Object</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__RENDERED_OBJECT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__RENDERED_OBJECT;
-
-    /**
-     * The feature id for the '<em><b>Vocabulary Element</b></em>' reference list.
-     * <!-- begin-user-doc --> <!--
-     * end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__VOCABULARY_ELEMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__VOCABULARY_ELEMENT;
-
-    /**
-     * The feature id for the '<em><b>Measurement</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__MEASUREMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__MEASUREMENT;
-
-    /**
-     * The feature id for the '<em><b>Change Request</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__CHANGE_REQUEST = ConnectionPackage.ABSTRACT_METADATA_OBJECT__CHANGE_REQUEST;
-
-    /**
-     * The feature id for the '<em><b>Dasdl Property</b></em>' reference list. <!-- begin-user-doc --> <!-- end-user-doc
-     * -->
-     * 
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__DASDL_PROPERTY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DASDL_PROPERTY;
-
-    /**
-     * The feature id for the '<em><b>Properties</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__PROPERTIES = ConnectionPackage.ABSTRACT_METADATA_OBJECT__PROPERTIES;
+    int SERVICE_PORT__NAME = 0;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__ID = ConnectionPackage.ABSTRACT_METADATA_OBJECT__ID;
-
-    /**
-     * The feature id for the '<em><b>Comment</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__COMMENT = ConnectionPackage.ABSTRACT_METADATA_OBJECT__COMMENT;
-
-    /**
-     * The feature id for the '<em><b>Label</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__LABEL = ConnectionPackage.ABSTRACT_METADATA_OBJECT__LABEL;
-
-    /**
-     * The feature id for the '<em><b>Read Only</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__READ_ONLY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__READ_ONLY;
-
-    /**
-     * The feature id for the '<em><b>Synchronised</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__SYNCHRONISED = ConnectionPackage.ABSTRACT_METADATA_OBJECT__SYNCHRONISED;
-
-    /**
-     * The feature id for the '<em><b>Divergency</b></em>' attribute.
-     * <!-- begin-user-doc --> <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_PORT__DIVERGENCY = ConnectionPackage.ABSTRACT_METADATA_OBJECT__DIVERGENCY;
+    int SERVICE_PORT__ID = 1;
 
     /**
      * The feature id for the '<em><b>Service Operation</b></em>' reference list.
@@ -1008,7 +613,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__SERVICE_OPERATION = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 0;
+    int SERVICE_PORT__SERVICE_OPERATION = 2;
 
     /**
      * The feature id for the '<em><b>Additional Info</b></em>' map.
@@ -1016,7 +621,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_PORT__ADDITIONAL_INFO = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 1;
+    int SERVICE_PORT__ADDITIONAL_INFO = 3;
 
     /**
      * The number of structural features of the '<em>Service Port</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
@@ -1025,7 +630,7 @@ public interface ServicesPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_PORT_FEATURE_COUNT = ConnectionPackage.ABSTRACT_METADATA_OBJECT_FEATURE_COUNT + 2;
+    int SERVICE_PORT_FEATURE_COUNT = 4;
 
     /**
      * The meta object id for the '{@link org.talend.repository.services.model.services.impl.AdditionalInfoMapImpl <em>Additional Info Map</em>}' class.
@@ -1078,6 +683,39 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EClass getServiceOperation();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getLabel <em>Label</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Label</em>'.
+     * @see org.talend.repository.services.model.services.ServiceOperation#getLabel()
+     * @see #getServiceOperation()
+     * @generated
+     */
+    EAttribute getServiceOperation_Label();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.talend.repository.services.model.services.ServiceOperation#getName()
+     * @see #getServiceOperation()
+     * @generated
+     */
+    EAttribute getServiceOperation_Name();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see org.talend.repository.services.model.services.ServiceOperation#getId()
+     * @see #getServiceOperation()
+     * @generated
+     */
+    EAttribute getServiceOperation_Id();
 
     /**
      * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServiceOperation#getReferenceJobId <em>Reference Job Id</em>}'.
@@ -1148,6 +786,28 @@ public interface ServicesPackage extends EPackage {
      * @generated
      */
     EClass getServicePort();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServicePort#getName <em>Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Name</em>'.
+     * @see org.talend.repository.services.model.services.ServicePort#getName()
+     * @see #getServicePort()
+     * @generated
+     */
+    EAttribute getServicePort_Name();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.talend.repository.services.model.services.ServicePort#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see org.talend.repository.services.model.services.ServicePort#getId()
+     * @see #getServicePort()
+     * @generated
+     */
+    EAttribute getServicePort_Id();
 
     /**
      * Returns the meta object for the reference list '{@link org.talend.repository.services.model.services.ServicePort#getServiceOperation <em>Service Operation</em>}'.
@@ -1243,6 +903,30 @@ public interface ServicesPackage extends EPackage {
         EClass SERVICE_OPERATION = eINSTANCE.getServiceOperation();
 
         /**
+         * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_OPERATION__LABEL = eINSTANCE.getServiceOperation_Label();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_OPERATION__NAME = eINSTANCE.getServiceOperation_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_OPERATION__ID = eINSTANCE.getServiceOperation_Id();
+
+        /**
          * The meta object literal for the '<em><b>Reference Job Id</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1299,6 +983,22 @@ public interface ServicesPackage extends EPackage {
          * @generated
          */
         EClass SERVICE_PORT = eINSTANCE.getServicePort();
+
+        /**
+         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_PORT__NAME = eINSTANCE.getServicePort_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute SERVICE_PORT__ID = eINSTANCE.getServicePort_Id();
 
         /**
          * The meta object literal for the '<em><b>Service Operation</b></em>' reference list feature. <!--

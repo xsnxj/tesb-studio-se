@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -21,37 +20,31 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
-import org.talend.core.model.metadata.IMetadataColumn;
-import org.talend.core.model.metadata.IMetadataTable;
-import org.talend.core.model.metadata.MetadataColumn;
-import org.talend.core.model.metadata.MetadataTable;
-import org.talend.core.model.metadata.MetadataTool;
+import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
+import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.ui.MultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
+import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.designer.core.ui.editor.cmd.CreateNodeContainerCommand;
-import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
-import org.talend.designer.core.ui.editor.cmd.RepositoryChangeMetadataCommand;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.wizards.NewProcessWizard;
-import org.talend.designer.core.utils.ValidationRulesUtil;
 import org.talend.designer.runprocess.ItemCacheManager;
 import org.talend.repository.model.ComponentsFactoryProvider;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -65,6 +58,7 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.utils.OperationRepositoryObject;
+import org.talend.repository.services.utils.PortRepositoryObject;
 import org.talend.repository.services.utils.WSDLUtils;
 
 public class CreateNewJobAction extends AbstractCreateAction {
@@ -106,7 +100,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -138,7 +132,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -206,8 +200,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 serviceParameters.put(WSDLUtils.ENDPOINT_URI, '"' + serviceParameters.get(WSDLUtils.ENDPOINT_URI) + '"');
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME,
-                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
+                        .getProperties(EProperties.LABEL))));
 
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
@@ -220,9 +214,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
+                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
 
                 // openEditor.doSave(new NullProgressMonitor());
@@ -244,7 +237,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 }
 
                 repositoryChange((RepositoryNode) node, node1);
-                repositoryChange((RepositoryNode) node, node2);
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                 try {
@@ -305,56 +297,17 @@ public class CreateNewJobAction extends AbstractCreateAction {
     }
 
     private void repositoryChange(RepositoryNode repNode, Node node) {
-        String paramName = "SCHEMA";
-        IElementParameter switchParam = node.getElementParameter(EParameterName.REPOSITORY_ALLOW_AUTO_SWITCH.getName());
-        String id = repNode.getObject().getProperty().getId();
-        String name = repNode.getObject().getLabel();
-        String value = id + " - " + name; //$NON-NLS-1$
-
-        String fullParamName = paramName + ":" + EParameterName.REPOSITORY_SCHEMA_TYPE.getName(); //$NON-NLS-1$
-        String schemaParamName = paramName + ":" + EParameterName.SCHEMA_TYPE.getName(); //$NON-NLS-1$
-
-        org.talend.core.model.metadata.builder.connection.Connection connection = null;
-        // IMetadataTable repositoryMetadata = MetadataTool.getMetadataFromRepository(value);
-        connection = MetadataTool.getConnectionFromRepository(value);
-
-        // For validation rule.
-        boolean isValRulesLost = false;
-        IRepositoryViewObject currentValRuleObj = ValidationRulesUtil.getCurrentValidationRuleObjs(node);
-        if (currentValRuleObj != null) {
-            List<IRepositoryViewObject> valRuleObjs = ValidationRulesUtil.getRelatedValidationRuleObjs(value);
-            if (!ValidationRulesUtil.isCurrentValRuleObjInList(valRuleObjs, currentValRuleObj)) {
-                //                    if (!MessageDialog.openConfirm(button.getShell(), Messages.getString("SchemaTypeController.0"), //$NON-NLS-1$
-                //                            Messages.getString("SchemaTypeController.3"))) { //$NON-NLS-1$
-                // return null;
-                // } else {
-                // isValRulesLost = true;
-                // }
-            }
+        IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
+        ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
+        if (param != null) {
+            param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.REPOSITORY);
+            String serviceId = connectionItem.getProperty().getId();
+            String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
+            String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(), param
+                    .getName()
+                    + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            command2.execute();
         }
-
-        // if (repositoryMetadata == null) {
-        IMetadataTable repositoryMetadata = new MetadataTable();
-        IMetadataColumn column = new MetadataColumn();
-        column.setTalendType("id_Document");
-        column.setLabel("payload");
-        repositoryMetadata.getListColumns().add(column);
-        // }
-        if (switchParam != null) {
-            switchParam.setValue(Boolean.FALSE);
-        }
-        CompoundCommand cc = new CompoundCommand();
-        node.setPropertyValue(schemaParamName, "REPOSITORY");
-        RepositoryChangeMetadataCommand changeMetadataCommand = new RepositoryChangeMetadataCommand(node, fullParamName, value,
-                repositoryMetadata, value, connection);//
-        changeMetadataCommand.setConnection(connection);
-        cc.add(changeMetadataCommand);
-
-        if (isValRulesLost) {
-            cc.add(new PropertyChangeCommand(node, EParameterName.VALIDATION_RULES.getName(), false));
-            cc.add(new PropertyChangeCommand(node, EParameterName.REPOSITORY_VALIDATION_RULE_TYPE.getName(), "")); //$NON-NLS-1$
-        }
-        cc.execute();
-
     }
 }

@@ -110,9 +110,6 @@ public class ServicesSwitch<T> {
             case ServicesPackage.SERVICE_OPERATION: {
                 ServiceOperation serviceOperation = (ServiceOperation)theEObject;
                 T result = caseServiceOperation(serviceOperation);
-                if (result == null) result = caseAbstractMetadataObject(serviceOperation);
-                if (result == null) result = caseModelElement(serviceOperation);
-                if (result == null) result = caseElement(serviceOperation);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -134,9 +131,6 @@ public class ServicesSwitch<T> {
             case ServicesPackage.SERVICE_PORT: {
                 ServicePort servicePort = (ServicePort)theEObject;
                 T result = caseServicePort(servicePort);
-                if (result == null) result = caseAbstractMetadataObject(servicePort);
-                if (result == null) result = caseModelElement(servicePort);
-                if (result == null) result = caseElement(servicePort);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }

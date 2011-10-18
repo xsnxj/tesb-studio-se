@@ -14,6 +14,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
@@ -28,6 +29,8 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getServiceOperation <em>Service Operation</em>}</li>
  *   <li>{@link org.talend.repository.services.model.services.impl.ServicePortImpl#getAdditionalInfo <em>Additional Info</em>}</li>
  * </ul>
@@ -35,7 +38,47 @@ import org.talend.repository.services.model.services.ServicesPackage;
  *
  * @generated
  */
-public class ServicePortImpl extends AbstractMetadataObjectImpl implements ServicePort {
+public class ServicePortImpl extends EObjectImpl implements ServicePort {
+
+    /**
+     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected static final String NAME_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected String name = NAME_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected static final String ID_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected String id = ID_EDEFAULT;
 
     /**
      * The cached value of the '{@link #getServiceOperation() <em>Service Operation</em>}' reference list. <!--
@@ -72,6 +115,48 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     protected EClass eStaticClass() {
         return ServicesPackage.Literals.SERVICE_PORT;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setName(String newName) {
+        String oldName = name;
+        name = newName;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__NAME, oldName, name));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setId(String newId) {
+        String oldId = id;
+        id = newId;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_PORT__ID, oldId, id));
     }
 
     /**
@@ -116,6 +201,10 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_PORT__NAME:
+                return getName();
+            case ServicesPackage.SERVICE_PORT__ID:
+                return getId();
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 return getServiceOperation();
             case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
@@ -133,6 +222,12 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_PORT__NAME:
+                setName((String)newValue);
+                return;
+            case ServicesPackage.SERVICE_PORT__ID:
+                setId((String)newValue);
+                return;
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 getServiceOperation().clear();
                 getServiceOperation().addAll((Collection<? extends ServiceOperation>)newValue);
@@ -151,6 +246,12 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_PORT__NAME:
+                setName(NAME_EDEFAULT);
+                return;
+            case ServicesPackage.SERVICE_PORT__ID:
+                setId(ID_EDEFAULT);
+                return;
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 getServiceOperation().clear();
                 return;
@@ -168,12 +269,34 @@ public class ServicePortImpl extends AbstractMetadataObjectImpl implements Servi
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_PORT__NAME:
+                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+            case ServicesPackage.SERVICE_PORT__ID:
+                return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
             case ServicesPackage.SERVICE_PORT__SERVICE_OPERATION:
                 return serviceOperation != null && !serviceOperation.isEmpty();
             case ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO:
                 return additionalInfo != null && !additionalInfo.isEmpty();
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (name: ");
+        result.append(name);
+        result.append(", id: ");
+        result.append(id);
+        result.append(')');
+        return result.toString();
     }
 
     public boolean isReadOnly() {

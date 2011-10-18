@@ -8,6 +8,7 @@ package org.talend.repository.services.model.services.impl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.talend.core.model.metadata.builder.connection.impl.AbstractMetadataObjectImpl;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicesPackage;
@@ -31,7 +32,67 @@ import org.talend.repository.services.model.services.ServicesPackage;
  * 
  * @generated
  */
-public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements ServiceOperation {
+public class ServiceOperationImpl extends EObjectImpl implements ServiceOperation {
+
+    /**
+     * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getLabel()
+     * @generated
+     * @ordered
+     */
+    protected static final String LABEL_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getLabel()
+     * @generated
+     * @ordered
+     */
+    protected String label = LABEL_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected static final String NAME_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getName()
+     * @generated
+     * @ordered
+     */
+    protected String name = NAME_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected static final String ID_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getId()
+     * @generated
+     * @ordered
+     */
+    protected String id = ID_EDEFAULT;
 
     /**
      * The default value of the '{@link #getReferenceJobId() <em>Reference Job Id</em>}' attribute.
@@ -91,6 +152,69 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     }
 
     /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setLabel(String newLabel) {
+        String oldLabel = label;
+        label = newLabel;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_OPERATION__LABEL, oldLabel, label));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setName(String newName) {
+        String oldName = name;
+        name = newName;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_OPERATION__NAME, oldName, name));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setId(String newId) {
+        String oldId = id;
+        id = newId;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ServicesPackage.SERVICE_OPERATION__ID, oldId, id));
+    }
+
+    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
@@ -135,6 +259,12 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_OPERATION__LABEL:
+                return getLabel();
+            case ServicesPackage.SERVICE_OPERATION__NAME:
+                return getName();
+            case ServicesPackage.SERVICE_OPERATION__ID:
+                return getId();
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 return getReferenceJobId();
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
@@ -151,6 +281,15 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_OPERATION__LABEL:
+                setLabel((String)newValue);
+                return;
+            case ServicesPackage.SERVICE_OPERATION__NAME:
+                setName((String)newValue);
+                return;
+            case ServicesPackage.SERVICE_OPERATION__ID:
+                setId((String)newValue);
+                return;
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 setReferenceJobId((String)newValue);
                 return;
@@ -168,6 +307,15 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_OPERATION__LABEL:
+                setLabel(LABEL_EDEFAULT);
+                return;
+            case ServicesPackage.SERVICE_OPERATION__NAME:
+                setName(NAME_EDEFAULT);
+                return;
+            case ServicesPackage.SERVICE_OPERATION__ID:
+                setId(ID_EDEFAULT);
+                return;
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 setReferenceJobId(REFERENCE_JOB_ID_EDEFAULT);
                 return;
@@ -185,6 +333,12 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
+            case ServicesPackage.SERVICE_OPERATION__LABEL:
+                return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+            case ServicesPackage.SERVICE_OPERATION__NAME:
+                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+            case ServicesPackage.SERVICE_OPERATION__ID:
+                return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
             case ServicesPackage.SERVICE_OPERATION__REFERENCE_JOB_ID:
                 return REFERENCE_JOB_ID_EDEFAULT == null ? referenceJobId != null : !REFERENCE_JOB_ID_EDEFAULT.equals(referenceJobId);
             case ServicesPackage.SERVICE_OPERATION__DOCUMENTATION:
@@ -202,7 +356,13 @@ public class ServiceOperationImpl extends AbstractMetadataObjectImpl implements 
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (referenceJobId: ");
+        result.append(" (label: ");
+        result.append(label);
+        result.append(", name: ");
+        result.append(name);
+        result.append(", id: ");
+        result.append(id);
+        result.append(", referenceJobId: ");
         result.append(referenceJobId);
         result.append(", documentation: ");
         result.append(documentation);
