@@ -299,7 +299,7 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 /**
  * web service provider implementation
  */
-<% if (null == wsdlLocation || wsdlLocation.isEmpty()) { %>
+<% if (null == wsdlLocation || wsdlLocation.trim().isEmpty()) { %>
 @javax.jws.WebService(
 		name = "<%=serviceName%>PortType",
 		targetNamespace = "<%=serviceNS%>"
@@ -492,10 +492,13 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 
 	public void run() {
 		// handle relative uri
-		String defaultPort = (String) System.getProperties().get("wsHttpPort");
-		if (null == defaultPort || defaultPort.trim().isEmpty()) {
-			defaultPort = "8088";
-		}
+<%
+	String defaultPort = (String) System.getProperties().get("wsHttpPort");
+	if (null == defaultPort || defaultPort.trim().isEmpty()) {
+		defaultPort = "8088";
+	}
+%>
+		String defaultPort = "<%=defaultPort%>";
 
 		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
 			endpointUrl = "http://localhost:" + defaultPort + "/";
@@ -548,8 +551,8 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 					"Cannot start provider with uri: " + endpointUrl + ". Malformed URL.");
 		}
 
-		// Endpoint is always null now so that WSDL value should be used
-		endpoint = javax.xml.ws.Endpoint.publish(null, new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler));
+		// null - WSDL value should be used
+		endpoint = javax.xml.ws.Endpoint.publish(/* null */ endpointUrl, new ESBProvider_<%=tESBProviderRequestNodeCid%>(handler));
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
 	}
