@@ -100,7 +100,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -132,7 +132,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -201,7 +201,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
                 serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
                         .getProperties(EProperties.LABEL))));
-                serviceParameters.put(WSDLUtils.WSDL_LOCATION, WSDLUtils.getWsdlFile(node).getLocation().toPortableString());
 
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
@@ -264,40 +263,12 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     public static void setProviderRequestComponentConfiguration(INode providerRequestComponent,
             Map<String, String> serviceConfiguration) {
-
-        IElementParameter parameter = providerRequestComponent.getElementParameter(WSDLUtils.ENDPOINT_URI);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.ENDPOINT_URI));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.SERVICE_NS);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.SERVICE_NS));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.SERVICE_NAME);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.SERVICE_NAME));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.PORT_NS);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.PORT_NS));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.PORT_NAME);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.PORT_NAME));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.OPERATION_NAME);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.OPERATION_NAME));
-        }
-
-        parameter = providerRequestComponent.getElementParameter(WSDLUtils.WSDL_LOCATION);
-        if (parameter != null) {
-            parameter.setValue(serviceConfiguration.get(WSDLUtils.WSDL_LOCATION));
+        for (Map.Entry<String, String> property : serviceConfiguration.entrySet()) {
+            String name = property.getKey();
+            IElementParameter parameter = providerRequestComponent.getElementParameter(name);
+            if (parameter != null) {
+                parameter.setValue(property.getValue());
+            }
         }
     }
 

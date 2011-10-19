@@ -252,7 +252,7 @@ public class ESBService implements IESBService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.IESBService#getServicesType()
      */
     public ERepositoryObjectType getServicesType() {
@@ -337,7 +337,6 @@ public class ESBService implements IESBService {
 
                     serviceParameters.put(WSDLUtils.PORT_NAME, portName);
                     serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
-                    serviceParameters.put(WSDLUtils.WSDL_LOCATION, wsdlPath);
 
                     CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
 

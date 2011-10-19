@@ -76,6 +76,8 @@ public class WSDLUtils {
         Map<String, String> map = new HashMap<String, String>();
         if (wsdlURI == null)
             return map;
+
+        map.put(WSDL_LOCATION, wsdlURI);
         map.put(ENDPOINT_URI, wsdlURI);
 
         Definition definition = getDefinition(wsdlURI);
