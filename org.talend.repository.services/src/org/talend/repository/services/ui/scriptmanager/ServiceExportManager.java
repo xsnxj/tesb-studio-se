@@ -190,7 +190,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
             // security
             if (useSecurityToken || useSecuritySaml) {
                 // <osgi:reference id="policyProvider" interface="org.talend.esb.job.controller.PolicyProvider" />
-                createKidNsWithAttrs(root, "reference", OSGI_NS, //$NON-NLS-1$
+                createKidNsWithAttrs(root, "osgi:reference", OSGI_NS, //$NON-NLS-1$
                         new HashMap<String, String>() {
                             {
                                 this.put("id", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -259,7 +259,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
 
                 // <osgix:cm-properties id="service-props" persistent-id="org.talend.esb.job.service"/>
-                createKidNsWithAttrs(root, "cm-properties", OSGIX_NS, //$NON-NLS-1$
+                createKidNsWithAttrs(root, "osgix:cm-properties", OSGIX_NS, //$NON-NLS-1$
                         new HashMap<String, String>() {
                             {
                                 this.put("id", "service-props"); //$NON-NLS-1$ //$NON-NLS-2$
