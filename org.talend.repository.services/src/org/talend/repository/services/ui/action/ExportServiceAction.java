@@ -66,12 +66,15 @@ public class ExportServiceAction extends WorkspaceJob {
 
     private static String JOB_CONTROLLER_VERSION = "[5,6)";
 
+	private RepositoryNode node = null;
+
     public ExportServiceAction(RepositoryNode node) throws CoreException {
         this(node, null);
     }
 
     public ExportServiceAction(RepositoryNode node, String targetPath) throws CoreException {
         super("Exporting service");
+		this.node = node;
         if ((node.getType() == ENodeType.REPOSITORY_ELEMENT)
                 && (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES)) {
             IRepositoryViewObject repositoryObject = node.getObject();
@@ -203,6 +206,8 @@ public class ExportServiceAction extends WorkspaceJob {
         }
         // <feature version='[5,6)'>talend-job-controller</feature>
         feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
+		feature.setConfigName(node.getObject().getLabel());
+		feature.setContextList(ContextNodeRetriever.getAllContext(node));
         return feature;
     }
 

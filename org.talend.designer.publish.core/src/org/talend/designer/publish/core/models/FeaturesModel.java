@@ -14,6 +14,9 @@ public class FeaturesModel extends UploadableModel {
 
 	private static String nameSuffix = "-feature";
 
+	private String configName = "";
+	private String[] contextList = new String[] { "Default" };
+
 	public FeaturesModel(String groupId, String namePrefix, String version) {
 		this(groupId, namePrefix, version, null, null, null);
 	}			
@@ -30,6 +33,8 @@ public class FeaturesModel extends UploadableModel {
 				userName, password);
 		subFeatures.addAll(featuresModel.subFeatures);
 		subBundles.addAll(featuresModel.subBundles);
+		this.configName = featuresModel.configName;
+		this.contextList = featuresModel.contextList;
 	}
 
 	@Override
@@ -101,8 +106,18 @@ public class FeaturesModel extends UploadableModel {
 	/**
 	 * @return the subBundles
 	 */
-	public Set<BundleModel> getSubBundles() {
-		return subBundles;
+	public BundleModel[] getSubBundles() {
+		return subBundles.toArray(new BundleModel[0]);
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+
+	public void setContextList(String[] contextList) {
+		if (contextList != null) {
+			this.contextList = contextList;
+		}
 	}
 
 	private String toFeatureString(String featureVersion, String featureName) {
@@ -130,6 +145,7 @@ public class FeaturesModel extends UploadableModel {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		// add headers
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<features>\n");
 		sb.append("\t<feature name=\"");
@@ -137,17 +153,34 @@ public class FeaturesModel extends UploadableModel {
 		sb.append("\" version=\"");
 		sb.append(version);
 		sb.append("\">\n");
-
+		// add sub features
 		for (String s : subFeatures) {
 			sb.append("\t\t");
 			sb.append(s);
 			sb.append("\n");
 		}
+
+		// add sub bundles
 		for (BundleModel s : subBundles) {
 			sb.append("\t\t");
 			sb.append(toBundleString(s));
 			sb.append("\n");
 		}
+
+		// add config
+		sb.append("\t\t<config name=\"");
+		sb.append(configName);
+		sb.append("\">\n");
+		sb.append("\t\t\ttalendcontext=\"");
+		for (int i = 0; i < contextList.length; i++) {
+			if (i != 0) {
+				sb.append(",");
+			}
+			sb.append(contextList[i]);
+		}
+		sb.append("\"\n");
+		sb.append("\t\t</config>\n");
+
 		sb.append("\t</feature>\n");
 		sb.append("</features>");
 
@@ -158,14 +191,17 @@ public class FeaturesModel extends UploadableModel {
 		return toString();
 	}
 
-	// public static void main(String[] args) {
-	// FeaturesModel featuresModel = new FeaturesModel(
-	// "CustomService-feature", "1.0.0");
-	// featuresModel.addSubBundle("talend", "job-control-bundle", "1.0");
-	// featuresModel.addSubBundle("talend", "ProviderJob", "1.0");
-	// featuresModel.addSubBundle("talend", "ESBProvider2", "1.0");
-	// featuresModel.addSubFeature("5.0-SNAPSHOT", "talend-job-controller");
-	// System.out.println(featuresModel);
-	// }
+	public static void main(String[] args) {
+		FeaturesModel featuresModel = new FeaturesModel("aaa",
+				"CustomService-feature", "1.0.0");
+		// featuresModel.addSubBundle("talend", "job-control-bundle", "1.0");
+		// featuresModel.addSubBundle("talend", "ProviderJob", "1.0");
+		// featuresModel.addSubBundle("talend", "ESBProvider2", "1.0");
+		// featuresModel.addSubFeature("5.0-SNAPSHOT", "talend-job-controller");
+		featuresModel.setConfigName("aa.bb");
+		featuresModel
+				.setContextList(new String[] { "Default", "Product", "Dev" });
+		System.out.println(featuresModel);
+	}
 
 }

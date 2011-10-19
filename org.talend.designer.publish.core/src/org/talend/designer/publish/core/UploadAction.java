@@ -19,14 +19,17 @@ public class UploadAction {
 		this.password = password;
 	}
 
-	public boolean deployRoute(String jarFilePath, String groupId,
+	public boolean deployRoute(String configName, String[] contextList,
+			String jarFilePath, String groupId,
 			String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
-		return deployRoute(new File(jarFilePath), groupId, artifactId, version,
+		return deployRoute(configName, contextList, new File(jarFilePath),
+				groupId, artifactId, version,
 				dependencies);
 	}
 
-	private boolean deployRoute(File jarFile, String groupId,
+	private boolean deployRoute(String configName, String[] contextList,
+			File jarFile, String groupId,
 			String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
 		BundleModel bundleModel = new BundleModel(jarFile, groupId, artifactId,
@@ -35,6 +38,8 @@ public class UploadAction {
 
 		FeaturesModel featuresModel = new FeaturesModel(groupId, artifactId,
 				version, repositoryUrl, username, password);
+		featuresModel.setConfigName(configName);
+		featuresModel.setContextList(contextList);
 		featuresModel.addSubBundle(bundleModel);
 		deployFeatures(featuresModel);
 		return true;
@@ -86,7 +91,7 @@ public class UploadAction {
 		// uploadAction.deployFeatures(f1);
 		// uploadAction.deployFeatures(f2);
 
-		uploadAction.deployRoute("TestEERoute_0.1.jar", "org.talend.liugang",
-				"TestEERoute2", "2.0.22-SNAPSHOT", null);
+		// uploadAction.deployRoute("TestEERoute_0.1.jar", "org.talend.liugang",
+		// "TestEERoute2", "2.0.22-SNAPSHOT", null);
 	}
 }
