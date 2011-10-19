@@ -1,33 +1,67 @@
 package org.talend.repository.services.ui.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.ProjectRepositoryNode;
+import org.eclipse.emf.common.util.EList;
+import org.talend.core.model.properties.ProcessItem;
+import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.model.services.ServiceConnection;
+import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 
 public class ContextNodeRetriever {
 
 	public static String[] getAllContext(RepositoryNode node) {
-		ProjectRepositoryNode projectNode = (ProjectRepositoryNode) node
-				.getRoot();
-		RepositoryNode contextNode = projectNode.getContextNode();
-		List<String> contexts = new ArrayList<String>();
-		contexts.add("Default");
-		retrieveAllContexts(contextNode, contexts);
-		return contexts.toArray(new String[0]);
-	}
-
-	private static void retrieveAllContexts(RepositoryNode contextNode,
-			List<String> contexts) {
-		if (contextNode.getType() == IRepositoryNode.ENodeType.REPOSITORY_ELEMENT) {
-			contexts.add(contextNode.getObject().getLabel());
-		} else if (contextNode.hasChildren()) {
-			List<IRepositoryNode> children = contextNode.getChildren();
-			for (IRepositoryNode n : children) {
-				retrieveAllContexts((RepositoryNode) n, contexts);
+		Set<String> contexts = new HashSet<String>();
+		try {
+			ServiceItem serviceItem = (ServiceItem) node.getObject()
+					.getProperty().getItem();
+			ServiceConnection connection = (ServiceConnection) serviceItem
+					.getConnection();
+			EList<ServicePort> servicePort = connection.getServicePort();
+			for (ServicePort sp : servicePort) {
+				EList<ServiceOperation> serviceOperation = sp
+						.getServiceOperation();
+				for (ServiceOperation so : serviceOperation) {
+					String jobId = so.getReferenceJobId();
+					if (jobId == null) {
+						continue;
+					}
+					RepositoryNode jobNode = RepositoryNodeUtilities
+							.getRepositoryNode(jobId, false);
+					if (jobNode == null) {
+						continue;
+					}
+					ProcessItem processItem = (ProcessItem) jobNode.getObject()
+							.getProperty().getItem();
+					ProcessType process = processItem.getProcess();
+					if (process == null) {
+						continue;
+					}
+					EList context = process.getContext();
+					if (context == null) {
+						continue;
+					}
+					Iterator iterator = context.iterator();
+					while (iterator.hasNext()) {
+						Object next = iterator.next();
+						if (!(next instanceof ContextType))
+							continue;
+						ContextType ct = (ContextType) next;
+						String name = ct.getName();
+						contexts.add(name);
+					}
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return contexts.toArray(new String[0]);
 	}
 }
