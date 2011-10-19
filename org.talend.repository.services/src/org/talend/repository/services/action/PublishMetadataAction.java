@@ -369,12 +369,12 @@ public class PublishMetadataAction extends AContextualAction {
         } else {
             nameWithoutPrefixForColumn = curName;
         }
+        retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id");
+        xmlNode.setAttribute("attri");
+        xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
         MetadataColumn column = null;
         switch (node.getType()) {
         case ATreeNode.ATTRIBUTE_TYPE:
-            retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id");
-            xmlNode.setAttribute("attri");
-            xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
             xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
