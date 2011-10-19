@@ -64,6 +64,11 @@ public class AssignJobAction extends AbstractCreateAction {
         currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
     }
 
+    public AssignJobAction(RepositoryNode operationNode) {
+        this();
+        repositoryNode = operationNode;
+    }
+
     public AssignJobAction(boolean isToolbar) {
         this();
         setToolbar(isToolbar);
@@ -76,7 +81,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -94,7 +99,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -115,114 +120,121 @@ public class AssignJobAction extends AbstractCreateAction {
         List<String> jobIDList = getAllReferenceJobId(repositoryNode);
         dialog.setJobIDList(jobIDList);
         if (dialog.open() == RepositoryReviewDialog.OK) {
-            IRepositoryViewObject repositoryObject = dialog.getResult().getObject();
-            final Item item = repositoryObject.getProperty().getItem();
-
-            try {
-                String jobID = item.getProperty().getId();
-                String jobName = item.getProperty().getLabel();
-                String operationName = repositoryNode.getObject().getLabel();
-                String parentPortName = repositoryNode.getParent().getObject().getLabel();
-                ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
-                        .getItem();
-
-                String wsdlPath = WSDLUtils.getWsdlFile(repositoryNode).getLocation().toPortableString();
-                Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-
-                List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-                for (ServicePort port : listPort) {
-                    if (port.getName().equals(parentPortName)) {
-                        List<ServiceOperation> listOperation = port.getServiceOperation();
-                        for (ServiceOperation operation : listOperation) {
-                            if (operation.getLabel().equals(operationName)) {
-                                operation.setReferenceJobId(jobID);
-                                operation.setLabel(operation.getName() + "-" + jobName);
-
-                                serviceParameters.put(WSDLUtils.PORT_NAME, parentPortName);
-                                serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
-
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                ProcessItem processItem = (ProcessItem) item;
-                ProcessType processType = processItem.getProcess();
-                EList nodeList = processType.getNode();
-                for (Object obj : nodeList) {
-                    NodeType node = (NodeType) obj;
-                    if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
-
-                        EList parameters = node.getElementParameter();
-                        for (Object paramObj : parameters) {
-                            ElementParameterType param = (ElementParameterType) paramObj;
-                            String name = param.getName();
-                            if (serviceParameters.containsKey(name)) {
-                                param.setValue(serviceParameters.get(name));
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-
-                try {
-                    factory.save(processItem);
-                } catch (PersistenceException e) {
-                    e.printStackTrace();
-                }
-
-                IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
-                boolean foundInOpen = false;
-
-                IProcess2 process = null;
-                IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .getEditorReferences();
-                List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
-                for (IProcess2 processOpen : processes) {
-                    if (processOpen.getProperty().getItem() == processItem) {
-                        foundInOpen = true;
-                        process = processOpen;
-                        break;
-                    }
-                }
-                if (!foundInOpen) {
-                    IProcess proc = service.getProcessFromProcessItem(processItem);
-                    if (proc instanceof IProcess2) {
-                        process = (IProcess2) proc;
-                    }
-                }
-
-                if (process != null) {
-                    List<? extends INode> nodelist = process.getGraphicalNodes();
-                    for (INode node : nodelist) {
-                        if (node.getComponent().getName().equals("tESBProviderRequest")) {
-                            repositoryChange(repositoryNode, node);
-                        }
-                    }
-                    processItem.setProcess(process.saveXmlFile());
-
-                    try {
-                        factory.save(processItem);
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                try {
-                    factory.save(serviceItem);
-                } catch (PersistenceException e) {
-                    e.printStackTrace();
-                }
-                RepositoryManager.refreshSavedNode(repositoryNode);
-            } catch (Exception e) {
-                ExceptionHandler.process(e);
-            }
+            assign(dialog.getResult());
         }
     }
+
+	public void assign(RepositoryNode jobNode) {
+		if (jobNode == null) {
+			return;
+		}
+		IRepositoryViewObject repositoryObject = jobNode.getObject();
+		final Item item = repositoryObject.getProperty().getItem();
+
+		try {
+		    String jobID = item.getProperty().getId();
+		    String jobName = item.getProperty().getLabel();
+		    String operationName = repositoryNode.getObject().getLabel();
+		    String parentPortName = repositoryNode.getParent().getObject().getLabel();
+		    ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty()
+		            .getItem();
+
+		    String wsdlPath = WSDLUtils.getWsdlFile(repositoryNode).getLocation().toPortableString();
+		    Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
+
+		    List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+		    for (ServicePort port : listPort) {
+		        if (port.getName().equals(parentPortName)) {
+		            List<ServiceOperation> listOperation = port.getServiceOperation();
+		            for (ServiceOperation operation : listOperation) {
+		                if (operation.getLabel().equals(operationName)) {
+		                    operation.setReferenceJobId(jobID);
+		                    operation.setLabel(operation.getName() + "-" + jobName);
+
+		                    serviceParameters.put(WSDLUtils.PORT_NAME, parentPortName);
+		                    serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
+
+		                    break;
+		                }
+		            }
+		            break;
+		        }
+		    }
+
+		    ProcessItem processItem = (ProcessItem) item;
+		    ProcessType processType = processItem.getProcess();
+		    EList nodeList = processType.getNode();
+		    for (Object obj : nodeList) {
+		        NodeType node = (NodeType) obj;
+		        if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
+
+		            EList parameters = node.getElementParameter();
+		            for (Object paramObj : parameters) {
+		                ElementParameterType param = (ElementParameterType) paramObj;
+		                String name = param.getName();
+		                if (serviceParameters.containsKey(name)) {
+		                    param.setValue(serviceParameters.get(name));
+		                }
+		            }
+		            break;
+		        }
+		    }
+
+		    IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+
+		    try {
+		        factory.save(processItem);
+		    } catch (PersistenceException e) {
+		        e.printStackTrace();
+		    }
+
+		    IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
+		    boolean foundInOpen = false;
+
+		    IProcess2 process = null;
+		    IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+		            .getEditorReferences();
+		    List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
+		    for (IProcess2 processOpen : processes) {
+		        if (processOpen.getProperty().getItem() == processItem) {
+		            foundInOpen = true;
+		            process = processOpen;
+		            break;
+		        }
+		    }
+		    if (!foundInOpen) {
+		        IProcess proc = service.getProcessFromProcessItem(processItem);
+		        if (proc instanceof IProcess2) {
+		            process = (IProcess2) proc;
+		        }
+		    }
+
+		    if (process != null) {
+		        List<? extends INode> nodelist = process.getGraphicalNodes();
+		        for (INode node : nodelist) {
+		            if (node.getComponent().getName().equals("tESBProviderRequest")) {
+		                repositoryChange(repositoryNode, node);
+		            }
+		        }
+		        processItem.setProcess(process.saveXmlFile());
+
+		        try {
+		            factory.save(processItem);
+		        } catch (PersistenceException e) {
+		            e.printStackTrace();
+		        }
+		    }
+
+		    try {
+		        factory.save(serviceItem);
+		    } catch (PersistenceException e) {
+		        e.printStackTrace();
+		    }
+		    RepositoryManager.refreshSavedNode(repositoryNode);
+		} catch (Exception e) {
+		    ExceptionHandler.process(e);
+		}
+	}
 
     public Class getClassForDoubleClick() {
         try {
