@@ -44,6 +44,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -68,6 +69,8 @@ public class WSDLUtils {
     public static final String OPERATION_NS = "OPERATION_NS"; //$NON-NLS-1$
 
     public static final String ENDPOINT_URI = "ENDPOINT_URI"; //$NON-NLS-1$
+
+    public static final String WSDL_LOCATION = "WSDL_LOCATION"; //$NON-NLS-1$
 
     public static Map<String, String> getServiceParameters(String wsdlURI) throws CoreException {
         Map<String, String> map = new HashMap<String, String>();
@@ -123,7 +126,7 @@ public class WSDLUtils {
         return isValid;
     }
 
-    public static IFile getWsdlFile(RepositoryNode repositoryNode) {
+    public static IFile getWsdlFile(IRepositoryNode repositoryNode) {
         ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
         try {
             IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());

@@ -176,7 +176,7 @@ public class ESBService implements IESBService {
             RepositoryNode selectNode) throws PersistenceException, CoreException {
         IRepositoryViewObject jobObj = factory.getLastVersion(newOpe.getReferenceJobId());
         ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
-        String wsdlPath = serConn.getWSDLPath();
+        String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
         Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
 
         IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
@@ -296,7 +296,7 @@ public class ESBService implements IESBService {
 
                 changeOldOperationLabel(serConn, node);
 
-                String wsdlPath = serConn.getWSDLPath();
+                String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 String portName = "";
                 String operationName = "";
@@ -337,6 +337,7 @@ public class ESBService implements IESBService {
 
                     serviceParameters.put(WSDLUtils.PORT_NAME, portName);
                     serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
+                    serviceParameters.put(WSDLUtils.WSDL_LOCATION, wsdlPath);
 
                     CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
 

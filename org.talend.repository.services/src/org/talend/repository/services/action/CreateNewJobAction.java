@@ -100,7 +100,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -132,7 +132,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -196,11 +196,12 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 Node node1 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
 
-                String wsdlPath = serviceConnection.getWSDLPath();
+                String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
                 serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
                         .getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.WSDL_LOCATION, WSDLUtils.getWsdlFile(node).getLocation().toPortableString());
 
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
@@ -292,6 +293,11 @@ public class CreateNewJobAction extends AbstractCreateAction {
         parameter = providerRequestComponent.getElementParameter(WSDLUtils.OPERATION_NAME);
         if (parameter != null) {
             parameter.setValue(serviceConfiguration.get(WSDLUtils.OPERATION_NAME));
+        }
+
+        parameter = providerRequestComponent.getElementParameter(WSDLUtils.WSDL_LOCATION);
+        if (parameter != null) {
+            parameter.setValue(serviceConfiguration.get(WSDLUtils.WSDL_LOCATION));
         }
     }
 
