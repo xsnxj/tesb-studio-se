@@ -355,17 +355,17 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 		// System.out.println(System.currentTimeMillis() + " -> handleMessage");
 
 		try {
-			javax.xml.namespace.QName operation = (javax.xml.namespace.QName) context
-					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_OPERATION);
-			javax.xml.namespace.QName port = (javax.xml.namespace.QName) context
-					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_PORT);
-			javax.xml.namespace.QName service = (javax.xml.namespace.QName) context
-					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_SERVICE);
-			if (serviceName.equals(service) && portName.equals(port) && operationName.equals(operation)) {
-				// System.out.println("request to implemented operation");
-			} else {
-				throw new RuntimeException("operation not implemented by job");
-			}
+//			javax.xml.namespace.QName operation = (javax.xml.namespace.QName) context
+//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_OPERATION);
+//			javax.xml.namespace.QName port = (javax.xml.namespace.QName) context
+//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_PORT);
+//			javax.xml.namespace.QName service = (javax.xml.namespace.QName) context
+//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_SERVICE);
+//			if (serviceName.equals(service) && portName.equals(port) && operationName.equals(operation)) {
+//				// System.out.println("request to implemented operation");
+//			} else {
+//				throw new RuntimeException("operation not implemented by job");
+//			}
 
 			org.dom4j.io.DocumentResult docResult = new org.dom4j.io.DocumentResult();
 			factory.newTransformer().transform(request, docResult);
