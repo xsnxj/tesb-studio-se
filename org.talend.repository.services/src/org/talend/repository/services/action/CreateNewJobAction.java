@@ -198,9 +198,10 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
                 String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-                serviceParameters.put(WSDLUtils.PORT_NAME, String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME, String.valueOf(String.valueOf(node
-                        .getProperties(EProperties.LABEL))));
+                serviceParameters.put(WSDLUtils.PORT_NAME,
+                        String.valueOf(portNode.getProperties(EProperties.LABEL)));
+                serviceParameters.put(WSDLUtils.OPERATION_NAME,
+                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
 
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 

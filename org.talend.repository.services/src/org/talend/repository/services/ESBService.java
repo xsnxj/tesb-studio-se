@@ -176,8 +176,6 @@ public class ESBService implements IESBService {
             RepositoryNode selectNode) throws PersistenceException, CoreException {
         IRepositoryViewObject jobObj = factory.getLastVersion(newOpe.getReferenceJobId());
         ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
-        String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
-        Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
 
         IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
         boolean foundInOpen = false;
@@ -201,9 +199,6 @@ public class ESBService implements IESBService {
 
         newOpe.setReferenceJobId(null);
         // newOpe.setLabel(newOpe.getName());
-        //
-        serviceParameters.put(WSDLUtils.PORT_NAME, null);
-        serviceParameters.put(WSDLUtils.OPERATION_NAME, null);
 
         if (process != null) {
             List<? extends INode> nodelist = process.getGraphicalNodes();

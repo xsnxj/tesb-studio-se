@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:cxf="http://cxf.apache.org/core"
 	xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:policy="http://cxf.apache.org/policy"
 	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-		http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
-	">
+		http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
+
+	<jaxws:endpoint id="service"
+		implementor="#genericServiceProvider"
+		xmlns:serviceNamespace="@Service.NS@"
+		serviceName="serviceNamespace:@Service.Name@"
+		endpointName="serviceNamespace:@Endpoint.Name@"
+		address="@Endpoint.Address@"
+		wsdlLocation="classpath:/@Wsdl.Location@">
+		<jaxws:properties />
+		<jaxws:features />
+	</jaxws:endpoint>
 
 	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
 		<property name="operations">
@@ -24,16 +35,6 @@
 			<osgi:reference interface="org.talend.esb.job.controller.JobLauncher" />
 		</property>
 	</bean>
-
-	<jaxws:endpoint id="service"
-		xmlns:serviceNamespace="@Service.NS@"
-		serviceName="serviceNamespace:@Service.Name@"
-		endpointName="serviceNamespace:@Endpoint.Name@"
-		address="@Endpoint.Address@"
-		wsdlLocation="classpath:/@Wsdl.Location@"
-		implementor="#genericServiceProvider">
-		<jaxws:features />
-	</jaxws:endpoint>
 
 	<osgi:service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
 		<osgi:service-properties>
@@ -47,13 +48,5 @@
 			<entry key="type" value="service" />
 		</osgi:service-properties>
 	</osgi:service>
-
-	<cxf:bus>
-		<cxf:features>
-			<policy:policies />
-		</cxf:features>
-	</cxf:bus>
-
-	<policy:externalAttachment location="classpath:/policy.xml" />
 
 </beans>

@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -55,15 +56,15 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
-    private static final String CXF_NS = "http://cxf.apache.org/core";
-    private static final String JAXWS_NS = "http://cxf.apache.org/jaxws";
-    private static final String POLICY_NS = "http://cxf.apache.org/policy";
+    private static final String CXF_NS = "http://cxf.apache.org/core"; //$NON-NLS-1$
+    private static final String JAXWS_NS = "http://cxf.apache.org/jaxws"; //$NON-NLS-1$
+    private static final String OSGI_NS = "http://www.springframework.org/schema/osgi"; //$NON-NLS-1$
+    private static final String OSGIX_NS = "http://www.springframework.org/schema/osgi-compendium"; //$NON-NLS-1$
 
     private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 
@@ -71,24 +72,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 
-    public void createPolicyAttachment(String outputFile, File wsdl,
-            String policyReferenceUri) throws IOException, CoreException {
-        String templateFile = FileLocator.toFileURL(
-                FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-                        new Path("resources/policy-template.xml"), null)) //$NON-NLS-1$
-                .getFile();
-        Map<String, String> serviceParams = WSDLUtils.getServiceParameters(wsdl.getAbsolutePath());
-
-        //TODO: remove template processing
-        Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put("@policy.reference@", policyReferenceUri); //$NON-NLS-1$
-        replacements.put("@endpoint.uri@", serviceParams.get(WSDLUtils.ENDPOINT_URI)); //$NON-NLS-1$
-        uglyTemplateProcessing(templateFile, outputFile, replacements);
-    }
-
+    @SuppressWarnings("serial")
     public void createSpringBeans(String outputFile,
             Map<ServicePort, Map<String, String>> ports, File wsdl,
-            String studioServiceName, boolean policyEnabled) throws IOException, CoreException {
+            String studioServiceName) throws IOException, CoreException {
         String inputFile = FileLocator.toFileURL(
                 FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
                         new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
@@ -113,7 +100,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                     serviceName = serviceQName.getLocalPart();
                     serviceNS = serviceQName.getNamespaceURI();
                     endpointName = port.getName();
-                    Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
+                    Collection<ExtensibilityElement> addrElems =
+                            findExtensibilityElement(port.getExtensibilityElements(), "address"); //$NON-NLS-1$
                     for (ExtensibilityElement element : addrElems) {
                         if (element != null && element instanceof SOAPAddress) {
                             endpointAddress = ((SOAPAddress) element).getLocationURI();
@@ -133,6 +121,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         replacements.put("@Wsdl.Location@", wsdl.getName()); //$NON-NLS-1$
         uglyTemplateProcessing(inputFile, outputFile, replacements);
 
+        EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
+        boolean useSl = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+        String security = additionalInfo.get(ServiceMetadataDialog.SECURITY);
+        boolean useSecurityToken = ServiceMetadataDialog.BASIC.equals(security);
+        boolean useSecuritySaml = ServiceMetadataDialog.SAML.equals(security);
+
         //create mapping operation-job
         File out = new File(outputFile);
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -141,72 +136,213 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         try {
             docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(out);
-            //include SAM/SL features
-            EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
+
             Element root = doc.getDocumentElement();
             Element features = null;
-            NodeList endpoints = root.getElementsByTagNameNS(JAXWS_NS,"endpoint");
-            for (int i=0; i<endpoints.getLength(); i++) {
+            Element properties = null;
+            NodeList endpoints = root.getElementsByTagNameNS(JAXWS_NS, "endpoint"); //$NON-NLS-1$
+            for (int i = 0; i < endpoints.getLength(); i++) {
                 Element endpoint = (Element)endpoints.item(i);
-                if (("serviceNamespace:"+endpointName).equals(endpoint.getAttribute("endpointName"))) {
-                    NodeList featuresNodes = endpoint.getElementsByTagNameNS(JAXWS_NS, "features");
-                    if (featuresNodes.getLength() > 0) {
-                        features = (Element) featuresNodes.item(0);
-                    }
+                if (("serviceNamespace:" + endpointName).equals(endpoint.getAttribute("endpointName"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    features = getOrCreateKidNs(endpoint, "features", JAXWS_NS); //$NON-NLS-1$
+                    properties = getOrCreateKidNs(endpoint, "properties", JAXWS_NS); //$NON-NLS-1$
                 }
             }
-            if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))) {
-                Element im = createKid(root, "import");
-                im.setAttribute("resource", "classpath:META-INF/tesb/locator/beans-osgi.xml"); //SL
-                Element bean = createKid(features, "bean");//<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
-                bean.setAttribute("class", "org.talend.esb.servicelocator.cxf.LocatorFeature");
+
+            if (useSl) {
+                createKid(root, "import") //$NON-NLS-1$
+                    .setAttribute("resource", "classpath:META-INF/tesb/locator/beans-osgi.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+                // <bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
+                createKid(features, "bean") //$NON-NLS-1$
+                    .setAttribute("class", "org.talend.esb.servicelocator.cxf.LocatorFeature"); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            Boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+
             if (useSam) {
-                Element im = createKid(root, "import");
-                im.setAttribute("resource", "classpath:META-INF/tesb/agent-osgi.xml"); //SAM
-                Element bean = createKid(features, "ref");//<ref bean="eventFeature"/>
-                bean.setAttribute("bean", "eventFeature");
+                createKid(root, "import") //$NON-NLS-1$
+                    .setAttribute("resource", "classpath:META-INF/tesb/agent-osgi.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+                // <ref bean="eventFeature"/>
+                createKid(features, "ref") //$NON-NLS-1$
+                    .setAttribute("bean", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            NodeList mapEls = doc.getElementsByTagName("map");
+
+            NodeList mapEls = doc.getElementsByTagName("map"); //$NON-NLS-1$ //$NON-NLS-2$
             if (mapEls.getLength() > 0) {
                 Element map = (Element) mapEls.item(0);
                 for (Map.Entry<ServicePort, Map<String, String>> port : ports.entrySet()) {
                     //TODO: actual port work
                     for (Map.Entry<String, String> operation : port.getValue().entrySet()) {
-                        Element entry = createKid(map, "entry");
-                        Element key = createKid(createKid(entry, "key"), "value");
-                        key.setTextContent(operation.getKey());
-                        Element value = createKid(entry, "value");
-                        value.setTextContent(operation.getValue());
+                        Element entry = createKid(map, "entry"); //$NON-NLS-1$
+                        createKid(createKid(entry, "key"), "value").setTextContent(operation.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
+                        createKid(entry, "value").setTextContent(operation.getValue()); //$NON-NLS-1$
                     }
                 }
                 if (useSam) {
-                    Element property = createKid((Element) map.getParentNode().getParentNode(), "property");
-                    property.setAttribute("name", "eventFeature");
-                    property.setAttribute("ref", "eventFeature");
+                    createKidWithAttrs((Element) map.getParentNode().getParentNode(), "property", //$NON-NLS-1$
+                            new HashMap<String, String>() {
+                                {
+                                    this.put("name", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
+                                    this.put("ref", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
+                            });
                 }
             }
 
-            if (policyEnabled) {
-//                createKidNS(
-//                        createKidNS(
-//                                createKidNS(root,
-//                                        "bus", CXF_NS),
-//                                "features", CXF_NS),
-//                        "policies", POLICY_NS);
-//
-//                createKidNS(root, "externalAttachment", POLICY_NS)
-//                    .setAttribute("location", "classpath:/policy.xml");
-            } else {
-                Node node2remove = root.getElementsByTagNameNS(CXF_NS, "bus").item(0);
-                if (null != node2remove) {
-                    root.removeChild(node2remove);
-                }
-                node2remove = root.getElementsByTagNameNS(POLICY_NS, "externalAttachment").item(0);
-                if (null != node2remove) {
-                    root.removeChild(node2remove);
-                }
+            // security
+            if (useSecurityToken || useSecuritySaml) {
+                // <osgi:reference id="policyProvider" interface="org.talend.esb.job.controller.PolicyProvider" />
+                createKidNsWithAttrs(root, "reference", OSGI_NS, //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("id", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("interface", "org.talend.esb.job.controller.PolicyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+            }
+            if (useSecurityToken) {
+                // <bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
+                //   <property name="contextName" value="karaf" />
+                // </bean>
+                Element jaasValidator = createKidWithAttrs(root, "bean", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("id", "jaasUTValidator"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("class", "org.apache.ws.security.validate.JAASUsernameTokenValidator"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(jaasValidator, "property", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("name", "contextName"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "karaf"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+                // <bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
+                //   <constructor-arg>
+                //     <bean factory-bean="policyProvider" factory-method="getTokenPolicy"/>
+                //   </constructor-arg>
+                // </bean>
+                Element policyFeatureBean = createKidWithAttrs(features, "bean", //$NON-NLS-1$
+                        Collections.singletonMap("class", "org.apache.cxf.ws.policy.WSPolicyFeature")); //$NON-NLS-1$ //$NON-NLS-2$
+                createKidWithAttrs(createKid(policyFeatureBean, "constructor-arg"), "bean", //$NON-NLS-1$ //$NON-NLS-2$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("factory-bean", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("factory-method", "getTokenPolicy"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+                // <entry key="ws-security.ut.validator" value-ref="jaasUTValidator"/>
+                createKidWithAttrs(properties, "entry", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("key", "ws-security.ut.validator"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value-ref", "jaasUTValidator"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+            }
+            if (useSecuritySaml) {
+                // <bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
+                //   <constructor-arg>
+                //     <bean factory-bean="policyProvider" factory-method="getSamlPolicy"/>
+                //   </constructor-arg>
+                // </bean>
+                Element policyFeatureBean = createKidWithAttrs(features, "bean", //$NON-NLS-1$
+                        Collections.singletonMap("class", "org.apache.cxf.ws.policy.WSPolicyFeature")); //$NON-NLS-1$ //$NON-NLS-2$
+                createKidWithAttrs(createKid(policyFeatureBean, "constructor-arg"), "bean", //$NON-NLS-1$ //$NON-NLS-2$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("factory-bean", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("factory-method", "getSamlPolicy"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+
+                // <osgix:cm-properties id="service-props" persistent-id="org.talend.esb.job.service"/>
+                createKidNsWithAttrs(root, "cm-properties", OSGIX_NS, //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("id", "service-props"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("persistent-id", "org.talend.esb.job.service"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+                // <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+                //   <property name="properties" ref="service-props" />
+                //   <property name="placeholderPrefix" value="$service{" />
+                // </bean>
+                Element propConfBean = createKidWithAttrs(root, "bean", //$NON-NLS-1$
+                        Collections.singletonMap("class", "org.springframework.beans.factory.config.PropertyPlaceholderConfigurer")); //$NON-NLS-1$ //$NON-NLS-2$
+                createKidWithAttrs(propConfBean, "property", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("name", "properties"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("ref", "service-props"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(propConfBean, "property", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("name", "placeholderPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "$service{"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+                // <bean id="callback" class="org.apache.cxf.interceptor.security.NamePasswordCallbackHandler">
+                //   <constructor-arg type="java.lang.String" value="$service{ws-security.signature.username}"/>
+                //   <constructor-arg type="java.lang.String" value="$service{ws-security.signature.password}"/>
+                //   <constructor-arg type="java.lang.String" value="setPassword"/>
+                // </bean>
+                Element namePassCallback = createKidWithAttrs(root, "bean", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("id", "callback"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("class", "org.apache.cxf.interceptor.security.NamePasswordCallbackHandler"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "$service{ws-security.signature.username}"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "$service{ws-security.signature.password}"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "setPassword"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+
+                // <entry key="ws-security.signature.username" value="$service{ws-security.signature.username}"/>
+                // <entry key="ws-security.callback-handler"><ref bean="callback" /></entry>
+                // <entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
+                createKidWithAttrs(properties, "entry", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("key", "ws-security.signature.username"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "$service{ws-security.signature.username}"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                createKidWithAttrs(properties, "entry", //$NON-NLS-1$
+                        new HashMap<String, String>() {
+                            {
+                                this.put("key", "ws-security.signature.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+                                this.put("value", "$service{ws-security.signature.properties}"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        });
+                Element entry = createKidWithAttrs(properties, "entry", //$NON-NLS-1$
+                        Collections.singletonMap("key", "ws-security.callback-handler")); //$NON-NLS-1$ //$NON-NLS-2$
+                createKidWithAttrs(entry, "ref", //$NON-NLS-1$
+                        Collections.singletonMap("bean", "callback")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             //output
@@ -245,10 +381,33 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         parent.appendChild(kid);
         return kid;
     }
-    private Element createKidNS(Element parent, String kidName, String kidNamespace) {
-        Element kid = parent.getOwnerDocument().createElementNS(kidNamespace, kidName);
+    private Element createKidNs(Element parent, String kidName, String kidNs) {
+        Element kid = parent.getOwnerDocument().createElementNS(kidNs, kidName);
         parent.appendChild(kid);
         return kid;
+    }
+    private Element createKidWithAttrs(Element parent, String kidName, Map<String, String> attrs) {
+        Element kid = createKid(parent, kidName);
+        setAttrs(kid, attrs);
+        return kid;
+    }
+    private Element createKidNsWithAttrs(Element parent, String kidName, String kidNs, Map<String, String> attrs) {
+        Element kid = createKidNs(parent, kidName, kidNs);
+        setAttrs(kid, attrs);
+        return kid;
+    }
+    private void setAttrs(Element elem, Map<String, String> attrs) {
+        for (Map.Entry<String, String> attr : attrs.entrySet()) {
+            elem.setAttribute(attr.getKey(), attr.getValue());
+        }
+    }
+    private Element getOrCreateKidNs(Element parent, String kidName, String kidNs) {
+        NodeList kidNodes = parent.getElementsByTagNameNS(kidNs, kidName);
+        if (0 == kidNodes.getLength()) {
+            return createKidNs(parent, kidName, kidNs);
+        } else {
+            return (Element) kidNodes.item(0);
+        }
     }
 
     public static Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements, String elementType) {
