@@ -97,7 +97,7 @@
 					REQUIRED="true" />
 			<IMPORT NAME="jettison"
 					MODULE="jettison-1.3.jar"
-					BundleID="jettison"
+					BundleID="org.codehaus.jettison.jettison"
 					REQUIRED="true" />
 			<IMPORT NAME="jra"
 					MODULE="jra-1.0-alpha-4.jar"
