@@ -114,9 +114,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
 		boolean useSl = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
 		boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
-		String security = additionalInfo.get(ServiceMetadataDialog.SECURITY);
-		boolean useSecurityToken = ServiceMetadataDialog.BASIC.equals(security);
-		boolean useSecuritySaml = ServiceMetadataDialog.SAML.equals(security);
+		boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
+		boolean useSecuritySaml = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
 
 		endpointInfo.put("useSL", useSl); //$NON-NLS-1$
 		endpointInfo.put("useSAM", useSam); //$NON-NLS-1$

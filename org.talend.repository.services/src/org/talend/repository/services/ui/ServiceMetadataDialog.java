@@ -4,8 +4,6 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,21 +20,20 @@ import org.talend.repository.services.model.services.ServicePort;
 
 public class ServiceMetadataDialog extends Dialog {
 
-    public static final String SECURITY = "Security";
+    public static final String SECURITY_SAML = "Security.SAML";
+    public static final String SECURITY_BASIC = "Security.Basic";
     public static final String USE_SL = "UseSL";
     public static final String USE_SAM = "UseSAM";
-    public static final String SAML = "SAML";
-    public static final String BASIC = "Basic";
     private Button samCheck;
     private Button slCheck;
-    private Button useCheck;
-    private Button basicRadio;
-    private Button samlRadio;
+    private Button basicCheck;
+    private Button samlCheck;
     private final ServiceItem serviceItem;
     private final ServicePort port;
     private boolean useSL;
     private boolean useSAM;
-    private String security;
+	private boolean securitySAML;
+	private boolean securityBasic;
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServicePort port) {
         super(parentShell);
@@ -46,7 +43,8 @@ public class ServiceMetadataDialog extends Dialog {
         if (props != null) {
             useSAM = Boolean.valueOf(props.get(USE_SAM));
             useSL = Boolean.valueOf(props.get(USE_SL));
-            security = props.get(SECURITY);
+            securitySAML = Boolean.valueOf(props.get(SECURITY_SAML));
+            securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
         }
     }
 
@@ -86,35 +84,15 @@ public class ServiceMetadataDialog extends Dialog {
         securityGroup.setText("ESB Service Security");
         securityGroup.setLayout(new GridLayout(2, false));
 
-        useCheck = new Button(securityGroup, SWT.CHECK);
-        useCheck.setSelection(null != security);
-        Label useLabel = new Label(securityGroup, SWT.NONE);
-        useLabel.setText("Use Service Security");
-
-        basicRadio = new Button(securityGroup, SWT.RADIO);
-        basicRadio.setSelection(BASIC.equals(security));
+        basicCheck = new Button(securityGroup, SWT.CHECK);
+        basicCheck.setSelection(securityBasic);
         final Label basicLabel = new Label(securityGroup, SWT.NONE);
         basicLabel.setText("Username / Password");
 
-        samlRadio = new Button(securityGroup, SWT.RADIO);
-        samlRadio.setSelection(SAML.equals(security));
+        samlCheck = new Button(securityGroup, SWT.CHECK);
+        samlCheck.setSelection(securitySAML);
         final Label samlLabel= new Label(securityGroup, SWT.NONE);
         samlLabel.setText("SAML Token");
-
-        SelectionListener listener = new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent evt) {;}
-            public void widgetSelected(SelectionEvent evt) {
-                boolean value = !basicRadio.getEnabled();
-                basicRadio.setEnabled(value);
-                basicLabel.setEnabled(value);
-                samlRadio.setEnabled(value);
-                samlLabel.setEnabled(value);
-            }
-        };
-        if ((null == security)) {
-            listener.widgetSelected(null);
-        }
-        useCheck.addSelectionListener(listener);
 
         return super.createDialogArea(parent);
     }
@@ -127,17 +105,12 @@ public class ServiceMetadataDialog extends Dialog {
         return slCheck.getSelection();
     }
 
-    private String getSecurity() {
-        if (!useCheck.getSelection()) {
-            return null;
-        }
-        if (basicRadio.getSelection()) {
-            return BASIC;
-        }
-        if (samlRadio.getSelection()) {
-            return SAML;
-        }
-        return null;
+    private boolean getSecurityBasic() {
+        return basicCheck.getSelection();
+    }
+    
+    private boolean getSecuritySAML() {
+        return samlCheck.getSelection();
     }
 
     /* (non-Javadoc)
@@ -149,7 +122,8 @@ public class ServiceMetadataDialog extends Dialog {
         if (props != null) {
             props.put(USE_SAM, Boolean.toString(isUseSam()));
             props.put(USE_SL, Boolean.toString(isUseSL()));
-            props.put(SECURITY, getSecurity());
+            props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
+            props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
         }
 
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
