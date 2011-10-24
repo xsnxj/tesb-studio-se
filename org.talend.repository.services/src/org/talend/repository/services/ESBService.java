@@ -116,6 +116,15 @@ public class ESBService implements IESBService {
         }
     }
 
+	public String getWsdlFilePath(Item item) {
+		if (item != null && item instanceof ServiceItem) {
+			ServiceItem si = (ServiceItem) item;
+			ServiceConnection connection = (ServiceConnection) si
+					.getConnection();
+			return connection.getWSDLPath();
+		}
+		return null;
+	}
     // private void changenewOperationLabel(RepositoryNode newNode, INode node, ServiceConnection serConn) {
     // String operationName = newNode.getObject().getLabel();
     // String parentPortName = newNode.getParent().getObject().getLabel();
