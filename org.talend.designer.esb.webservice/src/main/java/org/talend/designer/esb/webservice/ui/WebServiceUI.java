@@ -27,10 +27,15 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -67,6 +72,8 @@ import org.talend.commons.ui.utils.PathUtils;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
 import org.talend.core.CorePlugin;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.IESBService;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
@@ -79,6 +86,7 @@ import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.ConnectionItem;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
@@ -103,7 +111,12 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.FlowInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.repository.ProjectManager;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
+import org.talend.repository.model.IRepositoryNode.EProperties;
+import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
 
 /**
@@ -146,6 +159,8 @@ public class WebServiceUI extends AbstractWebService {
     private AbstractDataTableEditorView<String> portListTableView;
 
     private Button refreshbut;
+
+	private Button servicebut;
 
     private Table listTable;
 
@@ -385,7 +400,7 @@ public class WebServiceUI extends AbstractWebService {
         layoutData.verticalIndent = 2;
         layoutData.verticalSpan = 1;
         wsdlUrlcomposite.setLayoutData(layoutData);
-        layout = new GridLayout(4, false);
+		layout = new GridLayout(5, false);
         wsdlUrlcomposite.setLayout(layout);
 
         wsdlField = new LabelledFileField(wsdlUrlcomposite, ExternalWebServiceUIProperties.FILE_LABEL,
@@ -419,6 +434,10 @@ public class WebServiceUI extends AbstractWebService {
         if (wsdlUrl != null) {
             wsdlField.setText(wsdlUrl);
         }
+
+		// TESB-3590，gliu
+		servicebut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
+		servicebut.setText(Messages.getString("WebServiceUI.Services"));
 
         refreshbut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
         refreshbut.setImage(ImageProvider.getImage(EImage.REFRESH_ICON));
@@ -554,6 +573,57 @@ public class WebServiceUI extends AbstractWebService {
             public void keyReleased(KeyEvent event) {
             }
         });
+
+		servicebut.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				// TODO
+				RepositoryReviewDialog dialog = new RepositoryReviewDialog(
+						Display.getCurrent().getActiveShell(),
+						ERepositoryObjectType.METADATA, "SERVICES:OPERATION", // see
+																				// it
+																				// in
+																				// RepositoryTypeProcessor.RepositoryTypeProcessor(String)
+						new ViewerFilter[] { new OnlyShowServicesFilter() }) {
+					@Override
+					protected boolean isSelectionValid(
+							SelectionChangedEvent event) {
+						IStructuredSelection selection = (IStructuredSelection) event
+								.getSelection();
+						if (selection.size() == 1) {
+							return true;
+						}
+						return false;
+					}
+				};
+				int open = dialog.open();
+				if (open == Dialog.OK) {
+					RepositoryNode result = dialog.getResult();
+					Item item = result.getObject().getProperty().getItem();
+					if (GlobalServiceRegister.getDefault().isServiceRegistered(
+							IESBService.class)) {
+						IESBService service = (IESBService) GlobalServiceRegister
+								.getDefault().getService(IESBService.class);
+						String wsdlFilePath = service.getWsdlFilePath(item);
+						if (wsdlFilePath != null) {
+							wsdlField.getTextControl().setText(
+									TalendTextUtils.addQuotes(PathUtils
+											.getPortablePath(wsdlFilePath)));
+							getDataFromNet();
+							if (portListTable.getItemCount() > 1) {
+								portListTable.deselectAll();
+								setOk(false);
+							}
+							if (listTable.getItemCount() == 1) {
+								selectFirstFunction();
+							}
+						}
+					}
+
+				}
+			}
+
+		});
 
         refreshbut.addSelectionListener(new SelectionAdapter() {
 
@@ -944,5 +1014,29 @@ public class WebServiceUI extends AbstractWebService {
         setOk(false);
     }
     
-    
+	class OnlyShowServicesFilter extends ViewerFilter {
+
+		private ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType
+				.valueOf(ERepositoryObjectType.class, "SERVICES"); // see
+																	// ESBRepositoryNodeType.SERVICES
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			if (!(element instanceof RepositoryNode)) {
+				return false;
+			}
+			RepositoryNode node = (RepositoryNode) element;
+			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
+					|| node.getProperties(EProperties.CONTENT_TYPE) != SERVICES) {
+				return false;
+			}
+			if (node.getObject() != null
+					&& ProxyRepositoryFactory.getInstance().getStatus(
+							node.getObject()) == ERepositoryStatus.DELETED) {
+				return false;
+			}
+			return true;
+		}
+	}
 }
