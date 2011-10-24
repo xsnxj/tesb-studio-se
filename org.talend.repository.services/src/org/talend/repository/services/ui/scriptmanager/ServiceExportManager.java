@@ -1,15 +1,10 @@
 package org.talend.repository.services.ui.scriptmanager;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -24,47 +19,29 @@ import javax.wsdl.Service;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EMap;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
-
-	private static final String CXF_NS = "http://cxf.apache.org/core"; //$NON-NLS-1$
-	private static final String JAXWS_NS = "http://cxf.apache.org/jaxws"; //$NON-NLS-1$
-	private static final String OSGI_NS = "http://www.springframework.org/schema/osgi"; //$NON-NLS-1$
-	private static final String OSGIX_NS = "http://www.springframework.org/schema/osgi-compendium"; //$NON-NLS-1$
 
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 
@@ -72,18 +49,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 	}
 
-	@SuppressWarnings("serial")
 	public void createSpringBeans(String outputFile,
 			Map<ServicePort, Map<String, String>> ports, File wsdl,
 			String studioServiceName) throws IOException, CoreException {
-		String inputFile = FileLocator.toFileURL(
-				FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-						new Path("resources/beans-template.xml"), null)) //$NON-NLS-1$
-				.getFile();
-		// TODO: support multiport!!!
-		Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet()
-				.iterator().next();
-		// TODO: do this in looooooooop!!!
+
+		//TODO: support multiport!!!
+		Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
+		//TODO: do this in looooooooop!!!
 
 		Definition def = WSDLUtils.getDefinition(wsdl.getAbsolutePath());
 		String serviceName = null;
@@ -92,18 +64,12 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		String endpointName = null;
 		Map<QName, Service> services = def.getServices();
 		ServicePort servicePort = studioPort.getKey();
-		for (Entry<QName, Service> serviceEntry : services.entrySet()) { // TODO:
-																			// support
-																			// multiservice
+		for (Entry<QName, Service> serviceEntry : services.entrySet()) { //TODO: support multiservice
 			QName serviceQName = serviceEntry.getKey();
 			Service service = serviceEntry.getValue();
-			Collection<Port> servicePorts = service.getPorts().values(); // TODO:
-																			// support
-																			// multiport
+			Collection<Port> servicePorts = service.getPorts().values(); //TODO: support multiport
 			for (Port port : servicePorts) {
-				if (servicePort.getName().equals(
-						port.getBinding().getPortType().getQName()
-								.getLocalPart())) {
+				if (servicePort.getName().equals(port.getBinding().getPortType().getQName().getLocalPart())) {
 					serviceName = serviceQName.getLocalPart();
 					serviceNS = serviceQName.getNamespaceURI();
 					endpointName = port.getName();
@@ -111,18 +77,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 							port.getExtensibilityElements(), "address"); //$NON-NLS-1$
 					for (ExtensibilityElement element : addrElems) {
 						if (element != null && element instanceof SOAPAddress) {
-							endpointAddress = ((SOAPAddress) element)
-									.getLocationURI();
+							endpointAddress = ((SOAPAddress) element).getLocationURI();
 							// http://jira.talendforge.org/browse/TESB-3601
-							if (endpointAddress.contains("://")) {
-								endpointAddress = endpointAddress
-										.substring(endpointAddress
-												.lastIndexOf("://") + 3);
-								endpointAddress = endpointAddress
-										.substring(endpointAddress.indexOf("/") + 1);
-								if (endpointAddress.startsWith("services")) {
-									endpointAddress = endpointAddress
-											.substring("services".length());
+							if (endpointAddress.contains("://")) { //$NON-NLS-1$
+								endpointAddress = endpointAddress.substring(endpointAddress.lastIndexOf("://") + 3); //$NON-NLS-1$
+								endpointAddress = endpointAddress.substring(endpointAddress.indexOf("/")); //$NON-NLS-1$
+								if (endpointAddress.startsWith("/services/")) { //$NON-NLS-1$
+									endpointAddress = endpointAddress.substring("/services".length()); //$NON-NLS-1$
 								}
 							}
 						}
@@ -131,367 +92,72 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 			}
 		}
 
-		// TODO: remove template processing
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("@Service.NS@", serviceNS); //$NON-NLS-1$
-		replacements.put("@Service.Name@", serviceName); //$NON-NLS-1$
-		replacements.put("@Endpoint.Name@", endpointName); //$NON-NLS-1$
-		replacements.put("@Endpoint.Address@", endpointAddress); //$NON-NLS-1$
-		replacements.put("@Service.Studio.Name@", studioServiceName); //$NON-NLS-1$
-		replacements.put("@Wsdl.Location@", wsdl.getName()); //$NON-NLS-1$
-		uglyTemplateProcessing(inputFile, outputFile, replacements);
+
+		Map<String, Object> endpointInfo = new HashMap<String, Object>();
+		endpointInfo.put("namespace", serviceNS); //$NON-NLS-1$
+		endpointInfo.put("service", serviceName); //$NON-NLS-1$
+		endpointInfo.put("port", endpointName); //$NON-NLS-1$
+		endpointInfo.put("address", endpointAddress); //$NON-NLS-1$
+		endpointInfo.put("studioName", studioServiceName); //$NON-NLS-1$
+		endpointInfo.put("wsdlLocation", wsdl.getName()); //$NON-NLS-1$
+
+		Map<String, String> operation2job = new HashMap<String, String>();
+		for (Map.Entry<ServicePort, Map<String, String>> port : ports.entrySet()) {
+			//TODO: actual port work
+			for (Map.Entry<String, String> operation : port.getValue().entrySet()) {
+				operation2job.put(operation.getKey(), operation.getValue());
+			}
+		}
+		endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
+
 
 		EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
-		boolean useSl = Boolean.valueOf(additionalInfo
-				.get(ServiceMetadataDialog.USE_SL));
-		boolean useSam = Boolean.valueOf(additionalInfo
-				.get(ServiceMetadataDialog.USE_SAM));
+		boolean useSl = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+		boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
 		String security = additionalInfo.get(ServiceMetadataDialog.SECURITY);
 		boolean useSecurityToken = ServiceMetadataDialog.BASIC.equals(security);
 		boolean useSecuritySaml = ServiceMetadataDialog.SAML.equals(security);
 
-		// create mapping operation-job
-		File out = new File(outputFile);
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory
-				.newInstance();
-		docFactory.setNamespaceAware(true);
-		DocumentBuilder docBuilder;
+		endpointInfo.put("useSL", useSl); //$NON-NLS-1$
+		endpointInfo.put("useSAM", useSam); //$NON-NLS-1$
+		endpointInfo.put("useSecuritySAML", useSecuritySaml); //$NON-NLS-1$
+		endpointInfo.put("useSecurityToken", useSecurityToken); //$NON-NLS-1$
+
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty("resource.loader", "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
+		engine.setProperty("classpath.resource.loader.class", //$NON-NLS-1$
+				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"); //$NON-NLS-1$
+		engine.init();
+
+		VelocityContext context = new VelocityContext();
+		context.put("endpoint", endpointInfo); //$NON-NLS-1$
+
+		FileWriter fw = null;
 		try {
-			docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(out);
-
-			Element root = doc.getDocumentElement();
-			Element features = null;
-			Element properties = null;
-			NodeList endpoints = root.getElementsByTagNameNS(JAXWS_NS,
-					"endpoint"); //$NON-NLS-1$
-			for (int i = 0; i < endpoints.getLength(); i++) {
-				Element endpoint = (Element) endpoints.item(i);
-				if (("serviceNamespace:" + endpointName).equals(endpoint.getAttribute("endpointName"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					features = getOrCreateKidNs(endpoint, "features", JAXWS_NS); //$NON-NLS-1$
-					properties = getOrCreateKidNs(endpoint,
-							"properties", JAXWS_NS); //$NON-NLS-1$
-				}
-			}
-
-			if (useSl) {
-				createKid(root, "import") //$NON-NLS-1$
-						.setAttribute(
-								"resource", "classpath:META-INF/tesb/locator/beans-osgi.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-				// <bean
-				// class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
-				createKid(features, "bean") //$NON-NLS-1$
-						.setAttribute(
-								"class", "org.talend.esb.servicelocator.cxf.LocatorFeature"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			if (useSam) {
-				createKid(root, "import") //$NON-NLS-1$
-						.setAttribute(
-								"resource", "classpath:META-INF/tesb/agent-osgi.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-				// <ref bean="eventFeature"/>
-				createKid(features, "ref") //$NON-NLS-1$
-						.setAttribute("bean", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			NodeList mapEls = doc.getElementsByTagName("map"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (mapEls.getLength() > 0) {
-				Element map = (Element) mapEls.item(0);
-				for (Map.Entry<ServicePort, Map<String, String>> port : ports
-						.entrySet()) {
-					// TODO: actual port work
-					for (Map.Entry<String, String> operation : port.getValue()
-							.entrySet()) {
-						Element entry = createKid(map, "entry"); //$NON-NLS-1$
-						createKid(createKid(entry, "key"), "value").setTextContent(operation.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
-						createKid(entry, "value").setTextContent(operation.getValue()); //$NON-NLS-1$
-					}
-				}
-				if (useSam) {
-					createKidWithAttrs((Element) map.getParentNode()
-							.getParentNode(), "property", //$NON-NLS-1$
-							new HashMap<String, String>() {
-								{
-									this.put("name", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
-									this.put("ref", "eventFeature"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-							});
-				}
-			}
-
-			// security
-			if (useSecurityToken || useSecuritySaml) {
-				// <osgi:reference id="policyProvider"
-				// interface="org.talend.esb.job.controller.PolicyProvider" />
-				createKidNsWithAttrs(root, "osgi:reference", OSGI_NS, //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("id", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"interface", "org.talend.esb.job.controller.PolicyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-			}
-			if (useSecurityToken) {
-				// <bean id="jaasUTValidator"
-				// class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
-				// <property name="contextName" value="karaf" />
-				// </bean>
-				Element jaasValidator = createKidWithAttrs(root, "bean", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("id", "jaasUTValidator"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"class", "org.apache.ws.security.validate.JAASUsernameTokenValidator"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(jaasValidator, "property", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("name", "contextName"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("value", "karaf"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
-				// <constructor-arg>
-				// <bean factory-bean="policyProvider"
-				// factory-method="getTokenPolicy"/>
-				// </constructor-arg>
-				// </bean>
-				Element policyFeatureBean = createKidWithAttrs(
-						features,
-						"bean", //$NON-NLS-1$
-						Collections
-								.singletonMap(
-										"class", "org.apache.cxf.ws.policy.WSPolicyFeature")); //$NON-NLS-1$ //$NON-NLS-2$
-				createKidWithAttrs(
-						createKid(policyFeatureBean, "constructor-arg"), "bean", //$NON-NLS-1$ //$NON-NLS-2$
-						new HashMap<String, String>() {
-							{
-								this.put("factory-bean", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("factory-method", "getTokenPolicy"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <entry key="ws-security.ut.validator"
-				// value-ref="jaasUTValidator"/>
-				createKidWithAttrs(properties, "entry", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("key", "ws-security.ut.validator"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("value-ref", "jaasUTValidator"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-			}
-			if (useSecuritySaml) {
-				// <bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
-				// <constructor-arg>
-				// <bean factory-bean="policyProvider"
-				// factory-method="getSamlPolicy"/>
-				// </constructor-arg>
-				// </bean>
-				Element policyFeatureBean = createKidWithAttrs(
-						features,
-						"bean", //$NON-NLS-1$
-						Collections
-								.singletonMap(
-										"class", "org.apache.cxf.ws.policy.WSPolicyFeature")); //$NON-NLS-1$ //$NON-NLS-2$
-				createKidWithAttrs(
-						createKid(policyFeatureBean, "constructor-arg"), "bean", //$NON-NLS-1$ //$NON-NLS-2$
-						new HashMap<String, String>() {
-							{
-								this.put("factory-bean", "policyProvider"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("factory-method", "getSamlPolicy"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <osgix:cm-properties id="service-props"
-				// persistent-id="org.talend.esb.job.service"/>
-				createKidNsWithAttrs(root, "osgix:cm-properties", OSGIX_NS, //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("id", "service-props"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"persistent-id", "org.talend.esb.job.service"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <bean
-				// class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-				// <property name="properties" ref="service-props" />
-				// <property name="placeholderPrefix" value="$service{" />
-				// </bean>
-				Element propConfBean = createKidWithAttrs(root,
-						"bean", //$NON-NLS-1$
-						Collections
-								.singletonMap(
-										"class", "org.springframework.beans.factory.config.PropertyPlaceholderConfigurer")); //$NON-NLS-1$ //$NON-NLS-2$
-				createKidWithAttrs(propConfBean, "property", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("name", "properties"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("ref", "service-props"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(propConfBean, "property", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("name", "placeholderPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("value", "$service{"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <bean id="callback"
-				// class="org.apache.cxf.interceptor.security.NamePasswordCallbackHandler">
-				// <constructor-arg type="java.lang.String"
-				// value="$service{ws-security.signature.username}"/>
-				// <constructor-arg type="java.lang.String"
-				// value="$service{ws-security.signature.password}"/>
-				// <constructor-arg type="java.lang.String"
-				// value="setPassword"/>
-				// </bean>
-				Element namePassCallback = createKidWithAttrs(root, "bean", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("id", "callback"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"class", "org.apache.cxf.interceptor.security.NamePasswordCallbackHandler"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"value", "$service{ws-security.signature.username}"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"value", "$service{ws-security.signature.password}"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(namePassCallback, "constructor-arg", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put("type", "java.lang.String"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put("value", "setPassword"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-
-				// <entry key="ws-security.signature.username"
-				// value="$service{ws-security.signature.username}"/>
-				// <entry key="ws-security.callback-handler"><ref
-				// bean="callback" /></entry>
-				// <entry key="ws-security.signature.properties"
-				// value="$service{ws-security.signature.properties}" />
-				createKidWithAttrs(properties, "entry", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put(
-										"key", "ws-security.signature.username"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"value", "$service{ws-security.signature.username}"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				createKidWithAttrs(properties, "entry", //$NON-NLS-1$
-						new HashMap<String, String>() {
-							{
-								this.put(
-										"key", "ws-security.signature.properties"); //$NON-NLS-1$ //$NON-NLS-2$
-								this.put(
-										"value", "$service{ws-security.signature.properties}"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-						});
-				Element entry = createKidWithAttrs(properties, "entry", //$NON-NLS-1$
-						Collections.singletonMap(
-								"key", "ws-security.callback-handler")); //$NON-NLS-1$ //$NON-NLS-2$
-				createKidWithAttrs(entry, "ref", //$NON-NLS-1$
-						Collections.singletonMap("bean", "callback")); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			// output
-			TransformerFactory tfactory = TransformerFactory.newInstance();
-			Transformer serializer;
-			serializer = tfactory.newTransformer();
-			// Setup indenting to "pretty print"
-			serializer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-			serializer.setOutputProperty(
-					"{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
-
-			serializer.transform(new DOMSource(doc), new StreamResult(out));
-
-		} catch (ParserConfigurationException e) {
-			logger.error(
-					Messages.ServiceExportManager_Exception_cannot_create_document_builder,
-					e);
-		} catch (SAXException e) {
-			logger.error(
-					Messages.ServiceExportManager_Exception_Cannot_parse_job_xml,
-					e);
+			fw = new FileWriter(outputFile);
+			Template template = engine.getTemplate("/resources/beans-template.xml"); //$NON-NLS-1$
+			template.merge(context, fw);
+			fw.flush();
+		} catch (ResourceNotFoundException rnfe) {
+			// couldn't find the template
+			logger.error(Messages.ServiceExportManager_Exception_cannot_open_file, rnfe);
+		} catch (ParseErrorException pee) {
+			// syntax error: problem parsing the template
+			logger.error(Messages.ServiceExportManager_Exception_cannot_open_file, pee);
+		} catch (MethodInvocationException mie) {
+			// something invoked in the template threw an exception
+			logger.error(mie.getLocalizedMessage(), mie);
 		} catch (IOException e) {
-			logger.error(
-					Messages.ServiceExportManager_Exception_cannot_open_file, e);
-		} catch (TransformerConfigurationException e) {
-			logger.error(
-					Messages.ServiceExportManager_Exception_cannot_serialize_xml,
-					e);
-		} catch (TransformerException e) {
+			// something wrong with output file
 			logger.error(e.getLocalizedMessage(), e);
-		}
-
-	}
-
-	// private void addProperty(Element props, String key,
-	// String value) {
-	//		Element prop = createKid(props, "entry"); //$NON-NLS-1$
-	//		prop.setAttribute("key", key); //$NON-NLS-1$
-	//		prop.setAttribute("value", value); //$NON-NLS-1$
-	// }
-	//
-	private Element createKid(Element parent, String kidName) {
-		Element kid = parent.getOwnerDocument().createElement(kidName);
-		parent.appendChild(kid);
-		return kid;
-	}
-
-	private Element createKidNs(Element parent, String kidName, String kidNs) {
-		Element kid = parent.getOwnerDocument().createElementNS(kidNs, kidName);
-		parent.appendChild(kid);
-		return kid;
-	}
-
-	private Element createKidWithAttrs(Element parent, String kidName,
-			Map<String, String> attrs) {
-		Element kid = createKid(parent, kidName);
-		setAttrs(kid, attrs);
-		return kid;
-	}
-
-	private Element createKidNsWithAttrs(Element parent, String kidName,
-			String kidNs, Map<String, String> attrs) {
-		Element kid = createKidNs(parent, kidName, kidNs);
-		setAttrs(kid, attrs);
-		return kid;
-	}
-
-	private void setAttrs(Element elem, Map<String, String> attrs) {
-		for (Map.Entry<String, String> attr : attrs.entrySet()) {
-			elem.setAttribute(attr.getKey(), attr.getValue());
-		}
-	}
-
-	private Element getOrCreateKidNs(Element parent, String kidName,
-			String kidNs) {
-		NodeList kidNodes = parent.getElementsByTagNameNS(kidNs, kidName);
-		if (0 == kidNodes.getLength()) {
-			return createKidNs(parent, kidName, kidNs);
-		} else {
-			return (Element) kidNodes.item(0);
+		} finally {
+			if (null != fw) {
+				try {
+					fw.close();
+				} catch (IOException e) {
+					logger.warn(e.getLocalizedMessage(), e);
+				}
+			}
 		}
 	}
 
@@ -500,8 +166,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
 		if (extensibilityElements != null) {
 			for (ExtensibilityElement elment : extensibilityElements) {
-				if (elment.getElementType().getLocalPart()
-						.equalsIgnoreCase(elementType)) {
+				if (elment.getElementType().getLocalPart().equalsIgnoreCase(elementType)) {
 					elements.add(elment);
 				}
 			}
@@ -517,16 +182,26 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
-		a.put(new Attributes.Name("Import-Package"),
-				"javax.xml.ws,org.talend.esb.job.controller,org.osgi.service.cm;version=\"[1.3,2)\",org.apache.ws.security.validate");
-		a.put(new Attributes.Name("Require-Bundle"),
-				"org.apache.cxf.bundle,org.springframework.beans,org.springframework.context,org.springframework.osgi.core,locator,sam-agent,sam-common");
+		a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
+				"javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
+				+ ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
+				+ ",org.apache.ws.security.validate" //$NON-NLS-1$
+			);
+		a.put(new Attributes.Name("Require-Bundle"), //$NON-NLS-1$
+				"org.apache.cxf.bundle" //$NON-NLS-1$
+				+ ",org.springframework.beans" //$NON-NLS-1$
+				+ ",org.springframework.context" //$NON-NLS-1$
+				+ ",org.springframework.osgi.core" //$NON-NLS-1$
+				+ ",locator" //$NON-NLS-1$
+				+ ",sam-agent" //$NON-NLS-1$
+				+ ",sam-common" //$NON-NLS-1$
+			);
 		return manifest;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.
 	 * JobJavaScriptOSGIForESBManager#getOutputSuffix()
 	 */
@@ -536,8 +211,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	}
 
 	public static Map<ExportChoice, Object> getDefaultExportChoiceMap() {
-		Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(
-				ExportChoice.class);
+		Map<ExportChoice, Object> exportChoiceMap =
+				new EnumMap<ExportChoice, Object>(ExportChoice.class);
 		exportChoiceMap.put(ExportChoice.needLauncher, true);
 		exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
 		exportChoiceMap.put(ExportChoice.needUserRoutine, true);
@@ -586,51 +261,6 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 			}
 		}
 		return "Job";
-	}
-
-	private void uglyTemplateProcessing(String inputFile, String outputFile,
-			Map<String, String> replacements) {
-
-		FileReader fr = null;
-		FileWriter fw = null;
-		try {
-			fr = new FileReader(inputFile);
-			BufferedReader br = new BufferedReader(fr);
-
-			fw = new FileWriter(outputFile);
-			BufferedWriter bw = new BufferedWriter(fw);
-
-			String line = br.readLine();
-			while (line != null) {
-				for (Map.Entry<String, String> replacement : replacements
-						.entrySet()) {
-					line = line.replace(replacement.getKey(),
-							replacement.getValue());
-				}
-				bw.write(line + "\n"); //$NON-NLS-1$
-				line = br.readLine();
-			}
-			bw.flush();
-		} catch (FileNotFoundException e) {
-			ExceptionHandler.process(e);
-			logger.error(e);
-		} catch (IOException e) {
-			ExceptionHandler.process(e);
-			logger.error(e);
-		} finally {
-			if (null != fw) {
-				try {
-					fw.close();
-				} catch (IOException e) {
-				}
-			}
-			if (null != fr) {
-				try {
-					fr.close();
-				} catch (IOException e) {
-				}
-			}
-		}
 	}
 
 }

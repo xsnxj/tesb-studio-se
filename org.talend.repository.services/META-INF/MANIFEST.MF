@@ -24,10 +24,13 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.xsd
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
-Bundle-ClassPath: lib/wsdl4j-1.6.2.jar,
- lib/xmlschema-core-2.0.jar,
- .
-Export-Package: org.talend.repository.services.model.services,
- org.talend.repository.services.ui.action
-Import-Package: org.talend.designer.publish.core,
- org.talend.designer.publish.core.models
+Bundle-ClassPath: .,
+ lib/commons-collections-3.2.1.jar,
+ lib/commons-lang-2.6.jar,
+ lib/velocity-1.7.jar,
+ lib/wsdl4j-1.6.2.jar,
+ lib/xmlschema-core-2.0.jar
+Export-Package: org.talend.repository.services.model.services
+ ,org.talend.repository.services.ui.action
+Import-Package: org.talend.designer.publish.core
+ ,org.talend.designer.publish.core.models
