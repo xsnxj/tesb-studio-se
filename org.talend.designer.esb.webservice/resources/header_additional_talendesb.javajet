@@ -491,26 +491,14 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 	}
 
 	public void run() {
-		// handle relative uri
+		
 <%
-	String defaultPort = (String) System.getProperties().get("wsHttpPort");
-	if (null == defaultPort || defaultPort.trim().isEmpty()) {
-		defaultPort = "8088";
-	}
+	//http://jira.talendforge.org/browse/TESB-3603 Clean up default port codes
+	//String defaultPort = (String) System.getProperties().get("wsHttpPort");
+	//if (null == defaultPort || defaultPort.trim().isEmpty()) {
+	//	defaultPort = "8088";
+	//}
 %>
-		String defaultPort = "<%=defaultPort%>";
-
-		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
-			endpointUrl = "http://localhost:" + defaultPort + "/";
-		}
-
-		if (!endpointUrl.contains("://")) {
-			if (!endpointUrl.startsWith("/")) {
-				endpointUrl = "/" + endpointUrl;
-			}
-			endpointUrl = "http://localhost:" + defaultPort + endpointUrl;
-		}
-
 		// test for busy
 		java.net.ServerSocket ss = null;
 		try {
