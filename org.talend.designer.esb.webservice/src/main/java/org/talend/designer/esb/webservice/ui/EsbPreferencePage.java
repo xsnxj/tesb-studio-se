@@ -32,7 +32,8 @@ public class EsbPreferencePage extends FieldEditorPreferencePage implements IWor
     @Override
     public boolean performOk() {
         boolean result = super.performOk();
-        WebServiceComponentPlugin.getDefault().loadCustomProperty();
+        // TESB 3602 Hide ESB preference page
+		// WebServiceComponentPlugin.getDefault().loadCustomProperty();
         return result;
     }
 

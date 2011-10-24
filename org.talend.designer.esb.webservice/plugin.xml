@@ -25,6 +25,7 @@
 		</Service>
 	</extension>
 
+	<!-- TESB-3602 Remove ESB page  
 	<extension point="org.eclipse.ui.preferencePages">
 		<page
 			category="org.talend.core.prefs"
@@ -33,5 +34,5 @@
 			name="%preferencesPage.main">
 		</page>
 	</extension>
-
+	-->
 </plugin>
