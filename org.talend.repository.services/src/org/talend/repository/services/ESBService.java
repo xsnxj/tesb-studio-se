@@ -28,6 +28,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
 import org.talend.core.IESBService;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
@@ -40,11 +41,13 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
@@ -116,15 +119,15 @@ public class ESBService implements IESBService {
         }
     }
 
-	public String getWsdlFilePath(Item item) {
-		if (item != null && item instanceof ServiceItem) {
-			ServiceItem si = (ServiceItem) item;
-			ServiceConnection connection = (ServiceConnection) si
-					.getConnection();
-			return connection.getWSDLPath();
-		}
-		return null;
-	}
+    public String getWsdlFilePath(Item item) {
+        if (item != null && item instanceof ServiceItem) {
+            ServiceItem si = (ServiceItem) item;
+            ServiceConnection connection = (ServiceConnection) si.getConnection();
+            return connection.getWSDLPath();
+        }
+        return null;
+    }
+
     // private void changenewOperationLabel(RepositoryNode newNode, INode node, ServiceConnection serConn) {
     // String operationName = newNode.getObject().getLabel();
     // String parentPortName = newNode.getParent().getObject().getLabel();
@@ -256,7 +259,7 @@ public class ESBService implements IESBService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.core.IESBService#getServicesType()
      */
     public ERepositoryObjectType getServicesType() {
@@ -377,5 +380,45 @@ public class ESBService implements IESBService {
                     + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
             command2.execute();
         }
+    }
+
+    public void editJobName(String originaleObjectLabel, String newLabel) {
+        IProxyRepositoryFactory proxyRepositoryFactory = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory();
+        Project project = ProjectManager.getInstance().getCurrentProject();
+        List<IRepositoryViewObject> service = null;
+        try {
+            service = proxyRepositoryFactory.getAll(project, ESBRepositoryNodeType.SERVICES, true);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        if (service != null && service.size() > 0) {
+            for (IRepositoryViewObject Object : service) {
+                boolean flag = false;
+                ServiceItem item = (ServiceItem) Object.getProperty().getItem();
+                ServiceConnection serviceConnection = (ServiceConnection) item.getConnection();
+                List<ServicePort> servicePorts = serviceConnection.getServicePort();
+                for (ServicePort port : servicePorts) {
+                    List<ServiceOperation> serviceOperations = port.getServiceOperation();
+                    for (ServiceOperation operation : serviceOperations) {
+                        String originaleItemLabel = operation.getLabel();
+                        if (originaleItemLabel.contains("-")) {
+                            String[] array = originaleItemLabel.split("-");
+                            if (originaleObjectLabel.equals(array[1])) {
+                                operation.setLabel(array[0] + "-" + newLabel);
+                                flag = true;
+                            }
+                        }
+                    }
+                }
+                if (flag) {
+                    try {
+                        proxyRepositoryFactory.save(item);
+                    } catch (PersistenceException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
     }
 }
