@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.IImage;
-import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.Information;
 import org.talend.core.model.properties.InformationLevel;
 import org.talend.core.model.properties.Item;
@@ -33,11 +32,8 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.XmiResourceManager;
-import org.talend.core.runtime.CoreRuntimePlugin;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -257,50 +253,5 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     public IImage getIcon(Item item) {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.repository.IRepositoryContentHandler#editJobName()
-     */
-    public void editJobName(String originaleObjectLabel, String newLabel) {
-        IProxyRepositoryFactory proxyRepositoryFactory = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory();
-        Project project = ProjectManager.getInstance().getCurrentProject();
-        List<IRepositoryViewObject> service = null;
-        try {
-            service = proxyRepositoryFactory.getAll(project, ESBRepositoryNodeType.SERVICES, true);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
-        if (service != null && service.size() > 0) {
-            for (IRepositoryViewObject Object : service) {
-                boolean flag = false;
-                ServiceItem item = (ServiceItem) Object.getProperty().getItem();
-                ServiceConnection serviceConnection = (ServiceConnection) item.getConnection();
-                List<ServicePort> servicePorts = serviceConnection.getServicePort();
-                for (ServicePort port : servicePorts) {
-                    List<ServiceOperation> serviceOperations = port.getServiceOperation();
-                    for (ServiceOperation operation : serviceOperations) {
-                        String originaleItemLabel = operation.getLabel();
-                        if (originaleItemLabel.contains("-")) {
-                            String[] array = originaleItemLabel.split("-");
-                            if (originaleObjectLabel.equals(array[1])) {
-                                operation.setLabel(array[0] + "-" + newLabel);
-                                flag = true;
-                            }
-                        }
-                    }
-                }
-                if (flag) {
-                    try {
-                        proxyRepositoryFactory.save(item);
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
     }
 }
