@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.model.services.ServicePort;
 
 public class ServiceMetadataDialog extends Dialog {
 
@@ -29,17 +29,17 @@ public class ServiceMetadataDialog extends Dialog {
     private Button basicCheck;
     private Button samlCheck;
     private final ServiceItem serviceItem;
-    private final ServicePort port;
+    private final ServiceConnection serviceConnection;
     private boolean useSL;
     private boolean useSAM;
 	private boolean securitySAML;
 	private boolean securityBasic;
 
-    public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServicePort port) {
+    public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
         super(parentShell);
         this.serviceItem = serviceItem;
-        this.port = port;
-        EMap<String, String> props = port.getAdditionalInfo();
+        this.serviceConnection = serviceConnection;
+        EMap<String, String> props = serviceConnection.getAdditionalInfo();
         if (props != null) {
             useSAM = Boolean.valueOf(props.get(USE_SAM));
             useSL = Boolean.valueOf(props.get(USE_SL));
@@ -51,7 +51,7 @@ public class ServiceMetadataDialog extends Dialog {
     protected ServiceMetadataDialog(Shell parentShell) {
         super(parentShell);
         serviceItem = null;
-        port = null;
+        serviceConnection = null;
     }
 
     /* (non-Javadoc)
@@ -118,7 +118,7 @@ public class ServiceMetadataDialog extends Dialog {
      */
     @Override
     protected void okPressed() {
-        EMap<String, String> props = port.getAdditionalInfo();
+        EMap<String, String> props = serviceConnection.getAdditionalInfo();
         if (props != null) {
             props.put(USE_SAM, Boolean.toString(isUseSam()));
             props.put(USE_SL, Boolean.toString(isUseSL()));

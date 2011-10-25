@@ -68,6 +68,8 @@ public class ExportServiceAction extends WorkspaceJob {
 
 	private RepositoryNode node = null;
 
+	private ServiceConnection serviceConnection;
+
     public ExportServiceAction(RepositoryNode node) throws CoreException {
         this(node, null);
     }
@@ -84,7 +86,7 @@ public class ExportServiceAction extends WorkspaceJob {
                 serviceWsdl = WSDLUtils.getWsdlFile(node);
             }
             ServiceItem serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+            serviceConnection = (ServiceConnection) serviceItem.getConnection();
             EList<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort port : listPort) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
@@ -164,7 +166,7 @@ public class ExportServiceAction extends WorkspaceJob {
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, wsdl, getServiceName());
+        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, serviceConnection, wsdl, getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + ".jar";
         File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
         try {

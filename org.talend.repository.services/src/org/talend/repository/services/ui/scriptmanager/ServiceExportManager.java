@@ -35,6 +35,8 @@ import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServiceConnection;
+import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -50,7 +52,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 	}
 
 	public void createSpringBeans(String outputFile,
-			Map<ServicePort, Map<String, String>> ports, File wsdl,
+			Map<ServicePort, Map<String, String>> ports, ServiceConnection serviceConnection, File wsdl,
 			String studioServiceName) throws IOException, CoreException {
 
 		//TODO: support multiport!!!
@@ -111,7 +113,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
 
 
-		EMap<String, String> additionalInfo = servicePort.getAdditionalInfo();
+		EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
 		boolean useSl = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
 		boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
 		boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));

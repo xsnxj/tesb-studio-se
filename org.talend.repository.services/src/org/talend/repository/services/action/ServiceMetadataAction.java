@@ -60,7 +60,7 @@ public class ServiceMetadataAction extends AContextualAction {
         @SuppressWarnings("unchecked")
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
-			if (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICEPORT) {
+			if (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
                 canWork = false;
                 break;
             } else if (canWork && node.getObject() != null
@@ -87,21 +87,13 @@ public class ServiceMetadataAction extends AContextualAction {
 
     protected void doRun() {
         IWorkbenchWindow window = this.getViewPart().getViewSite().getWorkbenchWindow();
-        ServicePort port = null;
         ServiceItem serviceItem = null;
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
-            serviceItem = (ServiceItem) node.getParent().getObject().getProperty().getItem();
+            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-            EList<ServicePort> listPort = serviceConnection.getServicePort();
-            for (ServicePort cport : listPort) {
-				if (cport.getName().equals(node.getObject().getLabel())) {
-                    port = cport;
-                }
-            }
+            Dialog dialog = new ServiceMetadataDialog(window, serviceItem, serviceConnection);
+            dialog.open();
         }
-
-        Dialog dialog = new ServiceMetadataDialog(window, serviceItem, port);
-        dialog.open();
     }
 }
