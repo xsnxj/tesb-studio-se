@@ -377,6 +377,7 @@
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID="org.apache.servicemix.specs.jaxws-api-2.2"
 					REQUIRED="true"/>
+
 			<IMPORT NAME="stax2-api"
 					MODULE="stax2-api-3.1.1.jar"
 					BundleID=""
@@ -392,6 +393,15 @@
 					REQUIRED="true"/>
 			<IMPORT NAME="saaj-impl"
 					MODULE="saaj-impl-1.3.12.jar"
+					BundleID=""
+					REQUIRED="true"/>
+
+			<IMPORT NAME="xmlsec"
+					MODULE="xmlsec-1.4.5.jar"
+					BundleID=""
+					REQUIRED="true"/>
+			<IMPORT NAME="wss4j"
+					MODULE="wss4j-1.6.3.jar"
 					BundleID=""
 					REQUIRED="true"/>
 
