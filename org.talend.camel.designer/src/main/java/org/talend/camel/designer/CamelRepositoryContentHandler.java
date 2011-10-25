@@ -240,4 +240,14 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.repository.IRepositoryContentHandler#editJobName()
+     */
+    public void editJobName(String originaleObjectLabel, String newLabel) {
+        // TODO Auto-generated method stub
+
+    }
+
 }
