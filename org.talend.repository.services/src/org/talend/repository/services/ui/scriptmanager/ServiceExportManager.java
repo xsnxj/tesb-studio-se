@@ -36,7 +36,6 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
-import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -80,13 +79,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 					for (ExtensibilityElement element : addrElems) {
 						if (element != null && element instanceof SOAPAddress) {
 							endpointAddress = ((SOAPAddress) element).getLocationURI();
-							// http://jira.talendforge.org/browse/TESB-3601
+							//http://jira.talendforge.org/browse/TESB-3638
 							if (endpointAddress.contains("://")) { //$NON-NLS-1$
 								endpointAddress = endpointAddress.substring(endpointAddress.lastIndexOf("://") + 3); //$NON-NLS-1$
 								endpointAddress = endpointAddress.substring(endpointAddress.indexOf("/")); //$NON-NLS-1$
-								if (endpointAddress.startsWith("/services/")) { //$NON-NLS-1$
-									endpointAddress = endpointAddress.substring("/services".length()); //$NON-NLS-1$
-								}
+								//if (endpointAddress.startsWith("/services/")) { //$NON-NLS-1$
+								//endpointAddress = endpointAddress.substring("/services".length()); //$NON-NLS-1$
+								// }
 							}
 						}
 					}
