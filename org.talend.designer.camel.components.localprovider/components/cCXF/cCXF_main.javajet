@@ -93,14 +93,16 @@ imports="
 	url = sb.toString();
 	
 	String uriRef = "uriMap.get(\"" + cid + "\")";
+	
+	String endpointVar = "endpoint" + cid;
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.to(<%=uriRef%>)
+		.to(<%=endpointVar%>)
 <%
 	} else {
 %>
-		from(<%=uriRef%>)
+		from(<%=endpointVar%>)
 <%
 	}
 %>
