@@ -82,10 +82,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 						if (element != null && element instanceof SOAPAddress) {
 							// http://jira.talendforge.org/browse/TESB-3638
 							endpointAddress = ((SOAPAddress) element).getLocationURI();
-							try{
+							try {
 								URL url = new URL(endpointAddress);
 								endpointAddress = url.getPath();
-							}catch (MalformedURLException e) {
+							} catch (MalformedURLException e) {
 								logger.error("Endpoint URI invalid: " + e);
 							}
 						}
@@ -114,15 +114,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
 
 		EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
-		boolean useSl = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
-		boolean useSam = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
-		boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
-		boolean useSecuritySaml = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
-
-		endpointInfo.put("useSL", useSl); //$NON-NLS-1$
-		endpointInfo.put("useSAM", useSam); //$NON-NLS-1$
-		endpointInfo.put("useSecuritySAML", useSecuritySaml); //$NON-NLS-1$
-		endpointInfo.put("useSecurityToken", useSecurityToken); //$NON-NLS-1$
+		endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)));
+		endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
+		endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC)));
+		endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML)));
 
 		VelocityEngine engine = new VelocityEngine();
 		engine.setProperty("resource.loader", "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
