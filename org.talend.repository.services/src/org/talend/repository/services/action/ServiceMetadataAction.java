@@ -14,7 +14,6 @@ package org.talend.repository.services.action;
 
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -27,7 +26,6 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -40,7 +38,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ServiceMetadataAction extends AContextualAction {
 
-    protected static final String ACTION_LABEL = "Edit Service Metadata";
+	protected static final String ACTION_LABEL = "ESB Runtime Options";
 
     private IStructuredSelection selection;
 
