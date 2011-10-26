@@ -74,7 +74,7 @@ public class WSDLUtils {
 
     public static Map<String, String> getServiceOperationParameters(String wsdlURI,
             String operationName, String portTypeName) throws CoreException {
-        // NOTE: all below in assuming standalone wsdl (no another wsdl's imports) !!!
+        // NOTE: all below in assuming standalone (no another WSDL's imports) WS-I complaint WSDL !
         Map<String, String> map = new HashMap<String, String>();
         if (null == wsdlURI) { // no WSDL provided
             return map;
