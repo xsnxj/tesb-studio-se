@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
@@ -20,6 +23,7 @@ import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
@@ -81,7 +85,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -99,7 +103,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -149,6 +153,11 @@ public class AssignJobAction extends AbstractCreateAction {
                     List<ServiceOperation> listOperation = port.getServiceOperation();
                     for (ServiceOperation operation : listOperation) {
                         if (operation.getLabel().equals(operationName)) {
+                            String jobNewName = port.getName() + "-" + operation.getName();
+                            if (resetJobname(item, jobNewName)) {
+                                jobName = jobNewName;
+                            }
+
                             operation.setReferenceJobId(jobID);
                             operation.setLabel(operation.getName() + "-" + jobName);
 
@@ -293,6 +302,29 @@ public class AssignJobAction extends AbstractCreateAction {
                     + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
             command2.execute();
         }
+    }
+
+    private boolean resetJobname(Item processItem, String jobNewName) {
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        boolean avaliable;
+        try {
+            avaliable = factory.isNameAvailable(processItem, jobNewName);
+            if (avaliable) {
+                Property property = processItem.getProperty();
+                property.setLabel(jobNewName);
+                return true;
+            } else {
+                MessageBox box = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_WARNING | SWT.OK);
+                box.setText("Jobname Error");
+                box.setMessage("Label" + " " + jobNewName + " " + "is already in use!");
+                if (box.open() == SWT.OK) {
+                    return false;
+                }
+            }
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        }
+        return false;
     }
 
 }

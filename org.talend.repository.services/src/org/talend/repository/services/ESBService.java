@@ -13,16 +13,21 @@
 package org.talend.repository.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -45,11 +50,15 @@ import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
+import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
+import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.action.CreateNewJobAction;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -92,7 +101,36 @@ public class ESBService implements IESBService {
     // changenewOperationLabel(newNode, node, serConn);
     // }
 
-    private void changeOldOperationLabel(ServiceConnection serConn, INode node) {
+    private void changeOldOperationLabel(RepositoryNode topParent, INode node, ServiceOperation newOperation) {
+        // here should be all the ports, not just ports of one connection
+        List<IRepositoryNode> nodeList = topParent.getChildren();
+        IElementParameter elePara = node.getElementParameter("PROPERTY:" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
+        if (elePara == null) {
+            return;
+        }
+        ServiceConnection serConn = null;
+        ServiceItem servicesItem = null;
+        String paraValue = (String) elePara.getValue();
+        if (paraValue == null || "".equals(paraValue)) {
+            return;
+        }
+        String connID = null;
+        if (paraValue.contains(" - ")) {
+            connID = paraValue.split(" - ")[0];
+        } else {
+            connID = paraValue;
+        }
+        for (IRepositoryNode repNode : nodeList) {
+            String id = repNode.getObject().getProperty().getId();
+            if (id.equals(connID)) {
+                servicesItem = (ServiceItem) repNode.getObject().getProperty().getItem();
+                serConn = (ServiceConnection) servicesItem.getConnection();
+                break;
+            }
+        }
+        if (serConn == null) {
+            return;
+        }
         EList<ServicePort> portList = serConn.getServicePort();
 
         IElementParameter portPara = node.getElementParameter(WSDLUtils.PORT_NAME);
@@ -105,9 +143,17 @@ public class ESBService implements IESBService {
                     if (port.getName().equals(portValue)) {
                         for (ServiceOperation ope : port.getServiceOperation()) {
                             if (ope.getName().equals(opeValue)) {
-                                if (ope.getLabel().contains("-")) {
+                                if (newOperation != null && !ope.getId().equals(newOperation.getId())) {
                                     ope.setLabel(opeValue);
-                                    // ope.setReferenceJobId(null);
+                                    ope.setReferenceJobId(null);
+                                    if (servicesItem != null) {
+                                        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                                        try {
+                                            factory.save(servicesItem);
+                                        } catch (PersistenceException e) {
+                                            ExceptionHandler.process(e);
+                                        }
+                                    }
                                     break out;
                                 }
 
@@ -187,6 +233,9 @@ public class ESBService implements IESBService {
     private void changeOtherJobSchemaValue(IProxyRepositoryFactory factory, ServiceOperation newOpe, ServiceConnection serConn,
             RepositoryNode selectNode) throws PersistenceException, CoreException {
         IRepositoryViewObject jobObj = factory.getLastVersion(newOpe.getReferenceJobId());
+        if (jobObj == null) {
+            return;
+        }
         ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
 
         IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
@@ -210,7 +259,7 @@ public class ESBService implements IESBService {
         }
 
         newOpe.setReferenceJobId(null);
-        // newOpe.setLabel(newOpe.getName());
+        newOpe.setLabel(newOpe.getName());
 
         if (process != null) {
             List<? extends INode> nodelist = process.getGraphicalNodes();
@@ -301,29 +350,29 @@ public class ESBService implements IESBService {
                 ServiceItem servicesItem = (ServiceItem) reViewObject.getProperty().getItem();
                 ServiceConnection serConn = (ServiceConnection) servicesItem.getConnection();
 
-                changeOldOperationLabel(serConn, node);
-
                 String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 String portName = "";
                 String operationName = "";
                 EList<ServicePort> portList = serConn.getServicePort();
-                ServicePort paPort = null;
                 ServiceOperation operation = null;
-                for (ServicePort port : portList) {
+                out: for (ServicePort port : portList) {
                     if (port.getId().equals(ids[1])) {
                         portName = port.getName();
-                        paPort = port;
                         // node.getElementParameter("PORT")
                         EList<ServiceOperation> opeList = port.getServiceOperation();
                         for (ServiceOperation ope : opeList) {
                             if (ope.getId().equals(ids[2])) {
                                 operationName = ope.getName();
                                 operation = ope;
+                                break out;
                             }
                         }
                     }
                 }
+
+                RepositoryNode topParent = getServicesTopNode(selectNode);
+                changeOldOperationLabel(topParent, node, operation);
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
@@ -332,6 +381,7 @@ public class ESBService implements IESBService {
                     MessageDialog.openWarning(new Shell(), "warning",
                             "This other job which based on the Operation will be unset!");
                 }
+
                 IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
                 IEditorInput input = activeEditor.getEditorInput();
                 if (input instanceof ProcessEditorInput) {
@@ -373,12 +423,210 @@ public class ESBService implements IESBService {
         ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
         if (param != null) {
             param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.REPOSITORY);
+            param.getChildParameters().get(EParameterName.REPOSITORY_PROPERTY_TYPE.getName()).setValue("");
             String serviceId = connectionItem.getProperty().getId();
             String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
             String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
             ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, null, param.getName()
                     + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
             command2.execute();
+        }
+    }
+
+    public Object getValue(Item connItem, String value, INode node) {
+        if (connItem instanceof ServiceItem) {
+            ServiceItem serviceItem = ((ServiceItem) connItem);
+            if (WSDLUtils.WSDL_LOCATION.equals(value)) {
+                return WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+            } else if ("ENDPOINT".equals(value)) {
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                try {
+                    return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.ENDPOINT_URI);
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+            } else if (WSDLUtils.OPERATION_NAME.equals(value)) {
+                String propertyValue = (String) node.getPropertyValue(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
+                if (propertyValue != null) {
+                    if (propertyValue.contains(" - ")) {
+                        String portID = propertyValue.split(" - ")[1];
+                        String operarionID = propertyValue.split(" - ")[2];
+                        for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
+                            if (port.getId().equals(portID)) {
+                                for (ServiceOperation operation : port.getServiceOperation()) {
+                                    if (operation.getId().equals(operarionID)) {
+                                        return operation.getName();
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            } else if (WSDLUtils.OPERATION_NS.equals(value)) {
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                try {
+                    return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.OPERATION_NS);
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+            } else if (WSDLUtils.PORT_NAME.equals(value)) {
+                String propertyValue = (String) node.getPropertyValue(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
+                if (propertyValue != null) {
+                    if (propertyValue.contains(" - ")) {
+                        String portID = propertyValue.split(" - ")[1];
+                        for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
+                            if (port.getId().equals(portID)) {
+                                return port.getName();
+                            }
+                        }
+                    }
+                }
+            } else if (WSDLUtils.PORT_NS.equals(value)) {
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                try {
+                    return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.PORT_NS);
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+            } else if (WSDLUtils.SERVICE_NAME.equals(value)) {
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                try {
+                    return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.SERVICE_NAME);
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+            } else if (WSDLUtils.SERVICE_NS.equals(value)) {
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                try {
+                    return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.SERVICE_NS);
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+
+        }
+        return null;
+    }
+
+    private RepositoryNode getServicesTopNode(RepositoryNode node) {
+        RepositoryNode parent = node.getParent();
+        if (parent.getParent() instanceof ProjectRepositoryNode) {
+            return parent;
+        }
+        parent = getServicesTopNode(parent);
+        return parent;
+    }
+
+    /**
+     * When services connection is renamed, refresh the connection label in the component view of job.
+     * 
+     * @param item
+     */
+    public void refreshComponentView(Item item) {
+        try {
+            IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+            IEditorReference[] editors = activePage.getEditorReferences();
+            for (IEditorReference er : editors) {
+                IEditorPart part = er.getEditor(false);
+                if (part instanceof AbstractMultiPageTalendEditor) {
+                    AbstractMultiPageTalendEditor editor = (AbstractMultiPageTalendEditor) part;
+                    CommandStack stack = (CommandStack) editor.getTalendEditor().getAdapter(CommandStack.class);
+                    if (stack != null) {
+                        IProcess process = editor.getProcess();
+                        for (final INode processNode : process.getGraphicalNodes()) {
+                            if (processNode instanceof Node) {
+                                checkRepository((Node) processNode, item, stack);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+    }
+
+    private void checkRepository(final Node node, Item item, CommandStack stack) {
+        final String updataComponentParamName = EParameterName.UPDATE_COMPONENTS.getName();
+        final List<IElementParameter> repositoryParam = new ArrayList<IElementParameter>();
+
+        for (IElementParameter param : node.getElementParameters()) {
+            if (param.getFieldType().equals(EParameterFieldType.SCHEMA_TYPE)) {
+                String value = (String) param.getChildParameters().get(EParameterName.SCHEMA_TYPE.getName()).getValue();
+
+                if (value.equals(EmfComponent.REPOSITORY)) {
+                    IElementParameter schema = param.getChildParameters().get(EParameterName.REPOSITORY_SCHEMA_TYPE.getName());
+                    if (schema != null && schema.getValue() != null) {
+                        String[] names = ((String) schema.getValue()).split(" - "); //$NON-NLS-1$
+                        if (names.length > 0) {
+                            if (names[0].equals(item.getProperty().getId())) {
+                                repositoryParam.add(schema);
+                            }
+                        }
+                    }
+                }
+
+            } else if (param.getFieldType().equals(EParameterFieldType.PROPERTY_TYPE)) {
+                Object value = param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).getValue();
+                if (value.equals(EmfComponent.REPOSITORY)) {
+                    IElementParameter property = param.getChildParameters()
+                            .get(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
+                    if (property != null && property.getValue() != null) {
+                        String proValue = (String) property.getValue();
+                        if (proValue != null && proValue.contains(" - ")) {
+                            proValue = proValue.split(" - ")[0];
+                        }
+                        if (proValue.equals(item.getProperty().getId())) {
+                            repositoryParam.add(property);
+                        }
+
+                    }
+                }
+            }
+        }
+
+        if (repositoryParam.isEmpty()) {
+            return;
+        }
+
+        stack.execute(new Command() {
+
+            @Override
+            public void execute() {
+
+                node.setPropertyValue(updataComponentParamName, new Boolean(true));
+                for (IElementParameter param : repositoryParam) {
+                    // force to reload label
+                    param.setListItemsDisplayName(new String[0]);
+                    param.setListItemsValue(new String[0]);
+                }
+            }
+
+        });
+    }
+
+    public void refreshOperationLabel(String jobID) {
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        try {
+            List<IRepositoryViewObject> repList = factory.getAll(getServicesType());
+            for (IRepositoryViewObject obj : repList) {
+                ServiceItem item = (ServiceItem) obj.getProperty().getItem();
+                ServiceConnection conn = (ServiceConnection) item.getConnection();
+                for (ServicePort port : conn.getServicePort()) {
+                    for (ServiceOperation operation : port.getServiceOperation()) {
+                        if (operation.getReferenceJobId() != null && operation.getReferenceJobId().endsWith(jobID)) {
+                            operation.setLabel(operation.getName());
+                            operation.setReferenceJobId(null);
+                            factory.save(item);
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
         }
     }
 

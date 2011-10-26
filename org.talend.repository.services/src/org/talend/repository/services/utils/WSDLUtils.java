@@ -186,6 +186,61 @@ public class WSDLUtils {
         return null;
     }
 
+    public static IFile getWsdlFile(ServiceItem serviceItem) {
+        try {
+            IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+            List<ReferenceFileItem> list = serviceItem.getReferenceResources();
+            for (ReferenceFileItem item : list) {
+                IPath path = Path.fromOSString(item.eResource().getURI().path());
+            }
+            String foldPath = serviceItem.getState().getPath();
+            String folder = "";
+            if (!foldPath.equals("")) {
+                folder = "/" + foldPath;
+            }
+            IFile file = currentProject.getFolder("services" + folder).getFile(
+                    serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+            if (!file.exists()) {
+                // copy file to item
+                IFile fileTemp = null;
+                try {
+                    folder = "";
+                    if (!foldPath.equals("")) {
+                        folder = "/" + foldPath;
+                    }
+                    fileTemp = currentProject.getFolder("services" + folder).getFile(
+                            serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                    if (!fileTemp.exists()) {
+                        fileTemp.create(byteArrayInputStream, true, null);
+                    } else {
+                        fileTemp.delete(true, null);
+                        fileTemp.create(byteArrayInputStream, true, null);
+                    }
+                } catch (CoreException e) {
+                    ExceptionHandler.process(e);
+                }
+                //
+                ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+                createReferenceFileItem.setContent(byteArray);
+                createReferenceFileItem.setExtension("wsdl");
+                serviceItem.getReferenceResources().add(createReferenceFileItem);
+                createReferenceFileItem.getContent().setInnerContent(new byte[0]);
+                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                try {
+                    factory.save(serviceItem);
+                } catch (PersistenceException e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+            return file;
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        }
+        return null;
+    }
+
     public static Definition getDefinition(String pathToWsdl) throws CoreException {
         Definition definition = null;
         try {

@@ -29,8 +29,11 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.IESBService;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
@@ -47,357 +50,363 @@ import org.talend.repository.services.model.services.ServicesFactory;
 
 public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
-	private ServiceItem serviceItem;
+    private ServiceItem serviceItem;
 
-	private RepositoryNode repositoryNode;
+    private RepositoryNode repositoryNode;
 
-	public LocalWSDLEditor() {
-		// TODO Auto-generated constructor stub
-	}
+    public LocalWSDLEditor() {
+        // TODO Auto-generated constructor stub
+    }
 
-	protected AdapterImpl dirtyListener = new AdapterImpl() {
+    protected AdapterImpl dirtyListener = new AdapterImpl() {
 
-		@Override
-		public void notifyChanged(Notification notification) {
-			if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
-				save();
-			}
-		}
-	};
+        @Override
+        public void notifyChanged(Notification notification) {
+            if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
+                save();
+            }
+        }
+    };
 
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		super.doSave(monitor);
-		save();
-	}
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+        super.doSave(monitor);
+        save();
+    }
 
-	private void save() {
-		if (serviceItem != null) {
-			IProject currentProject;
-			try {
-				currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-				String foldPath = serviceItem.getState().getPath();
-				String folder = "";
-				if (!foldPath.equals("")) {
-					folder = "/" + foldPath;
-				}
-				IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
-						repositoryNode.getObject().getProperty().getLabel() + "_"
-						+ repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
-				if (fileTemp.exists()) {
-					saveModel(fileTemp.getRawLocation().toOSString());
-				}
-				IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-				factory.save(serviceItem);
-				RepositoryManager.refreshSavedNode(repositoryNode);
-				//////////// TODO: remove this ugly patch! do correct changeset
-				EList<ServicePort> servicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-				for (ServicePort servicePort : servicePorts) {
-					List<IRepositoryNode> portNodes = repositoryNode.getChildren();
-					IRepositoryNode portNode = null;
-					for (IRepositoryNode node : portNodes) {
-						if (node.getObject().getLabel().equals(servicePort.getName())) {
-							portNode = node;
-						}
-					}
-					EList<ServiceOperation> operations = servicePort.getServiceOperation();
-					for (ServiceOperation operation : operations) {
-						String referenceJobId = operation.getReferenceJobId();
-						if (referenceJobId != null) {
-							for (IRepositoryNode operationNode : portNode.getChildren()) {
-								if (operationNode.getObject().getLabel().startsWith(operation.getName()+"-")) {
-									RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(referenceJobId, false);
-									AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
-									action.assign(jobNode);
-									break;
-								}
-							}
-						}
-					}
-				}
-				//////////// TODO
+    private void save() {
+        if (serviceItem != null) {
+            IProject currentProject;
+            try {
+                currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+                String foldPath = serviceItem.getState().getPath();
+                String folder = "";
+                if (!foldPath.equals("")) {
+                    folder = "/" + foldPath;
+                }
+                IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
+                        repositoryNode.getObject().getProperty().getLabel() + "_"
+                                + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
+                if (fileTemp.exists()) {
+                    saveModel(fileTemp.getRawLocation().toOSString());
+                }
+                // if (isDirty()) {
+                // update
+                RepositoryUpdateManager.updateServices(serviceItem);
+                // }
 
+                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                factory.save(serviceItem);
+                RepositoryManager.refreshSavedNode(repositoryNode);
 
-			} catch (PersistenceException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+                    IESBService service = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+                    if (service != null) {
+                        service.refreshComponentView(serviceItem);
+                    }
+                }
+                // ////////// TODO: remove this ugly patch! do correct changeset
+                EList<ServicePort> servicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+                for (ServicePort servicePort : servicePorts) {
+                    List<IRepositoryNode> portNodes = repositoryNode.getChildren();
+                    IRepositoryNode portNode = null;
+                    for (IRepositoryNode node : portNodes) {
+                        if (node.getObject().getLabel().equals(servicePort.getName())) {
+                            portNode = node;
+                        }
+                    }
+                    EList<ServiceOperation> operations = servicePort.getServiceOperation();
+                    for (ServiceOperation operation : operations) {
+                        String referenceJobId = operation.getReferenceJobId();
+                        if (referenceJobId != null) {
+                            for (IRepositoryNode operationNode : portNode.getChildren()) {
+                                if (operationNode.getObject().getLabel().startsWith(operation.getName() + "-")) {
+                                    RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(referenceJobId, false);
+                                    AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
+                                    action.assign(jobNode);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                // ////////// TODO
 
-	private void saveModel(String path) {
-		IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-		WSDLFactory wsdlFactory;
-		try {
-			wsdlFactory = WSDLFactory.newInstance();
-			WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-			newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-			newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-			Definition definition = newWSDLReader.readWSDL(path);
-			Map portTypes = definition.getAllPortTypes();
-			Iterator it = portTypes.keySet().iterator();
+            } catch (PersistenceException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-			// changed for TDI-18005
-			Map<String, String> portNameIdMap = new HashMap<String, String>();
-			Map<String, Map<String, String>> portAdditionalMap = new HashMap<String, Map<String, String>>();
-			Map<String, String> operNameIdMap = new HashMap<String, String>();
-			Map<String, String> operJobMap = new HashMap<String, String>();
+    private void saveModel(String path) {
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        WSDLFactory wsdlFactory;
+        try {
+            wsdlFactory = WSDLFactory.newInstance();
+            WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+            newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+            newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+            Definition definition = newWSDLReader.readWSDL(path);
+            Map portTypes = definition.getAllPortTypes();
+            Iterator it = portTypes.keySet().iterator();
 
-			EList<ServicePort> oldServicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-			// get old service port item names and operation names under them
-			HashMap<String, ArrayList<String>> oldPortItemNames = new HashMap<String, ArrayList<String>>();
+            // changed for TDI-18005
+            Map<String, String> portNameIdMap = new HashMap<String, String>();
+            Map<String, Map<String, String>> portAdditionalMap = new HashMap<String, Map<String, String>>();
+            Map<String, String> operNameIdMap = new HashMap<String, String>();
+            Map<String, String> operJobMap = new HashMap<String, String>();
 
-			for (ServicePort servicePort : oldServicePorts) {
-				// keep id
-				portNameIdMap.put(servicePort.getName(), servicePort.getId());
+            EList<ServicePort> oldServicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+            // get old service port item names and operation names under them
+            HashMap<String, ArrayList<String>> oldPortItemNames = new HashMap<String, ArrayList<String>>();
 
-				// keep additional infos
-				Map<String, String> additionInfoMap = new HashMap<String, String>();
-				EMap<String, String> oldInfo = servicePort.getAdditionalInfo();
-				Iterator<Entry<String, String>> iterator = oldInfo.iterator();
-				while (iterator.hasNext()) {
-					Entry<String, String> next = iterator.next();
-					additionInfoMap.put(next.getKey(), next.getValue());
-				}
-				portAdditionalMap.put(servicePort.getId(), additionInfoMap);
+            for (ServicePort servicePort : oldServicePorts) {
+                // keep id
+                portNameIdMap.put(servicePort.getName(), servicePort.getId());
 
-				EList<ServiceOperation> operations = servicePort.getServiceOperation();
-				ArrayList<String> operationNames = new ArrayList<String>();
-				for (ServiceOperation operation : operations) {
-					operNameIdMap.put(operation.getName(), operation.getId());
-					operationNames.add(operation.getLabel());
-					// record assigned job
-					operJobMap.put(operation.getId(), 
-							operation.getReferenceJobId());
-				}
-				oldPortItemNames.put(servicePort.getName(), operationNames);
-			}
+                // keep additional infos
+                Map<String, String> additionInfoMap = new HashMap<String, String>();
+                EMap<String, String> oldInfo = servicePort.getAdditionalInfo();
+                Iterator<Entry<String, String>> iterator = oldInfo.iterator();
+                while (iterator.hasNext()) {
+                    Entry<String, String> next = iterator.next();
+                    additionInfoMap.put(next.getKey(), next.getValue());
+                }
+                portAdditionalMap.put(servicePort.getId(), additionInfoMap);
 
-			((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
-			while (it.hasNext()) {
-				QName key = (QName) it.next();
-				PortType portType = (PortType) portTypes.get(key);
-				if (portType.isUndefined()) {
-					continue;
-				}
+                EList<ServiceOperation> operations = servicePort.getServiceOperation();
+                ArrayList<String> operationNames = new ArrayList<String>();
+                for (ServiceOperation operation : operations) {
+                    operNameIdMap.put(operation.getName(), operation.getId());
+                    operationNames.add(operation.getLabel());
+                    // record assigned job
+                    operJobMap.put(operation.getId(), operation.getReferenceJobId());
+                }
+                oldPortItemNames.put(servicePort.getName(), operationNames);
+            }
 
-				ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
-				String portName = portType.getQName().getLocalPart();
-				port.setName(portName);
-				// set port id
-				Iterator portIterator = portNameIdMap.keySet().iterator();
-				while (portIterator.hasNext()) {
-					String oldportName = (String) portIterator.next();
-					if (oldportName.equals(portName)) {
-						String id = (String) portNameIdMap.get(oldportName);
-						port.setId(id);
+            ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
+            while (it.hasNext()) {
+                QName key = (QName) it.next();
+                PortType portType = (PortType) portTypes.get(key);
+                if (portType.isUndefined()) {
+                    continue;
+                }
 
-						// restore additional infos
-						Map<String, String> storedAdditions = portAdditionalMap
-						.get(id);
-						Iterator<String> keySet = storedAdditions.keySet()
-						.iterator();
-						while (keySet.hasNext()) {
-							String next = keySet.next();
-							String value = storedAdditions.get(next);
-							port.getAdditionalInfo().put(next, value);
-						}
-					}
-				}
-				if (port.getId() == null || port.getId().equals("")) {
-					port.setId(factory.getNextId());
-				}
-				List<Operation> list = portType.getOperations();
-				for (Operation operation : list) {
-					if (operation.isUndefined()) {
-						// means the operation has been removed already ,why ?
-						continue;
-					}
-					ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
-					serviceOperation.setName(operation.getName());
-					Iterator operationIterator = operNameIdMap.keySet()
-					.iterator();
-					while (operationIterator.hasNext()) {
-						String oldOperationName = (String) operationIterator.next();
-						String operationId = (String) operNameIdMap
-						.get(oldOperationName);
-						if (oldOperationName.equals(operation.getName())) {
-							serviceOperation.setId(operationId);
-							// re-assign job
-							String jobId = operJobMap.get(operationId);
-							if (jobId != null) {
-								serviceOperation.setReferenceJobId(jobId);
-							}
-						}
-					}
-					if (serviceOperation.getId() == null || serviceOperation.getId().equals("")) {
-						serviceOperation.setId(factory.getNextId());
-					}
-					if (operation.getDocumentationElement() != null) {
-						serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
-					}
-					boolean hasAssignedjob = false;
-					ArrayList<String> operationNames = oldPortItemNames.get(portName);
-					if (operationNames != null) {
-						for (String name : operationNames) {
-							if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
-								serviceOperation.setLabel(name);
-								hasAssignedjob = true;
-								break;
-							}
-						}
-					}
-					if (!hasAssignedjob) {
-						serviceOperation.setLabel(operation.getName());
-					}
-					port.getServiceOperation().add(serviceOperation);
-				}
-				((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
-			}
-		} catch (WSDLException e) {
-			e.printStackTrace();
-		}
-	}
+                ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
+                String portName = portType.getQName().getLocalPart();
+                port.setName(portName);
+                // set port id
+                Iterator portIterator = portNameIdMap.keySet().iterator();
+                while (portIterator.hasNext()) {
+                    String oldportName = (String) portIterator.next();
+                    if (oldportName.equals(portName)) {
+                        String id = (String) portNameIdMap.get(oldportName);
+                        port.setId(id);
 
-	@Override
-	public void doSaveAs() {
-		super.doSaveAs();
-	}
+                        // restore additional infos
+                        Map<String, String> storedAdditions = portAdditionalMap.get(id);
+                        Iterator<String> keySet = storedAdditions.keySet().iterator();
+                        while (keySet.hasNext()) {
+                            String next = keySet.next();
+                            String value = storedAdditions.get(next);
+                            port.getAdditionalInfo().put(next, value);
+                        }
+                    }
+                }
+                if (port.getId() == null || port.getId().equals("")) {
+                    port.setId(factory.getNextId());
+                }
+                List<Operation> list = portType.getOperations();
+                for (Operation operation : list) {
+                    if (operation.isUndefined()) {
+                        // means the operation has been removed already ,why ?
+                        continue;
+                    }
+                    ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
+                    serviceOperation.setName(operation.getName());
+                    Iterator operationIterator = operNameIdMap.keySet().iterator();
+                    while (operationIterator.hasNext()) {
+                        String oldOperationName = (String) operationIterator.next();
+                        String operationId = (String) operNameIdMap.get(oldOperationName);
+                        if (oldOperationName.equals(operation.getName())) {
+                            serviceOperation.setId(operationId);
+                            // re-assign job
+                            String jobId = operJobMap.get(operationId);
+                            if (jobId != null) {
+                                serviceOperation.setReferenceJobId(jobId);
+                            }
+                        }
+                    }
+                    if (serviceOperation.getId() == null || serviceOperation.getId().equals("")) {
+                        serviceOperation.setId(factory.getNextId());
+                    }
+                    if (operation.getDocumentationElement() != null) {
+                        serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
+                    }
+                    boolean hasAssignedjob = false;
+                    ArrayList<String> operationNames = oldPortItemNames.get(portName);
+                    if (operationNames != null) {
+                        for (String name : operationNames) {
+                            if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
+                                serviceOperation.setLabel(name);
+                                hasAssignedjob = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!hasAssignedjob) {
+                        serviceOperation.setLabel(operation.getName());
+                    }
+                    port.getServiceOperation().add(serviceOperation);
+                }
+                ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
+            }
+        } catch (WSDLException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		super.init(site, input);
+    @Override
+    public void doSaveAs() {
+        super.doSaveAs();
+    }
 
-	}
+    @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        super.init(site, input);
 
-	@Override
-	public boolean isDirty() {
-		return super.isDirty();
-	}
+    }
 
-	@Override
-	public boolean isSaveAsAllowed() {
-		return super.isSaveAsAllowed();
-	}
+    @Override
+    public boolean isDirty() {
+        return super.isDirty();
+    }
 
-	@Override
-	public void setFocus() {
-		super.setFocus();
-	}
+    @Override
+    public boolean isSaveAsAllowed() {
+        return super.isSaveAsAllowed();
+    }
 
-	public RepositoryNode getRepositoryNode() {
-		return this.repositoryNode;
-	}
+    @Override
+    public void setFocus() {
+        super.setFocus();
+    }
 
-	public void setRepositoryNode(RepositoryNode repositoryNode) {
-		this.repositoryNode = repositoryNode;
-	}
+    public RepositoryNode getRepositoryNode() {
+        return this.repositoryNode;
+    }
 
-	public ServiceItem getServiceItem() {
-		return this.serviceItem;
-	}
+    public void setRepositoryNode(RepositoryNode repositoryNode) {
+        this.repositoryNode = repositoryNode;
+    }
 
-	public void setServiceItem(ServiceItem serviceItem) {
-		this.serviceItem = serviceItem;
-	}
+    public ServiceItem getServiceItem() {
+        return this.serviceItem;
+    }
 
-	public void addListener() {
-		// ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener);
-		((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().add(dirtyListener);
-	}
+    public void setServiceItem(ServiceItem serviceItem) {
+        this.serviceItem = serviceItem;
+    }
 
-	public void removeListener() {
-		((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().remove(dirtyListener);
-		// ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
-	}
+    public void addListener() {
+        // ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener);
+        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().add(dirtyListener);
+    }
 
-	public void setReadOnly(boolean isReadOnly) {
-		if (isReadOnly) {
-			IAction addMessage = getActionRegistry().getAction("ASDAddMessageAction");
-			getActionRegistry().removeAction(addMessage);
+    public void removeListener() {
+        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().remove(dirtyListener);
+        // ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+    }
 
-			IAction addPart = getActionRegistry().getAction("ASDAddPartAction");
-			getActionRegistry().removeAction(addPart);
+    public void setReadOnly(boolean isReadOnly) {
+        if (isReadOnly) {
+            IAction addMessage = getActionRegistry().getAction("ASDAddMessageAction");
+            getActionRegistry().removeAction(addMessage);
 
-			IAction setNewMessage = getActionRegistry().getAction("ASDSetNewMessageAction");
-			getActionRegistry().removeAction(setNewMessage);
+            IAction addPart = getActionRegistry().getAction("ASDAddPartAction");
+            getActionRegistry().removeAction(addPart);
 
-			IAction setMessageInterface = getActionRegistry().getAction("ASDSetMessageInterfaceAction");
-			getActionRegistry().removeAction(setMessageInterface);
+            IAction setNewMessage = getActionRegistry().getAction("ASDSetNewMessageAction");
+            getActionRegistry().removeAction(setNewMessage);
 
-			IAction setNewType = getActionRegistry().getAction("ASDSetNewTypeAction");
-			getActionRegistry().removeAction(setNewType);
+            IAction setMessageInterface = getActionRegistry().getAction("ASDSetMessageInterfaceAction");
+            getActionRegistry().removeAction(setMessageInterface);
 
-			IAction setExistingType = getActionRegistry().getAction("ASDSetExistingTypeAction");
-			getActionRegistry().removeAction(setExistingType);
+            IAction setNewType = getActionRegistry().getAction("ASDSetNewTypeAction");
+            getActionRegistry().removeAction(setNewType);
 
-			IAction setNewElement = getActionRegistry().getAction("ASDSetNewElementAction");
-			getActionRegistry().removeAction(setNewElement);
+            IAction setExistingType = getActionRegistry().getAction("ASDSetExistingTypeAction");
+            getActionRegistry().removeAction(setExistingType);
 
-			IAction setExistingElement = getActionRegistry().getAction("ASDSetExistingElementAction");
-			getActionRegistry().removeAction(setExistingElement);
+            IAction setNewElement = getActionRegistry().getAction("ASDSetNewElementAction");
+            getActionRegistry().removeAction(setNewElement);
 
-			IAction directEdit = getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT);
-			getActionRegistry().removeAction(directEdit);
-			// --
-			IAction addService = getActionRegistry().getAction("ASDAddServiceAction");
-			getActionRegistry().removeAction(addService);
+            IAction setExistingElement = getActionRegistry().getAction("ASDSetExistingElementAction");
+            getActionRegistry().removeAction(setExistingElement);
 
-			IAction addBinding = getActionRegistry().getAction("ASDAddBindingAction");
-			getActionRegistry().removeAction(addBinding);
+            IAction directEdit = getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT);
+            getActionRegistry().removeAction(directEdit);
+            // --
+            IAction addService = getActionRegistry().getAction("ASDAddServiceAction");
+            getActionRegistry().removeAction(addService);
 
-			IAction addInterface = getActionRegistry().getAction("ASDAddInterfaceAction");
-			getActionRegistry().removeAction(addInterface);
+            IAction addBinding = getActionRegistry().getAction("ASDAddBindingAction");
+            getActionRegistry().removeAction(addBinding);
 
-			IAction addEndPoint = getActionRegistry().getAction("ASDAddEndPointAction");
-			getActionRegistry().removeAction(addEndPoint);
+            IAction addInterface = getActionRegistry().getAction("ASDAddInterfaceAction");
+            getActionRegistry().removeAction(addInterface);
 
-			IAction addOperation = getActionRegistry().getAction("ASDAddOperationAction");
-			getActionRegistry().removeAction(addOperation);
+            IAction addEndPoint = getActionRegistry().getAction("ASDAddEndPointAction");
+            getActionRegistry().removeAction(addEndPoint);
 
-			IAction addInput = getActionRegistry().getAction("ASDAddInputActionn");
-			getActionRegistry().removeAction(addInput);
+            IAction addOperation = getActionRegistry().getAction("ASDAddOperationAction");
+            getActionRegistry().removeAction(addOperation);
 
-			IAction addOutput = getActionRegistry().getAction("ASDAddOutputActionn");
-			getActionRegistry().removeAction(addOutput);
+            IAction addInput = getActionRegistry().getAction("ASDAddInputActionn");
+            getActionRegistry().removeAction(addInput);
 
-			IAction addFault = getActionRegistry().getAction("ASDAddFaultActionn");
-			getActionRegistry().removeAction(addFault);
+            IAction addOutput = getActionRegistry().getAction("ASDAddOutputActionn");
+            getActionRegistry().removeAction(addOutput);
 
-			IAction addDelete = getActionRegistry().getAction("ASDDeleteAction");
-			getActionRegistry().removeAction(addDelete);
+            IAction addFault = getActionRegistry().getAction("ASDAddFaultActionn");
+            getActionRegistry().removeAction(addFault);
 
-			IAction setNewBinding = getActionRegistry().getAction("ASDSetNewBindingAction");
-			getActionRegistry().removeAction(setNewBinding);
+            IAction addDelete = getActionRegistry().getAction("ASDDeleteAction");
+            getActionRegistry().removeAction(addDelete);
 
-			IAction setExistingBinding = getActionRegistry().getAction("ASDSetExistingBindingAction");
-			getActionRegistry().removeAction(setExistingBinding);
+            IAction setNewBinding = getActionRegistry().getAction("ASDSetNewBindingAction");
+            getActionRegistry().removeAction(setNewBinding);
 
-			IAction setNewInterface = getActionRegistry().getAction("ASDSetNewInterfaceAction");
-			getActionRegistry().removeAction(setNewInterface);
+            IAction setExistingBinding = getActionRegistry().getAction("ASDSetExistingBindingAction");
+            getActionRegistry().removeAction(setExistingBinding);
 
-			IAction setExistingInterface = getActionRegistry().getAction("ASDSetExistingInterfaceAction");
-			getActionRegistry().removeAction(setExistingInterface);
+            IAction setNewInterface = getActionRegistry().getAction("ASDSetNewInterfaceAction");
+            getActionRegistry().removeAction(setNewInterface);
 
-			IAction generateBinding = getActionRegistry().getAction("ASDGenerateBindingActionn");
-			getActionRegistry().removeAction(generateBinding);
+            IAction setExistingInterface = getActionRegistry().getAction("ASDSetExistingInterfaceAction");
+            getActionRegistry().removeAction(setExistingInterface);
 
-			IAction addImport = getActionRegistry().getAction("ASDAddImportAction");
-			getActionRegistry().removeAction(addImport);
+            IAction generateBinding = getActionRegistry().getAction("ASDGenerateBindingActionn");
+            getActionRegistry().removeAction(generateBinding);
 
-			IAction addParameter = getActionRegistry().getAction("ASDAddParameterAction");
-			getActionRegistry().removeAction(addParameter);
+            IAction addImport = getActionRegistry().getAction("ASDAddImportAction");
+            getActionRegistry().removeAction(addImport);
 
-			IAction addSchema = getActionRegistry().getAction("ASDAddSchemaAction");
-			getActionRegistry().removeAction(addSchema);
+            IAction addParameter = getActionRegistry().getAction("ASDAddParameterAction");
+            getActionRegistry().removeAction(addParameter);
 
-			IAction openSchema = getActionRegistry().getAction("ASDOpenSchemaAction");
-			getActionRegistry().removeAction(openSchema);
+            IAction addSchema = getActionRegistry().getAction("ASDAddSchemaAction");
+            getActionRegistry().removeAction(addSchema);
 
-			IAction openImport = getActionRegistry().getAction("ASDOpenImportAction");
-			getActionRegistry().removeAction(openImport);
+            IAction openSchema = getActionRegistry().getAction("ASDOpenSchemaAction");
+            getActionRegistry().removeAction(openSchema);
 
-			IAction openInNewEditor = getActionRegistry().getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
-			getActionRegistry().removeAction(openInNewEditor);
-		}
-	}
+            IAction openImport = getActionRegistry().getAction("ASDOpenImportAction");
+            getActionRegistry().removeAction(openImport);
+
+            IAction openInNewEditor = getActionRegistry().getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
+            getActionRegistry().removeAction(openInNewEditor);
+        }
+    }
 }
