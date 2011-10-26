@@ -153,7 +153,7 @@ public class AssignJobAction extends AbstractCreateAction {
                     List<ServiceOperation> listOperation = port.getServiceOperation();
                     for (ServiceOperation operation : listOperation) {
                         if (operation.getLabel().equals(operationName)) {
-                            String jobNewName = port.getName() + "-" + operation.getName();
+                            String jobNewName = port.getName() + "_" + operation.getName();
                             if (resetJobname(item, jobNewName)) {
                                 jobName = jobNewName;
                             }
