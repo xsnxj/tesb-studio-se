@@ -179,8 +179,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // Set readonly to false since created job will always be editable.
                 fileEditorInput = new ProcessEditorInput(processWizard.getProcess(), false, true, false);
                 fileEditorInput.setView(getViewPart());
-                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
-                        .getProperty().getId(), false);
+                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(
+                        fileEditorInput.getItem().getProperty().getId(), false);
                 fileEditorInput.setRepositoryNode(repositoryNode);
 
                 IWorkbenchPage page = getActivePage();
@@ -197,12 +197,9 @@ public class CreateNewJobAction extends AbstractCreateAction {
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
 
                 String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
-                Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-                serviceParameters.put(WSDLUtils.PORT_NAME,
-                        String.valueOf(portNode.getProperties(EProperties.LABEL)));
-                serviceParameters.put(WSDLUtils.OPERATION_NAME,
-                        String.valueOf(String.valueOf(node.getProperties(EProperties.LABEL))));
-
+                Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
+                        ((OperationRepositoryObject) node.getObject()).getName(),
+                        node.getParent().getObject().getLabel());
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
                 NodeContainer nc = new NodeContainer(node1);
@@ -246,8 +243,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 }
                 RepositoryManager.refreshSavedNode(node);
             } catch (PartInitException e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
                 ExceptionHandler.process(e);
             } catch (PersistenceException e) {
                 MessageBoxExceptionHandler.process(e);

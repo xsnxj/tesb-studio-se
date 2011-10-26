@@ -85,7 +85,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -103,7 +103,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -139,17 +139,12 @@ public class AssignJobAction extends AbstractCreateAction {
             String jobID = item.getProperty().getId();
             String jobName = item.getProperty().getLabel();
             String operationName = repositoryNode.getObject().getLabel();
-            String parentPortName = repositoryNode.getParent().getObject().getLabel();
+            String portName = repositoryNode.getParent().getObject().getLabel();
             ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty().getItem();
-
-            String wsdlPath = WSDLUtils.getWsdlFile(repositoryNode).getLocation().toPortableString();
-            Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
-            String opName = String.valueOf(repositoryNode.getProperties(EProperties.LABEL));
-            String portName = String.valueOf(repositoryNode.getParent().getProperties(EProperties.LABEL));
 
             List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
             for (ServicePort port : listPort) {
-                if (port.getName().equals(parentPortName)) {
+                if (port.getName().equals(portName)) {
                     List<ServiceOperation> listOperation = port.getServiceOperation();
                     for (ServiceOperation operation : listOperation) {
                         if (operation.getLabel().equals(operationName)) {
@@ -157,14 +152,8 @@ public class AssignJobAction extends AbstractCreateAction {
                             if (resetJobname(item, jobNewName)) {
                                 jobName = jobNewName;
                             }
-
                             operation.setReferenceJobId(jobID);
                             operation.setLabel(operation.getName() + "-" + jobName);
-
-                            // serviceParameters.put(WSDLUtils.PORT_NAME, parentPortName);
-                            // serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
-                            serviceParameters.put(WSDLUtils.PORT_NAME, portName);
-                            serviceParameters.put(WSDLUtils.OPERATION_NAME, operation.getName());
                             break;
                         }
                     }
@@ -172,13 +161,16 @@ public class AssignJobAction extends AbstractCreateAction {
                 }
             }
 
+            String wsdlPath = WSDLUtils.getWsdlFile(repositoryNode).getLocation().toPortableString();
+            Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
+                    ((OperationRepositoryObject) repositoryNode.getObject()).getName(), portName);
+
             ProcessItem processItem = (ProcessItem) item;
             ProcessType processType = processItem.getProcess();
             EList nodeList = processType.getNode();
             for (Object obj : nodeList) {
                 NodeType node = (NodeType) obj;
                 if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
-
                     EList parameters = node.getElementParameter();
                     for (Object paramObj : parameters) {
                         ElementParameterType param = (ElementParameterType) paramObj;

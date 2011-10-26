@@ -72,6 +72,66 @@ public class WSDLUtils {
 
     public static final String WSDL_LOCATION = "WSDL_LOCATION"; //$NON-NLS-1$
 
+    public static Map<String, String> getServiceOperationParameters(String wsdlURI,
+            String operationName, String portTypeName) throws CoreException {
+        // NOTE: all below in assuming standalone wsdl (no another wsdl's imports) !!!
+        Map<String, String> map = new HashMap<String, String>();
+        if (null == wsdlURI) { // no WSDL provided
+            return map;
+        }
+
+        Definition wsdl = getDefinition(wsdlURI);
+        String targetNs = wsdl.getTargetNamespace();
+        QName portTypeQName = new QName(targetNs, portTypeName);
+        if (null == wsdl.getPortType(portTypeQName)) { // portType not found
+            return map;
+        }
+
+        String serviceName = null;
+        String portName = null;
+        String endpointUri = null;
+        for (Object serviceObject : wsdl.getServices().values()) {
+            Service service = (Service) serviceObject;
+            for (Object portObject : service.getPorts().values()) {
+                Port port = (Port) portObject;
+                if(portTypeQName.equals(port.getBinding().getPortType().getQName())) {
+                    portName = port.getName();
+
+                    @SuppressWarnings("rawtypes")
+                    List extElements = port.getExtensibilityElements();
+                    if (null != extElements) {
+                        for (Object extElement : extElements) {
+                            if (extElement instanceof SOAPAddress) {
+                                endpointUri = ((SOAPAddress) extElement).getLocationURI();
+                                break;
+                            } else if (extElement instanceof SOAP12Address) {
+                                endpointUri = ((SOAP12Address) extElement).getLocationURI();
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            if (null != portName) {
+                serviceName = service.getQName().getLocalPart();
+            }
+        }
+
+        if (null != serviceName) {
+            map.put(SERVICE_NAME, serviceName);
+            map.put(SERVICE_NS, targetNs);
+            map.put(PORT_NAME, portName);
+            map.put(PORT_NS, targetNs);
+            map.put(OPERATION_NAME, operationName);
+//            map.put(OPERATION_NS, targetNs);
+            map.put(ENDPOINT_URI, endpointUri);
+            map.put(WSDL_LOCATION, wsdlURI);
+        }
+        return map;
+    }
+
+    @Deprecated
     public static Map<String, String> getServiceParameters(String wsdlURI) throws CoreException {
         Map<String, String> map = new HashMap<String, String>();
         if (wsdlURI == null)

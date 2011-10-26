@@ -308,7 +308,7 @@ public class ESBService implements IESBService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.IESBService#getServicesType()
      */
     public ERepositoryObjectType getServicesType() {
@@ -350,10 +350,7 @@ public class ESBService implements IESBService {
                 ServiceItem servicesItem = (ServiceItem) reViewObject.getProperty().getItem();
                 ServiceConnection serConn = (ServiceConnection) servicesItem.getConnection();
 
-                String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
-                Map<String, String> serviceParameters = WSDLUtils.getServiceParameters(wsdlPath);
                 String portName = "";
-                String operationName = "";
                 EList<ServicePort> portList = serConn.getServicePort();
                 ServiceOperation operation = null;
                 out: for (ServicePort port : portList) {
@@ -363,7 +360,6 @@ public class ESBService implements IESBService {
                         EList<ServiceOperation> opeList = port.getServiceOperation();
                         for (ServiceOperation ope : opeList) {
                             if (ope.getId().equals(ids[2])) {
-                                operationName = ope.getName();
                                 operation = ope;
                                 break out;
                             }
@@ -392,9 +388,9 @@ public class ESBService implements IESBService {
                     operation.setReferenceJobId(jobID);
                     operation.setLabel(operation.getName() + "-" + jobName);
 
-                    serviceParameters.put(WSDLUtils.PORT_NAME, portName);
-                    serviceParameters.put(WSDLUtils.OPERATION_NAME, operationName);
-
+                    String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
+                    Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(
+                            wsdlPath, operation.getName(), portName);
                     CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
 
                     try {
@@ -520,7 +516,7 @@ public class ESBService implements IESBService {
 
     /**
      * When services connection is renamed, refresh the connection label in the component view of job.
-     * 
+     *
      * @param item
      */
     public void refreshComponentView(Item item) {
