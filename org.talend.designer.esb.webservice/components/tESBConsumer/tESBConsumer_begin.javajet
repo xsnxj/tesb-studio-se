@@ -91,10 +91,6 @@ if (this.registry != null) {
 	);
 } else {
 <%
-boolean useNTLM = ("true").equals(ElementParameterParser.getValue(node,"__USE_NTLM__"));
-String domain = ElementParameterParser.getValue(node,"__NTLM_DOMAIN__");
-String host = ElementParameterParser.getValue(node,"__NTLM_HOST__");
-
 String authType = ElementParameterParser.getValue(node,"__ESB_SECURITY__");
 String username = ElementParameterParser.getValue(node,"__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node,"__AUTH_PASSWORD__");
@@ -111,19 +107,19 @@ String trustStorePassword = ElementParameterParser.getValue(node,"__SSL_TRUSTSER
 
 String connTimeoutStr = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
 String connTimeoutSec = (connTimeoutStr!=null&&!("").equals(connTimeoutStr))?connTimeoutStr:"20";
-long connTimeout = (long)(Double.valueOf(connTimeoutSec) * 1000);
+long connTimeout = (long) (Double.valueOf(connTimeoutSec) * 1000);
 
 String receiveTimeoutStr = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
 String receiveTimeoutSec = (receiveTimeoutStr!=null&&!("").equals(receiveTimeoutStr))?receiveTimeoutStr:"20";
-long receiveTimeout = (long)(Double.valueOf(receiveTimeoutSec) * 1000);
+long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
 
 String tempPath = ElementParameterParser.getValue(node,"__TMPPATH__");
 if("".equals(tempPath))tempPath="\"\"";
 
 %>
-System.out.println("<%=serviceName%>");
-System.out.println("<%=portName%>");
-System.out.println("<%=methodNS%>|<%=soapAction%>");
+// System.out.println("<%=serviceName%>");
+// System.out.println("<%=portName%>");
+// System.out.println("<%=methodNS%>|<%=soapAction%>");
 
 class Util_<%=cid%> {
 
@@ -242,59 +238,37 @@ class Util_<%=cid%> {
 	config_<%=cid%>.setKeyStoreFile(System.getProperty("javax.net.ssl.keyStore"));
 	config_<%=cid%>.setKeyStoreType(System.getProperty("javax.net.ssl.keyStoreType"));
 	config_<%=cid%>.setKeyStorePwd(System.getProperty("javax.net.ssl.keyStorePassword"));
-<%
-if (needSSLtoTrustServer) {
-%>
-	System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
 
+<% if (needSSLtoTrustServer) { %>
+	System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
 	System.setProperty("javax.net.ssl.trustStore", <%=trustStoreFile %>);
 	System.setProperty("javax.net.ssl.trustStorePassword", <%=trustStorePassword %>);
-<%
-}
-if ("TOKEN".equals(authType) && !useNTLM) {
-%>
+<% }
+
+if ("TOKEN".equals(authType)) { %>
 	config_<%=cid%>.setUsername(<%=username%>);
 	config_<%=cid%>.setPassword(<%=password%>);
-<%
-} else if("TOKEN".equals(authType) && useNTLM) {
-%>
-	jcifs.Config.setProperty("jcifs.smb.client.username", <%=username%>);
-	jcifs.Config.setProperty("jcifs.smb.client.password", <%=password%>);
-<%
-}
-if(useProxy) {
-%>
+<% }
+
+if(useProxy) { %>
 	config_<%=cid%>.setProxyServer(<%=proxyHost %>);
 	config_<%=cid%>.setProxyPort(<%=proxyPort %>);
 	config_<%=cid%>.setProxyUsername(<%=proxyUser %>);
 	config_<%=cid%>.setProxyPassword( <%=proxyPassword %>);
-<%
-}
-if(useNTLM) {
-%>
-	jcifs.Config.setProperty("jcifs.smb.client.domain", <%=domain%>);
-	jcifs.Config.setProperty("jcifs.netbios.wins", <%=host%>);
-	jcifs.Config.registerSmbURLHandler();
-<%
-}
-%>
+<% } %>
+
 	org.talend.ws.helper.ServiceDiscoveryHelper serviceDiscoveryHelper_<%=cid%> = null ;
 
-<% if (!useNTLM) { %>
 	java.net.URI uri_<%=cid%> = new java.net.URI(<%=endpoint%>);
 	if ("http".equals(uri_<%=cid%>.getScheme()) || "https".equals(uri_<%=cid%>.getScheme())) {
 		serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(<%=endpoint%>,config_<%=cid%>,<%=tempPath%>);
 	} else {
-<% } %>
 		serviceDiscoveryHelper_<%=cid%> = new org.talend.ws.helper.ServiceDiscoveryHelper(<%=endpoint%>,<%=tempPath%>);
 		serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(serviceDiscoveryHelper_<%=cid%>,config_<%=cid%>);
-<% if (!useNTLM) { %>
 	}
-<% } %>
 
 	serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
 	portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
 	java.util.Map<String,Object> inMap_<%=cid%> = null;
-
 }
