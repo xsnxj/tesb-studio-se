@@ -86,6 +86,7 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -365,10 +366,14 @@ public class PublishMetadataAction extends AContextualAction {
 			} catch (URISyntaxException e) {
 
 			}
-			IPath path = new Path(folderString);
-			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
-				path = path.removeFirstSegments(1);
+			if (folderString.startsWith(":")) {
+				folderString = folderString.substring(1);
 			}
+			folderString = FolderNameUtil.replaceAllLimited(folderString);
+			IPath path = new Path(folderString);
+//			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
+//				path = path.removeFirstSegments(1);
+//			}
 			factory.create(connectionItem, path);
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
