@@ -13,6 +13,8 @@
 package org.talend.designer.esb.webservice.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -945,7 +948,24 @@ public class WebServiceUI extends AbstractWebService {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-			factory.create(connectionItem, new Path(currentFunction.getServerNameSpace()+"/"+currentFunction.getServerName()));
+			// http://jira.talendforge.org/browse/TESB-3655 Remove possible
+			// schema prefix
+			String folderString = currentFunction.getServerNameSpace() + "/"
+					+ currentFunction.getServerName();
+			try {
+				URI uri = new URI(folderString);
+				String scheme = uri.getScheme();
+				if (scheme != null) {
+					folderString = folderString.substring(scheme.length());
+				}
+			} catch (URISyntaxException e) {
+
+			}
+			IPath path = new Path(folderString);
+			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
+				path = path.removeFirstSegments(1);
+			}
+			factory.create(connectionItem, path);
 			ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
 			RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
 		} catch (PersistenceException e) {
