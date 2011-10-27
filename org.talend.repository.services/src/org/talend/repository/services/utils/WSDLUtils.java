@@ -14,7 +14,6 @@ package org.talend.repository.services.utils;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -128,47 +127,6 @@ public class WSDLUtils {
             map.put(ENDPOINT_URI, endpointUri);
             map.put(WSDL_LOCATION, wsdlURI);
         }
-        return map;
-    }
-
-    @Deprecated
-    public static Map<String, String> getServiceParameters(String wsdlURI) throws CoreException {
-        Map<String, String> map = new HashMap<String, String>();
-        if (wsdlURI == null)
-            return map;
-
-        map.put(WSDL_LOCATION, wsdlURI);
-        map.put(ENDPOINT_URI, wsdlURI);
-
-        Definition definition = getDefinition(wsdlURI);
-
-        Map services = definition.getServices();
-        Iterator servicesIter = services.keySet().iterator();
-        while (servicesIter.hasNext()) {
-            QName key = (QName) servicesIter.next();
-            map.put(SERVICE_NAME, key.getLocalPart());
-            map.put(SERVICE_NS, key.getNamespaceURI());
-            map.put(PORT_NS, key.getNamespaceURI());
-            Service service = (Service) services.get(key);
-            Map ports = service.getPorts();
-            Iterator portsIter = ports.keySet().iterator();
-            while (portsIter.hasNext()) {
-                String portKey = (String) portsIter.next();
-                Port port = (Port) ports.get(portKey);
-                List extElements = port.getExtensibilityElements();
-                if (extElements != null && extElements.size() > 0) {
-                    Object obj = extElements.get(0);
-                    if (obj instanceof SOAPAddress) {
-                        SOAPAddress address = (SOAPAddress) extElements.get(0);
-                        map.put(ENDPOINT_URI, address.getLocationURI());
-                    } else if (obj instanceof SOAP12Address) {
-                        SOAP12Address address = (SOAP12Address) extElements.get(0);
-                        map.put(ENDPOINT_URI, address.getLocationURI());
-                    }
-                }
-            }
-        }
-
         return map;
     }
 
