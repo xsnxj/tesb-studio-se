@@ -626,6 +626,41 @@ public class ESBService implements IESBService {
         }
     }
 
+    public StringBuffer getAllTheJObNames(List<IRepositoryViewObject> jobList) {
+        StringBuffer jobNames = null;
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        try {
+            List<IRepositoryViewObject> repList = factory.getAll(getServicesType());
+            for (IRepositoryViewObject node : jobList) {
+                ERepositoryObjectType repositoryObjectType = node.getRepositoryObjectType();
+                if (repositoryObjectType != ERepositoryObjectType.PROCESS) {
+                    continue;
+                }
+                String jobID = node.getProperty().getId();
+                for (IRepositoryViewObject obj : repList) {
+                    ServiceItem item = (ServiceItem) obj.getProperty().getItem();
+                    ServiceConnection conn = (ServiceConnection) item.getConnection();
+                    middle: for (ServicePort port : conn.getServicePort()) {
+                        for (ServiceOperation operation : port.getServiceOperation()) {
+                            if (operation.getReferenceJobId() != null && operation.getReferenceJobId().endsWith(jobID)) {
+                                if (jobNames == null) {
+                                    jobNames = new StringBuffer(node.getProperty().getLabel());
+                                } else {
+                                    jobNames.append(node.getProperty().getLabel());
+                                }
+                                break middle;
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        }
+        return jobNames;
+    }
+
     public void editJobName(String originaleObjectLabel, String newLabel) {
         IProxyRepositoryFactory proxyRepositoryFactory = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory();
         Project project = ProjectManager.getInstance().getCurrentProject();

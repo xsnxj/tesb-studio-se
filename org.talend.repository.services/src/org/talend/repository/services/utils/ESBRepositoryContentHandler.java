@@ -113,9 +113,12 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     }
 
     public IImage getIcon(ERepositoryObjectType type) {
-        if (type == ESBRepositoryNodeType.SERVICES || type == ERepositoryObjectType.SERVICESPORT
-                || type == ERepositoryObjectType.SERVICESOPERATION) {
+        if (type == ESBRepositoryNodeType.SERVICES) {
             return EServiceCoreImage.SERVICE_ICON;
+        } else if (type == ERepositoryObjectType.SERVICESPORT) {
+            return EServiceCoreImage.PORT_ICON;
+        } else if (type == ERepositoryObjectType.SERVICESOPERATION) {
+            return EServiceCoreImage.OPERATION_ICON;
         }
         return null;
     }

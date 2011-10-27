@@ -19,7 +19,9 @@ import org.talend.commons.ui.runtime.image.IImage;
  */
 public enum EServiceCoreImage implements IImage {
     SERVICE_ICON("/icons/services.png"), //$NON-NLS-1$
-    SERVICE_WIZ("/icons/services_big.png");
+    SERVICE_WIZ("/icons/services_big.png"),
+    PORT_ICON("/icons/port.gif"),
+    OPERATION_ICON("/icons/operation.gif");
 
     private String path;
 
