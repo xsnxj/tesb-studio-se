@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +37,7 @@ import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -259,7 +261,8 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-            factory.create(connectionItem, new Path(parameter.getNameSpace() + "/" + portTypeQName.getLocalPart()));
+			factory.create(connectionItem, new Path(parameter.getNameSpace()
+					+ "/" + portTypeQName.getLocalPart()));
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
@@ -349,7 +352,25 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-            factory.create(connectionItem, new Path(parameter.getNameSpace() + "/" + portTypeQName.getLocalPart()));
+			// http://jira.talendforge.org/browse/TESB-3655 Remove possible
+			// schema prefix
+			String folderString = parameter.getNameSpace() + "/"
+					+ portTypeQName.getLocalPart();
+			try {
+				URI uri = new URI(folderString);
+				String scheme = uri.getScheme();
+				if (scheme != null) {
+					folderString = folderString.substring(scheme.length());
+				}
+			} catch (URISyntaxException e) {
+
+			}
+			IPath path = new Path(folderString);
+			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
+				path = path.removeFirstSegments(1);
+			}
+			factory.create(connectionItem, path);
+
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
