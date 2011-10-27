@@ -961,10 +961,14 @@ public class WebServiceUI extends AbstractWebService {
 			} catch (URISyntaxException e) {
 
 			}
-			IPath path = new Path(folderString);
-			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
-				path = path.removeFirstSegments(1);
+			if (folderString.startsWith(":")) {
+				folderString = folderString.substring(1);
 			}
+			folderString = replaceAllLimited(folderString);
+			IPath path = new Path(folderString);
+			// if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
+			// path = path.removeFirstSegments(1);
+			// }
 			factory.create(connectionItem, path);
 			ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
 			RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
@@ -1058,5 +1062,31 @@ public class WebServiceUI extends AbstractWebService {
 			}
 			return true;
 		}
+	}
+
+	/*
+	 * [TESB-3653] more detail please refer to
+	 * org.talend.repository.services.utils
+	 * .FolderNameUtil.replaceAllLimited(String) but, since it will cause the
+	 * github hudson build failed so just copy it here
+	 */
+	private String replaceAllLimited(String input) {
+		if (input == null) {
+			return input;
+		}
+		String[] split = input.split("/");
+		if (split.length <= 1) {
+			// return input;
+			split = new String[] { input };
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < split.length; i++) {
+			String replaceAll = split[i].replaceAll("\\p{Punct}", "RP");
+			sb.append(replaceAll);
+			if (i < split.length - 1) {
+				sb.append("/");
+			}
+		}
+		return sb.toString();
 	}
 }
