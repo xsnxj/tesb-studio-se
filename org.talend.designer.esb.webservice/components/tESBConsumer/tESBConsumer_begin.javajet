@@ -16,7 +16,7 @@ imports="
 %>
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-INode node = (INode)codeGenArgument.getArgument();
+INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
 String projectName = codeGenArgument.getCurrentProjectName();
@@ -30,7 +30,7 @@ String portNS = ElementParameterParser.getValue(node,"__PORT_NS__");
 String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
 
 String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
-String method = methodTemp.indexOf("(")!=-1?methodTemp.substring(0,methodTemp.indexOf("(")):methodTemp;
+String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
 String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
@@ -39,6 +39,10 @@ Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE
 String slStrategy = ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__");
 
 Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
+
+String authType = ElementParameterParser.getValue(node,"__ESB_SECURITY__");
+String username = ElementParameterParser.getValue(node,"__AUTH_USERNAME__");
+String password = ElementParameterParser.getValue(node,"__AUTH_PASSWORD__");
 %>
 javax.xml.namespace.QName serviceName_<%=cid%> = null;
 javax.xml.namespace.QName portName_<%=cid%> = null;
@@ -62,16 +66,15 @@ if (this.registry != null) {
 				// use Service Locator
 				put("useServiceLocator", <%=useSl%>);
 				<%if (useSl) { %>
-				put("LocatorSelectionStrategy", "<%=slStrategy%>");
+					put("LocatorSelectionStrategy", "<%=slStrategy%>");
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
 
-				<% String esbSecurity = ElementParameterParser.getValue(node, "__ESB_SECURITY__"); %>
-				put("esbSecurity", "<%=esbSecurity%>");
-				<% if ("SAML".equals(esbSecurity) || "TOKEN".equals(esbSecurity)) { %>
-					put("username", <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
-					put("password", <%=ElementParameterParser.getValue(node, "__AUTH_PASSWORD__")%>);
+				put("esbSecurity", "<%=authType%>");
+				<% if ("SAML".equals(authType) || "TOKEN".equals(authType) || "BASIC".equals(authType)) { %>
+					put("username", <%=username%>);
+					put("password", <%=password%>);
 				<% } %>
 			}};
 
@@ -91,10 +94,6 @@ if (this.registry != null) {
 	);
 } else {
 <%
-String authType = ElementParameterParser.getValue(node,"__ESB_SECURITY__");
-String username = ElementParameterParser.getValue(node,"__AUTH_USERNAME__");
-String password = ElementParameterParser.getValue(node,"__AUTH_PASSWORD__");
-
 boolean useProxy = ("true").equals(ElementParameterParser.getValue(node,"__USE_PROXY__"));
 String proxyHost = ElementParameterParser.getValue(node,"__PROXY_HOST__");
 String proxyPort = ElementParameterParser.getValue(node,"__PROXY_PORT__");
@@ -106,16 +105,15 @@ String trustStoreFile = ElementParameterParser.getValue(node,"__SSL_TRUSTSERVER_
 String trustStorePassword = ElementParameterParser.getValue(node,"__SSL_TRUSTSERVER_PASSWORD__");
 
 String connTimeoutStr = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
-String connTimeoutSec = (connTimeoutStr!=null&&!("").equals(connTimeoutStr))?connTimeoutStr:"20";
+String connTimeoutSec = (connTimeoutStr != null && !("").equals(connTimeoutStr)) ? connTimeoutStr : "20";
 long connTimeout = (long) (Double.valueOf(connTimeoutSec) * 1000);
 
 String receiveTimeoutStr = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
-String receiveTimeoutSec = (receiveTimeoutStr!=null&&!("").equals(receiveTimeoutStr))?receiveTimeoutStr:"20";
+String receiveTimeoutSec = (receiveTimeoutStr != null && !("").equals(receiveTimeoutStr)) ? receiveTimeoutStr : "20";
 long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
 
 String tempPath = ElementParameterParser.getValue(node,"__TMPPATH__");
-if("".equals(tempPath))tempPath="\"\"";
-
+if ("".equals(tempPath)) { tempPath="\"\""; }
 %>
 // System.out.println("<%=serviceName%>");
 // System.out.println("<%=portName%>");
@@ -241,20 +239,26 @@ class Util_<%=cid%> {
 
 <% if (needSSLtoTrustServer) { %>
 	System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-	System.setProperty("javax.net.ssl.trustStore", <%=trustStoreFile %>);
-	System.setProperty("javax.net.ssl.trustStorePassword", <%=trustStorePassword %>);
+	System.setProperty("javax.net.ssl.trustStore", <%=trustStoreFile%>);
+	System.setProperty("javax.net.ssl.trustStorePassword", <%=trustStorePassword%>);
 <% }
 
-if ("TOKEN".equals(authType)) { %>
+if ("BASIC".equals(authType) || "TOKEN".equals(authType)) { %>
 	config_<%=cid%>.setUsername(<%=username%>);
 	config_<%=cid%>.setPassword(<%=password%>);
+	<% if ("BASIC".equals(authType)) { %>
+		config_<%=cid%>.setBasicAuth(true);
+	<% } %>
+	<% if ("TOKEN".equals(authType)) { %>
+		config_<%=cid%>.setTokenAuth(true);
+	<% } %>
 <% }
 
-if(useProxy) { %>
-	config_<%=cid%>.setProxyServer(<%=proxyHost %>);
-	config_<%=cid%>.setProxyPort(<%=proxyPort %>);
-	config_<%=cid%>.setProxyUsername(<%=proxyUser %>);
-	config_<%=cid%>.setProxyPassword( <%=proxyPassword %>);
+if (useProxy) { %>
+	config_<%=cid%>.setProxyServer(<%=proxyHost%>);
+	config_<%=cid%>.setProxyPort(<%=proxyPort%>);
+	config_<%=cid%>.setProxyUsername(<%=proxyUser%>);
+	config_<%=cid%>.setProxyPassword( <%=proxyPassword%>);
 <% } %>
 
 	org.talend.ws.helper.ServiceDiscoveryHelper serviceDiscoveryHelper_<%=cid%> = null ;
