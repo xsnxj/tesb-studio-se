@@ -20,7 +20,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 /**
- * 
+ *
  * @author rlamarche
  */
 public class ServiceHelperConfiguration {
@@ -34,6 +34,10 @@ public class ServiceHelperConfiguration {
     private Long receiveTimeout;
 
     private String cookie;
+
+    private boolean basicAuth = false;
+
+    private boolean tokenAuth = false;
 
     private String username;
 
@@ -272,6 +276,22 @@ public class ServiceHelperConfiguration {
 
     public void setKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
+    }
+
+    public boolean isBasicAuth() {
+        return basicAuth;
+    }
+
+    public void setBasicAuth(boolean basicAuth) {
+        this.basicAuth = basicAuth;
+    }
+
+    public boolean isTokenAuth() {
+        return tokenAuth;
+    }
+
+    public void setTokenAuth(boolean tokenAuth) {
+        this.tokenAuth = tokenAuth;
     }
 
 }

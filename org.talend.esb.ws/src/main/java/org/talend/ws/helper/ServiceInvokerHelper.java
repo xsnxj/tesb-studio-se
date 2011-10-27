@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -89,22 +90,22 @@ public class ServiceInvokerHelper {
     }
 
     public ServiceInvokerHelper(String wsdlUri)
-    		throws WSDLException, IOException, TransformerException, URISyntaxException {
+            throws WSDLException, IOException, TransformerException, URISyntaxException {
         this(new ServiceDiscoveryHelper(wsdlUri));
     }
 
     public ServiceInvokerHelper(String wsdlUri, String tempPath)
-    		throws WSDLException, IOException, TransformerException, URISyntaxException {
+            throws WSDLException, IOException, TransformerException, URISyntaxException {
         this(new ServiceDiscoveryHelper(wsdlUri, tempPath));
     }
 
     public ServiceInvokerHelper(String wsdlUri, ServiceHelperConfiguration configuration)
-    		throws WSDLException, IOException, TransformerException, URISyntaxException {
+            throws WSDLException, IOException, TransformerException, URISyntaxException {
         this(new ServiceDiscoveryHelper(wsdlUri, configuration));
     }
 
     public ServiceInvokerHelper(String wsdlUri, ServiceHelperConfiguration configuration, String tempPath)
-    		throws WSDLException, IOException, TransformerException, URISyntaxException {
+            throws WSDLException, IOException, TransformerException, URISyntaxException {
         this(new ServiceDiscoveryHelper(wsdlUri, configuration, tempPath), configuration);
     }
 
@@ -117,7 +118,7 @@ public class ServiceInvokerHelper {
         this();
         this.serviceDiscoveryHelper = serviceDiscoveryHelper;
         @SuppressWarnings("unchecked")
-		Set<Map.Entry<String, String>> entrySet = serviceDiscoveryHelper.getDefinition().getNamespaces().entrySet();
+        Set<Map.Entry<String, String>> entrySet = serviceDiscoveryHelper.getDefinition().getNamespaces().entrySet();
 
         bindingFiles = new ArrayList<String>(entrySet.size());
         Set<String> namespaces = new HashSet<String>();
@@ -148,7 +149,7 @@ public class ServiceInvokerHelper {
                     namespacePackageMap.put(x.getTargetNamespace(), packageName);
                     packageNamespaceMap.put(packageName, x.getTargetNamespace());
                     File f = org.apache.cxf.tools.util.JAXBUtils.getPackageMappingSchemaBindingFile(
-                    		x.getTargetNamespace(), packageName);
+                            x.getTargetNamespace(), packageName);
                     f.deleteOnExit();
                     bindingFiles.add(f.getAbsolutePath());
                 }
@@ -181,33 +182,33 @@ public class ServiceInvokerHelper {
 
         if (serviceName == null) {
             throw new IllegalArgumentException(
-            		"serviceName is mandatory.");
+                    "serviceName is mandatory.");
         }
         Definition definition = serviceDiscoveryHelper.getDefinition();
         Service service = definition.getService(serviceName);
         if (service == null) {
             throw new IllegalArgumentException(
-            		"Service " + serviceName + " does not exists.");
+                    "Service " + serviceName + " does not exists.");
         }
 
         if (portName == null) {
             throw new IllegalArgumentException(
-            		"portName is mandatory.");
+                    "portName is mandatory.");
         }
         Port port = service.getPort(portName.getLocalPart());
         if (port == null) {
             throw new IllegalArgumentException(
-            		"Port " + portName + " does not exists for service " + serviceName + ".");
+                    "Port " + portName + " does not exists for service " + serviceName + ".");
         }
 
         if (operationName == null) {
             throw new IllegalArgumentException(
-            		"operationName is mandatory.");
+                    "operationName is mandatory.");
         }
         Operation operation = port.getBinding().getPortType().getOperation(operationName, null, null);
         if (operation == null) {
             throw new IllegalArgumentException(
-            		"Operation " + operationName + " does not exists for service " + serviceName + ".");
+                    "Operation " + operationName + " does not exists for service " + serviceName + ".");
         }
 
         URL wsdlUrl = new URL(serviceDiscoveryHelper.getLocalWsdlUri());
@@ -219,9 +220,8 @@ public class ServiceInvokerHelper {
         } else {
             dipatchPortName = portName;
         }
-		javax.xml.ws.Dispatch<Source> disp = service1.createDispatch(dipatchPortName,
-						Source.class,
-						javax.xml.ws.Service.Mode.PAYLOAD);
+        javax.xml.ws.Dispatch<Source> disp = service1.createDispatch(dipatchPortName,
+                        Source.class, javax.xml.ws.Service.Mode.PAYLOAD);
         java.util.Map<String, Object> requestContext = disp.getRequestContext();
         if(requestContext == null) {
             throw new Exception("setSOAPActionURI:getRequestContext() returned null");
@@ -238,9 +238,10 @@ public class ServiceInvokerHelper {
             }
         }
 
-        if ((configuration.getUsername() != null) && (configuration.getPassword() != null)){
-            // requestContext.put(BindingProvider.USERNAME_PROPERTY, configuration.getUsername());
-            // requestContext.put(BindingProvider.PASSWORD_PROPERTY, configuration.getPassword());
+        if (configuration.isBasicAuth()) {
+            requestContext.put(BindingProvider.USERNAME_PROPERTY, configuration.getUsername());
+            requestContext.put(BindingProvider.PASSWORD_PROPERTY, configuration.getPassword());
+        } else if (configuration.isTokenAuth()) {
             Map<String, Object> wssProps = new HashMap<String, Object>();
             wssProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
             wssProps.put(WSHandlerConstants.USER, configuration.getUsername());
@@ -256,6 +257,7 @@ public class ServiceInvokerHelper {
             ((DispatchImpl) disp).getClient().getEndpoint()
                     .getOutInterceptors().add(new WSS4JOutInterceptor(wssProps));
         }
+
         boolean useProxy = configuration.getProxyServer() != null;
         String proxyHost = System.getProperty(HTTP_PROXY_HOST);
         String proxyPort = System.getProperty(HTTP_PROXY_PORT);
