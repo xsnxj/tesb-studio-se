@@ -50,8 +50,19 @@ org.talend.ws.helper.ServiceInvokerHelper serviceInvokerHelper_<%=cid%> = null ;
 
 ESBConsumer consumer_<%=cid%> = null;
 if (this.registry != null) {
+
+	final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+<%	if (useSl) {
+	List<Map<String, String>> customProperties = (List<Map<String,String>>)
+			ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+	for (int k = 0; k < customProperties.size(); k++) { %>
+		slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+	<% }
+} %>
+
 	consumer_<%=cid%> = this.registry.createConsumer(
 		new ESBEndpointInfo() {
+
 			@SuppressWarnings("serial")
 			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
 				put("wsdlURL", <%=endpoint%>);
@@ -67,6 +78,7 @@ if (this.registry != null) {
 				put("useServiceLocator", <%=useSl%>);
 				<%if (useSl) { %>
 					put("LocatorSelectionStrategy", "<%=slStrategy%>");
+					put("SL-PROPS", slCustomProps_<%=cid%>);
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
