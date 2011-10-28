@@ -52,12 +52,14 @@
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
 			<bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
 				<constructor-arg>
+					<list>
 #if (${endpoint.useSecurityToken})
-					<bean factory-bean="policyProvider" factory-method="getTokenPolicy" />
+						<bean factory-bean="policyProvider" factory-method="getTokenPolicy" />
 #end
 #if (${endpoint.useSecuritySAML})
-					<bean factory-bean="policyProvider" factory-method="getSamlPolicy" />
+						<bean factory-bean="policyProvider" factory-method="getSamlPolicy" />
 #end
+					</list>
 				</constructor-arg>
 			</bean>
 #end
