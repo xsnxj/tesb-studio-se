@@ -308,7 +308,7 @@ public class ESBService implements IESBService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.IESBService#getServicesType()
      */
     public ERepositoryObjectType getServicesType() {
@@ -436,20 +436,6 @@ public class ESBService implements IESBService {
             IElementParameter operationEle = node.getElementParameter(WSDLUtils.OPERATION_NAME);
             if (WSDLUtils.WSDL_LOCATION.equals(value)) {
                 return WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-            } else if ("ENDPOINT".equals(value)) {
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-                try {
-                    // return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.ENDPOINT_URI);
-                    if (portEle != null && operationEle != null) {
-                        String portValeu = (String) portEle.getValue();
-                        String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI, operationValue, portValeu).get(
-                                WSDLUtils.ENDPOINT_URI);
-                    }
-
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
-                }
             } else if (WSDLUtils.OPERATION_NAME.equals(value)) {
                 String propertyValue = (String) node.getPropertyValue(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
                 if (propertyValue != null) {
@@ -463,80 +449,29 @@ public class ESBService implements IESBService {
                                         return operation.getName();
                                     }
                                 }
-
                             }
                         }
                     }
                 }
-            } else if (WSDLUtils.OPERATION_NS.equals(value)) {
+            } else if (WSDLUtils.OPERATION_NS.equals(value)
+                    || WSDLUtils.PORT_NAME.equals(value)
+                    || WSDLUtils.PORT_NS.equals(value)
+                    || WSDLUtils.SERVICE_NAME.equals(value)
+                    || WSDLUtils.SERVICE_NS.equals(value)
+                    || "ENDPOINT".equals(value)) {
+                String serviceParamKey = "ENDPOINT".equals(value) ? WSDLUtils.ENDPOINT_URI : value;
                 String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
                 try {
-                    // return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.OPERATION_NS);
-
                     if (portEle != null && operationEle != null) {
-                        String portValeu = (String) portEle.getValue();
+                        String portValue = (String) portEle.getValue();
                         String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI, operationValue, portValeu).get(
-                                WSDLUtils.OPERATION_NS);
-                    }
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
-                }
-            } else if (WSDLUtils.PORT_NAME.equals(value)) {
-                String propertyValue = (String) node.getPropertyValue(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
-                if (propertyValue != null) {
-                    if (propertyValue.contains(" - ")) {
-                        String portID = propertyValue.split(" - ")[1];
-                        for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
-                            if (port.getId().equals(portID)) {
-                                return port.getName();
-                            }
-                        }
-                    }
-                }
-            } else if (WSDLUtils.PORT_NS.equals(value)) {
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-                try {
-                    // return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.PORT_NS);
-
-                    if (portEle != null && operationEle != null) {
-                        String portValeu = (String) portEle.getValue();
-                        String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI, operationValue, portValeu).get(WSDLUtils.PORT_NS);
-                    }
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
-                }
-            } else if (WSDLUtils.SERVICE_NAME.equals(value)) {
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-                try {
-                    // return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.SERVICE_NAME);
-
-                    if (portEle != null && operationEle != null) {
-                        String portValeu = (String) portEle.getValue();
-                        String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI, operationValue, portValeu).get(
-                                WSDLUtils.SERVICE_NAME);
-                    }
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
-                }
-            } else if (WSDLUtils.SERVICE_NS.equals(value)) {
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-                try {
-                    // return WSDLUtils.getServiceParameters(wsdlURI).get(WSDLUtils.SERVICE_NS);
-
-                    if (portEle != null && operationEle != null) {
-                        String portValeu = (String) portEle.getValue();
-                        String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI, operationValue, portValeu).get(
-                                WSDLUtils.SERVICE_NS);
+                        return WSDLUtils.getServiceOperationParameters(wsdlURI,
+                                operationValue, portValue).get(serviceParamKey);
                     }
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
                 }
             }
-
         }
         return null;
     }
@@ -552,7 +487,7 @@ public class ESBService implements IESBService {
 
     /**
      * When services connection is renamed, refresh the connection label in the component view of job.
-     * 
+     *
      * @param item
      */
     public void refreshComponentView(Item item) {
