@@ -12,11 +12,13 @@
 // ============================================================================
 package org.talend.designer.esb.webservice.ui;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.datatools.enablement.oda.xml.util.ui.ATreeNode;
+import org.eclipse.datatools.enablement.oda.xml.util.ui.XSDPopulationUtil2;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -62,6 +66,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.xsd.XSDSchema;
+import org.eclipse.xsd.util.XSDResourceImpl;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -79,10 +85,15 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
+import org.talend.core.model.metadata.MappingTypeRetriever;
+import org.talend.core.model.metadata.MetadataTalendType;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
+import org.talend.core.model.metadata.builder.connection.MetadataColumn;
+import org.talend.core.model.metadata.builder.connection.MetadataTable;
 import org.talend.core.model.metadata.builder.connection.SchemaTarget;
 import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
+import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.process.IContext;
@@ -102,6 +113,8 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
+import org.talend.cwm.helper.ConnectionHelper;
+import org.talend.cwm.helper.PackageHelper;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentMain;
@@ -121,6 +134,8 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
+import orgomg.cwm.resource.record.RecordFactory;
+import orgomg.cwm.resource.record.RecordFile;
 
 /**
  * gcui class global comment. Detailled comment
@@ -943,6 +958,10 @@ public class WebServiceUI extends AbstractWebService {
 			target.setRelativeXPathQuery(leaf[0]);
 			target.setTagName(leaf[1]);
         }
+
+		// GLIU: add for TESB-3668
+		fillMetadataInfo(message, name, connection);
+
         // save
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         String nextId = factory.getNextId();
@@ -976,6 +995,171 @@ public class WebServiceUI extends AbstractWebService {
 			openErrorDialog("Error populating schema to XML metadata.", e);
 		}
 	}
+
+	/*
+	 * GLIU: TESB-3668 start please refer to
+	 * 
+	 * @see org.talend.repository.services.action
+	 * .PublishMetadataAction#populateMessage2(ParameterInfo, QName) for more
+	 * details
+	 */
+	private int orderId;
+	private boolean loopElementFound;
+
+	private void fillMetadataInfo(FlowInfo message, String name,
+			XmlFileConnection connection) {
+		try {
+			String text = wsdlField.getText();
+			if (text.startsWith("\"")) {
+				text = text.substring(1);
+			}
+			if (text.endsWith("\"")) {
+				text = text.substring(0, text.length() - 1);
+			}
+			// URI uri = new File(text).toURI();
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(
+					message.getSchema());
+			XSDResourceImpl xsdResourceImpl = new XSDResourceImpl(
+					org.eclipse.emf.common.util.URI.createFileURI(text));
+			xsdResourceImpl.load(inputStream, Collections.EMPTY_MAP);
+			XSDSchema xsdSchema = xsdResourceImpl.getSchema();
+			@SuppressWarnings("restriction")
+			XSDPopulationUtil2 util = new XSDPopulationUtil2();
+			List<ATreeNode> rootNodes = util.getAllRootNodes(xsdSchema);
+
+			ATreeNode node = null;
+
+			// try to find the root element needed from XSD file.
+			// note: if there is any prefix, it will get the node with the first
+			// correct name, no matter the prefix.
+			// once the we can get the correct prefix value from the wsdl, this
+			// code should be modified.
+			for (ATreeNode curNode : rootNodes) {
+				String curName = (String) curNode.getValue();
+				if (curName.contains(":")) {
+					// if with prefix, don't care about it for now, just compare
+					// the name.
+					if (curName.split(":")[1].equals(name)) {
+						node = curNode;
+						break;
+					}
+				} else if (curName.equals(name)) {
+					node = curNode;
+					break;
+				}
+			}
+			node = util.getSchemaTree(xsdSchema, node, true);
+
+			orderId = 1;
+			loopElementFound = false;
+
+			if (ConnectionHelper.getTables(connection).isEmpty()) {
+				MetadataTable table = ConnectionFactory.eINSTANCE
+						.createMetadataTable();
+				RecordFile record = (RecordFile) ConnectionHelper.getPackage(
+						connection.getName(), connection, RecordFile.class);
+				if (record != null) {
+					PackageHelper.addMetadataTable(table, record);
+				} else {
+					RecordFile newrecord = RecordFactory.eINSTANCE
+							.createRecordFile();
+					newrecord.setName(connection.getName());
+					ConnectionHelper.addPackage(newrecord, connection);
+					PackageHelper.addMetadataTable(table, newrecord);
+				}
+			}
+			fillRootInfo(connection, node, "");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void fillRootInfo(XmlFileConnection connection, ATreeNode node,
+			String path) throws Exception {
+		XMLFileNode xmlNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
+		xmlNode.setXMLPath(path + "/" + node.getValue());
+		xmlNode.setOrder(orderId);
+		orderId++;
+		MappingTypeRetriever retriever;
+		String nameWithoutPrefixForColumn;
+		String curName = (String) node.getValue();
+		if (curName.contains(":")) {
+			nameWithoutPrefixForColumn = curName.split(":")[1];
+		} else {
+			nameWithoutPrefixForColumn = curName;
+		}
+		retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id");
+		xmlNode.setAttribute("attri");
+		xmlNode.setType(retriever.getDefaultSelectedTalendType(node
+				.getDataType()));
+		MetadataColumn column = null;
+		switch (node.getType()) {
+		case ATreeNode.ATTRIBUTE_TYPE:
+			xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
+			column = ConnectionFactory.eINSTANCE.createMetadataColumn();
+			column.setTalendType(xmlNode.getType());
+			column.setLabel(nameWithoutPrefixForColumn);
+			ConnectionHelper.getTables(connection)
+					.toArray(new MetadataTable[0])[0].getColumns().add(column);
+			break;
+		case ATreeNode.ELEMENT_TYPE:
+			boolean haveElementOrAttributes = false;
+			for (Object curNode : node.getChildren()) {
+				if (((ATreeNode) curNode).getType() != ATreeNode.NAMESPACE_TYPE) {
+					haveElementOrAttributes = true;
+					break;
+				}
+			}
+			if (!haveElementOrAttributes) {
+				xmlNode.setAttribute("branch");
+				retriever = MetadataTalendType
+						.getMappingTypeRetriever("xsd_id");
+				xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
+				xmlNode.setType(retriever.getDefaultSelectedTalendType(node
+						.getDataType()));
+				column = ConnectionFactory.eINSTANCE.createMetadataColumn();
+				column.setTalendType(xmlNode.getType());
+				column.setLabel(nameWithoutPrefixForColumn);
+				ConnectionHelper.getTables(connection).toArray(
+						new MetadataTable[0])[0].getColumns().add(column);
+			}
+			break;
+		case ATreeNode.NAMESPACE_TYPE:
+			xmlNode.setAttribute("ns");
+			// specific for namespace... no path set, there is only the prefix
+			// value.
+			// this value is saved now in node.getDataType()
+			xmlNode.setXMLPath(node.getDataType());
+
+			xmlNode.setDefaultValue((String) node.getValue());
+			break;
+		case ATreeNode.OTHER_TYPE:
+			break;
+		}
+		// will try to get the first element (branch or main), and set it as
+		// loop.
+		if (!loopElementFound && path.split("/").length == 2
+				&& node.getType() == ATreeNode.ELEMENT_TYPE) {
+			connection.getLoop().add(xmlNode);
+
+			for (XMLFileNode curNode : connection.getRoot()) {
+				if (curNode.getXMLPath().startsWith(path)) {
+					curNode.setAttribute("main");
+				}
+			}
+			xmlNode.setAttribute("main");
+			loopElementFound = true;
+		} else {
+			connection.getRoot().add(xmlNode);
+		}
+		if (node.getChildren().length > 0) {
+			for (Object curNode : node.getChildren()) {
+				fillRootInfo(connection, (ATreeNode) curNode,
+						path + "/" + node.getValue());
+			}
+		}
+	}
+	// TESB-3668 end
 
 	private boolean updateConnection() {
         if (currentPortName != null) {
