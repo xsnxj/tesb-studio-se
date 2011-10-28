@@ -32,9 +32,9 @@ import org.talend.repository.model.RepositoryNode;
 public class DragAndDropServiceHandler implements IDragAndDropServiceHandler {
 
     public boolean canHandle(Connection connection) {
-        if (connection instanceof Connection) {
-            return true;
-        }
+        // if (connection instanceof Connection) {
+        // return true;
+        // }
         return false;
     }
 
