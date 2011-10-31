@@ -577,7 +577,7 @@ class HandlerThread_<%=tESBProviderRequestNodeCid%> extends Thread {
 
 
 <% // REST
-List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequestLoop");
 if (!httpRequestComponentsList.isEmpty()) {
 
 
@@ -1050,6 +1050,7 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String tRESTRequestNodeCid = tRESTRequestNode.getUniqueName();
+	tRESTRequestNodeCid = tRESTRequestNodeCid.replaceAll("_Loop", "");
 	boolean isOneWayRest = tRESTRequestNode.getProcess().getNodesOfType("tRESTResponse").isEmpty();
 %>
 /**
@@ -1332,7 +1333,7 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 	}
 
 <%
-List<? extends IConnection> conns = tRESTRequestNode.getOutgoingSortedConnections();
+List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tRESTRequestNode, "__SCHEMAS__");
 	// TODO: validation:
