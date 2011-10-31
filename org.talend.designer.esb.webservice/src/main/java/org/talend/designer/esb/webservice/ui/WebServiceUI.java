@@ -90,12 +90,10 @@ import org.talend.core.model.metadata.MetadataTalendType;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
-import org.talend.core.model.metadata.builder.connection.SchemaTarget;
 import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
 import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
-import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
 import org.talend.core.model.process.IElementParameter;
@@ -944,20 +942,13 @@ public class WebServiceUI extends AbstractWebService {
 		connectionItem.setProperty(connectionProperty);
         connectionItem.setConnection(connection);
 
-        connection.setInputModel(true); 
+		/*
+		 * TESB-3689: change from true to false to fix the cannot imported by
+		 * tESB* component
+		 */
+		connection.setInputModel(false);
 		//schema
 		connection.setFileContent(message.getSchema());
-        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
-        connection.getSchema().add(xmlXPathLoopDescriptor);
-        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/"+parameter.getName());
-        xmlXPathLoopDescriptor.setLimitBoucle(50);
-        xmlXPathLoopDescriptor.setConnection(connection);
-        for (String[] leaf : parameter.getLeafList()) {
-	        SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
-			xmlXPathLoopDescriptor.getSchemaTargets().add(target);
-			target.setRelativeXPathQuery(leaf[0]);
-			target.setTagName(leaf[1]);
-        }
 
 		// GLIU: add for TESB-3668
 		fillMetadataInfo(message, name, connection);
