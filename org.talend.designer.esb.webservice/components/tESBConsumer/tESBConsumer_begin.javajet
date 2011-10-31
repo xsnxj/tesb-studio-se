@@ -40,7 +40,8 @@ String slStrategy = ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STR
 
 Boolean useSam = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 
-String authType = ElementParameterParser.getValue(node,"__ESB_SECURITY__");
+Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
+String authType = ElementParameterParser.getValue(node,"__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node,"__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node,"__AUTH_PASSWORD__");
 %>
@@ -76,15 +77,15 @@ if (this.registry != null) {
 
 				// use Service Locator
 				put("useServiceLocator", <%=useSl%>);
-				<%if (useSl) { %>
+				<% if (useSl) { %>
 					put("LocatorSelectionStrategy", "<%=slStrategy%>");
 					put("SL-PROPS", slCustomProps_<%=cid%>);
 				<% } %>
  				// use Service Activity Monitor
 				put("useServiceActivityMonitor", <%=useSam%>);
 
-				put("esbSecurity", "<%=authType%>");
-				<% if ("SAML".equals(authType) || "TOKEN".equals(authType) || "BASIC".equals(authType)) { %>
+				<% if (useAuth) { %>
+					put("esbSecurity", "<%=authType%>");
 					put("username", <%=username%>);
 					put("password", <%=password%>);
 				<% } %>
@@ -255,7 +256,7 @@ class Util_<%=cid%> {
 	System.setProperty("javax.net.ssl.trustStorePassword", <%=trustStorePassword%>);
 <% }
 
-if ("BASIC".equals(authType) || "TOKEN".equals(authType)) { %>
+if (useAuth && ("BASIC".equals(authType) || "TOKEN".equals(authType))) { %>
 	config_<%=cid%>.setUsername(<%=username%>);
 	config_<%=cid%>.setPassword(<%=password%>);
 	<% if ("BASIC".equals(authType)) { %>
