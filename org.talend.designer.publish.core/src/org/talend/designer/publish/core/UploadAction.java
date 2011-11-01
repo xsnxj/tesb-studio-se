@@ -9,6 +9,10 @@ import org.talend.designer.publish.core.models.FeaturesModel;
 
 public class UploadAction {
 
+	private static String JOB_CONTROLLER_FEATURE = "talend-job-controller";
+
+	private static String JOB_CONTROLLER_VERSION = "[5,6)";
+
 	private String repositoryUrl = null;
 	private String username = null;
 	private String password = null;
@@ -20,17 +24,14 @@ public class UploadAction {
 	}
 
 	public boolean deployRoute(String configName, String[] contextList,
-			String jarFilePath, String groupId,
-			String artifactId, String version,
-			Set<DependencyModel> dependencies) throws Exception {
+			String jarFilePath, String groupId, String artifactId,
+			String version, Set<DependencyModel> dependencies) throws Exception {
 		return deployRoute(configName, contextList, new File(jarFilePath),
-				groupId, artifactId, version,
-				dependencies);
+				groupId, artifactId, version, dependencies);
 	}
 
 	private boolean deployRoute(String configName, String[] contextList,
-			File jarFile, String groupId,
-			String artifactId, String version,
+			File jarFile, String groupId, String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
 		BundleModel bundleModel = new BundleModel(jarFile, groupId, artifactId,
 				version, repositoryUrl, username, password);
@@ -41,27 +42,33 @@ public class UploadAction {
 		featuresModel.setConfigName(configName);
 		featuresModel.setContextList(contextList);
 		featuresModel.addSubBundle(bundleModel);
+		// http://jira.talendforge.org/browse/TESB-3698
+		featuresModel.addSubFeature(JOB_CONTROLLER_FEATURE,
+				JOB_CONTROLLER_VERSION);
 		deployFeatures(featuresModel);
 		return true;
 	}
 
 	public void deployFeatures(FeaturesModel featuresModel) throws Exception {
 		if (featuresModel != null) {
-			FeaturesModel model = new FeaturesModel(featuresModel, repositoryUrl, username, password);
+			FeaturesModel model = new FeaturesModel(featuresModel,
+					repositoryUrl, username, password);
 			model.upload();
 		}
 	}
 
 	public void deployBundle(BundleModel bundleModel) throws Exception {
 		if (bundleModel != null) {
-			BundleModel model = new BundleModel(bundleModel, repositoryUrl, username, password);
+			BundleModel model = new BundleModel(bundleModel, repositoryUrl,
+					username, password);
 			model.upload();
 		}
 	}
 
 	// for test
 	public static void main(String[] args) throws Exception {
-		UploadAction uploadAction = new UploadAction("http://192.168.0.10:8080/archiva/repository/snapshots/",
+		UploadAction uploadAction = new UploadAction(
+				"http://192.168.0.10:8080/archiva/repository/snapshots/",
 				"talend", "talend123");
 
 		// BundleModel b1 = new BundleModel(new File("userRoutines.jar"),
