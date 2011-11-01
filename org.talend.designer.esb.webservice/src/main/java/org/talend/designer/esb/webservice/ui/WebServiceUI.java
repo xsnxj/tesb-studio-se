@@ -1256,7 +1256,7 @@ public class WebServiceUI extends AbstractWebService {
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < split.length; i++) {
-			String replaceAll = split[i].replaceAll("\\p{Punct}", "RP");
+			String replaceAll = split[i].replaceAll("\\p{Punct}", "-");
 			sb.append(replaceAll);
 			if (i < split.length - 1) {
 				sb.append("/");
