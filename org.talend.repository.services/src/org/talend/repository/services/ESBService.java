@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;
@@ -168,8 +169,10 @@ public class ESBService implements IESBService {
     public String getWsdlFilePath(Item item) {
         if (item != null && item instanceof ServiceItem) {
             ServiceItem si = (ServiceItem) item;
-            ServiceConnection connection = (ServiceConnection) si.getConnection();
-            return connection.getWSDLPath();
+			IFile wsdlFile = WSDLUtils.getWsdlFile(si);
+			if (wsdlFile != null) {
+				return wsdlFile.getLocation().toPortableString();
+			}
         }
         return null;
     }
