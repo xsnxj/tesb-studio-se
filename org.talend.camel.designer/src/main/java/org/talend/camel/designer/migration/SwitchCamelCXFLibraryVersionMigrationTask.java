@@ -42,7 +42,7 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
     }
 
     public Date getOrder() {
-        GregorianCalendar gc = new GregorianCalendar(2011, 9, 23, 10, 00, 00);
+		GregorianCalendar gc = new GregorianCalendar(2011, 11, 3, 14, 42, 00);
         return gc.getTime();
     }
 
@@ -100,12 +100,14 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
         String result = "";
         if (evtValue.contains("camel-")) {
             result = evtValue.replaceAll("2.7.\\d", "2.8.2-SNAPSHOT");
+			result = result.replaceAll("2\\.8\\.2-SNAPSHOT", "2.8.2");
         }
         if (evtValue.contains("spring-")) {
             result = evtValue.replace("3.0.5", "3.0.6");
         }
         if (evtValue.contains("cxf-bundle")) {
             result = evtValue.replaceAll("2.4.\\d", "2.5.0-SNAPSHOT");
+			result = result.replaceAll("2\\.5\\.0-SNAPSHOT", "2.5.0");
         }
         return result;
     }
