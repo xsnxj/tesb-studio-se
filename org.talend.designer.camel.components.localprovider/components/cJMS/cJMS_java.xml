@@ -50,8 +50,51 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER> -->
 
-		<PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false"
-			NUM_ROW="10" NB_LINES="5" GROUP="BROKER_GROUP">
+		<PARAMETER NAME="MQ_TYPE" FIELD="CLOSED_LIST" NUM_ROW="6"
+			REQUIRED="true"  READONLY="false"  GROUP="MQ_GROUP">
+			<ITEMS DEFAULT="ACTIVEMQ">
+				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
+				<ITEM NAME="WMQ" VALUE="WebSphere MQ" />
+				<ITEM NAME="OTHER" VALUE="Other" />
+			</ITEMS>
+		</PARAMETER>
+
+		<!-- ActiveMQ -->
+		<PARAMETER NAME="AMQ_BROKER_URI" FIELD="TEXT" NUM_ROW="7"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>"vm://localhost?broker.persistent=false"</DEFAULT>
+		</PARAMETER>
+		
+		<!-- WebSphere MQ -->
+		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"localhost"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_PORT" FIELD="TEXT" NUM_ROW="8"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"1414"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_TRANSPORT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="9"
+			REQUIRED="true"  READONLY="false"  GROUP="MQ_GROUP" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<ITEMS DEFAULT="CLIENT">
+				<ITEM NAME="BINDINGS" VALUE="0" />
+				<ITEM NAME="CLIENT" VALUE="1" />
+				<ITEM NAME="BINDINGS_CLIENT" VALUE="8" />
+				<!--<ITEM NAME="DIRECT_TCPIP" VALUE="2" />
+				<ITEM NAME="DIRECT_HTTP" VALUE="4" />
+			--></ITEMS>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_QUEUE_MANAGER" FIELD="TEXT" NUM_ROW="10"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"mq.queue.manager"</DEFAULT>
+		</PARAMETER>
+
+		<!-- Customized -->
+		<PARAMETER NAME="OTHER_CODE" FIELD="MEMO_JAVA" REQUIRED="false"
+			NUM_ROW="7" NB_LINES="6" GROUP="MQ_GROUP" SHOW_IF="MQ_TYPE == 'OTHER'">
 			<DEFAULT>		
 /*
 *	Please specify "connectionFactory" here
@@ -66,12 +109,13 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 			</DEFAULT>
 		</PARAMETER>
 	    <PARAMETER
-      NAME="DRIVER_JAR"
+      NAME="OTHER_DRIVER_JAR"
       FIELD="TABLE"
       NUM_ROW="30"
       NB_LINES="2" 
       REPOSITORY_VALUE="DRIVER_JAR"
-      GROUP="BROKER_GROUP">
+      GROUP="MQ_GROUP"
+      SHOW_IF="MQ_TYPE == 'OTHER'">
       	<ITEMS> 
 			<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
 		</ITEMS> 
@@ -107,6 +151,10 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 				REQUIRED="true" />
 			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
+			<IMPORT NAME="spring-tx" MODULE="spring-tx-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-jms" MODULE="spring-jms-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
 			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
@@ -117,7 +165,19 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
+			<IMPORT NAME="activemq" MODULE="activemq-all-5.1.0.jar"
+				REQUIRED="true" />
 			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.8.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="j-wmq" MODULE="com.ibm.mq.jmqi.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="wmq-jms" MODULE="com.ibm.mqjms.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="wmq-connector" MODULE="connector.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="dhbcore" MODULE="dhbcore.jar"
 				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
