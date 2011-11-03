@@ -600,17 +600,24 @@ public class ESBService implements IESBService {
         }
     }
 
-    public StringBuffer getAllTheJObNames(List<IRepositoryViewObject> jobList) {
+    public StringBuffer getAllTheJObNames(IRepositoryNode jobObject) {
         StringBuffer jobNames = null;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        List<IRepositoryNode> jobList = new ArrayList<IRepositoryNode>();
+        if (jobObject.getObjectType() == ERepositoryObjectType.PROCESS) {
+            jobList.add(jobObject);
+        } else if (jobObject.getObjectType() == ERepositoryObjectType.FOLDER) {
+            jobList = getJobObject(jobObject);
+        }
+
         try {
             List<IRepositoryViewObject> repList = factory.getAll(getServicesType());
-            for (IRepositoryViewObject node : jobList) {
-                ERepositoryObjectType repositoryObjectType = node.getRepositoryObjectType();
+            for (IRepositoryNode node : jobList) {
+                ERepositoryObjectType repositoryObjectType = node.getObjectType();
                 if (repositoryObjectType != ERepositoryObjectType.PROCESS) {
                     continue;
                 }
-                String jobID = node.getProperty().getId();
+                String jobID = node.getObject().getProperty().getId();
                 for (IRepositoryViewObject obj : repList) {
                     ServiceItem item = (ServiceItem) obj.getProperty().getItem();
                     ServiceConnection conn = (ServiceConnection) item.getConnection();
@@ -618,9 +625,10 @@ public class ESBService implements IESBService {
                         for (ServiceOperation operation : port.getServiceOperation()) {
                             if (operation.getReferenceJobId() != null && operation.getReferenceJobId().endsWith(jobID)) {
                                 if (jobNames == null) {
-                                    jobNames = new StringBuffer(node.getProperty().getLabel());
+                                    jobNames = new StringBuffer(node.getObject().getProperty().getLabel());
                                 } else {
-                                    jobNames.append(node.getProperty().getLabel());
+                                    jobNames.append(",");
+                                    jobNames.append(node.getObject().getProperty().getLabel());
                                 }
                                 break middle;
                             }
@@ -673,5 +681,18 @@ public class ESBService implements IESBService {
             }
         }
         RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
+    }
+
+    private List<IRepositoryNode> getJobObject(IRepositoryNode folderObj) {
+        List<IRepositoryNode> objList = new ArrayList<IRepositoryNode>();
+        for (IRepositoryNode child : folderObj.getChildren()) {
+            ERepositoryObjectType repositoryObjectType = child.getObjectType();
+            if (repositoryObjectType == ERepositoryObjectType.PROCESS) {
+                objList.add(child);
+            } else if (repositoryObjectType == ERepositoryObjectType.FOLDER) {
+                objList.addAll(getJobObject(child));
+            }
+        }
+        return objList;
     }
 }
