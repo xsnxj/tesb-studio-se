@@ -63,13 +63,18 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         @Override
         public void notifyChanged(Notification notification) {
             if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
-                save();
+                if (isDirty()) {
+                    save();
+                }
             }
         }
     };
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        if (!isDirty()) {
+            return;
+        }
         super.doSave(monitor);
         save();
     }
