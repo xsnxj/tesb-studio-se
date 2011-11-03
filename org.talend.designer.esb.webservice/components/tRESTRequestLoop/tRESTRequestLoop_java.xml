@@ -52,22 +52,12 @@
 						<ITEM NAME="DELETE" VALUE="DELETE" />
 					</ITEMS>
 				</ITEM>
-				<!--
-				<ITEM NAME="INPUT_COLUMN" FIELD="PREV_COLUMN_LIST" />
-				 -->
-				 <!--
-				<ITEM NAME="COLUMNS" FIELD="COLUMN_LIST" />
-				 -->
-
 				<ITEM NAME="URI_PATTERN" FIELD="TEXT" VALUE='"/"'/>
-				<!-- ITEM NAME="MAPPING" FIELD="SCHEMA_XPATH_QUERYS" / -->
 			</ITEMS>
 		</PARAMETER>
 
-		<PARAMETER FIELD="CHECK"
-				NAME="KEEPLISTENING"
-				DYNAMIC_SETTINGS="true"
-				SHOW="true" NUM_ROW="250">
+		<PARAMETER NAME="KEEPLISTENING" FIELD="CHECK" NUM_ROW="250"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
@@ -107,12 +97,10 @@
 					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-					
 			<IMPORT NAME="geronimo-activation_1.1_spec"
 					MODULE="geronimo-activation_1.1_spec-1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID="org.apache.servicemix.specs.jaxws-api-2.2"
@@ -122,7 +110,6 @@
 					MODULE="jaxb-api-2.2.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-			
 			<IMPORT NAME="jaxb-impl"
 					MODULE="jaxb-impl-2.2.4-1.jar"
 					BundleID=""
@@ -132,12 +119,11 @@
 					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-					
 			<IMPORT NAME="stax2-api"
 					MODULE="stax2-api-3.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-					
+
 			<IMPORT NAME="woodstox-core-asl"
 					MODULE="woodstox-core-asl-4.1.1.jar"
 					BundleID=""
@@ -147,12 +133,10 @@
 					MODULE="xmlschema-core-2.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-			
 			<IMPORT NAME="neethi"
 					MODULE="neethi-3.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-					
 			<IMPORT NAME="wsdl4j"
 					MODULE="wsdl4j-1.6.2.jar"
 					BundleID=""
@@ -162,37 +146,32 @@
 					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
 					BundleID=""
 					REQUIRED="true"/-->
-			
+
 			<IMPORT NAME="geronimo-servlet_2.5_spec"
 					MODULE="geronimo-servlet_2.5_spec-1.1.2.jar"
 					BundleID=""
 					REQUIRED="true"/>
-					
 			<IMPORT NAME="jetty-continuation"
 					MODULE="jetty-continuation-7.5.3.v20111011.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="jetty-http"
 					MODULE="jetty-http-7.5.3.v20111011.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="jetty-io"
 					MODULE="jetty-io-7.5.3.v20111011.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="jetty-server"
 					MODULE="jetty-server-7.5.3.v20111011.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="jetty-util"
 					MODULE="jetty-util-7.5.3.v20111011.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
+
 			<!-- IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.6.1.jar"
 					REQUIRED="true"/>
@@ -204,37 +183,30 @@
 					MODULE="spring-aop-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-					
 			<IMPORT NAME="spring-asm"
 					MODULE="spring-asm-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-					
 			<IMPORT NAME="spring-beans"
 					MODULE="spring-beans-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-					
 			<IMPORT NAME="spring-context"
 					MODULE="spring-context-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-					
 			<IMPORT NAME="spring-core"
 					MODULE="spring-core-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="spring-web"
 					MODULE="spring-web-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-			
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.0.6.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true"/>
-
 		</IMPORTS>
 	</CODEGENERATION>
 
