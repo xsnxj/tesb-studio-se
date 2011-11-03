@@ -275,7 +275,7 @@
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true"/>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.5.0-SNAPSHOT.jar"
+					MODULE="cxf-bundle-2.5.0.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true"/>
 			<IMPORT NAME="neethi"
