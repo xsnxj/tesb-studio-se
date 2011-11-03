@@ -14,12 +14,15 @@ package org.talend.repository.services.ui;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.properties.ByteArray;
@@ -66,6 +70,7 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
+import org.talend.repository.services.utils.TemplateProcessor;
 
 /**
  * hwang class global comment. Detailled comment
@@ -78,9 +83,7 @@ public class OpenWSDLPage extends WizardPage {
 
     private String path;
 
-    private Definition definition;
-
-    private boolean flag;
+    private boolean createWSDL;
 
     private ServiceItem item = null;
 
@@ -106,17 +109,17 @@ public class OpenWSDLPage extends WizardPage {
         final Button check = new Button(parentArea, SWT.CHECK);
         check.setText("create new wsdl file");
         check.setSelection(false);
-        flag = true;
+        createWSDL = false;
         check.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 if (check.getSelection()) {
                     wsdlText.setVisible(false);
-                    flag = false;
+                    createWSDL = true;
                     setPageComplete(true);
                 } else {
                     wsdlText.setVisible(true);
-                    flag = true;
+                    createWSDL = false;
                     path = wsdlText.getText();
                     if (path.trim().length() > 0) {
                         setPageComplete(true);
@@ -166,6 +169,11 @@ public class OpenWSDLPage extends WizardPage {
     }
 
     public boolean finish() {
+
+        String label = item.getProperty().getLabel();
+        String version = item.getProperty().getVersion();
+        String wsdlFileName = label + "_" + version + ".wsdl";
+
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         if (creation) {
             item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
@@ -176,7 +184,22 @@ public class OpenWSDLPage extends WizardPage {
                 ExceptionHandler.process(e);
             }
         }
-        if (flag) {
+
+        IProject currentProject;
+		try {
+			currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+		} catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+            return false;
+		}
+        String foldPath = item.getState().getPath();
+        String folder = "";
+        if (!foldPath.equals("")) {
+            folder = "/" + foldPath;
+        }
+        IFile fileTemp = currentProject.getFolder("services" + folder).getFile(wsdlFileName);
+
+        if (!createWSDL) {
             if (path != null && !path.trim().equals("")) {
                 item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
                 ((ServiceConnection) item.getConnection()).setWSDLPath(path);
@@ -197,22 +220,12 @@ public class OpenWSDLPage extends WizardPage {
                 }
                 // copy file to item
                 try {
-                    IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-                    String foldPath = item.getState().getPath();
-                    String folder = "";
-                    if (!foldPath.equals("")) {
-                        folder = "/" + foldPath;
-                    }
-                    IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
-                            item.getProperty().getLabel() + "_" + item.getProperty().getVersion() + ".wsdl");
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer.toString().getBytes());
                     if (!fileTemp.exists()) {
                         fileTemp.create(byteArrayInputStream, true, null);
                     } else {
                         fileTemp.setContents(byteArrayInputStream, 0, null);
                     }
-                } catch (PersistenceException e1) {
-                    ExceptionHandler.process(e1);
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
                 }
@@ -229,64 +242,28 @@ public class OpenWSDLPage extends WizardPage {
                             buffer.toString().getBytes());
                 }
                 //
-                WSDLFactory wsdlFactory;
-                try {
-                    wsdlFactory = WSDLFactory.newInstance();
-                    WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-                    newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-                    newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-                    definition = newWSDLReader.readWSDL(path);
-                    Map portTypes = definition.getAllPortTypes();
-                    Iterator it = portTypes.keySet().iterator();
-                    repositoryNode.getChildren().clear();
-                    ((ServiceConnection) item.getConnection()).getServicePort().clear();
-                    while (it.hasNext()) {
-                        QName key = (QName) it.next();
-                        PortType portType = (PortType) portTypes.get(key);
-                        ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
-                        port.setId(factory.getNextId());
-                        port.setName(portType.getQName().getLocalPart());
-                        List<Operation> list = portType.getOperations();
-                        for (Operation operation : list) {
-                            ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
-                            serviceOperation.setId(factory.getNextId());
-                            RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(item.getProperty()),
-                                    repositoryNode, ENodeType.REPOSITORY_ELEMENT);
-                            operationNode.setProperties(EProperties.LABEL, item.getProperty().getLabel());
-                            operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
-                            serviceOperation.setName(operation.getName());
-                            if (operation.getDocumentationElement() != null) {
-                                serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
-                            }
-                            serviceOperation.setLabel(operation.getName());
-                            port.getServiceOperation().add(serviceOperation);
-                        }
-                        ((ServiceConnection) item.getConnection()).getServicePort().add(port);
-                    }
-                } catch (WSDLException e) {
-                    ExceptionHandler.process(e);
-                }
+                populateModelFromWsdl(factory, path, item, repositoryNode);
             }
         } else { // create new wsdl file
             try {
                 ((ServiceConnection) item.getConnection()).setWSDLPath("");
                 ((ServiceConnection) item.getConnection()).getServicePort().clear();
 
-                IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-                String foldPath = item.getState().getPath();
-                String folder = "";
-                if (!foldPath.equals("")) {
-                    folder = "/" + foldPath;
-                }
-                IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
-                        item.getProperty().getLabel() + "_" + item.getProperty().getVersion() + ".wsdl");
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                Map<String, Object> wsdlInfo = new HashMap<String, Object>();
+                wsdlInfo.put("serviceName", label); //$NON-NLS-1$
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                String templatePath = "/resources/wsdl-template.wsdl"; //$NON-NLS-1$
+				TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(baos));
+
+//                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
                 if (!fileTemp.exists()) {
                     fileTemp.create(byteArrayInputStream, true, null);
                 } else {
                     fileTemp.setContents(byteArrayInputStream, 0, null);
                 }
-            } catch (PersistenceException e1) {
+            } catch (SystemException e1) {
                 ExceptionHandler.process(e1);
             } catch (CoreException e) {
                 ExceptionHandler.process(e);
@@ -302,6 +279,8 @@ public class OpenWSDLPage extends WizardPage {
             } else {
                 ((ReferenceFileItem) item.getReferenceResources().get(0)).getContent().setInnerContent("".getBytes());
             }
+
+            populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString(), item, repositoryNode);
         }
 
         try {
@@ -313,4 +292,47 @@ public class OpenWSDLPage extends WizardPage {
         }
         return false;
     }
+
+	private void populateModelFromWsdl(IProxyRepositoryFactory factory, String wsdlPath, ServiceItem serviceItem, RepositoryNode serviceRepositoryNode) {
+
+        WSDLFactory wsdlFactory;
+        try {
+            wsdlFactory = WSDLFactory.newInstance();
+            WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+            newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+            newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+            Definition definition = newWSDLReader.readWSDL(wsdlPath);
+            Map portTypes = definition.getAllPortTypes();
+            Iterator it = portTypes.keySet().iterator();
+            serviceRepositoryNode.getChildren().clear();
+            ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
+            while (it.hasNext()) {
+                QName key = (QName) it.next();
+                PortType portType = (PortType) portTypes.get(key);
+                ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
+                port.setId(factory.getNextId());
+                port.setName(portType.getQName().getLocalPart());
+                List<Operation> list = portType.getOperations();
+                for (Operation operation : list) {
+                    ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
+                    serviceOperation.setId(factory.getNextId());
+                    RepositoryNode operationNode = new RepositoryNode(
+                    		new RepositoryViewObject(serviceItem.getProperty()), serviceRepositoryNode, ENodeType.REPOSITORY_ELEMENT);
+                    operationNode.setProperties(EProperties.LABEL, serviceItem.getProperty().getLabel());
+                    operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
+                    serviceOperation.setName(operation.getName());
+                    if (operation.getDocumentationElement() != null) {
+                        serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
+                    }
+                    serviceOperation.setLabel(operation.getName());
+                    port.getServiceOperation().add(serviceOperation);
+                }
+                ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
+            }
+        } catch (WSDLException e) {
+            ExceptionHandler.process(e);
+        }
+
+	}
+
 }
