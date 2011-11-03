@@ -461,15 +461,14 @@ public class ESBService implements IESBService {
                     || WSDLUtils.PORT_NS.equals(value)
                     || WSDLUtils.SERVICE_NAME.equals(value)
                     || WSDLUtils.SERVICE_NS.equals(value)
-                    || "ENDPOINT".equals(value)) {
-                String serviceParamKey = "ENDPOINT".equals(value) ? WSDLUtils.ENDPOINT_URI : value;
+                    || WSDLUtils.ENDPOINT_URI.equals(value)) {
                 String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
                 try {
                     if (portEle != null && operationEle != null) {
                         String portValue = (String) portEle.getValue();
                         String operationValue = (String) operationEle.getValue();
                         return WSDLUtils.getServiceOperationParameters(wsdlURI,
-                                operationValue, portValue).get(serviceParamKey);
+                                operationValue, portValue).get(value);
                     }
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
