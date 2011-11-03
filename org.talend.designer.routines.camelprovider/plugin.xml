@@ -11,7 +11,7 @@
          point="org.talend.core.systemRoutineLibrary"> 
       <libraryNeeded 
             language="java" 
-            moduleName="camel-core-2.8.2-SNAPSHOT.jar" 
+            moduleName="camel-core-2.8.2.jar" 
             routineName="CamelStat"></libraryNeeded> 
     </extension> 
 

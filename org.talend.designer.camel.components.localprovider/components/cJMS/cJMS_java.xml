@@ -91,17 +91,17 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 
 	<CODEGENERATION>
 		<IMPORTS>
-		    <IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2-SNAPSHOT.jar"
+		    <IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.8.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
@@ -117,7 +117,7 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.8.2.jar"
 				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>

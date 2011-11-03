@@ -39,96 +39,96 @@
 			<ITEMS>
 				<ITEM NAME="LIBPATH" FIELD="CLOSED_LIST">
 					<ITEMS DEFAULT="AMQP">
-						<ITEM NAME="AMQP" VALUE="camel-amqp-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="ATOM" VALUE="camel-atom-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="AWS" VALUE="camel-aws-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="BAM" VALUE="camel-bam-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="BEAN-VALIDATOR" VALUE="camel-bean-validator-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="BINDY" VALUE="camel-bindy-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="BLUEPRINT" VALUE="camel-blueprint-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CACHE" VALUE="camel-cache-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CASTOR" VALUE="camel-castor-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="COMETD" VALUE="camel-cometd-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CRYPTO" VALUE="camel-crypto-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CSV" VALUE="camel-csv-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CXF" VALUE="camel-cxf-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="CXF_BUNDLE" VALUE="cxf-bundle-2.5.0-SNAPSHOT.jar" />
-						<ITEM NAME="DNS" VALUE="camel-dns-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="DOZER" VALUE="camel-dozer-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="ECLIPSE" VALUE="camel-eclipse-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="EJB" VALUE="camel-ejb-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="EVENTADMIN" VALUE="camel-eventadmin-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="EXEC" VALUE="camel-exec-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="FLATPACK" VALUE="camel-flatpack-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="FREEMARKER" VALUE="camel-freemarker-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="FTP" VALUE="camel-ftp-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="GAE" VALUE="camel-gae-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="GROOVY" VALUE="camel-groovy-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="GUICE" VALUE="camel-guice-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="HAWTDB" VALUE="camel-hawtdb-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="HAZELCAST" VALUE="camel-hazelcast-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="HL7" VALUE="camel-hl7-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="HTTP" VALUE="camel-http-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="HTTP4" VALUE="camel-http4-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="IBATIS" VALUE="camel-ibatis-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="IRC" VALUE="camel-irc-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JACKSON" VALUE="camel-jackson-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JASYPT" VALUE="camel-jasypt-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JAVASPACE" VALUE="camel-javaspace-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JAXB" VALUE="camel-jaxb-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JCR" VALUE="camel-jcr-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JDBC" VALUE="camel-jdbc-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JETTY" VALUE="camel-jetty-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JIBX" VALUE="camel-jibx-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JING" VALUE="camel-jing-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JMS" VALUE="camel-jms-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JMX" VALUE="camel-jmx-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JOSQL" VALUE="camel-josql-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JPA" VALUE="camel-jpa-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JT400" VALUE="camel-jt400-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JUEL" VALUE="camel-juel-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="JXPATH" VALUE="camel-jxpath-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="KESTREL" VALUE="camel-kestrel-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="LDAP" VALUE="camel-ldap-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="LUCENE" VALUE="camel-lucene-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="MAIL" VALUE="camel-mail-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="MINA" VALUE="camel-mina-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="MSV" VALUE="camel-msv-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="MVEL" VALUE="camel-mvel-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="MYBATIS" VALUE="camel-mybatis-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="NAGIOS" VALUE="camel-nagios-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="NETTY" VALUE="camel-netty-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="OGNL" VALUE="camel-ognl-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="PAXLOGGING" VALUE="camel-paxlogging-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="PRINTER" VALUE="camel-printer-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="PROTOBUF" VALUE="camel-protobuf-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="QUARTZ" VALUE="camel-quartz-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="QUICKFIX" VALUE="camel-quickfix-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="RESTLET" VALUE="camel-restlet-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="RMI" VALUE="camel-rmi-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="ROUTEBOX" VALUE="camel-routebox-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="RSS" VALUE="camel-rss-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="RUBY" VALUE="camel-ruby-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SAXON" VALUE="camel-saxon-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SCALA" VALUE="camel-scala-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SCRIPT" VALUE="camel-script-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SERVLET" VALUE="camel-servlet-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SHIRO" VALUE="camel-shiro-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SIP" VALUE="camel-sip-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SMPP" VALUE="camel-smpp-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SNMP" VALUE="camel-snmp-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SOAP" VALUE="camel-soap-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SPRING" VALUE="camel-spring-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SQL" VALUE="camel-sql-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="STREAM" VALUE="camel-stream-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="STRINGTEMPLATE" VALUE="camel-stringtemplate-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="SYSLOG" VALUE="camel-syslog-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="TAGSOUP" VALUE="camel-tagsoup-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="VELOCITY" VALUE="camel-velocity-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="XMLBEANS" VALUE="camel-xmlbeans-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="XMLSECURITY" VALUE="camel-xmlsecurity-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="XMPP" VALUE="camel-xmpp-alldep-2.8.2-SNAPSHOT.jar" />
-						<ITEM NAME="XSTREAM" VALUE="camel-xstream-alldep-2.8.2-SNAPSHOT.jar" />
+						<ITEM NAME="AMQP" VALUE="camel-amqp-alldep-2.8.2.jar" />
+						<ITEM NAME="ATOM" VALUE="camel-atom-alldep-2.8.2.jar" />
+						<ITEM NAME="AWS" VALUE="camel-aws-alldep-2.8.2.jar" />
+						<ITEM NAME="BAM" VALUE="camel-bam-alldep-2.8.2.jar" />
+						<ITEM NAME="BEAN-VALIDATOR" VALUE="camel-bean-validator-alldep-2.8.2.jar" />
+						<ITEM NAME="BINDY" VALUE="camel-bindy-alldep-2.8.2.jar" />
+						<ITEM NAME="BLUEPRINT" VALUE="camel-blueprint-2.8.2.jar" />
+						<ITEM NAME="CACHE" VALUE="camel-cache-alldep-2.8.2.jar" />
+						<ITEM NAME="CASTOR" VALUE="camel-castor-alldep-2.8.2.jar" />
+						<ITEM NAME="COMETD" VALUE="camel-cometd-alldep-2.8.2.jar" />
+						<ITEM NAME="CRYPTO" VALUE="camel-crypto-alldep-2.8.2.jar" />
+						<ITEM NAME="CSV" VALUE="camel-csv-alldep-2.8.2.jar" />
+						<ITEM NAME="CXF" VALUE="camel-cxf-alldep-2.8.2.jar" />
+						<ITEM NAME="CXF_BUNDLE" VALUE="cxf-bundle-2.5.0.jar" />
+						<ITEM NAME="DNS" VALUE="camel-dns-alldep-2.8.2.jar" />
+						<ITEM NAME="DOZER" VALUE="camel-dozer-alldep-2.8.2.jar" />
+						<ITEM NAME="ECLIPSE" VALUE="camel-eclipse-2.8.2.jar" />
+						<ITEM NAME="EJB" VALUE="camel-ejb-alldep-2.8.2.jar" />
+						<ITEM NAME="EVENTADMIN" VALUE="camel-eventadmin-alldep-2.8.2.jar" />
+						<ITEM NAME="EXEC" VALUE="camel-exec-alldep-2.8.2.jar" />
+						<ITEM NAME="FLATPACK" VALUE="camel-flatpack-alldep-2.8.2.jar" />
+						<ITEM NAME="FREEMARKER" VALUE="camel-freemarker-alldep-2.8.2.jar" />
+						<ITEM NAME="FTP" VALUE="camel-ftp-alldep-2.8.2.jar" />
+						<ITEM NAME="GAE" VALUE="camel-gae-alldep-2.8.2.jar" />
+						<ITEM NAME="GROOVY" VALUE="camel-groovy-alldep-2.8.2.jar" />
+						<ITEM NAME="GUICE" VALUE="camel-guice-alldep-2.8.2.jar" />
+						<ITEM NAME="HAWTDB" VALUE="camel-hawtdb-alldep-2.8.2.jar" />
+						<ITEM NAME="HAZELCAST" VALUE="camel-hazelcast-alldep-2.8.2.jar" />
+						<ITEM NAME="HL7" VALUE="camel-hl7-alldep-2.8.2.jar" />
+						<ITEM NAME="HTTP" VALUE="camel-http-alldep-2.8.2.jar" />
+						<ITEM NAME="HTTP4" VALUE="camel-http4-alldep-2.8.2.jar" />
+						<ITEM NAME="IBATIS" VALUE="camel-ibatis-alldep-2.8.2.jar" />
+						<ITEM NAME="IRC" VALUE="camel-irc-alldep-2.8.2.jar" />
+						<ITEM NAME="JACKSON" VALUE="camel-jackson-alldep-2.8.2.jar" />
+						<ITEM NAME="JASYPT" VALUE="camel-jasypt-alldep-2.8.2.jar" />
+						<ITEM NAME="JAVASPACE" VALUE="camel-javaspace-alldep-2.8.2.jar" />
+						<ITEM NAME="JAXB" VALUE="camel-jaxb-alldep-2.8.2.jar" />
+						<ITEM NAME="JCR" VALUE="camel-jcr-alldep-2.8.2.jar" />
+						<ITEM NAME="JDBC" VALUE="camel-jdbc-alldep-2.8.2.jar" />
+						<ITEM NAME="JETTY" VALUE="camel-jetty-alldep-2.8.2.jar" />
+						<ITEM NAME="JIBX" VALUE="camel-jibx-alldep-2.8.2.jar" />
+						<ITEM NAME="JING" VALUE="camel-jing-alldep-2.8.2.jar" />
+						<ITEM NAME="JMS" VALUE="camel-jms-alldep-2.8.2.jar" />
+						<ITEM NAME="JMX" VALUE="camel-jmx-alldep-2.8.2.jar" />
+						<ITEM NAME="JOSQL" VALUE="camel-josql-alldep-2.8.2.jar" />
+						<ITEM NAME="JPA" VALUE="camel-jpa-alldep-2.8.2.jar" />
+						<ITEM NAME="JT400" VALUE="camel-jt400-alldep-2.8.2.jar" />
+						<ITEM NAME="JUEL" VALUE="camel-juel-alldep-2.8.2.jar" />
+						<ITEM NAME="JXPATH" VALUE="camel-jxpath-alldep-2.8.2.jar" />
+						<ITEM NAME="KESTREL" VALUE="camel-kestrel-alldep-2.8.2.jar" />
+						<ITEM NAME="LDAP" VALUE="camel-ldap-alldep-2.8.2.jar" />
+						<ITEM NAME="LUCENE" VALUE="camel-lucene-alldep-2.8.2.jar" />
+						<ITEM NAME="MAIL" VALUE="camel-mail-alldep-2.8.2.jar" />
+						<ITEM NAME="MINA" VALUE="camel-mina-alldep-2.8.2.jar" />
+						<ITEM NAME="MSV" VALUE="camel-msv-alldep-2.8.2.jar" />
+						<ITEM NAME="MVEL" VALUE="camel-mvel-alldep-2.8.2.jar" />
+						<ITEM NAME="MYBATIS" VALUE="camel-mybatis-alldep-2.8.2.jar" />
+						<ITEM NAME="NAGIOS" VALUE="camel-nagios-alldep-2.8.2.jar" />
+						<ITEM NAME="NETTY" VALUE="camel-netty-alldep-2.8.2.jar" />
+						<ITEM NAME="OGNL" VALUE="camel-ognl-alldep-2.8.2.jar" />
+						<ITEM NAME="PAXLOGGING" VALUE="camel-paxlogging-alldep-2.8.2.jar" />
+						<ITEM NAME="PRINTER" VALUE="camel-printer-alldep-2.8.2.jar" />
+						<ITEM NAME="PROTOBUF" VALUE="camel-protobuf-alldep-2.8.2.jar" />
+						<ITEM NAME="QUARTZ" VALUE="camel-quartz-alldep-2.8.2.jar" />
+						<ITEM NAME="QUICKFIX" VALUE="camel-quickfix-alldep-2.8.2.jar" />
+						<ITEM NAME="RESTLET" VALUE="camel-restlet-alldep-2.8.2.jar" />
+						<ITEM NAME="RMI" VALUE="camel-rmi-alldep-2.8.2.jar" />
+						<ITEM NAME="ROUTEBOX" VALUE="camel-routebox-alldep-2.8.2.jar" />
+						<ITEM NAME="RSS" VALUE="camel-rss-alldep-2.8.2.jar" />
+						<ITEM NAME="RUBY" VALUE="camel-ruby-alldep-2.8.2.jar" />
+						<ITEM NAME="SAXON" VALUE="camel-saxon-alldep-2.8.2.jar" />
+						<ITEM NAME="SCALA" VALUE="camel-scala-alldep-2.8.2.jar" />
+						<ITEM NAME="SCRIPT" VALUE="camel-script-alldep-2.8.2.jar" />
+						<ITEM NAME="SERVLET" VALUE="camel-servlet-alldep-2.8.2.jar" />
+						<ITEM NAME="SHIRO" VALUE="camel-shiro-alldep-2.8.2.jar" />
+						<ITEM NAME="SIP" VALUE="camel-sip-alldep-2.8.2.jar" />
+						<ITEM NAME="SMPP" VALUE="camel-smpp-alldep-2.8.2.jar" />
+						<ITEM NAME="SNMP" VALUE="camel-snmp-alldep-2.8.2.jar" />
+						<ITEM NAME="SOAP" VALUE="camel-soap-alldep-2.8.2.jar" />
+						<ITEM NAME="SPRING" VALUE="camel-spring-2.8.2.jar" />
+						<ITEM NAME="SQL" VALUE="camel-sql-alldep-2.8.2.jar" />
+						<ITEM NAME="STREAM" VALUE="camel-stream-alldep-2.8.2.jar" />
+						<ITEM NAME="STRINGTEMPLATE" VALUE="camel-stringtemplate-alldep-2.8.2.jar" />
+						<ITEM NAME="SYSLOG" VALUE="camel-syslog-alldep-2.8.2.jar" />
+						<ITEM NAME="TAGSOUP" VALUE="camel-tagsoup-alldep-2.8.2.jar" />
+						<ITEM NAME="VELOCITY" VALUE="camel-velocity-alldep-2.8.2.jar" />
+						<ITEM NAME="XMLBEANS" VALUE="camel-xmlbeans-alldep-2.8.2.jar" />
+						<ITEM NAME="XMLSECURITY" VALUE="camel-xmlsecurity-alldep-2.8.2.jar" />
+						<ITEM NAME="XMPP" VALUE="camel-xmpp-alldep-2.8.2.jar" />
+						<ITEM NAME="XSTREAM" VALUE="camel-xstream-alldep-2.8.2.jar" />
 					</ITEMS>
 				</ITEM>
 			</ITEMS>
@@ -153,13 +153,13 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
@@ -177,183 +177,183 @@
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-amqp" MODULE="camel-amqp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-amqp" MODULE="camel-amqp-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-atom" MODULE="camel-atom-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-atom" MODULE="camel-atom-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-aws" MODULE="camel-aws-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-aws" MODULE="camel-aws-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-bam" MODULE="camel-bam-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-bam" MODULE="camel-bam-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-bean-validator" MODULE="camel-bean-validator-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-bean-validator" MODULE="camel-bean-validator-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-bindy" MODULE="camel-bindy-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-bindy" MODULE="camel-bindy-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-blueprint" MODULE="camel-blueprint-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-blueprint" MODULE="camel-blueprint-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-cache" MODULE="camel-cache-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-cache" MODULE="camel-cache-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-castor" MODULE="camel-castor-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-castor" MODULE="camel-castor-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-cometd" MODULE="camel-cometd-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-cometd" MODULE="camel-cometd-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-context" MODULE="camel-context-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-context" MODULE="camel-context-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-crypto" MODULE="camel-crypto-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-crypto" MODULE="camel-crypto-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-csv" MODULE="camel-csv-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-csv" MODULE="camel-csv-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-cxf" MODULE="camel-cxf-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-cxf" MODULE="camel-cxf-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-dns" MODULE="camel-dns-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-dns" MODULE="camel-dns-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-dozer" MODULE="camel-dozer-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-dozer" MODULE="camel-dozer-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-eclipse" MODULE="camel-eclipse-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-eclipse" MODULE="camel-eclipse-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ejb" MODULE="camel-ejb-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ejb" MODULE="camel-ejb-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-eventadmin" MODULE="camel-eventadmin-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-eventadmin" MODULE="camel-eventadmin-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-exec" MODULE="camel-exec-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-exec" MODULE="camel-exec-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-flatpack" MODULE="camel-flatpack-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-flatpack" MODULE="camel-flatpack-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-freemarker" MODULE="camel-freemarker-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-freemarker" MODULE="camel-freemarker-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-gae" MODULE="camel-gae-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-gae" MODULE="camel-gae-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-guice" MODULE="camel-guice-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-guice" MODULE="camel-guice-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-hawtdb" MODULE="camel-hawtdb-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-hawtdb" MODULE="camel-hawtdb-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-hazelcast" MODULE="camel-hazelcast-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-hazelcast" MODULE="camel-hazelcast-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-hl7" MODULE="camel-hl7-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-hl7" MODULE="camel-hl7-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-http" MODULE="camel-http-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-http" MODULE="camel-http-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-http4" MODULE="camel-http4-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-http4" MODULE="camel-http4-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ibatis" MODULE="camel-ibatis-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ibatis" MODULE="camel-ibatis-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-irc" MODULE="camel-irc-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-irc" MODULE="camel-irc-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jackson" MODULE="camel-jackson-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jackson" MODULE="camel-jackson-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jasypt" MODULE="camel-jasypt-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jasypt" MODULE="camel-jasypt-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-javaspace" MODULE="camel-javaspace-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-javaspace" MODULE="camel-javaspace-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jaxb" MODULE="camel-jaxb-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jaxb" MODULE="camel-jaxb-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jcr" MODULE="camel-jcr-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jcr" MODULE="camel-jcr-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jdbc" MODULE="camel-jdbc-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jdbc" MODULE="camel-jdbc-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jetty" MODULE="camel-jetty-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jetty" MODULE="camel-jetty-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jibx" MODULE="camel-jibx-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jibx" MODULE="camel-jibx-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jing" MODULE="camel-jing-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jing" MODULE="camel-jing-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jms" MODULE="camel-jms-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jms" MODULE="camel-jms-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jmx" MODULE="camel-jmx-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jmx" MODULE="camel-jmx-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-josql" MODULE="camel-josql-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-josql" MODULE="camel-josql-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jpa" MODULE="camel-jpa-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jpa" MODULE="camel-jpa-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jt400" MODULE="camel-jt400-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jt400" MODULE="camel-jt400-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-juel" MODULE="camel-juel-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-juel" MODULE="camel-juel-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-jxpath" MODULE="camel-jxpath-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-jxpath" MODULE="camel-jxpath-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-kestrel" MODULE="camel-kestrel-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-kestrel" MODULE="camel-kestrel-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ldap" MODULE="camel-ldap-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ldap" MODULE="camel-ldap-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-lucene" MODULE="camel-lucene-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-lucene" MODULE="camel-lucene-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-mina" MODULE="camel-mina-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-mina" MODULE="camel-mina-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-msv" MODULE="camel-msv-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-msv" MODULE="camel-msv-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-mvel" MODULE="camel-mvel-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-mvel" MODULE="camel-mvel-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-mybatis" MODULE="camel-mybatis-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-mybatis" MODULE="camel-mybatis-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-nagios" MODULE="camel-nagios-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-nagios" MODULE="camel-nagios-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-netty" MODULE="camel-netty-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-netty" MODULE="camel-netty-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ognl" MODULE="camel-ognl-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ognl" MODULE="camel-ognl-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-paxlogging" MODULE="camel-paxlogging-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-paxlogging" MODULE="camel-paxlogging-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-printer" MODULE="camel-printer-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-printer" MODULE="camel-printer-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-protobuf" MODULE="camel-protobuf-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-protobuf" MODULE="camel-protobuf-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-quartz" MODULE="camel-quartz-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-quartz" MODULE="camel-quartz-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-quickfix" MODULE="camel-quickfix-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-quickfix" MODULE="camel-quickfix-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-restlet" MODULE="camel-restlet-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-restlet" MODULE="camel-restlet-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-rmi" MODULE="camel-rmi-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-rmi" MODULE="camel-rmi-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-routebox" MODULE="camel-routebox-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-routebox" MODULE="camel-routebox-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-rss" MODULE="camel-rss-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-rss" MODULE="camel-rss-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-ruby" MODULE="camel-ruby-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-ruby" MODULE="camel-ruby-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-saxon" MODULE="camel-saxon-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-saxon" MODULE="camel-saxon-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-scala" MODULE="camel-scala-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-scala" MODULE="camel-scala-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-servlet" MODULE="camel-servlet-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-servlet" MODULE="camel-servlet-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-shiro" MODULE="camel-shiro-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-shiro" MODULE="camel-shiro-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-sip" MODULE="camel-sip-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-sip" MODULE="camel-sip-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-smpp" MODULE="camel-smpp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-smpp" MODULE="camel-smpp-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-snmp" MODULE="camel-snmp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-snmp" MODULE="camel-snmp-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-soap" MODULE="camel-soap-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-soap" MODULE="camel-soap-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-sql" MODULE="camel-sql-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-sql" MODULE="camel-sql-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-stream" MODULE="camel-stream-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-stream" MODULE="camel-stream-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-stringtemplate" MODULE="camel-stringtemplate-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-stringtemplate" MODULE="camel-stringtemplate-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-syslog" MODULE="camel-syslog-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-syslog" MODULE="camel-syslog-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-tagsoup" MODULE="camel-tagsoup-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-tagsoup" MODULE="camel-tagsoup-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-velocity" MODULE="camel-velocity-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-velocity" MODULE="camel-velocity-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-xmlbeans" MODULE="camel-xmlbeans-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-xmlbeans" MODULE="camel-xmlbeans-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-xmlsecurity" MODULE="camel-xmlsecurity-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-xmlsecurity" MODULE="camel-xmlsecurity-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-xmpp" MODULE="camel-xmpp-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-xmpp" MODULE="camel-xmpp-alldep-2.8.2.jar"
 				REQUIRED="false" />
-			<IMPORT NAME="talend-camel-xstream" MODULE="camel-xstream-alldep-2.8.2-SNAPSHOT.jar"
+			<IMPORT NAME="talend-camel-xstream" MODULE="camel-xstream-alldep-2.8.2.jar"
 				REQUIRED="false" />
 		</IMPORTS>
 	</CODEGENERATION>
