@@ -22,7 +22,7 @@ imports="
 	if(conns.size()>0) {
 		
 			if(!("none".equals(language))) {
-				if("true".endsWith(useDelimiter)){
+				if("true".equals(useDelimiter)){
 %>
 				.recipientList(<%=language%>(<%=expression%>),<%=delimiter%>)
 <%				}else{
@@ -32,7 +32,7 @@ imports="
 %>
 <%
 			} else {
-			    if("true".endsWith(useDelimiter)){
+			    if("true".equals(useDelimiter)){
 %>
 				.recipientList(<%=expression%>,<%=delimiter%>)
 <%              } else{
