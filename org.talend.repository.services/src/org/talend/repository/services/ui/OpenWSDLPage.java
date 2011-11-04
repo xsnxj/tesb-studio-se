@@ -130,10 +130,9 @@ public class OpenWSDLPage extends WizardPage {
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         wsdlText = new LabelledFileField(parentArea, "WSDL", xmlExtensions); //$NON-NLS-1$
 
-        if (null != item.getConnection()) {
-            path = ((ServiceConnection) item.getConnection()).getWSDLPath();
-            wsdlText.setText(path);
-        }
+        path = (null == item.getConnection()) ? "" : ((ServiceConnection) item.getConnection()).getWSDLPath();
+        wsdlText.setText(path);
+
         setPageComplete(!path.trim().isEmpty());
 
         addListener();
