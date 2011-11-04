@@ -175,4 +175,8 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
             ExceptionHandler.process(e);
         }
     }
+
+	public void setRepositoryNode(RepositoryNode repositoryNode) {
+		this.repositoryNode = repositoryNode;
+	}
 }

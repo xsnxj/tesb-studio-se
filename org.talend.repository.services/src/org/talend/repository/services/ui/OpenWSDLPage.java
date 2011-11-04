@@ -50,23 +50,29 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.IESBService;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.repository.RepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
+import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.TemplateProcessor;
 
 /**
@@ -180,6 +186,8 @@ public class OpenWSDLPage extends WizardPage {
             } catch (PersistenceException e) {
                 ExceptionHandler.process(e);
             }
+            repositoryNode = new RepositoryNode(new RepositoryViewObject(item.getProperty()),
+            		repositoryNode.getParent(), ENodeType.REPOSITORY_ELEMENT);
         }
 
         IProject currentProject;
@@ -293,6 +301,10 @@ public class OpenWSDLPage extends WizardPage {
         try {
             factory.save(item);
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+            OpenWSDLEditorAction action = new OpenWSDLEditorAction();
+            action.setRepositoryNode(repositoryNode);
+            action.run();
+
             return true;
         } catch (PersistenceException e) {
             e.printStackTrace();
