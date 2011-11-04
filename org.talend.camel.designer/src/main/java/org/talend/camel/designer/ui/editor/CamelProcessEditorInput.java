@@ -51,7 +51,7 @@ public class CamelProcessEditorInput extends JobEditorInput {
      * @see org.talend.repository.editor.JobEditorInput#createProcess()
      */
     protected Process createProcess() {
-        return new Process(getItem().getProperty());
+        return new RouteProcess(getItem().getProperty());
     }
 
     /*
