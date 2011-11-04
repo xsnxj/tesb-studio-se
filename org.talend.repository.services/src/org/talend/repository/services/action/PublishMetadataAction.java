@@ -262,8 +262,7 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-			factory.create(connectionItem, new Path(parameter.getNameSpace()
-					+ "/" + portTypeQName.getLocalPart()));
+            factory.create(connectionItem, new Path(parameter.getNameSpace() + "/" + portTypeQName.getLocalPart()));
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
@@ -338,7 +337,7 @@ public class PublishMetadataAction extends AContextualAction {
                     PackageHelper.addMetadataTable(table, newrecord);
                 }
             }
-            fillRootInfo(connection, node, "");
+            fillRootInfo(connection, node, "", false);
 
         } catch (MalformedURLException e1) {
             ExceptionHandler.process(e1);
@@ -353,28 +352,27 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-			// http://jira.talendforge.org/browse/TESB-3655 Remove possible
-			// schema prefix
-			String folderString = parameter.getNameSpace() + "/"
-					+ portTypeQName.getLocalPart();
-			try {
-				URI uri = new URI(folderString);
-				String scheme = uri.getScheme();
-				if (scheme != null) {
-					folderString = folderString.substring(scheme.length());
-				}
-			} catch (URISyntaxException e) {
+            // http://jira.talendforge.org/browse/TESB-3655 Remove possible
+            // schema prefix
+            String folderString = parameter.getNameSpace() + "/" + portTypeQName.getLocalPart();
+            try {
+                URI uri = new URI(folderString);
+                String scheme = uri.getScheme();
+                if (scheme != null) {
+                    folderString = folderString.substring(scheme.length());
+                }
+            } catch (URISyntaxException e) {
 
-			}
-			if (folderString.startsWith(":")) {
-				folderString = folderString.substring(1);
-			}
-			folderString = FolderNameUtil.replaceAllLimited(folderString);
-			IPath path = new Path(folderString);
-//			if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
-//				path = path.removeFirstSegments(1);
-//			}
-			factory.create(connectionItem, path);
+            }
+            if (folderString.startsWith(":")) {
+                folderString = folderString.substring(1);
+            }
+            folderString = FolderNameUtil.replaceAllLimited(folderString);
+            IPath path = new Path(folderString);
+            // if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
+            // path = path.removeFirstSegments(1);
+            // }
+            factory.create(connectionItem, path);
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
@@ -382,7 +380,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
-    private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path) throws OdaException {
+    private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) throws OdaException {
         XMLFileNode xmlNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
         xmlNode.setXMLPath(path + "/" + node.getValue());
         xmlNode.setOrder(orderId);
@@ -424,6 +422,8 @@ public class PublishMetadataAction extends AContextualAction {
                 column.setTalendType(xmlNode.getType());
                 column.setLabel(nameWithoutPrefixForColumn);
                 ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0].getColumns().add(column);
+            } else {
+                xmlNode.setAttribute("main");
             }
             break;
         case ATreeNode.NAMESPACE_TYPE:
@@ -437,23 +437,19 @@ public class PublishMetadataAction extends AContextualAction {
         case ATreeNode.OTHER_TYPE:
             break;
         }
+        boolean subElementsInLoop = inLoop;
         // will try to get the first element (branch or main), and set it as loop.
-        if (!loopElementFound && path.split("/").length == 2 && node.getType() == ATreeNode.ELEMENT_TYPE) {
+        if ((!loopElementFound && path.split("/").length == 2 && node.getType() == ATreeNode.ELEMENT_TYPE) || subElementsInLoop) {
             connection.getLoop().add(xmlNode);
 
-            for (XMLFileNode curNode : connection.getRoot()) {
-                if (curNode.getXMLPath().startsWith(path)) {
-                    curNode.setAttribute("main");
-                }
-            }
-            xmlNode.setAttribute("main");
             loopElementFound = true;
+            subElementsInLoop = true;
         } else {
             connection.getRoot().add(xmlNode);
         }
         if (node.getChildren().length > 0) {
             for (Object curNode : node.getChildren()) {
-                fillRootInfo(connection, (ATreeNode) curNode, path + "/" + node.getValue());
+                fillRootInfo(connection, (ATreeNode) curNode, path + "/" + node.getValue(), subElementsInLoop);
             }
         }
     }
