@@ -233,7 +233,6 @@ public class ImportSpringXMLWizard extends Wizard {
 					CamelProcessEditorInput fileEditorInput;
 					// Set readonly to false since created job will always be editable.
 					fileEditorInput = new CamelProcessEditorInput(processItem, true, true, false);
-					fileEditorInput.setView(getViewPart());
 					IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem().getProperty()
 							.getId(), false);
 					fileEditorInput.setRepositoryNode(repositoryNode);
