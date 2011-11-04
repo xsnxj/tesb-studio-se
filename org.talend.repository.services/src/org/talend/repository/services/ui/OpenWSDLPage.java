@@ -12,16 +12,13 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -186,12 +183,12 @@ public class OpenWSDLPage extends WizardPage {
         }
 
         IProject currentProject;
-		try {
-			currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-		} catch (PersistenceException e) {
+        try {
+            currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+        } catch (PersistenceException e) {
             ExceptionHandler.process(e);
             return false;
-		}
+        }
         String foldPath = item.getState().getPath();
         String folder = "";
         if (!foldPath.equals("")) {
@@ -204,23 +201,34 @@ public class OpenWSDLPage extends WizardPage {
                 item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
                 ((ServiceConnection) item.getConnection()).setWSDLPath(path);
                 File file = new File(path);
-                StringBuffer buffer = new StringBuffer();
+                FileInputStream source;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 try {
-                    BufferedReader read = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-                    String temp;
-                    while ((temp = read.readLine()) != null) {
-                        buffer.append(temp);
+                    source = new FileInputStream(file);
+                    try {
+
+                        byte[] buf = new byte[1024];
+                        int i = 0;
+                        while ((i = source.read(buf)) != -1) {
+                            bos.write(buf, 0, i);
+                        }
+                    } catch (IOException e) {
+                        ExceptionHandler.process(e);
+                    } finally {
+                        try {
+                            source.close();
+                        } catch (Exception e) {
+                        }
+                        try {
+                            bos.close();
+                        } catch (Exception e) {
+                        }
                     }
-                } catch (UnsupportedEncodingException e) {
-                    ExceptionHandler.process(e);
-                } catch (FileNotFoundException e) {
-                    ExceptionHandler.process(e);
-                } catch (IOException e) {
-                    ExceptionHandler.process(e);
-                }
-                // copy file to item
+                } catch (FileNotFoundException e2) {
+                    ExceptionHandler.process(e2);
+                } // copy file to item
                 try {
-                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer.toString().getBytes());
+                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bos.toByteArray());
                     if (!fileTemp.exists()) {
                         fileTemp.create(byteArrayInputStream, true, null);
                     } else {
@@ -236,10 +244,9 @@ public class OpenWSDLPage extends WizardPage {
                     createReferenceFileItem.setContent(byteArray);
                     createReferenceFileItem.setExtension("wsdl");
                     item.getReferenceResources().add(createReferenceFileItem);
-                    createReferenceFileItem.getContent().setInnerContent(buffer.toString().getBytes());
+                    createReferenceFileItem.getContent().setInnerContent(bos.toByteArray());
                 } else {
-                    ((ReferenceFileItem) item.getReferenceResources().get(0)).getContent().setInnerContent(
-                            buffer.toString().getBytes());
+                    ((ReferenceFileItem) item.getReferenceResources().get(0)).getContent().setInnerContent(bos.toByteArray());
                 }
                 //
                 populateModelFromWsdl(factory, path, item, repositoryNode);
@@ -254,10 +261,10 @@ public class OpenWSDLPage extends WizardPage {
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 String templatePath = "/resources/wsdl-template.wsdl"; //$NON-NLS-1$
-				TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(baos));
+                TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(baos));
 
-//                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
+                // ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
                 if (!fileTemp.exists()) {
                     fileTemp.create(byteArrayInputStream, true, null);
                 } else {
@@ -293,7 +300,8 @@ public class OpenWSDLPage extends WizardPage {
         return false;
     }
 
-	private void populateModelFromWsdl(IProxyRepositoryFactory factory, String wsdlPath, ServiceItem serviceItem, RepositoryNode serviceRepositoryNode) {
+    private void populateModelFromWsdl(IProxyRepositoryFactory factory, String wsdlPath, ServiceItem serviceItem,
+            RepositoryNode serviceRepositoryNode) {
 
         WSDLFactory wsdlFactory;
         try {
@@ -316,8 +324,8 @@ public class OpenWSDLPage extends WizardPage {
                 for (Operation operation : list) {
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                     serviceOperation.setId(factory.getNextId());
-                    RepositoryNode operationNode = new RepositoryNode(
-                    		new RepositoryViewObject(serviceItem.getProperty()), serviceRepositoryNode, ENodeType.REPOSITORY_ELEMENT);
+                    RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(serviceItem.getProperty()),
+                            serviceRepositoryNode, ENodeType.REPOSITORY_ELEMENT);
                     operationNode.setProperties(EProperties.LABEL, serviceItem.getProperty().getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                     serviceOperation.setName(operation.getName());
@@ -333,6 +341,6 @@ public class OpenWSDLPage extends WizardPage {
             ExceptionHandler.process(e);
         }
 
-	}
+    }
 
 }
