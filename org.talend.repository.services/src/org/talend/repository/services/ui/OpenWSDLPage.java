@@ -88,64 +88,68 @@ public class OpenWSDLPage extends WizardPage {
 
     private IPath pathToSave;
 
-    protected OpenWSDLPage(RepositoryNode repositoryNode, IPath pathToSave, ServiceItem item, String pageName, boolean creation) {
+    protected OpenWSDLPage(RepositoryNode repositoryNode, IPath pathToSave, ServiceItem item,
+            String pageName, boolean creation) {
         super(pageName);
         this.creation = creation;
         this.pathToSave = pathToSave;
         this.item = item;
         this.repositoryNode = repositoryNode;
-        this.setTitle("Edit WSDL");
-        this.setMessage("choose a WSDL file");
+        this.path = (null == item.getConnection()) ? ""
+                : ((ServiceConnection) item.getConnection()).getWSDLPath();
+
+        this.setTitle("Assign WSDL");
+        this.setMessage("Assign WSDL to Data Service");
     }
 
     public void createControl(Composite parent) {
         Composite parentArea = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 5;
-        parentArea.setLayout(layout);
-        final Button check = new Button(parentArea, SWT.CHECK);
-        check.setText("create new wsdl file");
-        check.setSelection(false);
-        createWSDL = false;
-        check.addSelectionListener(new SelectionAdapter() {
+        parentArea.setLayout(new GridLayout(1, false));
+
+        Button radioCreateWsdl = new Button(parentArea, SWT.RADIO);
+        radioCreateWsdl.setText("Create new WSDL");
+        radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (check.getSelection()) {
-                    wsdlText.setVisible(false);
-                    createWSDL = true;
-                    setPageComplete(true);
-                } else {
-                    wsdlText.setVisible(true);
-                    createWSDL = false;
-                    path = wsdlText.getText();
-                    setPageComplete(!path.trim().isEmpty());
-                }
+                wsdlText.setVisible(false);
+                createWSDL = true;
+                setPageComplete(true);
+            }
+        });
+        radioCreateWsdl.setSelection(true);
+
+        Button radioImportWsdl = new Button(parentArea, SWT.RADIO);
+        radioImportWsdl.setText("Import existed WSDL");
+        radioImportWsdl.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                wsdlText.setVisible(true);
+                createWSDL = false;
+                path = wsdlText.getText();
+                setPageComplete(!path.trim().isEmpty());
             }
         });
 
-        GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gridData.horizontalSpan = 5;
-        gridData.verticalSpan = 1;
-        check.setLayoutData(gridData);
+
+        Composite wsdlFileArea = new Composite(parentArea, SWT.NONE);
+        wsdlFileArea.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        GridLayout layout = new GridLayout(3, false);
+        layout.marginLeft = 15;
+        layout.marginHeight = 0;
+        wsdlFileArea.setLayout(layout);
 
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        wsdlText = new LabelledFileField(parentArea, "WSDL", xmlExtensions); //$NON-NLS-1$
-
-        path = (null == item.getConnection()) ? "" : ((ServiceConnection) item.getConnection()).getWSDLPath();
+        wsdlText = new LabelledFileField(wsdlFileArea, "WSDL file", xmlExtensions); //$NON-NLS-1$
+        wsdlText.setVisible(false);
         wsdlText.setText(path);
-
-        setPageComplete(!path.trim().isEmpty());
-
-        addListener();
-        setControl(parentArea);
-    }
-
-    private void addListener() {
         wsdlText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 path = wsdlText.getText();
                 setPageComplete(!path.trim().isEmpty());
             }
         });
+
+        setPageComplete(!path.trim().isEmpty());
+
+        setControl(parentArea);
     }
 
     @SuppressWarnings("unchecked")
@@ -171,7 +175,8 @@ public class OpenWSDLPage extends WizardPage {
 
         IProject currentProject;
         try {
-            currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+            currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance()
+                    .getCurrentProject());
         } catch (PersistenceException e) {
             ExceptionHandler.process(e);
             return false;
@@ -196,7 +201,8 @@ public class OpenWSDLPage extends WizardPage {
                 wsdlInfo.put("serviceName", label); //$NON-NLS-1$
 
                 String templatePath = "/resources/wsdl-template.wsdl"; //$NON-NLS-1$
-                TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(baos));
+                TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(
+                        baos));
             } else {
                 // copy WSDL file
                 readWsdlFile(new File(path), baos);
@@ -225,7 +231,8 @@ public class OpenWSDLPage extends WizardPage {
             createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
 
             //
-            populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString(), item, repositoryNode);
+            populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString(), item,
+                    repositoryNode);
 
         } catch (SystemException e) {
             ExceptionHandler.process(e);
@@ -237,7 +244,8 @@ public class OpenWSDLPage extends WizardPage {
 
         try {
             factory.save(item);
-            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+            ProxyRepositoryFactory.getInstance().saveProject(
+                    ProjectManager.getInstance().getCurrentProject());
             OpenWSDLEditorAction action = new OpenWSDLEditorAction();
             action.setRepositoryNode(repositoryNode);
             action.run();
