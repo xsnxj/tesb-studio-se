@@ -1011,7 +1011,7 @@ public class WebServiceUI extends AbstractWebService {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(
 					message.getSchema());
 			XSDResourceImpl xsdResourceImpl = new XSDResourceImpl(
-					org.eclipse.emf.common.util.URI.createFileURI(text));
+					org.eclipse.emf.common.util.URI.createURI(text));
 			xsdResourceImpl.load(inputStream, Collections.EMPTY_MAP);
 			XSDSchema xsdSchema = xsdResourceImpl.getSchema();
 			@SuppressWarnings("restriction")
