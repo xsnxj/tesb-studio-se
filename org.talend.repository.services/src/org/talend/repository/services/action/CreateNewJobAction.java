@@ -100,7 +100,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -132,7 +132,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -178,9 +178,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
             try {
                 // Set readonly to false since created job will always be editable.
                 fileEditorInput = new ProcessEditorInput(processWizard.getProcess(), false, true, false);
-                fileEditorInput.setView(getViewPart());
-                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(
-                        fileEditorInput.getItem().getProperty().getId(), false);
+                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
+                        .getProperty().getId(), false);
                 fileEditorInput.setRepositoryNode(repositoryNode);
 
                 IWorkbenchPage page = getActivePage();
@@ -198,8 +197,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
                 String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
-                        ((OperationRepositoryObject) node.getObject()).getName(),
-                        node.getParent().getObject().getLabel());
+                        ((OperationRepositoryObject) node.getObject()).getName(), node.getParent().getObject().getLabel());
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
                 NodeContainer nc = new NodeContainer(node1);
@@ -211,8 +209,9 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand((org.talend.designer.core.ui.editor.process.Process) fileEditorInput
-                        .getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(
+                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
 
                 // openEditor.doSave(new NullProgressMonitor());
@@ -276,9 +275,10 @@ public class CreateNewJobAction extends AbstractCreateAction {
             String serviceId = connectionItem.getProperty().getId();
             String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
             String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
-            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(), param
-                    .getName()
-                    + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(
+                    node,
+                    connectionItem.getConnection(),
+                    param.getName() + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
             command2.execute();
         }
     }

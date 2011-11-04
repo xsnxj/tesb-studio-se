@@ -104,7 +104,6 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
                 IEditorPart editorPart = page.findEditor(fileEditorInput);
 
                 if (editorPart == null) {
-                    fileEditorInput.setView(getViewPart());
                     fileEditorInput.setRepositoryNode(node);
                     editorPart = page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
                     /* MultiPageTalendEditor openEditor = (MultiPageTalendEditor) */

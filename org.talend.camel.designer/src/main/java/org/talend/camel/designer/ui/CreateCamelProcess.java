@@ -146,7 +146,6 @@ public class CreateCamelProcess extends CreateProcess {
                 // Set readonly to false since created job will always be editable.
                 fileEditorInput = new CamelProcessEditorInput(processWizard.getProcess(), false, true, false);
 
-                fileEditorInput.setView(getViewPart());
                 IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
                         .getProperty().getId(), false);
                 fileEditorInput.setRepositoryNode(repositoryNode);

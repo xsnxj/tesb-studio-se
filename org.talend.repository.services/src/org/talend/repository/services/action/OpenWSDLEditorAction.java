@@ -62,6 +62,8 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                     if (editor instanceof LocalWSDLEditor) {
                         LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) editor;
                         localWSDLEditor.removeListener();
+                        localWSDLEditor.setServiceItem(null);
+                        localWSDLEditor.setRepositoryNode(null);
                     }
                     String editorName = editor.getEditorInput().getName();
                     IProxyRepositoryFactory repFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
@@ -78,8 +80,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                     } catch (Exception e) {
                         ExceptionHandler.process(e);
                     }
-
-                    RepositoryManager.getRepositoryView().refreshView();
+                    RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
                 }
             }
 

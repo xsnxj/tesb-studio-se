@@ -67,7 +67,6 @@ public class ReadCamelProcess extends AbstractProcessAction {
             IEditorPart editorPart = page.findEditor(fileEditorInput);
 
             if (editorPart == null) {
-                fileEditorInput.setView(getViewPart());
                 fileEditorInput.setRepositoryNode(node);
                 page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
             } else {
