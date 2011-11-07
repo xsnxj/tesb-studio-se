@@ -40,6 +40,10 @@ public class RecipientListComponentSaver extends AbstractComponentSaver {
 		if ("true".equals(parellelProcess)) {
 			element.setAttribute("parallelProcessing", "true");
 		}
+		String stopOnException = parameter.get(RL_STOP_ON_EXCEPTION);
+		if ("true".equals(stopOnException)) {
+			element.setAttribute("stopOnException", "true");
+		}
 		String delimiter = parameter.get(RL_DELIMITER);
 		if (delimiter != null && !"".equals(delimiter)) {
 			element.setAttribute("delimiter", delimiter);
