@@ -142,7 +142,7 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 				contextElement);
 		savers[FTP] = new FtpComponentSaver(document, beansElement,
 				contextElement);
-		savers[ACTIVEMQ] = new ActivemqComponentSaver(document, beansElement,
+		savers[RECIPIENT] = new ActivemqComponentSaver(document, beansElement,
 				contextElement);
 		savers[MSGENDPOINT] = new MsgEndpointComponentSaver(document,
 				beansElement, contextElement);

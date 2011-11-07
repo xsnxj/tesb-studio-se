@@ -16,7 +16,7 @@ public interface ICamelSpringConstants {
 	public static final int INTERCEPT = 0;
 	public static final int EXCEPTION = 1;
 	public static final int TRY = 2;
-	public static final int ACTIVEMQ = 3;
+	public static final int RECIPIENT = 3;
 	public static final int BEAN = 4;
 	public static final int CXF = 5;
 	public static final int FILE = 6;
@@ -61,6 +61,11 @@ public interface ICamelSpringConstants {
 	
 	//pipe
 	public static final String PF_DESTINATIONS = "destinations";
+
+	// recipient list
+	public static final String RL_STOP_ON_EXCEPTION = "stop_on_exception";
+	public static final String RL_IGNORE_INVALID = "ignore_invalid";
+	public static final String RL_PARELLEL_PROCESS = "parellel_process";
 
 	//split
 	public static final String SP_SPLIT_EXPRESS = "split_express";
@@ -227,8 +232,11 @@ public interface ICamelSpringConstants {
 	public static final String JMS_SCHEMA_NAME = "jms_schema";
 	public static final String JMS_TYPE = "jms_type";
 	public static final String JMS_DESTINATION = "jms_destination";
-	
-	
+	public static final String JMS_BORKER_TYPE = "jms_broker_type";
+	public static final String JMS_ACTIVEMQ_BROKER = "ActiveMQ";
+	public static final String JMS_WMQ_BROKER = "WebSphere MQ";
+	public static final String JMS_CUSTOM_BROKER = "Other";
+
 	//output xml elements
 	
 	//ns

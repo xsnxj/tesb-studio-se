@@ -31,6 +31,7 @@ import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SetBodyDefinition;
@@ -50,7 +51,6 @@ import org.talend.designer.camel.spring.core.exprs.ExpressionProcessor;
 import org.talend.designer.camel.spring.core.intl.SpringNodeIdFactory;
 import org.talend.designer.camel.spring.core.intl.XmlFileApplicationContext;
 import org.talend.designer.camel.spring.core.parsers.AbstractComponentParser;
-import org.talend.designer.camel.spring.core.parsers.ActiveMQComponentParser;
 import org.talend.designer.camel.spring.core.parsers.AggregateComponentParser;
 import org.talend.designer.camel.spring.core.parsers.BeanComponentParser;
 import org.talend.designer.camel.spring.core.parsers.CXFComponentParser;
@@ -74,6 +74,7 @@ import org.talend.designer.camel.spring.core.parsers.MulticastComponentParser;
 import org.talend.designer.camel.spring.core.parsers.OnExceptionComponentParser;
 import org.talend.designer.camel.spring.core.parsers.PipeLineComponentParser;
 import org.talend.designer.camel.spring.core.parsers.ProcessorComponentParser;
+import org.talend.designer.camel.spring.core.parsers.RecipientListComponentParser;
 import org.talend.designer.camel.spring.core.parsers.RoutingSlipComponentParser;
 import org.talend.designer.camel.spring.core.parsers.SetBodyComponentParser;
 import org.talend.designer.camel.spring.core.parsers.SetHeaderComponentParser;
@@ -142,7 +143,7 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		// initial parser
 		parsers[FILE] = new FileComponentParser(appContext);
 		parsers[FTP] = new FTPComponentParser(appContext);
-		parsers[ACTIVEMQ] = new ActiveMQComponentParser(appContext);
+		parsers[RECIPIENT] = new RecipientListComponentParser(appContext);
 		parsers[JMS] = new JMSComponentParser(appContext);
 		parsers[CXF] = new CXFComponentParser(appContext);
 		parsers[MSGENDPOINT] = new MessageEndpointParser(appContext);
@@ -393,6 +394,9 @@ public class CamelSpringParser implements ICamelSpringConstants {
 		} else if (pd instanceof PipelineDefinition) {
 			id = processIsolateDefinition(PF, nodeIdFactory, fromId, pd,
 					connectionType, connectionMap);
+		} else if (pd instanceof RecipientListDefinition) {
+			id = processIsolateDefinition(RECIPIENT, nodeIdFactory, fromId, pd,
+					connectionType, connectionMap);
 		} else {
 			id = processIsolateDefinition(MSGENDPOINT, nodeIdFactory, fromId,
 					pd, connectionType, connectionMap);
@@ -607,9 +611,8 @@ public class CamelSpringParser implements ICamelSpringConstants {
 				String schema = uri.substring(0, index);
 				String beanClassName = appContext
 						.getRegisterBeanClassName(schema);
-				if (ActiveMQComponent.class.getName().equals(beanClassName)) {
-					return ACTIVEMQ;
-				} else if (JmsComponent.class.getName().equals(beanClassName)) {
+				if (ActiveMQComponent.class.getName().equals(beanClassName)
+						|| JmsComponent.class.getName().equals(beanClassName)) {
 					return JMS;
 				}
 			}
