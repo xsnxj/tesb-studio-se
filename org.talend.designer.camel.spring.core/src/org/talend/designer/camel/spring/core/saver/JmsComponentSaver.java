@@ -9,7 +9,8 @@ import org.w3c.dom.Element;
 
 public class JmsComponentSaver extends AbstractComponentSaver {
 
-	public JmsComponentSaver(Document document, Element rootElement, Element contextElement) {
+	public JmsComponentSaver(Document document, Element rootElement,
+			Element contextElement) {
 		super(document, rootElement, contextElement);
 	}
 
@@ -28,7 +29,7 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 	 */
 	public Element save(SpringRouteNode srn, Element parent) {
 		SpringRouteNode preNode = srn.getParent();
-		//create element
+		// create element
 		Element element = null;
 		if (preNode == null) {
 			element = document.createElement(FROM_ELE);
@@ -36,22 +37,23 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 			element = document.createElement(TO_ELE);
 		}
 		parent.appendChild(element);
-		
+
 		Map<String, String> parameter = srn.getParameter();
 
 		StringBuilder sb = new StringBuilder();
-		
+
 		String schema = parameter.get(JMS_SCHEMA_NAME);
 		parameter.remove(JMS_SCHEMA_NAME);
 		sb.append(schema);
-		
-		//create bean
-		Element beanElement = addBeanElement(schema, "org.apache.camel.component.jms.JmsComponent");
+
+		// create bean
+		Element beanElement = addBeanElement(schema,
+				"org.apache.camel.component.jms.JmsComponent");
 
 		Element connectionFactory = document.createElement("property");
 		connectionFactory.setAttribute("name", "connectionFactory");
 		beanElement.appendChild(connectionFactory);
-		
+
 		Element factoryBean = document.createElement(BEAN_ELE);
 		connectionFactory.appendChild(factoryBean);
 		String brokerType = parameter.get(JMS_BROKER_TYPE);
@@ -87,18 +89,26 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 			Element hostNameProperty = document.createElement("property");
 			factoryBean.appendChild(hostNameProperty);
 			hostNameProperty.setAttribute("name", "hostName");
-			hostNameProperty.setAttribute("value",
-					parameter.get("hostName"));
+			hostNameProperty.setAttribute("value", parameter.get("hostName"));
 			parameter.remove("hostName");
 
 			Element portProperty = document.createElement("property");
 			factoryBean.appendChild(portProperty);
 			portProperty.setAttribute("name", "port");
-			portProperty.setAttribute("port", parameter.get("port"));
+			portProperty.setAttribute("value", parameter.get("port"));
 			parameter.remove("port");
 
+		} else {
+			factoryBean.setAttribute("class",
+					"org.apache.activemq.ActiveMQConnectionFactory");
+			Element urlProperty = document.createElement("property");
+			factoryBean.appendChild(urlProperty);
+			String brokerUrl = "vm://localhost?broker.persistent=false";
+
+			urlProperty.setAttribute("name", "brokerURL");
+			urlProperty.setAttribute("value", brokerUrl);
 		}
-		
+
 		String type = parameter.get(JMS_TYPE);
 		parameter.remove(JMS_TYPE);
 		if (type != null) {

@@ -30,7 +30,8 @@ public class CJMSParameterExHandler extends AbstractExParameterHandler {
 	public void handleParameters(EList<?> elementParameterTypes,
 			Map<String, String> parameters) {
 
-		String NAME = computeTextElementValue("NAME", elementParameterTypes);
+		String NAME = computeTextElementValue("UNIQUE_NAME",
+				elementParameterTypes).replace("_", "");
 		parameters.put("jms_schema", NAME);
 		String TYPE = computeTextElementValue("TYPE", elementParameterTypes);
 		parameters.put("jms_type", TYPE);
