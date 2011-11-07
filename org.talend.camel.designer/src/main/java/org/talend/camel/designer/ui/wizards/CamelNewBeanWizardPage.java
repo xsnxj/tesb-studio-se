@@ -19,14 +19,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
-import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -82,39 +76,4 @@ public class CamelNewBeanWizardPage extends PropertiesWizardPage {
         }
     }
 
-    /**
-     * ftang Comment method "evaluateNameInRoutine".
-     */
-    private void evaluateNameInRoutine() {
-        String jobName = nameText.getText().trim();
-        boolean isValid = isNameValidInRountine(jobName);
-
-        if (!isValid) {
-            nameStatus = createStatus(IStatus.ERROR, Messages.getString("PropertiesWizardPage.ItemExistsInRoutineError")); //$NON-NLS-1$
-            updatePageStatus();
-        }
-    }
-
-    /**
-     * ftang Comment method "isNameExistingInRountine".
-     * 
-     * @param jobName
-     */
-    private boolean isNameValidInRountine(String jobName) {
-        Property property = PropertiesFactory.eINSTANCE.createProperty();
-
-        IProxyRepositoryFactory repositoryFactory = DesignerPlugin.getDefault().getRepositoryService()
-                .getProxyRepositoryFactory();
-        property.setId(repositoryFactory.getNextId());
-        RoutineItem routineItem = PropertiesFactory.eINSTANCE.createRoutineItem();
-        routineItem.setProperty(property);
-        boolean isValid = false;
-        try {
-            isValid = repositoryFactory.isNameAvailable(property.getItem(), jobName);
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-            return false;
-        }
-        return isValid;
-    }
 }
