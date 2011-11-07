@@ -102,7 +102,7 @@ public class ExportParameterProviderFactory {
 				componentName));
 
 		componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.JMS];
-		exportHandlers.put(componentName, new CommonParameterProvider(
+		exportHandlers.put(componentName, new CJMSParameterExHandler(
 				componentName));
 
 		componentName = RouteMapping.COMPOMENT_NAMES[ICamelSpringConstants.LOOP];
