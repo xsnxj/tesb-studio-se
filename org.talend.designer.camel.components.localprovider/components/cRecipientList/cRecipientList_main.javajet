@@ -17,6 +17,9 @@ imports="
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String useDelimiter = ElementParameterParser.getValue(node, "__USE_DELIMITER__");
 	String delimiter = ElementParameterParser.getValue(node, "__DELIMITER__");
+	String stopOnException = ElementParameterParser.getValue(node, "__STOP_ON_EXCEPTION__");
+	String ignoreInvalid = ElementParameterParser.getValue(node, "__IGNORE_INVALID__");
+	String parallelProcess = ElementParameterParser.getValue(node, "__PARELLEL_PROCESS__");
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
@@ -39,6 +42,22 @@ imports="
 %>
 				.recipientList(<%=expression%>)
 <%				}
+			}
+			
+			if("true".equals(stopOnException)){
+%>
+			.stopOnException()
+<%
+			}
+			if("true".equals(ignoreInvalid)){
+%>
+			.ignoreInvalidEndpoints()
+<%		
+			}
+			if("true".equals(parallelProcess)){
+%>
+			.parallelProcessing()
+<%	
 			}
 		
 	}
