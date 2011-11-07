@@ -49,7 +49,7 @@ public class CJMSParameterExHandler extends AbstractExParameterHandler {
 		} else if (ICamelSpringConstants.JMS_WMQ_BROKER.equals(mqType)) {
 			String WQM_SEVER = computeTextElementValue("WQM_SEVER",
 					elementParameterTypes);
-			parameters.put("hostname", unquotes(WQM_SEVER));
+			parameters.put("hostName", unquotes(WQM_SEVER));
 			String WMQ_PORT = computeTextElementValue("WMQ_PORT",
 					elementParameterTypes);
 			parameters.put("port", unquotes(WMQ_PORT));
