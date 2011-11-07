@@ -18,7 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.talend.designer.camel.spring.core.models.SpringRoute;
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
 import org.talend.designer.camel.spring.core.saver.AbstractComponentSaver;
-import org.talend.designer.camel.spring.core.saver.ActivemqComponentSaver;
+import org.talend.designer.camel.spring.core.saver.RecipientListComponentSaver;
 import org.talend.designer.camel.spring.core.saver.AggregateComponentSaver;
 import org.talend.designer.camel.spring.core.saver.BeanComponentSaver;
 import org.talend.designer.camel.spring.core.saver.CatchComponentSaver;
@@ -142,7 +142,7 @@ public class CamelSpringSaver implements ICamelSpringConstants {
 				contextElement);
 		savers[FTP] = new FtpComponentSaver(document, beansElement,
 				contextElement);
-		savers[RECIPIENT] = new ActivemqComponentSaver(document, beansElement,
+		savers[RECIPIENT] = new RecipientListComponentSaver(document, beansElement,
 				contextElement);
 		savers[MSGENDPOINT] = new MsgEndpointComponentSaver(document,
 				beansElement, contextElement);

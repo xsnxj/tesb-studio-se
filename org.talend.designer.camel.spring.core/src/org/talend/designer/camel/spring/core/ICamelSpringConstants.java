@@ -232,7 +232,7 @@ public interface ICamelSpringConstants {
 	public static final String JMS_SCHEMA_NAME = "jms_schema";
 	public static final String JMS_TYPE = "jms_type";
 	public static final String JMS_DESTINATION = "jms_destination";
-	public static final String JMS_BORKER_TYPE = "jms_broker_type";
+	public static final String JMS_BROKER_TYPE = "jms_broker_type";
 	public static final String JMS_ACTIVEMQ_BROKER = "ActiveMQ";
 	public static final String JMS_WMQ_BROKER = "WebSphere MQ";
 	public static final String JMS_CUSTOM_BROKER = "Other";
@@ -272,6 +272,7 @@ public interface ICamelSpringConstants {
 	public static final String RESOURCE_ATT = "resource";
 	public static final String SPLIT_ELE = "split";
 	public static final String SETHEADER_ELE = "setHeader";
+	public static final String RECIPIENT_LIST_ELE = "recipientList";
 	public static final String SETBODY_ELE = "setBody";
 	public static final String CONVERT_ELE = "convertBodyTo";
 	public static final String ENRICH_ELE = "enrich";

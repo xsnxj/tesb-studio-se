@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.talend.designer.camel.spring.core.models.SpringRouteNode;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -76,16 +75,44 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 		//create bean
 		Element beanElement = addBeanElement(schema, "org.apache.camel.component.jms.JmsComponent");
 
-		//Comment on element
-		Comment brokerPropertyComment = document.createComment("Auto generated property.");
-        beanElement.appendChild(brokerPropertyComment);
-        
-		Element brokerProperty = document.createElement("property");
-		brokerProperty.setAttribute("name", "connectionFactory");
-		//Add a url attribute
-		brokerProperty.setAttribute("value", "vm://localhost?broker.persistent=false&broker.useJmx=false");
-		beanElement.appendChild(brokerProperty);
+		Element connectionFactory = document.createElement("property");
+		connectionFactory.setAttribute("name", "connectionFactory");
+		beanElement.appendChild(connectionFactory);
 		
+		Element factoryBean = document.createElement(BEAN_ELE);
+		connectionFactory.appendChild(factoryBean);
+		String brokerType = parameter.get(JMS_BROKER_TYPE);
+		if (JMS_ACTIVEMQ_BROKER.equals(brokerType)) {
+			factoryBean.setAttribute("class",
+					"org.apache.activemq.ActiveMQConnectionFactory");
+			Element urlProperty = document.createElement("property");
+			factoryBean.appendChild(urlProperty);
+			String brokerUrl = parameter.get("brokerURL");
+			urlProperty.setAttribute("brokerURL", brokerUrl);
+
+		} else if (JMS_WMQ_BROKER.equals(brokerType)) {
+			factoryBean.setAttribute("class",
+					"com.ibm.mq.jms.MQQueueConnectionFactory");
+			Element queueManagerProperty = document.createElement("property");
+			factoryBean.appendChild(queueManagerProperty);
+			queueManagerProperty.setAttribute("queueManager",
+					parameter.get("queueManager"));
+
+			Element tranportTypeProperty = document.createElement("property");
+			factoryBean.appendChild(tranportTypeProperty);
+			queueManagerProperty.setAttribute("transportType",
+					parameter.get("transportType"));
+
+			Element hostNameProperty = document.createElement("property");
+			factoryBean.appendChild(hostNameProperty);
+			queueManagerProperty.setAttribute("hostName",
+					parameter.get("hostName"));
+
+			Element portProperty = document.createElement("property");
+			factoryBean.appendChild(portProperty);
+			queueManagerProperty.setAttribute("port", parameter.get("port"));
+
+		}
 		
 		return element;
 	}

@@ -58,7 +58,7 @@ public class JMSComponentParser extends AbstractComponentParser {
 		BeanDefinition beanDefinition = getBeanDefinition(schema);
 		String beanClassName = appContext.getRegisterBeanClassName(schema);
 		if (ActiveMQComponent.class.getName().equals(beanClassName)) {
-			map.put(JMS_BORKER_TYPE, JMS_ACTIVEMQ_BROKER);
+			map.put(JMS_BROKER_TYPE, JMS_ACTIVEMQ_BROKER);
 			if (beanDefinition != null) {
 				MutablePropertyValues propertyValues = beanDefinition
 						.getPropertyValues();
@@ -82,7 +82,7 @@ public class JMSComponentParser extends AbstractComponentParser {
 			}
 		} else {
 			if (beanDefinition != null) {
-				map.put(JMS_BORKER_TYPE, JMS_CUSTOM_BROKER);
+				map.put(JMS_BROKER_TYPE, JMS_CUSTOM_BROKER);
 				MutablePropertyValues propertyValues = beanDefinition
 						.getPropertyValues();
 				if (propertyValues == null || propertyValues.isEmpty()) {
@@ -102,10 +102,10 @@ public class JMSComponentParser extends AbstractComponentParser {
 				String factoryBeanClassName = factoryBean.getBeanClassName();
 				if (ActiveMQConnectionFactory.class.getName().equals(
 						factoryBeanClassName)) {
-					map.put(JMS_BORKER_TYPE, JMS_ACTIVEMQ_BROKER);
+					map.put(JMS_BROKER_TYPE, JMS_ACTIVEMQ_BROKER);
 				} else if ("com.ibm.mq.jms.MQQueueConnectionFactory"
 						.equals(factoryBeanClassName)) {
-					map.put(JMS_BORKER_TYPE, JMS_WMQ_BROKER);
+					map.put(JMS_BROKER_TYPE, JMS_WMQ_BROKER);
 				}
 				MutablePropertyValues factoryProperties = factoryBean
 						.getPropertyValues();
