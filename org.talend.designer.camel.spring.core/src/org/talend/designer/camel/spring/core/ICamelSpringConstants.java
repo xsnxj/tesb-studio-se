@@ -66,6 +66,7 @@ public interface ICamelSpringConstants {
 	public static final String RL_STOP_ON_EXCEPTION = "stop_on_exception";
 	public static final String RL_IGNORE_INVALID = "ignore_invalid";
 	public static final String RL_PARELLEL_PROCESS = "parellel_process";
+	public static final String RL_DELIMITER = "delimiter";
 
 	//split
 	public static final String SP_SPLIT_EXPRESS = "split_express";
