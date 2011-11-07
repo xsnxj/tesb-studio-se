@@ -115,7 +115,7 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
       NB_LINES="2" 
       REPOSITORY_VALUE="DRIVER_JAR"
       GROUP="MQ_GROUP"
-      SHOW_IF="MQ_TYPE == 'OTHER'">
+      SHOW_IF="(MQ_TYPE == 'OTHER') OR (MQ_TYPE == 'WMQ')">
       	<ITEMS> 
 			<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
 		</ITEMS> 
@@ -169,7 +169,8 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 				REQUIRED="true" />
 			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.8.2.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar"
+			<!-- http://jira.talendforge.org/browse/TESB-3828 -->
+			<!--<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="j-wmq" MODULE="com.ibm.mq.jmqi.jar"
 				REQUIRED="true" />
@@ -179,7 +180,7 @@ connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://loca
 				REQUIRED="true" />
 			<IMPORT NAME="dhbcore" MODULE="dhbcore.jar"
 				REQUIRED="true" />
-		</IMPORTS>
+		--></IMPORTS>
 	</CODEGENERATION>
 
 	<RETURNS />
