@@ -171,5 +171,12 @@
             id="org.talend.camel.designer.switchCamelCXFLibraryVersionMigrationTask"
             name="SwitchCamelCXFLibraryVersionMigrationTask">
       </projecttask>
+      <projecttask
+            beforeLogon="false"
+            class="org.talend.camel.designer.migration.NewJMSComponentMigrationTask"
+            description="NewJMSComponentMigrationTask"
+            id="org.talend.camel.designer.NewJMSComponentMigrationTask"
+            name="NewJMSComponentMigrationTask">
+      </projecttask>
       </extension>
 </plugin>
