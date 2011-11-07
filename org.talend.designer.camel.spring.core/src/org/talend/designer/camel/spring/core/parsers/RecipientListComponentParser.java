@@ -30,6 +30,11 @@ public class RecipientListComponentParser extends AbstractComponentParser {
 		map.put(RL_IGNORE_INVALID, ignoreInvalidEndpoints + "");
 		map.put(RL_PARELLEL_PROCESS, parallelProcessing + "");
 		map.put(RL_STOP_ON_EXCEPTION, stopOnException + "");
+
+		String delimiter = rld.getDelimiter();
+		if (delimiter != null) {
+			map.put(RL_DELIMITER, delimiter);
+		}
 	}
 
 	@Override
