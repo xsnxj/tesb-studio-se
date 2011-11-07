@@ -63,32 +63,37 @@ public class JmsComponentSaver extends AbstractComponentSaver {
 			factoryBean.appendChild(urlProperty);
 			String brokerUrl = parameter.get("brokerURL");
 			parameter.remove("brokerURL");
-			urlProperty.setAttribute("brokerURL", brokerUrl);
+
+			urlProperty.setAttribute("name", "brokerURL");
+			urlProperty.setAttribute("value", brokerUrl);
 
 		} else if (JMS_WMQ_BROKER.equals(brokerType)) {
 			factoryBean.setAttribute("class",
 					"com.ibm.mq.jms.MQQueueConnectionFactory");
 			Element queueManagerProperty = document.createElement("property");
 			factoryBean.appendChild(queueManagerProperty);
-			queueManagerProperty.setAttribute("queueManager",
+			queueManagerProperty.setAttribute("name", "queueManager");
+			queueManagerProperty.setAttribute("value",
 					parameter.get("queueManager"));
 			parameter.remove("queueManager");
 
 			Element tranportTypeProperty = document.createElement("property");
 			factoryBean.appendChild(tranportTypeProperty);
-			tranportTypeProperty.setAttribute("transportType",
+			tranportTypeProperty.setAttribute("name", "transportType");
+			tranportTypeProperty.setAttribute("value",
 					parameter.get("transportType"));
 			parameter.remove("transportType");
 
 			Element hostNameProperty = document.createElement("property");
 			factoryBean.appendChild(hostNameProperty);
-			hostNameProperty
-					.setAttribute("hostName",
+			hostNameProperty.setAttribute("name", "hostName");
+			hostNameProperty.setAttribute("value",
 					parameter.get("hostName"));
 			parameter.remove("hostName");
 
 			Element portProperty = document.createElement("property");
 			factoryBean.appendChild(portProperty);
+			portProperty.setAttribute("name", "port");
 			portProperty.setAttribute("port", parameter.get("port"));
 			parameter.remove("port");
 

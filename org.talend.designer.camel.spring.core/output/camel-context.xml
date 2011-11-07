@@ -46,7 +46,19 @@
 		<property name="brokerURL" value="tcp://localhost:61616" />
 	</bean>
 
-	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+    <property name="connectionFactory">
+      <bean class="com.ibm.mq.jms.MQQueueConnectionFactory">
+        <property name="queueManager" value="mq.queue.manager" />
+        <property name="transportType" value="1" />
+        <property name="hostName" value="192.168.92.132" />
+        <property name="port" value="1414" />
+      </bean>
+    </property>
+  </bean>
+
+
+	<bean id="jms2" class="org.apache.camel.component.jms.JmsComponent">
 		<property name="connectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
 				<property name="brokerURL"

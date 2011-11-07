@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:broker="http://activemq.apache.org/schema/core" xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="activemq1">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+    </bean>
+    <cxf:cxfEndpoint xmlns:ns="http://www.talend.com" address="http://localhost:8000/service.endpoint" endpointName="ns:pn" id="cxfEndpoint1" serviceName="ns:sn" wsdlURL="ccc/www.wsdl">
+        <cxf:properties>
+            <entry key="dataFormat" value="PAYLOAD"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    <bean class="org.apache.camel.component.jms.JmsComponent" id="name">
+        <!--Auto generated property.-->
+        <property name="connectionFactory" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    </bean>
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel-1">
+        <route>
+            <from uri="file:C:/data/input?bufferSize=128&amp;aaaa=bbbb&amp;flatten=true&amp;noop=true&amp;autoCreate=true&amp;fileName=aaa.txt"/>
+            <to uri="activemq1:queue:queue.name?ccc=dddd"/>
+            <to uri="cxf:bean:cxfEndpoint1?eee=ffff"/>
+            <to uri="ftp://username@localhost//?password=password&amp;ggg=hhh"/>
+            <to uri="name:topic:queuedd.name?newLine=c"/>
+        </route>
+    </camelContext>
+</beans>

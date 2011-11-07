@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel-1">
+        <route>
+            <from uri=""/>
+            <choice>
+                <when>
+                    <constant>1</constant>
+                    <to uri="when1"/>
+                </when>
+                <when>
+                    <constant>3</constant>
+                    <to uri="when2"/>
+                </when>
+                <when>
+                    <constant>5</constant>
+                    <to uri="when3"/>
+                </when>
+                <when>
+                    <constant>4</constant>
+                    <to uri="when4"/>
+                </when>
+                <when>
+                    <constant>2</constant>
+                    <to uri="when5"/>
+                </when>
+                <otherwise>
+                    <to uri="other"/>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+</beans>

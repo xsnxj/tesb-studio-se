@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="myBean" id="dynamic1"/>
+    <bean class="CustomAggregationStrategy" id="aggregateStrategy1"/>
+    <bean class="cccc" id="repo1"/>
+    <bean class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository" id="idemRepo1">
+        <constructor-arg type="int" value="200"/>
+    </bean>
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel-1">
+        <route>
+            <from uri=""/>
+            <dynamicRouter>
+                <method method="zzz" ref="dynamic1"/>
+            </dynamicRouter>
+            <aggregate aggregationRepositoryRef="repo1" closeCorrelationKeyOnCompletion="5" completionFromBatchConsumer="true" completionInterval="5000" completionSize="4" completionTimeout="3000" eagerCheckCompletion="true" groupExchanges="true" ignoreInvalidCorrelationKeys="true" strategyRef="aggregateStrategy1">
+                <correlationExpression>
+                    <xpath>eeee</xpath>
+                </correlationExpression>
+                <completionPredicate>
+                    <expressionDefinition>zzz</expressionDefinition>
+                </completionPredicate>
+                <loadBalance>
+                    <random/>
+                    <choice>
+                        <when>
+                            <constant>true</constant>
+                            <to uri=""/>
+                        </when>
+                        <otherwise>
+                            <to uri=""/>
+                        </otherwise>
+                    </choice>
+                    <idempotentConsumer messageIdRepositoryRef="idemRepo1">
+                        <xpath>${'sss'}</xpath>
+                        <to uri=""/>
+                    </idempotentConsumer>
+                    <to uri=""/>
+                </loadBalance>
+                <filter>
+                    <xpath>eeee</xpath>
+                    <to uri=""/>
+                </filter>
+                <to uri=""/>
+            </aggregate>
+            <to uri=""/>
+        </route>
+    </camelContext>
+</beans>
