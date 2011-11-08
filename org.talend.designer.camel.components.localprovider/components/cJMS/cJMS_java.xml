@@ -91,6 +91,24 @@
 			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
 			<DEFAULT>"mq.queue.manager"</DEFAULT>
 		</PARAMETER>
+		
+		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31" GROUP="MQ_GROUP" 
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar, com.ibm.mqjms.jar, connector.jar, dhbcore.jar)</DEFAULT>
+		</PARAMETER>  
+		   
+    	<PARAMETER
+      		 NAME="WMQ_DRIVER_JAR"
+     		 FIELD="TABLE"
+     		 NUM_ROW="30"
+     		 NB_LINES="2" 
+     		 REPOSITORY_VALUE="DRIVER_JAR"
+     		 GROUP="MQ_GROUP"
+     		 SHOW_IF="MQ_TYPE == 'WMQ'">
+      		<ITEMS> 
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
+			</ITEMS> 
+   		 </PARAMETER>
 
 		<!-- Customized -->
 		<PARAMETER NAME="OTHER_CODE" FIELD="MEMO_JAVA" REQUIRED="false"
@@ -99,27 +117,21 @@
 /*
 *	Please specify "connectionFactory" here
 */
-				
-/*
-* this is a sample, to run it
-* you have to add following jars in below table:
-*	activemq-all-5.1.0.jar/spring-tx-3.0.6.RELEASE.jar/spring-jms-3.0.6.RELEASE.jar
-*/
 connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
 			</DEFAULT>
 		</PARAMETER>
-	    <PARAMETER
-      NAME="OTHER_DRIVER_JAR"
-      FIELD="TABLE"
-      NUM_ROW="30"
-      NB_LINES="2" 
-      REPOSITORY_VALUE="DRIVER_JAR"
-      GROUP="MQ_GROUP"
-      SHOW_IF="(MQ_TYPE == 'OTHER') OR (MQ_TYPE == 'WMQ')">
-      	<ITEMS> 
-			<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
-		</ITEMS> 
-    </PARAMETER>
+		<PARAMETER
+      		NAME="OTHER_DRIVER_JAR"
+      		FIELD="TABLE"
+      		NUM_ROW="30"
+     		NB_LINES="2" 
+      		REPOSITORY_VALUE="DRIVER_JAR"
+      		GROUP="MQ_GROUP"
+      		SHOW_IF="MQ_TYPE == 'OTHER'">
+      		<ITEMS> 
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
+			</ITEMS> 
+ 		</PARAMETER>
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
