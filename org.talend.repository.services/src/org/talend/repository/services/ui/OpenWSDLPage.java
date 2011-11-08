@@ -111,7 +111,7 @@ public class OpenWSDLPage extends WizardPage {
         parentArea.setLayout(new GridLayout(1, false));
 
         Button radioCreateWsdl = new Button(parentArea, SWT.RADIO);
-        radioCreateWsdl.setText(Messages.AssignWsdlDialog_Choice_CreateNew);
+        radioCreateWsdl.setText(Messages.AssignWsdlDialog_Choice_CreateNewWsdl);
         radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
@@ -123,7 +123,7 @@ public class OpenWSDLPage extends WizardPage {
         radioCreateWsdl.setSelection(createWSDL);
 
         Button radioImportWsdl = new Button(parentArea, SWT.RADIO);
-        radioImportWsdl.setText(Messages.AssignWsdlDialog_Choice_ImportExistent);
+        radioImportWsdl.setText(Messages.AssignWsdlDialog_Choice_ImportExistentWsdl);
         radioImportWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(true);
@@ -144,7 +144,7 @@ public class OpenWSDLPage extends WizardPage {
 
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         wsdlText = new LabelledFileField(wsdlFileArea,
-                Messages.AssignWsdlDialog_ImportExistent_FilePath, xmlExtensions);
+                Messages.AssignWsdlDialog_ImportExistentWsdl_FilePath, xmlExtensions);
         wsdlText.setVisible(!createWSDL);
         wsdlText.setText(path);
         wsdlText.addModifyListener(new ModifyListener() {
