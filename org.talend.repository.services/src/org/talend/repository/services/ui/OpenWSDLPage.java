@@ -112,6 +112,7 @@ public class OpenWSDLPage extends WizardPage {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
                 createWSDL = true;
+                path = "";
                 setPageComplete(true);
             }
         });
@@ -147,7 +148,7 @@ public class OpenWSDLPage extends WizardPage {
             }
         });
 
-        setPageComplete(!path.trim().isEmpty());
+        setPageComplete(true);
 
         setControl(parentArea);
     }
