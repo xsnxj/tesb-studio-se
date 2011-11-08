@@ -16,9 +16,10 @@ public class Messages extends NLS {
 
 	public static String AssignWsdlDialog_Title;
 	public static String AssignWsdlDialog_Description;
-	public static String AssignWsdlDialog_Choice_CreateNewWsdl;
-	public static String AssignWsdlDialog_Choice_ImportExistentWsdl;
-	public static String AssignWsdlDialog_ImportExistentWsdl_FilePath;
+	public static String AssignWsdlDialog_WsdlChoice_CreateNew;
+	public static String AssignWsdlDialog_WsdlChoice_ImportExistent;
+	public static String AssignWsdlDialog_ExistentWsdlFilePath;
+	public static String AssignWsdlDialog_ImportWsdlSchemas;
 
 	static {
 		// initialize resource bundle

@@ -94,7 +94,7 @@ public class OpenWSDLPage extends WizardPage {
 
     private IPath pathToSave;
 
-	private Button checkImport;
+    private Button checkImport;
 
     protected OpenWSDLPage(RepositoryNode repositoryNode, IPath pathToSave, ServiceItem item,
             String pageName, boolean creation) {
@@ -103,7 +103,7 @@ public class OpenWSDLPage extends WizardPage {
         this.pathToSave = pathToSave;
         this.item = item;
         this.repositoryNode = repositoryNode;
-        this.path = (null == item.getConnection()) ? ""
+        this.path = (null == item.getConnection()) ? "" //$NON-NLS-1$
                 : ((ServiceConnection) item.getConnection()).getWSDLPath();
         this.createWSDL = true; // default configuration value
 
@@ -116,7 +116,7 @@ public class OpenWSDLPage extends WizardPage {
         parentArea.setLayout(new GridLayout(1, false));
 
         Button radioCreateWsdl = new Button(parentArea, SWT.RADIO);
-        radioCreateWsdl.setText(Messages.AssignWsdlDialog_Choice_CreateNewWsdl);
+        radioCreateWsdl.setText(Messages.AssignWsdlDialog_WsdlChoice_CreateNew);
         radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
@@ -129,7 +129,7 @@ public class OpenWSDLPage extends WizardPage {
         radioCreateWsdl.setSelection(createWSDL);
 
         Button radioImportWsdl = new Button(parentArea, SWT.RADIO);
-        radioImportWsdl.setText(Messages.AssignWsdlDialog_Choice_ImportExistentWsdl);
+        radioImportWsdl.setText(Messages.AssignWsdlDialog_WsdlChoice_ImportExistent);
         radioImportWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(true);
@@ -151,7 +151,7 @@ public class OpenWSDLPage extends WizardPage {
 
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         wsdlText = new LabelledFileField(wsdlFileArea,
-                Messages.AssignWsdlDialog_ImportExistentWsdl_FilePath, xmlExtensions);
+                Messages.AssignWsdlDialog_ExistentWsdlFilePath, xmlExtensions);
         wsdlText.setVisible(!createWSDL);
         wsdlText.setText(path);
         wsdlText.addModifyListener(new ModifyListener() {
@@ -160,9 +160,10 @@ public class OpenWSDLPage extends WizardPage {
                 setPageComplete(!path.trim().isEmpty());
             }
         });
+
         Label lab = new Label(wsdlFileArea, SWT.NONE);
         checkImport = new Button(wsdlFileArea, SWT.CHECK);
-        checkImport.setText("Import WSDL Schemas on finish");
+        checkImport.setText(Messages.AssignWsdlDialog_ImportWsdlSchemas);
         checkImport.setVisible(false);
         checkImport.setSelection(true);
 
@@ -202,11 +203,11 @@ public class OpenWSDLPage extends WizardPage {
             return false;
         }
         String foldPath = item.getState().getPath();
-        String folder = "";
-        if (!foldPath.equals("")) {
-            folder = "/" + foldPath;
+        String folder = ""; //$NON-NLS-1$
+        if (!foldPath.equals("")) { //$NON-NLS-1$
+            folder = "/" + foldPath; //$NON-NLS-1$
         }
-        IFile fileTemp = currentProject.getFolder("services" + folder).getFile(wsdlFileName);
+        IFile fileTemp = currentProject.getFolder("services" + folder).getFile(wsdlFileName); //$NON-NLS-1$
 
         try {
             item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
@@ -218,7 +219,7 @@ public class OpenWSDLPage extends WizardPage {
             if (createWSDL) {
                 // create new WSDL file from template
                 TemplateProcessor.processTemplate(TEMPLATE_SERVICE_WSDL,
-                        Collections.singletonMap("serviceName", (Object) label),
+                        Collections.singletonMap("serviceName", (Object) label), //$NON-NLS-1$
                         new OutputStreamWriter(baos));
             } else {
                 // copy WSDL file
@@ -268,9 +269,9 @@ public class OpenWSDLPage extends WizardPage {
             action.run();
 
             if (checkImport.isVisible() && checkImport.getSelection()) {
-            	PublishMetadataAction publishAction = new PublishMetadataAction();
-            	publishAction.setNodes(Arrays.asList(new RepositoryNode[]{repositoryNode}));
-            	publishAction.run();
+                PublishMetadataAction publishAction = new PublishMetadataAction();
+                publishAction.setNodes(Arrays.asList(new RepositoryNode[] { repositoryNode }));
+                publishAction.run();
             }
 
             return true;
