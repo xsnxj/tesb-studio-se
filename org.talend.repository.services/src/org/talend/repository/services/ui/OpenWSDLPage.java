@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -63,6 +65,7 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.OpenWSDLEditorAction;
+import org.talend.repository.services.action.PublishMetadataAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -91,6 +94,8 @@ public class OpenWSDLPage extends WizardPage {
 
     private IPath pathToSave;
 
+	private Button checkImport;
+
     protected OpenWSDLPage(RepositoryNode repositoryNode, IPath pathToSave, ServiceItem item,
             String pageName, boolean creation) {
         super(pageName);
@@ -115,6 +120,7 @@ public class OpenWSDLPage extends WizardPage {
         radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
+                checkImport.setVisible(false);
                 createWSDL = true;
                 path = "";
                 setPageComplete(true);
@@ -127,6 +133,7 @@ public class OpenWSDLPage extends WizardPage {
         radioImportWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(true);
+                checkImport.setVisible(true);
                 createWSDL = false;
                 path = wsdlText.getText();
                 setPageComplete(!path.trim().isEmpty());
@@ -153,6 +160,11 @@ public class OpenWSDLPage extends WizardPage {
                 setPageComplete(!path.trim().isEmpty());
             }
         });
+        Label lab = new Label(wsdlFileArea, SWT.NONE);
+        checkImport = new Button(wsdlFileArea, SWT.CHECK);
+        checkImport.setText("Import WSDL Schemas on finish");
+        checkImport.setVisible(false);
+        checkImport.setSelection(true);
 
         setPageComplete(radioCreateWsdl.getSelection()
                 || (radioImportWsdl.getSelection() && !path.trim().isEmpty()));
@@ -254,6 +266,13 @@ public class OpenWSDLPage extends WizardPage {
             OpenWSDLEditorAction action = new OpenWSDLEditorAction();
             action.setRepositoryNode(repositoryNode);
             action.run();
+
+            if (checkImport.isVisible() && checkImport.getSelection()) {
+            	PublishMetadataAction publishAction = new PublishMetadataAction();
+            	publishAction.setNodes(Arrays.asList(new RepositoryNode[]{repositoryNode}));
+            	publishAction.run();
+            }
+
             return true;
         } catch (PersistenceException e) {
             e.printStackTrace();

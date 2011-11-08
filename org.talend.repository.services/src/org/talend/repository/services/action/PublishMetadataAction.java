@@ -105,6 +105,8 @@ public class PublishMetadataAction extends AContextualAction {
     protected static final String ACTION_LABEL = "Import WSDL Schemas";
 
     private IStructuredSelection selection;
+    private List<RepositoryNode> nodes;
+
 
     /*
      * (non-Javadoc)
@@ -147,14 +149,19 @@ public class PublishMetadataAction extends AContextualAction {
         return isEnabled();
     }
 
+	public void setNodes(List<RepositoryNode> nodes) {
+		this.nodes = nodes;
+	}
+
     protected void doRun() {
         UIJob job = new UIJob("importing...") {
 
-            @Override
+			@Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 monitor.beginTask("importing", 100);
-                @SuppressWarnings("unchecked")
-                List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+                if (nodes == null) {
+                	nodes = (List<RepositoryNode>) selection.toList();
+                }
                 int step = 100;
                 int size = nodes.size();
                 if (size > 0) {
