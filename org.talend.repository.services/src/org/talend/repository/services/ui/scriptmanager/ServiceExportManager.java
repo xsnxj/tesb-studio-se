@@ -23,28 +23,25 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
+import org.talend.commons.exception.SystemException;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
+import org.talend.repository.services.utils.TemplateProcessor;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
+
+	private static final String TEMPLATE_SPRING_BEANS = "/resources/beans-template.xml"; //$NON-NLS-1$
 
 	private static Logger logger = Logger.getLogger(ServiceExportManager.class);
 
@@ -52,9 +49,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		super(null, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 	}
 
-	public void createSpringBeans(String outputFile,
-			Map<ServicePort, Map<String, String>> ports, ServiceConnection serviceConnection, File wsdl,
-			String studioServiceName) throws IOException, CoreException {
+	public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports,
+			ServiceConnection serviceConnection, File wsdl, String studioServiceName)
+			throws IOException, CoreException {
 
 		//TODO: support multiport!!!
 		Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
@@ -67,12 +64,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		String endpointName = null;
 		Map<QName, Service> services = def.getServices();
 		ServicePort servicePort = studioPort.getKey();
-		for (Entry<QName, Service> serviceEntry : services.entrySet()) { //TODO: support multiservice
+		for (Entry<QName, Service> serviceEntry : services.entrySet()) { //TODO: support multi-services
 			QName serviceQName = serviceEntry.getKey();
 			Service service = serviceEntry.getValue();
-			Collection<Port> servicePorts = service.getPorts().values(); //TODO: support multiport
+			Collection<Port> servicePorts = service.getPorts().values(); //TODO: support multi-ports
 			for (Port port : servicePorts) {
-				if (servicePort.getName().equals(port.getBinding().getPortType().getQName().getLocalPart())) {
+				if (servicePort.getName().equals(
+						port.getBinding().getPortType().getQName().getLocalPart())) {
 					serviceName = serviceQName.getLocalPart();
 					serviceNS = serviceQName.getNamespaceURI();
 					endpointName = port.getName();
@@ -114,42 +112,33 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
 
 		EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
-		endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)));
-		endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
-		endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC)));
-		endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML)));
+		endpointInfo.put("useSL",
+				Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)));
+		endpointInfo.put("useSAM",
+				Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
+		endpointInfo.put("useSecurityToken",
+				Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC)));
+		endpointInfo.put("useSecuritySAML",
+				Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML)));
 
-		VelocityEngine engine = new VelocityEngine();
-		engine.setProperty("resource.loader", "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
-		engine.setProperty("classpath.resource.loader.class", //$NON-NLS-1$
-				"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"); //$NON-NLS-1$
-		engine.init();
 
-		VelocityContext context = new VelocityContext();
-		context.put("endpoint", endpointInfo); //$NON-NLS-1$
+		Map<String, Object> contextParams = new HashMap<String, Object>();
+		contextParams.put("endpoint", endpointInfo);
 
-		FileWriter fw = null;
+		FileWriter fileWriter = null;
 		try {
-			fw = new FileWriter(outputFile);
-			Template template = engine.getTemplate("/resources/beans-template.xml"); //$NON-NLS-1$
-			template.merge(context, fw);
-			fw.flush();
-		} catch (ResourceNotFoundException rnfe) {
-			// couldn't find the template
-			logger.error(Messages.ServiceExportManager_Exception_cannot_open_file, rnfe);
-		} catch (ParseErrorException pee) {
-			// syntax error: problem parsing the template
-			logger.error(Messages.ServiceExportManager_Exception_cannot_open_file, pee);
-		} catch (MethodInvocationException mie) {
-			// something invoked in the template threw an exception
-			logger.error(mie.getLocalizedMessage(), mie);
+			fileWriter = new FileWriter(outputFile);
+			TemplateProcessor.processTemplate(TEMPLATE_SPRING_BEANS, contextParams, fileWriter);
+		} catch (SystemException e) {
+			// something wrong with template processing
+			logger.error(e.getLocalizedMessage(), e);
 		} catch (IOException e) {
 			// something wrong with output file
 			logger.error(e.getLocalizedMessage(), e);
 		} finally {
-			if (null != fw) {
+			if (null != fileWriter) {
 				try {
-					fw.close();
+					fileWriter.close();
 				} catch (IOException e) {
 					logger.warn(e.getLocalizedMessage(), e);
 				}

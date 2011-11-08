@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +61,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -70,9 +71,11 @@ import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.utils.TemplateProcessor;
 
 /**
- * hwang class global comment. Detailled comment
+ * hwang class global comment. Detailed comment
  */
 public class OpenWSDLPage extends WizardPage {
+
+    private static final String TEMPLATE_SERVICE_WSDL = "/resources/wsdl-template.wsdl"; //$NON-NLS-1$
 
     private RepositoryNode repositoryNode;
 
@@ -82,9 +85,9 @@ public class OpenWSDLPage extends WizardPage {
 
     private boolean createWSDL;
 
-    private ServiceItem item = null;
+    private ServiceItem item;
 
-    private boolean creation = false;
+    private boolean creation;
 
     private IPath pathToSave;
 
@@ -97,9 +100,10 @@ public class OpenWSDLPage extends WizardPage {
         this.repositoryNode = repositoryNode;
         this.path = (null == item.getConnection()) ? ""
                 : ((ServiceConnection) item.getConnection()).getWSDLPath();
+        this.createWSDL = true; // default configuration value
 
-        this.setTitle("Assign WSDL");
-        this.setMessage("Assign WSDL to Data Service");
+        this.setTitle(Messages.AssignWsdlDialog_Title);
+        this.setMessage(Messages.AssignWsdlDialog_Description);
     }
 
     public void createControl(Composite parent) {
@@ -107,7 +111,7 @@ public class OpenWSDLPage extends WizardPage {
         parentArea.setLayout(new GridLayout(1, false));
 
         Button radioCreateWsdl = new Button(parentArea, SWT.RADIO);
-        radioCreateWsdl.setText("Create new WSDL");
+        radioCreateWsdl.setText(Messages.AssignWsdlDialog_Choice_CreateNew);
         radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
@@ -116,10 +120,10 @@ public class OpenWSDLPage extends WizardPage {
                 setPageComplete(true);
             }
         });
-        radioCreateWsdl.setSelection(true);
+        radioCreateWsdl.setSelection(createWSDL);
 
         Button radioImportWsdl = new Button(parentArea, SWT.RADIO);
-        radioImportWsdl.setText("Import existed WSDL");
+        radioImportWsdl.setText(Messages.AssignWsdlDialog_Choice_ImportExisted);
         radioImportWsdl.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(true);
@@ -128,6 +132,7 @@ public class OpenWSDLPage extends WizardPage {
                 setPageComplete(!path.trim().isEmpty());
             }
         });
+        radioImportWsdl.setSelection(!createWSDL);
 
 
         Composite wsdlFileArea = new Composite(parentArea, SWT.NONE);
@@ -138,8 +143,9 @@ public class OpenWSDLPage extends WizardPage {
         wsdlFileArea.setLayout(layout);
 
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        wsdlText = new LabelledFileField(wsdlFileArea, "WSDL file", xmlExtensions); //$NON-NLS-1$
-        wsdlText.setVisible(false);
+        wsdlText = new LabelledFileField(wsdlFileArea,
+                Messages.AssignWsdlDialog_ImportExisted_FilePath, xmlExtensions);
+        wsdlText.setVisible(!createWSDL);
         wsdlText.setText(path);
         wsdlText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -148,7 +154,8 @@ public class OpenWSDLPage extends WizardPage {
             }
         });
 
-        setPageComplete(true);
+        setPageComplete(radioCreateWsdl.getSelection()
+                || (radioImportWsdl.getSelection() && !path.trim().isEmpty()));
 
         setControl(parentArea);
     }
@@ -191,19 +198,16 @@ public class OpenWSDLPage extends WizardPage {
 
         try {
             item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
-            ((ServiceConnection) item.getConnection()).setWSDLPath((createWSDL) ? "" : path);
+            ((ServiceConnection) item.getConnection()).setWSDLPath(path);
             ((ServiceConnection) item.getConnection()).getServicePort().clear();
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             if (createWSDL) {
                 // create new WSDL file from template
-                Map<String, Object> wsdlInfo = new HashMap<String, Object>();
-                wsdlInfo.put("serviceName", label); //$NON-NLS-1$
-
-                String templatePath = "/resources/wsdl-template.wsdl"; //$NON-NLS-1$
-                TemplateProcessor.processTemplate(templatePath, wsdlInfo, new OutputStreamWriter(
-                        baos));
+                TemplateProcessor.processTemplate(TEMPLATE_SERVICE_WSDL,
+                        Collections.singletonMap("serviceName", (Object) label),
+                        new OutputStreamWriter(baos));
             } else {
                 // copy WSDL file
                 readWsdlFile(new File(path), baos);

@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2011 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.utils;
 
 import java.io.IOException;
@@ -14,7 +26,7 @@ import org.talend.commons.exception.SystemException;
 public class TemplateProcessor {
 
     public static void processTemplate(String tempalatePath, Map<String, Object> contextParams,
-            Writer outputWriter) throws SystemException {
+            Writer outputWriter) throws SystemException, IOException {
 
         VelocityEngine engine = new VelocityEngine();
         engine.setProperty("resource.loader", "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -45,8 +57,6 @@ public class TemplateProcessor {
             // something invoked in the template threw an exception
             // org.apache.velocity.exception.MethodInvocationException;
             throw new SystemException(ve);
-        } catch (IOException e) {
-            throw new SystemException(e);
         }
     }
 }
