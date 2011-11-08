@@ -61,6 +61,9 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                     InternalWSDLMultiPageEditor editor = (InternalWSDLMultiPageEditor) part;
                     if (editor instanceof LocalWSDLEditor) {
                         LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) editor;
+                        if (localWSDLEditor.getServiceItem() == null) {
+                            return;
+                        }
                         localWSDLEditor.removeListener();
                         localWSDLEditor.setServiceItem(null);
                         localWSDLEditor.setRepositoryNode(null);
@@ -177,7 +180,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
         }
     }
 
-	public void setRepositoryNode(RepositoryNode repositoryNode) {
-		this.repositoryNode = repositoryNode;
-	}
+    public void setRepositoryNode(RepositoryNode repositoryNode) {
+        this.repositoryNode = repositoryNode;
+    }
 }
