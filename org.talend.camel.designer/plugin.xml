@@ -126,7 +126,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.talend.camel.designer.CamelPerspectiveFactory"
-            icon="icons/appli_16x16.png"
+            icon="icons/routes_icon.png"
             id="org.talend.camel.perspective"
             name="Mediation">
       </perspective>
