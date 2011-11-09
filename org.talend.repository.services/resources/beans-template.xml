@@ -5,6 +5,10 @@
 #if (${endpoint.useSecuritySAML})
 		xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 #end
+#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
+		xmlns:p="http://cxf.apache.org/policy"
+		xmlns:wsp="http://www.w3.org/ns/ws-policy"
+#end
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="
 			http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
@@ -12,6 +16,10 @@
 			http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 #if (${endpoint.useSecuritySAML})
 			http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+#end
+#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
+			http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+			http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd
 #end
 		">
 
@@ -50,25 +58,28 @@
 			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature" />
 #end
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
-			<bean class="org.apache.cxf.ws.policy.WSPolicyFeature">
-				<constructor-arg>
-					<list>
-#if (${endpoint.useSecurityToken})
-						<bean factory-bean="policyProvider" factory-method="getTokenPolicy" />
+			<p:policies>
+				<wsp:Policy>
+#if (${endpoint.useSecurityToken} && ${endpoint.useSecuritySAML})
+					<wsp:ExactlyOne>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+						</wsp:All>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
+						</wsp:All>
+					</wsp:ExactlyOne>
+#elseif (${endpoint.useSecurityToken})
+					<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+#elseif (${endpoint.useSecuritySAML})
+					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
 #end
-#if (${endpoint.useSecuritySAML})
-						<bean factory-bean="policyProvider" factory-method="getSamlPolicy" />
-#end
-					</list>
-				</constructor-arg>
-			</bean>
+				</wsp:Policy>
+			</p:policies>
 #end
 		</jaxws:features>
 	</jaxws:endpoint>
 
-#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
-	<osgi:reference id="policyProvider" interface="org.talend.esb.job.controller.PolicyProvider" />
-#end
 #if (${endpoint.useSecurityToken})
 	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
 		<property name="contextName" value="karaf" />
@@ -89,8 +100,9 @@
 ]]#
 #end
 
-	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
-		<property name="operations">
+	<osgi:reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory"/>
+	<bean id="genericServiceProvider" factory-bean="providerFactory" factory-method="create">
+		<constructor-arg>
 			<map>
 #foreach ($entry in $endpoint.operation2job.entrySet())
 				<entry>
@@ -99,25 +111,14 @@
 				</entry>
 #end
 			</map>
-		</property>
-		<property name="jobLauncher">
-			<osgi:reference interface="org.talend.esb.job.controller.JobLauncher" />
-		</property>
+		</constructor-arg>
 #if (${endpoint.useSAM})
 		<property name="eventFeature" ref="eventFeature" />
 #end
 	</bean>
-
 	<osgi:service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
 		<osgi:service-properties>
 			<entry key="service.pid" value="${endpoint.studioName}" />
-		</osgi:service-properties>
-	</osgi:service>
-
-	<osgi:service ref="service" interface="javax.xml.ws.Endpoint">
-		<osgi:service-properties>
-			<entry key="name" value="${endpoint.studioName}" />
-			<entry key="type" value="service" />
 		</osgi:service-properties>
 	</osgi:service>
 
