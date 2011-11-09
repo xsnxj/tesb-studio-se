@@ -94,7 +94,7 @@
 		
 		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31" GROUP="MQ_GROUP" 
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
-			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar, com.ibm.mqjms.jar, connector.jar, dhbcore.jar)</DEFAULT>
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar, com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
 		</PARAMETER>  
 		   
     	<PARAMETER
