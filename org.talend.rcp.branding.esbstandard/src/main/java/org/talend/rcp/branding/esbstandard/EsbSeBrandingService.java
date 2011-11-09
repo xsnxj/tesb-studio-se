@@ -24,6 +24,7 @@ import org.talend.core.ui.branding.AbstractTalendBrandingService;
 import org.talend.core.ui.branding.DefaultBrandingConfiguration;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.rcp.branding.esbstandard.i18n.Messages;
+import org.talend.rcp.branding.esbstandard.starting.EsbStartingBrowser;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
@@ -82,5 +83,11 @@ public class EsbSeBrandingService extends AbstractTalendBrandingService {
 
     public String getOptionName() {
         return "for ESB";
+    }
+
+    @Override
+    public String getStartingBrowserId() {
+        // TODO Auto-generated method stub
+        return EsbStartingBrowser.ID;
     }
 }

@@ -92,4 +92,12 @@
                   talendPerspectiveId="org.talend.rcp.DesignPerspective">
             </TalendPerspective>
          </extension>
+         <extension point="org.eclipse.ui.editors">
+		   <editor
+		         class="org.talend.rcp.branding.esbstandard.starting.EsbStartingBrowser"
+		         default="false"
+		         id="org.talend.rcp.branding.esbstandard.starting.EsbStartingBrowser"
+		         name="starting">
+		   </editor>
+		</extension>
 </plugin>

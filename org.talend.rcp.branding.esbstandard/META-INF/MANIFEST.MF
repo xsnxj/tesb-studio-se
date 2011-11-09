@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide,
+ org.eclipse.ui.forms,
  org.eclipse.ui.intro,
  org.talend.rcp,
  org.talend.core,
