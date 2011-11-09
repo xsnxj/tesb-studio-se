@@ -82,7 +82,7 @@
                   class="org.talend.rcp.perspective.Perspective"
                   icon="icons/di_perspective_16x16.png"
                   id="org.talend.rcp.perspective"
-                  name="Service Builder">
+                  name="Integration">
             </perspective>
          </extension>
          <extension

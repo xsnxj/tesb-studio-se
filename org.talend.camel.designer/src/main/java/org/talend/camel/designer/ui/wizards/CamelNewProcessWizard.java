@@ -20,10 +20,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
@@ -84,7 +84,7 @@ public class CamelNewProcessWizard extends Wizard {
 
         repositoryFactory = DesignerPlugin.getDefault().getRepositoryService().getProxyRepositoryFactory();
 
-        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_WIZ));
+        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECoreImage.DEFAULT_WIZ));
     }
 
     /**
