@@ -149,4 +149,14 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
     public ServiceItem getBean() {
         return this.serviceItem;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
+	@Override
+	public boolean canFinish() {
+		return super.canFinish() && wsdlPage.isPageComplete();
+	}
+    
+    
 }
