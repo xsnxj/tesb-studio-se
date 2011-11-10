@@ -435,41 +435,51 @@ public class ESBService implements IESBService {
     public Object getValue(Item connItem, String value, INode node) {
         if (connItem instanceof ServiceItem) {
             ServiceItem serviceItem = ((ServiceItem) connItem);
-            IElementParameter portEle = node.getElementParameter(WSDLUtils.PORT_NAME);
-            IElementParameter operationEle = node.getElementParameter(WSDLUtils.OPERATION_NAME);
-            if (WSDLUtils.WSDL_LOCATION.equals(value)) {
-                return WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-            } else if (WSDLUtils.OPERATION_NAME.equals(value)) {
-                String propertyValue = (String) node.getPropertyValue(EParameterName.REPOSITORY_PROPERTY_TYPE.getName());
-                if (propertyValue != null) {
-                    if (propertyValue.contains(" - ")) {
-                        String portID = propertyValue.split(" - ")[1];
-                        String operarionID = propertyValue.split(" - ")[2];
-                        for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
-                            if (port.getId().equals(portID)) {
-                                for (ServiceOperation operation : port.getServiceOperation()) {
-                                    if (operation.getId().equals(operarionID)) {
-                                        return operation.getName();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (WSDLUtils.OPERATION_NS.equals(value)
+            if (WSDLUtils.ENDPOINT_URI.equals(value)
+                    || WSDLUtils.OPERATION_NAME.equals(value)
+                    || WSDLUtils.OPERATION_NS.equals(value)
                     || WSDLUtils.PORT_NAME.equals(value)
                     || WSDLUtils.PORT_NS.equals(value)
                     || WSDLUtils.SERVICE_NAME.equals(value)
                     || WSDLUtils.SERVICE_NS.equals(value)
-                    || WSDLUtils.ENDPOINT_URI.equals(value)) {
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
-                try {
-                    if (portEle != null && operationEle != null) {
-                        String portValue = (String) portEle.getValue();
-                        String operationValue = (String) operationEle.getValue();
-                        return WSDLUtils.getServiceOperationParameters(wsdlURI,
-                                operationValue, portValue).get(value);
+                    || WSDLUtils.WSDL_LOCATION.equals(value)) {
+
+                String wsdlPortTypeName = null;
+                String wsdlOperationName = null;
+
+                // find operation that job is bind to
+                String processId = node.getProcess().getId();
+                ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+                for (ServicePort port : connection.getServicePort()) {
+                    for (ServiceOperation operation : port.getServiceOperation()) {
+                        if (processId.equals(operation.getReferenceJobId())) {
+                            wsdlOperationName = operation.getName();
+                            wsdlPortTypeName = port.getName();
+                            break;
+                        }
                     }
+                    if (null != wsdlOperationName) {
+                        break;
+                    }
+                }
+
+                if (null == wsdlOperationName) {
+                    // job is not bind to any data service operation -> no need any updates
+                    return null;
+                }
+
+                if (WSDLUtils.OPERATION_NAME.equals(value)) {
+                    return wsdlOperationName;
+                }
+
+                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                if (WSDLUtils.WSDL_LOCATION.equals(value)) {
+                    return wsdlURI;
+                }
+
+                try {
+                    return WSDLUtils.getServiceOperationParameters(wsdlURI, wsdlOperationName,
+                            wsdlPortTypeName).get(value);
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
                 }
