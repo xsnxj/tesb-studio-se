@@ -61,10 +61,9 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
                     InternalWSDLMultiPageEditor editor = (InternalWSDLMultiPageEditor) part;
                     if (editor instanceof LocalWSDLEditor) {
                         LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) editor;
-                        if (localWSDLEditor.getServiceItem() == null) {
-                            return;
+                        if (localWSDLEditor.getServiceItem() != null) {
+                            localWSDLEditor.removeListener();
                         }
-                        localWSDLEditor.removeListener();
                         localWSDLEditor.setServiceItem(null);
                         localWSDLEditor.setRepositoryNode(null);
                     }
