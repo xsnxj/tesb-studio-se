@@ -105,8 +105,8 @@ public class PublishMetadataAction extends AContextualAction {
     protected static final String ACTION_LABEL = "Import WSDL Schemas";
 
     private IStructuredSelection selection;
-    private List<RepositoryNode> nodes;
 
+    private List<RepositoryNode> nodes;
 
     /*
      * (non-Javadoc)
@@ -149,18 +149,18 @@ public class PublishMetadataAction extends AContextualAction {
         return isEnabled();
     }
 
-	public void setNodes(List<RepositoryNode> nodes) {
-		this.nodes = nodes;
-	}
+    public void setNodes(List<RepositoryNode> nodes) {
+        this.nodes = nodes;
+    }
 
     protected void doRun() {
         UIJob job = new UIJob("importing...") {
 
-			@Override
+            @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 monitor.beginTask("importing", 100);
                 if (nodes == null) {
-                	nodes = (List<RepositoryNode>) selection.toList();
+                    nodes = (List<RepositoryNode>) selection.toList();
                 }
                 int step = 100;
                 int size = nodes.size();
@@ -210,9 +210,11 @@ public class PublishMetadataAction extends AContextualAction {
                     } catch (CoreException e) {
                         e.printStackTrace();
                         monitor.done();
+                        nodes = null;
                         return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
                     }
                 }
+                nodes = null;
                 monitor.done();
                 return Status.OK_STATUS;
             }
@@ -422,9 +424,7 @@ public class PublishMetadataAction extends AContextualAction {
             }
             if (!haveElementOrAttributes) {
                 xmlNode.setAttribute("branch");
-                retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id");
                 xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
-                xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
                 column = ConnectionFactory.eINSTANCE.createMetadataColumn();
                 column.setTalendType(xmlNode.getType());
                 column.setLabel(nameWithoutPrefixForColumn);
