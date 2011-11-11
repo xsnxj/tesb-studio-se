@@ -19,11 +19,11 @@ imports="
 	if(conns.size()>0) {
 		if(!("none".equals(language))) {
 %>
-			.filter(<%=language%>(<%=expression%>))
+			.filter().<%=language%>(<%=expression%>)
 <%
 		} else {
 %>
-			.filter(<%=expression%>);
+			.filter().<%=expression%>
 <%
 		}
 	}

@@ -15,7 +15,8 @@ imports="
 	
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
-	String useDelimiter = ElementParameterParser.getValue(node, "__USE_DELIMITER__");
+	String useDelimiter = "false";
+//	String useDelimiter = ElementParameterParser.getValue(node, "__USE_DELIMITER__");
 	String delimiter = ElementParameterParser.getValue(node, "__DELIMITER__");
 	String stopOnException = ElementParameterParser.getValue(node, "__STOP_ON_EXCEPTION__");
 	String ignoreInvalid = ElementParameterParser.getValue(node, "__IGNORE_INVALID__");
@@ -27,20 +28,20 @@ imports="
 			if(!("none".equals(language))) {
 				if("true".equals(useDelimiter)){
 %>
-				.recipientList(<%=language%>(<%=expression%>),<%=delimiter%>)
+				.recipientList().<%=language%>(<%=expression%>)
 <%				}else{
 %>
-				.recipientList(<%=language%>(<%=expression%>))
+				.recipientList().<%=language%>(<%=expression%>)
 <%              }
 %>
 <%
 			} else {
 			    if("true".equals(useDelimiter)){
 %>
-				.recipientList(<%=expression%>,<%=delimiter%>)
+				.recipientList().<%=expression%>
 <%              } else{
 %>
-				.recipientList(<%=expression%>)
+				.recipientList().<%=expression%>
 <%				}
 			}
 			

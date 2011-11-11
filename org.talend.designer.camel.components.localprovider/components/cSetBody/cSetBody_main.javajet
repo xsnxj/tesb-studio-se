@@ -19,11 +19,11 @@ imports="
 	if(conns.size()>0) {
 		if(!("none".equals(language))) {
 %>
-			.setBody(<%=language%>(<%=expression%>))
+			.setBody().<%=language%>(<%=expression%>)
 <%
 		} else {
 %>
-			.setBody(<%=expression%>)
+			.setBody().<%=expression%>
 <%
 		}
 	}

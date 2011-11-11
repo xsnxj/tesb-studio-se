@@ -24,11 +24,11 @@ imports="
 		if("false".equals(useBean)) {
 			if(!("none".equals(language))) {
 %>
-				.setHeader(<%=header%>, <%=language%>(<%=expression%>))
+				.setHeader(<%=header%>).<%=language%>(<%=expression%>)
 <%
 			} else {
 %>
-				.setHeader(<%=header%>, <%=expression%>)
+				.setHeader(<%=header%>).<%=expression%>
 <%
 			}
 		} else {
