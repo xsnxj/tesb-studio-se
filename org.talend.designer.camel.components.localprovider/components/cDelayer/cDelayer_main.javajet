@@ -17,7 +17,7 @@ imports="
 	if(conns.size()>0) {
 		if(timeToWait!=null && timeToWait.length()>0) {
 %>
-			.delayer(<%=Integer.parseInt(timeToWait)%>)
+			.delay(<%=Integer.parseInt(timeToWait)%>)
 <%
 		}
 	}
