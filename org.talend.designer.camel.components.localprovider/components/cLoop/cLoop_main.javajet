@@ -34,7 +34,7 @@ imports="
 <%
 			} else {
 %>
-				.loop.<%=exp%>
+				.loop().<%=exp%>
 <%
 			}
 		}

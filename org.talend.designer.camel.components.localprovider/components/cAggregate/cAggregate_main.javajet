@@ -45,7 +45,7 @@ imports="
 		if(!useAggregationStrategy) {
 			if(!("none".equals(language))) {
 %>
-				.aggregate().<%=language%>(<%=expression%>)
+				.aggregate(<%=language%>(<%=expression%>))
 <%
 			} else {
 %>
@@ -55,11 +55,11 @@ imports="
 		} else {
 			if(!("none".equals(language))) {
 %>
-				.aggregate().<%=language%>(<%=expression%>).aggregationStrategy(new beans.<%=aggregationStrategy%>())
+				.aggregate(<%=language%>(<%=expression%>), new beans.<%=aggregationStrategy%>())
 <%
 			} else {
 %>
-				.aggregate(<%=expression%>).aggregationStrategy(new beans.<%=aggregationStrategy%>())
+				.aggregate(<%=expression%>, new beans.<%=aggregationStrategy%>())
 <%
 			}
 		}
@@ -104,7 +104,7 @@ imports="
 		
 		if(useCompletionBatch) {
 %>
-			.completionFromBatchCustomer()
+			.completionFromBatchConsumer()
 <%
 		}
 		
