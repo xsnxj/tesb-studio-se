@@ -46,18 +46,18 @@ imports="
 <%
 		}
 		
-		if(useAggregationStrategy) {
-%>
-			, new <%=aggregationStrategy%>()
-<%
-		}
-		
 		if(isPollEnrich) {
 			if(specifyTimeout) {
 %>
 				, <%=timeout%>
 <%
 			}
+		}
+		
+		if(useAggregationStrategy) {
+%>
+			, new <%=aggregationStrategy%>()
+<%
 		}
 		
 %>
