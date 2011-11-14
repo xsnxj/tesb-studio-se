@@ -35,7 +35,7 @@ public class EsbSeBrandingService extends AbstractTalendBrandingService {
     protected IBrandingConfiguration brandingConfigure;
 
     public String getShortProductName() {
-        return "ESB SE"; //$NON-NLS-1$
+        return getProductName();
     }
 
     public String getCorporationName() {
