@@ -32,5 +32,6 @@ Bundle-ClassPath: .,
  lib/xmlschema-core-2.0.jar
 Export-Package: org.talend.repository.services.model.services
  ,org.talend.repository.services.ui.action
+ ,org.talend.repository.services.action
 Import-Package: org.talend.designer.publish.core
  ,org.talend.designer.publish.core.models

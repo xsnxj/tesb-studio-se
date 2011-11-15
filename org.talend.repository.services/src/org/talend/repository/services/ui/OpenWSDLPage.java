@@ -109,7 +109,8 @@ public class OpenWSDLPage extends WizardPage {
         this.pathToSave = pathToSave;
         this.item = item;
         this.repositoryNode = repositoryNode;
-        this.path = (null == item.getConnection()) ? "" : ((ServiceConnection) item.getConnection()).getWSDLPath();
+        this.path = (null == item || null == item.getConnection()) ? "" //$NON-NLS-1$
+                : ((ServiceConnection) item.getConnection()).getWSDLPath();
         this.createWSDL = true; // default configuration value
 
         this.setTitle(Messages.AssignWsdlDialog_Title);
@@ -176,7 +177,7 @@ public class OpenWSDLPage extends WizardPage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
      */
     @Override

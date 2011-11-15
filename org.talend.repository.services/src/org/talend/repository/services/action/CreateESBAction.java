@@ -36,7 +36,6 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
-import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.ui.ESBWizard;
@@ -66,7 +65,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -102,7 +101,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.action.Action#run()
      */
     protected void doRun() {
@@ -135,7 +134,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Jsdoc)
-     * 
+     *
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
@@ -146,26 +145,36 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     private void selectRootObject(Properties params) {
         try {
-            IViewPart findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(RepositoryView.ID);
+            IViewPart findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage().findView(RepositoryView.ID);
             if (findView == null) {
-                findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RepositoryView.ID);
+                findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                        .showView(RepositoryView.ID);
             }
             RepositoryView view = (RepositoryView) findView;
 
             Object type = params.get("type");
+
             if (ESBRepositoryNodeType.SERVICES.name().equals(type)) {
-                IRepositoryNode processNode = ((ProjectRepositoryNode) view.getRoot()).getProcessNode();
-                if (processNode != null) {
-                    setWorkbenchPart(view);
-                    view.getViewer().expandToLevel(processNode, 1);
-                    view.getViewer().setSelection(new StructuredSelection(processNode));
+                RepositoryNode repositoryNode = view.getRoot();
+                IRepositoryNode servicesNode = null;
+                java.util.List<IRepositoryNode> list = repositoryNode.getChildren();
+                for (IRepositoryNode node : list) {
+                    if (ESBRepositoryNodeType.SERVICES.equals(node.getContentType())) {
+                        servicesNode = node;
+                        break;
+                    }
                 }
 
+                if (servicesNode != null) {
+                    setWorkbenchPart(view);
+                    view.getViewer().expandToLevel(servicesNode, 1);
+                    view.getViewer().setSelection(new StructuredSelection(servicesNode));
+                }
             }
         } catch (PartInitException e) {
             ExceptionHandler.process(e);
         }
-
     }
 
 }
