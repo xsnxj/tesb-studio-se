@@ -21,10 +21,13 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -32,10 +35,11 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.ui.ESBWizard;
@@ -105,10 +109,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
      * @see org.eclipse.jface.action.Action#run()
      */
     protected void doRun() {
-        // RepositoryNode codeNode = getViewPart().getRoot().getChildren().get(4);
-        // RepositoryNode routineNode = codeNode.getChildren().get(0);
         RepositoryNode beanNode = getCurrentRepositoryNode();
-
         if (isToolbar()) {
             if (beanNode != null && beanNode.getContentType() != ESBRepositoryNodeType.SERVICES) {
                 beanNode = null;
@@ -124,6 +125,10 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         } else {
             selection = getRepositorySelection();
         }
+        if (selection.isEmpty()) {
+            return;
+        }
+
         ESBWizard beanWizard = new ESBWizard(PlatformUI.getWorkbench(), true, selection);
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), beanWizard);
 
@@ -144,28 +149,41 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
     }
 
     private void selectRootObject(Properties params) {
+
+        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (null == workbenchWindow) {
+            return;
+        }
+        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+        if (null == workbenchPage) {
+            return;
+        }
+
+        IPerspectiveDescriptor currentPerspective = workbenchPage.getPerspective();
+        if (!IBrandingConfiguration.PERSPECTIVE_DI_ID.equals(currentPerspective.getId())) {
+            // show Integration perspective
+            try {
+                workbenchWindow.getWorkbench().showPerspective(
+                        IBrandingConfiguration.PERSPECTIVE_DI_ID, workbenchWindow);
+                workbenchPage = workbenchWindow.getActivePage();
+            } catch (WorkbenchException e) {
+                ExceptionHandler.process(e);
+                return;
+            }
+        }
+
         try {
-            IViewPart findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getActivePage().findView(RepositoryView.ID);
+            IViewPart findView = workbenchPage.findView(RepositoryView.ID);
             if (findView == null) {
-                findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .showView(RepositoryView.ID);
+                findView = workbenchPage.showView(RepositoryView.ID);
             }
             RepositoryView view = (RepositoryView) findView;
 
             Object type = params.get("type");
 
             if (ESBRepositoryNodeType.SERVICES.name().equals(type)) {
-                RepositoryNode repositoryNode = view.getRoot();
-                IRepositoryNode servicesNode = null;
-                java.util.List<IRepositoryNode> list = repositoryNode.getChildren();
-                for (IRepositoryNode node : list) {
-                    if (ESBRepositoryNodeType.SERVICES.equals(node.getContentType())) {
-                        servicesNode = node;
-                        break;
-                    }
-                }
-
+                RepositoryNode servicesNode = ((ProjectRepositoryNode)  view.getRoot())
+                        .getRootRepositoryNode(ESBRepositoryNodeType.SERVICES);
                 if (servicesNode != null) {
                     setWorkbenchPart(view);
                     view.getViewer().expandToLevel(servicesNode, 1);
