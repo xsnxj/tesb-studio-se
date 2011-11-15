@@ -117,7 +117,7 @@
 /*
 *	Please specify "connectionFactory" here
 */
-connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+//connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
 			</DEFAULT>
 		</PARAMETER>
 		<PARAMETER
