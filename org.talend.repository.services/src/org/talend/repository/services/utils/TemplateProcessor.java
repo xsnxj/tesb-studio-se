@@ -32,6 +32,8 @@ public class TemplateProcessor {
         engine.setProperty("resource.loader", "classpath"); //$NON-NLS-1$ //$NON-NLS-2$
         engine.setProperty("classpath.resource.loader.class", //$NON-NLS-1$
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader"); //$NON-NLS-1$
+        engine.setProperty("eventhandler.referenceinsertion.class", //$NON-NLS-1$
+                "org.apache.velocity.app.event.implement.EscapeXmlReference"); //$NON-NLS-1$
         engine.init();
 
         VelocityContext context = new VelocityContext(contextParams);

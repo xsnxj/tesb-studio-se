@@ -1,16 +1,23 @@
 package org.talend.repository.services.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -20,20 +27,20 @@ import org.talend.repository.services.model.services.ServiceItem;
 
 public class ServiceMetadataDialog extends Dialog {
 
-    public static final String SECURITY_SAML = "Security.SAML";
     public static final String SECURITY_BASIC = "Security.Basic";
-    public static final String USE_SL = "UseSL";
+    public static final String SECURITY_SAML = "Security.SAML";
     public static final String USE_SAM = "UseSAM";
-    private Button samCheck;
-    private Button slCheck;
-    private Button basicCheck;
-    private Button samlCheck;
+    public static final String USE_SL = "UseSL";
+    public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_";
+
     private final ServiceItem serviceItem;
     private final ServiceConnection serviceConnection;
-    private boolean useSL;
+    private ServiceMetadataCustomPropertiesTable customPropertiesTable;
     private boolean useSAM;
+    private boolean useSL;
+    private Map<String, String> slCustomProperties = new HashMap<String, String>();
+    private boolean securityBasic;
 	private boolean securitySAML;
-	private boolean securityBasic;
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
         super(parentShell);
@@ -45,6 +52,13 @@ public class ServiceMetadataDialog extends Dialog {
             useSL = Boolean.valueOf(props.get(USE_SL));
             securitySAML = Boolean.valueOf(props.get(SECURITY_SAML));
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
+
+            for (Map.Entry<String, String> prop : props.entrySet()) {
+                if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
+                    slCustomProperties.put(prop.getKey().substring(SL_CUSTOM_PROP_PREFIX.length()),
+                            prop.getValue());
+                }
+            }
         }
     }
 
@@ -60,57 +74,76 @@ public class ServiceMetadataDialog extends Dialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
-        container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        container.setLayout(new GridLayout(1, false));
+        container.setLayoutData(new GridData(GridData.FILL_BOTH));
+        container.setLayout(new GridLayout());
 
         Group samSlGroup = new Group(container, SWT.NONE);
-        samSlGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         samSlGroup.setText("ESB Service Features");
-        samSlGroup.setLayout(new GridLayout(2, false));
+        samSlGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        samSlGroup.setLayout(new GridLayout());
 
-        samCheck = new Button(samSlGroup, SWT.CHECK);
+        final Button samCheck = new Button(samSlGroup, SWT.CHECK);
+        samCheck.setText("Use Service Activity Monitor");
         samCheck.setSelection(useSAM);
-        Label samLabel = new Label(samSlGroup, SWT.NONE);
-        samLabel.setText("Use Service Activity Monitor");
+        samCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                useSAM = samCheck.getSelection();
+            }
+        });
 
-        slCheck = new Button(samSlGroup, SWT.CHECK);
+        final Button slCheck = new Button(samSlGroup, SWT.CHECK);
+        slCheck.setText("Use Service Locator");
         slCheck.setSelection(useSL);
-        Label slLabel = new Label(samSlGroup, SWT.NONE);
-        slLabel.setText("Use Service Locator");
+        slCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                useSL = slCheck.getSelection();
+                customPropertiesTable.setEditable(slCheck.getSelection());
+            }
+        });
 
+        customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
+        customPropertiesTable.setEditable(useSL);
 
         Group securityGroup = new Group(container, SWT.NONE);
-        securityGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         securityGroup.setText("ESB Service Security");
-        securityGroup.setLayout(new GridLayout(2, false));
+        securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        securityGroup.setLayout(new GridLayout());
 
-        basicCheck = new Button(securityGroup, SWT.CHECK);
+        final Button basicCheck = new Button(securityGroup, SWT.CHECK);
+        basicCheck.setText("Username / Password");
         basicCheck.setSelection(securityBasic);
-        final Label basicLabel = new Label(securityGroup, SWT.NONE);
-        basicLabel.setText("Username / Password");
+        basicCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                securityBasic = basicCheck.getSelection();
+            }
+        });
 
-        samlCheck = new Button(securityGroup, SWT.CHECK);
+        final Button samlCheck = new Button(securityGroup, SWT.CHECK);
+        samlCheck.setText("SAML Token");
         samlCheck.setSelection(securitySAML);
-        final Label samlLabel= new Label(securityGroup, SWT.NONE);
-        samlLabel.setText("SAML Token");
+        samlCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                securitySAML = samlCheck.getSelection();
+            }
+        });
 
         return super.createDialogArea(parent);
     }
 
     private boolean isUseSam() {
-        return samCheck.getSelection();
+        return useSAM;
     }
 
     private boolean isUseSL() {
-        return slCheck.getSelection();
+        return useSL;
     }
 
     private boolean getSecurityBasic() {
-        return basicCheck.getSelection();
+        return securityBasic;
     }
-    
+
     private boolean getSecuritySAML() {
-        return samlCheck.getSelection();
+        return securitySAML;
     }
 
     /* (non-Javadoc)
@@ -124,6 +157,25 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(USE_SL, Boolean.toString(isUseSL()));
             props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
+
+            if (isUseSL()) {
+                slCustomProperties = new HashMap<String, String>(customPropertiesTable
+                        .getPropertiesList().getPropertiesMap());
+                // remove old custom properties
+                List<String> props2delete = new ArrayList<String>();
+                for (String propKey : props.keySet()) {
+                    if (propKey.startsWith(SL_CUSTOM_PROP_PREFIX)) {
+                        props2delete.add(propKey);
+                    }
+                }
+                for (String propKey : props2delete) {
+                    props.removeKey(propKey);
+                }
+                // set new custom properties
+                for (Map.Entry<String, String> prop : slCustomProperties.entrySet()) {
+                    props.put(SL_CUSTOM_PROP_PREFIX + prop.getKey(), prop.getValue());
+                }
+            }
         }
 
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -133,5 +185,16 @@ public class ServiceMetadataDialog extends Dialog {
             e.printStackTrace();
         }
         super.okPressed();
+    }
+
+    protected Point getInitialSize() {
+        Point pt = super.getInitialSize();
+        pt.x = Math.max(pt.x, 300);
+        pt.y = Math.max(pt.y, 300);
+        return pt;
+    }
+
+    protected void setShellStyle(int newShellStyle) {
+        super.setShellStyle(newShellStyle | SWT.RESIZE);
     }
 }

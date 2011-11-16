@@ -55,7 +55,20 @@
 			<ref bean="eventFeature" />
 #end
 #if (${endpoint.useSL})
-			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature" />
+			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature">
+#if (!$endpoint.slCustomProps.isEmpty())
+				<property name="availableEndpointProperties">
+					<map>
+#foreach ($entry in $endpoint.slCustomProps.entrySet())
+						<entry>
+							<key><value>${entry.key}</value></key>
+							<value>${entry.value}</value>
+						</entry>
+#end
+					</map>
+				</property>
+#end
+			</bean>
 #end
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
 			<p:policies>
