@@ -20,7 +20,6 @@ imports="
    		cid = node.getUniqueName();
    	}
 	
-	String uri = ElementParameterParser.getValue(node, "__URI__");
 	String uriRef = "uriMap.get(\"" + cid + "\")";
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
