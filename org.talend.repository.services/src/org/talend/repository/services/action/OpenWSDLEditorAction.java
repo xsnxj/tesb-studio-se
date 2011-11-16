@@ -3,15 +3,25 @@ package org.talend.repository.services.action;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.intro.IIntroSite;
+import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.LoginException;
@@ -22,17 +32,21 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
+import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.LocalWSDLEditor;
 import org.talend.repository.services.utils.WSDLUtils;
+import org.talend.repository.ui.views.RepositoryView;
 
-public class OpenWSDLEditorAction extends AbstractCreateAction {
+public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntroAction {
 
     private ERepositoryObjectType currentNodeType;
 
@@ -99,7 +113,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -130,7 +144,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -181,5 +195,72 @@ public class OpenWSDLEditorAction extends AbstractCreateAction {
 
     public void setRepositoryNode(RepositoryNode repositoryNode) {
         this.repositoryNode = repositoryNode;
+    }
+
+    public void run(IIntroSite site, Properties params) {
+        PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
+
+        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(
+                IBrandingConfiguration.PERSPECTIVE_DI_ID, ESBRepositoryNodeType.SERVICES,
+                params.getProperty("nodeId"));
+
+        repositoryNode = RepositoryNodeUtilities.getRepositoryNode(params.getProperty("nodeId"), false);
+
+        doRun();
+    }
+
+    private void do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(String perspectiveId,
+            ERepositoryObjectType repositoryNodeType, String nodeItemId) {
+
+        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (null == workbenchWindow) {
+            return;
+        }
+        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+        if (null == workbenchPage) {
+            return;
+        }
+
+        IPerspectiveDescriptor currentPerspective = workbenchPage.getPerspective();
+        if (!perspectiveId.equals(currentPerspective.getId())) {
+            // show required perspective
+            try {
+                workbenchWindow.getWorkbench().showPerspective(perspectiveId, workbenchWindow);
+                workbenchPage = workbenchWindow.getActivePage();
+            } catch (WorkbenchException e) {
+                ExceptionHandler.process(e);
+                return;
+            }
+        }
+
+        // find/show repository view
+        IViewPart findView = workbenchPage.findView(RepositoryView.ID);
+        try {
+            if (findView == null) {
+                findView = workbenchPage.showView(RepositoryView.ID);
+            }
+        } catch (PartInitException e) {
+            ExceptionHandler.process(e);
+            return;
+        }
+
+        // find repository node
+        RepositoryView view = (RepositoryView) findView;
+        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot())
+                .getRootRepositoryNode(repositoryNodeType);
+        if (null != repositoryNode) {
+            // expand/select repository node
+            setWorkbenchPart(view);
+            view.getViewer().expandToLevel(repositoryNode, 1);
+            view.getViewer().setSelection(new StructuredSelection(repositoryNode));
+
+            // find node item
+            RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(nodeItemId, false);
+            if (null != nodeItem) {
+                // expand/select node item
+                view.getViewer().expandToLevel(nodeItem, 2);
+                view.getViewer().setSelection(new StructuredSelection(nodeItem));
+            }
+        }
     }
 }

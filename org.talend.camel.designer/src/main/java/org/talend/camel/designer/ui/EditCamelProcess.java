@@ -20,9 +20,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
@@ -32,11 +36,13 @@ import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.action.AbstractProcessAction;
@@ -45,14 +51,16 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.ui.views.RepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
- * 
+ *
  * $Id: EditProcess.java 52559 2010-12-13 04:14:06Z nrousseau $
- * 
+ *
  */
 public class EditCamelProcess extends AbstractProcessAction implements IIntroAction {
 
@@ -73,7 +81,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.action.Action#run()
      */
     protected void doRun() {
@@ -144,7 +152,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -192,7 +200,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
     }
 
     /**
-     * 
+     *
      * DOC YeXiaowei EditProcess class global comment. Detailled comment
      */
     // @SuppressWarnings("unchecked")
@@ -221,7 +229,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.actions.AContextualView#getClassForDoubleClick()
      */
     @Override
@@ -231,12 +239,15 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
         this.params = params;
         PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
+        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(
+                IBrandingConfiguration.PERSPECTIVE_CAMEL_ID,
+                CamelRepositoryNodeType.repositoryRoutesType, params.getProperty("nodeId"));
         doRun();
     }
 
@@ -250,7 +261,62 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
                 return new StructuredSelection(repositoryNode);
             }
             return null;
-
         }
     }
+
+    private void do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(String perspectiveId,
+            ERepositoryObjectType repositoryNodeType, String nodeItemId) {
+
+        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (null == workbenchWindow) {
+            return;
+        }
+        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+        if (null == workbenchPage) {
+            return;
+        }
+
+        IPerspectiveDescriptor currentPerspective = workbenchPage.getPerspective();
+        if (!perspectiveId.equals(currentPerspective.getId())) {
+            // show required perspective
+            try {
+                workbenchWindow.getWorkbench().showPerspective(perspectiveId, workbenchWindow);
+                workbenchPage = workbenchWindow.getActivePage();
+            } catch (WorkbenchException e) {
+                ExceptionHandler.process(e);
+                return;
+            }
+        }
+
+        // find/show repository view
+        IViewPart findView = workbenchPage.findView(RepositoryView.ID);
+        try {
+            if (findView == null) {
+                findView = workbenchPage.showView(RepositoryView.ID);
+            }
+        } catch (PartInitException e) {
+            ExceptionHandler.process(e);
+            return;
+        }
+
+        // find repository node
+        RepositoryView view = (RepositoryView) findView;
+        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot())
+                .getRootRepositoryNode(repositoryNodeType);
+        if (null != repositoryNode) {
+            // expand/select repository node
+            setWorkbenchPart(view);
+            view.getViewer().expandToLevel(repositoryNode, 1);
+            view.getViewer().setSelection(new StructuredSelection(repositoryNode));
+
+            // find node item
+            RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(nodeItemId, false);
+            if (null != nodeItem) {
+                // expand/select node item
+                // view.getViewer().expandToLevel(nodeItem, 2);
+                view.getViewer().setSelection(new StructuredSelection(nodeItem));
+            }
+        }
+    }
+
 }
