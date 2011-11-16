@@ -29,15 +29,19 @@ COMPATIBILITY="ALL"
 	  <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="2" NB_LINES="9">
 	    <DEFAULT>
 /*
-*	Please write java codes of manipulate CamelContext here. 
-*   Here are some defined variables: 
-*     1 camelContext: for manipulate CamelContext
-*     2 typeConverterRegistry: for type TypeConverter registry
-*   Examples:
-*     1 camelContext.addComponent("component", new  org.apache.camel.component.dataset.DataSetComponent());
-*     2 typeConverterRegistry.addTypeConverter(String.class, Object.class, new org.apache.camel.impl.converter.ToStringTypeConverter());
+*	Here you can put Java code that will be used within the route.
+* 
+*   Usually you would register custom components in camelContext or
+*   manipulate typeConverterRegistry.
+*  
+*   For example:
+* 
+*     // Declaring a custom component in the Camel Context
+*     camelContext.addComponent("component", new  org.apache.camel.component.dataset.DataSetComponent());
+* 
+*     // Register a special type conversion 
+*     typeConverterRegistry.addTypeConverter(String.class, Object.class, new org.apache.camel.impl.converter.ToStringTypeConverter());
 */
-
 </DEFAULT>
 	  </PARAMETER>
 	<PARAMETER NAME="DRIVER_JAR" FIELD="TABLE" NUM_ROW="30"

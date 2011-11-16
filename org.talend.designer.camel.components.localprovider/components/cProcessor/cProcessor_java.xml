@@ -36,7 +36,7 @@
 
   <PARAMETERS>
       <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="2" NB_LINES="9" CONTEXT="begin">
-	      <DEFAULT>System.out.println("We just downloaded: "+ exchange.getIn().getHeader("CamelFileName"));</DEFAULT>
+	      <DEFAULT>System.out.println("Roger.");</DEFAULT>
 	  </PARAMETER>
    </PARAMETERS>
    
