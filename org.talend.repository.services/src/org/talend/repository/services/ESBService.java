@@ -169,10 +169,10 @@ public class ESBService implements IESBService {
     public String getWsdlFilePath(Item item) {
         if (item != null && item instanceof ServiceItem) {
             ServiceItem si = (ServiceItem) item;
-			IFile wsdlFile = WSDLUtils.getWsdlFile(si);
-			if (wsdlFile != null) {
-				return wsdlFile.getLocation().toPortableString();
-			}
+            IFile wsdlFile = WSDLUtils.getWsdlFile(si);
+            if (wsdlFile != null) {
+                return wsdlFile.getLocation().toPortableString();
+            }
         }
         return null;
     }
@@ -311,7 +311,7 @@ public class ESBService implements IESBService {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.core.IESBService#getServicesType()
      */
     public ERepositoryObjectType getServicesType() {
@@ -435,14 +435,10 @@ public class ESBService implements IESBService {
     public Object getValue(Item connItem, String value, INode node) {
         if (connItem instanceof ServiceItem) {
             ServiceItem serviceItem = ((ServiceItem) connItem);
-            if (WSDLUtils.ENDPOINT_URI.equals(value)
-                    || WSDLUtils.OPERATION_NAME.equals(value)
-                    || WSDLUtils.OPERATION_NS.equals(value)
-                    || WSDLUtils.PORT_NAME.equals(value)
-                    || WSDLUtils.PORT_NS.equals(value)
-                    || WSDLUtils.SERVICE_NAME.equals(value)
-                    || WSDLUtils.SERVICE_NS.equals(value)
-                    || WSDLUtils.WSDL_LOCATION.equals(value)) {
+            if (WSDLUtils.ENDPOINT_URI.equals(value) || WSDLUtils.OPERATION_NAME.equals(value)
+                    || WSDLUtils.OPERATION_NS.equals(value) || WSDLUtils.PORT_NAME.equals(value)
+                    || WSDLUtils.PORT_NS.equals(value) || WSDLUtils.SERVICE_NAME.equals(value)
+                    || WSDLUtils.SERVICE_NS.equals(value) || WSDLUtils.WSDL_LOCATION.equals(value)) {
 
                 String wsdlPortTypeName = null;
                 String wsdlOperationName = null;
@@ -478,8 +474,7 @@ public class ESBService implements IESBService {
                 }
 
                 try {
-                    return WSDLUtils.getServiceOperationParameters(wsdlURI, wsdlOperationName,
-                            wsdlPortTypeName).get(value);
+                    return WSDLUtils.getServiceOperationParameters(wsdlURI, wsdlOperationName, wsdlPortTypeName).get(value);
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
                 }
@@ -499,7 +494,7 @@ public class ESBService implements IESBService {
 
     /**
      * When services connection is renamed, refresh the connection label in the component view of job.
-     *
+     * 
      * @param item
      */
     public void refreshComponentView(Item item) {
@@ -703,5 +698,43 @@ public class ESBService implements IESBService {
             }
         }
         return objList;
+    }
+
+    public boolean isJobAlreadyAssignToServiceOperation(String jobID) {
+        boolean flag = false;
+        boolean portBreak = false;
+        boolean serviceBreak = false;
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        try {
+            List<IRepositoryViewObject> allService = factory.getAll(ERepositoryObjectType.SERVICESOPERATION);
+            for (IRepositoryViewObject viewObject : allService) {
+                ServiceItem serviceItem = (ServiceItem) viewObject.getProperty().getItem();
+                ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+                List<ServicePort> ports = serviceConnection.getServicePort();
+                for (ServicePort port : ports) {
+                    List<ServiceOperation> operations = port.getServiceOperation();
+                    for (ServiceOperation operation : operations) {
+                        String referenceJobId = operation.getReferenceJobId();
+                        if (referenceJobId != null && !referenceJobId.equals("")) {
+                            if (referenceJobId.contains(jobID)) {
+                                flag = true;
+                                portBreak = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (portBreak) {
+                        serviceBreak = true;
+                        break;
+                    }
+                }
+                if (serviceBreak) {
+                    break;
+                }
+            }
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 }
