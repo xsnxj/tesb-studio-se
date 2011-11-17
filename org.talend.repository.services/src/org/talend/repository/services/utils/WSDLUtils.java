@@ -33,7 +33,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
+import org.eclipse.wst.wsdl.validation.internal.WSDLValidator;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ByteArray;
@@ -45,6 +48,8 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Activator;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -276,6 +281,35 @@ public class WSDLUtils {
 
     public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
         return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
+    }
+    
+    /**
+     * Validate WSDL file.
+     * @param node
+     * @throws CoreException
+     */
+	public static void validateWsdl(RepositoryNode node) throws CoreException {
+    	IFile wsdlFile = getWsdlFile(node);
+    	if (null == wsdlFile) {
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_found));
+    	}
+    	String wsdlPath = wsdlFile.getLocationURI().toString();
+    	validateWsdl(wsdlPath);
+    }
+    
+    /**
+     * Validate WSDL file.
+     * @param wsdlUri
+     * @throws CoreException
+     */
+    @SuppressWarnings("restriction")
+	public static void validateWsdl(String wsdlUri) throws CoreException {
+    	WSDLValidator wsdlValidator = new WSDLValidator();
+    	IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
+    	
+    	if (!validationReport.isWSDLValid()) {
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_valid));
+    	}
     }
 
 }
