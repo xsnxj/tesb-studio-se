@@ -1,5 +1,6 @@
 package org.talend.repository.services.action;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -103,7 +104,7 @@ public class AssignJobAction extends AbstractCreateAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
@@ -124,7 +125,74 @@ public class AssignJobAction extends AbstractCreateAction {
         List<String> jobIDList = getAllReferenceJobId(repositoryNode);
         dialog.setJobIDList(jobIDList);
         if (dialog.open() == RepositoryReviewDialog.OK) {
+            changeOldJob();
             assign(dialog.getResult());
+        }
+    }
+
+    public void changeOldJob() {
+        String operationName = repositoryNode.getObject().getLabel();
+        String portName = repositoryNode.getParent().getObject().getLabel();
+        ServiceItem serviceItem = (ServiceItem) repositoryNode.getParent().getParent().getObject().getProperty().getItem();
+        List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+        String oldJobID = null;
+        for (ServicePort port : listPort) {
+            if (port.getName().equals(portName)) {
+                List<ServiceOperation> listOperation = port.getServiceOperation();
+                for (ServiceOperation operation : listOperation) {
+                    if (operation.getLabel().equals(operationName)) {
+                        oldJobID = operation.getReferenceJobId();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        try {
+            IRepositoryViewObject object = factory.getLastVersion(oldJobID);
+            Item item = object.getProperty().getItem();
+            ProcessItem processItem = (ProcessItem) item;
+            //
+            IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
+            boolean foundInOpen = false;
+            IProcess2 process = null;
+            IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .getEditorReferences();
+            List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
+            for (IProcess2 processOpen : processes) {
+                if (processOpen.getProperty().getItem() == processItem) {
+                    foundInOpen = true;
+                    process = processOpen;
+                    break;
+                }
+            }
+            if (!foundInOpen) {
+                IProcess proc = service.getProcessFromProcessItem(processItem);
+                if (proc instanceof IProcess2) {
+                    process = (IProcess2) proc;
+                }
+            }
+
+            if (process != null) {
+                List<? extends INode> nodelist = process.getGraphicalNodes();
+                for (INode node : nodelist) {
+                    if (node.getComponent().getName().equals("tESBProviderRequest")) {
+                        repositoryChangeToBuildIn(repositoryNode, node);
+                    }
+                }
+                processItem.setProcess(process.saveXmlFile());
+
+                try {
+                    factory.save(processItem);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -289,9 +357,21 @@ public class AssignJobAction extends AbstractCreateAction {
             String serviceId = connectionItem.getProperty().getId();
             String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
             String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
-            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(), param
-                    .getName()
-                    + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(
+                    node,
+                    connectionItem.getConnection(),
+                    param.getName() + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            command2.execute();
+        }
+    }
+
+    private void repositoryChangeToBuildIn(RepositoryNode repNode, INode node) {
+        IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
+        ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
+        if (param != null) {
+            param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.BUILTIN);
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(),
+                    param.getName() + ":" + EParameterName.PROPERTY_TYPE.getName(), EmfComponent.BUILTIN); //$NON-NLS-1$
             command2.execute();
         }
     }
