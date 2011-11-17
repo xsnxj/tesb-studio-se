@@ -20,6 +20,9 @@ public class Messages extends NLS {
 	public static String AssignWsdlDialog_WsdlChoice_ImportExistent;
 	public static String AssignWsdlDialog_ExistentWsdlFilePath;
 	public static String AssignWsdlDialog_ImportWsdlSchemas;
+	
+	public static String PublishMetadata_Exception_wsdl_not_found;
+	public static String PublishMetadata_Exception_wsdl_not_valid;
 
 	static {
 		// initialize resource bundle

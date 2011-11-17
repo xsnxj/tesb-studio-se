@@ -87,6 +87,7 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.FolderNameUtil;
@@ -237,7 +238,7 @@ public class PublishMetadataAction extends AContextualAction {
 	private void validateWSDL(RepositoryNode node) throws CoreException {
     	IFile wsdlFile = WSDLUtils.getWsdlFile(node);
     	if (null == wsdlFile) {
-    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "WSDL file not found."));
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_found));
     	}
     	String wsdlPath = wsdlFile.getLocationURI().toString();
     	
@@ -245,7 +246,7 @@ public class PublishMetadataAction extends AContextualAction {
     	IValidationReport validationReport = wsdlValidator.validate(wsdlPath);
     	
     	if (!validationReport.isWSDLValid()) {
-    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can't import WSDL Schemas: WSDL is not valid."));
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_valid));
     	}
     }
     
