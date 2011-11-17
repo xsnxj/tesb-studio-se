@@ -35,6 +35,7 @@ import javax.wsdl.Output;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -49,6 +50,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
+import org.eclipse.wst.wsdl.validation.internal.WSDLValidator;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -170,6 +173,7 @@ public class PublishMetadataAction extends AContextualAction {
                 for (RepositoryNode node : nodes) {
                     monitor.worked(step);
                     try {
+                    	validateWSDL(node);
                         Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
                         SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
                         Map<QName, Binding> bindings = wsdlDefinition.getBindings();
@@ -223,7 +227,28 @@ public class PublishMetadataAction extends AContextualAction {
         job.setUser(true);
         job.schedule();
     }
-
+    
+    /**
+     * Validate WSDL file.
+     * @param node
+     * @throws CoreException
+     */
+    @SuppressWarnings("restriction")
+	private void validateWSDL(RepositoryNode node) throws CoreException {
+    	IFile wsdlFile = WSDLUtils.getWsdlFile(node);
+    	if (null == wsdlFile) {
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "WSDL file not found."));
+    	}
+    	String wsdlPath = wsdlFile.getLocationURI().toString();
+    	
+    	WSDLValidator wsdlValidator = new WSDLValidator();
+    	IValidationReport validationReport = wsdlValidator.validate(wsdlPath);
+    	
+    	if (!validationReport.isWSDLValid()) {
+    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can't import WSDL Schemas: WSDL is not valid."));
+    	}
+    }
+    
     /**
      * old system, shouldn't be used anymore.
      */
