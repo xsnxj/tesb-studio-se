@@ -373,6 +373,9 @@ public class AssignJobAction extends AbstractCreateAction {
             ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(),
                     param.getName() + ":" + EParameterName.PROPERTY_TYPE.getName(), EmfComponent.BUILTIN); //$NON-NLS-1$
             command2.execute();
+            command2 = new ChangeValuesFromRepository(node, connectionItem.getConnection(), param.getName()
+                    + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), ""); //$NON-NLS-1$
+            command2.execute();
         }
     }
 
