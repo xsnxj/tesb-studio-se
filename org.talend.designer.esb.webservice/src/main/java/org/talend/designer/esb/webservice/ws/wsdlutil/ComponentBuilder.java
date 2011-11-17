@@ -317,7 +317,7 @@ public class ComponentBuilder {
         value.setServerNameSpace(namespace);
         Collection<Port> ports = service.getPorts().values();
         for (Port port : ports) {
-            Binding binding = port.getBinding();
+        	Binding binding = port.getBinding();
             if (port.getName() != null) {
                 if (value.getPortNames() == null) {
                     value.setPortNames(new ArrayList<String>());
@@ -330,6 +330,7 @@ public class ComponentBuilder {
                     if (element != null && element instanceof SOAPAddress) {
                         SOAPAddress soapAddr = (SOAPAddress) element;
                         operation.setTargetURL(soapAddr.getLocationURI());
+                        operation.setPortTypeName(port.getBinding().getPortType().getQName().getLocalPart());
                     }
                 }
                 value.addOperation(operation);

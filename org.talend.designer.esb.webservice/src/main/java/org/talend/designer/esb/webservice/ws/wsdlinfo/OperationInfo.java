@@ -39,6 +39,7 @@ public class OperationInfo {
     private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
     private String serviceid;
+	private String portTypeName;
 
     public OperationInfo() {
         super();
@@ -149,4 +150,13 @@ public class OperationInfo {
     public String toString() {
         return getTargetMethodName();
     }
+
+	public String getPortTypeName() {
+		return portTypeName;
+	}
+
+    public void setPortTypeName(String value) {
+    	portTypeName = value;
+    }
+
 }

@@ -22,6 +22,8 @@ public class Function {
 
     private String serverName;
 
+    private String portTypeName;
+
     private String serverNameSpace;
 
     private List<String> portNames;
@@ -48,6 +50,7 @@ public class Function {
         this.nameSpaceURI = oper.getNamespaceURI();
         this.encodingStyle = oper.getEncodingStyle();
         this.addressLocation = oper.getTargetURL();
+        this.portTypeName = oper.getPortTypeName();
         
         
         // input parameters
@@ -172,5 +175,13 @@ public class Function {
     public void setPortNames(List<String> portNames) {
         this.portNames = portNames;
     }
+
+	public void setPortTypeName(String portTypeName) {
+		this.portTypeName = portTypeName;
+	}
+
+	public String getPortTypeName() {
+		return portTypeName;
+	}
 
 }

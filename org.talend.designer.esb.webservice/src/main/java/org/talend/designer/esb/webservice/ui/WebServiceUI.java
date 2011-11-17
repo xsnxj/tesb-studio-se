@@ -961,7 +961,7 @@ public class WebServiceUI extends AbstractWebService {
 			// http://jira.talendforge.org/browse/TESB-3655 Remove possible
 			// schema prefix
 			String folderString = currentFunction.getServerNameSpace() + "/"
-					+ currentFunction.getServerName();
+					+ currentFunction.getPortTypeName();
 			try {
 				URI uri = new URI(folderString);
 				String scheme = uri.getScheme();
@@ -1011,7 +1011,7 @@ public class WebServiceUI extends AbstractWebService {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(
 					message.getSchema());
 			XSDResourceImpl xsdResourceImpl = new XSDResourceImpl(
-					org.eclipse.emf.common.util.URI.createURI(text));
+					org.eclipse.emf.common.util.URI.createFileURI(text));
 			xsdResourceImpl.load(inputStream, Collections.EMPTY_MAP);
 			XSDSchema xsdSchema = xsdResourceImpl.getSchema();
 			@SuppressWarnings("restriction")
