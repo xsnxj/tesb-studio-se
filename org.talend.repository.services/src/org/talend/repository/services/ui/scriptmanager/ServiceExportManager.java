@@ -83,6 +83,15 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 							try {
 								URL url = new URL(endpointAddress);
 								endpointAddress = url.getPath();
+
+								if (endpointAddress.equals("/services/")
+										|| endpointAddress.equals("/services")) {
+									// pass as is
+								} else if (endpointAddress.startsWith("/services/")) {
+									// remove forwarding "/services/" context as required by runtime
+									endpointAddress = endpointAddress.substring(
+											"/services/".length() - 1); // leave forwarding slash
+								}
 							} catch (MalformedURLException e) {
 								logger.error("Endpoint URI invalid: " + e);
 							}
