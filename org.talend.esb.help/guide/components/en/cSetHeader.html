@@ -1,0 +1,121 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cSetHeader</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;A.&nbsp;Appendix Camel components"><link rel="prev" href="cSetBody.html" title="cSetBody"><link rel="next" href="cSplitter.html" title="cSplitter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cSetHeader"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cSetHeader"></a>cSetHeader</h2></div></div></div><div class="mediaobject"><img src="../images/cSetHeader_icon32.png"></div><div class="section" title="cSetHeader properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8907"></a>cSetHeader properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Transformation</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetHeader</strong></span> sets a header on each message sent to
+								it.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetHeader</strong></span> is used to set a header or customize the default
+								header, if any, on each message sent to it for subsequent message
+								processing.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="italic">Header</span></p>
+						</td><td valign="top"><p>Type in a name for the message header.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="italic">Use bean</span></td><td valign="top"><p>Select this check box if you want to call a predefined Java Bean to return the header
+								value.</p><p>When this check box is selected, a
+									<span class="bold"><strong>Bean class</strong></span> field appears for
+								you specify the Bean class to call.</p></td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="italic">Bean class</span></td><td valign="top">Type in the Bean class that will return a value for the
+							message header, in the form of
+								<span class="emphasis"><em>beans.BEAN_NAME.class</em></span>.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Language</em></span></td><td valign="top"><p>Select the language of the expression you use,
+								from <span class="bold"><strong>Constant</strong></span>, <span class="bold"><strong>EL</strong></span>, <span class="bold"><strong>Groovy</strong></span>, <span class="bold"><strong>Header</strong></span>,
+									<span class="bold"><strong>JavaScript</strong></span>, <span class="bold"><strong>JoSQL</strong></span>, <span class="bold"><strong>JXPath</strong></span>, <span class="bold"><strong>MVEL</strong></span>,
+									<span class="bold"><strong>None</strong></span>, <span class="bold"><strong>OGNL</strong></span>, <span class="bold"><strong>PHP</strong></span>,
+									<span class="bold"><strong>Property</strong></span>, <span class="bold"><strong>Python</strong></span>, <span class="bold"><strong>Ruby</strong></span>,
+									<span class="bold"><strong>Simple</strong></span>, <span class="bold"><strong>SpEL</strong></span>, <span class="bold"><strong>SQL</strong></span>,
+									<span class="bold"><strong>XPath</strong></span>, and <span class="bold"><strong>XQuery</strong></span>.</p>
+							<p>This list box is hidden when the <span class="bold"><strong>Use
+									bean</strong></span> check box is selected.</p></td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression to set the value of the
+								message header.</p>
+							<p>This field is hidden when the <span class="bold"><strong>Use
+									bean</strong></span> check box is selected.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetHeader</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Splitting a message and renaming the sub-messages according to contained information"><div class="titlepage"><div><div><h3 class="title"><a name="d0e9101"></a>Scenario: Splitting a message and renaming the sub-messages according to contained
+			information</h3></div></div></div><p>In this scenario, a file message containing people information is split into sub-messages,
+			each then is routed to another endpoint, where it is renamed according the city name it
+			contains.</p><p>The following is an extract of the example XML file used in this use case:</p><pre class="programlisting">&lt;people&gt;
+    &lt;person&gt;
+        &lt;firstName&gt;Pierre&lt;/firstName&gt;
+        &lt;lastName&gt;Dubois&lt;/lastName&gt;
+        &lt;city&gt;Paris&lt;/city&gt;
+    &lt;/person&gt;
+    &lt;person&gt;
+        &lt;firstName&gt;Nicolas&lt;/firstName&gt;
+        &lt;lastName&gt;Yang&lt;/lastName&gt;
+        &lt;city&gt;Beijing&lt;/city&gt;
+    &lt;/person&gt;
+    &lt;person&gt;
+        &lt;firstName&gt;Ellen&lt;/firstName&gt;
+        &lt;lastName&gt;Ripley&lt;/lastName&gt;
+        &lt;city&gt;Washington&lt;/city&gt;
+    &lt;/person&gt;
+&lt;/people&gt;</pre><p>A predefined Java Bean, <span class="emphasis"><em>setFileNames</em></span>, is called by the <span class="bold"><strong>cSetHeader</strong></span> component used in this use case to define a file
+			name for each message according to the city name it contains. For more information about
+			creating and using Java Beans, see <a class="xref" href="">???</a>. </p><p>
+			</p><pre class="programlisting">package beans;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+public class setFileNames {
+	public String getCityName(Document document) {
+		NodeList cities = document.getDocumentElement().getElementsByTagName(
+				"city");
+		Element city = (Element) cities.item(0);
+		String textContent = city.getTextContent();
+			return textContent+".xml";
+		}
+}</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e9125"></a>Dropping and linking the components</h4></div></div></div><p>This use case uses two <span class="bold"><strong>cMessagingEndpoint</strong></span>
+				components, one as the message source and the other as the receiving endpoint, a
+					<span class="bold"><strong>cSplitter</strong></span> component to split the source
+				message, and a <span class="bold"><strong>cSetHeader</strong></span> component to define the
+				file name for each message being sent to the receiving endpoint.</p><div class="mediaobject"><img src="../images/use_case-csetheader1.png"></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder, and drop two <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the design
+						workspace.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Routing</strong></span> folder, drop a <span class="bold"><strong>cSplitter</strong></span> component onto the design workspace,
+						between the two <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						components.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Transformation</strong></span> folder, drop a
+							<span class="bold"><strong>cSetHeader</strong></span> component onto the design
+						workspace, between the <span class="bold"><strong>cSplitter</strong></span> component
+						and the receiving <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						component.</p></li><li class="listitem"><p>Right-click the source <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						component, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the contextual menu and click the
+							<span class="bold"><strong>cSplitter</strong></span> component.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cSplitter</strong></span> component,
+						select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Split</strong></span> from the contextual menu and click the <span class="bold"><strong>cSetHeader</strong></span> component.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cSetHeader</strong></span> component,
+						select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the contextual menu and click the receiving
+							<span class="bold"><strong>cMessagingEndpoint</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e9227"></a>Configuring the components and connections</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click the input <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						component to display its <span class="bold"><strong>Component</strong></span> view,
+						and type in the URI of the source message in the <span class="bold"><strong>URI</strong></span> field.</p><p>As we are handling a file message, type in <span class="emphasis"><em>"file:/"</em></span>
+						followed by the path to the folder containing the file to send, with the
+							<span class="emphasis"><em>noop</em></span> file specific option. This option tells Camel
+						to leave the file as is, instead of moving it from its original
+						folder.</p><div class="mediaobject"><img src="../images/use_case-csetheader2.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cSplitter</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view, and set an
+						Xpath expression in the <span class="bold"><strong>Expression</strong></span> field to
+						split the message into sub-messages at each <span class="emphasis"><em>person</em></span> node
+						of the XML file.</p><div class="mediaobject"><img src="../images/use_case-csetheader3.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cSetHeader</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Header</strong></span> field, type in the name of
+						the header you want to give to the messages. </p><p>In this use case, we want to define the file name for each incoming message, so fill in
+							<span class="italic">CamelFileName</span> as the header
+						name.</p></li><li class="listitem"><p>Select the <span class="bold"><strong>Use bean</strong></span> check box, and in the
+							<span class="bold"><strong>Bean class</strong></span> field that appears, type in
+						the name of the predefined Java Bean. </p><div class="mediaobject"><img src="../images/use_case-csetheader4.png"></div></li><li class="listitem"><p>Double-click the receiving <span class="bold"><strong>cMessagingEndpoint</strong></span> component to display its <span class="bold"><strong>Component</strong></span> view, and fill the <span class="bold"><strong>URI</strong></span> filed with the URI of the folder you want to
+						send your messages to.</p><p>As we are handling file messages, type in <span class="emphasis"><em>"file:/"</em></span>
+						and the path to the folder to which the files will be sent. </p><div class="mediaobject"><img src="../images/use_case-csetheader5.png"></div></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e9330"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/use_case-csetheader6.png"></div><p>As shown in the code, a message route is built <code class="code">from</code> one endpoint
+							<code class="code">.to</code> another, and while in routing, the source message is
+						split according to the condition <code class="code">.split</code> and each sub-message is
+						given a header according to <code class="code">.setHeader</code>, the value of which is
+						returned by <code class="code">.method(beans.setFileName.class)</code>.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your Route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The source file message is split into sub-messages and each sub-message is
+				renamed after the city name it contains and routed to the receiving endpoint: the
+				message containing the city name <span class="emphasis"><em>Paris</em></span> is renamed <span class="italic">Paris.xml</span>, the message containing the city name
+					<span class="emphasis"><em>Beijing</em></span> is renamed <span class="italic">Beijing.xml</span>, and so on.</p><p>For more scenarios involving the use of a <span class="bold"><strong>cSetHeader</strong></span> component, see <a class="xref" href="cRoutingSlip.html#jzhang-20111014-camel_components-croutingslip_s1" title="Scenario 1: Routing a message consecutively to a series of endpoints">the section called &#8220;Scenario 1: Routing a message consecutively to a series of endpoints&#8221;</a> and <a class="xref" href="cRoutingSlip.html#jzhang-20111014-camel_components-croutingslip_s2" title="Scenario 2: Routing each message conditionally to a series of endpoints">the section called &#8220;Scenario 2: Routing each message conditionally to a series of endpoints&#8221;</a> of the <a class="xref" href="cRoutingSlip.html" title="cRoutingSlip">the section called &#8220;cRoutingSlip&#8221;</a> component.</p></div></div></div></body></html>

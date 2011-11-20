@@ -1,0 +1,189 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cCXF</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;A.&nbsp;Appendix Camel components"><link rel="prev" href="cConvertBodyTo.html" title="cConvertBodyTo"><link rel="next" href="cDynamicRouter.html" title="cDynamicRouter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cCXF"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cCXF"></a>cCXF</h2></div></div></div><div class="mediaobject"><img src="../images/ccxf_icon32_white.png"></div><div class="section" title="cCXF properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1792"></a>cCXF properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cCXF</strong></span> provides integration with
+								Apache CXF for connecting to JAX-WS services. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cCXF</strong></span> provides web services from
+								WSDL files or Java classes.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Address</em></span>
+							</p>
+						</td><td valign="top">
+							<p>The service endpoint URL where the web service is provided.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Type</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select which type you want to use to provide web service. Either
+									<span class="bold"><strong>wsdlURL</strong></span> or <span class="bold"><strong>serviceClass</strong></span>.</p>
+							<p><span class="bold"><strong>wsdlURL</strong></span>: Select this type to
+								provide the web service from a WSDL file.</p>
+							<p><span class="bold"><strong>serviceClass</strong></span>: Select this type to
+								provide the web service from an SEI (Service Endpoint Interface)
+								Java class.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/WSDL File</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This field displays when the <span class="bold"><strong>wsdlURL</strong></span> service type is selected. Browse to or enter
+								the path to the WSDL file to be used to provide the web service.
+							</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Service Class</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This field displays when the <span class="bold"><strong>serviceClass</strong></span> service type is selected. Enter the
+								name of the service class to be used to provide the web service.
+							</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Dataformat</em></span>
+							</p>
+						</td><td valign="top">
+							<p>The exchange data style. <span class="bold"><strong>MESSAGE</strong></span>,
+									<span class="bold"><strong>PAYLOAD</strong></span>, or <span class="bold"><strong>POJO</strong></span>.</p>
+							<p><span class="bold"><strong>MESSAGE</strong></span> is the raw message that
+								is received from the transport layer. </p>
+							<p><span class="bold"><strong>PAYLOAD</strong></span> is the message payload,
+								the contents of the <code class="code">soap:body</code>. </p>
+							<p><span class="bold"><strong>POJO</strong></span>s (Plain Old Java Objects)
+								are the Java parameters to the method being invoked on the target
+								server. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Service</em></span>
+						</td><td valign="top">Select this check box to specify the service port. This
+							option is useful especially when there are multi service ports in the
+							WSDL or service class.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Service Name</em></span>
+						</td><td valign="top">The service name this service is implementing. It maps
+							to the <code class="code">wsdl:service@name</code> in the format of
+								<code class="code">ns:SERVICE_NAME</code> where <code class="code">ns</code> is a namespace
+							prefix valid at this scope. </td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Port Name</em></span>
+						</td><td valign="top">The endpoint name this service is implementing. It maps
+							to the <code class="code">wsdl:port@name</code>, in the format of
+								<code class="code">ns:PORT_NAME</code> where <code class="code">ns</code> is a namespace
+							prefix valid at this scope. </td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>ESB Features/Use Service Locator</em></span></td><td valign="top">Maintains the availability of the service to help meet
+							demands and service level agreements (SLAs).</td></tr><tr><td>&nbsp;</td><td valign="top"><span class="emphasis"><em> ESB Features/Use Service Activity Monitor
+							</em></span></td><td valign="top">
+							<p>Captures events and stores this information to facilitate in-depth
+								analysis of service activity and track-and-trace of messages
+								throughout a business transaction. This can be used to analyze
+								service response times, identify traffic patterns, perform root
+								cause analysis and more.</p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>This feature is not supported when <span class="bold"><strong>MESSAGE</strong></span> is used as the processing mode. When
+										<span class="bold"><strong>MESSAGE</strong></span> is selected in the
+										<span class="bold"><strong>Dataformat</strong></span> field, the
+										<span class="bold"><strong>Use Service Activity
+										Monitor</strong></span> check box is disabled.</p></td></tr></table></div>
+						</td></tr><tr><td>
+							<span class="bold"><strong>Advanced settings</strong></span>
+						</td><td valign="top">
+							<span class="emphasis"><em>Arguments</em></span>
+						</td><td valign="top">Set the optional arguments in the corresponding table.
+							Click <span class="bold"><strong>[+]</strong></span> as many times as required to
+							add arguments to the table. Then click the corresponding <span class="bold"><strong>Value</strong></span> field and enter a value. See the site
+								<a class="link" href="http://camel.apache.org/cxf.html" target="_top">http://camel.apache.org/cxf.html</a> for available URI
+							options.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cCXF</strong></span> can be a start, middle or
+								end component in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario&nbsp;1: Providing a web service using cCXF from a WSDL file"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2127"></a>Scenario&nbsp;1: Providing a web service using cCXF from a WSDL file</h3></div></div></div><p>In this scenario, a web service is provided from a WSDL file using a <span class="bold"><strong>cCXF</strong></span> component.</p><div class="mediaobject"><img src="../images/use_case_ccxf1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2138"></a>Dropping and linking the components</h4></div></div></div><p>This use case requires one <span class="bold"><strong>cCXF</strong></span> component and one
+					<span class="bold"><strong>cProcessor</strong></span> component.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder, select the <span class="bold"><strong>cCXF</strong></span> component and drop it onto the design
+						workspace.</p></li><li class="listitem"><p> Expand the <span class="bold"><strong>Processor</strong></span> folder, select the
+							<span class="bold"><strong>cProcessor</strong></span> component and drop it onto
+						the design workspace.</p></li><li class="listitem"><p> Right-click the <span class="bold"><strong>cCXF</strong></span> component, select
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the contextual menu and click the <span class="bold"><strong>cProcessor</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2186"></a>Configuring the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Double-click the <span class="bold"><strong>cCXF</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view and set its
+						parameters.</p><div class="mediaobject"><img src="../images/use_case_ccxf2.png"></div></li><li class="listitem"><p> In the <span class="bold"><strong>Address</strong></span> field, type in the
+						service endpoint URL where the web service is provided. Here, we use the
+						default address as shown in the above screenshot.</p></li><li class="listitem"><p> In the <span class="bold"><strong>Type</strong></span> field, select <span class="bold"><strong>wsdlURL</strong></span> to start the web service from a WSDL
+						file.</p></li><li class="listitem"><p> In the <span class="bold"><strong>Wsdl File</strong></span> field, browse to or
+						type in the path to the WSDL file to be used for the web service. </p></li><li class="listitem"><p> In the <span class="bold"><strong>Dataformat</strong></span> field, select
+							<span class="bold"><strong>PAYLOAD</strong></span> mode for the <span class="bold"><strong>wsdlURL</strong></span> service type.</p></li><li class="listitem"><p> Double click the <span class="bold"><strong>cProcessor</strong></span> component
+						to display its <span class="bold"><strong>Component</strong></span> view. By
+						default, a piece of code is already set in the <span class="bold"><strong>Code</strong></span> field. This
+						code is a Java code that makes a message: <span class="italic">"We just downloaded:"
+						</span> and the name of the intercepted messages display in the console.
+						In this use case, we simply keep the code as it is. </p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf11.png" width="100%"></td></tr></table></div></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2259"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf3.png" width="100%"></td></tr></table></div><p>As shown in the code, a message route is built <code class="code">from</code> the
+							<code class="code">cCXF_1</code> and processed by <code class="code">cProcessor_1</code>.</p></li><li class="listitem"><p> Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The service is started. You can access it from a web browser with the
+				service address URL plus <code class="code">?wsdl</code>, for example, in Microsoft Internet
+				Explorer. </p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf4.png" width="100%"></td></tr></table></div></div></div><div class="section" title="Scenario&nbsp;2: Providing a web service using cCXF from a Java class"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2303"></a>Scenario&nbsp;2: Providing a web service using cCXF from a Java class</h3></div></div></div><p>In this scenario, a web service is provided from a Java class file using a <span class="bold"><strong>cCXF</strong></span> component.</p><div class="section" title="Creating a Java class"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2311"></a>Creating a Java class</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> From the repository tree view, expand the <span class="bold"><strong>Code</strong></span> node and right click the <span class="bold"><strong>Beans</strong></span> node. In the contextual menu, select <span class="bold"><strong>Create Bean</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ccxf5.png"></div></li><li class="listitem"><p> The <span class="bold"><strong>New Bean</strong></span> wizard opens. In the
+							<span class="bold"><strong>Name</strong></span> field, type in a name for the
+						bean, for example, <span class="emphasis"><em>CXFdemobean</em></span>. Click <span class="bold"><strong>Finish</strong></span> to close the wizard.</p><div class="mediaobject"><img src="../images/use_case_ccxf6.png"></div></li><li class="listitem"><p> Change the class type to <code class="code">interface</code>, change the return type
+						to <code class="code">string</code> and remove the message body.</p><p>
+						</p><pre class="programlisting">package beans;
+
+public interface CXFdemobean {
+    public String helloExample(String message) ;
+}</pre><p>
+					</p></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your bean.</p></li></ol></div></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2368"></a>Dropping and linking the components</h4></div></div></div><div class="mediaobject"><img src="../images/use_case_ccxf1.png"></div><p>This use case requires one <span class="bold"><strong>cCXF</strong></span>
+				component and one <span class="bold"><strong>cProcessor</strong></span> component.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder, select the <span class="bold"><strong>cCXF</strong></span> component and drop it onto the design
+						workspace.</p></li><li class="listitem"><p> Expand the <span class="bold"><strong>Processor</strong></span> folder, select the
+							<span class="bold"><strong>cProcessor</strong></span> component and drop it onto
+						the design workspace.</p></li><li class="listitem"><p> Right-click the <span class="bold"><strong>cCXF</strong></span> component, select
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the contextual menu and click the <span class="bold"><strong>cProcessor</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2419"></a>Configuring the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Double-click the <span class="bold"><strong>cCXF</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view and set its
+						parameters.</p><div class="mediaobject"><img src="../images/use_case_ccxf8.png"></div></li><li class="listitem"><p> In the <span class="bold"><strong>Address</strong></span> field, type in the
+						service endpoint URL where the web service is provided, as shown in the
+						above screenshot.</p></li><li class="listitem"><p> In the <span class="bold"><strong>Type</strong></span> field, select <span class="bold"><strong>serviceClass</strong></span> to start the web service from a Java
+						class.</p></li><li class="listitem"><p> In the <span class="bold"><strong>Service Class</strong></span> field, type in
+						service class that is created in the beginning of this scenario. </p></li><li class="listitem"><p> In the <span class="bold"><strong>Dataformat</strong></span> field, select
+							<span class="bold"><strong>POJO</strong></span> mode for the <span class="bold"><strong>serviceClass</strong></span> service type.</p></li><li class="listitem"><p> Double click the <span class="bold"><strong>cProcessor</strong></span> component
+						to display its <span class="bold"><strong>Component</strong></span> view. By
+						default, a piece of code is already set in the <span class="bold"><strong>Code</strong></span> field. This
+						code is a Java code that makes a message: <span class="italic">"We just downloaded:"
+						</span> and the name of the intercepted messages display in the console.
+						In this use case, we simply keep the code as it is. </p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf11.png" width="100%"></td></tr></table></div></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2492"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf9.png" width="100%"></td></tr></table></div><p>As shown in the code, a message route is built <code class="code">from</code> the
+							<code class="code">cCXF_1</code> and processed by <code class="code">cProcessor_1</code>.</p></li><li class="listitem"><p> Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The service is started. You can access it from a web browser with the
+				service address URL plus <code class="code">?wsdl</code>, for example, in Microsoft Internet
+				Explorer. </p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_ccxf10.png" width="100%"></td></tr></table></div></div></div></div></body></html>

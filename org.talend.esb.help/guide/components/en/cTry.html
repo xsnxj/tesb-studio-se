@@ -1,0 +1,86 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cTry</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;A.&nbsp;Appendix Camel components"><link rel="prev" href="cTalendJob.html" title="cTalendJob"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cTry"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cTry"></a>cTry</h2></div></div></div><div class="mediaobject"><img src="../images/cTry_icon32_white.png"></div><div class="section" title="cTry properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10076"></a>cTry properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cTry</strong></span> offers Java's exception
+								handling abilities, i.e.  building try/catch/finally blocks.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cTry</strong></span> is designed to build  Java
+								try/catch/finally blocks to handle exceptions.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exceptions</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This field appears when you click on the <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Catch</strong></span> link.
+								You can type in the exception to be caught in this field. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cTry</strong></span> is designed to build  Java
+								try/catch/finally blocks to handle exceptions.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Using cTry to build try/catch/finally blocks for exceptions handling"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10191"></a>Scenario: Using cTry to build try/catch/finally blocks for exceptions handling</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cTry</strong></span> component is used to build
+			try/catch/finally blocks to handle exceptions. Specifically, the route first tries to
+			throw an exception, which is caught to trigger file transferring. Finally, the code
+			block prints out the file transferring results.</p><p>To build the route, do the following:</p><div class="section" title="Dragging and dropping components and linking them together"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10201"></a>Dragging and dropping components and linking them together </h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Drag and drop the components from the <span class="bold"><strong>Palette</strong></span> onto the
+						workspace: <span class="bold"><strong>cFile</strong></span> (X2), <span class="bold"><strong>cTry</strong></span> and <span class="bold"><strong>cProcessor</strong></span> (X3).</p></li><li class="listitem"><p>Link <span class="bold"><strong>cFile_1</strong></span> to <span class="bold"><strong>cTry</strong></span>
+						using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cTry</strong></span> to <span class="bold"><strong>cProcessor_3</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt;
+							<span class="bold"><strong>Try</strong></span> connection.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cTry</strong></span> to <span class="bold"><strong>cProcessor_2</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt;
+							<span class="bold"><strong>Catch</strong></span> connection.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cProcessor_2</strong></span> to <span class="bold"><strong>cFile_2</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>
+						connection.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cTry</strong></span> to <span class="bold"><strong>cProcessor_1</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt;
+							<span class="bold"><strong>Finally</strong></span> connection.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_1.png" align="middle"></div></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10298"></a>Configuring the components </h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click <span class="bold"><strong>cFile_1</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_2.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Path</strong></span> field, enter the path of the source file,
+							<span class="italic">"C:/data/input/file"</span> in this
+						scenario. Select the <span class="bold"><strong>noop</strong></span> check box, which
+						means that the source file will not be moved from its original folder.
+						Select the <span class="bold"><strong>autoCreate</strong></span> check box to create
+						the specified path automatically if it does not exist..</p></li><li class="listitem"><p>Double-click <span class="bold"><strong>cProcessor_3</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_3.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Code</strong></span> box, enter <code class="code">throw new
+							Exception()</code> to generate an exception. </p></li><li class="listitem"><p>Double click the <span class="bold"><strong>catch</strong></span> connection to open
+						its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_4.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Exceptions</strong></span> field, enter the
+						exception to catch, <code class="code">Exception.class</code> in this scenario.</p></li><li class="listitem"><p>Double click <span class="bold"><strong>cProcessor_2</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_5.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Code</strong></span> box, enter
+							<code class="code">System.out.println("Upon exception, download: "+
+							exchange.getIn().getHeader("CamelFileName"));</code> to give file
+						download information upon an exception. </p></li><li class="listitem"><p>Double click <span class="bold"><strong>cFile_2</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_6.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Path</strong></span> field, enter the destination
+						path of the downloads, <span class="italic">"C:/data/output"</span>
+						in this scenario. Select the <span class="bold"><strong>autoCreate</strong></span>
+						check box to create the specified path automatically if it does not
+						exist.</p></li><li class="listitem"><p>Double click <span class="bold"><strong>cProcessor_1</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_7.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Code</strong></span> box, enter
+							<code class="code">System.out.println("Finally downloaded: "+
+							exchange.getIn().getHeader("CamelFileName"));</code> to show the
+						information on the final downloads. </p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10455"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace
+						to check the generated code.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_8.png" align="middle"></div><p>As shown above, the route first runs a <code class="code">.doTry ()</code>  after leaving the node
+							<code class="code">cFile_1</code>, to <code class="code">throw new Exception()</code> by
+							<code class="code">cProcessor_3</code>. Then,  <code class="code">.doCatch(Exception.class)</code>
+						occurs and <code class="code">cProcessor_2</code> prints out the names of the files
+						transferred to <code class="code">cFile_2</code>. Finally, <code class="code">.doFinally()</code> gets
+						executed by <code class="code">cProcessor_1</code> to print out the names of files
+						transferred in the end.</p></li><li class="listitem"><p>Press <span class="bold"><strong>F6</strong></span> to execute the Route.</p><p>The names of files transferred are displayed.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_9.png" align="middle"></div></li></ol></div></div></div></div></body></html>

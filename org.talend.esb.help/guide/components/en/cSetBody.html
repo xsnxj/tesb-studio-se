@@ -1,0 +1,71 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cSetBody</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;A.&nbsp;Appendix Camel components"><link rel="prev" href="cStop.html" title="cStop"><link rel="next" href="cSetHeader.html" title="cSetHeader"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cSetBody"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cSetBody"></a>cSetBody</h2></div></div></div><div class="mediaobject"><img src="../images/cSetBody_icon32.png"></div><div class="section" title="cSetBody properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8513"></a>cSetBody properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Transformation</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetBody</strong></span> replaces the payload of each message sent
+								to it.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetBody</strong></span> is used to replace the content of each
+								message sent to it according to expression value.</p>
+						</td></tr><tr><td valign="top">
+							<p><span class="bold"><strong>Basic settings</strong></span></p>
+						</td><td valign="top"><span class="emphasis"><em>Language</em></span></td><td valign="top"><p>Select the language of the expression you use to
+								set the content for matched messages, from <span class="bold"><strong>Constant</strong></span>, <span class="bold"><strong>EL</strong></span>,
+									<span class="bold"><strong>Groovy</strong></span>, <span class="bold"><strong>Header</strong></span>, <span class="bold"><strong>JavaScript</strong></span>,
+									<span class="bold"><strong>JoSQL</strong></span>, <span class="bold"><strong>JXPath</strong></span>, <span class="bold"><strong>MVEL</strong></span>,
+									<span class="bold"><strong>None</strong></span>, <span class="bold"><strong>OGNL</strong></span>, <span class="bold"><strong>PHP</strong></span>,
+									<span class="bold"><strong>Property</strong></span>, <span class="bold"><strong>Python</strong></span>, <span class="bold"><strong>Ruby</strong></span>,
+									<span class="bold"><strong>Simple</strong></span>, <span class="bold"><strong>SpEL</strong></span>, <span class="bold"><strong>SQL</strong></span>,
+									<span class="bold"><strong>XPath</strong></span>, and <span class="bold"><strong>XQuery</strong></span>.</p></td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression to set the message
+								content.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSetBody</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Replacing the content of messages with their extracts"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8662"></a>Scenario: Replacing the content of messages with their extracts </h3></div></div></div><p>In this scenario, file messages are routed from one endpoint to another, with the content of
+			each message replaced with the information extracted from it.</p><p>The following is an example XML file used in this use case:</p><pre class="programlisting">&lt;people&gt;
+    &lt;person&gt;
+        &lt;firstName&gt;Pierre&lt;/firstName&gt;
+        &lt;lastName&gt;Dubois&lt;/lastName&gt;
+        &lt;city&gt;Paris&lt;/city&gt;
+    &lt;/person&gt;
+&lt;/people&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8672"></a>Dropping and linking the components</h4></div></div></div><p>This use case uses two <span class="bold"><strong>cMessagingEndpoint</strong></span>
+				components, one as the message source and the other as the receiving endpoint, a
+					<span class="bold"><strong>cSetBody</strong></span> component to replace the content of
+				the messages, and a <span class="bold"><strong>cProcessor</strong></span> component to display
+				the new content of the messages routed to the receiving endpoint.</p><div class="mediaobject"><img src="../images/use_case-csetbody1.png"></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder, and drop two <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the design
+						workspace.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Transformation</strong></span> folder, drop a
+							<span class="bold"><strong>cSetBody</strong></span> component onto the design
+						workspace, between the two <span class="bold"><strong>cMessagingEndpoint</strong></span> components.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Processor</strong></span> folder, drop a
+							<span class="bold"><strong>cProcessor</strong></span> component onto the design
+						workspace, following the second <span class="bold"><strong>cMessagingEndpoint</strong></span> component.</p></li><li class="listitem"><p>Right-click the first <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the contextual menu and click the <span class="bold"><strong>cSetBody</strong></span> component.</p></li><li class="listitem"><p>Repeat this operation to connect the <span class="bold"><strong>cSetBody</strong></span> component to the second <span class="bold"><strong>cMessagingEndpoint</strong></span> component, and the second <span class="bold"><strong>cMessagingEndpoint</strong></span> component to the <span class="bold"><strong>cProcessor</strong></span> component. </p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8756"></a>Configuring the components and connections</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click the input <span class="bold"><strong>cMessagingEndpoint</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view, and type in the
+						URI of the source messages in the <span class="bold"><strong>URI</strong></span>
+						field.</p><p>As we are handling file messages, type in <span class="emphasis"><em>"file:/"</em></span>
+						followed by the path to the folder containing the files to send, with the
+							<span class="emphasis"><em>noop</em></span> file specific option. This option tells Camel
+						to leave the files as is, instead of moving them from their original
+						folder.</p><div class="mediaobject"><img src="../images/use_case-csetbody2.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cSetBody</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Language</strong></span> list box, select the
+						language of the expression you are going to use. </p><p>Here we are handling XML files, so select <span class="bold"><strong>XPath</strong></span> from the list box.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Expression</strong></span> field, type in the
+						expression that will return the message body content you want.</p><p>In this use case, we want each file contains only the
+							<span class="emphasis"><em>firstName</em></span> node when routed to the destination. </p><div class="mediaobject"><img src="../images/use_case-csetbody3.png"></div></li><li class="listitem"><p>Double-click the receiving <span class="bold"><strong>cMessagingEndpoint</strong></span> component to display its <span class="bold"><strong>Component</strong></span> view, and fill the <span class="bold"><strong>URI</strong></span> filed with the URI of the folder you want to
+						send your messages to.</p><p>As we are handling file messages, type in <span class="emphasis"><em>"file:/"</em></span>
+						and the path to the folder to which the files will be sent. </p><div class="mediaobject"><img src="../images/use_case-csetbody4.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view, and customize
+						the code so that the console will display information the way you
+						wish.</p><p>Here, we want to use this component to monitor the message routed to the
+						connected endpoint and display the file names and the message content, so we
+						customize the code accordingly, as shown below. </p><div class="mediaobject"><img src="../images/use_case-csetbody5.png"></div></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8857"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/use_case-csetbody6.png"></div><p>In this partially shown code, a message route is built <code class="code">from</code>
+						one endpoint <code class="code">.to</code> another, and while in routing, the body
+						content of each message is replaced according to the condition
+							<code class="code">.setBody</code>.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and click the <span class="bold"><strong>Run</strong></span> button to launch the execution of your Route.
+						You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p><div class="mediaobject"><img src="../images/use_case-csetbody7.png"></div></li></ol></div><p>RESULT: The XML files are sent to the defined destination, where each file
+				contains only a <span class="emphasis"><em>firstName</em></span> node.</p></div></div></div></body></html>

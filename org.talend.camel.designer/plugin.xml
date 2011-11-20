@@ -110,7 +110,7 @@
             default="false"
             icon="icons/empty.gif"
             id="org.talend.camel.designer.core.ui.CamelMultiPageTalendEditor"
-            name="CamelDesigner">
+            name="Mediation">
       </editor>
    </extension>
    <extension

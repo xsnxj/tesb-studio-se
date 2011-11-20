@@ -1,0 +1,70 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cIntercept</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;A.&nbsp;Appendix Camel components"><link rel="prev" href="cIdempotentConsumer.html" title="cIdempotentConsumer"><link rel="next" href="cJMS.html" title="cJMS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cIntercept"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cIntercept"></a>cIntercept</h2></div></div></div><div class="mediaobject"><img src="../images/cIntercept_icon32_white.png"></div><div class="section" title="cIntercept properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4311"></a>cIntercept properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Exception</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> intercepts the messages of all the routes before
+								they are produced, and routes them in a new single route without
+								modifying the original routes. When this detour is complete,
+								messages are sent to the originally intended target
+								endpoints.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> intercepts a route and redirects it in
+								another route without modifying it. This can be useful at testing
+								time to simulate error handling.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> is a start component of a
+								sub-route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Connections</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Route</em></span></p>
+						</td><td valign="top"><p>Select the <span class="bold"><strong>Route</strong></span>
+								link to intercept all the messages of all the routes listened by the
+									<span class="bold"><strong>cIntercept</strong></span>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>When</em></span></p>
+						</td><td valign="top"><p>Select the <span class="bold"><strong>When</strong></span>
+								link to filter the messages to intercept and click the <span class="bold"><strong>Component</strong></span> view.</p><p> In the
+									<span class="bold"><strong>Type</strong></span> list, select the type of
+								language you will use to declare your condition.</p><p> In the
+									<span class="bold"><strong>Condition</strong></span> field, type in the
+								condition that will be used to filter the messages.</p><p> All the messages that do not match this condition are dropped by default or can be retrieved
+								with the <span class="bold"><strong>Otherwise</strong></span> link to a
+								different channel. </p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2" valign="top"><p>As you are doing an integration test and you want to keep the original route untouched, you
+								can not add interceptors or mocks directly in the route.</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: intercepting several routes and redirect them in a single new route"><div class="titlepage"><div><div><h3 class="title"><a name="Raa87706"></a>Scenario: intercepting several routes and redirect them in a single new route</h3></div></div></div><p>In this scenario, the message routings are intercepted and routed in a new
+			route.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/Use_Case_cIntercept1.png" width="100%"></td></tr></table></div><p>Create two routes to intercept first. To do so:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder and drop four <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the design workspace.</p></li><li class="listitem"><p>Right-click the component labeled <span class="bold"><strong>cMessagingEndpoint_1</strong></span>, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the
+					contextual menu and click the component labeled <span class="bold"><strong>cMessagingEndpoint_2</strong></span>.</p></li><li class="listitem"><p>Repeat this operation to connect the component labeled <span class="bold"><strong>cMessagingEndpoint_3</strong></span> and the component labeled <span class="bold"><strong>cMessagingEndpoint_4</strong></span>.</p></li><li class="listitem"><p>Double-click the component labeled <span class="bold"><strong>cMessagingEndpoint_1</strong></span> to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI of the messages you want to
+					route in the <span class="bold"><strong>URI</strong></span> field. </p><p>Here, we are handling file messages, so, type in <span class="emphasis"><em>&#8220;file:/&#8221;</em></span> followed by
+					the path to the folder containing the files to send, with the
+						<span class="emphasis"><em>noop</em></span> file specific option. This option tells Camel not
+					to perform any operation on the files, as a result that files will stay as they
+					are and will not be removed from their directory.</p><div class="mediaobject"><img src="../images/Use_Case_cIntercept2.png"></div></li><li class="listitem"><p>Double-click the component labeled <span class="bold"><strong>cMessagingEndpoint_2</strong></span> to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI of the messages you want to
+					route your message in the <span class="bold"><strong>URI</strong></span> field. </p><p>Here, we are handling file messages, so, type in <span class="emphasis"><em>"file:/"</em></span> followed by
+					the path to the folder to which the files will be routed,
+						<span class="emphasis"><em>out1</em></span> in this use case.</p><div class="mediaobject"><img src="../images/Use_Case_cIntercept3.png"></div></li><li class="listitem"><p>In the same way, set the components across the second route as shown
+					below.</p><div class="mediaobject"><img src="../images/Use_Case_cIntercept4.png"></div><div class="mediaobject"><img src="../images/Use_Case_cIntercept5.png"></div></li></ol></div><p>Now you can start to create the intercepting route connection. To do so:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Exception</strong></span> folder, select the <span class="bold"><strong>cIntercept</strong></span> component and drop it onto the design
+					workspace.</p></li><li class="listitem"><p>Repeat this operation with a <span class="bold"><strong>cProcessor</strong></span>
+					component from the <span class="bold"><strong>Processor</strong></span> folder, a
+						<span class="bold"><strong>cMessagingendpoint</strong></span> component from the
+						<span class="bold"><strong>Messaging</strong></span> folder, and a <span class="bold"><strong>cStop</strong></span> component from the <span class="bold"><strong>Miscellaneous</strong></span> folder.</p></li><li class="listitem"><p>Right-click the first <span class="bold"><strong>cIntercept</strong></span> component,
+					select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the contextual menu and click the <span class="bold"><strong>cProcessor</strong></span> component.</p></li><li class="listitem"><p>Repeat this operation to connect the <span class="bold"><strong>cProcessor</strong></span>, <span class="bold"><strong>cMessagingendpoint</strong></span>,
+					and <span class="bold"><strong>cStop</strong></span> components.</p></li><li class="listitem"><p>Leave the <span class="bold"><strong>cIntercept</strong></span> component as it is because it
+					intercepts all the messages of all the routes as soon as the messages are sent
+					and does not have properties to set.</p></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component to display its
+						<span class="bold"><strong>Component</strong></span> view and customize the code as
+					you want.</p><p>By default, a piece of code is already set in the <span class="bold"><strong>Code</strong></span>
+					field of the <span class="bold"><strong>Component</strong></span> view. This code is a
+					Java code that makes a message: <span class="emphasis"><em>"We just downloaded:"</em></span>,
+					which is displayed on the console, followed by the name of the intercepted
+					message.</p><div class="mediaobject"><img src="../images/Use_Case_cIntercept6.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cMessagingEndpoint_5</strong></span> component to
+					display its <span class="bold"><strong>Component</strong></span> view, and type in the URI
+					of the folder where you want your messages to be routed in the <span class="bold"><strong>URI</strong></span> field. </p><p>Here, we are handling file messages, so, type in <span class="emphasis"><em>"file:/"</em></span>
+					followed by the path to the folder in which the files will be routed. In this
+					use case, the files will be received in a folder named
+						<span class="emphasis"><em>intercept</em></span>.</p><div class="mediaobject"><img src="../images/Use_Case_cIntercept7.png"></div></li><li class="listitem"><p>Leave the <span class="bold"><strong>cStop</strong></span> component as it is because it stops the
+					route on which it is dropped and does not have properties to set. </p></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace
+					to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="96%"><tr><td><img src="../images/Use_Case_cIntercept8.png" width="100%"></td></tr></table></div></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and click the <span class="bold"><strong>Run</strong></span> button to launch the execution of your route. </p><p>You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: Files are sent from endpoints, caught by the <span class="bold"><strong>cIntercept</strong></span> component, monitored by the <span class="bold"><strong>cProcessor</strong></span> component and sent to a new endpoint, and then the original
+			routes are stopped before they can end. </p></div></div></body></html>
