@@ -29,4 +29,9 @@ public class RouteProcess extends Process {
         // no job settings for routes
     }
 
+    @Override
+    public String getBaseHelpLink() {
+        return "org.talend.esb.help.";
+    }
+
 }

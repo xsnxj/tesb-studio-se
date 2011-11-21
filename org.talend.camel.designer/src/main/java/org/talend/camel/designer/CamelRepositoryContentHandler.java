@@ -16,13 +16,11 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
-import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
@@ -76,24 +74,19 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
 
         Resource itemResource = null;
         ERepositoryObjectType type;
-        switch (classifierID) {
-        case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-            if (item instanceof CamelProcessItem) {
-                type = CamelRepositoryNodeType.repositoryRoutesType;
-                itemResource = create(project, (CamelProcessItem) item, path, type);
-                Resource screenshotsResource = createScreenshotResource(project, (CamelProcessItem) item, path, type);
-                xmiResourceManager.saveResource(screenshotsResource);
-                return itemResource;
-            }
-        case CamelPropertiesPackage.BEAN_ITEM:
-            if (item instanceof FileItem) {
-                type = CamelRepositoryNodeType.repositoryBeansType;
-                itemResource = create(project, (FileItem) item, path, type);
-                return itemResource;
-            }
-        default:
-            return null;
+        if (item instanceof CamelProcessItem) {
+            type = CamelRepositoryNodeType.repositoryRoutesType;
+            itemResource = create(project, (CamelProcessItem) item, path, type);
+            Resource screenshotsResource = createScreenshotResource(project, (CamelProcessItem) item, path, type);
+            xmiResourceManager.saveResource(screenshotsResource);
+            return itemResource;
         }
+        if (item instanceof BeanItem) {
+            type = CamelRepositoryNodeType.repositoryBeansType;
+            itemResource = create(project, (FileItem) item, path, type);
+            return itemResource;
+        }
+        return null;
     }
 
     // TODO refer to LocalRepositoryFactory
@@ -126,18 +119,13 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
      */
     public Resource save(Item item) throws PersistenceException {
         Resource itemResource = null;
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                itemResource = save((CamelProcessItem) item);
-                return itemResource;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                itemResource = save((BeanItem) item);
-                return itemResource;
-            default:
-                return null;
-            }
+        if (item instanceof CamelProcessItem) {
+            itemResource = save((CamelProcessItem) item);
+            return itemResource;
+        }
+        if (item instanceof BeanItem) {
+            itemResource = save((BeanItem) item);
+            return itemResource;
         }
         return null;
     }
@@ -192,16 +180,11 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
     }
 
     public ERepositoryObjectType getRepositoryObjectType(Item item) {
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == CamelPropertiesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case CamelPropertiesPackage.CAMEL_PROCESS_ITEM:
-                return CamelRepositoryNodeType.repositoryRoutesType;
-            case CamelPropertiesPackage.BEAN_ITEM:
-                return CamelRepositoryNodeType.repositoryBeansType;
-            default:
-                return null;
-            }
+        if (item instanceof CamelProcessItem) {
+            return CamelRepositoryNodeType.repositoryRoutesType;
+        }
+        if (item instanceof BeanItem) {
+            return CamelRepositoryNodeType.repositoryBeansType;
         }
         return null;
     }
