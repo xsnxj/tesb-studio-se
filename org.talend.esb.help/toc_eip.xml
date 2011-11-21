@@ -3,7 +3,6 @@
 
 <toc label="Talend User documentation">  
   <topic label="Enteprise Integration Patterns">
-	<topic label="cActiveMQ" href="guide/components/en/cActiveMQ.html"/>
     <topic label="cAggregate" href="guide/components/en/cAggregate.html"/>
     <topic label="cBean" href="guide/components/en/cBean.html"/>
     <topic label="cConfig" href="guide/components/en/cConfig.html"/>
