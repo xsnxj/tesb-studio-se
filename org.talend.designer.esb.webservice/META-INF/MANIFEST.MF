@@ -36,7 +36,7 @@ Bundle-ClassPath: .
  ,lib/oro-2.0.8.jar
  ,lib/xerces-1.2.3.jar
  ,lib/xercesImpl-2.9.1.jar
- ,lib/xmlschema-core-2.0.1.jar
  ,components/tESBConsumer/commons-beanutils-1.7.0.jar
  ,components/tESBProviderRequest/cxf-bundle-2.5.0.jar
+ ,components/tESBProviderRequest/xmlschema-core-2.0.1.jar
  ,components/tESBProviderRequest/wsdl4j-1.6.2.jar

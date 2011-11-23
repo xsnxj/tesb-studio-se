@@ -20,8 +20,6 @@ INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 cid = cid.replaceAll("_In", "");
 
-boolean isOneWay = node.getProcess().getNodesOfType("tRESTResponse").isEmpty();
-
 List<IMetadataTable> metadatas = node.getMetadataList();
 if (null != metadatas && 0 < metadatas.size()) {
 	IMetadataTable metadata = metadatas.get(0);
@@ -29,7 +27,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 	%>
 		if (requestMessage_<%=cid%>.containsKey("ERROR")) {
 			// wrong request received
-			esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
 			<%
 			List<? extends IConnection> connsAll = node.getOutgoingSortedConnections();
 			if (null != connsAll && !connsAll.isEmpty()) {
@@ -60,19 +57,12 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 		} else { // non-error (not wrong request)
 
-			<%
-			if (isOneWay) { 
-			%>
-				esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
-			<%
-			}
-			%>
 			String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
 			String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
 			String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
 			// String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
 			Document body_<%=cid%> = null;
-			if (requestMessage_<%=cid%>.get("BODY") != null) { 
+			if (requestMessage_<%=cid%>.get("BODY") != null) {
 				body_<%=cid%> = new Document();
 				body_<%=cid%>.setDocument((org.dom4j.Document) requestMessage_<%=cid%>.get("BODY"));
 			}
@@ -85,7 +75,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 					if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 						continue;
 					}
-	
+
 					String connectionName = conn.getName();
 
 					if ("WRONG_CALLS".equals(conn.getConnectorName())) { %>
@@ -98,7 +88,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 					%>
 					if (matchedFlow_<%=cid%>.equals("<%=connectionName%>")) {
 						<%=connectionName%> = new <%=connectionName%>Struct();
-	
+
 						<% if (null != connMetadata.getColumn("body")) { %>
 							<%=connectionName%>.body = body_<%=cid%>;
 						<% } %>
@@ -115,7 +105,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 								}
 							<%
 							}
-						}	
+						}
 						%>
 					} else { // non matched flow
 						<%=connectionName%> = null;
