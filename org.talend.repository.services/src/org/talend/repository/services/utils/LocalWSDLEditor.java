@@ -116,9 +116,13 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     List<IRepositoryNode> portNodes = repositoryNode.getChildren();
                     IRepositoryNode portNode = null;
                     for (IRepositoryNode node : portNodes) {
-                        if (node.getObject().getLabel().equals(servicePort.getName())) {
+                        if ((node.getObject()).getLabel().equals(servicePort.getName())) {
                             portNode = node;
                         }
+                    }
+                    if (portNode == null) {
+                        // for now, if the port has been renamed, we just lose all links (avoid an NPE for nothing)
+                        continue;
                     }
                     EList<ServiceOperation> operations = servicePort.getServiceOperation();
                     for (ServiceOperation operation : operations) {
