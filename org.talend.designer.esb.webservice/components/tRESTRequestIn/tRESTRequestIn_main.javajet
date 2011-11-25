@@ -1,0 +1,120 @@
+<%@ jet
+	imports="
+		java.util.List
+
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+
+		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.metadata.types.JavaTypesManager
+
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+	"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode)codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+cid = cid.replaceAll("_In", "");
+
+List<IMetadataTable> metadatas = node.getMetadataList();
+if (null != metadatas && 0 < metadatas.size()) {
+	IMetadataTable metadata = metadatas.get(0);
+	if (null != metadata) {
+	%>
+		if (requestMessage_<%=cid%>.containsKey("ERROR")) {
+			// wrong request received
+			<%
+			List<? extends IConnection> connsAll = node.getOutgoingSortedConnections();
+			if (null != connsAll && !connsAll.isEmpty()) {
+				for (IConnection conn : connsAll) {
+					if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+						continue;
+					}
+
+					String connectionName = conn.getName();
+
+					if ("WRONG_CALLS".equals(conn.getConnectorName())) { // "WRONG_CALL" flow %>
+						String wrongCallUri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
+						String wrongCallError_<%=cid%> = (String) requestMessage_<%=cid%>.get("ERROR");
+						int wrongCallStatus_<%=cid%> = (Integer) requestMessage_<%=cid%>.get("STATUS");
+
+						<%=connectionName%> = new <%=connectionName%>Struct();
+						<%=connectionName%>.uri = wrongCallUri_<%=cid%>;
+						<%=connectionName%>.error = wrongCallError_<%=cid%>;
+						<%=connectionName%>.status = wrongCallStatus_<%=cid%>;
+					<%
+					} else { // not "WRONG_CALL" flow %>
+						<%=connectionName%> = null;
+					<%
+					}
+				}
+			}
+			%>
+
+		} else { // non-error (not wrong request)
+
+			String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
+			String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
+			String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
+			// String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
+			Document body_<%=cid%> = null;
+			if (requestMessage_<%=cid%>.get("BODY") != null) {
+				body_<%=cid%> = new Document();
+				body_<%=cid%>.setDocument((org.dom4j.Document) requestMessage_<%=cid%>.get("BODY"));
+			}
+			java.util.Map<String, Object> params_<%=cid%> =
+				(java.util.Map<String, Object>) requestMessage_<%=cid%>.get("PARAMS");
+			<%
+			List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+			if (null != conns && !conns.isEmpty()) {
+				for (IConnection conn : conns) {
+					if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+						continue;
+					}
+
+					String connectionName = conn.getName();
+
+					if ("WRONG_CALLS".equals(conn.getConnectorName())) { %>
+						<%=connectionName%> = null;
+						<%
+						continue;
+					}
+
+					IMetadataTable connMetadata = conn.getMetadataTable();
+					%>
+					if (matchedFlow_<%=cid%>.equals("<%=connectionName%>")) {
+						<%=connectionName%> = new <%=connectionName%>Struct();
+
+						<% if (null != connMetadata.getColumn("body")) { %>
+							<%=connectionName%>.body = body_<%=cid%>;
+						<% } %>
+						<%
+						List<IMetadataColumn> connColumnList = connMetadata.getListColumns();
+						for (IMetadataColumn connColumn : connColumnList) {
+							String columnName = connColumn.getLabel();
+
+							if (!"body".equals(columnName)) {
+								String javaTypeFull = JavaTypesManager.getTypeToGenerate(connColumn.getTalendType(), true);
+								%>
+								if (params_<%=cid%>.containsKey("<%=columnName%>")) {
+									<%=connectionName%>.<%=columnName%> = (<%= javaTypeFull%>) params_<%=cid%>.get("<%=columnName%>");
+								}
+							<%
+							}
+						}
+						%>
+					} else { // non matched flow
+						<%=connectionName%> = null;
+					}
+				<%
+				}
+			}
+	} // end of if (null != metadata)
+} // end of if (null != metadatas && 0 < metadatas.size())
+%>
+		}
+

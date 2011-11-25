@@ -1,0 +1,148 @@
+<%@ jet
+imports="
+    org.talend.core.model.process.INode
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.ElementParameterParser
+    org.talend.core.model.process.IConnectionCategory
+    org.talend.core.model.metadata.IMetadataTable
+    org.talend.core.model.metadata.IMetadataColumn
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.metadata.types.JavaTypesManager
+    org.talend.core.model.metadata.types.JavaType
+    java.util.List
+    java.util.ArrayList
+    java.util.Map
+"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode)codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+
+String dieOnError = ElementParameterParser.getValue(node, "__DIE_ON_ERROR__");
+String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
+String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
+
+IConnection inputConn = null;
+List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+if (incomingConnections != null && !incomingConnections.isEmpty()) {
+	for (IConnection conn : incomingConnections) {
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+			inputConn = conn;
+			break;
+		}
+	}
+}
+if (inputConn != null) {
+	List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+	if (conns != null && conns.size() > 0) {
+		for (int i = 0; i < conns.size(); i++) {
+			IConnection conn = conns.get(i);
+			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+	%>
+		<%=conn.getName()%> = null;
+	<%
+			}
+		}
+	}
+
+	List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+	List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+	IConnection connResponse = null;
+	IConnection connFault = null;
+	if (connsResponse.size() == 1) {
+		connResponse = connsResponse.get(0);
+	}
+	if (connsFault.size() == 1) {
+		connFault = connsFault.get(0);
+	}
+%>
+		org.dom4j.Document responseDoc_<%=cid%> = null;
+		try {
+			Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
+
+			try {
+				if (consumer_<%=cid%> == null) {
+					responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
+							serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
+							requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+				} else {
+					// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
+					java.util.Map<String, String> customProps_<%=cid%> = null;
+				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+						List<Map<String, String>> customProperties = (List<Map<String,String>>)
+								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+						if (!customProperties.isEmpty()) { %>
+							customProps_<%=cid%> = new java.util.HashMap<String, String>();
+							<% for (int k = 0; k < customProperties.size(); k++) { %>
+							customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+							<% } %>
+						<% } %>
+				<% } %>
+					Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
+					responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
+				}
+			} catch (javax.xml.ws.soap.SOAPFaultException e) {
+	<%		if (null != connFault) { %>
+				String faultString_<%=cid%> = e.getFault().getFaultString();
+				Document faultTalendDoc_<%=cid%> = null;
+				if (null != e.getFault().getDetail()
+					&& null != e.getFault().getDetail().getFirstChild()) {
+					try {
+						javax.xml.transform.Source faultSource_<%=cid%> =
+							new javax.xml.transform.dom.DOMSource(
+									e.getFault().getDetail().getFirstChild());
+
+						org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
+						javax.xml.transform.TransformerFactory.newInstance()
+							.newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
+						org.dom4j.Document faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
+
+						faultTalendDoc_<%=cid%> = new Document();
+						faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				if (<%=connFault.getName()%> == null) {
+					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+				}
+				<%=connFault.getName()%>.faultString = faultString_<%=cid%>;
+				<%=connFault.getName()%>.faultDetail = faultTalendDoc_<%=cid%>;
+	<%		} else { %>
+				e.printStackTrace();
+	<%		} %>
+			} catch(Exception e){
+	<%		if (null != connFault) { %>
+				String faultMessage_<%=cid%> = e.getMessage();
+				if (<%=connFault.getName()%> == null) {
+					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+				}
+				<%=connFault.getName()%>.faultString = faultMessage_<%=cid%>;
+				<%=connFault.getName()%>.faultDetail = null;
+	<%		} else { %>
+				e.printStackTrace();
+	<%		} %>
+			}
+		} catch(Exception e){
+	<%		if (("true").equals(dieOnError)) { %>
+				throw(e);
+	<%		} else { %>
+				System.err.print(e.getMessage());
+	<%		} %>
+		}
+
+<%	if (null != connResponse) { %>
+		if (null != responseDoc_<%=cid%>) {
+			if (<%=connResponse.getName()%> == null) {
+				<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
+			}
+
+			Document responseTalendDoc_<%=cid%> = new Document();
+			responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+			<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
+		}
+<%
+	}
+}
+%>

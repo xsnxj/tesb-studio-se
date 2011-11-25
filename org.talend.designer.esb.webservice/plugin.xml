@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.talend.core.components_provider">
+		<ComponentsProvider
+			class="org.talend.esb.tooling.component.provider.ESBComponentsProvider"
+			folderName="tesb"
+			id="org.talend.esb.tooling.component.provider.ESBComponentsProvider" />
+	</extension>
+	<extension point="org.talend.designer.codegen.additional_jetfile">
+		<jetProvider
+			class="org.talend.esb.tooling.component.provider.ESBJetFileProvider"
+			id="org.talend.esb.tooling.component.provider.ESBJetFileProvider" />
+	</extension>
+
+	<extension point="org.talend.core.external_component">
+		<ExternalComponent
+			class="org.talend.designer.esb.webservice.WebServiceComponent">
+		</ExternalComponent>
+	</extension>
+	<extension point="org.talend.core.runtime.service">
+		<Service
+			class="org.talend.designer.esb.webservice.ui.WebServiceHelper"
+			serviceId="IWebService">
+		</Service>
+	</extension>
+
+	<!-- TESB-3602 Remove ESB page  
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			category="org.talend.core.prefs"
+			class="org.talend.designer.esb.webservice.ui.EsbPreferencePage"
+			id="org.talend.designer.esb"
+			name="%preferencesPage.main">
+		</page>
+	</extension>
+	-->
+</plugin>

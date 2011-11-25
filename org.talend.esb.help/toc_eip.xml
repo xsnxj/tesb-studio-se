@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Talend User documentation">  
+  <topic label="Enteprise Integration Patterns">
+    <topic label="cAggregate" href="guide/components/en/cAggregate.html"/>
+    <topic label="cBean" href="guide/components/en/cBean.html"/>
+    <topic label="cConfig" href="guide/components/en/cConfig.html"/>
+    <topic label="cConvertBodyTo" href="guide/components/en/cConvertBodyTo.html"/>
+    <topic label="cCXF" href="guide/components/en/cCXF.html"/>
+    <topic label="cDynamicRouter" href="guide/components/en/cDynamicRouter.html"/>
+    <topic label="cExchangePattern" href="guide/components/en/cExchangePattern.html"/>
+    <topic label="cFile" href="guide/components/en/cFile.html"/>
+    <topic label="cFtp" href="guide/components/en/cFtp.html"/>
+    <topic label="cIdempotentConsumer" href="guide/components/en/cIdempotentConsumer.html"/>
+    <topic label="cIntercept" href="guide/components/en/cIntercept.html"/>
+    <topic label="cJMS" href="guide/components/en/cJMS.html"/>
+    <topic label="cLoadBalancer" href="guide/components/en/cLoadBalancer.html"/>
+    <topic label="cLoop" href="guide/components/en/cLoop.html"/>
+    <topic label="cMessageFilter" href="guide/components/en/cMessageFilter.html"/>
+    <topic label="cMessageRouter" href="guide/components/en/cMessageRouter.html"/>
+    <topic label="cMessagingEndpoint" href="guide/components/en/cMessagingEndpoint.html"/>
+    <topic label="cOnException" href="guide/components/en/cOnException.html"/>
+    <topic label="cProcessor" href="guide/components/en/cProcessor.html"/>
+    <topic label="cRoutingSlip" href="guide/components/en/cRoutingSlip.html"/>
+    <topic label="cSetBody" href="guide/components/en/cSetBody.html"/>
+    <topic label="cSetHeader" href="guide/components/en/cSetHeader.html"/>
+    <topic label="cSplitter" href="guide/components/en/cSplitter.html"/>
+    <topic label="cStop" href="guide/components/en/cStop.html"/>
+    <topic label="cTalendJob" href="guide/components/en/cTalendJob.html"/>
+    <topic label="cTry" href="guide/components/en/cTry.html"/>
+  </topic> 
+</toc>

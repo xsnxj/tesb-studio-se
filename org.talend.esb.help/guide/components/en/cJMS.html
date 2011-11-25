@@ -1,0 +1,116 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cJMS</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cIntercept.html" title="cIntercept"><link rel="next" href="cLoadBalancer.html" title="cLoadBalancer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cJMS"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cJMS"></a>cJMS</h2></div></div></div><div class="mediaobject"><img src="../images/cjms_icon32_white.png"></div><div class="section" title="cJMS properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e46594"></a>cJMS properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cJMS</strong></span> allows messages to be sent to
+								(or consumed from) a JMS Queue or Topic.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cJMS</strong></span> is used to send messages to,
+								or consume messages from, a JMS Queue or Topic.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Endpoint URI/Schema</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Type in a name for the schema of the message.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Endpoint URI/Type</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select the message type, either <span class="bold"><strong>queue</strong></span> or <span class="bold"><strong>topic</strong></span>.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Service/destination</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Type in a name for the JMS queue or topic. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Broker/Codes</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Write a piece of code to specify the JMS connection factory to be
+								used for sending or consuming messages. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="italic">Broker/Dependencies </span>
+						</td><td valign="top">Select the library that is required by the JMS
+							connection factory from the list. </td></tr><tr><td>
+							<span class="bold"><strong>Advanced settings</strong></span>
+						</td><td valign="top">
+							<span class="emphasis"><em>URI Options</em></span>
+						</td><td valign="top">Set the optional arguments in the corresponding table.
+							Click <span class="bold"><strong>[+]</strong></span> as many times as required to
+							add arguments to the table. Then click the corresponding <span class="bold"><strong>Value</strong></span> field and enter a value. See the site
+								<a class="link" href="http://camel.apache.org/jms.html" target="_top">http://camel.apache.org/jms.html</a> for available URI
+							options.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cJMS</strong></span> can be a start, middle or end component in a
+								route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Sending and receiving a message from a JMS queue"><div class="titlepage"><div><div><h3 class="title"><a name="nwang-20111014-camel_components-cjms_s1"></a>Scenario: Sending and receiving a message from a JMS queue</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cJMS</strong></span> component sends out a
+			message from the local file system. The message is then consumed by another <span class="bold"><strong>cJMS</strong></span> component.</p><div class="mediaobject"><img src="../images/use_case_cjms1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e46811"></a>Dropping and linking the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder. Select the <span class="bold"><strong>cFile</strong></span> component and drop it onto the design
+						workspace.</p></li><li class="listitem"><p> Repeat this operation to drop two <span class="bold"><strong>cJMS</strong></span> components onto
+						the design workspace. One is used as the message producer and the other as
+						the consumer.</p></li><li class="listitem"><p> Expand the <span class="bold"><strong>Processor</strong></span> folder, select the
+							<span class="bold"><strong>cProcessor</strong></span> component and drop it onto
+						the design workspace.</p></li><li class="listitem"><p> Right-click the input <span class="bold"><strong>cFile</strong></span> component,
+						select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the contextual menu and click the producer
+							<span class="bold"><strong>cJMS</strong></span> component.</p></li><li class="listitem"><p> Repeat this operation to connect the consumer <span class="bold"><strong>cJMS</strong></span> component to the <span class="bold"><strong>cProcessor</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e46866"></a>Configuring the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Double-click the input <span class="bold"><strong>cFile</strong></span> component
+						to display its <span class="bold"><strong>Component</strong></span> view and set its
+						parameters.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms2.png" width="100%"></td></tr></table></div></li><li class="listitem"><p> Define the properties of the <span class="bold"><strong>cFile</strong></span>
+						component, as shown in the above screenshot. In this use case, simply
+						specify the file path, select the <span class="bold"><strong>noop</strong></span>
+						check box and leave the other parameters as they are.</p></li><li class="listitem"><p> Double click the producer <span class="bold"><strong>cJMS</strong></span> component
+						to display its <span class="bold"><strong>Component</strong></span> view and set its parameters.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms3.png" width="100%"></td></tr></table></div></li><li class="listitem"><p> In the <span class="bold"><strong>Schema</strong></span> field, type in
+							<span class="emphasis"><em>producer</em></span> to name it as we want it to send the
+						message. </p></li><li class="listitem"><p> In the <span class="bold"><strong>Type</strong></span> field, select <span class="bold"><strong>queue</strong></span> to send the message to a JMS Queue.</p></li><li class="listitem"><p> Add the libraries to the <span class="bold"><strong>Dependencies</strong></span>
+						table as required in the <span class="bold"><strong>Codes</strong></span>. In this use
+						case, we use the default connectionFactory
+							<code class="code">ActiveMQConnectionFactory</code>, which needs three libraries as
+						shown in the above screenshot. Click <span class="bold"><strong>[+]</strong></span>
+						below the dependencies table to add the libraries from the list.</p></li><li class="listitem"><p>Double click the consumer <span class="bold"><strong>cJMS</strong></span> component
+						to display its <span class="bold"><strong>Component</strong></span> view and set its parameters.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms4.png" width="100%"></td></tr></table></div></li><li class="listitem"><p>In the <span class="bold"><strong>Schema</strong></span> field, name it as
+							<span class="emphasis"><em>consumer</em></span> as we want it to receive the message.
+					</p></li><li class="listitem"><p>Repeat step 7 and step 8 to configure the consumer as the producer because
+						we want to send and receive the message between them.</p></li><li class="listitem"><p>Keep the default setting of the <span class="bold"><strong>cProcessor</strong></span> component.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms5.png" width="100%"></td></tr></table></div></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e46975"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms6.png" width="100%"></td></tr></table></div><p>As shown in the code, a message route is built <code class="code">from</code> the endpoint
+							<code class="code">cFile_1</code>
+						<code class="code">.to</code> the endpoint <code class="code">cJMS_1</code>. Then another message
+						route is built from the endpoint <code class="code">cJMS_2</code> and printed by
+							<code class="code">cProcessor_1</code>.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The message is received by the consumer and printed in the console.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cjms7.png" width="100%"></td></tr></table></div></div></div></div></body></html>

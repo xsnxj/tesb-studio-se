@@ -1,0 +1,48 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+	"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode)codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+cid = cid.replaceAll("_Loop", "");
+
+if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 1) { %>
+	if (true) {
+		throw new RuntimeException("cannot instantiate Web Service: job contains more than one tESBProviderRequest component");
+	}
+<% } %>
+
+//*** external processor(s) initialization
+	ESBProviderCallbackTalendJobInner providerCallback_<%=cid%>;
+	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
+	if (null == this.callback) {
+		final QueuedMessageHandlerImpl<org.dom4j.Document> handler_<%=cid%> =
+			new QueuedMessageHandlerImpl<org.dom4j.Document>();
+		handlerThread_<%=cid%> =
+			new HandlerThread_<%=cid%>(handler_<%=cid%>); //
+		handlerThread_<%=cid%>.start();
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler_<%=cid%>);
+	} else {
+		providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(this.callback);
+	}
+
+	globalMap.put("esbHandler", providerCallback_<%=cid%>);
+//*** external processor(s) initialization finish
+
+int nb_line_<%=cid%> = 0;
+
+try {
+	// This is a beginning of the ESB provider request component cycle
+	while(true) {
+		try {
+			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
+				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
+
+			org.dom4j.Document requestMessage_<%=cid%> =
+					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
+

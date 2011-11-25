@@ -1,0 +1,71 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMessageFilter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cMessagingEndpoint.html" title="cMessagingEndpoint"><link rel="next" href="cMessageRouter.html" title="cMessageRouter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cMessageFilter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessageFilter"></a>cMessageFilter</h2></div></div></div><div class="mediaobject"><img src="../images/cMessageFilter_icon32_white.png"></div><div class="section" title="cMessageFilter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e48156"></a>cMessageFilter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Routing</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cMessageFilter</strong></span> filters the content of messages
+								according to specified criteria and routes the filtered messages to
+								the specified output channel. All messages that do not match the
+								criteria will be dropped.</p><p> For more information on the
+								Camel Message Filter EIP: <a class="link" href="http://camel.apache.org/message-filter.html" target="_top">http://camel.apache.org/message-filter.html</a>.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Use <span class="bold"><strong>cMessageFilter</strong></span> to eliminate unwanted messages from a
+								channel according to criteria.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Language</em></span></p>
+						</td><td valign="top"><p>Select the language of the expression you use to
+								filter your messages from <span class="bold"><strong>Constant</strong></span>,
+									<span class="bold"><strong>EL</strong></span>, <span class="bold"><strong>Groovy</strong></span>, <span class="bold"><strong>Header</strong></span>,
+									<span class="bold"><strong>JavaScript</strong></span>, <span class="bold"><strong>JoSQL</strong></span>, <span class="bold"><strong>JXPath</strong></span>, <span class="bold"><strong>MVEL</strong></span>,
+									<span class="bold"><strong>None</strong></span>, <span class="bold"><strong>OGNL</strong></span>, <span class="bold"><strong>PHP</strong></span>,
+									<span class="bold"><strong>Property</strong></span>, <span class="bold"><strong>Python</strong></span>, <span class="bold"><strong>Ruby</strong></span>,
+									<span class="bold"><strong>Simple</strong></span>, <span class="bold"><strong>SpEL</strong></span>, <span class="bold"><strong>SQL</strong></span>,
+									<span class="bold"><strong>XPath</strong></span>, and <span class="bold"><strong>XQuery</strong></span>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression to use to filter the
+								messages.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cMessageFilter</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: filtering messages according to a criterion"><div class="titlepage"><div><div><h3 class="title"><a name="d0e48313"></a>Scenario: filtering messages according to a criterion</h3></div></div></div><p>In this use case, we filter XML messages that are sent from the sending endpoint
+			according to a defined criteria: all XML files where the value of the
+				<span class="emphasis"><em>city</em></span> node is <span class="emphasis"><em>Paris</em></span> are sent to a folder
+			named <span class="emphasis"><em>paris</em></span>.</p><p>You can reuse the Route built in <a class="xref" href="cMessagingEndpoint.html#Raa98448" title="Scenario&nbsp;2: sending files to another message endpoint">the section called &#8220;Scenario&nbsp;2: sending files to another message endpoint&#8221;</a> of <span class="bold"><strong>cMessagingEndpoint</strong></span> to build this new Route.</p><p>Here's an example of the XML files used:</p><pre class="programlisting">&lt;people&gt;
+	&lt;person id="8"&gt;
+		&lt;firstName&gt;Ellen&lt;/firstName&gt;
+		&lt;lastName&gt;Ripley&lt;/lastName&gt;
+		&lt;city&gt;Washington&lt;/city&gt;
+	&lt;/person&gt;
+&lt;/people&gt; </pre><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/cMessageFilter_scenario1.png" width="100%"></td></tr></table></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Open the Route built in <a class="xref" href="cMessagingEndpoint.html#Raa98448" title="Scenario&nbsp;2: sending files to another message endpoint">the section called &#8220;Scenario&nbsp;2: sending files to another message endpoint&#8221;</a>.</p></li><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Routing</strong></span> folder, select a <span class="bold"><strong>cMessageFilter</strong></span> component and drop it onto the design
+					workspace.</p></li><li class="listitem"><p>Expand the <span class="bold"><strong>Messaging</strong></span> folder and drop another
+					two <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the
+					design workspace.</p></li><li class="listitem"><p>Right-click the second <span class="bold"><strong>cMessagingEndpoint</strong></span>
+					component, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the menu and drag to the <span class="bold"><strong>cMessageFilter</strong></span> to link them together with a route
+					connection. </p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageFilter</strong></span> component,
+					select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Filter</strong></span> from the menu and drag to the third <span class="bold"><strong>cMessagingEndpoint</strong></span> component. This endpoint will collect the
+					messages that meet the defined criterion.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageFilter</strong></span> component,
+					select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the menu and drag to the last <span class="bold"><strong>cMessagingEndpoint</strong></span> component. This endpoint will collect all the
+					messages, including those meeting the filter criterion. This connection is
+					optional.</p></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cMessageFilter</strong></span> component to
+					display the <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Language</strong></span> field, select the language of
+					the expression you want to use to filter your messages. </p><p>As we are handling XML files, we select <span class="bold"><strong>XPath</strong></span>.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Expression</strong></span> field, type in the
+					expression according to which you want to filter your messages. </p><p>Here, we want to filter messages according the <span class="emphasis"><em>city</em></span> node
+					of the XML files and will only retrieve and send those which contain "Paris" to
+					the next endpoint.</p><div class="mediaobject"><img src="../images/cMessageFilter_scenario2.png"></div></li><li class="listitem"><p>Double-click the third endpoint component to display the <span class="bold"><strong>Component</strong></span> view, and type in the URI for the messages meeting the
+					filter criterion in the <span class="bold"><strong>URI</strong></span> field. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> and the path
+					to the folder to which the files will be sent, <span class="emphasis"><em>paris</em></span> in
+					this use case.</p><div class="mediaobject"><img src="../images/cMessageFilter_scenario3.png"></div></li><li class="listitem"><p>Double-click the last endpoint component to display the <span class="bold"><strong>Component</strong></span> view and define the URI for the path where you want
+					collect all the files, <span class="emphasis"><em>all</em></span> in this use case.</p></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li><li class="listitem"><p>To have a look at the generated code, click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject"><img src="../images/cMessageFilter_scenario4.png"></div><p>The code shows as in the previous use case that sends messages from one
+					endpoint to another, but they are also filtered (<code class="code">.filter</code>) and the
+					messages matching the filter are send to a third endpoint, while all messages
+					are sent to the last endpoint.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and click
+					the <span class="bold"><strong>Run</strong></span> button to launch the execution of your
+					Route. </p><p>You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The messages are filtered according to the defined criterion and the messages
+			containing "<span class="emphasis"><em>Paris</em></span>" are redirected to this new <span class="bold"><strong>paris</strong></span> folder, all the messages, including those containing
+				"<span class="emphasis"><em>Paris</em></span>", are sent to the <span class="bold"><strong>all</strong></span>
+			folder.</p></div></div></body></html>

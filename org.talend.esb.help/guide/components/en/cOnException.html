@@ -1,0 +1,129 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cOnException</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cMessageRouter.html" title="cMessageRouter"><link rel="next" href="cProcessor.html" title="cProcessor"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cOnException"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cOnException"></a>cOnException</h2></div></div></div><div class="mediaobject"><img src="../images/cOnException_icon32_white.png"></div><div class="section" title="cOnException properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e48964"></a>cOnException properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cOnException</strong></span> catches the defined
+								exceptions to trigger desired actions.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cOnException</strong></span> is designed to catch
+								the defined exceptions for desired error handling. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exceptions</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Click the plus button to add as many lines as needed in the table to define the
+								exceptions to be caught.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Set a redelivering tries count</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to set the maximum redelivering tries in the
+									<span class="bold"><strong>Maximum redelivering tries</strong></span>
+								field. </p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Non blocking asynchronous behavior</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to enable the feature of not blocking asynchronous
+								behavior.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exception behavior</em></span>
+							</p>
+						</td><td valign="top">
+							<p><span class="bold"><strong>None</strong></span>: select this option to take no action on the
+								original route.</p>
+							<p><span class="bold"><strong>Handle the exceptions</strong></span>: select this option to handle
+								exceptions and break out the original route.</p>
+							<p><span class="bold"><strong>Ignore the exceptions</strong></span>: select this option to ignore
+								the exceptions and continue routing in the original route. </p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Route the original input body instead of the current
+									body</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to route the original message instead of the current message that
+								might be changed during the routing.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cOnException</strong></span> is designed to catch
+								the defined exceptions for desired error handling. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Using cOnException to ignore exceptions and continue routing in the original route"><div class="titlepage"><div><div><h3 class="title"><a name="d0e49149"></a>Scenario: Using cOnException to ignore exceptions and continue routing in the original
+			route</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cOnException</strong></span> component is used to
+			ignore an IOException and continue sending the message along the original route.</p><div class="section" title="Dragging and dropping components and linking them together"><div class="titlepage"><div><div><h4 class="title"><a name="d0e49157"></a>Dragging and dropping components and linking them together </h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Drag and drop the components from the <span class="bold"><strong>Palette</strong></span> onto the
+						workspace: <span class="bold"><strong>cOnException</strong></span>, <span class="bold"><strong>cFile</strong></span> (X2) and <span class="bold"><strong>cBean</strong></span>.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cFile_1</strong></span> to <span class="bold"><strong>cBean</strong></span>
+						using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="listitem"><p>Link <span class="bold"><strong>cBean</strong></span> to <span class="bold"><strong>cFile_3</strong></span>
+						using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_1.png" align="middle"></div></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e49209"></a>Configuring the components </h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click <span class="bold"><strong>cOnException</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_2.png" align="middle"></div></li><li class="listitem"><p>Click the plus button to add a line in the <span class="bold"><strong>Exceptions</strong></span>
+						table. Define the exception to catch, e.g. <span class="italic">java.io.IOException</span>.</p></li><li class="listitem"><p>Select the <span class="bold"><strong>Ignore the exceptions</strong></span> option
+						in the <span class="bold"><strong>Exception behavior</strong></span> table.</p></li><li class="listitem"><p>Double click <span class="bold"><strong>cFile_1</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_3.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Path</strong></span> field, enter the path of the source files,
+						e.g. <span class="italic">"C:/data/input/body"</span>. Note that
+						there should exist a file for the test purpose.</p></li><li class="listitem"><p>Select the <span class="bold"><strong>noop</strong></span> check box to make no
+						changes to the folder of the source file. Select <span class="bold"><strong>autoCreate</strong></span> to create the folder if it does not exist.</p></li><li class="listitem"><p>Double click <span class="bold"><strong>cBean_1</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p></li><li class="listitem"><p>
+						</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_4.png" align="middle"></div><p>
+					</p></li><li class="listitem"><p>In the <span class="bold"><strong>Bean class</strong></span> field, enter the name of the bean to
+						be invoked, <span class="italic">beans.ThrowIoException.class</span>
+						in this scenario.</p><p>Note that this bean has already been defined in the <span class="bold"><strong>Code</strong></span>
+						node of the <span class="bold"><strong>Repository</strong></span> and it looks like
+						this:</p><pre class="programlisting">package beans;
+
+import java.io.IOException;
+
+import org.apache.camel.Exchange;
+
+
+public class ThrowIoException {
+
+    /**
+
+     * @throws IOException 
+     */
+    public static void helloExample(String message, Exchange exchange) throws IOException {
+        throw new IOException("An IOException has been caught");
+    }
+}</pre><p>For more information about creating and using Java Beans, see <a class="xref" title="Using Beans">the section called &#8220;Using Beans&#8221;</a>. </p></li><li class="listitem"><p>Double click <span class="bold"><strong>cFile_3</strong></span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_5.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>Path</strong></span> field, enter the path of the
+						destination files, e.g. <span class="italic">"C:/data/input/body/1"</span>. </p></li><li class="listitem"><p>Select <span class="bold"><strong>autoCreate</strong></span> to create the folder if
+						it does not exist.</p></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e49357"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace
+						to check the generated code.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_6.png" align="middle"></div><p>As shown above, the message <code class="code">from</code> the endpoint <code class="code">cFile_1</code> is
+						delivered to <code class="code">cFile_3</code> even if an exception is thrown by
+							<code class="code">.bean( beans.ThrowIoException.class)</code> at
+							<code class="code">cBean_1</code>. This is because the feature
+							<code class="code">continued(true)</code> is enabled at <code class="code">cOnException_1</code>,
+						which allows the routing to continues along its original route as if the
+						exception did not occur. </p></li><li class="listitem"><p>Press <span class="bold"><strong>F6</strong></span> to execute the Route.</p><p>The route gets executed successfully and the file is routed to the destination as if no
+						exception was thrown along the routing.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_7.png" align="middle"></div></li></ol></div></div></div></div></body></html>

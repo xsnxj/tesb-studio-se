@@ -1,0 +1,100 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cLoadBalancer</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cJMS.html" title="cJMS"><link rel="next" href="cLoop.html" title="cLoop"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cLoadBalancer"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cLoadBalancer"></a>cLoadBalancer</h2></div></div></div><div class="mediaobject"><img src="../images/cLoadBalancer_icon32_white.png"></div><div class="section" title="cLoadBalancer properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e47031"></a>cLoadBalancer properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Routing</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> allows you to distribute messages
+								across multiple endpoints using different load balancing
+								strategies.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> allows you to distribute messages
+								among several endpoints using a variety of load balancing
+								strategies.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Strategy</em></span></p>
+						</td><td valign="top"><p>Select between <span class="bold"><strong>Random</strong></span>, <span class="bold"><strong>Round
+								Robin</strong></span>, <span class="bold"><strong>Sticky</strong></span>, <span class="bold"><strong>Topic</strong></span>, <span class="bold"><strong>Failover</strong></span>, and <span class="bold"><strong>Custom</strong></span>. Each method is described below.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Random</span></p>
+						</td><td colspan="2" valign="top"><p>The receiving endpoint is
+								chosen randomly at each exchange.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Round
+								Robin</span></p>
+						</td><td colspan="2" valign="top"><p>Messages are distributed
+								according to the round robin method which distributes the load
+								evenly.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Sticky</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Language</em></span></p>
+						</td><td valign="top"><p>Select the language of the expression to use in
+								the <span class="bold"><strong>Expression</strong></span> field to distribute
+								the messages.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression that will be used to
+								calculate a correlation key that will determine the endpoint to
+								choose. </p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Topic</span></p>
+						</td><td colspan="2" valign="top"><p>Select this option to
+								send all the messages to all the endpoints.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Failover</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Basic mode</em></span></p>
+						</td><td valign="top"><p>By default, the failover load balancing always
+								sends the messages to the first endpoint. If the first endpoint
+								fails, the messages are sent to subsequent endpoints.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Specify exceptions</em></span></p>
+						</td><td valign="top"><p>Specify the exceptions to which the failover
+								should react to in the <span class="bold"><strong>Exception</strong></span>
+								table.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Use with Round robin</em></span></p>
+						</td><td valign="top"><p>Select this option to use failover with advanced
+								options.</p><p>From the <span class="bold"><strong>Maximum failover attempt</strong></span> list, select the number of
+								attempt to be proceed before giving up the transfer: </p><p>
+									-<span class="bold"><strong>Attempt forever</strong></span>: always
+								attempts to transfer the messages and always try to failover.
+								</p><p> -<span class="bold"><strong>Never failover</strong></span>:
+								gives up immediately the transfer of messages and never try to
+								failover.</p><p> -<span class="bold"><strong>A number of
+									attempts</strong></span>: attempts <span class="emphasis"><em>n</em></span> number of
+								time to transfer messages, specify that number in the <span class="bold"><strong>Number of attempts</strong></span> field.</p><p><span class="bold"><strong>Inherit error handler</strong></span>: Select <span class="emphasis"><em>true</em></span> if
+								you want Camel error handler to be used. If you select
+									<span class="emphasis"><em>false</em></span>, the load balancer will immediately
+								failover when an exception is thrown. </p><p><span class="bold"><strong>Use Round robin</strong></span>: Select <span class="emphasis"><em>true</em></span> if you want
+								to combine failover with round robin. Failover load balancing with
+								round robin mode distributes the load evenly between the services,
+								and it provides automatic failover.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Custom</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Load balancer</em></span></p>
+						</td><td valign="top"><p>Type in the name of your custom load
+								balancer.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Distributing messages evenly among receiver endpoints based on round robin"><div class="titlepage"><div><div><h3 class="title"><a name="d0e47295"></a>Scenario: Distributing messages evenly among receiver endpoints based on round robin </h3></div></div></div><p>In this scenario, <span class="bold"><strong>cLoadBalancer</strong></span> is deployed to
+			distribute four messages evenly among two receiving endpoints in accordance with the
+			round robin load balancing policy.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Drag and drop the components from the <span class="bold"><strong>Palette</strong></span>
+					to the workspace: <span class="bold"><strong>cMessagingEndpoint</strong></span> (X3) and
+						<span class="bold"><strong>cLoadBalancer</strong></span>.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_1.png" align="middle"></div></li><li class="listitem"><p>Link the first <span class="bold"><strong>cMessagingEndpoint</strong></span> component
+					to <span class="bold"><strong>cLoadBalancer</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection. </p></li><li class="listitem"><p>Link <span class="bold"><strong>cLoadBalancer</strong></span> to the two other <span class="bold"><strong>cMessagingEndpoint</strong></span> components using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Load Balance</strong></span>
+					connection.</p></li><li class="listitem"><p>Double click the first <span class="bold"><strong>cMessagingEndpoint</strong></span>
+					component to open its <span class="bold"><strong>Basic Settings</strong></span> view in
+					the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_2.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, enter the URI of the source
+					messages and relevant arguments, e.g. <span class="italic">"file://C:/data/input/loadBalance/?noop=true"</span>, where the
+					argument <span class="italic">?noop=true</span> means that no operation
+					will be made on the source messages.</p></li><li class="listitem"><p>Double click <span class="bold"><strong>cLoadBalancer</strong></span> to open its
+						<span class="bold"><strong>Basic Settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_6.png" align="middle"></div></li><li class="listitem"><p>Select <span class="bold"><strong>Round robin</strong></span> from the <span class="bold"><strong>Strategy</strong></span> list.</p></li><li class="listitem"><p>Double-click the second <span class="bold"><strong>cMessagingEndpoint</strong></span>
+					component to open its <span class="bold"><strong>Basic Settings</strong></span> view in
+					the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_3.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, enter the URI of the
+					destination for the messages, e.g. <span class="italic">"file://c:/data/output/loadBalance/1"</span>.</p></li><li class="listitem"><p>Double-click the third <span class="bold"><strong>cMessagingEndpoint</strong></span>
+					component to open its <span class="bold"><strong>Basic Settings</strong></span> view in
+					the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_4.png" align="middle"></div></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, enter the URI of the
+					destination for the messages, e.g. <span class="italic">"file://c:/data/output/loadBalance/2"</span>.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+					design workspace to check the generated code: </p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_7.png" align="middle"></div><p>As shown above, while messages are routed <code class="code">.from</code> the source endpoint
+						<code class="code">.to</code> the destination endpoints, routing load balancing is
+					implemented by <code class="code">.loadBalance()</code> according to the
+						<code class="code">.roundRobin()</code> strategy.</p></li><li class="listitem"><p>Save the Route and press <span class="bold"><strong>F6</strong></span> to run it.</p><p>You can find that message 1 and message 3 are received in the folder <span class="italic">C:\data\output\loadBalance\1</span> while message 2 and
+					message 4 are received in the folder <span class="italic">C:\data\output\loadBalance\2</span>.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_5.png" align="middle"></div></li></ol></div></div></div></body></html>
