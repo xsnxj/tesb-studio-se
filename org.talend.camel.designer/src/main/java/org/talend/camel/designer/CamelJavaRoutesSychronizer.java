@@ -26,7 +26,6 @@ import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.SystemException;
-import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
@@ -167,7 +166,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
                 if (copyToTemp) {
                     String beanContent = new String(beanItem.getContent().getInnerContent());
                     // see 14713
-                    String version = VersionUtils.getVersion();
+                    String version = CamelDesignerPlugin.getDefault().getVersion();
                     if (beanContent.contains("%GENERATED_LICENSE%")) { //$NON-NLS-1$
                         IService service = GlobalServiceRegister.getDefault().getService(IBrandingService.class);
                         if (service instanceof AbstractBrandingService) {

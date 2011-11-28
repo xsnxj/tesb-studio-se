@@ -35,7 +35,7 @@
 				<COLUMN NAME="string" TYPE="id_String" READONLY="true" NULLABLE="true" />
 			</TABLE>
 		</PARAMETER>
-
+		
 		<PARAMETER NAME="STATUS_CODE" FIELD="CLOSED_LIST"
 				REQUIRED="true" NUM_ROW="20">
 			<ITEMS DEFAULT="200">
@@ -43,7 +43,7 @@
 				<ITEM NAME="400" VALUE="400" />
 				<ITEM NAME="404" VALUE="404" />
 				<ITEM NAME="500" VALUE="500" />
-<!--
+<!-- 
 200 OK
 300 Multiple Choices
 301 Moved Permanently
@@ -57,14 +57,9 @@
 410 Gone
 500 Internal Server Error
  -->
-				<ITEM NAME="CUSTOM" VALUE="CUSTOM" />
 			</ITEMS>
 		</PARAMETER>
-		<PARAMETER NAME="CUSTOM_STATUS_CODE" FIELD="TEXT"
-				REQUIRED="true" NUM_ROW="20"
-				SHOW_IF="STATUS_CODE == 'CUSTOM'">
-			<DEFAULT>200</DEFAULT>
-		</PARAMETER>
+		
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>

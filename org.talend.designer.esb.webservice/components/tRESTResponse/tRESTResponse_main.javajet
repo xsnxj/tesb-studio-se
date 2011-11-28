@@ -29,19 +29,8 @@ if (null != metadatas && 0 < metadatas.size()) {
 		if (null != conns && 0 < conns.size()) {
 			IConnection conn = conns.get(0);
 			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-
-				String selectedStatusCode = ElementParameterParser.getValue(node, "__STATUS_CODE__");
-				if ("CUSTOM".equals(selectedStatusCode)) {
 %>
-	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__CUSTOM_STATUS_CODE__")%>;
-<%
-				} else {
-%>
-	Integer restProviderStatusCode_<%=cid%> = <%= selectedStatusCode%>;
-<%
-				}
-%>
-
+	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__STATUS_CODE__")%>;
 	Object restProviderResponse_<%=cid%> = null;
 <%
 				IMetadataColumn column = conn.getMetadataTable().getColumn("string");
@@ -67,7 +56,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 		restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
 
 		esbHandler_<%=cid%>.sendResponse(restResponse_<%=cid%>);
-		isRequestReceivedAndResponseSentBack = true;
 	}
 <%
 			}

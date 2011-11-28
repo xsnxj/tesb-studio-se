@@ -63,6 +63,10 @@ public class CamelDesignerPlugin extends AbstractUIPlugin {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
     }
 
+    public String getVersion() {
+        return (String) plugin.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+    }
+
     public IRunProcessService getRunProcessService() {
         IService service = GlobalServiceRegister.getDefault().getService(IRunProcessService.class);
         return (IRunProcessService) service;

@@ -17,7 +17,7 @@
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
 
-	if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) {
+	if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) { 
 	%>
 		if (true) {
 			throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
@@ -37,12 +37,12 @@
 			}
 		}
 	}
-	if (!hasOutputConnection) {
+	if (!hasOutputConnection) { 
 	%>
 		if (true) {
 			throw new RuntimeException("cannot instantiate REST service: tRESTRequest component has no any output connections");
 		}
-	<%
+	<%	
 	}
 	%>
 
@@ -72,18 +72,11 @@
 
 	try {
 		// This is a beginning of the ESB provider request component cycle
-		boolean isRequestReceivedAndResponseSentBack = true;
 		while(true) {
 			try {
 				ESBProviderCallback esbHandler_<%=cid%> =
 					(ESBProviderCallback) globalMap.get("esbHandler");
 
-				if (!isRequestReceivedAndResponseSentBack) {
-					esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
-					isRequestReceivedAndResponseSentBack = true;
-				}
-
 				java.util.Map<String, Object> requestMessage_<%=cid%> =
 					(java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
 
-				isRequestReceivedAndResponseSentBack = false;

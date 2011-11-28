@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -44,7 +43,6 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -152,45 +150,43 @@ public class AssignJobAction extends AbstractCreateAction {
         }
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         try {
-            if (oldJobID != null) {
-                IRepositoryViewObject object = factory.getLastVersion(oldJobID);
-                Item item = object.getProperty().getItem();
-                ProcessItem processItem = (ProcessItem) item;
-                //
-                IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
-                boolean foundInOpen = false;
-                IProcess2 process = null;
-                IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .getEditorReferences();
-                List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
-                for (IProcess2 processOpen : processes) {
-                    if (processOpen.getProperty().getItem() == processItem) {
-                        foundInOpen = true;
-                        process = processOpen;
-                        break;
+            IRepositoryViewObject object = factory.getLastVersion(oldJobID);
+            Item item = object.getProperty().getItem();
+            ProcessItem processItem = (ProcessItem) item;
+            //
+            IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
+            boolean foundInOpen = false;
+            IProcess2 process = null;
+            IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .getEditorReferences();
+            List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
+            for (IProcess2 processOpen : processes) {
+                if (processOpen.getProperty().getItem() == processItem) {
+                    foundInOpen = true;
+                    process = processOpen;
+                    break;
+                }
+            }
+            if (!foundInOpen) {
+                IProcess proc = service.getProcessFromProcessItem(processItem);
+                if (proc instanceof IProcess2) {
+                    process = (IProcess2) proc;
+                }
+            }
+
+            if (process != null) {
+                List<? extends INode> nodelist = process.getGraphicalNodes();
+                for (INode node : nodelist) {
+                    if (node.getComponent().getName().equals("tESBProviderRequest")) {
+                        repositoryChangeToBuildIn(repositoryNode, node);
                     }
                 }
-                if (!foundInOpen) {
-                    IProcess proc = service.getProcessFromProcessItem(processItem);
-                    if (proc instanceof IProcess2) {
-                        process = (IProcess2) proc;
-                    }
-                }
+                processItem.setProcess(process.saveXmlFile());
 
-                if (process != null) {
-                    List<? extends INode> nodelist = process.getGraphicalNodes();
-                    for (INode node : nodelist) {
-                        if (node.getComponent().getName().equals("tESBProviderRequest")) {
-                            repositoryChangeToBuildIn(repositoryNode, node);
-                        }
-                    }
-                    processItem.setProcess(process.saveXmlFile());
-
-                    try {
-                        factory.save(processItem);
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    factory.save(processItem);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (PersistenceException e) {
@@ -206,22 +202,7 @@ public class AssignJobAction extends AbstractCreateAction {
         }
         IRepositoryViewObject repositoryObject = jobNode.getObject();
         final Item item = repositoryObject.getProperty().getItem();
-        // judge the job whether had T_ESB_PROVIDER_REQUEST
-        ProcessItem processItem = (ProcessItem) item;
-        ProcessType processType = processItem.getProcess();
-        EList nodeList = processType.getNode();
-        boolean hadEsbRequestComponent = false;
-        for (Object obj : nodeList) {
-            NodeType node = (NodeType) obj;
-            if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
-                hadEsbRequestComponent = true;
-            }
-        }
-        if (!hadEsbRequestComponent) {
-            MessageDialog.openWarning(Display.getCurrent().getActiveShell(), Messages.AssignJobAction_WarningTitle,
-                    Messages.AssignJobAction_WarningMessage);
-            return;
-        }
+
         try {
             String jobID = item.getProperty().getId();
             String jobName = item.getProperty().getLabel();
@@ -252,6 +233,9 @@ public class AssignJobAction extends AbstractCreateAction {
             Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                     ((OperationRepositoryObject) repositoryNode.getObject()).getName(), portName);
 
+            ProcessItem processItem = (ProcessItem) item;
+            ProcessType processType = processItem.getProcess();
+            EList nodeList = processType.getNode();
             for (Object obj : nodeList) {
                 NodeType node = (NodeType) obj;
                 if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
