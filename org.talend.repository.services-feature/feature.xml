@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="javax.wsdl" version="1.6.0" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="org.eclipse.wst.server.core"
          download-size="0"
@@ -381,7 +385,7 @@
          id="javax.wsdl"
          download-size="0"
          install-size="0"
-         version="1.6.2.v201012040545"
+         version="1.5.1.v201005080630"
          unpack="false"/>
 
    <plugin
