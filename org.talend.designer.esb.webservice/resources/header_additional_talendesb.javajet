@@ -1315,8 +1315,7 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 					status = 200;
 				}
 
-				return javax.ws.rs.core.Response.status(status).type("application/xml")
-						.entity(responseBody).build();
+				return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
 <% } %>
 			} finally {
 				messageExchange.completeQueuedProcessing();
@@ -1477,6 +1476,7 @@ if (null != conns && !conns.isEmpty()) {
 class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
 
 	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
+	@javax.ws.rs.core.Context private javax.ws.rs.core.HttpHeaders inHeaders;
 
 	private RESTProvider_<%=tRESTRequestNodeCid%> provider;
 
@@ -1499,7 +1499,10 @@ class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.
 			}
 		}
 		response = provider.handleWrongRequest(ui.getPath(), response.getStatus(), error);
-		return response;
+
+		java.util.List<javax.ws.rs.core.MediaType> accepts = inHeaders.getAcceptableMediaTypes();
+		String type = accepts.isEmpty() ? "application/xml" : accepts.get(0).toString();
+		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(type).build();
 	}
 }
 
