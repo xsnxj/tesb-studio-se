@@ -385,6 +385,13 @@
          unpack="false"/>
 
    <plugin
+         id="javax.wsdl"
+         download-size="0"
+         install-size="0"
+         version="1.5.1.v201005080630"
+         unpack="false"/>
+         
+   <plugin
          id="javax.xml"
          download-size="190"
          install-size="190"
