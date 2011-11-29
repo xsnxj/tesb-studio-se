@@ -30,7 +30,7 @@ public class SplitterComponentSaver extends AbstractComponentSaver {
 			int index = express.indexOf(".");
 			int leftB = express.indexOf("(", index);
 			if(leftB!=-1){
-				String type = express.substring(index+1,leftB).trim();
+				String type = express.substring(express.indexOf(".",express.indexOf(")"))+1, leftB).trim();
 				String value = "";
 				int firstQuote = express.indexOf("\"");
 				int nextQuote = express.indexOf("\"",firstQuote+1);

@@ -54,7 +54,7 @@ public class MulticastComponentSaver extends AbstractComponentSaver {
 		//create to elements
 		String destinations = parameter.get(ML_DESTINATIONS);
 		if(destinations!=null&&!"".equals(destinations)){
-			String[] splits = destinations.split(";");
+			String[] splits = destinations.split(",");
 			for(String s:splits){
 				Element toElement = document.createElement(TO_ELE);
 				toElement.setAttribute("uri", removeQuote(s));

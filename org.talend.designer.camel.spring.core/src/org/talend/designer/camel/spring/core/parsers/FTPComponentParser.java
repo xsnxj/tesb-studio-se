@@ -46,39 +46,43 @@ public class FTPComponentParser extends AbstractComponentParser {
 				uri = uri.substring(index+1);
 			}
 			
+			String majorPart = uri;
+			String parameters = "";
+			index = uri.indexOf("?");
+			if(index != -1){
+				majorPart = uri.substring(0,index);
+				parameters = uri.substring(index+1);
+			}
+			
 			//server
-			index = uri.indexOf(":");
+			index = majorPart.indexOf(":");
 			if(index!=-1){
-				map.put(FTP_SERVER, uri.substring(0,index));
-				uri = uri.substring(index+1);
+				map.put(FTP_SERVER, majorPart.substring(0,index));
+				majorPart = majorPart.substring(index+1);
 				//port
-				index = uri.indexOf("/");
+				index = majorPart.indexOf("/");
 				if(index!=-1){
-					map.put(FTP_PORT, uri.substring(0,index));
-					uri = uri.substring(index+1);
+					map.put(FTP_PORT, majorPart.substring(0,index));
+					map.put(FTP_DIRECTORY, majorPart.substring(index+1));
+				}else{
+					map.put(FTP_PORT, majorPart);
 				}
 			}else{
-				index = uri.indexOf("/");
-				if(index!=-1){
-					map.put(FTP_SERVER, uri.substring(0,index));
-					uri = uri.substring(index+1);
+				index = majorPart.indexOf("/");
+				if(index == -1){
+					map.put(FTP_SERVER, majorPart);
+				}else{
+					map.put(FTP_SERVER, majorPart.substring(0,index));
+					map.put(FTP_DIRECTORY, majorPart.substring(index+1));
 				}
 			}
 			
-			//directory
-			index = uri.indexOf("?");
-			if(index==-1){
-				map.put(FTP_DIRECTORY, uri);
-			}else{
-				map.put(FTP_DIRECTORY, uri.substring(0,index));
-				//options
-				uri = uri.substring(index+1);
-				String[] parameters = uri.split("&");
-				for (String s : parameters) {
-					String[] kv = s.split("=");
-					if (kv.length == 2) {
-						map.put(kv[0], kv[1]);
-					}
+			//parameters
+			String[] ps = parameters.split("&");
+			for (String s : ps) {
+				String[] kv = s.split("=");
+				if (kv.length == 2) {
+					map.put(kv[0], kv[1]);
 				}
 			}
 		}
