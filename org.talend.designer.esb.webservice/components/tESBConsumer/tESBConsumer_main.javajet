@@ -112,17 +112,6 @@ if (inputConn != null) {
 	<%		} else { %>
 				e.printStackTrace();
 	<%		} %>
-			} catch(Exception e){
-	<%		if (null != connFault) { %>
-				String faultMessage_<%=cid%> = e.getMessage();
-				if (<%=connFault.getName()%> == null) {
-					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
-				}
-				<%=connFault.getName()%>.faultString = faultMessage_<%=cid%>;
-				<%=connFault.getName()%>.faultDetail = null;
-	<%		} else { %>
-				e.printStackTrace();
-	<%		} %>
 			}
 		} catch(Exception e){
 	<%		if (("true").equals(dieOnError)) { %>
