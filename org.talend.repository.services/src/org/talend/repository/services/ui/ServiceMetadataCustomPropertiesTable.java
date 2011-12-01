@@ -38,10 +38,10 @@ import org.talend.repository.services.Activator;
 
 public class ServiceMetadataCustomPropertiesTable {
 
-    private final String COLUMN_NAME = "name";
-    private final String COLUMN_VALUE = "value";
+    private static final String COLUMN_PROPERTY_NAME_DEFAULT_VALUE = "property name";
+    private static final String COLUMN_PROPERTY_VALUE_DEFAULT_VALUE = "property value";
 
-    private String[] columnNames = new String[] { COLUMN_NAME, COLUMN_VALUE };
+    private String[] columnNames = new String[] { "name", "value" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private Composite composite;
     private Table table;
@@ -119,17 +119,29 @@ public class ServiceMetadataCustomPropertiesTable {
 
         CellEditor[] editors = new CellEditor[columnNames.length];
 
-        TextCellEditor textEditor = new TextCellEditor(table);
+        TextCellEditor textEditor = new TextCellEditor(table) {
+            protected Object doGetValue() {
+                Object value = super.doGetValue();
+                return (null == value || ((String) value).trim().isEmpty())
+                        ? COLUMN_PROPERTY_NAME_DEFAULT_VALUE : value;
+            }
+        };
         ((Text) textEditor.getControl()).setTextLimit(64);
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
-                e.doit = !e.text.trim().isEmpty();
+                e.doit = !e.text.equals("\""); //$NON-NLS-1$
+//              e.doit = !e.text.trim().isEmpty();
             }
         });
         editors[0] = textEditor;
 
         textEditor = new TextCellEditor(table);
         ((Text) textEditor.getControl()).setTextLimit(64);
+        ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
+            public void verifyText(VerifyEvent e) {
+                e.doit = !e.text.equals("\""); //$NON-NLS-1$
+            }
+        });
         editors[1] = textEditor;
 
         tableViewer.setCellEditors(editors);
@@ -139,7 +151,7 @@ public class ServiceMetadataCustomPropertiesTable {
     private void createButtons(Composite parent) {
 
         Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
-        add.setImage(Activator.getImageDescriptor("/icons/add.gif").createImage());
+        add.setImage(Activator.getImageDescriptor("/icons/add.gif").createImage()); //$NON-NLS-1$
         add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
         add.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -148,7 +160,7 @@ public class ServiceMetadataCustomPropertiesTable {
         });
 
         Button delete = new Button(parent, SWT.PUSH | SWT.CENTER);
-        delete.setImage(Activator.getImageDescriptor("/icons/delete.gif").createImage());
+        delete.setImage(Activator.getImageDescriptor("/icons/delete.gif").createImage()); //$NON-NLS-1$
         delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
         delete.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -230,7 +242,9 @@ public class ServiceMetadataCustomPropertiesTable {
         }
 
         public void addProperty() {
-            CustomProperty property = new CustomProperty("new custom property name", "new custom property value");
+            CustomProperty property = new CustomProperty(
+                    COLUMN_PROPERTY_NAME_DEFAULT_VALUE,
+                    COLUMN_PROPERTY_VALUE_DEFAULT_VALUE);
             properties.add(properties.size(), property);
             Iterator<IPropertiesListViewer> iterator = changeListeners.iterator();
             while (iterator.hasNext()) {
