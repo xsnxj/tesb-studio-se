@@ -1,10 +1,18 @@
 <%@ jet
 	package="org.talend.designer.codegen.translators.common"
 	imports="
+		java.util.ArrayList
+		java.util.Arrays
+		java.util.Collections
+		java.util.HashMap
+		java.util.HashSet
 		java.util.List
 		java.util.Map
-		java.util.HashMap
+		java.util.Set
 		java.util.Vector
+
+		java.util.regex.Matcher
+		java.util.regex.Pattern
 
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
@@ -22,11 +30,6 @@
 		java.io.UnsupportedEncodingException
 		java.net.URLEncoder
 
-		java.util.ArrayList
-		java.util.Collections
-
-		java.util.regex.Matcher
-		java.util.regex.Pattern
 	"
 	class="Header_additional"
 %>
@@ -588,7 +591,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 		public static final String FINAL_MATCH_GROUP = "FINAL_MATCH_GROUP";
 		private static final String DEFAULT_PATH_VARIABLE_REGEX = "([^/]+?)";
 		private static final String CHARACTERS_TO_ESCAPE = ".*+";
-//	    private static final String SLASH = "/";
 
 		private final String template;
 		private final List<String> variables = new ArrayList<String>();
@@ -650,8 +652,8 @@ if (!httpRequestComponentsList.isEmpty()) {
 		/**
 		 * List of all variables in order of appearance in template.
 		 *
-		 * @return unmodifiable list of variable names w/o patterns, e.g. for "/foo/{v1:\\d}/{v2}" returned list
-		 *         is ["v1","v2"].
+		 * @return unmodifiable list of variable names w/o patterns,
+		 * e.g. for "/foo/{v1:\\d}/{v2}" returned list is ["v1","v2"].
 		 */
 		public List<String> getVariables() {
 			return Collections.unmodifiableList(variables);
@@ -681,61 +683,14 @@ if (!httpRequestComponentsList.isEmpty()) {
 		}
 
 
-//	    public boolean match(String uri, MultivaluedMap<String, String> templateVariableToValue) {
-	//
-//	        if (uri == null) {
-//	            return (templateRegexPattern == null) ? true : false;
-//	        }
-	//
-//	        if (templateRegexPattern == null) {
-//	            return false;
-//	        }
-	//
-//	        Matcher m = templateRegexPattern.matcher(uri);
-	//
-//	        if (!m.matches()) {
-//	            return false;
-//	        }
-	//
-	//
-//	        // Assign the matched template values to template variables
-//	        int groupCount = m.groupCount();
-	//
-//	        int i = 1;
-//	        for (String name : variables) {
-//	            while (i <= groupCount) {
-//	                String value = m.group(i++);
-//	                if (value == null || value.length() == 0 && i < groupCount) {
-//	                    continue;
-//	                }
-//	                templateVariableToValue.add(name, value);
-//	                break;
-//	            }
-//	        }
-//	        // The right hand side value, might be used to further resolve
-//	        // sub-resources.
-	//
-//	        String finalGroup = i > groupCount ? SLASH : m.group(groupCount);
-//	        if (finalGroup == null) {
-//	            finalGroup = SLASH;
-//	        }
-//	        templateVariableToValue.putSingle(FINAL_MATCH_GROUP, finalGroup);
-	//
-//	        return true;
-//	    }
-	//
-//	    public static URITemplate createTemplate(Path path) {
-	//
-//	        return createTemplate(path == null ? null : path.value());
-//	    }
 
 
 		/**
 		 * Creates object form string.
 		 *
 		 * @param uriChunk stringified uri chunk
-		 * @return If param has variable form then {@link Variable} instance is created, otherwise chunk is
-		 *         treated as {@link Literal}.
+		 * @return If param has variable form then {@link Variable} instance is created,
+		 * otherwise chunk is treated as {@link Literal}.
 		 */
 		public UriChunk createUriChunk(String uriChunk) {
 			if (uriChunk == null || "".equals(uriChunk)) {
@@ -911,8 +866,7 @@ if (!httpRequestComponentsList.isEmpty()) {
 		/**
 		 * Token is enclosed by curly braces.
 		 *
-		 * @param token
-		 *            text to verify
+		 * @param token text to verify
 		 * @return true if enclosed, false otherwise.
 		 */
 		public boolean insideBraces(String token) {
@@ -923,8 +877,7 @@ if (!httpRequestComponentsList.isEmpty()) {
 		 * Strips token from enclosed curly braces. If token is not enclosed method
 		 * has no side effect.
 		 *
-		 * @param token
-		 *            text to verify
+		 * @param token text to verify
 		 * @return text stripped from curly brace begin-end pair.
 		 */
 		public String stripBraces(String token) {
@@ -1034,18 +987,35 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	}
 
-//	public URITemplateUtils createTemplate(String pathValue) {
-//
-//		if (pathValue == null) {
-//			return new URITemplateUtils("/");
-//		}
-//
-//		if (!pathValue.startsWith("/")) {
-//			pathValue = "/" + pathValue;
-//		}
-//
-//		return new URITemplateUtils(pathValue);
-//	}
+	/**
+	* JAXRS Parameter Representation
+	*/
+	final class Parameter {
+		private String name;
+		private String javaType;
+		private String paramType;
+		private String defaultValue;
+
+		public Parameter(String name, String paramType, String javaType, String defaultValue) {
+			this.name = name;
+			this.javaType = javaType;
+			this.paramType = paramType;
+			this.defaultValue = defaultValue;
+		}
+
+		public String getName() {
+			return name;
+		}
+		public String getJavaType() {
+			return javaType;
+		}
+		public String getParamType() {
+			return paramType;
+		}
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+	}
 
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
@@ -1289,14 +1259,6 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 		this.messageHandler = messageHandler;
 	}
 
-//	private java.util.Map<String, String> getPathParameters(javax.ws.rs.core.UriInfo uriInfo) {
-//		java.util.Map<String, String> params = new java.util.HashMap<String, String>();
-//		javax.ws.rs.core.MultivaluedMap<String, String> pathParams = uriInfo.getPathParameters();
-//		for (String paramName : pathParams.keySet()) {
-//			params.put(paramName, pathParams.getFirst(paramName));
-//		}
-//		return params;
-//	}
 
 	private javax.ws.rs.core.Response processRequest(java.util.Map<String, Object> request) {
 		try {
@@ -1336,11 +1298,6 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tRESTRequestNode, "__SCHEMAS__");
-	// TODO: validation:
-	// 1. uri != null && uri.trim().length() > 0 && ??? uri.trim().startsWith("/")
-	// 2. ??? uri format by REST API - compile
-	// 3. ??? uri parameters unique
-	// 4. ??? uris+verb are not interfere
 	for (IConnection conn : conns) {
 		if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 			continue;
@@ -1363,18 +1320,42 @@ if (null != conns && !conns.isEmpty()) {
 			continue;
 		}
 
-		Map<String, String> parameters = new HashMap<String, String>();
+		boolean formSupported = false;
+
+		// All the parameters specified in the Schema Editor need to be handled.
+		final Set<String> paramTypes = new HashSet<String>(Arrays.asList("PATH", "QUERY", "FORM", "HEADER"));
+
+		Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 		if (null != uriPattern) {
 			URITemplateUtils uriTemplate = new URITemplateUtils(uriPattern);
 			List<String> variables = uriTemplate.getVariables();
 
 			IMetadataTable connMetadata = conn.getMetadataTable();
-			for (String variable : variables) {
-				// TODO: check-remove some registered names like: body, uri ?, ...
-				IMetadataColumn column = connMetadata.getColumn(variable);
-				if (null == column) {
+			for (IMetadataColumn column : connMetadata.getListColumns()) {
+				// parameter name 
+				String paramName = column.getLabel();
+				if (paramName.equals("body")) {
+			            continue;
+				}
+
+				// parameter type - if empty - default to 'path'
+				String paramType = column.getComment();
+				if (paramType == null || paramType.length() == 0) {
+					paramType = "PATH";
+				} else {
+					paramType = paramType.toUpperCase().trim();
+				}
+				// must be a supported parameter type 
+				if (!paramTypes.contains(paramType)) {
+					// Report unsupported JAX-RS parameter type
 					continue;
 				}
+				// having at least one form parameter means form submissions are supported
+				if ("FORM".equals(paramType)) {
+					formSupported = true;
+				}
+				// convert from say "PATH" to "Path"
+				paramType = paramType.substring(0, 1) + paramType.substring(1).toLowerCase();
 
 				JavaType javaType = JavaTypesManager.getJavaTypeFromId(column.getTalendType());
 
@@ -1393,47 +1374,43 @@ if (null != conns && !conns.isEmpty()) {
 					|| JavaTypesManager.BIGDECIMAL == javaType) {
 
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-					parameters.put(variable, javaTypeWhole);
+					// parameter default value
+					String defaultValue = column.getDefault();
+					
+					Parameter param = new Parameter(paramName, paramType, javaTypeWhole, defaultValue); 
+					parameters.put(paramName, param);
 				} else {
-					// not worked (has no constructor with single String parameter, static valueOf(String) or fromString(String) methods)
-					//	JavaTypesManager.BYTE_ARRAY
-					//	JavaTypesManager.DATE
-					//	JavaTypesManager.LIST
-					//	JavaTypesManager.OBJECT
-					//	JavaTypesManager.CHARACTER
-
-					// not presented for flow field scheme
-					// JavaTypesManager.DIRECTORY
-					// JavaTypesManager.FILE
-					// JavaTypesManager.PASSWORD
-					// JavaTypesManager.VALUE_LIST
-
-					// others
-					// "id_Document"
+					//Report that the Java type is unsupported
 				}
 			}
 		}
-
 %>
 	@javax.ws.rs.<%=httpVerb%>()
 <% if (null != uriPattern) { %>
 	@javax.ws.rs.Path(<%=uriPattern%>)
 <% } %>
+<% if (formSupported) { %>
+	@javax.ws.rs.Consumes("application/x-www-form-urlencoded")
+<% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%
 			boolean paramCommaWritten = false;
 			for (String parameter : parameters.keySet()) {
-			if (!paramCommaWritten) {
-				paramCommaWritten = true;
-			} else {
-				%>
-				,
-				<%  } %>
-			@javax.ws.rs.PathParam("<%=parameter%>") <%=parameters.get(parameter)%> <%=parameter%>
+				Parameter param = parameters.get(parameter);
+				if (!paramCommaWritten) {
+					paramCommaWritten = true;
+				} else {
+					%>, <%
+				} 
+
+				if (param.getDefaultValue() != null) { %>
+					@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>")
+				<% } %>
+				@javax.ws.rs.<%=param.getParamType()%>Param("<%=parameter%>") <%=param.getJavaType()%> <%=parameter%>
 		<%	} %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) {
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) {
 			if (paramCommaWritten) {
-				%> , <%
+				%>, <%
 			} %>
 			org.dom4j.Document body
 		<% } %>
@@ -1442,9 +1419,8 @@ if (null != conns && !conns.isEmpty()) {
 		java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
 		request.put("VERB", "<%=httpVerb%>");
 		request.put("OPERATION", "<%=connName%>");
-		// request.put("URI", uriInfo.getPath());
 		request.put("PATTERN", <%=uriPattern%>);
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb))) { %>
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
 		request.put("BODY", body);
 		<% } %>
 
