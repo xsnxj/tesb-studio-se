@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import javax.wsdl.Output;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
+import org.apache.ws.commons.schema.XmlSchema;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -90,7 +92,6 @@ import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.actions.AContextualAction;
-import org.talend.repository.ui.wizards.metadata.connection.files.xml.util.StringUtil;
 import orgomg.cwm.resource.record.RecordFactory;
 import orgomg.cwm.resource.record.RecordFile;
 
@@ -107,6 +108,8 @@ public class PublishMetadataAction extends AContextualAction {
     private IStructuredSelection selection;
 
     private List<RepositoryNode> nodes;
+
+    private XSDPopulationUtil2 populationUtil;
 
     /*
      * (non-Javadoc)
@@ -191,7 +194,22 @@ public class PublishMetadataAction extends AContextualAction {
     }
 
     public void process(Definition wsdlDefinition) {
+        populationUtil = new XSDPopulationUtil2();
         SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
+        int index = 0;
+        // to modify later, have a map done on the byte[] is really not good.
+        Map<byte[], String> fileToSchemaMap = new HashMap<byte[], String>();
+        for (XmlSchema schema : schemaUtil.getSchemas().keySet()) {
+            String file = initFileContent(schemaUtil.getSchemas().get(schema), index);
+            fileToSchemaMap.put(schemaUtil.getSchemas().get(schema), file);
+            try {
+                populationUtil.addSchema(file);
+            } catch (IOException e) {
+                ExceptionHandler.process(e);
+            }
+            index++;
+        }
+
         Map<QName, Binding> bindings = wsdlDefinition.getBindings();
         List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
         for (Binding binding : bindings.values()) {
@@ -205,7 +223,8 @@ public class PublishMetadataAction extends AContextualAction {
                     if (inDef != null) {
                         Message inMsg = inDef.getMessage();
                         if (inMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(inMsg), portType.getQName(), oper);
+                            populateMessage2(schemaUtil.getParameterFromMessage(inMsg), portType.getQName(), oper,
+                                    fileToSchemaMap);
                         }
                     }
 
@@ -213,14 +232,16 @@ public class PublishMetadataAction extends AContextualAction {
                     if (outDef != null) {
                         Message outMsg = outDef.getMessage();
                         if (outMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(outMsg), portType.getQName(), oper);
+                            populateMessage2(schemaUtil.getParameterFromMessage(outMsg), portType.getQName(), oper,
+                                    fileToSchemaMap);
                         }
                     }
                     Collection<Fault> faults = oper.getFaults().values();
                     for (Fault fault : faults) {
                         Message faultMsg = fault.getMessage();
                         if (faultMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(faultMsg), portType.getQName(), oper);
+                            populateMessage2(schemaUtil.getParameterFromMessage(faultMsg), portType.getQName(), oper,
+                                    fileToSchemaMap);
                         }
                     }
                 }
@@ -291,8 +312,10 @@ public class PublishMetadataAction extends AContextualAction {
      * from the same xsd, generate it everytime right now.
      * 
      * @param oper
+     * @param hashMap
      */
-    private void populateMessage2(ParameterInfo parameter, QName portTypeQName, Operation oper) {
+    private void populateMessage2(ParameterInfo parameter, QName portTypeQName, Operation oper,
+            Map<byte[], String> schemaToFileMap) {
         String name = /* componentName + "_"+ */parameter.getName();
         XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
         connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
@@ -311,11 +334,16 @@ public class PublishMetadataAction extends AContextualAction {
         connection.setInputModel(false);
         // schema
         connection.setFileContent(parameter.getSchema());
-        String filePath = initFileContent(parameter.getSchema());
         XSDSchema xsdSchema;
         try {
-            xsdSchema = new XSDPopulationUtil2().getXSDSchema(filePath);
-            List<ATreeNode> rootNodes = new XSDPopulationUtil2().getAllRootNodes(xsdSchema);
+            String filePath = schemaToFileMap.get(parameter.getSchema()); // name of xsd file needed
+            if (filePath == null) {
+                // just in case, but should never happen
+                return;
+            }
+
+            xsdSchema = populationUtil.getXSDSchema(filePath);
+            List<ATreeNode> rootNodes = populationUtil.getAllRootNodes(xsdSchema);
 
             ATreeNode node = null;
 
@@ -337,7 +365,7 @@ public class PublishMetadataAction extends AContextualAction {
                 }
             }
 
-            node = new XSDPopulationUtil2().getSchemaTree(xsdSchema, node, true);
+            node = populationUtil.getSchemaTree(xsdSchema, node, true);
             orderId = 1;
             loopElementFound = false;
             if (ConnectionHelper.getTables(connection).isEmpty()) {
@@ -467,7 +495,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
-    private String initFileContent(byte[] fileContent) {
+    private String initFileContent(byte[] fileContent, int index) {
         byte[] bytes = fileContent;
         Project project = ProjectManager.getInstance().getCurrentProject();
         IProject fsProject = null;
@@ -480,7 +508,7 @@ public class PublishMetadataAction extends AContextualAction {
             return null;
         }
         String temPath = fsProject.getLocationURI().getPath() + File.separator + "temp"; //$NON-NLS-1$
-        String fileName = StringUtil.TMP_XSD_FILE;
+        String fileName = "tempXSDFile" + index + ".XSD";
         File temfile = new File(temPath + File.separator + fileName);
 
         if (!temfile.exists()) {

@@ -135,30 +135,31 @@ public class SchemaUtil {
     private void addSchema(Map<XmlSchema, byte[]> map, final XmlSchema schema) {
         try {
             final ByteArrayOutputStream fos = new ByteArrayOutputStream();
-            //one more crutch for the disabled
+            // one more crutch for the disabled
             ExecutorService executor = Executors.newCachedThreadPool();
             Callable<Object> task = new Callable<Object>() {
-               public Object call() {
-            	  try {
-					schema.write(fos);   //this method hangs when using invalid wsdl.   
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                  return null;
-               }
+
+                public Object call() {
+                    try {
+                        schema.write(fos); // this method hangs when using invalid wsdl.
+                    } catch (UnsupportedEncodingException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
             };
             Future<Object> future = executor.submit(task);
             try {
-               future.get(30, TimeUnit.SECONDS); 
+                future.get(30, TimeUnit.SECONDS);
             } catch (TimeoutException ex) {
-               // handle the timeout
+                // handle the timeout
             } catch (InterruptedException e) {
-               // handle the interrupts
+                // handle the interrupts
             } catch (ExecutionException e) {
-               // handle other exceptions
+                // handle other exceptions
             } finally {
-               future.cancel(true); // may or may not desire this
+                future.cancel(true); // may or may not desire this
             }
             fos.close();
             map.put(schema, fos.toByteArray());
@@ -242,12 +243,12 @@ public class SchemaUtil {
             QName elementQname = part.getElementName();
             // if element is missing - try to get type attribute
             if (null == elementQname) {
-            	elementQname = part.getTypeName();
+                elementQname = part.getTypeName();
             }
             // it's possible if type also will be null. in this case just return null
             if (null == elementQname) {
-            	return null;
-            }            
+                return null;
+            }
             for (XmlSchema schema : schemas.keySet()) {
                 for (XmlSchemaElement element : schema.getElements().values()) {
                     if (element.getName().equals(elementQname.getLocalPart())) {// TODO: check namespaces too
@@ -534,6 +535,10 @@ public class SchemaUtil {
 
         return isJavaBasicType;
 
+    }
+
+    public HashMap<XmlSchema, byte[]> getSchemas() {
+        return schemas;
     }
 
 }
