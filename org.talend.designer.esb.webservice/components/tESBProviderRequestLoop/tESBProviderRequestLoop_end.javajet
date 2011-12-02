@@ -10,6 +10,8 @@
 	INode node = (INode) codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
+
+	Boolean keepListening = Boolean.valueOf(ElementParameterParser.getValue(node, "__KEEPLISTENING__"));
 %>
 		} catch (ESBJobInterruptedException e) {
 			// job interrupted from outside
@@ -19,7 +21,7 @@
 		} finally {
 			// Exit from this loop is made by the configuring "Keep listening"
 			// parameter to false. Then we will have a break before.
-			if ("false".equals("<%=ElementParameterParser.getValue(node, "__KEEPLISTENING__")%>")) {
+			if ("false".equals("<%=keepListening%>")) {
 				break;
 			}
 		}
@@ -27,13 +29,17 @@
 		globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
 	} // This is the end of the ESB Service Provider loop
 } finally {
+<% if (!keepListening) { %>
 	// for "keep listening" == false web service need a time to serve response
-	Thread.currentThread();
-	Thread.sleep(500);
+	if (null == this.callback) {
+		// only for execution in Studio
+		Thread.currentThread();
+		Thread.sleep(500);
+	}
+<% } %>
 	// unsubscribe
 	if (null != handlerThread_<%=cid%>) {
 		// stop endpoint in case it was opened by job
 		handlerThread_<%=cid%>.stopEndpoint();
 	}
 }
-
