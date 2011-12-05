@@ -34,7 +34,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 	String esbProviderFaultTitle_<%=cid%> = <%= ElementParameterParser.getValue(node, "__ESB_FAULT_TITLE__")%> + " [<%=cid%>]";
 	Document esbProviderFaultDoc_<%=cid%> = null;
 <%
-				IMetadataColumn column = conn.getMetadataTable().getColumn("payload"); 
+				IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
 				if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
 	esbProviderFaultDoc_<%=cid%> = <%=conn.getName()%>.payload;
@@ -61,6 +61,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 				(null == esbProviderFaultDoc_<%=cid%>) ? null
 						: esbProviderFaultDoc_<%=cid%>.getDocument()
 			);
+		isRequestReceivedAndResponseSentBack = true;
 	}
 <%
 			}

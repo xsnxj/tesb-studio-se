@@ -11,6 +11,9 @@ INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 cid = cid.replaceAll("_Loop", "");
 
+boolean isOneWay = (node.getProcess().getNodesOfType("tESBProviderFault").isEmpty()
+	&& node.getProcess().getNodesOfType("tESBProviderResponse").isEmpty());
+
 if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 1) { %>
 	if (true) {
 		throw new RuntimeException("cannot instantiate Web Service: job contains more than one tESBProviderRequest component");
@@ -38,11 +41,23 @@ int nb_line_<%=cid%> = 0;
 
 try {
 	// This is a beginning of the ESB provider request component cycle
+	boolean isRequestReceivedAndResponseSentBack = true;
 	while(true) {
 		try {
 			ESBProviderCallbackTalendJobInner esbHandler_<%=cid%> =
 				(ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 
+<% if (!isOneWay) { %>
+			if (!isRequestReceivedAndResponseSentBack) {
+				// esbHandler_<%=cid%>.sendFault(new RuntimeException("response/fault is not provided by Talend job"));
+				esbHandler_<%=cid%>.sendResponse(org.dom4j.DocumentHelper.createDocument());
+				isRequestReceivedAndResponseSentBack = true;
+			}
+<% } %>
+
 			org.dom4j.Document requestMessage_<%=cid%> =
 					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
 
+<% if (!isOneWay) { %>
+			isRequestReceivedAndResponseSentBack = false;
+<% } %>

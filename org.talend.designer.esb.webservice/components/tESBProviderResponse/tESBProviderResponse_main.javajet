@@ -28,7 +28,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 		if (null != conns && 0 < conns.size()) {
 			IConnection conn = conns.get(0);
 			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-				IMetadataColumn column = conn.getMetadataTable().getColumn("payload"); 
+				IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
 				if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
 	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
@@ -49,6 +49,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 		esbProviderCallback_<%=cid%>.setCustomProperties(customProps_<%=cid%>);
 		esbProviderCallback_<%=cid%>.sendResponse(esbProviderResponseDoc_<%=cid%>.getDocument());
+		isRequestReceivedAndResponseSentBack = true;
 	}
 <%
 				}
