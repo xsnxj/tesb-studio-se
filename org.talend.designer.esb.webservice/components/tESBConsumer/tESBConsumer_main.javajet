@@ -122,7 +122,7 @@ if (inputConn != null) {
 		}
 
 <%	if (null != connResponse) { %>
-		if (null != responseDoc_<%=cid%>) {
+//		if (null != responseDoc_<%=cid%>) {
 			if (<%=connResponse.getName()%> == null) {
 				<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
 			}
@@ -130,7 +130,7 @@ if (inputConn != null) {
 			Document responseTalendDoc_<%=cid%> = new Document();
 			responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
 			<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
-		}
+//		}
 <%
 	}
 }
