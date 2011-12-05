@@ -700,7 +700,7 @@ public class ESBService implements IESBService {
         return objList;
     }
 
-    public boolean isJobAlreadyAssignToServiceOperation(String jobID) {
+    public void deleteOldRelation(String jobID) {
         boolean flag = false;
         boolean portBreak = false;
         boolean serviceBreak = false;
@@ -716,7 +716,9 @@ public class ESBService implements IESBService {
                     for (ServiceOperation operation : operations) {
                         String referenceJobId = operation.getReferenceJobId();
                         if (referenceJobId != null && !referenceJobId.equals("")) {
-                            if (referenceJobId.contains(jobID)) {
+                            if (referenceJobId.equals(jobID)) {
+                                operation.setLabel(operation.getName());
+                                operation.setReferenceJobId(null);
                                 flag = true;
                                 portBreak = true;
                                 break;
@@ -729,12 +731,13 @@ public class ESBService implements IESBService {
                     }
                 }
                 if (serviceBreak) {
+                    factory.save(serviceItem, null);
                     break;
                 }
             }
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        return flag;
+        RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
     }
 }
