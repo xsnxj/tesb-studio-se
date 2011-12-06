@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
-import org.eclipse.wst.wsdl.validation.internal.WSDLValidator;
+import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.URIResolverWrapper;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -305,8 +305,8 @@ public class WSDLUtils {
      */
     @SuppressWarnings("restriction")
 	public static void validateWsdl(String wsdlUri) throws CoreException {
-    	WSDLValidator wsdlValidator = new WSDLValidator();
-    	wsdlValidator.addURIResolver(new URIResolverWrapper());
+    	WSDLValidator wsdlValidator = WSDLValidator.getInstance();
+    	//wsdlValidator.addURIResolver(new URIResolverWrapper());
     	IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
     	
     	if (!validationReport.isWSDLValid()) {
