@@ -380,8 +380,14 @@ public class PublishMetadataAction extends AContextualAction {
                     PackageHelper.addMetadataTable(table, newrecord);
                 }
             }
-            fillRootInfo(connection, node, "", false);
-
+            boolean haveElement = false;
+            for (Object curNode : node.getChildren()) {
+                if (((ATreeNode) curNode).getType() == ATreeNode.ELEMENT_TYPE) {
+                    haveElement = true;
+                    break;
+                }
+            }
+            fillRootInfo(connection, node, "", !haveElement);
         } catch (MalformedURLException e1) {
             ExceptionHandler.process(e1);
         } catch (URISyntaxException e1) {
