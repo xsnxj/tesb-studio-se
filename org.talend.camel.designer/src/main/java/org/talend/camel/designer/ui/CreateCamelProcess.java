@@ -69,7 +69,8 @@ import org.talend.repository.ui.views.RepositoryView;
  */
 public class CreateCamelProcess extends CreateProcess {
 
-    private static final String CREATE_LABEL = Messages.getString("CreateProcess.createJob"); //$NON-NLS-1$
+	private static final String CREATE_LABEL = Messages
+			.getString("CreateProcess.createRoute"); //$NON-NLS-1$
 
     public CreateCamelProcess() {
         super();
