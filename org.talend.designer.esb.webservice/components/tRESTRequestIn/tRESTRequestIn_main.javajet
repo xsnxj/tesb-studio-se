@@ -23,8 +23,8 @@ cid = cid.replaceAll("_In", "");
 List<IMetadataTable> metadatas = node.getMetadataList();
 if (null != metadatas && 0 < metadatas.size()) {
 	IMetadataTable metadata = metadatas.get(0);
-	if (null != metadata) {
-	%>
+	if (null != metadata) { %>
+
 		if (requestMessage_<%=cid%>.containsKey("ERROR")) {
 			// wrong request received
 			<%
@@ -46,8 +46,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 						<%=connectionName%>.uri = wrongCallUri_<%=cid%>;
 						<%=connectionName%>.error = wrongCallError_<%=cid%>;
 						<%=connectionName%>.status = wrongCallStatus_<%=cid%>;
-					<%
-					} else { // not "WRONG_CALL" flow %>
+					<% } else { // not "WRONG_CALL" flow %>
 						<%=connectionName%> = null;
 					<%
 					}
@@ -59,8 +58,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 			String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
 			String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
-			String restWord_<%=cid%> = (String) requestMessage_<%=cid%>.get("WORD");
-			// String uri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
 			Document body_<%=cid%> = null;
 			if (requestMessage_<%=cid%>.get("BODY") != null) {
 				body_<%=cid%> = new Document();
@@ -118,3 +115,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 %>
 		}
 
+		globalMap.put("<%=cid%>_URI_BASE", (String) requestMessage_<%=cid%>.get("URI_BASE"));
+		globalMap.put("<%=cid%>_URI_ABSOLUTE", (String) requestMessage_<%=cid%>.get("URI_ABSOLUTE"));
+		globalMap.put("<%=cid%>_HTTP_METHOD", (String) requestMessage_<%=cid%>.get("VERB"));

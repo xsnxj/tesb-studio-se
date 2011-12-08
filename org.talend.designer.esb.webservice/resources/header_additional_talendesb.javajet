@@ -1252,6 +1252,8 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
 @javax.ws.rs.Consumes({"application/xml", "application/json"})
 public class RESTProvider_<%=tRESTRequestNodeCid%> {
 
+	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
+
 	private QueuedMessageHandlerImpl<java.util.Map<String, Object>> messageHandler;
 
 	public RESTProvider_<%=tRESTRequestNodeCid%>(
@@ -1332,7 +1334,7 @@ if (null != conns && !conns.isEmpty()) {
 
 			IMetadataTable connMetadata = conn.getMetadataTable();
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
-				// parameter name 
+				// parameter name
 				String paramName = column.getLabel();
 				if (paramName.equals("body")) {
 			            continue;
@@ -1345,7 +1347,7 @@ if (null != conns && !conns.isEmpty()) {
 				} else {
 					paramType = paramType.toUpperCase().trim();
 				}
-				// must be a supported parameter type 
+				// must be a supported parameter type
 				if (!paramTypes.contains(paramType)) {
 					// Report unsupported JAX-RS parameter type
 					continue;
@@ -1376,8 +1378,8 @@ if (null != conns && !conns.isEmpty()) {
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
 					// parameter default value
 					String defaultValue = column.getDefault();
-					
-					Parameter param = new Parameter(paramName, paramType, javaTypeWhole, defaultValue); 
+
+					Parameter param = new Parameter(paramName, paramType, javaTypeWhole, defaultValue);
 					parameters.put(paramName, param);
 				} else {
 					//Report that the Java type is unsupported
@@ -1401,7 +1403,7 @@ if (null != conns && !conns.isEmpty()) {
 					paramCommaWritten = true;
 				} else {
 					%>, <%
-				} 
+				}
 
 				if (param.getDefaultValue() != null) { %>
 					@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>")
@@ -1423,6 +1425,8 @@ if (null != conns && !conns.isEmpty()) {
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
 		request.put("BODY", body);
 		<% } %>
+		request.put("URI_BASE", ui.getBaseUri().toString());
+		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
 		//request.put("PARAMS", getPathParameters(uriInfo));
 		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
@@ -1437,13 +1441,16 @@ if (null != conns && !conns.isEmpty()) {
 	}
 }
 %>
-	public javax.ws.rs.core.Response handleWrongRequest(String uri, int status, String error) {
-		System.out.println("wrong call [uri: " + uri + " ; status: " + status + " ; error: " + error + "]");
+	public javax.ws.rs.core.Response handleWrongRequest(javax.ws.rs.core.UriInfo ui, int status, String error) {
+
+		System.out.println("wrong call [uri: " + ui.getPath() + " ; status: " + status + " ; error: " + error + "]");
 
 		java.util.Map<String, Object> wrongRequest = new java.util.HashMap<String, Object>();
 		wrongRequest.put("ERROR", error);
-		wrongRequest.put("URI", uri);
 		wrongRequest.put("STATUS", status);
+		wrongRequest.put("URI", ui.getPath());
+		wrongRequest.put("URI_BASE", ui.getBaseUri().toString());
+		wrongRequest.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
 		return processRequest(wrongRequest);
 	}
@@ -1474,7 +1481,7 @@ class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.
 				error = null == ex.getCause() ? ex.getMessage() : ex.getCause().getMessage();
 			}
 		}
-		response = provider.handleWrongRequest(ui.getPath(), response.getStatus(), error);
+		response = provider.handleWrongRequest(ui, response.getStatus(), error);
 
 		java.util.List<javax.ws.rs.core.MediaType> accepts = inHeaders.getAcceptableMediaTypes();
 		String type = accepts.isEmpty() ? "application/xml" : accepts.get(0).toString();
