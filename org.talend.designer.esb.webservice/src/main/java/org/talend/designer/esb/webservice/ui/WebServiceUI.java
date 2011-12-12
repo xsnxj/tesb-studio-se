@@ -965,6 +965,9 @@ public class WebServiceUI extends AbstractWebService {
 				return false;
 			}
 			RepositoryNode node = (RepositoryNode) element;
+			if (node.getType() == ENodeType.SIMPLE_FOLDER) {
+				return true;
+			}
 			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
 					|| node.getProperties(EProperties.CONTENT_TYPE) != SERVICES) {
 				return false;
