@@ -103,7 +103,7 @@
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
-					BundleID="org.apache.servicemix.specs.jaxws-api-2.2"
+					BundleID=""
 					REQUIRED="true"/>
 
 			<IMPORT NAME="jaxb-api"
