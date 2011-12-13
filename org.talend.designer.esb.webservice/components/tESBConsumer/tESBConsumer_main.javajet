@@ -57,33 +57,45 @@ if (inputConn != null) {
 		connFault = connsFault.get(0);
 	}
 %>
-		org.dom4j.Document responseDoc_<%=cid%> = null;
-		try {
-			Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
+	try {
+		Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
-			try {
-				if (consumer_<%=cid%> == null) {
-					responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
-							serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
-							requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-				} else {
-					// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
-					java.util.Map<String, String> customProps_<%=cid%> = null;
-				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
-						List<Map<String, String>> customProperties = (List<Map<String,String>>)
-								ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
-						if (!customProperties.isEmpty()) { %>
-							customProps_<%=cid%> = new java.util.HashMap<String, String>();
-							<% for (int k = 0; k < customProperties.size(); k++) { %>
-							customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-							<% } %>
+		try {
+			org.dom4j.Document responseDoc_<%=cid%> = null;
+
+			if (consumer_<%=cid%> == null) {
+				responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
+						serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
+						requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+			} else {
+				// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
+				java.util.Map<String, String> customProps_<%=cid%> = null;
+			<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+					List<Map<String, String>> customProperties = (List<Map<String,String>>)
+							ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+					if (!customProperties.isEmpty()) { %>
+						customProps_<%=cid%> = new java.util.HashMap<String, String>();
+						<% for (int k = 0; k < customProperties.size(); k++) { %>
+						customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 						<% } %>
-				<% } %>
-					Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
-					responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
+					<% } %>
+			<% } %>
+				Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
+				responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
+			}
+			<% if (null != connResponse) { %>
+			// if (null != responseDoc_<%=cid%>) {
+				if (<%=connResponse.getName()%> == null) {
+					<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
 				}
-			} catch (javax.xml.ws.soap.SOAPFaultException e) {
-	<%		if (null != connFault) { %>
+
+				Document responseTalendDoc_<%=cid%> = new Document();
+				responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+				<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
+			// }
+			<% } %>
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			<% if (null != connFault) { %>
 				String faultString_<%=cid%> = e.getFault().getFaultString();
 				Document faultTalendDoc_<%=cid%> = null;
 				if (null != e.getFault().getDetail()
@@ -109,29 +121,16 @@ if (inputConn != null) {
 				}
 				<%=connFault.getName()%>.faultString = faultString_<%=cid%>;
 				<%=connFault.getName()%>.faultDetail = faultTalendDoc_<%=cid%>;
-	<%		} else { %>
+			<% } else { %>
 				e.printStackTrace();
-	<%		} %>
-			}
-		} catch(Exception e){
-	<%		if (("true").equals(dieOnError)) { %>
-				throw(e);
-	<%		} else { %>
-				System.err.print(e.getMessage());
-	<%		} %>
+			<% } %>
 		}
-
-<%	if (null != connResponse) { %>
-//		if (null != responseDoc_<%=cid%>) {
-			if (<%=connResponse.getName()%> == null) {
-				<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
-			}
-
-			Document responseTalendDoc_<%=cid%> = new Document();
-			responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
-			<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
-//		}
-<%
+	} catch(Exception e){
+		<% if (("true").equals(dieOnError)) { %>
+			throw(e);
+		<% } else { %>
+			System.err.print(e.getMessage());
+		<% } %>
 	}
-}
-%>
+
+<% } %>
