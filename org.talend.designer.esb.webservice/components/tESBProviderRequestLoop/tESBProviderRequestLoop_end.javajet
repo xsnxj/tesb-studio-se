@@ -18,6 +18,7 @@
 			break;
 		} catch (Throwable e) {
 			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFault(e);
+			isRequestReceivedAndResponseSentBack = true;
 		} finally {
 			// Exit from this loop is made by the configuring "Keep listening"
 			// parameter to false. Then we will have a break before.
