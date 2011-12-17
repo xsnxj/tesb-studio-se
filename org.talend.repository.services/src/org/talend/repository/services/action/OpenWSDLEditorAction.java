@@ -113,7 +113,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
      * )
@@ -144,13 +144,16 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualAction#doRun()
      */
     @Override
     protected void doRun() {
         if (repositoryNode == null) {
             repositoryNode = getCurrentRepositoryNode();
+        }
+        if (repositoryNode.getObjectType() == ERepositoryObjectType.SERVICESPORT) {
+            repositoryNode = repositoryNode.getParent();
         }
         if (isToolbar()) {
             if (repositoryNode != null && repositoryNode.getContentType() != currentNodeType) {
@@ -200,9 +203,8 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
     public void run(IIntroSite site, Properties params) {
         PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
 
-        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(
-                IBrandingConfiguration.PERSPECTIVE_DI_ID, ESBRepositoryNodeType.SERVICES,
-                params.getProperty("nodeId"));
+        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(IBrandingConfiguration.PERSPECTIVE_DI_ID,
+                ESBRepositoryNodeType.SERVICES, params.getProperty("nodeId"));
 
         repositoryNode = RepositoryNodeUtilities.getRepositoryNode(params.getProperty("nodeId"), false);
 
@@ -246,8 +248,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
         // find repository node
         RepositoryView view = (RepositoryView) findView;
-        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot())
-                .getRootRepositoryNode(repositoryNodeType);
+        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot()).getRootRepositoryNode(repositoryNodeType);
         if (null != repositoryNode) {
             // expand/select repository node
             setWorkbenchPart(view);
