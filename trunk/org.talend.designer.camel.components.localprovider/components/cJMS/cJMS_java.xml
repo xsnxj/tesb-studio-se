@@ -1,0 +1,214 @@
+<COMPONENT>
+
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
+			MAX_OUTPUT="1" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<!--<PARAMETER NAME="NAME" FIELD="TEXT"  READONLY="false" REQUIRED="true" NUM_ROW="3" GROUP="URI_GROUP"> 
+			<DEFAULT>"name"</DEFAULT> 
+		</PARAMETER>
+		--><!--<PARAMETER NAME="SUBFIX" READONLY="true" FIELD="TEXT" NUM_ROW="3"
+			GROUP="URI_GROUP">
+			<DEFAULT>"jms"</DEFAULT>
+		</PARAMETER>
+		--><PARAMETER NAME="TYPE" FIELD="CLOSED_LIST" NUM_ROW="4"
+			REQUIRED="true"  READONLY="false"  GROUP="URI_GROUP">
+			<ITEMS DEFAULT="QUEUE">
+				<ITEM NAME="QUEUE" VALUE="queue" />
+				<ITEM NAME="TOPIC" VALUE="topic" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="DESTINATION"  READONLY="false" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="5" GROUP="URI_GROUP">
+			<DEFAULT>"queue.name"</DEFAULT>
+		</PARAMETER>
+		<!-- <PARAMETER NAME="ADDITIONAL_OPTIONS" FIELD="CHECK" NUM_ROW="6"
+			GROUP="URI_GROUP" REQUIRED="true">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER> -->
+
+		<PARAMETER NAME="MQ_TYPE" FIELD="CLOSED_LIST" NUM_ROW="6"
+			REQUIRED="true"  READONLY="false"  GROUP="MQ_GROUP">
+			<ITEMS DEFAULT="ACTIVEMQ">
+				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
+				<ITEM NAME="WMQ" VALUE="WebSphere MQ" />
+				<ITEM NAME="OTHER" VALUE="Other" />
+			</ITEMS>
+		</PARAMETER>
+
+		<!-- ActiveMQ -->
+		<PARAMETER NAME="AMQ_BROKER_URI" FIELD="TEXT" NUM_ROW="7"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>"vm://localhost?broker.persistent=false"</DEFAULT>
+		</PARAMETER>
+		
+		<!-- WebSphere MQ -->
+		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"localhost"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_PORT" FIELD="TEXT" NUM_ROW="8"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"1414"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_TRANSPORT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="9"
+			REQUIRED="true"  READONLY="false"  GROUP="MQ_GROUP" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<ITEMS DEFAULT="CLIENT">
+				<ITEM NAME="BINDINGS" VALUE="0" />
+				<ITEM NAME="CLIENT" VALUE="1" />
+				<ITEM NAME="BINDINGS_CLIENT" VALUE="8" />
+				<!--<ITEM NAME="DIRECT_TCPIP" VALUE="2" />
+				<ITEM NAME="DIRECT_HTTP" VALUE="4" />
+			--></ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_QUEUE_MANAGER" FIELD="TEXT" NUM_ROW="10"
+			GROUP="MQ_GROUP" REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"mq.queue.manager"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_AUTH" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="11" SHOW_IF="MQ_TYPE == 'WMQ'" GROUP="MQ_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_USERNAME" FIELD="TEXT" NUM_ROW="12" GROUP="MQ_GROUP"
+			SHOW_IF="(MQ_TYPE == 'WMQ') AND (WMQ_AUTH == 'true')">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_PASSWORD" FIELD="PASSWORD" NUM_ROW="12"
+			GROUP="MQ_GROUP" SHOW_IF="(MQ_TYPE == 'WMQ') AND (WMQ_AUTH == 'true')">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31" GROUP="MQ_GROUP" 
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar, com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
+		</PARAMETER>  
+		   
+    	<PARAMETER
+      		 NAME="WMQ_DRIVER_JAR"
+     		 FIELD="TABLE"
+     		 NUM_ROW="30"
+     		 NB_LINES="2" 
+     		 REPOSITORY_VALUE="DRIVER_JAR"
+     		 GROUP="MQ_GROUP"
+     		 SHOW_IF="MQ_TYPE == 'WMQ'">
+      		<ITEMS> 
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
+			</ITEMS> 
+   		 </PARAMETER>
+
+		<!-- Customized -->
+		<PARAMETER NAME="OTHER_CODE" FIELD="MEMO_JAVA" REQUIRED="false"
+			NUM_ROW="7" NB_LINES="6" GROUP="MQ_GROUP" SHOW_IF="MQ_TYPE == 'OTHER'">
+			<DEFAULT>		
+/*
+*	Please specify "connectionFactory" here
+*/
+//connectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+			</DEFAULT>
+		</PARAMETER>
+		<PARAMETER
+      		NAME="OTHER_DRIVER_JAR"
+      		FIELD="TABLE"
+      		NUM_ROW="30"
+     		NB_LINES="2" 
+      		REPOSITORY_VALUE="DRIVER_JAR"
+      		GROUP="MQ_GROUP"
+      		SHOW_IF="MQ_TYPE == 'OTHER'">
+      		<ITEMS> 
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST"  />
+			</ITEMS> 
+ 		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="URI_OPTIONS" FIELD="TABLE" NUM_ROW="7"
+			 NB_LINES="5">
+			<ITEMS>
+				<ITEM NAME="NAME" FIELD="TEXT">
+				</ITEM>
+				<ITEM NAME="VALUE" />
+			</ITEMS>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+		    <IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.8.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-tx" MODULE="spring-tx-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-jms" MODULE="spring-jms-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="activemq" MODULE="activemq-all-5.5.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.8.2.jar"
+				REQUIRED="true" />
+			<!-- http://jira.talendforge.org/browse/TESB-3828 -->
+			<!--<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="j-wmq" MODULE="com.ibm.mq.jmqi.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="wmq-jms" MODULE="com.ibm.mqjms.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="wmq-connector" MODULE="connector.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="dhbcore" MODULE="dhbcore.jar"
+				REQUIRED="true" />
+		--></IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
+</COMPONENT>

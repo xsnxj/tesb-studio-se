@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:jaxws="http://cxf.apache.org/jaxws"
+		xmlns:osgi="http://www.springframework.org/schema/osgi"
+#if (${endpoint.useSecuritySAML})
+		xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+#end
+#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
+		xmlns:p="http://cxf.apache.org/policy"
+		xmlns:wsp="http://www.w3.org/ns/ws-policy"
+#end
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="
+			http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+#if (${endpoint.useSecuritySAML})
+			http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+#end
+#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
+			http://cxf.apache.org/policy http://cxf.apache.org/schemas/policy.xsd
+			http://www.w3.org/ns/ws-policy http://www.w3.org/2007/02/ws-policy.xsd
+#end
+		">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+#if (${endpoint.useSAM})
+	<import resource="classpath:META-INF/tesb/agent-osgi.xml" />
+#end
+#if (${endpoint.useSL})
+	<import resource="classpath:META-INF/tesb/locator/beans-osgi.xml" />
+#end
+
+	<jaxws:endpoint id="service"
+			implementor="#genericServiceProvider"
+			xmlns:tns="${endpoint.namespace}"
+			serviceName="tns:${endpoint.service}"
+			endpointName="tns:${endpoint.port}"
+			address="${endpoint.address}"
+			wsdlLocation="classpath:/${endpoint.wsdlLocation}">
+		<jaxws:properties>
+#if (${endpoint.useSecurityToken})
+			<entry key="ws-security.ut.validator" value-ref="jaasUTValidator" />
+#end
+#if (${endpoint.useSecuritySAML})
+#[[
+			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}"/>
+			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}"/>
+			<entry key="ws-security.callback-handler"><ref bean="callback"/></entry>
+]]#
+#end
+		</jaxws:properties>
+		<jaxws:features>
+#if (${endpoint.useSAM})
+			<ref bean="eventFeature" />
+#end
+#if (${endpoint.useSL})
+			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature">
+#if (!$endpoint.slCustomProps.isEmpty())
+				<property name="availableEndpointProperties">
+					<map>
+#foreach ($entry in $endpoint.slCustomProps.entrySet())
+						<entry>
+							<key><value>${entry.key}</value></key>
+							<value>${entry.value}</value>
+						</entry>
+#end
+					</map>
+				</property>
+#end
+			</bean>
+#end
+#if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
+			<p:policies>
+				<wsp:Policy>
+#if (${endpoint.useSecurityToken} && ${endpoint.useSecuritySAML})
+					<wsp:ExactlyOne>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+						</wsp:All>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
+						</wsp:All>
+					</wsp:ExactlyOne>
+#elseif (${endpoint.useSecurityToken})
+					<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+#elseif (${endpoint.useSecuritySAML})
+					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
+#end
+				</wsp:Policy>
+			</p:policies>
+#end
+		</jaxws:features>
+	</jaxws:endpoint>
+
+#if (${endpoint.useSecurityToken})
+	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
+		<property name="contextName" value="karaf" />
+	</bean>
+#end
+#if (${endpoint.useSecuritySAML})
+#[[
+	<osgix:cm-properties id="service-props" persistent-id="org.talend.esb.job.service" />
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="properties" ref="service-props" />
+		<property name="placeholderPrefix" value="$service{" />
+	</bean>
+	<bean id="callback" class="org.apache.cxf.interceptor.security.NamePasswordCallbackHandler">
+		<constructor-arg type="java.lang.String" value="$service{ws-security.signature.username}" />
+		<constructor-arg type="java.lang.String" value="$service{ws-security.signature.password}" />
+		<constructor-arg type="java.lang.String" value="setPassword" />
+	</bean>
+]]#
+#end
+
+	<osgi:reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory"/>
+	<bean id="genericServiceProvider" factory-bean="providerFactory" factory-method="create">
+		<constructor-arg>
+			<map>
+#foreach ($entry in $endpoint.operation2job.entrySet())
+				<entry>
+					<key><value>${entry.key}</value></key>
+					<value>${entry.value}</value>
+				</entry>
+#end
+			</map>
+		</constructor-arg>
+#if (${endpoint.useSAM})
+		<property name="eventFeature" ref="eventFeature" />
+#end
+	</bean>
+	<osgi:service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
+		<osgi:service-properties>
+			<entry key="service.pid" value="${endpoint.studioName}" />
+		</osgi:service-properties>
+	</osgi:service>
+
+</beans>

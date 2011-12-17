@@ -1,0 +1,72 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMessagingEndpoint</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cLoop.html" title="cLoop"><link rel="next" href="cMessageFilter.html" title="cMessageFilter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cMessagingEndpoint"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessagingEndpoint"></a>cMessagingEndpoint</h2></div></div></div><div class="mediaobject"><img src="../images/cMessagingEndpoint_icon32_white.png"></div><div class="section" title="cMessagingEndpoint properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e47744"></a>cMessagingEndpoint properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Messaging</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cMessagingEndpoint</strong></span> allows two applications to
+								communicate by either sending or receiving messages, one endpoint
+								can not do both. </p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cMessagingEndpoint</strong></span> sends or receives messages.
+							</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>URI</em></span></p>
+						</td><td valign="top"><p>URI of the messages to send or receive. It can be
+								of different format:</p><p>-File: "file:/",
+								</p><p>-Database: "jdbc:/", </p><p>-Protocols: "ftp:/",
+								"http:/"</p><p>-etc.</p><p>You can add parameters to the
+								URI using the generic URI syntax, for example:</p><p>
+								<code class="code">"file:/directoryName?option=value&amp;option=value"</code>
+							</p><p>For more information on the different components that can be used in cMessagingEndpoint, see
+								Apache Camel&#8217;s Website: <a class="link" href="http://camel.apache.org/components.html" target="_top">http://camel.apache.org/components.html</a>.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Advanced
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Dependencies</em></span></p>
+						</td><td valign="top"><p>By default, the camel core supports the following
+								components: bean, browse, class, dataset, direct, file, language,
+								log, mock, properties, ref, seda, timer, vm.</p><p>To use
+								other components, you have to provide the dependencies corresponding
+								to those components in the <span class="bold"><strong>cMessagingEndpoint</strong></span> component. To do
+								so:</p><p>Click the plus button to add new lines in the
+									<span class="bold"><strong>Camel component</strong></span> list. In the
+								line added, select the component you want to use in <span class="bold"><strong>cMessagingEndpoint</strong></span>. </p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Use a custom component</em></span></p>
+						</td><td valign="top"><p>If you want to use a custom component, select this
+								check box and click the three-dot button to upload a jar file with
+								your own component.</p><p> </p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>All the transitive dependencies of this cus&shy;tom component
+									should be included in the jar file.</p></td></tr></table></div>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p>This component can be used as sending and/or receiving message endpoint according to its
+								position in the Route. </p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario&nbsp;1: moving files from one message endpoint to another"><div class="titlepage"><div><div><h3 class="title"><a name="d0e47890"></a>Scenario&nbsp;1: moving files from one message endpoint to another</h3></div></div></div><p>This scenatio uses two <span class="bold"><strong>cMessagingEndpoint</strong></span> components
+			to read and move files from one endpoint to another.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_1.png"></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder and drop two <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the design workspace.</p></li><li class="listitem"><p>Right-click the first component, select <span class="bold"><strong>Row</strong></span>
+					&gt; <span class="bold"><strong>Route</strong></span> in the menu and drag to the second
+					to link them together with a route link.</p></li><li class="listitem"><p>Double-click the first endpoint component to display the <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, type in the URI of the
+					messages you want to route. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> and the path to the folder
+					containing the files.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_2.png"></div></li><li class="listitem"><p>Double-click the second endpoint component to display the <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, type in the URI of the
+					folder where you want to route your message. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> and the path to the folder
+					to which the files will be sent.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_3.png"></div></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li><li class="listitem"><p>To have a look at the generated code, click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/cMessagingEndpoint_scenario1_4.png" width="100%"></td></tr></table></div><p>The code shows the <code class="code">from</code> and <code class="code">.to</code> corresponding to the
+					two endpoints; <code class="code">from</code> for the sending one and <code class="code">.to</code> for
+					the receiving one.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Run</strong></span> view, click the <span class="bold"><strong>Run</strong></span> button to launch the execution of your Route. </p><p>You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The files are moved from their original folder to the target one. Furthermore, a new
+				<span class="bold"><strong>.camel</strong></span> folder is created in the source folder
+			containing the consumed files. This is Camel&#8217;s default behavior. Thus, the files will
+			not be processed endlessly but they are backed up in case of problems.</p></div><div class="section" title="Scenario&nbsp;2: sending files to another message endpoint"><div class="titlepage"><div><div><h3 class="title"><a name="Raa98448"></a>Scenario&nbsp;2: sending files to another message endpoint</h3></div></div></div><p>This scenario accesses FTP service and transfers files from one endpoint to
+			another.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_1.png"></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder and select the <span class="bold"><strong>cMessagingEndpoint</strong></span> component and drop two of them onto the
+					design workspace.</p></li><li class="listitem"><p>Right-click the first component, select <span class="bold"><strong>Row</strong></span>
+					&gt; <span class="bold"><strong>Route</strong></span> in the menu and drag to the second
+					to link them together with a route link. </p></li><li class="listitem"><p>Double-click the first endpoint component to display the <span class="bold"><strong>Component</strong></span> view.</p></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, type in the URI of the
+					message you want to route. </p><p>Here, we are using an FTP component: <code class="code">ftp://indus@degas/remy/camel</code>
+					with URI specific parameters authenticating the FTP connection:
+						<code class="code">?username=indus&amp;password=indus</code>.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_2.png"></div></li><li class="listitem"><p>For the FTP component to work in Camel, click the <span class="bold"><strong>Advanced settings</strong></span> tab of <span class="bold"><strong>cMessagingEndpoint</strong></span>, click the <span class="bold"><strong>[+]</strong></span> button to add a Camel component in the <span class="bold"><strong>Dependencies</strong></span> table, and select <span class="emphasis"><em>ftp</em></span> from the
+						<span class="bold"><strong>Camel component</strong></span> list to activate the FTP
+					component.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_3.png"></div></li><li class="listitem"><p>Double-click the second endpoint component to display the <span class="bold"><strong>Component</strong></span> view. </p></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, type in the URI of the
+					folder to which you want your message to be routed. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> and the path to the folder
+					to which the files will be sent.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_3.png"></div></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li><li class="listitem"><p>To have a look at the generated code, click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/cMessagingEndpoint_scenario2_4.png" width="100%"></td></tr></table></div><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/cMessagingEndpoint_scenario2_5.png" width="100%"></td></tr></table></div><p>In this part of code, we can see a route represented by <code class="code">from</code> and
+						<code class="code">.to</code>, corresponding to the sending and receiving
+					endpoints.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Run</strong></span> view, click the <span class="bold"><strong>Run</strong></span> button to launch the execution of your Route. </p><p>You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The message is sent (copied) to the receiving endpoint.</p></div></div></body></html>

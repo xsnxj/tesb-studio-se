@@ -1,0 +1,81 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cConfig</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cBean.html" title="cBean"><link rel="next" href="cConvertBodyTo.html" title="cConvertBodyTo"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cConfig"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cConfig"></a>cConfig</h2></div></div></div><div class="mediaobject"><img src="../images/cconfig_icon32_white.png"></div><div class="section" title="cConfig properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e43051"></a>cConfig properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Context</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cConfig</strong></span> represents a single Camel
+								routing rulebase to manipulate the CamelContext.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cConfig</strong></span> manipulates the Camel
+								context as needed by the Routes.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Code</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Write a piece of code to manipulate the CamelContext. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="italic">Dependencies </span>
+						</td><td valign="top">Select the library or libraries that is required by the
+							CamelContext or Typeconverter Registry from the list. </td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cConfig</strong></span> can not be added directly in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Implementing a dataset from the Registry"><div class="titlepage"><div><div><h3 class="title"><a name="d0e43169"></a>Scenario: Implementing a dataset from the Registry</h3></div></div></div><p>In this scenario, an instance of dataset is added in the Registry and implemented by a
+				<span class="bold"><strong>cMessagingEndpoint</strong></span> component. </p><div class="mediaobject"><img src="../images/use_case_cconfig1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e43180"></a>Dropping and linking the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Context</strong></span> folder and select the <span class="bold"><strong>cConfig</strong></span> component and drop it onto the design
+						workspace.</p></li><li class="listitem"><p> Expand the <span class="bold"><strong>Messaging</strong></span> folder, select the
+							<span class="bold"><strong>cMessagingEndpoint</strong></span> component and drop
+						it onto the design workspace.</p></li><li class="listitem"><p> Expand the <span class="bold"><strong>Processor</strong></span> folder, select the
+							<span class="bold"><strong>cProcessor</strong></span> component and drop it onto
+						the design workspace.</p></li><li class="listitem"><p> Right-click the input <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						component, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the contextual menu and click the
+							<span class="bold"><strong>cProcessor</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e43229"></a>Configuring the components</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p> Double-click the input <span class="bold"><strong>cMessagingEndpoint</strong></span> component to display its <span class="bold"><strong>Component</strong></span> view and set its parameters.</p><div class="mediaobject"><img src="../images/use_case_cconfig2.png" width="432"></div></li><li class="listitem"><p>In the <span class="bold"><strong>URI</strong></span> field, enter
+							<span class="emphasis"><em>dataset:foo</em></span> between the quotation marks. </p></li><li class="listitem"><p>Double click the <span class="bold"><strong>cProcessor</strong></span> component to
+						display its <span class="bold"><strong>Component</strong></span> view and set its
+						parameters. By default, a piece of code is already set in the <span class="bold"><strong>Code</strong></span> field. This code is a Java code that makes a
+						message: <span class="italic">"We just downloaded:" </span> and the
+						name of the intercepted messages display in the console. In this use case,
+						change the code as shown below. </p><div class="mediaobject"><img src="../images/use_case_cconfig3.png" width="432"></div></li><li class="listitem"><p> Double click the <span class="bold"><strong>cConfig</strong></span> component to display its
+							<span class="bold"><strong>Component</strong></span> view and set its parameters.
+						Write a piece of code in the <span class="bold"><strong>Code</strong></span> field to
+						register the dataset instance <span class="italic">foo</span> into
+						the registry, as shown below. </p><p>
+						</p><pre class="programlisting">org.apache.camel.impl.SimpleRegistry registry = new
+org.apache.camel.impl.SimpleRegistry();
+                registry.put("foo", new 
+org.apache.camel.component.dataset.SimpleDataSet());
+camelContext.setRegistry(registry);</pre><p>
+					</p><p>
+						</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cconfig4.png" width="100%"></td></tr></table></div><p>
+					</p></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e43304"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cconfig5.png" width="100%"></td></tr></table></div><p>As shown in the code, a message route is built <code class="code">from</code> the
+							<code class="code">cMessagingEndpoint_1</code> and processed by
+							<code class="code">cProcessor_1</code>.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: The message is printed in the console.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cconfig6.png" width="100%"></td></tr></table></div></div></div></div></body></html>
