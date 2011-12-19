@@ -156,12 +156,6 @@
             talendPerspectiveId="org.talend.camel.CamelPerspective">
       </TalendPerspective>
    </extension>
-   <extension
-         point="org.talend.core.repository.repository_handler">
-      <RepositoryHandler
-            class="org.talend.camel.designer.DragAndDropServiceHandler">
-      </RepositoryHandler>
-   </extension>
  <extension
          point="org.talend.core.migrationTask">
       <projecttask
