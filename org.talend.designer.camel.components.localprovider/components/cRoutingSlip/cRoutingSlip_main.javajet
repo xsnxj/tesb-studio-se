@@ -19,7 +19,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.routingSlip(<%=header%>, <%=delimiter%>)
+		.routingSlip(header(<%=header%>), <%=delimiter%>)
 <%
 	}
 %>
