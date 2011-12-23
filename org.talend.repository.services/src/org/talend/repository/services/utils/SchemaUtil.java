@@ -287,7 +287,11 @@ public class SchemaUtil {
     }
 
     private void buildParameterFromElements(String partElement, ParameterInfo parameterRoot) {
-        parametersName.add(parameterRoot.getName());
+        String parameterName = parameterRoot.getName();
+        if (parameterName == null) {
+        	return;
+        }
+		parametersName.add(parameterName);
 
         Iterator<XmlSchemaElement> elementsItr = allXmlSchemaElement.iterator();
         if (partElement != null) {
