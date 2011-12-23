@@ -20,6 +20,20 @@ imports="
 	String repository = ElementParameterParser.getValue(node, "__REPOSITORY_TYPE__");
 	String cacheSize = ElementParameterParser.getValue(node, "__CACHE_SIZE__");
 	String fileStore = ElementParameterParser.getValue(node, "__FILE_STORE__");
+	String eager = ElementParameterParser.getValue(node, "__EAGER__");
+	String skipDuplicate = ElementParameterParser.getValue(node, "__SKIP_DUPLICATE__");
+	
+	boolean isEager = false;
+	boolean isSkip = false;
+	
+	if("true".equals(eager)){
+		isEager = true;
+	}
+	
+	if("true".equals(skipDuplicate)){
+		isSkip = true;
+	}
+	
 	
 	if(conns.size()>0) { //BEGIN 1
 		if("false".equals(useLanguage)) { //BEGIN 2
@@ -48,7 +62,7 @@ imports="
 <%
 		} //END 2
 %>
-		)
+		).eager(<%=isEager%>).skipDuplicate(<%=isSkip%>)
 <%
 	} //END 1
 %>
