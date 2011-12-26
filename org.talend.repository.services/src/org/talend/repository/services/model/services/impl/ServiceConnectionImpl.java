@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.talend.core.model.metadata.builder.connection.impl.ConnectionImpl;
 
+import org.talend.core.model.properties.PropertiesPackage;
+import org.talend.core.model.properties.impl.AdditionalInfoMapImpl;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -148,7 +150,7 @@ public class ServiceConnectionImpl extends ConnectionImpl implements ServiceConn
      */
     public EMap<String, String> getAdditionalInfo() {
         if (additionalInfo == null) {
-            additionalInfo = new EcoreEMap<String,String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO);
+            additionalInfo = new EcoreEMap<String,String>(PropertiesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_CONNECTION__ADDITIONAL_INFO);
         }
         return additionalInfo;
     }

@@ -54,13 +54,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
     private EClass servicePortEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EClass additionalInfoMapEClass = null;
-
-    /**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
      * EPackage.Registry} by the package package URI value.
      * <p>
@@ -262,33 +255,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EClass getAdditionalInfoMap() {
-        return additionalInfoMapEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getAdditionalInfoMap_Key() {
-        return (EAttribute)additionalInfoMapEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getAdditionalInfoMap_Value() {
-        return (EAttribute)additionalInfoMapEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * @generated
      */
@@ -332,10 +298,6 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         createEAttribute(servicePortEClass, SERVICE_PORT__ID);
         createEReference(servicePortEClass, SERVICE_PORT__SERVICE_OPERATION);
         createEReference(servicePortEClass, SERVICE_PORT__ADDITIONAL_INFO);
-
-        additionalInfoMapEClass = createEClass(ADDITIONAL_INFO_MAP);
-        createEAttribute(additionalInfoMapEClass, ADDITIONAL_INFO_MAP__KEY);
-        createEAttribute(additionalInfoMapEClass, ADDITIONAL_INFO_MAP__VALUE);
     }
 
     /**
@@ -385,39 +347,16 @@ public class ServicesPackageImpl extends EPackageImpl implements ServicesPackage
         initEClass(serviceConnectionEClass, ServiceConnection.class, "ServiceConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServiceConnection_WSDLPath(), theEcorePackage.getEString(), "WSDLPath", null, 0, 1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServiceConnection_ServicePort(), this.getServicePort(), null, "servicePort", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getServiceConnection_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getServiceConnection_AdditionalInfo(), thePropertiesPackage.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServiceConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(servicePortEClass, ServicePort.class, "ServicePort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getServicePort_Name(), theEcorePackage.getEString(), "name", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServicePort_Id(), theEcorePackage.getEString(), "id", null, 0, 1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServicePort_ServiceOperation(), this.getServiceOperation(), null, "serviceOperation", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getServicePort_AdditionalInfo(), this.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-        initEClass(additionalInfoMapEClass, Map.Entry.class, "AdditionalInfoMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getAdditionalInfoMap_Key(), theEcorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getAdditionalInfoMap_Value(), theEcorePackage.getEString(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getServicePort_AdditionalInfo(), thePropertiesPackage.getAdditionalInfoMap(), null, "additionalInfo", null, 0, -1, ServicePort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);
-
-        // Create annotations
-        // MapEntry
-        createMapEntryAnnotations();
-    }
-
-    /**
-     * Initializes the annotations for <b>MapEntry</b>.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void createMapEntryAnnotations() {
-        String source = "MapEntry";		
-        addAnnotation
-          (additionalInfoMapEClass, 
-           source, 
-           new String[] {
-           });
     }
 
 } // ServicesPackageImpl
