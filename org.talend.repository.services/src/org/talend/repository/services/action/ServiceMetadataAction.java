@@ -58,11 +58,11 @@ public class ServiceMetadataAction extends AContextualAction {
         @SuppressWarnings("unchecked")
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
-			if (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
-                canWork = false;
-                break;
-            } else if (canWork && node.getObject() != null
-                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
+			if (
+					(node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) ||
+					(node.getObject() == null) ||
+					(ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)
+			) {
                 canWork = false;
                 break;
             } else {
