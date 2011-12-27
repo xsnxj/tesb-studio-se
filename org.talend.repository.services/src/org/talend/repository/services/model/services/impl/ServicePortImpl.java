@@ -19,6 +19,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.talend.core.model.properties.PropertiesPackage;
+import org.talend.core.model.properties.impl.AdditionalInfoMapImpl;
 import org.talend.core.model.metadata.builder.connection.impl.AbstractMetadataObjectImpl;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
@@ -176,7 +178,7 @@ public class ServicePortImpl extends EObjectImpl implements ServicePort {
      */
     public EMap<String, String> getAdditionalInfo() {
         if (additionalInfo == null) {
-            additionalInfo = new EcoreEMap<String,String>(ServicesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO);
+            additionalInfo = new EcoreEMap<String,String>(PropertiesPackage.Literals.ADDITIONAL_INFO_MAP, AdditionalInfoMapImpl.class, this, ServicesPackage.SERVICE_PORT__ADDITIONAL_INFO);
         }
         return additionalInfo;
     }

@@ -112,7 +112,7 @@ public interface ServicePort extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Additional Info</em>' map.
      * @see org.talend.repository.services.model.services.ServicesPackage#getServicePort_AdditionalInfo()
-     * @model mapType="org.talend.repository.services.model.services.AdditionalInfoMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
+     * @model mapType="org.talend.core.model.properties.AdditionalInfoMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString>"
      * @generated
      */
     EMap<String, String> getAdditionalInfo();

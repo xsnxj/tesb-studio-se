@@ -65,7 +65,6 @@ public class ServicesFactoryImpl extends EFactoryImpl implements ServicesFactory
             case ServicesPackage.SERVICE_OPERATION: return createServiceOperation();
             case ServicesPackage.SERVICE_CONNECTION: return createServiceConnection();
             case ServicesPackage.SERVICE_PORT: return createServicePort();
-            case ServicesPackage.ADDITIONAL_INFO_MAP: return (EObject)createAdditionalInfoMap();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -109,16 +108,6 @@ public class ServicesFactoryImpl extends EFactoryImpl implements ServicesFactory
     public ServicePort createServicePort() {
         ServicePortImpl servicePort = new ServicePortImpl();
         return servicePort;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Map.Entry<String, String> createAdditionalInfoMap() {
-        AdditionalInfoMapImpl additionalInfoMap = new AdditionalInfoMapImpl();
-        return additionalInfoMap;
     }
 
     /**
