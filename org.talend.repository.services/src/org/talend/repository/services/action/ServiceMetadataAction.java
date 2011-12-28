@@ -22,6 +22,7 @@ import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -59,6 +60,7 @@ public class ServiceMetadataAction extends AContextualAction {
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
 			if (
+					(node.getType() != ENodeType.REPOSITORY_ELEMENT) ||
 					(node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) ||
 					(node.getObject() == null) ||
 					(ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)
