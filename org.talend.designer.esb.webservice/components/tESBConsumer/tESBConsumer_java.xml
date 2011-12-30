@@ -68,10 +68,13 @@
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true"/>
 			</TABLE>
 		</PARAMETER>
-
 		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30" CONTEXT="FAULT">
 			<TABLE READONLY="true">
+				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024" READONLY="true"/>
 				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true"/>
+				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024" READONLY="true"/>
+				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024" READONLY="true"/>
+				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024" READONLY="true"/>
 				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true"/>
 			</TABLE>
 		</PARAMETER>

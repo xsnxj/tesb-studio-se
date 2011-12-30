@@ -68,9 +68,8 @@ if (inputConn != null) {
 						serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
 						requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 			} else {
-				// responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(requestTalendDoc.getDocument());
 				java.util.Map<String, String> customProps_<%=cid%> = null;
-			<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
 					List<Map<String, String>> customProperties = (List<Map<String,String>>)
 							ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 					if (!customProperties.isEmpty()) { %>
@@ -79,25 +78,24 @@ if (inputConn != null) {
 						customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 						<% } %>
 					<% } %>
-			<% } %>
+				<% } %>
 				Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
 				responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
 			}
 			<% if (null != connResponse) { %>
-			// if (null != responseDoc_<%=cid%>) {
 				if (<%=connResponse.getName()%> == null) {
 					<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
 				}
-
-				Document responseTalendDoc_<%=cid%> = new Document();
-				responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+				Document responseTalendDoc_<%=cid%> = null;
+				if (null != responseDoc_<%=cid%>) {
+					responseTalendDoc_<%=cid%> = new Document();
+					responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+				}
 				<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
-			// }
 			<% } %>
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
 			<% if (null != connFault) { %>
-				String faultString_<%=cid%> = e.getFault().getFaultString();
-				Document faultTalendDoc_<%=cid%> = null;
+				org.dom4j.Document faultDoc_<%=cid%> = null;
 				if (null != e.getFault().getDetail()
 					&& null != e.getFault().getDetail().getFirstChild()) {
 					try {
@@ -108,18 +106,33 @@ if (inputConn != null) {
 						org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
 						javax.xml.transform.TransformerFactory.newInstance()
 							.newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
-						org.dom4j.Document faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
-
-						faultTalendDoc_<%=cid%> = new Document();
-						faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+						faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
+
 				if (<%=connFault.getName()%> == null) {
 					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
 				}
-				<%=connFault.getName()%>.faultString = faultString_<%=cid%>;
+				// <%=connFault.getName()%>.faultCode = e.getFault().getFaultCode();
+				<%=connFault.getName()%>.faultCode = e.getFault().getFaultCodeAsQName().toString();
+				<%=connFault.getName()%>.faultString = e.getFault().getFaultString();
+				<%=connFault.getName()%>.faultActor = e.getFault().getFaultActor();
+				try {
+					// SOAP 1.2
+					<%=connFault.getName()%>.faultNode = e.getFault().getFaultNode();
+					<%=connFault.getName()%>.faultRole = e.getFault().getFaultRole();
+				} catch (java.lang.UnsupportedOperationException uoe) {
+					// SOAP 1.1
+					<%=connFault.getName()%>.faultNode = null;
+					<%=connFault.getName()%>.faultRole = null;
+				}
+				Document faultTalendDoc_<%=cid%> = null;
+				if (null != faultDoc_<%=cid%>) {
+					faultTalendDoc_<%=cid%> = new Document();
+					faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+				}
 				<%=connFault.getName()%>.faultDetail = faultTalendDoc_<%=cid%>;
 			<% } else { %>
 				e.printStackTrace();
