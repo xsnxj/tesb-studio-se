@@ -436,7 +436,7 @@ public class PublishMetadataAction extends AContextualAction {
         orderId++;
         MappingTypeRetriever retriever;
         String nameWithoutPrefixForColumn;
-        String curName = (String) node.getOriginalDataType();
+        String curName = (String) node.getValue();
         if (curName.contains(":")) {
             nameWithoutPrefixForColumn = curName.split(":")[1];
         } else {
