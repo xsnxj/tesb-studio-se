@@ -29,13 +29,6 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-		<!-- PARAMETER NAME="SCHEMA" FIELD="SCHEMA_TYPE" NUM_ROW="2">
-			<TABLE>
-				<COLUMN NAME="uri" TYPE="id_String" READONLY="true"/>
-				<COLUMN NAME="body" TYPE="id_String" READONLY="true"/>
-			</TABLE>
-		</PARAMETER -->
-
 		<!-- rest service endpoint -->
 		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
 			<DEFAULT>"http://localhost:8088/"</DEFAULT>
@@ -207,7 +200,7 @@
 
 	<RETURNS>
 		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer"/>
-                <RETURN AVAILABILITY="FLOW" NAME="URI" TYPE="id_String" />
+		<RETURN AVAILABILITY="FLOW" NAME="URI" TYPE="id_String" />
 		<RETURN AVAILABILITY="FLOW" NAME="URI_BASE" TYPE="id_String" />
 		<RETURN AVAILABILITY="FLOW" NAME="URI_ABSOLUTE" TYPE="id_String" />
 		<RETURN AVAILABILITY="FLOW" NAME="HTTP_METHOD" TYPE="id_String" />
