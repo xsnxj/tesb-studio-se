@@ -1429,6 +1429,7 @@ if (null != conns && !conns.isEmpty()) {
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
 		request.put("BODY", body);
 		<% } %>
+                request.put("URI", ui.getPath()); 
 		request.put("URI_BASE", ui.getBaseUri().toString());
 		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
