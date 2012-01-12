@@ -39,11 +39,13 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 					if ("WRONG_CALLS".equals(conn.getConnectorName())) { // "WRONG_CALL" flow %>
 						String wrongCallUri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
+						String wrongCallMethod_<%=cid%> = (String) requestMessage_<%=cid%>.get("VERB");
 						String wrongCallError_<%=cid%> = (String) requestMessage_<%=cid%>.get("ERROR");
 						int wrongCallStatus_<%=cid%> = (Integer) requestMessage_<%=cid%>.get("STATUS");
 
 						<%=connectionName%> = new <%=connectionName%>Struct();
 						<%=connectionName%>.uri = wrongCallUri_<%=cid%>;
+						<%=connectionName%>.method = wrongCallMethod_<%=cid%>;
 						<%=connectionName%>.error = wrongCallError_<%=cid%>;
 						<%=connectionName%>.status = wrongCallStatus_<%=cid%>;
 					<% } else { // not "WRONG_CALL" flow %>

@@ -33,6 +33,7 @@
 		<PARAMETER NAME="SCHEMA_WRONG_CALLS" FIELD="SCHEMA_TYPE" NUM_ROW="1" CONTEXT="WRONG_CALLS" SHOW="false">
 			<TABLE READONLY="true">
 				<COLUMN NAME="uri" TYPE="id_String" LENGTH="255" READONLY="true"/>
+				<COLUMN NAME="method" TYPE="id_String" LENGTH="255" READONLY="true"/>
 				<COLUMN NAME="status" TYPE="id_Integer" READONLY="true"/>
 				<COLUMN NAME="error" TYPE="id_String" LENGTH="1024" READONLY="true"/>
 			</TABLE>
