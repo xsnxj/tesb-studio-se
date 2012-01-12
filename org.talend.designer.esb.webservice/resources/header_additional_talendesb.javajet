@@ -1429,6 +1429,7 @@ if (null != conns && !conns.isEmpty()) {
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
 		request.put("BODY", body);
 		<% } %>
+		request.put("URI", ui.getPath());
 		request.put("URI_BASE", ui.getBaseUri().toString());
 		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
@@ -1445,16 +1446,18 @@ if (null != conns && !conns.isEmpty()) {
 	}
 }
 %>
-	public javax.ws.rs.core.Response handleWrongRequest(javax.ws.rs.core.UriInfo ui, int status, String error) {
+	public javax.ws.rs.core.Response handleWrongRequest(
+			org.apache.cxf.jaxrs.ext.MessageContext context, int status, String error) {
 
-		System.out.println("wrong call [uri: " + ui.getPath() + " ; status: " + status + " ; error: " + error + "]");
+		System.out.println("wrong call [uri: " + context.getUriInfo().getPath() + " ; method: " + context.getRequest().getMethod() + " ; status: " + status + " ; error: " + error + "]");
 
 		java.util.Map<String, Object> wrongRequest = new java.util.HashMap<String, Object>();
 		wrongRequest.put("ERROR", error);
 		wrongRequest.put("STATUS", status);
-		wrongRequest.put("URI", ui.getPath());
-		wrongRequest.put("URI_BASE", ui.getBaseUri().toString());
-		wrongRequest.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
+		wrongRequest.put("VERB", context.getRequest().getMethod());
+		wrongRequest.put("URI", context.getUriInfo().getPath());
+		wrongRequest.put("URI_BASE", context.getUriInfo().getBaseUri().toString());
+		wrongRequest.put("URI_ABSOLUTE", context.getUriInfo().getAbsolutePath().toString());
 
 		return processRequest(wrongRequest);
 	}
@@ -1462,8 +1465,7 @@ if (null != conns && !conns.isEmpty()) {
 
 class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
 
-	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
-	@javax.ws.rs.core.Context private javax.ws.rs.core.HttpHeaders inHeaders;
+	@javax.ws.rs.core.Context private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
 	private RESTProvider_<%=tRESTRequestNodeCid%> provider;
 
@@ -1485,9 +1487,9 @@ class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.
 				error = null == ex.getCause() ? ex.getMessage() : ex.getCause().getMessage();
 			}
 		}
-		response = provider.handleWrongRequest(ui, response.getStatus(), error);
+		response = provider.handleWrongRequest(messageContext, response.getStatus(), error);
 
-		java.util.List<javax.ws.rs.core.MediaType> accepts = inHeaders.getAcceptableMediaTypes();
+		java.util.List<javax.ws.rs.core.MediaType> accepts = messageContext.getHttpHeaders().getAcceptableMediaTypes();
 		String type = accepts.isEmpty() ? "application/xml" : accepts.get(0).toString();
 		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(type).build();
 	}
@@ -1528,7 +1530,7 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 			sf.setAddress(endpointUrl);
 			server = sf.create();
 
-			System.out.println("rest service [endpoint: " + endpointUrl + "] published");
+			System.out.println("REST service [endpoint: " + endpointUrl + "] published");
 		} catch (Throwable e) {
 			e.printStackTrace();
 //			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
@@ -1541,7 +1543,7 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 		if (null != server) {
 			server.stop();
 			server.destroy();
-			System.out.println("rest service [endpoint: " + endpointUrl + "] unpublished");
+			System.out.println("REST service [endpoint: " + endpointUrl + "] unpublished");
 		}
 	}
 }
