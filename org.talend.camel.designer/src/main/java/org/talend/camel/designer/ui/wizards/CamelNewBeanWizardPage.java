@@ -81,53 +81,48 @@ public class CamelNewBeanWizardPage extends PropertiesWizardPage {
     protected void evaluateTextField() {
         super.evaluateTextField();
         if (nameStatus.getSeverity() == IStatus.OK) {
-			evaluateName();
+            evaluateName();
         }
     }
 
-	/**
-	 * ftang Comment method "evaluateNameInRoutine".
-	 */
-	protected void evaluateName() {
-		String jobName = nameText.getText().trim();
-		boolean isValid = isNameValidInRountine(jobName);
+    /**
+     * ftang Comment method "evaluateNameInRoutine".
+     */
+    protected void evaluateName() {
+        String jobName = nameText.getText().trim();
+        boolean isValid = isNameValidInRountine(jobName);
 
-		// Fix the name evaluate bug temporary LiXP TESB-2591
-		// New Route Wizard input name validation fails to notify an invalid
-		// name
-		if (!isValid
-				|| !Pattern.matches(RepositoryConstants
-						.getPattern(ERepositoryObjectType.PROCESS), nameText
-						.getText()) || nameText.getText().trim().contains(" ")) {
-			nameStatus = createStatus(IStatus.ERROR,
-					"Name contains incorrect characters.");
-			updatePageStatus();
-		}
-	}
+        // Fix the name evaluate bug temporary LiXP TESB-2591
+        // New Route Wizard input name validation fails to notify an invalid
+        // name
+        if (!isValid || !Pattern.matches(RepositoryConstants.getPattern(ERepositoryObjectType.ROUTINES), nameText.getText())
+                || nameText.getText().trim().contains(" ")) {
+            nameStatus = createStatus(IStatus.ERROR, "Name contains incorrect characters.");
+            updatePageStatus();
+        }
+    }
 
-	/**
-	 * ftang Comment method "isNameExistingInRountine".
-	 * 
-	 * @param jobName
-	 */
-	private boolean isNameValidInRountine(String jobName) {
-		Property property = PropertiesFactory.eINSTANCE.createProperty();
+    /**
+     * ftang Comment method "isNameExistingInRountine".
+     * 
+     * @param jobName
+     */
+    private boolean isNameValidInRountine(String jobName) {
+        Property property = PropertiesFactory.eINSTANCE.createProperty();
 
-		IProxyRepositoryFactory repositoryFactory = DesignerPlugin.getDefault()
-				.getRepositoryService().getProxyRepositoryFactory();
-		property.setId(repositoryFactory.getNextId());
-		RoutineItem routineItem = PropertiesFactory.eINSTANCE
-				.createRoutineItem();
-		routineItem.setProperty(property);
-		boolean isValid = false;
-		try {
-			isValid = repositoryFactory.isNameAvailable(property.getItem(),
-					jobName);
-		} catch (PersistenceException e) {
-			ExceptionHandler.process(e);
-			return false;
-		}
-		return isValid;
-	}
+        IProxyRepositoryFactory repositoryFactory = DesignerPlugin.getDefault().getRepositoryService()
+                .getProxyRepositoryFactory();
+        property.setId(repositoryFactory.getNextId());
+        RoutineItem routineItem = PropertiesFactory.eINSTANCE.createRoutineItem();
+        routineItem.setProperty(property);
+        boolean isValid = false;
+        try {
+            isValid = repositoryFactory.isNameAvailable(property.getItem(), jobName);
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+            return false;
+        }
+        return isValid;
+    }
 
 }
