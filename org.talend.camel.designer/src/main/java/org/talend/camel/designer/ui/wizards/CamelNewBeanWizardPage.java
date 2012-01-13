@@ -97,7 +97,7 @@ public class CamelNewBeanWizardPage extends PropertiesWizardPage {
 		// name
 		if (!isValid
 				|| !Pattern.matches(RepositoryConstants
-						.getPattern(ERepositoryObjectType.PROCESS), nameText
+						.getPattern(ERepositoryObjectType.ROUTINES), nameText
 						.getText()) || nameText.getText().trim().contains(" ")) {
 			nameStatus = createStatus(IStatus.ERROR,
 					"Name contains incorrect characters.");
