@@ -92,7 +92,7 @@ public class CamelNewProcessWizardPage extends PropertiesWizardPage {
 		String jobName = nameText.getText().trim();
 		boolean isValid = isNameValidInRountine(jobName);
 
-		// Fix the name evaluate bug temporary LiXP TESB-2591
+		// Fix the name evaluate bug temporary LiXP TESB-4533
 		// New Route Wizard input name validation fails to notify an invalid
 		// name
 		if (!isValid
