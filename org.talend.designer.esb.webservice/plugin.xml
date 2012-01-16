@@ -24,7 +24,16 @@
 			serviceId="IWebService">
 		</Service>
 	</extension>
-
+ <extension
+       point="org.talend.core.migrationTask">
+       <projecttask
+            beforeLogon="false"
+            class="org.talend.designer.esb.webservice.migration.ConsumerFaultResponseMigrationTask"
+            description="Add more fault response message migration task"
+            id="org.talend.designer.esb.webservice.ConsumerFaultResponseMigrationTask"
+            name="ConsumerFaultResponseMigrationTask">
+      </projecttask>
+ </extension>
 	<!-- TESB-3602 Remove ESB page  
 	<extension point="org.eclipse.ui.preferencePages">
 		<page
