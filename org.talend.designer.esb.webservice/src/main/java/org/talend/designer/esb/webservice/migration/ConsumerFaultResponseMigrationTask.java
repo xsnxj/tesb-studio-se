@@ -28,13 +28,11 @@ public class ConsumerFaultResponseMigrationTask extends
 	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory
 			.getInstance();
 
-	@Override
 	public Date getOrder() {
 		GregorianCalendar gc = new GregorianCalendar(2011, 12, 30, 17, 21, 00);
 		return gc.getTime();
 	}
 
-	@Override
 	public ExecutionResult execute(Item item) {
 		try {
 			addMoreFaultResponseMessage(item);
@@ -74,6 +72,16 @@ public class ConsumerFaultResponseMigrationTask extends
 	}
 
 	private void addColumn(EList column, String name) {
+		Iterator iterator = column.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			if (next != null && next instanceof ColumnType) {
+				ColumnType ct = (ColumnType) next;
+				if (name.equals(ct.getName())) {
+					return;
+				}
+			}
+		}
 		ColumnType columnType = TalendFileFactory.eINSTANCE.createColumnType();
 		columnType.setDefaultValue("");
 		columnType.setKey(false);
