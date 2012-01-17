@@ -3,39 +3,44 @@
 <plugin>
 	<extension point="org.talend.core.components_provider">
 		<ComponentsProvider
+			id="org.talend.esb.tooling.component.provider.ESBComponentsProvider"
 			class="org.talend.esb.tooling.component.provider.ESBComponentsProvider"
-			folderName="tesb"
-			id="org.talend.esb.tooling.component.provider.ESBComponentsProvider" />
+			folderName="tesb" />
 	</extension>
 	<extension point="org.talend.designer.codegen.additional_jetfile">
 		<jetProvider
-			class="org.talend.esb.tooling.component.provider.ESBJetFileProvider"
-			id="org.talend.esb.tooling.component.provider.ESBJetFileProvider" />
+			id="org.talend.esb.tooling.component.provider.ESBJetFileProvider"
+			class="org.talend.esb.tooling.component.provider.ESBJetFileProvider" />
 	</extension>
 
 	<extension point="org.talend.core.external_component">
 		<ExternalComponent
-			class="org.talend.designer.esb.webservice.WebServiceComponent">
-		</ExternalComponent>
+			class="org.talend.designer.esb.webservice.WebServiceComponent" />
 	</extension>
 	<extension point="org.talend.core.runtime.service">
 		<Service
-			class="org.talend.designer.esb.webservice.ui.WebServiceHelper"
-			serviceId="IWebService">
-		</Service>
+			serviceId="IWebService"
+			class="org.talend.designer.esb.webservice.ui.WebServiceHelper" />
 	</extension>
- <extension
-       point="org.talend.core.migrationTask">
-       <projecttask
-            beforeLogon="false"
-            class="org.talend.designer.esb.webservice.migration.ConsumerFaultResponseMigrationTask"
-            description="Add more fault response message migration task"
-            id="org.talend.designer.esb.webservice.ConsumerFaultResponseMigrationTask"
-            name="ConsumerFaultResponseMigrationTask">
-      </projecttask>
- </extension>
 
-	<!-- TESB-3602 Remove ESB page  
+	<extension point="org.talend.core.migrationTask">
+		<projecttask
+			id="org.talend.designer.esb.webservice.ConsumerFaultResponseMigrationTask"
+			class="org.talend.designer.esb.webservice.migration.ConsumerFaultResponseMigrationTask"
+			name="ConsumerFaultResponseMigrationTask"
+			description="Add more fault response message migration task"
+			beforeLogon="false" />
+	</extension>
+	<extension point="org.talend.core.migrationTask">
+		<projecttask
+			id="org.talend.designer.esb.webservice.RestRequestWrongCallMigrationTask"
+			class="org.talend.designer.esb.webservice.migration.RestRequestWrongCallMigrationTask"
+			name="RestRequestWrongCallMigrationTask"
+			description="Add more information to wrong call flow migration task"
+			beforeLogon="false" />
+	</extension>
+
+	<!-- TESB-3602 Remove ESB page
 	<extension point="org.eclipse.ui.preferencePages">
 		<page
 			category="org.talend.core.prefs"
