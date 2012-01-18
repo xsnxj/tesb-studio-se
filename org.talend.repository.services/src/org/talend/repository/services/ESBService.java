@@ -66,6 +66,7 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.model.services.ServicesPackage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.OperationRepositoryObject;
 import org.talend.repository.services.utils.PortRepositoryObject;
@@ -739,5 +740,17 @@ public class ESBService implements IESBService {
             e.printStackTrace();
         }
         RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.IESBService#isServiceItem(int)
+     */
+    public boolean isServiceItem(int classifierID) {
+        if (classifierID == ServicesPackage.SERVICE_ITEM) {
+            return true;
+        }
+        return false;
     }
 }
