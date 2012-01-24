@@ -69,7 +69,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 		restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
 
 		esbHandler_<%=cid%>.sendResponse(restResponse_<%=cid%>);
-		isRequestReceivedAndResponseSentBack = true;
+		globalMap.put("restRequestReceivedAndResponseSentBack", true);
 	}
 <%
 			}
