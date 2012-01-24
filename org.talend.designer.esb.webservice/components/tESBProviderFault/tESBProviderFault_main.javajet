@@ -61,7 +61,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 				(null == esbProviderFaultDoc_<%=cid%>) ? null
 						: esbProviderFaultDoc_<%=cid%>.getDocument()
 			);
-		isRequestReceivedAndResponseSentBack = true;
+		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 	}
 <%
 			}

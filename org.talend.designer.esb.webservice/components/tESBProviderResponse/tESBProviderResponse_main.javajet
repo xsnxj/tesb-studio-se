@@ -49,7 +49,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 		esbProviderCallback_<%=cid%>.setCustomProperties(customProps_<%=cid%>);
 		esbProviderCallback_<%=cid%>.sendResponse(esbProviderResponseDoc_<%=cid%>.getDocument());
-		isRequestReceivedAndResponseSentBack = true;
+		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 	}
 <%
 				}

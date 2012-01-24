@@ -63,7 +63,6 @@
 	//		// providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(this.callback);
 	//		providerCallback_<%=cid%> = this.callback;
 	//	}
-
 	globalMap.put("esbHandler", providerCallback_<%=cid%>);
 
 	//*** external processor(s) initialization finish
@@ -71,19 +70,19 @@
 	int nb_line_<%=cid%> = 0;
 
 	try {
-		// This is a beginning of the ESB provider request component cycle
-		boolean isRequestReceivedAndResponseSentBack = true;
+		// This is a beginning of the REST provider request component cycle
+		globalMap.put("restRequestReceivedAndResponseSentBack", true);
 		while(true) {
 			try {
 				ESBProviderCallback esbHandler_<%=cid%> =
 					(ESBProviderCallback) globalMap.get("esbHandler");
 
-				if (!isRequestReceivedAndResponseSentBack) {
+				if (!(Boolean) globalMap.get("restRequestReceivedAndResponseSentBack")) {
 					esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
-					isRequestReceivedAndResponseSentBack = true;
+					globalMap.put("restRequestReceivedAndResponseSentBack", true);
 				}
 
 				java.util.Map<String, Object> requestMessage_<%=cid%> =
 					(java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
 
-				isRequestReceivedAndResponseSentBack = false;
+				globalMap.put("restRequestReceivedAndResponseSentBack", false);
