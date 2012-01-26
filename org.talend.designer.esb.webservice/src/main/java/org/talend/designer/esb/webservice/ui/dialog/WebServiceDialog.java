@@ -66,7 +66,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     /**
      * Sets the size.
-     * 
+     *
      * @param size the size to set
      */
     public void setSize(Rectangle size) {
@@ -75,7 +75,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     /**
      * Sets the maximizedSize.
-     * 
+     *
      * @param maximizedSize the maxmimizedSize to set
      */
     public void setMaximized(boolean maximized) {
@@ -101,7 +101,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
 
@@ -170,6 +170,10 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
                 IElementParameter Port_NS = wenCom.getElementParameter("PORT_NS");
                 Port_NS.setValue(function.getServerNameSpace());
             }
+
+            IElementParameter Soap_Action = wenCom.getElementParameter("SOAP_ACTION");
+            Soap_Action.setValue(function.getSoapAction());
+
             IElementParameter esbEndpoint = wenCom.getElementParameter("ESB_ENDPOINT");
             if (esbEndpoint != null) {
                 esbEndpoint.setValue(TalendTextUtils.addQuotes(function.getAddressLocation()));
