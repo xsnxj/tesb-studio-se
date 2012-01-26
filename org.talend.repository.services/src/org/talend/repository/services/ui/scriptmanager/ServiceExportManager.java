@@ -31,6 +31,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
@@ -186,7 +187,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		a.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-Name"), artefactName); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
-		a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
+		a.put(new Attributes.Name("Bundle-Version"), Activator.getDefault().getBundle().getVersion().toString()); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
 		a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
 				"javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
