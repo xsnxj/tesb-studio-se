@@ -23,6 +23,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
 import org.talend.commons.exception.SystemException;
@@ -187,8 +188,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		a.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-Name"), artefactName); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
-		a.put(new Attributes.Name("Bundle-Version"), Activator.getDefault().getBundle().getVersion().toString()); //$NON-NLS-1$
+		a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
+		a.put(new Attributes.Name("Created-By"), Activator.getDefault().getBundle().getVersion().toString());
 		a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
 				"javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
 				+ ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
