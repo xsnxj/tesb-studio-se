@@ -32,7 +32,7 @@ String portName = ElementParameterParser.getValue(node,"__PORT_NAME__");
 String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
-String soapAction = ElementParameterParser.getValue(node,"__SOAPACTION__");
+String soapAction = ElementParameterParser.getValue(node,"__SOAP_ACTION__");
 String methodNS = ElementParameterParser.getValue(node,"__METHOD_NS__");
 
 Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
@@ -72,6 +72,7 @@ if (this.registry != null) {
 				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
 				put("defaultOperationName", "<%=method%>");
 				put("defaultOperationNameSpace", "");
+				put("soapAction", "<%=soapAction%>");
 				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
