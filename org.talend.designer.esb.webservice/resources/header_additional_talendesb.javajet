@@ -355,8 +355,6 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 <% } %>
 	public javax.xml.transform.Source invoke(javax.xml.transform.Source request) {
 
-		// System.out.println(System.currentTimeMillis() + " -> handleMessage");
-
 		try {
 //			javax.xml.namespace.QName operation = (javax.xml.namespace.QName) context
 //					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_OPERATION);
@@ -387,7 +385,6 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
 					if (null == responseDoc) {
-						// System.out.println("response: empty");
 						throw new RuntimeException("no response provided by Talend job");
 					}
 					// System.out.println("response: " + responseDoc.asXML());
@@ -404,8 +401,6 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new RuntimeException(ex);
-		} finally {
-			// System.out.println(System.currentTimeMillis() + " <- handleMessage");
 		}
 	}
 }
@@ -1295,8 +1290,6 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
-		} finally {
-			// System.out.println(System.currentTimeMillis() + " <- handleMessage");
 		}
 	}
 
@@ -1449,7 +1442,7 @@ if (null != conns && !conns.isEmpty()) {
 	public javax.ws.rs.core.Response handleWrongRequest(
 			org.apache.cxf.jaxrs.ext.MessageContext context, int status, String error) {
 
-		System.out.println("wrong call [uri: " + context.getUriInfo().getPath() + " ; method: " + context.getRequest().getMethod() + " ; status: " + status + " ; error: " + error + "]");
+		// System.out.println("wrong call [uri: " + context.getUriInfo().getPath() + " ; method: " + context.getRequest().getMethod() + " ; status: " + status + " ; error: " + error + "]");
 
 		java.util.Map<String, Object> wrongRequest = new java.util.HashMap<String, Object>();
 		wrongRequest.put("ERROR", error);
@@ -1530,12 +1523,9 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 			sf.setAddress(endpointUrl);
 			server = sf.create();
 
-			System.out.println("REST service [endpoint: " + endpointUrl + "] published");
+			// System.out.println("REST service [endpoint: " + endpointUrl + "] published");
 		} catch (Throwable e) {
 			e.printStackTrace();
-//			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-//			e.printStackTrace(new java.io.PrintStream(baos));
-//			System.out.println("error:\n" + baos.toString());
 		}
 	}
 
@@ -1543,7 +1533,7 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 		if (null != server) {
 			server.stop();
 			server.destroy();
-			System.out.println("REST service [endpoint: " + endpointUrl + "] unpublished");
+			// System.out.println("REST service [endpoint: " + endpointUrl + "] unpublished");
 		}
 	}
 }
