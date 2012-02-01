@@ -257,7 +257,7 @@
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="commons-codec"
-					MODULE="commons-codec-1.2.jar"
+					MODULE="commons-codec-1.4.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="commons-collections"
@@ -282,7 +282,7 @@
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true"/>
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.5.0.jar"
+					MODULE="cxf-bundle-2.5.2.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true"/>
 			<IMPORT NAME="neethi"
@@ -355,11 +355,11 @@
 					REQUIRED="true"/>
 
 			<IMPORT NAME="xmlsec"
-					MODULE="xmlsec-1.4.5.jar"
+					MODULE="xmlsec-1.4.6.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.3.jar"
+					MODULE="wss4j-1.6.4.jar"
 					BundleID=""
 					REQUIRED="true"/>
 

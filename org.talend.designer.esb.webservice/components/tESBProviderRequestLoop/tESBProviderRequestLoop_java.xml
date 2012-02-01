@@ -87,7 +87,7 @@
 					REQUIRED="true"/>
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.5.0.jar"
+					MODULE="cxf-bundle-2.5.2.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true"/>
 
@@ -159,23 +159,23 @@
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-continuation"
-					MODULE="jetty-continuation-7.5.3.v20111011.jar"
+					MODULE="jetty-continuation-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-http"
-					MODULE="jetty-http-7.5.3.v20111011.jar"
+					MODULE="jetty-http-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-io"
-					MODULE="jetty-io-7.5.3.v20111011.jar"
+					MODULE="jetty-io-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-server"
-					MODULE="jetty-server-7.5.3.v20111011.jar"
+					MODULE="jetty-server-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true"/>
 			<IMPORT NAME="jetty-util"
-					MODULE="jetty-util-7.5.3.v20111011.jar"
+					MODULE="jetty-util-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true"/>
 
