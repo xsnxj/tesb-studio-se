@@ -641,16 +641,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
         if (settings != null) {
             String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames != null) {
-                // destination
-                for (int i = 0; i < directoryNames.length; i++) {
-                    if (directoryNames[i].toLowerCase().endsWith(".zip")) { //$NON-NLS-1$
-                        addDestinationItem(directoryNames[i]);
-                    }
-                }
-            }
 
-            setDefaultDestination();
+			if (directoryNames != null && directoryNames.length > 0) {
+				String fileName = this.getDefaultFileName().get(0) + "_"
+						+ this.getDefaultFileName().get(1) + getOutputSuffix();
+				for (int i = 0; i < directoryNames.length; i++) {
+					String destination = new Path(directoryNames[i]).append(
+							fileName).toOSString();
+					addDestinationItem(destination);
+					setDestinationValue(destination);
+				}
+			} else {
+				setDefaultDestination();
+			}
+
             shellLauncherButton.setSelection(settings.getBoolean(STORE_SHELL_LAUNCHER_ID));
             // systemRoutineButton.setSelection(settings.getBoolean(STORE_SYSTEM_ROUTINE_ID));
             // userRoutineButton.setSelection(settings.getBoolean(STORE_USER_ROUTINE_ID));
@@ -713,12 +717,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 settings.put(PETALS_EXPORT_DESTINATIONS, directoryNames);
                 return;
             }
-            String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames == null) {
-                directoryNames = new String[0];
-            }
-            String destinationValue = manager.getDestinationPath();
-            directoryNames = addToHistory(directoryNames, destinationValue);
+			// String[] directoryNames =
+			// settings.getArray(STORE_DESTINATION_NAMES_ID);
+			// if (directoryNames == null) {
+			// directoryNames = new String[0];
+			// }
+			// String destinationValue = manager.getDestinationPath();
+			// directoryNames = addToHistory(directoryNames, destinationValue);
+			String[] directoryNames = new String[1];
+			String destinationValue = manager.getDestinationPath();
+			if (destinationValue != null) {
+				destinationValue = destinationValue.substring(0,
+						destinationValue.lastIndexOf(File.separator));
+			}
+			directoryNames[0] = destinationValue;
 
             settings.put(STORE_EXPORTTYPE_ID, getCurrentExportType());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
@@ -866,16 +878,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
-            if (directoryNames != null) {
-                // destination
-                String filterName = ".jar"; //$NON-NLS-1$
+			if (directoryNames != null && directoryNames.length > 0) {
+				String fileName = getDefaultFileName().get(0) + "_"
+						+ getDefaultFileName().get(1) + getOutputSuffix();
                 for (int i = 0; i < directoryNames.length; i++) {
-                    if (directoryNames[i].toLowerCase().endsWith(filterName)) {
-                        addDestinationItem(directoryNames[i]);
-                    }
+					String destination = new Path(directoryNames[i]).append(
+							fileName).toOSString();
+					addDestinationItem(destination);
+					setDestinationValue(destination);
                 }
+			} else {
+				setDefaultDestination();
             }
-            setDefaultDestination();
+		} else {
+			setDefaultDestination();
         }
     }
 
