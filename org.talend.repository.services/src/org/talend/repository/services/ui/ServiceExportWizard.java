@@ -37,7 +37,7 @@ import org.talend.repository.services.ui.action.ExportServiceAction;
 /**
  * Job scripts export wizard. <br/>
  * 
- * $Id: ServiceExportWizard.java 1 2006-12-13 下午03:13:18 bqian
+ * $Id: ServiceExportWizard.java 1 2006-12-13 PM 03:13:18 bqian
  * 
  */
 public class ServiceExportWizard extends Wizard implements IExportWizard {
@@ -58,6 +58,9 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings.getSection("ServiceExportWizard"); //$NON-NLS-1$
+		if (section == null) {
+			section = workbenchSettings.addNewSection("ServiceExportWizard"); //$NON-NLS-1$
+		}
         setDialogSettings(section);
     }
 
@@ -97,6 +100,7 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
         	for (RepositoryNode node : nodes) {
         		new ExportServiceAction(node, mainPage.getDestinationValue()).runInWorkspace(null);
         	}
+			mainPage.finish();
 		} catch (CoreException e) {
 			log.error(e);
 			return false;

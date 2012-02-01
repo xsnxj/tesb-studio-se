@@ -96,9 +96,13 @@ public class ServiceExportWSWizardPage extends WizardPage {
     
 	public String getDestinationValue() {
 		if (null == destinationValue) {
-	        String bundleName = serviceName + "-" + serviceVersion + getOutputSuffix();
-	        String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
-	        IPath path = new Path(userDir).append(bundleName);
+			String bundleName = serviceName + "-" + serviceVersion
+					+ getOutputSuffix();
+			String storedDir = getDialogSettings().get(getClass().getName());
+			if (storedDir == null) {
+				storedDir = System.getProperty("user.dir");
+			}
+			IPath path = new Path(storedDir).append(bundleName);
 	        destinationValue = path.toOSString();
 		}
 		return destinationValue;
@@ -138,6 +142,16 @@ public class ServiceExportWSWizardPage extends WizardPage {
 			public void widgetDefaultSelected(SelectionEvent e) {;}
 		});
 
+	}
+
+	public void finish() {
+		String destination = destinationText.getText().trim();
+		if (!"".equals(destination)) {
+			getDialogSettings().put(
+					getClass().getName(),
+					destination.substring(0,
+							destination.lastIndexOf(File.separator)));
+		}
 	}
 
 }
