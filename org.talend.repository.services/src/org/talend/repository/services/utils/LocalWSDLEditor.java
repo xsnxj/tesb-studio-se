@@ -22,11 +22,9 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
@@ -55,15 +53,20 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     private RepositoryNode repositoryNode;
 
     public LocalWSDLEditor() {
-        // TODO Auto-generated constructor stub
+
+    }
+
+    boolean isServiceUpdateRequired() {
+        CommandStack commandStack = this.getCommandStack();
+        return isDirty() || commandStack.canUndo() && commandStack.isDirty();
+        //return isDirty() || commandStack.canUndo();
     }
 
     protected AdapterImpl dirtyListener = new AdapterImpl() {
-
         @Override
         public void notifyChanged(Notification notification) {
             if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
-                if (isDirty()) {
+                if (isServiceUpdateRequired()) {
                     save();
                 }
             }
@@ -206,11 +209,11 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 String portName = portType.getQName().getLocalPart();
                 port.setName(portName);
                 // set port id
-                Iterator portIterator = portNameIdMap.keySet().iterator();
+                Iterator<String> portIterator = portNameIdMap.keySet().iterator();
                 while (portIterator.hasNext()) {
-                    String oldportName = (String) portIterator.next();
+                    String oldportName = portIterator.next();
                     if (oldportName.equals(portName)) {
-                        String id = (String) portNameIdMap.get(oldportName);
+                        String id = portNameIdMap.get(oldportName);
                         port.setId(id);
 
                         // restore additional infos
@@ -234,10 +237,10 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                     ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                     serviceOperation.setName(operation.getName());
-                    Iterator operationIterator = operNameIdMap.keySet().iterator();
+                    Iterator<String> operationIterator = operNameIdMap.keySet().iterator();
                     while (operationIterator.hasNext()) {
-                        String oldOperationName = (String) operationIterator.next();
-                        String operationId = (String) operNameIdMap.get(oldOperationName);
+                        String oldOperationName = operationIterator.next();
+                        String operationId = operNameIdMap.get(oldOperationName);
                         if (oldOperationName.equals(operation.getName())) {
                             serviceOperation.setId(operationId);
                             // re-assign job
@@ -276,32 +279,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
     }
 
-    @Override
-    public void doSaveAs() {
-        super.doSaveAs();
-    }
-
-    @Override
-    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-        super.init(site, input);
-
-    }
-
-    @Override
-    public boolean isDirty() {
-        return super.isDirty();
-    }
-
-    @Override
-    public boolean isSaveAsAllowed() {
-        return super.isSaveAsAllowed();
-    }
-
-    @Override
-    public void setFocus() {
-        super.setFocus();
-    }
-
     public RepositoryNode getRepositoryNode() {
         return this.repositoryNode;
     }
@@ -330,92 +307,48 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     public void setReadOnly(boolean isReadOnly) {
         if (isReadOnly) {
-            IAction addMessage = getActionRegistry().getAction("ASDAddMessageAction");
-            getActionRegistry().removeAction(addMessage);
+            ActionRegistry actionRegistry = getActionRegistry();
 
-            IAction addPart = getActionRegistry().getAction("ASDAddPartAction");
-            getActionRegistry().removeAction(addPart);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddMessageAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddPartAction"));
 
-            IAction setNewMessage = getActionRegistry().getAction("ASDSetNewMessageAction");
-            getActionRegistry().removeAction(setNewMessage);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewMessageAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetMessageInterfaceAction"));
 
-            IAction setMessageInterface = getActionRegistry().getAction("ASDSetMessageInterfaceAction");
-            getActionRegistry().removeAction(setMessageInterface);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewTypeAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingTypeAction"));
 
-            IAction setNewType = getActionRegistry().getAction("ASDSetNewTypeAction");
-            getActionRegistry().removeAction(setNewType);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewElementAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingElementAction"));
 
-            IAction setExistingType = getActionRegistry().getAction("ASDSetExistingTypeAction");
-            getActionRegistry().removeAction(setExistingType);
+            actionRegistry.removeAction(actionRegistry.getAction(GEFActionConstants.DIRECT_EDIT));
 
-            IAction setNewElement = getActionRegistry().getAction("ASDSetNewElementAction");
-            getActionRegistry().removeAction(setNewElement);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddServiceAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddBindingAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddInterfaceAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddEndPointAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddOperationAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddInputActionn"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddOutputActionn"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddFaultActionn"));
 
-            IAction setExistingElement = getActionRegistry().getAction("ASDSetExistingElementAction");
-            getActionRegistry().removeAction(setExistingElement);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDDeleteAction"));
 
-            IAction directEdit = getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT);
-            getActionRegistry().removeAction(directEdit);
-            // --
-            IAction addService = getActionRegistry().getAction("ASDAddServiceAction");
-            getActionRegistry().removeAction(addService);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewBindingAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingBindingAction"));
 
-            IAction addBinding = getActionRegistry().getAction("ASDAddBindingAction");
-            getActionRegistry().removeAction(addBinding);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewInterfaceAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingInterfaceAction"));
 
-            IAction addInterface = getActionRegistry().getAction("ASDAddInterfaceAction");
-            getActionRegistry().removeAction(addInterface);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDGenerateBindingActionn"));
 
-            IAction addEndPoint = getActionRegistry().getAction("ASDAddEndPointAction");
-            getActionRegistry().removeAction(addEndPoint);
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddImportAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddParameterAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDAddSchemaAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDOpenSchemaAction"));
+            actionRegistry.removeAction(actionRegistry.getAction("ASDOpenImportAction"));
 
-            IAction addOperation = getActionRegistry().getAction("ASDAddOperationAction");
-            getActionRegistry().removeAction(addOperation);
-
-            IAction addInput = getActionRegistry().getAction("ASDAddInputActionn");
-            getActionRegistry().removeAction(addInput);
-
-            IAction addOutput = getActionRegistry().getAction("ASDAddOutputActionn");
-            getActionRegistry().removeAction(addOutput);
-
-            IAction addFault = getActionRegistry().getAction("ASDAddFaultActionn");
-            getActionRegistry().removeAction(addFault);
-
-            IAction addDelete = getActionRegistry().getAction("ASDDeleteAction");
-            getActionRegistry().removeAction(addDelete);
-
-            IAction setNewBinding = getActionRegistry().getAction("ASDSetNewBindingAction");
-            getActionRegistry().removeAction(setNewBinding);
-
-            IAction setExistingBinding = getActionRegistry().getAction("ASDSetExistingBindingAction");
-            getActionRegistry().removeAction(setExistingBinding);
-
-            IAction setNewInterface = getActionRegistry().getAction("ASDSetNewInterfaceAction");
-            getActionRegistry().removeAction(setNewInterface);
-
-            IAction setExistingInterface = getActionRegistry().getAction("ASDSetExistingInterfaceAction");
-            getActionRegistry().removeAction(setExistingInterface);
-
-            IAction generateBinding = getActionRegistry().getAction("ASDGenerateBindingActionn");
-            getActionRegistry().removeAction(generateBinding);
-
-            IAction addImport = getActionRegistry().getAction("ASDAddImportAction");
-            getActionRegistry().removeAction(addImport);
-
-            IAction addParameter = getActionRegistry().getAction("ASDAddParameterAction");
-            getActionRegistry().removeAction(addParameter);
-
-            IAction addSchema = getActionRegistry().getAction("ASDAddSchemaAction");
-            getActionRegistry().removeAction(addSchema);
-
-            IAction openSchema = getActionRegistry().getAction("ASDOpenSchemaAction");
-            getActionRegistry().removeAction(openSchema);
-
-            IAction openImport = getActionRegistry().getAction("ASDOpenImportAction");
-            getActionRegistry().removeAction(openImport);
-
-            IAction openInNewEditor = getActionRegistry().getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
-            getActionRegistry().removeAction(openInNewEditor);
+            actionRegistry.removeAction(actionRegistry.getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor"));
         }
     }
 }
