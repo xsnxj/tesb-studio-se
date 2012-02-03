@@ -98,20 +98,20 @@ public class SwitchCamelCXFLibraryVersionMigrationTask extends AbstractItemMigra
         }
 
         String result = "";
-        if (evtValue.contains("camel-")) {
+        if (evtValue.startsWith("camel-")) {
             result = evtValue.replaceAll("2.7.\\d", "2.8.2-SNAPSHOT");
             result = result.replaceAll("2\\.8\\.2-SNAPSHOT", "2.8.2");
             result = result.replaceAll("2\\.8\\.2", "2.8.4");
         }
-        if (evtValue.contains("spring-")) {
+        if (evtValue.startsWith("spring-")) {
             result = evtValue.replace("3.0.5", "3.0.6");
         }
-        if (evtValue.contains("cxf-bundle")) {
+        if (evtValue.startsWith("cxf-bundle")) {
             result = evtValue.replaceAll("2.4.\\d", "2.5.0-SNAPSHOT");
             result = result.replaceAll("2\\.5\\.0-SNAPSHOT", "2.5.0");
             result = result.replaceAll("2\\.5\\.0", "2.5.2");
         }
-        if (evtValue.contains("activemq-all")) {
+        if (evtValue.startsWith("activemq-all")) {
             result = evtValue.replaceAll("5.1.0", "5.5.1");
         }
         return result;
