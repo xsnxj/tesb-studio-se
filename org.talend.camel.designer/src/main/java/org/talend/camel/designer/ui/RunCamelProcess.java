@@ -78,7 +78,7 @@ public class RunCamelProcess extends AContextualAction {
 
             switch (node.getType()) {
             case REPOSITORY_ELEMENT:
-                if (node.getParent().getContentType() != CamelRepositoryNodeType.repositoryRoutesType) {
+                if (node.getParent() == null || node.getParent().getContentType() != CamelRepositoryNodeType.repositoryRoutesType) {
                     canWork = false;
                 }
                 break;
