@@ -179,5 +179,12 @@
             id="org.talend.camel.designer.AggregateStrategyMigrationTask"
             name="AggregateStrategyMigrationTask">
       </projecttask>
+       <projecttask
+             beforeLogon="false"
+             class="org.talend.camel.designer.migration.SwitchCamelCXFLibraryVersionMigrationTask"
+             description="Switch284CamelCXFLibraryVersionMigrationTask"
+             id="org.talend.camel.designer.switch284CamelCXFLibraryVersionMigrationTask"
+             name="Switch284CamelCXFLibraryVersionMigrationTask2">
+       </projecttask>
       </extension>
 </plugin>
