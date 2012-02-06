@@ -1264,20 +1264,15 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 
 			try {
 <% if (isOneWayRest) { %>
-				// return null;
-				return javax.ws.rs.core.Response.status(200).build();
+				Integer status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
+				return javax.ws.rs.core.Response.status(status).build();
 <% } else { %>
 				java.util.Map<String, Object> responseMap = messageExchange.getResponse();
 				Object responseBody = responseMap.get("BODY");
 				Integer status = (Integer) responseMap.get("STATUS");
 				if (null == status) {
-					if (request.containsKey("STATUS")) {
-						status = (Integer) request.get("STATUS");
-					} else {
-						status = 200;
-					}
+					status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
 				}
-
 				return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
 <% } %>
 			} finally {
