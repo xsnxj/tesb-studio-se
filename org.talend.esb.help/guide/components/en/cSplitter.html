@@ -1,106 +1,49 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>cSplitter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cSetHeader.html" title="cSetHeader"><link rel="next" href="cTalendJob.html" title="cTalendJob"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cSplitter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cSplitter"></a>cSplitter</h2></div></div></div><div class="mediaobject"><img src="../images/cSplitter_icon32_white.png"></div><div class="section" title="cSplitter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e51299"></a>cSplitter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
-								Family</strong></span></p>
-						</td><td colspan="2" valign="top"><p>Routing</p>
-						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
-						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSplitter</strong></span> splits a message into several submessages
-								according to a condition.</p>
-						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
-						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSplitter</strong></span> separates multiple elements of a message
-								so that they can be handled and treated differently in individual
-								routes</p>
-						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
-								settings</strong></span></p>
-						</td><td valign="top"><p><span class="emphasis"><em>Language</em></span></p>
-						</td><td valign="top"><p>Select the language of the expression you use to
-								split your messages.</p>
-						</td></tr><tr><td><p>&nbsp;</p>
-						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
-						</td><td valign="top"><p>Type in the expression to use to split the
-								messages.</p>
-						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
-						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cSplitter</strong></span> is used as a middle component in a
-								Route.</p>
-						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
-						</td><td colspan="2"><p>&nbsp;n/a</p>
-						</td></tr></tbody></table></div></div><div class="section" title="Scenario: splitting one message into several messages and routing them in several specific routes"><div class="titlepage"><div><div><h3 class="title"><a name="d0e51393"></a>Scenario: splitting one message into several messages and routing them in several
-			specific routes</h3></div></div></div><p>In this scenario, a file message is sent from an endpoint and its content is split
-			according to an expression. The split content is then routed to different endpoints
-			according to the defined conditions.</p><p>Here's an extract of the XML file used:</p><pre class="programlisting">&lt;people&gt;
-	&lt;person id="8"&gt;
-		&lt;firstName&gt;Ellen&lt;/firstName&gt;
-		&lt;lastName&gt;Ripley&lt;/lastName&gt;
-		&lt;city&gt;Washington&lt;/city&gt;
-	&lt;/person&gt;
-&lt;/people&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e51403"></a>Dropping and linking the components</h4></div></div></div><p>This use case requires one <span class="bold"><strong>cSplitter</strong></span> component,
-				one <span class="bold"><strong>cMessageRouter</strong></span> component and seven <span class="bold"><strong>cMessagingEndpoint</strong></span> components.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter1.png"></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder and select the <span class="bold"><strong>cMessagingEndpoint</strong></span> component. Drop one as input
-						and six as output onto the design workspace as shown above.</p></li><li class="listitem"><p>Expand the <span class="bold"><strong>Routing</strong></span> folder. Select the
-							<span class="bold"><strong>cSplitter</strong></span> component and drop it onto
-						the design workspace, between the input component and the output
-						ones.</p></li><li class="listitem"><p>Select the <span class="bold"><strong>cMessageRouter</strong></span> component from
-						the <span class="bold"><strong>Routing</strong></span> folder and drop it onto the
-						design workspace, between the <span class="bold"><strong>cSplitter</strong></span> and
-						the output components.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessagingEndpoint</strong></span>
-						component on the left, select <span class="bold"><strong>Row</strong></span> &gt;
-							<span class="bold"><strong>Route</strong></span> from the contextual menu and
-						click the <span class="bold"><strong>cSplitter</strong></span> component.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cSplitter</strong></span> component,
-						select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Split</strong></span> from the contextual menu and click the <span class="bold"><strong>cMessageRouter</strong></span> component. </p></li><li class="listitem"><p>Use a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection to link the <span class="bold"><strong>cMessageRouter</strong></span> to the <span class="bold"><strong>cMessagingEndpoint</strong></span> component at the bottom (<span class="bold"><strong>cMessagingEndpoint_7</strong></span> in the figure).</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
-						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>When</strong></span> from the contextual menu and click the first output
-							<span class="bold"><strong>cMessagingEndpoint</strong></span> component on the top
-							(<span class="bold"><strong>cMessagingEndpoint_2</strong></span> in the figure).
-					</p></li><li class="listitem"><p>Repeat this operation to connect the <span class="bold"><strong>cMessageRouter</strong></span> component to the next three output <span class="bold"><strong>cMessagingEndpoint</strong></span> components (<span class="bold"><strong>cMessagingEndpoint_3</strong></span> through <span class="bold"><strong>cMessagingEndpoint_5</strong></span> in the figure).</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
-						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>Otherwise</strong></span> in the contextual menu and click the last output
-							<span class="bold"><strong>cMessagingEndpoint</strong></span> component (<span class="bold"><strong>cMessagingEndpoint_6</strong></span> in the figure).</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e51553"></a>Configuring the components and connections</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click the input <span class="bold"><strong>cMessagingEndpoint</strong></span>
-						component to display its <span class="bold"><strong>Component</strong></span> view,
-						and type in the URI of the messages you want to route in the <span class="bold"><strong>URI</strong></span> field.</p><p>As we are handling a file message, type in <span class="emphasis"><em>"file:/"</em></span>
-						followed by the path to the folder containing the files to send, with the
-							<span class="emphasis"><em>noop</em></span> file specific option. This option tells Camel
-						to leave the file as is, instead of moving it from its original
-						folder.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter2.png"></div></li><li class="listitem"><p>Double-click the <span class="bold"><strong>cSplitter</strong></span> component to
-						display its <span class="bold"><strong>Component</strong></span> view, and set an
-						Xpath expression in the <span class="bold"><strong>Expression</strong></span> field to
-						split the message into several messages at each <span class="emphasis"><em>person</em></span>
-						node of the XML file.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter3.png"></div></li><li class="listitem"><p>In the design workspace, click the first <span class="bold"><strong>When</strong></span> route link and click the <span class="bold"><strong>Component</strong></span> view to set the condition to match the message to
-						route to the connected endpoint.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Type</strong></span> list, select the language of
-						the expression you want to use to route the message. Select
-							<span class="emphasis"><em>Xpath</em></span> in this scenario.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Condition</strong></span> field, specify which
-						split content will be sent to the connected endpoint. </p><p>Here we retrieve the <span class="emphasis"><em>person</em></span> node for which the
-							<span class="emphasis"><em>city</em></span> node is defined as
-						<span class="emphasis"><em>London</em></span>. The people based in London will be
-						retrieved.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter4.png"></div></li><li class="listitem"><p>Repeat this operation on the rest <span class="bold"><strong>When</strong></span>
-						connections for other cities, for example, Paris, Beijing, Washington, etc. </p><p>Then, the <span class="bold"><strong>cMessageRouter</strong></span> component will
-						route the split messages to different endpoints according to conditions
-						defined in its different <span class="bold"><strong>When</strong></span>
-						connections.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Otherwise</strong></span> connection of <span class="bold"><strong>cMessageRouter</strong></span>, camel will send all data/messages
-						that does not match the condition defined in the different <span class="bold"><strong>When</strong></span> route links.</p></li><li class="listitem"><p>Double-click the first output <span class="bold"><strong>cMessagingEndpoint</strong></span> component to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI in the
-							<span class="bold"><strong>URI</strong></span> field for routing your message. </p><p>Here, we are handling a file message, so type in
-							<span class="emphasis"><em>"file:/"</em></span> followed by the path to the folder to
-						which the files will be routed. In this endpoint, you want to retrieve the
-						split messages matching the city of <span class="emphasis"><em>London</em></span>, so it will
-						send the files to a folder named <span class="emphasis"><em>london</em></span>.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter6.png"></div></li><li class="listitem"><p>Repeat this operation to define folders for the other output <span class="bold"><strong>cMessagingEndpoint</strong></span> components linked with the
-							<span class="bold"><strong>cMessageRouter</strong></span> component via a
-							<span class="bold"><strong>When</strong></span> connection, for example, a
-							<span class="emphasis"><em>paris</em></span> folder for the <span class="emphasis"><em>Paris</em></span>
-						conditioned <span class="bold"><strong>When</strong></span> connection, etc.</p></li><li class="listitem"><p>Double-click the endpoint component linked to the <span class="bold"><strong>Otherwise</strong></span> connection to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI in the <span class="bold"><strong>URI</strong></span> field for the destination of your message. </p><p>Here, we are handling file messages, so type in
-							<span class="emphasis"><em>"file:/"</em></span> followed by the path to the folder to
-						which the files will be routed. This endpoint will retrieve all the split
-						messages not matching the filters defined in the <span class="bold"><strong>When</strong></span> connections of the <span class="bold"><strong>cMessageRouter</strong></span> to a folder named
-						<span class="emphasis"><em>other</em></span>.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter8.png"></div></li><li class="listitem"><p>Double-click the endpoint component linked with the <span class="bold"><strong>cMessageRouter</strong></span> component via a route connection to display
-						its <span class="bold"><strong>Component</strong></span> view, and type in the URI in
-						the <span class="bold"><strong>URI</strong></span> field for the destination of your
-						messages. </p><p>Here, we are handling file messages, so type in
-							<span class="emphasis"><em>"file:/"</em></span> followed by the path to the folder to
-						which the files will be routed. As the route connection is used to pass all
-						the messages from its source, this endpoint will retrieve all of the split
-						messages regardless of the conditions specified in the <span class="bold"><strong>When</strong></span> connections.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter5.png"></div></li><li class="listitem"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e51767"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
-						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/Use_Case_cSplitter9.png"></div><p>In the code, the message is split according to the condition
-							<code class="code">.split</code>, routed according to a condition
-							<code class="code">.choice()</code>, and sent to different defined endpoints
-							(<code class="code">.to</code>) according to <code class="code">.when</code> filters. Messages not
-						matching the conditions are retrieved by the <code class="code">.otherwise</code> code
-						and the original route is continued by the <code class="code">.end</code> code.</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and
-						click the <span class="bold"><strong>Run</strong></span> button to launch the
-						execution of your Route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p></li></ol></div><p>RESULT: New files are created in the newly created city folders based on the
-				cities, unmatched files are retrieved in a folder, and all the messages of the
-				original route before the message routing are retrieved in another folder.</p></div></div></div></body></html>
+   <title>cSplitter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch06.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cRecipientList.html" title="cRecipientList"><link rel="next" href="cRoutingSlip.html" title="cRoutingSlip"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cSplitter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cSplitter"></a>cSplitter</h2></div></div></div><div class="mediaobject"><img src="../images/cSplitter_icon32_white.png"></div><div class="section" title="cSplitter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e11568"></a>cSplitter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Routing</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cSplitter</strong></span> splits a message into
+								several submessages according to a condition.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cSplitter</strong></span> separates multiple
+								elements of a message so that they can be handled and treated
+								differently in individual routes</p>
+						</td></tr><tr><td>
+							<p><span class="bold"><strong>Basic settings</strong></span>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Expression</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Type in the expression to use to split the messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cSplitter</strong></span> is used as a middle
+								component in a Route.</p>
+						</td></tr><tr><td rowspan="2" valign="top">
+							<span class="bold"><strong>Connections</strong></span></td><td valign="top"><span class="emphasis"><em>split</em></span></td><td valign="top">Select this link to route the splitted messages to the
+							next endpoint.</td></tr><tr><td valign="top"><span class="emphasis"><em>Route</em></span></td><td valign="top">Select this link to route all the messages from the
+							sender to the next endpoint.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Related scenario:"><div class="titlepage"><div><div><h3 class="title"><a name="d0e11690"></a>Related scenario:</h3></div></div></div><p>For a related scenario, see <a class="xref" href="cSetHeader.html#jzhang-20120109-transformation-csetheader_scenario" title="Scenario: Splitting a message and renaming the sub-messages according to contained information">the section called &#8220;Scenario: Splitting a message and renaming the sub-messages according to contained
+			information&#8221;</a> of <a class="xref" href="cSetHeader.html" title="cSetHeader">the section called &#8220;cSetHeader&#8221;</a>.</p></div></div></body></html>

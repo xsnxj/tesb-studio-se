@@ -13,6 +13,10 @@
     <description>Allows to write Java Codes to create and initialize CamelContext</description>
     <topic href="guide/components/en/cConfig.html" label="cConfig Component Documentation"/>
   </context>
+  <context id="cContentEnricher">
+    <description>Enrich a message with data obtained from another resource</description>
+    <topic href="guide/components/en/cContentEnricher.html" label="cContentEnricher Component Documentation"/>
+  </context>
   <context id="cConvertBodyTo">
     <description>Convert a message to a given type</description>
     <topic href="guide/components/en/cConvertBodyTo.html" label="cConvertBodyTo Component Documentation"/>
@@ -20,6 +24,10 @@
   <context id="cCXF">
     <description>Filter out duplicate messages</description>
     <topic href="guide/components/en/cCXF.html" label="cCXF Component Documentation"/>
+  </context>
+  <context id="cDelayer">
+    <description>Delay the delivery of messages to some destination</description>
+    <topic href="guide/components/en/cDelayer.html" label="cDelayer Component Documentation"/>
   </context>
   <context id="cDynamicRouter">
     <description>Route messages while avoiding the dependency of the router on all possible destinations</description>
@@ -45,6 +53,10 @@
     <description>Intercept exchanges while they are on route.</description>
     <topic href="guide/components/en/cIntercept.html" label="cIntercept Component Documentation"/>
   </context>
+  <context id="cJavaDSLProcessor">
+    <description>Allows to enter manually the the Java DSL code for a processor</description>
+    <topic href="guide/components/en/cJavaDSLProcessor.html" label="cJavaDSLProcessor Component Documentation"/>
+  </context>
   <context id="cJMS">
     <description>Generic component for the different file endpoints</description>
     <topic href="guide/components/en/cJMS.html" label="cJMS Component Documentation"/>
@@ -69,13 +81,25 @@
     <description>Generic component for the different endpoints</description>
     <topic href="guide/components/en/cMessagingEndpoint.html" label="cMessagingEndpoint Component Documentation"/>
   </context>
+  <context id="cMulticast">
+    <description>Route the same message to a number of endpoints and process them in a different way.</description>
+    <topic href="guide/components/en/cMulticast.html" label="cMulticast Component Documentation"/>
+  </context>
   <context id="cOnException">
     <description>Handle exceptions catched in each routes of the camel context.</description>
     <topic href="guide/components/en/cOnException.html" label="cOnException Component Documentation"/>
   </context>
+  <context id="cPipesAndFilters">
+    <description>Split your processing across multiple independent endpoint instances</description>
+    <topic href="guide/components/en/cPipesAndFilters.html" label="cPipesAndFilters Component Documentation"/>
+  </context>
   <context id="cProcessor">
     <description>Implement consumers of message exchanges</description>
     <topic href="guide/components/en/cProcessor.html" label="cProcessor Component Documentation"/>
+  </context>
+  <context id="cRecipientList">
+    <description>Route messages to a number of dynamically specified recipients</description>
+    <topic href="guide/components/en/cRecipientList.html" label="cRecipientList Component Documentation"/>
   </context>
   <context id="cRoutingSlip">
     <description>Route a message consecutively through a series of processing steps where the sequence of steps is not known at design time and can vary for each message</description>
@@ -101,8 +125,16 @@
     <description>Execute a data integration job.</description>
     <topic href="guide/components/en/cTalendJob.html" label="cTalendJob Component Documentation"/>
   </context>
+  <context id="cThrottler">
+    <description>Ensure that a specific endpoint does not get overloaded</description>
+    <topic href="guide/components/en/cThrottler.html" label="cThrottler Component Documentation"/>
+  </context>
   <context id="cTry">
     <description>Represent the "try" java instruction</description>
     <topic href="guide/components/en/cTry.html" label="cTry Component Documentation"/>
+  </context>
+  <context id="cWireTap">
+    <description>Route messages to a separate tap location while it is forwarded to the ultimate destination.</description>
+    <topic href="guide/components/en/cWireTap.html" label="cWireTap Component Documentation"/>
   </context>
 </contexts>
