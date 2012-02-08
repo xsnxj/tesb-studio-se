@@ -1,6 +1,6 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>cMessageRouter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="Raa25276.html" title="Appendix&nbsp;E.&nbsp;Appendix Camel components"><link rel="prev" href="cMessageFilter.html" title="cMessageFilter"><link rel="next" href="cOnException.html" title="cOnException"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cMessageRouter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessageRouter"></a>cMessageRouter</h2></div></div></div><div class="mediaobject"><img src="../images/cMessageRouter_icon32_white.png"></div><div class="section" title="cMessageRouter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e48530"></a>cMessageRouter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+   <title>cMessageRouter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch06.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cMessageFilter.html" title="cMessageFilter"><link rel="next" href="cMulticast.html" title="cMulticast"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cMessageRouter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessageRouter"></a>cMessageRouter</h2></div></div></div><div class="mediaobject"><img src="../images/cMessageRouter_icon32_white.png"></div><div class="section" title="cMessageRouter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e9904"></a>cMessageRouter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
 								Family</strong></span></p>
 						</td><td colspan="2" valign="top"><p>Routing</p>
 						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
@@ -16,74 +16,76 @@
 								channels. Messages can be outputted through either a <span class="bold"><strong>When</strong></span>, <span class="bold"><strong>Otherwise</strong></span> or <span class="bold"><strong>Route</strong></span>
 								types of connection.</p>
 						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Connection</strong></span>s</p>
-						</td><td valign="top"><p><span class="emphasis"><em>When</em></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Trigger / When</em></span></p>
 						</td><td valign="top"><p>Select the <span class="bold"><strong>When</strong></span>
 								link and click the <span class="bold"><strong>Component</strong></span>
-								view.</p><p> In the <span class="bold"><strong>Type</strong></span>
-								list, select the type of language you will use to declare your
-								condition.</p><p> In the <span class="bold"><strong>Condition</strong></span> field, type in the condition that will be
-								used to filter the messages.</p><p> All the messages that do
-								not match this condition are dropped by default or can be retrieved
-								with the <span class="bold"><strong>Otherwise</strong></span> link to an
-								different channel. </p>
+								view.</p><p>In the <span class="bold"><strong>Type</strong></span> list,
+								select the type of language you will use to declare your
+								condition.</p><p>In the <span class="bold"><strong>Condition</strong></span> field, type in the condition that will be
+								used to filter the messages.</p><p>All the messages that do not match this condition are retrieved with the <span class="bold"><strong>Otherwise</strong></span> link to a different channel or dropped if
+								an <span class="bold"><strong>Otherwise</strong></span> link does not present. </p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>There can be more than one <span class="bold"><strong>When</strong></span> link in a
+									Route.</p></td></tr></table></div>
 						</td></tr><tr><td><p>&nbsp;</p>
-						</td><td valign="top"><p><span class="emphasis"><em>Otherwise</em></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Trigger / Otherwise</em></span></p>
 						</td><td valign="top"><p>This link automatically retrieves the messages
 								that do not match the <span class="bold"><strong>When</strong></span>
 								conditions. </p>
-						</td></tr><tr><td><p>&nbsp;</p>
-						</td><td valign="top"><p><span class="emphasis"><em>Route</em></span></p>
-						</td><td valign="top"><p>This link continues the original route
-								designed.</p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>There can be only one <span class="bold"><strong>Otherwise</strong></span> link, which is
+									optional, in a Route.</p></td></tr></table></div>
 						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
 						</td><td colspan="2"><p>&nbsp;n/a</p>
-						</td></tr></tbody></table></div></div><div class="section" title="Scenario: routing messages according to criteria"><div class="titlepage"><div><div><h3 class="title"><a name="Raa16067"></a>Scenario: routing messages according to criteria</h3></div></div></div><p>In this scenario, messages are sent from an endpoint and routed to a specific endpoint
-			according to a defined condition.</p><p>Here's an extract of the XML file used:</p><pre class="programlisting">&lt;people&gt;
-	&lt;person id="8"&gt;
-		&lt;firstName&gt;Ellen&lt;/firstName&gt;
-		&lt;lastName&gt;Ripley&lt;/lastName&gt;
-		&lt;city&gt;Washington&lt;/city&gt;
-	&lt;/person&gt;
-&lt;/people&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e48682"></a>Dropping and linking the components</h4></div></div></div><p>This use case requires one <span class="bold"><strong>cMessageRouter</strong></span>
-				component and four <span class="bold"><strong>cMessagingEndpoint</strong></span>
-				components.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="531"><tr><td><img src="../images/cMessageRouter_scenario1.png" width="531"></td></tr></table></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Message</strong></span> folder, select <span class="bold"><strong>cMessagingEndpoint</strong></span>, and drop one as input and three as
-						output onto the design workspace, as shown above.</p></li><li class="listitem"><p>Expand the <span class="bold"><strong>Routing</strong></span> folder, select
-							<span class="bold"><strong>cMessageRouter</strong></span> and drop it onto the
-						design workspace, between the input component and output ones.</p></li><li class="listitem"><p>Right-click the first <span class="bold"><strong>cMessagingEndpoint</strong></span>
-						component, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> in the menu and drag to the <span class="bold"><strong>cMessageRouter</strong></span> component. </p><p>Do the same between the <span class="bold"><strong>cMessageRouter</strong></span>
-						and the output <span class="bold"><strong>cMessagingEndpoint</strong></span> component
-						placed below it.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
-						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>When</strong></span> in the menu and drag to the output <span class="bold"><strong>cMessagingEndpoint</strong></span> component on the top.</p></li><li class="listitem"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
-						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>Otherwise</strong></span> in the menu and drag to the other output <span class="bold"><strong>cMessagingEndpoint</strong></span> component.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e48771"></a>Configuring the components and connections</h4></div></div></div><p>The <span class="bold"><strong>cMessageRouter</strong></span> component does not have any
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Routing messages according to a criterion"><div class="titlepage"><div><div><h3 class="title"><a name="Raa16067"></a>Scenario: Routing messages according to a criterion</h3></div></div></div><p>In
+			this use case, we route XML messages that are sent from the sending endpoint according
+			to a defined criterion: those XML files in which the value of the
+				<span class="emphasis"><em>city</em></span> node is <span class="emphasis"><em>Paris</em></span> are sent to a folder
+			named <span class="emphasis"><em>Paris_only</em></span>, and other messages are sent to a folder named
+				<span class="italic">others</span>.</p><p>Of
+			the four XML files used in this scenario, <span class="italic">Message_1.xml</span> and <span class="italic">Message_4.xml</span>
+			contain the city name of <span class="italic">Paris</span>. The following is an
+			example:</p><pre class="programlisting">&lt;person&gt;
+  &lt;firstName&gt;Pierre&lt;/firstName&gt;
+  &lt;lastName&gt;Dupont&lt;/lastName&gt;
+  &lt;city&gt;Paris&lt;/city&gt;
+&lt;/person&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10080"></a>Dropping and linking the components</h4></div></div></div><p>This scenario requires one <span class="bold"><strong>cMessageRouter</strong></span>
+				component to route the messages from the sender, one <span class="bold"><strong>cFile</strong></span> component as the message sender, one <span class="bold"><strong>cFile</strong></span> component to receiver the messages containing <span class="italic">Paris</span>, one <span class="bold"><strong>cFile</strong></span>
+				component to receiver all the other messages from the sender, and two <span class="bold"><strong>cProcessor</strong></span> components to monitor the messages routed to
+				the two receivers.</p><div class="mediaobject"><img src="../images/cmessagerouter_scenario1.png"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="bold"><strong>Messaging</strong></span> folder of the
+							<span class="bold"><strong>Palette</strong></span>, drop three <span class="bold"><strong>cFile</strong></span> components onto the design workspace, and
+						label them <span class="italic">Sender</span>, <span class="italic">Paris_only</span>, and <span class="italic">Other_cities</span> respectively to better identify their
+						roles.</p></li><li class="step" title="Step 2"><p>From the <span class="bold"><strong>Routing</strong></span> folder, drop a <span class="bold"><strong>cMessageRouter</strong></span> component onto the design
+						workspace, and label it <span class="italic">Message_router</span>.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Processor</strong></span> folder, drop two
+							<span class="bold"><strong>cProcessor</strong></span> components onto the design
+						workspace, and label them <span class="italic">Monitor_Paris</span>
+						and <span class="italic">Monitor_others</span> respectively.</p></li><li class="step" title="Step 4"><p>Right-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Sender</span>, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the
+						contextual menu and click the <span class="bold"><strong>cMessageRouter</strong></span> component. </p></li><li class="step" title="Step 5"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
+						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>When</strong></span> from the contextual menu and click the <span class="bold"><strong>cFile</strong></span> component labeled <span class="italic">Paris_only</span>. This endpoint will retrieve the messages that
+						meet the defined criterion.</p></li><li class="step" title="Step 6"><p>Right-click the <span class="bold"><strong>cMessageRouter</strong></span> component,
+						select <span class="bold"><strong>Trigger</strong></span> &gt; <span class="bold"><strong>Otherwise</strong></span> from the contextual menu and click the <span class="bold"><strong>cFile</strong></span> component labeled <span class="italic">Other_cities</span>. This endpoint will collect all the messages
+						that do not meeting the filter criterion.</p></li><li class="step" title="Step 7"><p>Right-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Paris_only</span>, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from
+						the contextual menu and click the <span class="bold"><strong>cProcessor</strong></span> component labeled <span class="italic">Monitor_Paris</span>. Repeat this step to connect the <span class="bold"><strong>cFile</strong></span> component labeled <span class="italic">Other_cities</span> to the <span class="bold"><strong>cProcessor</strong></span> component labeled <span class="italic">Monitor_others</span>.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10242"></a>Configuring the components and connections</h4></div></div></div><p>The <span class="bold"><strong>cMessageRouter</strong></span> component does not have any
 				property as it filters and routes the messages from one endpoint to others based on
 				the conditions set in its <span class="bold"><strong>When</strong></span>
-				connection(s).</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Double-click the first endpoint component to display the <span class="bold"><strong>Component</strong></span> view, and type in the URI of the
-						messages you want to route in the <span class="bold"><strong>URI</strong></span>
-						field. </p><p>Here, we are handling files using the <span class="emphasis"><em>noop</em></span> file specific option.
-						This option tells Camel to leave files as they are, so that the files will
-						not be moved from its original folder.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario2.png"></div></li><li class="listitem"><p>In the design workspace, click the <span class="bold"><strong>When</strong></span>
-						connection you created previously and click the <span class="bold"><strong>Component</strong></span> view to define a filter against which messages
-						will be outputted.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Type</strong></span> list, select <span class="bold"><strong>xpath</strong></span> because the format of the messages used is
-						XML.</p></li><li class="listitem"><p>In the <span class="bold"><strong>Condition</strong></span> field, type in
-							<code class="code">"/people/person/city='Paris'"</code> to retrieve only messages
-						where the value of the <span class="emphasis"><em>city</em></span> node is
-							<span class="emphasis"><em>Paris</em></span>.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario6.png"></div></li><li class="listitem"><p>Double-click the endpoint component linked with this <span class="bold"><strong>When</strong></span> connection to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI of the folder where you
-						want to route your message in the <span class="bold"><strong>URI</strong></span>
-						field. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> followed
-						by the path to folder to which we want to send files matching the defined
-						condition, <span class="emphasis"><em>paris</em></span> in this use case.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario3.png"></div></li><li class="listitem"><p>Double-click the endpoint component linked to the <span class="bold"><strong>Otherwise</strong></span> connection to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI in the <span class="bold"><strong>URI</strong></span> field for routing messages not matching the
-						condition defined in the <span class="bold"><strong>When</strong></span> connection
-						property setting. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:/"</em></span> followed by the path to
-						the folder to which we want to send the files, <span class="emphasis"><em>other</em></span> in
-						this use case.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario4.png"></div></li><li class="listitem"><p>Double-click the last endpoint component to display its <span class="bold"><strong>Component</strong></span> view, and type in the URI in the
-							<span class="bold"><strong>URI</strong></span> field for routing your messages. </p><p>As we are handling hiles, type in <span class="emphasis"><em>"file:/"</em></span> followed by the path to
-						which all the files from the original endpoint will be sent.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario5.png"></div></li><li class="listitem"><p> Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e48908"></a>Viewing code and executing the Route</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
-						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/cMessageRouter_scenario7.png"></div><p>In the code, the messages are routed according to conditions initialized
-						with the <code class="code">.choice()</code> piece of code, the filter you define is
-						initialized with the <code class="code">.when()</code> piece of code, the non filtered
-						messages are routed through the <code class="code">.otherwise()</code> piece of code and
-						the original route is followed with the <code class="code">.end()</code> piece of code.
-					</p></li><li class="listitem"><p>Click the <span class="bold"><strong>Run</strong></span> button in the <span class="bold"><strong>Run</strong></span> view or press <span class="bold"><strong>F6</strong></span> to execute your Route. </p></li></ol></div><p>RESULT: The files containing &#8220;Paris&#8221; are redirected to a folder name
-					<span class="emphasis"><em>paris</em></span>, the other messages are redirected in a folder called
-					<span class="emphasis"><em>other</em></span>, and all the messages to the
-					<span class="emphasis"><em>output</em></span> folder. </p></div></div></div></body></html>
+				connection(s).</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Sender</span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/cmessagerouter_scenario2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path to message source.</p><p>From the <span class="bold"><strong>Encoding</strong></span> list, select the encoding type of your message files. Leave the other parameters as they are.</p></li><li class="step" title="Step 3"><p>In the design workspace, click the <span class="bold"><strong>When</strong></span>
+						connection you created and click the <span class="bold"><strong>Component</strong></span> view to define a filter against which messages
+						will be routed.</p><div class="mediaobject"><img src="../images/cmessagerouter_scenario6.png"></div></li><li class="step" title="Step 4"><p>In the <span class="bold"><strong>Type</strong></span> list, select <span class="bold"><strong>xpath</strong></span> because the format of the messages used is XML.</p><p>In the <span class="bold"><strong>Condition</strong></span> field, type in <code class="code">"/person[city='Paris']"</code> to retrieve only those messages in which the value of the <span class="emphasis"><em>city</em></span> node is <span class="emphasis"><em>Paris</em></span>.</p></li><li class="step" title="Step 5"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Paris_only</span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> view, and specify the path for the messages
+						meeting the filter criterion in the <span class="bold"><strong>Path</strong></span>
+						field. </p><div class="mediaobject"><img src="../images/cmessagerouter_scenario3.png"></div><p>Repeat this step to define the path for all the messages from the sender
+						in the <span class="bold"><strong>cFile</strong></span> component labeled <span class="italic">Other_cities</span>.</p></li><li class="step" title="Step 6"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component
+						labeled <span class="italic">Monitor_Paris</span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> view, and customize the code in the
+							<span class="bold"><strong>Code</strong></span> area to display the file names of
+						the messages that meet the filter criterion on the console:</p><pre class="programlisting">System.out.println("Message sent to folder Paris_only: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><p>Repeat this step to customize the code in the <span class="bold"><strong>cProcessor</strong></span> component labeled <span class="italic">Monitor_others</span> to display the file names of all the messages
+						from the sender.</p></li><li class="step" title="Step 7"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10381"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/cmessagerouter_scenario7.png"></div><p>As shown in the code, the messages are routed according to conditions
+						initialized with the <code class="code">.choice()</code> piece of code, the filter you
+						defined is initialized with the <code class="code">.when()</code> piece of code, and the
+						non filtered messages are routed through the <code class="code">.otherwise()</code> piece
+						of code. </p></li><li class="step" title="Step 2"><p>Click the <span class="bold"><strong>Run</strong></span> button in the <span class="bold"><strong>Run</strong></span> view or press <span class="bold"><strong>F6</strong></span> to execute your Route. </p><p>RESULT: The files containing &#8220;<span class="italic">Paris</span>&#8221; are sent to a
+						folder named <span class="emphasis"><em>Paris_only</em></span>, and the other messages are
+						sent in a folder called <span class="emphasis"><em>others</em></span>. </p><div class="mediaobject"><img src="../images/cmessagerouter_scenario8.png"></div></li></ol></div></div></div></div></body></html>
