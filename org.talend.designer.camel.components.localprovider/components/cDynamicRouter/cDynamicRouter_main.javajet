@@ -15,6 +15,7 @@ imports="
 	String beanClass = ElementParameterParser.getValue(node, "__BEAN__");
 	String specifyMethod = ElementParameterParser.getValue(node, "__SPECIFY_METHOD__");
 	String method = ElementParameterParser.getValue(node, "__METHOD__");
+	String ignore = ElementParameterParser.getValue(node, "__IGNORE_INVALID_ENDPOINTS__");
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
@@ -25,6 +26,11 @@ imports="
 		} else {
 %>
 			.dynamicRouter(bean(<%=beanClass%>, <%=method%>))
+<%
+		}
+		if("true".equals(ignore)) {
+%>
+			.ignoreInvalidEndpoints()
 <%
 		}
 	}
