@@ -26,10 +26,7 @@ import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import javax.management.ReflectionException;
-
-import routines.system.GlobalResource;
 
 public class CamelStat implements Runnable {
 
@@ -396,7 +393,10 @@ public class CamelStat implements Runnable {
         }
         bean.setState(mode);
         bean.setEndTime(System.currentTimeMillis());
-        bean.setNbLine(Integer.parseInt(mBeanServer.getAttribute(routeMBean, "ExchangesTotal").toString()));
+		if (routeMBean != null) {
+			bean.setNbLine(Integer.parseInt(mBeanServer.getAttribute(
+					routeMBean, "ExchangesTotal").toString()));
+		}
         processStats.put(key, bean);
 
         // if tFileList-->tFileInputDelimited-->tFileOuputDelimited, it should
