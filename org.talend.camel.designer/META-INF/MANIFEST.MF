@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.debug,
  org.eclipse.debug.ui,
  org.talend.librariesmanager,
- org.eclipse.gef
+ org.eclipse.gef,
+ org.talend.designer.codegen
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.talend.camel.designer.ui.editor,

@@ -13,6 +13,8 @@
 package org.talend.camel.designer.component;
 
 import org.eclipse.gef.commands.Command;
+import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
 
 /**
  * @author liXiaopeng
@@ -20,8 +22,48 @@ import org.eclipse.gef.commands.Command;
  */
 public class SetConnectionFactoryCommand extends Command {
 
+	private JSMExternalComponentMain main;
+
+	private INode selectedNode;
+
+	/**
+	 * @param main
+	 * @param selectedNode
+	 */
+	public SetConnectionFactoryCommand(JSMExternalComponentMain main,
+			INode selectedNode) {
+		this.main = main;
+		this.selectedNode = selectedNode;
+	}
+
 	@Override
 	public void execute() {
-		super.execute();
+		JMSExternalComponent jmsExternalComponent = main.getExternalComponent();
+		INode originalNode = jmsExternalComponent.getOriginalNode();
+		IElementParameter elementParameter = originalNode
+				.getElementParameter("CONNECTION_FACOTRY_LABEL");
+		if (selectedNode != null) {
+			if (elementParameter != null) {
+				elementParameter.setValue(getLabel(selectedNode));
+			}
+			elementParameter = originalNode
+					.getElementParameter("CONNECTION_FACOTRY");
+			if (elementParameter != null) {
+				elementParameter.setValue(selectedNode.getUniqueName().replace(
+						"_", ""));
+			}
+		}
+	}
+
+
+	public static String getLabel(INode element) {
+		IElementParameter param = element.getElementParameter("LABEL");
+		String label = "";
+		if (param != null && !"__UNIQUE_NAME__".equals(param.getValue())) {
+			label = (String) param.getValue();
+		} else {
+			label = ((INode) element).getUniqueName();
+		}
+		return label;
 	}
 }

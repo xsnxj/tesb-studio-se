@@ -213,36 +213,14 @@ public class JMSDialog extends Dialog {
 
 	}
 
-	/**
-	 * Refresh the Property View
-	 */
-	private void refreshView() {
-		SetConnectionFactoryCommand command = new SetConnectionFactoryCommand();
-		executeCommand(command);
-	}
 
 	/**
 	 * Reset ConnectionFactory field.
 	 */
 	private void resetParameter() {
-		JMSExternalComponent jmsExternalComponent = main.getExternalComponent();
-		IElementParameter elementParameter = jmsExternalComponent
-				.getElementParameter("CONNECTION_FACOTRY_LABEL");
-		INode selectedNode = getSelectedNode();
-		if (selectedNode != null) {
-			if (elementParameter != null) {
-				elementParameter.setValue(getLabel(selectedNode));
-			}
-			elementParameter = jmsExternalComponent
-					.getElementParameter("CONNECTION_FACOTRY");
-			if (elementParameter != null) {
-				elementParameter.setValue(selectedNode.getUniqueName().replace(
-						"_", ""));
-			}
-
-			refreshView();
-		}
-
+		SetConnectionFactoryCommand command = new SetConnectionFactoryCommand(
+				main, getSelectedNode());
+		executeCommand(command);
 	}
 
 	/**
