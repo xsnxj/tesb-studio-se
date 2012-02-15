@@ -180,4 +180,10 @@
             name="AggregateStrategyMigrationTask">
       </projecttask>
       </extension>
+        <extension
+         point="org.talend.core.external_component">
+      <ExternalComponent
+            class="org.talend.camel.designer.component.JMSExternalComponent">
+      </ExternalComponent>
+   </extension>
 </plugin>
