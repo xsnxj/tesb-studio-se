@@ -1,12 +1,15 @@
 package org.talend.repository.services.ui.action;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.RepositoryNode;
@@ -19,7 +22,12 @@ import org.talend.repository.services.model.services.ServicePort;
 public class ContextNodeRetriever {
 
 	public static String[] getAllContext(RepositoryNode node) {
-		Set<String> contexts = new HashSet<String>();
+		return getContextsMap(node).keySet().toArray(new String[0]);
+	}
+
+	public static Map<String, Map<String, String>> getContextsMap(
+			RepositoryNode node) {
+		Map <String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
 		try {
 			Item item = node.getObject().getProperty().getItem();
 			if (item instanceof ServiceItem) {
@@ -47,18 +55,27 @@ public class ContextNodeRetriever {
 						if (process == null) {
 							continue;
 						}
-						EList context = process.getContext();
-						if (context == null) {
+						EList contexts = process.getContext();
+						if (contexts == null) {
 							continue;
 						}
-						Iterator iterator = context.iterator();
+						Iterator iterator = contexts.iterator();
 						while (iterator.hasNext()) {
 							Object next = iterator.next();
-							if (!(next instanceof ContextType))
+							if (!(next instanceof ContextType)) {
 								continue;
+							}
 							ContextType ct = (ContextType) next;
 							String name = ct.getName();
-							contexts.add(name);
+							Map<String, String> contextParams = contextValues.get(name); 
+							if (contextParams == null)	{
+								contextParams = new HashMap<String, String>();
+							}
+							contextValues.put(name, contextParams);
+							EList<ContextParameterType> params = ct.getContextParameter();
+							for (ContextParameterType param : params) {
+								contextParams.put(param.getName(), param.getValue());
+							}
 						}
 					}
 				}
@@ -74,7 +91,12 @@ public class ContextNodeRetriever {
 								continue;
 							ContextType ct = (ContextType) next;
 							String name = ct.getName();
-							contexts.add(name);
+							HashMap<String, String> contextParams = new HashMap<String, String>();
+							contextValues.put(name, contextParams);
+							EList<ContextParameterType> params = ct.getContextParameter();
+							for (ContextParameterType param : params) {
+								contextParams.put(param.getName(), param.getValue());
+							}
 						}
 					}
 				}
@@ -83,6 +105,6 @@ public class ContextNodeRetriever {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return contexts.toArray(new String[0]);
+		return contextValues;
 	}
 }

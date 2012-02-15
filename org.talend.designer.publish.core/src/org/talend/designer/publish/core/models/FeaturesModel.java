@@ -3,7 +3,10 @@ package org.talend.designer.publish.core.models;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class FeaturesModel extends UploadableModel {
@@ -16,6 +19,7 @@ public class FeaturesModel extends UploadableModel {
 
 	private String configName = "";
 	private String[] contextList = new String[] { "Default" };
+	private Map<String, Map<String, String>> contexts = new HashMap<String, Map<String, String>>();
 
 	public FeaturesModel(String groupId, String namePrefix, String version) {
 		this(groupId, namePrefix, version, null, null, null);
@@ -119,6 +123,21 @@ public class FeaturesModel extends UploadableModel {
 			this.contextList = contextList;
 		}
 	}
+	
+	public void setContexts(Map<String, Map<String, String>> contexts) {
+		Set<String> contextNames = new HashSet<String>(Arrays.asList(this.contextList));
+		contextNames.addAll(contexts.keySet());
+		setContextList((String[]) contextNames.toArray(new String[0]));
+		for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
+			String contextName = context.getKey();
+			if (this.contexts.containsKey(contextName)) {
+				this.contexts.get(contextName).putAll(context.getValue());
+			} else {
+				this.contexts.put(contextName, context.getValue());
+			}
+		}
+		this.contexts = contexts;
+	}
 
 	private String toFeatureString(String featureVersion, String featureName) {
 		StringBuilder sb = new StringBuilder();
@@ -147,7 +166,7 @@ public class FeaturesModel extends UploadableModel {
 		StringBuilder sb = new StringBuilder();
 		// add headers
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<features>\n");
+		sb.append("<features name=\"").append(artifactId).append("\" xmlns=\"http://karaf.apache.org/xmlns/features/v1.0.0\">\n");
 		sb.append("\t<feature name=\"");
 		sb.append(artifactId);
 		sb.append("\" version=\"");
@@ -181,6 +200,22 @@ public class FeaturesModel extends UploadableModel {
 		sb.append("\"\n");
 		sb.append("\t\t</config>\n");
 
+		// add contexts config
+		for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
+			sb.append("\t\t<config name=\"");
+			sb.append(context.getKey());
+			sb.append("\">\n");
+			for (Map.Entry<String, String> property : context.getValue().entrySet()) {
+				sb.append("\t\t\t");
+				sb.append(property.getKey());
+				sb.append("=");
+				sb.append(property.getValue());
+				sb.append("\n");
+			}
+			sb.append("\t\t</config>\n");
+		}
+
+		
 		sb.append("\t</feature>\n");
 		sb.append("</features>");
 

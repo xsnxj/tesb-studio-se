@@ -190,7 +190,7 @@ public class ExportServiceAction extends WorkspaceJob {
 		// <feature version='[5,6)'>talend-job-controller</feature>
 		feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
 		feature.setConfigName(node.getObject().getLabel());
-		feature.setContextList(ContextNodeRetriever.getAllContext(node));
+		feature.setContexts(ContextNodeRetriever.getContextsMap(node));
 		return feature;
 	}
 
