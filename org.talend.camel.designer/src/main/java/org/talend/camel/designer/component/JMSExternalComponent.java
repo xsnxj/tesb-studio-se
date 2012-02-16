@@ -13,6 +13,8 @@
 package org.talend.camel.designer.component;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.talend.core.model.process.AbstractExternalNode;
@@ -37,7 +39,10 @@ public class JMSExternalComponent extends AbstractExternalNode {
 		this.getElementParameter(EParameterName.UPDATE_COMPONENTS.getName())
 				.setValue(Boolean.TRUE);
 		Dialog dialog = main.createDialog(display.getActiveShell());
-		return dialog.open();
+		if (dialog.open() == IDialogConstants.OK_ID) {
+			return SWT.OK;
+		}
+		return -1;
 	}
 
 	public int open(Composite parent) {

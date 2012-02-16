@@ -221,6 +221,7 @@ public class JMSDialog extends Dialog {
 		SetConnectionFactoryCommand command = new SetConnectionFactoryCommand(
 				main, getSelectedNode());
 		executeCommand(command);
+
 	}
 
 	/**
