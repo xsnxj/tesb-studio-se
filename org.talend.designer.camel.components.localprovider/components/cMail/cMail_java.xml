@@ -108,6 +108,8 @@
 				REQUIRED="true" />
 			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
+			<IMPORT NAME="spring-context-support" MODULE="spring-context-support-3.0.6.RELEASE.jar"
+				REQUIRED="true" />
 			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
