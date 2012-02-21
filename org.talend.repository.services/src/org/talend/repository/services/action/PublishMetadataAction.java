@@ -365,7 +365,7 @@ public class PublishMetadataAction extends AContextualAction {
                 }
             }
 
-            node = populationUtil.getSchemaTree(xsdSchema, node, true);
+            node = populationUtil.getSchemaTree(xsdSchema, node);
             orderId = 1;
             loopElementFound = false;
             if (ConnectionHelper.getTables(connection).isEmpty()) {
