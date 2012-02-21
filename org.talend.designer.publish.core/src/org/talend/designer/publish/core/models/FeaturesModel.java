@@ -186,35 +186,36 @@ public class FeaturesModel extends UploadableModel {
 			sb.append("\n");
 		}
 
-		// add config
-		sb.append("\t\t<config name=\"");
-		sb.append(configName);
-		sb.append("\">\n");
-		sb.append("\t\t\ttalendcontext=\"");
-		for (int i = 0; i < contextList.length; i++) {
-			if (i != 0) {
-				sb.append(",");
-			}
-			sb.append(contextList[i]);
-		}
-		sb.append("\"\n");
-		sb.append("\t\t</config>\n");
-
-		// add contexts config
-		for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
+		if (null == contexts || contexts.isEmpty()) {
+			// add config
 			sb.append("\t\t<config name=\"");
-			sb.append(context.getKey());
+			sb.append(configName);
 			sb.append("\">\n");
-			for (Map.Entry<String, String> property : context.getValue().entrySet()) {
-				sb.append("\t\t\t");
-				sb.append(property.getKey());
-				sb.append("=");
-				sb.append(property.getValue());
-				sb.append("\n");
+			sb.append("\t\t\ttalendcontext=\"");
+			for (int i = 0; i < contextList.length; i++) {
+				if (i != 0) {
+					sb.append(",");
+				}
+				sb.append(contextList[i]);
 			}
+			sb.append("\"\n");
 			sb.append("\t\t</config>\n");
+		} else {
+			// add contexts config
+			for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
+				sb.append("\t\t<config name=\"");
+				sb.append(context.getKey());
+				sb.append("\">\n");
+				for (Map.Entry<String, String> property : context.getValue().entrySet()) {
+					sb.append("\t\t\t");
+					sb.append(property.getKey());
+					sb.append("=");
+					sb.append(property.getValue());
+					sb.append("\n");
+				}
+				sb.append("\t\t</config>\n");
+			}
 		}
-
 		
 		sb.append("\t</feature>\n");
 		sb.append("</features>");
