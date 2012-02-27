@@ -31,7 +31,8 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 /**
  * Page of the Job Scripts Export Wizard. <br/>
  * 
- * @referto WizardArchiveFileResourceExportPage1 $Id: JobScriptsExportWizardPage.java 1 2006-12-13 下午03:09:07 bqian
+ * @referto WizardArchiveFileResourceExportPage1 $Id:
+ *          JobScriptsExportWizardPage.java 1 2006-12-13 03:09:07 bqian
  * 
  */
 public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWizardPage {
@@ -115,4 +116,8 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
         return ".jar"; //$NON-NLS-1$
     }
 
+	@Override
+	protected String getProcessType() {
+		return "Route";
+	}
 }

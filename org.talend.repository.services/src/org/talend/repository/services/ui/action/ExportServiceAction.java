@@ -129,7 +129,7 @@ public class ExportServiceAction extends WorkspaceJob {
 			JobExportAction job = new JobExportAction(
 					Arrays.asList(new RepositoryNode[] { node }), node
 							.getObject().getVersion(), getBundleVersion(),
-					manager, directoryName);
+					manager, directoryName, "Service");
 			try {
 				progressService.run(false, true, job);
 			} catch (InvocationTargetException e) {
