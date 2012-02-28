@@ -192,7 +192,8 @@ public class OpenWSDLPage extends WizardPage {
 
     @SuppressWarnings("unchecked")
     public boolean finish() {
-
+      //changed by hqzhang for TDI-19527, label=displayName
+        item.getProperty().setLabel(item.getProperty().getDisplayName());
         String label = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
         String wsdlFileName = label + "_" + version + ".wsdl"; //$NON-NLS-1$ //$NON-NLS-2$
