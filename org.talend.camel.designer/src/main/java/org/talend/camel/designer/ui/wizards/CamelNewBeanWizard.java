@@ -116,6 +116,9 @@ public class CamelNewBeanWizard extends Wizard {
         IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();
         try {
             property.setId(repositoryFactory.getNextId());
+
+			// http://jira.talendforge.org/browse/TESB-5000 LiXiaopeng
+			property.setLabel(property.getDisplayName());
             // repositoryFactory.create(routineItem, mainPage.getDestinationPath());
             repositoryFactory.create(beanItem, mainPage.getDestinationPath());
         } catch (PersistenceException e) {

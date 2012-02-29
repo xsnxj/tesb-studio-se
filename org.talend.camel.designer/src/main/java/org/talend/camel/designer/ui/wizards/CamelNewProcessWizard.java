@@ -107,6 +107,9 @@ public class CamelNewProcessWizard extends Wizard {
 
             property.setId(repositoryFactory.getNextId());
 
+			// http://jira.talendforge.org/browse/TESB-5000 LiXiaopeng
+			property.setLabel(property.getDisplayName());
+
             ProcessType process = TalendFileFactory.eINSTANCE.createProcessType();
             ParametersType parameterType = TalendFileFactory.eINSTANCE.createParametersType();
             // add depended routines.
