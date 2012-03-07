@@ -22,8 +22,8 @@ imports="
    		cid = node.getUniqueName();
    	}
 
-	String useJDSL = ElementParameterParser.getValue(node, "__USE_JDSL__");
-	if("true".equals(useJDSL)){
+	String useLogEIP = ElementParameterParser.getValue(node, "__USE_LOGEIP__");
+	if("true".equals(useLogEIP)){
 		String level = ElementParameterParser.getValue(node, "__LEVEL_TYPE__");
 		String message = ElementParameterParser.getValue(node, "__MESSAGE__");
 %>
