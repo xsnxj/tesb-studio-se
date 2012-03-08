@@ -90,17 +90,17 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.8.2.jar"
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.9.2-SNAPSHOT.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.8.2.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.9.2-SNAPSHOT.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.8.2.jar"
+			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.9.2-SNAPSHOT.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.6.RELEASE.jar"
 				REQUIRED="true" />
