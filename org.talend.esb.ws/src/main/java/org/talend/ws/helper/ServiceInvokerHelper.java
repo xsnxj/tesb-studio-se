@@ -37,7 +37,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 //import org.apache.cxf.endpoint.Client;
 //import org.apache.cxf.endpoint.dynamic.DynamicClientFactory;
-import org.apache.cxf.jaxb.JAXBUtils;
+import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.apache.cxf.jaxws.DispatchImpl;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
