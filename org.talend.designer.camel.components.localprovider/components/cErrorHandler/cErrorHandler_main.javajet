@@ -79,7 +79,7 @@
 		String useLogLevel = ElementParameterParser.getValue(node, "__USE_LOG_LEVEL__");
 		if("true".equals(useLogLevel)){
 			String logLevel = ElementParameterParser.getValue(node, "__LOG_LEVEL__");
-			sb.append("level(");
+			sb.append(".level(");
 			sb.append("org.apache.camel.LoggingLevel.");
 			sb.append(logLevel);
 			sb.append(")");
