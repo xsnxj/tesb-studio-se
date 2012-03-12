@@ -5,6 +5,7 @@ imports="
     org.talend.core.model.process.IConnection
     org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.components.IComponent
     java.util.List
     java.util.Map
 " 
@@ -23,9 +24,20 @@ imports="
 	String uriRef = "uriMap.get(\"" + cid + "\")";
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
+		IConnection iConnection = conns.get(0);
+		INode source = iConnection.getSource();
+		if ("cErrorHandler".equals(source
+				.getComponent().getName())
+				&& source.getIncomingConnections()
+						.size() < 1){
 %>
-		.to(<%=uriRef%>)
+			.from(<%=uriRef%>)
 <%
+		}else{
+%>
+			.to(<%=uriRef%>)
+<%
+		}
 	} else {
 %>
 		from(<%=uriRef%>)
