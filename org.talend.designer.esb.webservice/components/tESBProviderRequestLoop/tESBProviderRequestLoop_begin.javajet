@@ -18,15 +18,15 @@ if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 1) { %>
 	if (true) {
 		throw new RuntimeException("cannot instantiate Web Service: job contains more than one tESBProviderRequest component");
 	}
-<% } 
-    if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 0) {
-    %>
-        if (true) {
-            throw new RuntimeException("cannot instantiate service: job contains both tESBProviderRequest and tRESTRequest components");
-        }
-    <%
-    }
-
+<%
+}
+if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 0) {
+%>
+	if (true) {
+		throw new RuntimeException("cannot instantiate service: job contains both tESBProviderRequest and tRESTRequest components");
+	}
+<%
+}
 %>
 
 //*** external processor(s) initialization

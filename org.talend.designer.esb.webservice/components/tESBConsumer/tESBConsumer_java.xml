@@ -23,9 +23,9 @@
 	</DOCUMENTATION>
 
 	<CONNECTORS>
-		<CONNECTOR CTYPE="FLOW" MIN_INPUT="1" MAX_INPUT="1" MAX_OUTPUT="0"/>
-		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1"/>
-		<CONNECTOR NAME="FAULT" CTYPE="FLOW" LINE_STYLE="2" COLOR="cc0000" MAX_OUTPUT="1"/>
+		<CONNECTOR CTYPE="FLOW" MIN_INPUT="1" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1" />
+		<CONNECTOR NAME="FAULT" CTYPE="FLOW" LINE_STYLE="2" COLOR="cc0000" MAX_OUTPUT="1" />
 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
 		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" />
 		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="0" />
@@ -39,7 +39,7 @@
 				REPOSITORY_VALUE="WEBSERVICE" />
 
 		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true"
-   				NUM_ROW="1"/>
+   				NUM_ROW="1" />
 
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
 
@@ -60,22 +60,22 @@
 
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
 			<TABLE READONLY="true">
-				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true"/>
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
 		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
 			<TABLE READONLY="true">
-				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true"/>
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
 		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30" CONTEXT="FAULT">
 			<TABLE READONLY="true">
-				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024" READONLY="true"/>
-				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true"/>
-				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024" READONLY="true"/>
-				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024" READONLY="true"/>
-				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024" READONLY="true"/>
-				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true"/>
+				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
 
@@ -156,8 +156,8 @@
 		</PARAMETER>
 		<!--<PARAMETER NAME="SOAP_ENCODING" FIELD="CLOSED_LIST" NUM_ROW="62" >
 			<ITEMS DEFAULT="RPC_ENCODED">
-			<ITEM NAME="RPC_ENCODED" VALUE="RPC_ENCODED"/>
-			<ITEM NAME="DOCUMENT_LITERAL" VALUE="DOCUMENT_LITERAL"/>
+			<ITEM NAME="RPC_ENCODED" VALUE="RPC_ENCODED" />
+			<ITEM NAME="DOCUMENT_LITERAL" VALUE="DOCUMENT_LITERAL" />
 			<ITEM NAME="DOCUMENT_LITERAL_WRAPPED" VALUE="DOCUMENT_LITERAL_WRAPPED" />
 		</ITEMS>
 		</PARAMETER>-->
@@ -202,21 +202,21 @@
 		<PARAMETER NAME="INPUT_PARAMS" FIELD="TABLE" NUM_ROW="70" NB_LINES="6"
 				SHOW="false" REPOSITORY_VALUE="INPUT_PARAMS">
 			<ITEMS>
-				<ITEM NAME="EXPRESSION"/>
-				<ITEM NAME="ELEMENT"/>
-				<ITEM NAME="SOURCE"/>
-				<ITEM NAME="PARAMETERINFO"/>
-				<ITEM NAME="PARAPARENT"/>
+				<ITEM NAME="EXPRESSION" />
+				<ITEM NAME="ELEMENT" />
+				<ITEM NAME="SOURCE" />
+				<ITEM NAME="PARAMETERINFO" />
+				<ITEM NAME="PARAPARENT" />
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="OUTPUT_PARAMS" FIELD="TABLE" NUM_ROW="80" NB_LINES="6" SHOW="false">
 			<ITEMS>
-				<ITEM NAME="EXPRESSION"/>
-				<ITEM NAME="COLUMN"/>
-				<ITEM NAME="SOURCE"/>
-				<ITEM NAME="ELEMENT"/>
-				<ITEM NAME="PARAMETERINFO"/>
-				<ITEM NAME="PARAPARENT"/>
+				<ITEM NAME="EXPRESSION" />
+				<ITEM NAME="COLUMN" />
+				<ITEM NAME="SOURCE" />
+				<ITEM NAME="ELEMENT" />
+				<ITEM NAME="PARAMETERINFO" />
+				<ITEM NAME="PARAPARENT" />
 			</ITEMS>
 		</PARAMETER>
 	</PARAMETERS>
@@ -248,145 +248,148 @@
 			<IMPORT NAME="talend-esb-ws"
 					MODULE="org.talend.esb.ws.jar"
 					REQUIRED="true" />
+
 			<IMPORT NAME="jcifs"
 					MODULE="jcifs-1.2.19.jar"
-					REQUIRED="true"/>
-
-			<IMPORT NAME="commons-beanutils"
-					MODULE="commons-beanutils-1.7.0.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="commons-codec"
-					MODULE="commons-codec-1.2.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="commons-collections"
-					MODULE="commons-collections-3.2.1.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="commons-httpclient"
-					MODULE="commons-httpclient-3.1.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="commons-lang"
-					MODULE="commons-lang-2.6.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 
 			<IMPORT NAME="dom4j"
 					MODULE="dom4j-1.6.1.jar"
 					BundleID="org.apache.servicemix.bundles.dom4j"
-					REQUIRED="true"/>
+					REQUIRED="true" />
+
+			<IMPORT NAME="commons-beanutils"
+					MODULE="commons-beanutils-1.7.0.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="commons-codec"
+					MODULE="commons-codec-1.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="commons-httpclient"
+					MODULE="commons-httpclient-3.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="commons-collections"
+					MODULE="commons-collections-3.2.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="commons-lang"
+					MODULE="commons-lang-2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.5.0.jar"
+					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
 					BundleID="org.apache.cxf.bundle"
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="neethi"
 					MODULE="neethi-3.0.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
 					MODULE="wsdl4j-1.6.2.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
 					MODULE="xmlschema-core-2.0.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 
 			<IMPORT NAME="jaxb-api"
 					MODULE="jaxb-api-2.2.3.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
 					MODULE="jaxb-impl-2.2.4-1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="jaxb-xjc"
 					MODULE="jaxb-xjc-2.2.4-1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 
 			<IMPORT NAME="geronimo-activation_1.1_spec"
 					MODULE="geronimo-activation_1.1_spec-1.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="geronimo-annotation_1.0_spec"
 					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="geronimo-javamail_1.4_spec"
 					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
-					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="geronimo-ws-metadata_2.0_spec"
-					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
-					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
-
-			<IMPORT NAME="stax2-api"
-					MODULE="stax2-api-3.1.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-stax-api_1.0_spec"
+					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
-			<IMPORT NAME="woodstox-core-asl"
-					MODULE="woodstox-core-asl-4.1.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-ws-metadata_2.0_spec"
+					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 
 			<IMPORT NAME="saaj-api"
 					MODULE="saaj-api-1.3.4.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="saaj-impl"
 					MODULE="saaj-impl-1.3.12.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
+
+			<IMPORT NAME="stax2-api"
+					MODULE="stax2-api-3.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="woodstox-core-asl-4.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
 
 			<IMPORT NAME="xmlsec"
-					MODULE="xmlsec-1.4.5.jar"
+					MODULE="xmlsec-1.5.1.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.3.jar"
+					MODULE="wss4j-1.6.5.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="spring-asm"
 					MODULE="spring-asm-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="spring-beans"
 					MODULE="spring-beans-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="spring-context"
 					MODULE="spring-context-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="spring-core"
 					MODULE="spring-core-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.0.6.RELEASE.jar"
 					BundleID=""
-					REQUIRED="true"/>
+					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 

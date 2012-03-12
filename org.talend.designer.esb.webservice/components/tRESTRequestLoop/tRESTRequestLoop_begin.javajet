@@ -17,18 +17,19 @@
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
 
-	if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) {
-	%>
-		if (true) {
-			throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
-		}
-	<%
+if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) {
+%>
+	if (true) {
+		throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
 	}
-	if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 0) { %>
-        if (true) {
-            throw new RuntimeException("cannot instantiate service: job contains both tESBProviderRequest and tRESTRequest components");
-        }
-<%  }
+<%
+}
+if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 0) { %>
+	if (true) {
+		throw new RuntimeException("cannot instantiate service: job contains both tESBProviderRequest and tRESTRequest components");
+	}
+<%
+}
 
 	List<? extends IConnection> conns = node.getProcess().getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 	boolean hasOutputConnection = false;
