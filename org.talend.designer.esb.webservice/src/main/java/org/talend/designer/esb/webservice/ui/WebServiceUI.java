@@ -35,8 +35,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -85,7 +83,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.prefs.ITalendCorePrefConstants;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
@@ -98,9 +95,6 @@ import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
-import org.talend.repository.model.ERepositoryStatus;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.action.PublishMetadataAction;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
@@ -113,9 +107,13 @@ import org.talend.repository.ui.utils.ConnectionContextHelper;
 public class WebServiceUI extends AbstractWebService {
 
     private static final String METHOD = "METHOD";
+
     private static final String TRUE = "true";
+
     private static final String NEED_SSL_TO_TRUSTSERVER = "NEED_SSL_TO_TRUSTSERVER";
+
     private static final String PORT_NAME = "PORT_NAME";
+
     private static final String ENDPOINT = "ENDPOINT";
 
     private static final String ERROR_GETTING_WSDL = "Error getting service description";
@@ -147,7 +145,7 @@ public class WebServiceUI extends AbstractWebService {
 
     private Button refreshbut;
 
-	private Button servicebut;
+    private Button servicebut;
 
     private Table listTable;
 
@@ -176,13 +174,14 @@ public class WebServiceUI extends AbstractWebService {
     private Set<String> portNameList = new HashSet<String>();
 
     private Button wizardOkButton;
-    
+
     private String parseUrl = "";
 
     private Button populateCheckbox;
-    
+
     private boolean gotNewData = false;
-	private Definition def;
+
+    private Definition def;
 
     public WebServiceUI(Composite uiParent, WebServiceComponentMain webServiceMain) {
         super();
@@ -216,7 +215,7 @@ public class WebServiceUI extends AbstractWebService {
             allPortNames.add(currentURL);
 
             Function fun = new Function(obj.toString());
-            fun.setPortNames(Arrays.asList(new String[]{currentURL}));
+            fun.setPortNames(Arrays.asList(new String[] { currentURL }));
             functionList.clear();
             functionList.add(fun);
             allFunctions.add(fun);
@@ -257,6 +256,7 @@ public class WebServiceUI extends AbstractWebService {
         String pluginId = WebServiceComponentPlugin.PLUGIN_ID;
         final IStatus status = new MultiStatus(pluginId, 0, getStatus(e, pluginId), msg, null);
         Display.getDefault().asyncExec(new Runnable() {
+
             public void run() {
                 ErrorDialog.openError(uiParent.getShell(), Messages.getString("Error"), null, status);
             }
@@ -337,12 +337,14 @@ public class WebServiceUI extends AbstractWebService {
     }
 
     @SuppressWarnings("rawtypes")
-    private class DataTableEditorView<T> extends AbstractDataTableEditorView<T>{
-    
+    private class DataTableEditorView<T> extends AbstractDataTableEditorView<T> {
+
         private IBeanPropertyAccessors accessors;
+
         private TableViewerCreatorColumn rowColumn;
 
-        public DataTableEditorView(Composite parent, int style, ExtendedTableModel<T> model, boolean b, boolean c, boolean d, IBeanPropertyAccessors accessors) {
+        public DataTableEditorView(Composite parent, int style, ExtendedTableModel<T> model, boolean b, boolean c, boolean d,
+                IBeanPropertyAccessors accessors) {
             super(parent, style, model, false, true, false, false);
             this.accessors = accessors;
             initGraphicComponents();
@@ -354,7 +356,7 @@ public class WebServiceUI extends AbstractWebService {
             layout.marginHeight = 0;
 
         }
-        
+
         protected void setTableViewerCreatorOptions(TableViewerCreator<T> newTableViewerCreator) {
             super.setTableViewerCreatorOptions(newTableViewerCreator);
             newTableViewerCreator.setHeaderVisible(false);
@@ -372,8 +374,7 @@ public class WebServiceUI extends AbstractWebService {
             rowColumn.setCellEditor(new TextCellEditor(tableViewerCreator.getTable()));
         }
     };
-    
-    
+
     private Composite createWSDLStatus() {
         wsdlComposite = new Composite(tabFolder, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -388,7 +389,7 @@ public class WebServiceUI extends AbstractWebService {
         layoutData.verticalIndent = 2;
         layoutData.verticalSpan = 1;
         wsdlUrlcomposite.setLayoutData(layoutData);
-		layout = new GridLayout(5, false);
+        layout = new GridLayout(5, false);
         wsdlUrlcomposite.setLayout(layout);
 
         wsdlField = new LabelledFileField(wsdlUrlcomposite, ExternalWebServiceUIProperties.FILE_LABEL,
@@ -410,6 +411,7 @@ public class WebServiceUI extends AbstractWebService {
 
         };
         wsdlField.addModifyListener(new ModifyListener() {
+
             public void modifyText(ModifyEvent e) {
                 URLValue = wsdlField.getText();
                 if (connection != null)
@@ -423,9 +425,9 @@ public class WebServiceUI extends AbstractWebService {
             wsdlField.setText(wsdlUrl);
         }
 
-		// TESB-3590，gliu
-		servicebut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
-		servicebut.setText(Messages.getString("WebServiceUI.Services"));
+        // TESB-3590，gliu
+        servicebut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
+        servicebut.setText(Messages.getString("WebServiceUI.Services"));
 
         refreshbut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
         refreshbut.setImage(ImageProvider.getImage(EImage.REFRESH_ICON));
@@ -445,19 +447,17 @@ public class WebServiceUI extends AbstractWebService {
         portNameLabel.setLayoutData(new GridData(SWT.NONE, SWT.TOP, false, false));
 
         ExtendedTableModel<String> portModel = new ExtendedTableModel<String>("PORTNAMELIST", allPortNames); //$NON-NLS-1$
-        portListTableView = new DataTableEditorView<String>(
-                wsdlPortOperationComposite, 
-                SWT.NONE, portModel, false, true, false,
+        portListTableView = new DataTableEditorView<String>(wsdlPortOperationComposite, SWT.NONE, portModel, false, true, false,
                 new IBeanPropertyAccessors<String, String>() {
+
                     public String get(String bean) {
                         return bean;
                     }
 
                     public void set(String bean, String value) {
-                      //readonly
+                        // readonly
                     }
-                }
-        );
+                });
 
         // WSDL Operation
         operationLabel = new Label(wsdlPortOperationComposite, SWT.NONE);
@@ -465,26 +465,24 @@ public class WebServiceUI extends AbstractWebService {
         operationLabel.setLayoutData(new GridData(SWT.NONE, SWT.TOP, false, false));
 
         ExtendedTableModel<Function> funModel = new ExtendedTableModel<Function>("FUNCTIONLIST", functionList); //$NON-NLS-1$
-        listTableView = new DataTableEditorView<Function>(
-                wsdlPortOperationComposite, 
-                SWT.NONE, funModel, false, true, false,
+        listTableView = new DataTableEditorView<Function>(wsdlPortOperationComposite, SWT.NONE, funModel, false, true, false,
                 new IBeanPropertyAccessors<Function, String>() {
+
                     public String get(Function bean) {
                         return bean.getName();
                     }
 
                     public void set(Function bean, String value) {
-                        //readonly
+                        // readonly
                     }
-                }
-        ); 
-        
+                });
+
         addListenerForWSDLCom();
-        
+
         populateCheckbox = new Button(wsdlComposite, SWT.CHECK | SWT.CENTER);
         populateCheckbox.setLayoutData(new GridData());
         populateCheckbox.setText("Populate schema to repository on finish");
-        
+
         return wsdlComposite;
     }
 
@@ -502,8 +500,8 @@ public class WebServiceUI extends AbstractWebService {
         };
         job.setSystem(true);
         job.schedule();
-        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay()
-                .getActiveShell().getShell());
+        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell()
+                .getShell());
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
             public void run(final IProgressMonitor monitor) {
@@ -545,73 +543,63 @@ public class WebServiceUI extends AbstractWebService {
         }
     }
 
-
-    
     private void addListenerForWSDLCom() {
-        wsdlField.getTextControl().addKeyListener(new KeyListener(){
+        wsdlField.getTextControl().addKeyListener(new KeyListener() {
+
             public void keyPressed(KeyEvent event) {
                 switch (event.keyCode) {
                 case 13:
                 case SWT.KEYPAD_CR:
                     refresh();
                 }
-                
+
             }
 
             public void keyReleased(KeyEvent event) {
             }
         });
 
-		servicebut.addSelectionListener(new SelectionAdapter() {
+        servicebut.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(SelectionEvent e) {
-				// TODO
-				RepositoryReviewDialog dialog = new RepositoryReviewDialog(
-						Display.getCurrent().getActiveShell(),
-						ERepositoryObjectType.METADATA, "SERVICES:OPERATION", // see
-																				// it
-																				// in
-																				// RepositoryTypeProcessor.RepositoryTypeProcessor(String)
-						new ViewerFilter[] { new OnlyShowServicesFilter() }) {
-					@Override
-					protected boolean isSelectionValid(
-							SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection) event
-								.getSelection();
-						if (selection.size() == 1) {
-							return true;
-						}
-						return false;
-					}
-				};
-				int open = dialog.open();
-				if (open == Dialog.OK) {
-					RepositoryNode result = dialog.getResult();
-					Item item = result.getObject().getProperty().getItem();
-					if (GlobalServiceRegister.getDefault().isServiceRegistered(
-							IESBService.class)) {
-						IESBService service = (IESBService) GlobalServiceRegister
-								.getDefault().getService(IESBService.class);
-						String wsdlFilePath = service.getWsdlFilePath(item);
-						if (wsdlFilePath != null) {
-							wsdlField.getTextControl().setText(
-									TalendTextUtils.addQuotes(PathUtils
-											.getPortablePath(wsdlFilePath)));
-							getDataFromNet();
-							if (portListTable.getItemCount() > 1) {
-								portListTable.deselectAll();
-								setOk(false);
-							}
-							if (listTable.getItemCount() == 1) {
-								selectFirstFunction();
-							}
-						}
-					}
+            public void widgetSelected(SelectionEvent e) {
+                // TODO
+                RepositoryReviewDialog dialog = new RepositoryReviewDialog(Display.getCurrent().getActiveShell(),
+                        ERepositoryObjectType.METADATA, "SERVICES:OPERATION") {
 
-				}
-			}
+                    @Override
+                    protected boolean isSelectionValid(SelectionChangedEvent event) {
+                        IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                        if (selection.size() == 1) {
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+                int open = dialog.open();
+                if (open == Dialog.OK) {
+                    RepositoryNode result = dialog.getResult();
+                    Item item = result.getObject().getProperty().getItem();
+                    if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+                        IESBService service = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+                        String wsdlFilePath = service.getWsdlFilePath(item);
+                        if (wsdlFilePath != null) {
+                            wsdlField.getTextControl()
+                                    .setText(TalendTextUtils.addQuotes(PathUtils.getPortablePath(wsdlFilePath)));
+                            getDataFromNet();
+                            if (portListTable.getItemCount() > 1) {
+                                portListTable.deselectAll();
+                                setOk(false);
+                            }
+                            if (listTable.getItemCount() == 1) {
+                                selectFirstFunction();
+                            }
+                        }
+                    }
 
-		});
+                }
+            }
+
+        });
 
         refreshbut.addSelectionListener(new SelectionAdapter() {
 
@@ -661,18 +649,19 @@ public class WebServiceUI extends AbstractWebService {
 
     private void selectFirstFunction() {
         if (listTable.getItemCount() > 0) {
-            listTable.setSelection(new int[]{0});
+            listTable.setSelection(new int[] { 0 });
             currentFunction = (Function) listTable.getItem(0).getData();
             setOk(true);
         } else {
             setOk(false);
         }
     }
-    
+
     private void getDataFromNet() {
         allFunctions.clear();
         portNameList.clear();
         Display.getDefault().syncExec(new Runnable() {
+
             public void run() {
                 URLValue = wsdlField.getText();
             }
@@ -681,7 +670,7 @@ public class WebServiceUI extends AbstractWebService {
         if (URLValue == null) {
             URLValue = ""; //$NON-NLS-1$
         }
-        allFunctions = getFunctionsList(URLValue); 
+        allFunctions = getFunctionsList(URLValue);
         gotNewData = true;
         for (Function function : allFunctions) {
             if ((function != null) && (function.getPortNames() != null)) {
@@ -689,19 +678,20 @@ public class WebServiceUI extends AbstractWebService {
             }
         }
         Display.getDefault().syncExec(new Runnable() {
+
             public void run() {
                 ExtendedTableModel<String> portListModel = portListTableView.getExtendedTableModel();
                 portListModel.removeAll();
-                //NO addAll(Collection) for ExtendedTableModel??? grrr
+                // NO addAll(Collection) for ExtendedTableModel??? grrr
                 for (String portName : portNameList) {
                     portListModel.add(portName);
                 }
-                //clear functions
+                // clear functions
                 ExtendedTableModel<Function> listModel = listTableView.getExtendedTableModel();
                 listModel.removeAll();
-                if (portNameList.size() == 1) { //only one porttype
+                if (portNameList.size() == 1) { // only one porttype
                     listModel.addAll(allFunctions);
-                } 
+                }
             }
 
         });
@@ -713,8 +703,7 @@ public class WebServiceUI extends AbstractWebService {
         WSDLDiscoveryHelper ws = new WSDLDiscoveryHelper();
         WebServiceComponent webServiceComponent = webServiceManager.getWebServiceComponent();
         IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
-        boolean isUseSSL = (parameter != null) && TRUE
-                .equals(parameter.getValue().toString());
+        boolean isUseSSL = (parameter != null) && TRUE.equals(parameter.getValue().toString());
 
         if (isUseSSL) {
             useSSL();
@@ -869,7 +858,7 @@ public class WebServiceUI extends AbstractWebService {
 
                 }
             }
-            String[] src = new String[]{"payload"};
+            String[] src = new String[] { "payload" };
             for (String insource : src) {
                 WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
                 if (insource == null || "".equals(insource)) {
@@ -883,15 +872,15 @@ public class WebServiceUI extends AbstractWebService {
     }
 
     private void populateSchema() {
-    	if (currentFunction == null || !(populateCheckbox.getSelection())) {
-    		return;
-    	}  	
-    	
-    	PublishMetadataAction action = new PublishMetadataAction();
-    	action.process(def);
+        if (currentFunction == null || !(populateCheckbox.getSelection())) {
+            return;
+        }
+
+        PublishMetadataAction action = new PublishMetadataAction();
+        action.process(def);
     }
-    
-	private boolean updateConnection() {
+
+    private boolean updateConnection() {
         if (currentPortName != null) {
             connection.setPortName(currentPortName);
         } else if (currentPortName == null && !allPortNames.isEmpty()) {
@@ -943,7 +932,6 @@ public class WebServiceUI extends AbstractWebService {
         }
     }
 
-    
     /**
      * @param okButton the wizardOkButton to set
      */
@@ -951,33 +939,5 @@ public class WebServiceUI extends AbstractWebService {
         this.wizardOkButton = okButton;
         setOk(false);
     }
-    
-	class OnlyShowServicesFilter extends ViewerFilter {
 
-		private ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType
-				.valueOf(ERepositoryObjectType.class, "SERVICES"); // see
-																	// ESBRepositoryNodeType.SERVICES
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-			if (!(element instanceof RepositoryNode)) {
-				return false;
-			}
-			RepositoryNode node = (RepositoryNode) element;
-			if (node.getType() == ENodeType.SIMPLE_FOLDER) {
-				return true;
-			}
-			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-					|| node.getProperties(EProperties.CONTENT_TYPE) != SERVICES) {
-				return false;
-			}
-			if (node.getObject() != null
-					&& ProxyRepositoryFactory.getInstance().getStatus(
-							node.getObject()) == ERepositoryStatus.DELETED) {
-				return false;
-			}
-			return true;
-		}
-	}
 }

@@ -254,6 +254,13 @@ public class ExportCamelTreeViewer extends ExportTreeViewer {
         return false;
     }
 
+    @Override
+    protected ERepositoryObjectType getCheckingType() {
+        ERepositoryObjectType repositoryNodeType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
+                ERepositoryObjectType.class, CamelRepositoryNodeType.ROUTES);
+        return repositoryNodeType;
+    }
+
     // private void checkSelection() {
     // if (jobScriptExportWizardPage == null) {
     // return;
