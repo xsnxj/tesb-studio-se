@@ -101,10 +101,10 @@ public class Switch292CamelCXFLibraryVersionMigrationTask extends
 
 		String result = "";
 		if (evtValue.startsWith("camel-")) {
-			result = evtValue.replaceAll("2\\.8\\.2", "2.9.2-SNAPSHOT");
+			result = evtValue.replaceAll("2\\.8\\.\\d", "2.9.2-SNAPSHOT");
 		}
 		if (evtValue.startsWith("cxf-bundle")) {
-			result = evtValue.replaceAll("2\\.5\\.0", "2.6.0-SNAPSHOT");
+			result = evtValue.replaceAll("2\\.5\\.\\d", "2.6.0-SNAPSHOT");
 		}
 		return result;
 	}
