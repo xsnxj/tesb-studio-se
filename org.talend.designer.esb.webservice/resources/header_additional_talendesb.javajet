@@ -368,9 +368,18 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 //				throw new RuntimeException("operation not implemented by job");
 //			}
 
-			org.dom4j.io.DocumentResult docResult = new org.dom4j.io.DocumentResult();
-			factory.newTransformer().transform(request, docResult);
-			org.dom4j.Document requestDoc = docResult.getDocument();
+			// fix for unsupported xmlns="" declaration processing over dom4j implementation
+			//		// old version:
+			//		// org.dom4j.io.DocumentResult docResult = new org.dom4j.io.DocumentResult();
+			//		// factory.newTransformer().transform(request, docResult);
+			//		// org.dom4j.Document requestDoc = docResult.getDocument();
+			// new version:
+			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+			factory.newTransformer().transform(request, new javax.xml.transform.stream.StreamResult(os));
+			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader().read(
+					new java.io.ByteArrayInputStream(os.toByteArray()));
+			// end of fix
+
 			// System.out.println("request: " + requestDoc.asXML());
 
 			QueuedExchangeContextImpl<org.dom4j.Document> messageExchange =
@@ -389,7 +398,15 @@ public class ESBProvider_<%=tESBProviderRequestNodeCid%> implements
 					}
 					// System.out.println("response: " + responseDoc.asXML());
 
-					return new org.dom4j.io.DocumentSource(responseDoc);
+					// fix for unsupported xmlns="" declaration processing over dom4j implementation
+					//		// old version:
+					//		// return new org.dom4j.io.DocumentSource(responseDoc);
+					// new version:
+					java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+					new org.dom4j.io.XMLWriter(baos).write(responseDoc);
+					return new javax.xml.transform.stream.StreamSource(
+							new java.io.ByteArrayInputStream(baos.toByteArray()));
+					// end of fix
 				}
 <% } %>
 			} finally {
