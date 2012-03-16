@@ -35,8 +35,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -85,7 +83,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.prefs.ITalendCorePrefConstants;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
@@ -98,9 +95,6 @@ import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
-import org.talend.repository.model.ERepositoryStatus;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.action.PublishMetadataAction;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
@@ -568,11 +562,7 @@ public class WebServiceUI extends AbstractWebService {
 				// TODO
 				RepositoryReviewDialog dialog = new RepositoryReviewDialog(
 						Display.getCurrent().getActiveShell(),
-						ERepositoryObjectType.METADATA, "SERVICES:OPERATION", // see
-																				// it
-																				// in
-																				// RepositoryTypeProcessor.RepositoryTypeProcessor(String)
-						new ViewerFilter[] { new OnlyShowServicesFilter() }) {
+						ERepositoryObjectType.METADATA, "SERVICES:OPERATION") {
 					@Override
 					protected boolean isSelectionValid(
 							SelectionChangedEvent event) {
@@ -952,32 +942,4 @@ public class WebServiceUI extends AbstractWebService {
         setOk(false);
     }
     
-	class OnlyShowServicesFilter extends ViewerFilter {
-
-		private ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType
-				.valueOf(ERepositoryObjectType.class, "SERVICES"); // see
-																	// ESBRepositoryNodeType.SERVICES
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-			if (!(element instanceof RepositoryNode)) {
-				return false;
-			}
-			RepositoryNode node = (RepositoryNode) element;
-			if (node.getType() == ENodeType.SIMPLE_FOLDER) {
-				return true;
-			}
-			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-					|| node.getProperties(EProperties.CONTENT_TYPE) != SERVICES) {
-				return false;
-			}
-			if (node.getObject() != null
-					&& ProxyRepositoryFactory.getInstance().getStatus(
-							node.getObject()) == ERepositoryStatus.DELETED) {
-				return false;
-			}
-			return true;
-		}
-	}
 }
