@@ -999,37 +999,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	}
 
-	/**
-	* JAXRS Parameter Representation
-	*/
-	final class Parameter {
-		private String name;
-		private String javaType;
-		private String paramType;
-		private String defaultValue;
-
-		public Parameter(String name, String paramType, String javaType, String defaultValue) {
-			this.name = name;
-			this.javaType = javaType;
-			this.paramType = paramType;
-			this.defaultValue = defaultValue;
-		}
-
-		public String getName() {
-			return name;
-		}
-		public String getJavaType() {
-			return javaType;
-		}
-		public String getParamType() {
-			return paramType;
-		}
-		public String getDefaultValue() {
-			return defaultValue;
-		}
-	}
-
-
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String tRESTRequestNodeCid = tRESTRequestNode.getUniqueName();
 	tRESTRequestNodeCid = tRESTRequestNodeCid.replaceAll("_Loop", "");
@@ -1306,6 +1275,72 @@ public class RESTProvider_<%=tRESTRequestNodeCid%> {
 	}
 
 <%
+	// TalendString helper
+	final class TalendString {
+		private final String name;
+
+		public TalendString(String name) {
+			this.name = name;
+		}
+
+		// copy-paste from routines.TalendString
+		public String getAsciiRandomString(int length) {
+			java.util.Random random = new java.util.Random();
+			int cnt = 0;
+			StringBuffer buffer = new StringBuffer();
+			char ch;
+			int end = 'z' + 1;
+			int start = ' ';
+			while (cnt < length) {
+				ch = (char) (random.nextInt(end - start) + start);
+				if (Character.isLetterOrDigit(ch)) {
+					buffer.append(ch);
+					cnt++;
+				}
+			}
+			return name + "_" + buffer.toString();
+		}
+	}
+
+	/**
+	* JAXRS Parameter Representation
+	*/
+	final class Parameter {
+		private final String name;
+		private final String javaType;
+		private final String paramType;
+		private final String defaultValue;
+		private final String variableName;
+
+		public Parameter(String name, String paramType, String javaType, String defaultValue) {
+			this(name, paramType, javaType, defaultValue, false);
+		}
+
+		public Parameter(String name, String paramType, String javaType, String defaultValue, boolean generateVariableName) {
+			this.name = name;
+			this.javaType = javaType;
+			this.paramType = paramType;
+			this.defaultValue = defaultValue;
+			this.variableName = (generateVariableName) ? new TalendString(name).getAsciiRandomString(5) : name;
+		}
+
+		public String getName() {
+			return name;
+		}
+		public String getJavaType() {
+			return javaType;
+		}
+		public String getParamType() {
+			return paramType;
+		}
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+		public String getVariableName() {
+			return variableName;
+		}
+	}
+
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tRESTRequestNode, "__SCHEMAS__");
@@ -1334,62 +1369,116 @@ if (null != conns && !conns.isEmpty()) {
 		boolean formSupported = false;
 
 		// All the parameters specified in the Schema Editor need to be handled.
-		final Set<String> paramTypes = new HashSet<String>(Arrays.asList("PATH", "QUERY", "FORM", "HEADER"));
+		final Set<String> restParameterTypes = new HashSet<String>(Arrays.asList("PATH", "QUERY", "FORM", "HEADER"));
+
+		final Set<JavaType> supportedJavaTypes = new HashSet<JavaType>(Arrays.asList(
+				JavaTypesManager.STRING,
+
+				JavaTypesManager.BOOLEAN,
+
+				JavaTypesManager.BYTE,
+
+				// number
+				JavaTypesManager.SHORT,
+				JavaTypesManager.INTEGER,
+				JavaTypesManager.LONG,
+				JavaTypesManager.FLOAT,
+				JavaTypesManager.DOUBLE,
+				JavaTypesManager.BIGDECIMAL
+			));
 
 		Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 		if (null != uriPattern) {
-			URITemplateUtils uriTemplate = new URITemplateUtils(uriPattern);
-			List<String> variables = uriTemplate.getVariables();
-
 			IMetadataTable connMetadata = conn.getMetadataTable();
+
+			URITemplateUtils uriTemplate = new URITemplateUtils(uriPattern);
+			List<String> uriVariables = uriTemplate.getVariables();
+			// we are going to declare all uri template variables ("Path" parameter type by REST)
+			for (String uriVariable : uriVariables) {
+				Parameter parameter = null;
+				String schemaFieldType = "id_String";
+
+				for (IMetadataColumn column : connMetadata.getListColumns()) {
+					// schema parameter name
+					String schemaFieldName = column.getLabel();
+					if ("body".equals(schemaFieldName)) {
+						// "body" is reserved name for content parameter
+						continue;
+					}
+
+					if (uriVariable.equals(schemaFieldName)) {
+						String restParameterType = column.getComment();
+						schemaFieldType = column.getTalendType();
+
+						if (restParameterType == null || restParameterType.trim().length() == 0 || "Path".equalsIgnoreCase(restParameterType.trim())) {
+
+							JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
+							if (supportedJavaTypes.contains(javaType)) {
+								String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
+								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault());
+							} else {
+								// defined java type is unsupported - will define with default String type below (and this parameter will not be set to flow field)
+								schemaFieldType = "id_String";
+							}
+						} else {
+							// uri parameter hidden by parameter of another type in schema - will use generated variable name in rest service method
+							String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
+							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, true);
+						}
+						break;
+					}
+				}
+				if (null == parameter) {
+					// either no uri parameter definition in flow schema
+					// (both by uri variable name and schema parameter type = 'Path')
+					// or unsupported java type in schema parameter definition
+					// so we will declare default java type - String
+					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
+					parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null);
+				}
+				parameters.put("Path:" + uriVariable + ":" + schemaFieldType, parameter);
+			}
+
+			// now we are going to declare all other (non uri template) variables ("Query", "Form", "Header" parameter types by REST)
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
-				// parameter name
-				String paramName = column.getLabel();
-				if (paramName.equals("body")) {
-			            continue;
+				// schema parameter name
+				String schemaFieldName = column.getLabel();
+				if (schemaFieldName.equals("body")) {
+					// "body" is reserved name for content parameter
+					continue;
 				}
 
-				// parameter type - if empty - default to 'path'
-				String paramType = column.getComment();
-				if (paramType == null || paramType.length() == 0) {
-					paramType = "PATH";
-				} else {
-					paramType = paramType.toUpperCase().trim();
+				// rest parameter type - if empty - default to 'Path'
+				String restParameterType = column.getComment();
+				if (restParameterType == null || restParameterType.trim().length() == 0) {
+					restParameterType = "PATH";
 				}
+				restParameterType = restParameterType.trim().toUpperCase();
+
 				// must be a supported parameter type
-				if (!paramTypes.contains(paramType)) {
+				if (!restParameterTypes.contains(restParameterType)) {
 					// Report unsupported JAX-RS parameter type
 					continue;
 				}
+				if ("PATH".equals(restParameterType)) {
+					// we already collect uri template parameters
+					continue;
+				}
+
 				// having at least one form parameter means form submissions are supported
-				if ("FORM".equals(paramType)) {
+				if ("FORM".equals(restParameterType)) {
 					formSupported = true;
 				}
 				// convert from say "PATH" to "Path"
-				paramType = paramType.substring(0, 1) + paramType.substring(1).toLowerCase();
+				restParameterType = restParameterType.substring(0, 1) + restParameterType.substring(1).toLowerCase();
 
-				JavaType javaType = JavaTypesManager.getJavaTypeFromId(column.getTalendType());
+				String schemaFieldType = column.getTalendType();
+				JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
 
-				if (JavaTypesManager.STRING == javaType
-
-					|| JavaTypesManager.BOOLEAN == javaType
-
-					|| JavaTypesManager.BYTE == javaType
-
-					// number
-					|| JavaTypesManager.SHORT == javaType
-					|| JavaTypesManager.INTEGER == javaType
-					|| JavaTypesManager.LONG == javaType
-					|| JavaTypesManager.FLOAT == javaType
-					|| JavaTypesManager.DOUBLE == javaType
-					|| JavaTypesManager.BIGDECIMAL == javaType) {
-
+				if (supportedJavaTypes.contains(javaType)) {
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-					// parameter default value
-					String defaultValue = column.getDefault();
-
-					Parameter param = new Parameter(paramName, paramType, javaTypeWhole, defaultValue);
-					parameters.put(paramName, param);
+					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault());
+					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
 					//Report that the Java type is unsupported
 				}
@@ -1417,7 +1506,7 @@ if (null != conns && !conns.isEmpty()) {
 				if (param.getDefaultValue() != null) { %>
 					@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>")
 				<% } %>
-				@javax.ws.rs.<%=param.getParamType()%>Param("<%=parameter%>") <%=param.getJavaType()%> <%=parameter%>
+				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%=param.getJavaType()%> <%=param.getVariableName()%>
 		<%	} %>
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) {
 			if (paramCommaWritten) {
@@ -1440,8 +1529,8 @@ if (null != conns && !conns.isEmpty()) {
 
 		//request.put("PARAMS", getPathParameters(uriInfo));
 		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
-		<%	for (String parameter : parameters.keySet()) { %>
-			parameters.put("<%=parameter%>", <%=parameter%>);
+		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
+			parameters.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
 		<%	} %>
 		request.put("PARAMS", parameters);
 

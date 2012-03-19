@@ -96,11 +96,24 @@ if (null != metadatas && 0 < metadatas.size()) {
 						for (IMetadataColumn connColumn : connColumnList) {
 							String columnName = connColumn.getLabel();
 
+							String restParameterType = connColumn.getComment();
+							if (restParameterType == null || restParameterType.trim().length() == 0) {
+								restParameterType = "Path";
+							} else {
+								restParameterType = restParameterType.trim();
+								// convert from say "PATH" to "Path"
+								restParameterType = restParameterType.substring(0, 1).toUpperCase() + restParameterType.substring(1).toLowerCase();
+							}
+
+							String schemaFieldType = connColumn.getTalendType();
+
+							String parameterKey = restParameterType + ":" + columnName + ":" + schemaFieldType;
+
 							if (!"body".equals(columnName)) {
-								String javaTypeFull = JavaTypesManager.getTypeToGenerate(connColumn.getTalendType(), true);
+								String javaTypeFull = JavaTypesManager.getTypeToGenerate(schemaFieldType, true);
 								%>
-								if (params_<%=cid%>.containsKey("<%=columnName%>")) {
-									<%=connectionName%>.<%=columnName%> = (<%= javaTypeFull%>) params_<%=cid%>.get("<%=columnName%>");
+								if (params_<%=cid%>.containsKey("<%=parameterKey%>")) {
+									<%=connectionName%>.<%=columnName%> = (<%= javaTypeFull%>) params_<%=cid%>.get("<%=parameterKey%>");
 								}
 							<%
 							}
