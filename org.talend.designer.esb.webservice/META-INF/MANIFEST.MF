@@ -41,5 +41,5 @@ Bundle-ClassPath: .
  ,lib/xerces-1.2.3.jar
  ,lib/xercesImpl-2.9.1.jar
  ,components/tESBConsumer/commons-beanutils-1.7.0.jar
- ,components/tESBProviderRequest/cxf-bundle-2.6.0-SNAPSHOT.jar
- ,components/tESBProviderRequest/xmlschema-core-2.0.1.jar
+ ,components/tESBConsumer/cxf-bundle-2.6.0-SNAPSHOT.jar
+ ,components/tESBConsumer/xmlschema-core-2.0.1.jar
