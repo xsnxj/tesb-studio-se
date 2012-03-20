@@ -1,12 +1,16 @@
 package org.talend.designer.esb.webservice;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class WebServiceComponentPlugin extends AbstractUIPlugin {
+
+	public boolean hasRepositoryServices = false;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.talend.designer.esb.webservice";
@@ -32,6 +36,11 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		Bundle repositoryServices = Platform
+				.getBundle("org.talend.repository.services");
+		if (repositoryServices != null) {
+			hasRepositoryServices = true;
+		}
 	}
 
 	// http://jira.talendforge.org/browse/TESB-3602 LiXiaopeng 2011-10-24
@@ -68,5 +77,9 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 	 */
 	public static WebServiceComponentPlugin getDefault() {
 		return plugin;
+	}
+
+	public static boolean hasRepositoryServices() {
+		return getDefault().hasRepositoryServices;
 	}
 }

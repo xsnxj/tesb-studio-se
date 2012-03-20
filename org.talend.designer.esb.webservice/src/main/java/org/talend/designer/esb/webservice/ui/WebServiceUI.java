@@ -96,7 +96,6 @@ import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.action.PublishMetadataAction;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
 
@@ -173,7 +172,7 @@ public class WebServiceUI extends AbstractWebService {
     
     private String parseUrl = "";
 
-    private Button populateCheckbox;
+	private Button populateCheckbox;
     
     private boolean gotNewData = false;
 	private Definition def;
@@ -377,12 +376,16 @@ public class WebServiceUI extends AbstractWebService {
         wsdlComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // WSDL URL
+		int wsdlUrlcompositeColumn = 4;
+		if (WebServiceComponentPlugin.hasRepositoryServices()) {
+			wsdlUrlcompositeColumn = 5;
+		}
         Composite wsdlUrlcomposite = new Composite(wsdlComposite, SWT.NONE);
         GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
         layoutData.verticalIndent = 2;
         layoutData.verticalSpan = 1;
         wsdlUrlcomposite.setLayoutData(layoutData);
-		layout = new GridLayout(5, false);
+		layout = new GridLayout(wsdlUrlcompositeColumn, false);
         wsdlUrlcomposite.setLayout(layout);
 
         wsdlField = new LabelledFileField(wsdlUrlcomposite, ExternalWebServiceUIProperties.FILE_LABEL,
@@ -418,8 +421,10 @@ public class WebServiceUI extends AbstractWebService {
         }
 
 		// TESB-3590，gliu
-		servicebut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
-		servicebut.setText(Messages.getString("WebServiceUI.Services"));
+		if (WebServiceComponentPlugin.hasRepositoryServices()) {
+			servicebut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
+			servicebut.setText(Messages.getString("WebServiceUI.Services"));
+		}
 
         refreshbut = new Button(wsdlUrlcomposite, SWT.PUSH | SWT.CENTER);
         refreshbut.setImage(ImageProvider.getImage(EImage.REFRESH_ICON));
@@ -475,9 +480,11 @@ public class WebServiceUI extends AbstractWebService {
         
         addListenerForWSDLCom();
         
-        populateCheckbox = new Button(wsdlComposite, SWT.CHECK | SWT.CENTER);
-        populateCheckbox.setLayoutData(new GridData());
-        populateCheckbox.setText("Populate schema to repository on finish");
+		if (WebServiceComponentPlugin.hasRepositoryServices()) {
+			populateCheckbox = new Button(wsdlComposite, SWT.CHECK | SWT.CENTER);
+			populateCheckbox.setLayoutData(new GridData());
+			populateCheckbox.setText("Populate schema to repository on finish");
+		}
         
         return wsdlComposite;
     }
@@ -556,52 +563,57 @@ public class WebServiceUI extends AbstractWebService {
             }
         });
 
-		servicebut.addSelectionListener(new SelectionAdapter() {
+		if (servicebut != null) {
+			servicebut.addSelectionListener(new SelectionAdapter() {
 
-			public void widgetSelected(SelectionEvent e) {
-				// TODO
-				RepositoryReviewDialog dialog = new RepositoryReviewDialog(
-						Display.getCurrent().getActiveShell(),
-						ERepositoryObjectType.METADATA, "SERVICES:OPERATION") {
-					@Override
-					protected boolean isSelectionValid(
-							SelectionChangedEvent event) {
-						IStructuredSelection selection = (IStructuredSelection) event
-								.getSelection();
-						if (selection.size() == 1) {
-							return true;
-						}
-						return false;
-					}
-				};
-				int open = dialog.open();
-				if (open == Dialog.OK) {
-					RepositoryNode result = dialog.getResult();
-					Item item = result.getObject().getProperty().getItem();
-					if (GlobalServiceRegister.getDefault().isServiceRegistered(
-							IESBService.class)) {
-						IESBService service = (IESBService) GlobalServiceRegister
-								.getDefault().getService(IESBService.class);
-						String wsdlFilePath = service.getWsdlFilePath(item);
-						if (wsdlFilePath != null) {
-							wsdlField.getTextControl().setText(
-									TalendTextUtils.addQuotes(PathUtils
-											.getPortablePath(wsdlFilePath)));
-							getDataFromNet();
-							if (portListTable.getItemCount() > 1) {
-								portListTable.deselectAll();
-								setOk(false);
+        		public void widgetSelected(SelectionEvent e) {
+					// TODO
+					RepositoryReviewDialog dialog = new RepositoryReviewDialog(
+							Display.getCurrent().getActiveShell(),
+							ERepositoryObjectType.METADATA,
+							"SERVICES:OPERATION") {
+						@Override
+						protected boolean isSelectionValid(
+								SelectionChangedEvent event) {
+							IStructuredSelection selection = (IStructuredSelection) event
+									.getSelection();
+							if (selection.size() == 1) {
+								return true;
 							}
-							if (listTable.getItemCount() == 1) {
-								selectFirstFunction();
+							return false;
+						}
+					};
+					int open = dialog.open();
+					if (open == Dialog.OK) {
+						RepositoryNode result = dialog.getResult();
+						Item item = result.getObject().getProperty().getItem();
+						if (GlobalServiceRegister.getDefault()
+								.isServiceRegistered(IESBService.class)) {
+							IESBService service = (IESBService) GlobalServiceRegister
+									.getDefault().getService(IESBService.class);
+							String wsdlFilePath = service.getWsdlFilePath(item);
+							if (wsdlFilePath != null) {
+								wsdlField
+										.getTextControl()
+										.setText(
+												TalendTextUtils.addQuotes(PathUtils
+														.getPortablePath(wsdlFilePath)));
+								getDataFromNet();
+								if (portListTable.getItemCount() > 1) {
+									portListTable.deselectAll();
+									setOk(false);
+								}
+								if (listTable.getItemCount() == 1) {
+									selectFirstFunction();
+								}
 							}
 						}
-					}
 
+        			}
 				}
-			}
 
-		});
+        	});
+		}
 
         refreshbut.addSelectionListener(new SelectionAdapter() {
 
@@ -873,12 +885,21 @@ public class WebServiceUI extends AbstractWebService {
     }
 
     private void populateSchema() {
-    	if (currentFunction == null || !(populateCheckbox.getSelection())) {
+		if (currentFunction == null || populateCheckbox == null
+				|| !(populateCheckbox.getSelection())) {
     		return;
     	}  	
-    	
-    	PublishMetadataAction action = new PublishMetadataAction();
-    	action.process(def);
+		if (WebServiceComponentPlugin.hasRepositoryServices()) {
+			try {
+				Class<?> forName = Class
+						.forName("org.talend.repository.services.action.PublishMetadataAction");
+				Object newInstance = forName.newInstance();
+				forName.getMethod("process", Definition.class).invoke(
+						newInstance, def);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
     }
     
 	private boolean updateConnection() {
