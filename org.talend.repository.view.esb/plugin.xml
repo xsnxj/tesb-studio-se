@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="true"
+            appearsBefore="org.talend.repository.viewer.root.recycleBin"
+            contentProvider="org.talend.repository.view.esb.viewer.content.RoutesContentProvider"
+            icon="icons/routes.png"
+            id="org.talend.repository.view.root.esb.routes"
+            labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
+            name="Routes"
+            priority="high">
+         <triggerPoints>
+            <or>
+               <adapt
+                     type="org.talend.repository.model.ProjectRepositoryNode">
+               </adapt>
+               <instanceof
+                     value="org.talend.repository.model.ProjectRepositoryNode">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.talend.repository.model.RepositoryNode">
+            </instanceof>
+         </possibleChildren>
+      </navigatorContent>
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="org.talend.repository.view.esb.viewer.content.BeansContentProvider"
+            icon="icons/beans.gif"
+            id="org.talend.repository.view.root.esb.beans"
+            labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
+            name="Beans"
+            priority="normal">
+         <triggerPoints>
+            <or>
+               <adapt
+                     type="org.talend.repository.model.ProjectRepositoryNode">
+               </adapt>
+               <instanceof
+                     value="org.talend.repository.model.ProjectRepositoryNode">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.talend.repository.model.RepositoryNode">
+            </instanceof>
+         </possibleChildren>
+      </navigatorContent>
+   </extension>
+
+</plugin>

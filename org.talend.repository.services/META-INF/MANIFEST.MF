@@ -23,7 +23,9 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.jface.text,
  org.eclipse.xsd,
  org.eclipse.wst.wsdl.validation,
- javax.wsdl;bundle-version="1.6.2"
+ javax.wsdl,
+ org.eclipse.ui.navigator,
+ org.talend.repository.view
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .

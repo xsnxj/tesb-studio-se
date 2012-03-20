@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ESB
+Bundle-SymbolicName: org.talend.repository.view.esb;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.talend.repository.view.esb.ESBPlugin
+Bundle-Vendor: .Talend.
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.navigator,
+ org.talend.core.runtime,
+ org.talend.repository.view,
+ org.talend.repository,
+ org.talend.camel.designer
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy

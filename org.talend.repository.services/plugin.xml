@@ -89,4 +89,33 @@
           name="WSDLEditor">
     </editor>
  </extension>
+ <extension
+       point="org.eclipse.ui.navigator.navigatorContent">
+    <navigatorContent
+          activeByDefault="true"
+          appearsBefore="org.talend.repository.viewer.root.code"
+          contentProvider="org.talend.repository.services.ui.viewer.content.ServicesContentProvider"
+          icon="icons/services.png"
+          id="org.talend.repository.viewer.root.services"
+          labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
+          name="Services"
+          priority="high">
+       <possibleChildren>
+          <instanceof
+                value="org.talend.repository.model.RepositoryNode">
+          </instanceof>
+       </possibleChildren>
+       <triggerPoints>
+          <and>
+             <instanceof
+                   value="org.talend.repository.model.RepositoryNode">
+             </instanceof>
+             <test
+                   forcePluginActivation="true"
+                   property="org.talend.repository.node.isMetadataTopNode">
+             </test>
+          </and>
+       </triggerPoints>
+    </navigatorContent>
+ </extension>
 </plugin>
