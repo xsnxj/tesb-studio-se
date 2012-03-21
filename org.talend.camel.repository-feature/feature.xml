@@ -236,8 +236,7 @@
          id="javax.xml.rpc"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.apache.log4j"
@@ -355,8 +354,7 @@
          id="org.apache.commons.discovery"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="javax.mail.glassfish"
@@ -684,8 +682,7 @@
          id="org.eclipse.jdt.debug"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.ecf"
@@ -810,14 +807,20 @@
          id="org.talend.designer.routines.camelprovider"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
-         
+         version="0.0.0"/>
+
    <plugin
          id="org.talend.repository.view.esb"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>      
+         unpack="false"/>
+
+   <plugin
+         id="org.talend.repository.view"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
