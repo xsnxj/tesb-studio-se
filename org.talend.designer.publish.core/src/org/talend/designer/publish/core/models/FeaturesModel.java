@@ -202,9 +202,10 @@ public class FeaturesModel extends UploadableModel {
 			sb.append("\t\t</config>\n");
 		} else {
 			// add contexts config
+			String serviceName = artifactId.substring(0,artifactId.indexOf(nameSuffix));
 			for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
 				sb.append("\t\t<config name=\"");
-				sb.append(context.getKey());
+				sb.append(serviceName).append(".").append(context.getKey());
 				sb.append("\">\n");
 				for (Map.Entry<String, String> property : context.getValue().entrySet()) {
 					sb.append("\t\t\t");
