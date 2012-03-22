@@ -23,7 +23,7 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.jface.text,
  org.eclipse.xsd,
  org.eclipse.wst.wsdl.validation,
- javax.wsdl,
+ javax.wsdl;bundle-version="1.6.2",
  org.eclipse.ui.navigator,
  org.talend.repository.view.di
 Bundle-ActivationPolicy: lazy
