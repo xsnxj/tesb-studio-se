@@ -1,6 +1,7 @@
 package org.talend.designer.publish.core;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
 import org.talend.designer.publish.core.models.BundleModel;
@@ -23,14 +24,14 @@ public class UploadAction {
 		this.password = password;
 	}
 
-	public boolean deployRoute(String configName, String[] contextList,
+	public boolean deployRoute(String configName, Map<String, Map<String, String>> contexts,
 			String jarFilePath, String groupId, String artifactId,
 			String version, Set<DependencyModel> dependencies) throws Exception {
-		return deployRoute(configName, contextList, new File(jarFilePath),
+		return deployRoute(configName, contexts, new File(jarFilePath),
 				groupId, artifactId, version, dependencies);
 	}
 
-	private boolean deployRoute(String configName, String[] contextList,
+	private boolean deployRoute(String configName, Map<String, Map<String, String>> contexts,
 			File jarFile, String groupId, String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
 		BundleModel bundleModel = new BundleModel(jarFile, groupId, artifactId,
@@ -40,7 +41,7 @@ public class UploadAction {
 		FeaturesModel featuresModel = new FeaturesModel(groupId, artifactId,
 				version, repositoryUrl, username, password);
 		featuresModel.setConfigName(configName);
-		featuresModel.setContextList(contextList);
+		featuresModel.setContexts(contexts);
 		featuresModel.addSubBundle(bundleModel);
 		// http://jira.talendforge.org/browse/TESB-3698
 		featuresModel.addSubFeature(JOB_CONTROLLER_FEATURE,

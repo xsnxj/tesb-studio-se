@@ -39,6 +39,7 @@ public class FeaturesModel extends UploadableModel {
 		subBundles.addAll(featuresModel.subBundles);
 		this.configName = featuresModel.configName;
 		this.contextList = featuresModel.contextList;
+		this.contexts = featuresModel.contexts;
 	}
 
 	@Override
