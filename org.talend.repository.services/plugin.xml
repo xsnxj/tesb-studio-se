@@ -100,22 +100,21 @@
           labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
           name="Services"
           priority="high">
-       <possibleChildren>
-          <instanceof
-                value="org.talend.repository.model.RepositoryNode">
-          </instanceof>
-       </possibleChildren>
-       <triggerPoints>
-          <and>
-             <instanceof
-                   value="org.talend.repository.model.RepositoryNode">
-             </instanceof>
-             <test
-                   forcePluginActivation="true"
-                   property="org.talend.repository.node.isMetadataTopNode">
-             </test>
-          </and>
-       </triggerPoints>
+         <triggerPoints>
+            <or>
+               <adapt
+                     type="org.talend.repository.model.ProjectRepositoryNode">
+               </adapt>
+               <instanceof
+                     value="org.talend.repository.model.ProjectRepositoryNode">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <instanceof
+                  value="org.talend.repository.model.RepositoryNode">
+            </instanceof>
+         </possibleChildren>
     </navigatorContent>
  </extension>
 </plugin>
