@@ -146,8 +146,7 @@ public class KarFileGenerator {
 	}
 
 	private static String[][] getSubFeatures(RepositoryNode node) {
-		// Waiting for TESB-5329 and TESB-5375
-		return new String[][] { { "camel-jetty", "[2,3)" } };
+		return CamelFeatureUtil.getFeaturesByNode(node);
 	}
 
 }
