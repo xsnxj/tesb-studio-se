@@ -118,14 +118,8 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
      * (non-Javadoc) Method declared on IWizard.
      */
     public boolean performFinish() {
-        boolean finish = mainPage.finish();
-        if (!finish && !getShell().isDisposed()) {
-            getShell().close();
-        } else {
-            selection = null;
-            mainPage = null;
-        }
-        return finish;
+		boolean finish = mainPage.finish();
+		return finish;
     }
 
     /*
