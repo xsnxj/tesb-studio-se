@@ -19,8 +19,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -30,13 +28,13 @@ import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.Property;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
-import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
+import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.repository.model.RepositoryNode;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * Camel component feature
@@ -112,10 +110,6 @@ public final class CamelFeatureUtil {
 		}
 	}
 
-	private static final String C_MESSAGINGE_NDPOINT = "cMessagingEndpoint";
-
-	private static final String C_CONFIG = "cConfig";
-
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
 	private static final String CAMEL_VERSION_RANGE = "[2, 5)";
@@ -182,37 +176,6 @@ public final class CamelFeatureUtil {
 
 	/**
 	 * 
-	 * @param currentNode2
-	 * @return
-	 */
-	private static Collection<? extends FeatureModel> getFeatureByAdvancedlibs(
-			NodeType currentNode) {
-
-		Set<FeatureModel> features = new HashSet<FeatureModel>();
-
-		if (C_MESSAGINGE_NDPOINT.equals(currentNode.getComponentName())
-				|| C_CONFIG.equals(currentNode.getComponentName())) {
-			for (Object e : currentNode.getElementParameter()) {
-				ElementParameterType p = (ElementParameterType) e;
-				if ("HOTLIBS".equals(p.getName())) {
-					EList elementValue = p.getElementValue();
-					for (Object pv : elementValue) {
-						ElementValueType evt = (ElementValueType) pv;
-						String evtValue = evt.getValue();
-						Set<FeatureModel> featureModel = computeFeature(evtValue);
-						if (featureModel != null) {
-							features.addAll(featureModel);
-						}
-					}
-				}
-			}
-		}
-
-		return features;
-	}
-
-	/**
-	 * 
 	 * @param node
 	 * @return
 	 */
@@ -243,8 +206,19 @@ public final class CamelFeatureUtil {
 		}
 
 		Property property = (Property) node.getObject().getProperty();
+		Process process = new org.talend.designer.core.ui.editor.process.Process(
+				property);
+		process.loadXmlFile();
+		Set<String> neededLibraries = process.getNeededLibraries(true);
+		for (String lib : neededLibraries) {
+			Set<FeatureModel> featureModel = computeFeature(lib);
+			if (featureModel != null) {
+				features.addAll(featureModel);
+			}
+		}
+
 		CamelProcessItem processItem = (CamelProcessItem) property.getItem();
-		ProcessType process = processItem.getProcess();
+		ProcessType processType = processItem.getProcess();
 
 		features.add(new FeatureModel("camel-spring", CAMEL_VERSION_RANGE));
 		features.add(new FeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
@@ -255,25 +229,10 @@ public final class CamelFeatureUtil {
 		// features.add(new FeatureModel("spring-web", SPRING_VERSION_RANGE));
 		features.add(new FeatureModel("talend-job-controller", "[5,6)"));
 
-		for (Object o : process.getNode()) {
+		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
 				NodeType currentNode = (NodeType) o;
 				if ("cCXF".equals(currentNode.getComponentName())) {
-
-					features.add(new FeatureModel("camel-cxf",
-							CAMEL_VERSION_RANGE));
-					features.add(new FeatureModel("cxf", "[2,10)"));
-					// features.add(new FeatureModel("cxf-specs", "[2,10)"));
-					// features.add(new FeatureModel("cxf-jaxb", "[2,10)"));
-					// features.add(new FeatureModel("cxf-abdera", "[2,10)"));
-
-					boolean sl = computeCheckElementValue("ENABLE_SL",
-							currentNode.getElementParameter());
-					if (sl) {
-						features.add(new FeatureModel("tesb-zookeeper",
-								"[2,10)"));
-					}
-
 					boolean sam = computeCheckElementValue("ENABLE_SAM",
 							currentNode.getElementParameter());
 					if (sam) {
@@ -283,32 +242,17 @@ public final class CamelFeatureUtil {
 								"[2,10)"));
 					}
 
-				} else if ("cFtp".equals(currentNode.getComponentName())) {
-					features.add(new FeatureModel("camel-ftp",
-							CAMEL_VERSION_RANGE));
-
-				} else if ("cJMS".equals(currentNode.getComponentName())) {
-					features.add(new FeatureModel("camel-jms",
-							CAMEL_VERSION_RANGE));
-					features.add(new FeatureModel("spring-jms",
-							SPRING_VERSION_RANGE));
-				} else if ("cMail".equals(currentNode.getComponentName())) {
-					features.add(new FeatureModel("camel-mail",
-							CAMEL_VERSION_RANGE));
-				} else if ("cHttp".equals(currentNode.getComponentName())) {
-					features.add(new FeatureModel("camel-http",
-							CAMEL_VERSION_RANGE));
-					features.add(new FeatureModel("http", "[2,10)"));
-				} else if ("cTalendJob".equals(currentNode.getComponentName())) {
-					features.add(new FeatureModel("camel-talendjob ",
-							CAMEL_VERSION_RANGE));
-				} else if (C_MESSAGINGE_NDPOINT.equals(currentNode
-						.getComponentName())
-						|| C_CONFIG.equals(currentNode.getComponentName())) {
-					features.addAll(getFeatureByAdvancedlibs(currentNode));
+					boolean sl = computeCheckElementValue("ENABLE_SL",
+							currentNode.getElementParameter());
+					if (sl) {
+						features.add(new FeatureModel("tesb-zookeepern",
+								"[2,10)"));
+					}
 				}
 			}
 		}
+
+		process.dispose();
 
 		return features;
 	}
@@ -319,38 +263,39 @@ public final class CamelFeatureUtil {
 		XPathFactory xpFactory = XPathFactory.newInstance();
 		XPath newXPath = xpFactory.newXPath();
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
-			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 			InputStream input = CamelFeatureUtil.class
 					.getResourceAsStream(MAPPING_XML_FILE);
-			Document doc = documentBuilder.parse(input);
-			NodeList list = (NodeList) newXPath.evaluate(
-					"//FeatureMap/Feature",
-					doc,
-					XPathConstants.NODESET);
+			try {
 
-			for (int index = 0; index < list.getLength(); index++) {
+				NodeList list = (NodeList) newXPath.evaluate(
+						"//FeatureMap/Feature", new InputSource(input),
+						XPathConstants.NODESET);
 
-				Node node = list.item(index);
-				String hotLib = node.getParentNode().getAttributes()
-						.getNamedItem("HotLib").getNodeValue();
-				Set<FeatureModel> features = camelFeaturesMap.get(hotLib);
-				if (features == null) {
-					features = new HashSet<FeatureModel>();
+				for (int index = 0; index < list.getLength(); index++) {
+
+					Node node = list.item(index);
+					String hotLib = node.getParentNode().getAttributes()
+							.getNamedItem("HotLib").getNodeValue();
+					Set<FeatureModel> features = camelFeaturesMap.get(hotLib);
+					if (features == null) {
+						features = new HashSet<FeatureModel>();
+						camelFeaturesMap.put(hotLib, features);
+					}
+
+					String featureVersion = node.getAttributes()
+							.getNamedItem("version").getNodeValue();
+					String featureName = node.getFirstChild().getNodeValue();
+					features.add(new FeatureModel(featureName, featureVersion));
 					camelFeaturesMap.put(hotLib, features);
 				}
-
-				String featureVersion = node.getAttributes()
-							.getNamedItem("version").getNodeValue();
-				String featureName = node.getFirstChild().getNodeValue();
-					features.add(new FeatureModel(featureName, featureVersion));
-				camelFeaturesMap.put(hotLib, features);
+			} finally {
+				input.close();
 			}
+
 		} catch (Exception e) {
 			ExceptionHandler.process(e);
 		}
-
 
 	}
 

@@ -38,7 +38,11 @@
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cxf-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-cxf</Feature>
-	</FeatureMap>
+		<Feature version="[2,5)">cxf</Feature><!--
+		<Feature version="[2,5)">cxf-specs</Feature>
+		<Feature version="[2,5)">cxf-jaxb</Feature>
+		<Feature version="[2,5)">cxf-abdera</Feature>
+	--></FeatureMap>
 	<FeatureMap HotLib="camel-dns-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-dns</Feature>
 	</FeatureMap>
@@ -82,6 +86,7 @@
 	</FeatureMap>
 	<FeatureMap HotLib="camel-http-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-http</Feature>
+		<Feature version="[2,5)">http</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-http4-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-http4</Feature>
@@ -120,6 +125,7 @@
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jms-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-jms</Feature>
+		<Feature version="[2,5)">spring-jms</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jmx-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-jmx</Feature>
@@ -260,5 +266,9 @@
 	</FeatureMap>
 	<FeatureMap HotLib="camel-xstream-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-xstream</Feature>
+	</FeatureMap><!--
+	<FeatureMap HotLib="locator-5.1.0.jar">
+		<Feature version="[2,10)">tesb-zookeeper</Feature>
 	</FeatureMap>
-</FeatureMAPS>
+--></FeatureMAPS>
+	
