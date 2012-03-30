@@ -6,18 +6,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ESBPlugin extends AbstractUIPlugin {
+public class ESBRepositoryViewPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.talend.repository.view.esb"; //$NON-NLS-1$
 
 	// The shared instance
-	private static ESBPlugin plugin;
+	private static ESBRepositoryViewPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public ESBPlugin() {
+	public ESBRepositoryViewPlugin() {
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class ESBPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static ESBPlugin getDefault() {
+	public static ESBRepositoryViewPlugin getDefault() {
 		return plugin;
 	}
 
