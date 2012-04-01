@@ -169,17 +169,17 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     public String getCurrentExportType() {
-        if (exportTypeCombo != null && !exportTypeCombo.getText().equals("")) { //$NON-NLS-1$
-            return exportTypeCombo.getText();
-        } else {
-            IDialogSettings settings = getDialogSettings();
-            if (settings != null && settings.get(STORE_EXPORTTYPE_ID) != null) {
-                return settings.get(STORE_EXPORTTYPE_ID);
-            }
-        }
+		// TESB-5328
+		//        if (exportTypeCombo != null && !exportTypeCombo.getText().equals("")) { //$NON-NLS-1$
+		// return exportTypeCombo.getText();
+		// } else {
+		// IDialogSettings settings = getDialogSettings();
+		// if (settings != null && settings.get(STORE_EXPORTTYPE_ID) != null) {
+		// return settings.get(STORE_EXPORTTYPE_ID);
+		// }
+		// }
         // Fix but TESB-2944 set default export type to OSGI
 		// return EXPORTTYPE_OSGI;
-        // TESB-5328
 		return EXPORTTYPE_KAR;
     }
 
