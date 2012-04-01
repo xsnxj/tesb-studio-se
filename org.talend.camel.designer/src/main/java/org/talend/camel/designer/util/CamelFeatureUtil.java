@@ -74,8 +74,10 @@ public final class CamelFeatureUtil {
 		public boolean equals(Object obj) {
 			if (obj != null && obj instanceof FeatureModel) {
 				FeatureModel model = (FeatureModel) obj;
-				return model.getName().equals(this.name)
-						&& model.getVersion().equals(this.version);
+				return model.getName().equals(this.name);
+				// && model.getVersion().equals(this.version); // fix the equals
+				// method, only compare the name, else, camel-spring will be
+				// added more times.
 			}
 			return super.equals(obj);
 		}
@@ -112,9 +114,9 @@ public final class CamelFeatureUtil {
 
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
-	private static final String CAMEL_VERSION_RANGE = "[2, 5)";
+	private static final String CAMEL_VERSION_RANGE = "[2,5)";
 
-	private static final String SPRING_VERSION_RANGE = "[3, 5)";
+	private static final String SPRING_VERSION_RANGE = "[3,5)";
 
 	private static Map<String, Set<FeatureModel>> camelFeaturesMap;
 
