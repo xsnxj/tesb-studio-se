@@ -6,11 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.repository.view.esb.ESBRepositoryViewPlugin
 Bundle-Vendor: .Talend.
 Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.expressions;visibility:=reexport,
  org.eclipse.ui,
  org.eclipse.ui.navigator,
  org.talend.core.runtime,
  org.talend.core.repository,
- org.talend.repository.view,
+ org.talend.repository.view;visibility:=reexport,
  org.talend.camel.designer
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

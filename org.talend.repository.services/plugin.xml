@@ -115,6 +115,36 @@
                   value="org.talend.repository.model.RepositoryNode">
             </instanceof>
          </possibleChildren>
+         <actionProvider
+               class="org.talend.repository.view.di.viewer.action.RepositoryNodeActionProvider">
+            <enablement>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.isServicesTopNode">
+                  </test>
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.talend.repository.node.isDeleted">
+                     </test>
+                  </not>
+               </and>
+            </enablement>
+         </actionProvider>
     </navigatorContent>
+ </extension>
+ <extension
+       point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester
+          class="org.talend.repository.services.ui.viewer.tester.ServicesNodeTester"
+          id="org.talend.repository.node.tester.services"
+          namespace="org.talend.repository.node"
+          properties="isServicesTopNode"
+          type="org.talend.repository.model.RepositoryNode">
+    </propertyTester>
  </extension>
 </plugin>

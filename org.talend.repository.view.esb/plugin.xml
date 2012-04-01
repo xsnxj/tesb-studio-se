@@ -53,5 +53,8 @@
          </possibleChildren>
       </navigatorContent>
    </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+   </extension>
 
 </plugin>
