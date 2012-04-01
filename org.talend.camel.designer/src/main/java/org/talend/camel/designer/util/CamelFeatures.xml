@@ -266,6 +266,9 @@
 	</FeatureMap>
 	<FeatureMap HotLib="camel-xstream-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-xstream</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-tis-2.9.2-SNAPSHOT.jar">
+		<Feature version="[2,10)">camel-talendjob</Feature>
 	</FeatureMap><!--
 	<FeatureMap HotLib="locator-5.1.0.jar">
 		<Feature version="[2,10)">tesb-zookeeper</Feature>

@@ -287,7 +287,7 @@ public final class CamelFeatureUtil {
 							.getNamedItem("version").getNodeValue();
 					String featureName = node.getFirstChild().getNodeValue();
 					features.add(new FeatureModel(featureName, featureVersion));
-					camelFeaturesMap.put(hotLib, features);
+					// camelFeaturesMap.put(hotLib, features);
 				}
 			} finally {
 				input.close();
