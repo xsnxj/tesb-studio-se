@@ -31,6 +31,46 @@ public class UploadAction {
 				groupId, artifactId, version, dependencies);
 	}
 
+	/**
+	 * http://jira.talendforge.org/browse/TESB-5426
+	 * 
+	 * @param configName
+	 * @param contexts
+	 * @param jarFilePath
+	 * @param groupId
+	 * @param artifactId
+	 * @param version
+	 * @param dependencies
+	 * @param features
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean deployRoute(String configName,
+			Map<String, Map<String, String>> contexts, String jarFilePath,
+			String groupId, String artifactId, String version,
+			Set<DependencyModel> dependencies, String[][] features)
+			throws Exception {
+		BundleModel bundleModel = new BundleModel(new File(jarFilePath),
+				groupId, artifactId, version, repositoryUrl, username, password);
+		deployBundle(bundleModel);
+
+		FeaturesModel featuresModel = new FeaturesModel(groupId, artifactId,
+				version, repositoryUrl, username, password);
+		featuresModel.setConfigName(configName);
+		featuresModel.setContexts(contexts);
+		featuresModel.addSubBundle(bundleModel);
+
+		featuresModel.addSubFeature(JOB_CONTROLLER_FEATURE,
+				JOB_CONTROLLER_VERSION);
+
+		for (String[] feature : features) {
+			featuresModel.addSubFeature(feature[0], feature[1]);
+		}
+
+		deployFeatures(featuresModel);
+		return true;
+	}
+
 	private boolean deployRoute(String configName, Map<String, Map<String, String>> contexts,
 			File jarFile, String groupId, String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
@@ -102,4 +142,5 @@ public class UploadAction {
 		// uploadAction.deployRoute("TestEERoute_0.1.jar", "org.talend.liugang",
 		// "TestEERoute2", "2.0.22-SNAPSHOT", null);
 	}
+
 }
