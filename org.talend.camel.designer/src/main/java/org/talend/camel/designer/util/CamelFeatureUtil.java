@@ -247,7 +247,8 @@ public final class CamelFeatureUtil {
 					boolean sl = computeCheckElementValue("ENABLE_SL",
 							currentNode.getElementParameter());
 					if (sl) {
-						features.add(new FeatureModel("tesb-zookeepern",
+						// http://jira.talendforge.org/browse/TESB-5461
+						features.add(new FeatureModel("tesb-zookeeper",
 								"[2,10)"));
 					}
 				}
