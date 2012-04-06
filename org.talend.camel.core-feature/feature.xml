@@ -188,7 +188,6 @@
       <import plugin="javax.xml.rpc"/>
       <import plugin="org.apache.commons.httpclient"/>
       <import plugin="org.talend.libraries.ui"/>
-      <import plugin="org.eclipse.datatools.enablement.oda.xml"/>
       <import plugin="org.apache.axis"/>
       <import plugin="org.talend.metadata.managment" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.talend.core.runtime" version="1.0.0" match="greaterOrEqual"/>
@@ -811,8 +810,7 @@
          id="org.eclipse.jdt.debug"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.gmf.runtime.common.core"
@@ -1139,7 +1137,13 @@
          id="org.talend.designer.routines.camelprovider"
          download-size="0"
          install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.talend.datatools.xml"
+         download-size="0"
+         install-size="0"
          version="0.0.0"
-         unpack="true"/>
+         unpack="false"/>
 
 </feature>
