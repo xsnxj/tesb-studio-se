@@ -496,20 +496,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.datatools.enablement.oda.xml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.datatools.connectivity.oda"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.emf.ecore.xmi"
          download-size="0"
          install-size="0"
@@ -1332,5 +1318,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="org.talend.datatools.xml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
