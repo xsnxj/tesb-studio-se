@@ -65,7 +65,6 @@
       <import plugin="org.eclipse.jface" version="3.5.0" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="compatible"/>
       <import plugin="org.eclipse.core.expressions" version="3.4.0" match="compatible"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda" version="3.0.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.icu" version="3.4.4" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.3.0" match="compatible"/>
