@@ -8,15 +8,15 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -30,6 +30,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.core.ui.branding.IBrandingConfiguration;
@@ -44,7 +45,7 @@ import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.LocalWSDLEditor;
 import org.talend.repository.services.utils.WSDLUtils;
-import org.talend.repository.ui.views.RepositoryView;
+import org.talend.repository.ui.views.IRepositoryView;
 
 public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntroAction {
 
@@ -235,32 +236,26 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
             }
         }
 
-        // find/show repository view
-        IViewPart findView = workbenchPage.findView(RepositoryView.ID);
-        try {
-            if (findView == null) {
-                findView = workbenchPage.showView(RepositoryView.ID);
-            }
-        } catch (PartInitException e) {
-            ExceptionHandler.process(e);
-            return;
-        }
-
         // find repository node
-        RepositoryView view = (RepositoryView) findView;
+        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
         RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot()).getRootRepositoryNode(repositoryNodeType);
         if (null != repositoryNode) {
             // expand/select repository node
             setWorkbenchPart(view);
-            view.getViewer().expandToLevel(repositoryNode, 1);
-            view.getViewer().setSelection(new StructuredSelection(repositoryNode));
+            final StructuredViewer viewer = view.getViewer();
+            if (viewer instanceof TreeViewer) {
+                ((TreeViewer) viewer).expandToLevel(repositoryNode, 1);
+            }
+            viewer.setSelection(new StructuredSelection(repositoryNode));
 
             // find node item
             RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(nodeItemId, false);
             if (null != nodeItem) {
                 // expand/select node item
-                view.getViewer().expandToLevel(nodeItem, 2);
-                view.getViewer().setSelection(new StructuredSelection(nodeItem));
+                if (viewer instanceof TreeViewer) {
+                    ((TreeViewer) viewer).expandToLevel(nodeItem, 2);
+                }
+                viewer.setSelection(new StructuredSelection(nodeItem));
             }
         }
     }

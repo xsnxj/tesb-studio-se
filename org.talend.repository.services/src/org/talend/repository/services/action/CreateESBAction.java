@@ -17,15 +17,14 @@ import java.util.Properties;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
@@ -34,6 +33,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.repository.ProjectManager;
@@ -45,7 +45,7 @@ import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.ui.ESBWizard;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
-import org.talend.repository.ui.views.RepositoryView;
+import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC hwang class global comment. Detailled comment
@@ -69,7 +69,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -105,7 +105,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.jface.action.Action#run()
      */
     protected void doRun() {
@@ -139,7 +139,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
     /*
      * (non-Jsdoc)
-     *
+     * 
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
@@ -163,8 +163,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         if (!IBrandingConfiguration.PERSPECTIVE_DI_ID.equals(currentPerspective.getId())) {
             // show Integration perspective
             try {
-                workbenchWindow.getWorkbench().showPerspective(
-                        IBrandingConfiguration.PERSPECTIVE_DI_ID, workbenchWindow);
+                workbenchWindow.getWorkbench().showPerspective(IBrandingConfiguration.PERSPECTIVE_DI_ID, workbenchWindow);
                 workbenchPage = workbenchWindow.getActivePage();
             } catch (WorkbenchException e) {
                 ExceptionHandler.process(e);
@@ -172,26 +171,23 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
             }
         }
 
-        try {
-            IViewPart findView = workbenchPage.findView(RepositoryView.ID);
-            if (findView == null) {
-                findView = workbenchPage.showView(RepositoryView.ID);
-            }
-            RepositoryView view = (RepositoryView) findView;
+        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
+        if (view != null) {
 
             Object type = params.get("type");
 
             if (ESBRepositoryNodeType.SERVICES.name().equals(type)) {
-                RepositoryNode servicesNode = ((ProjectRepositoryNode)  view.getRoot())
+                RepositoryNode servicesNode = ((ProjectRepositoryNode) view.getRoot())
                         .getRootRepositoryNode(ESBRepositoryNodeType.SERVICES);
                 if (servicesNode != null) {
                     setWorkbenchPart(view);
-                    view.getViewer().expandToLevel(servicesNode, 1);
-                    view.getViewer().setSelection(new StructuredSelection(servicesNode));
+                    final StructuredViewer viewer = view.getViewer();
+                    if (viewer instanceof TreeViewer) {
+                        ((TreeViewer) viewer).expandToLevel(servicesNode, 1);
+                    }
+                    viewer.setSelection(new StructuredSelection(servicesNode));
                 }
             }
-        } catch (PartInitException e) {
-            ExceptionHandler.process(e);
         }
     }
 

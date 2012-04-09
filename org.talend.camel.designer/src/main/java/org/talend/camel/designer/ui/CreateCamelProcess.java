@@ -12,20 +12,19 @@
 // ============================================================================
 package org.talend.camel.designer.ui;
 
-import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -43,6 +42,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.core.ui.images.OverlayImageProvider;
@@ -59,18 +59,16 @@ import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.views.IRepositoryView;
-import org.talend.repository.ui.views.RepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
- *
+ * 
  * $Id: CreateProcess.java 52792 2010-12-17 08:20:23Z cli $
- *
+ * 
  */
 public class CreateCamelProcess extends CreateProcess {
 
-	private static final String CREATE_LABEL = Messages
-			.getString("CreateProcess.createRoute"); //$NON-NLS-1$
+    private static final String CREATE_LABEL = Messages.getString("CreateProcess.createRoute"); //$NON-NLS-1$
 
     public CreateCamelProcess() {
         super();
@@ -90,27 +88,17 @@ public class CreateCamelProcess extends CreateProcess {
         this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 
-    public IRepositoryView getRepositoryView() {
-        IViewPart findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                .findView(IRepositoryView.VIEW_ID);
-        return (IRepositoryView) findView;
-    }
-
     public IRepositoryNode getProcessNode() {
-        List<IRepositoryNode> chindren = getRepositoryView().getRoot().getChildren();
         ERepositoryObjectType repositoryNodeType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
                 ERepositoryObjectType.class, CamelRepositoryNodeType.ROUTES);
-        for (IRepositoryNode repositoryNode : chindren) {
-            if (((RepositoryNode) repositoryNode).getContentType() == repositoryNodeType) {
-                return repositoryNode;
-            }
-        }
-        return null;
+        IRepositoryNode repositoryNode = ProjectRepositoryNode.getInstance().getRootRepositoryNode(repositoryNodeType);
+
+        return repositoryNode;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.jface.action.Action#run()
      */
     @Override
@@ -167,7 +155,7 @@ public class CreateCamelProcess extends CreateProcess {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -225,8 +213,7 @@ public class CreateCamelProcess extends CreateProcess {
         if (!IBrandingConfiguration.PERSPECTIVE_CAMEL_ID.equals(currentPerspective.getId())) {
             // show Mediation perspective
             try {
-                workbenchWindow.getWorkbench().showPerspective(
-                        IBrandingConfiguration.PERSPECTIVE_CAMEL_ID, workbenchWindow);
+                workbenchWindow.getWorkbench().showPerspective(IBrandingConfiguration.PERSPECTIVE_CAMEL_ID, workbenchWindow);
                 workbenchPage = workbenchWindow.getActivePage();
             } catch (WorkbenchException e) {
                 ExceptionHandler.process(e);
@@ -234,26 +221,22 @@ public class CreateCamelProcess extends CreateProcess {
             }
         }
 
-        try {
-            IViewPart findView = workbenchPage.findView(RepositoryView.ID);
-            if (findView == null) {
-                findView = workbenchPage.showView(RepositoryView.ID);
-            }
-            RepositoryView view = (RepositoryView) findView;
-
+        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
+        if (view != null) {
             Object type = params.get("type");
             if (CamelRepositoryNodeType.repositoryRoutesType.name().equals(type)) {
-                RepositoryNode processNode = ((ProjectRepositoryNode)  view.getRoot())
+                RepositoryNode processNode = ((ProjectRepositoryNode) view.getRoot())
                         .getRootRepositoryNode(CamelRepositoryNodeType.repositoryRoutesType);
 
                 if (processNode != null) {
                     setWorkbenchPart(view);
-                    view.getViewer().expandToLevel(processNode, 1);
-                    view.getViewer().setSelection(new StructuredSelection(processNode));
+                    final StructuredViewer viewer = view.getViewer();
+                    if (viewer instanceof TreeViewer) {
+                        ((TreeViewer) viewer).expandToLevel(processNode, 1);
+                    }
+                    viewer.setSelection(new StructuredSelection(processNode));
                 }
             }
-        } catch (PartInitException e) {
-            ExceptionHandler.process(e);
         }
     }
 }

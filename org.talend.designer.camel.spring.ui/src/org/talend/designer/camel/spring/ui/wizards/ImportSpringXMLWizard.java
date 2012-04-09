@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -49,7 +48,6 @@ import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * Wizard for the creation of a new project. <br/>
@@ -238,7 +236,7 @@ public class ImportSpringXMLWizard extends Wizard {
                     IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
                             .getProperty().getId(), false);
                     fileEditorInput.setRepositoryNode(repositoryNode);
-                    IWorkbenchPage page = getViewPart().getViewSite().getPage();
+                    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                     page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
                 } catch (PersistenceException e) {
                     e.printStackTrace();
@@ -261,18 +259,6 @@ public class ImportSpringXMLWizard extends Wizard {
         CamelSpringParser parser = new CamelSpringParser();
         parser.addListener(new SpringParserListener(processType));
         parser.startParse(springXMLPath);
-    }
-
-    /**
-     * 
-     * Returns the repository view..
-     * 
-     * @return - the repository biew
-     */
-    public IRepositoryView getViewPart() {
-        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                .findView(IRepositoryView.VIEW_ID);
-        return (IRepositoryView) viewPart;
     }
 
     /**

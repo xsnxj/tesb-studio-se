@@ -15,6 +15,7 @@ package org.talend.camel.designer;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC nrousseau class global comment. Detailled comment
@@ -31,7 +32,7 @@ public class CamelPerspectiveFactory implements IPerspectiveFactory {
         String navigatorId = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
         String outlineId = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
         //        String codeId = "org.talend.designer.core.codeView"; //$NON-NLS-1$
-        String repositoryId = "org.talend.repository.views.repository"; //$NON-NLS-1$
+        String repositoryId = IRepositoryView.VIEW_ID;
 
         String runProcessViewId = "org.talend.designer.runprocess.ui.views.processview"; //$NON-NLS-1$
         String problemsViewId = "org.talend.designer.core.ui.views.ProblemsView"; //$NON-NLS-1$

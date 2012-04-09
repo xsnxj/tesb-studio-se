@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroSite;
@@ -33,11 +33,11 @@ import org.talend.camel.designer.ui.wizards.CamelNewBeanWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.SystemException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.repository.ProjectManager;
@@ -47,7 +47,7 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.ui.views.RepositoryView;
+import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
@@ -164,25 +164,23 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
     }
 
     private void selectRootObject(Properties params) {
-        try {
-            IViewPart findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(RepositoryView.ID);
-            if (findView == null) {
-                findView = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(RepositoryView.ID);
-            }
-            RepositoryView view = (RepositoryView) findView;
 
+        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
+        if (view != null) {
             Object type = params.get("type");
             if (CamelRepositoryNodeType.repositoryBeansType.name().equals(type)) {
-                IRepositoryNode processNode = ((ProjectRepositoryNode) view.getRoot()).getProcessNode();
+                IRepositoryNode processNode = ((ProjectRepositoryNode) view.getRoot())
+                        .getRootRepositoryNode(ERepositoryObjectType.PROCESS);
                 if (processNode != null) {
                     setWorkbenchPart(view);
-                    view.getViewer().expandToLevel(processNode, 1);
-                    view.getViewer().setSelection(new StructuredSelection(processNode));
+                    final StructuredViewer viewer = view.getViewer();
+                    if (viewer instanceof TreeViewer) {
+                        ((TreeViewer) viewer).expandToLevel(processNode, 1);
+                    }
+                    viewer.setSelection(new StructuredSelection(processNode));
                 }
 
             }
-        } catch (PartInitException e) {
-            ExceptionHandler.process(e);
         }
 
     }

@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -41,6 +41,7 @@ import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
@@ -54,13 +55,13 @@ import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.ui.views.RepositoryView;
+import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
- *
+ * 
  * $Id: EditProcess.java 52559 2010-12-13 04:14:06Z nrousseau $
- *
+ * 
  */
 public class EditCamelProcess extends AbstractProcessAction implements IIntroAction {
 
@@ -81,7 +82,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.jface.action.Action#run()
      */
     protected void doRun() {
@@ -152,7 +153,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
@@ -200,7 +201,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
     }
 
     /**
-     *
+     * 
      * DOC YeXiaowei EditProcess class global comment. Detailled comment
      */
     // @SuppressWarnings("unchecked")
@@ -229,7 +230,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.talend.repository.ui.actions.AContextualView#getClassForDoubleClick()
      */
     @Override
@@ -239,14 +240,13 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
         this.params = params;
         PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
-        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(
-                IBrandingConfiguration.PERSPECTIVE_CAMEL_ID,
+        do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(IBrandingConfiguration.PERSPECTIVE_CAMEL_ID,
                 CamelRepositoryNodeType.repositoryRoutesType, params.getProperty("nodeId"));
         doRun();
     }
@@ -288,35 +288,25 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
             }
         }
 
-        // find/show repository view
-        IViewPart findView = workbenchPage.findView(RepositoryView.ID);
-        try {
-            if (findView == null) {
-                findView = workbenchPage.showView(RepositoryView.ID);
-            }
-        } catch (PartInitException e) {
-            ExceptionHandler.process(e);
-            return;
-        }
-
         // find repository node
-        RepositoryView view = (RepositoryView) findView;
-        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot())
-                .getRootRepositoryNode(repositoryNodeType);
+        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
+        RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot()).getRootRepositoryNode(repositoryNodeType);
         if (null != repositoryNode) {
             // expand/select repository node
             setWorkbenchPart(view);
-            view.getViewer().expandToLevel(repositoryNode, 1);
-            view.getViewer().setSelection(new StructuredSelection(repositoryNode));
+            final StructuredViewer viewer = view.getViewer();
+            if (viewer instanceof TreeViewer) {
+                ((TreeViewer) viewer).expandToLevel(repositoryNode, 1);
+            }
+            viewer.setSelection(new StructuredSelection(repositoryNode));
 
             // find node item
             RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(nodeItemId, false);
             if (null != nodeItem) {
                 // expand/select node item
                 // view.getViewer().expandToLevel(nodeItem, 2);
-                view.getViewer().setSelection(new StructuredSelection(nodeItem));
+                viewer.setSelection(new StructuredSelection(nodeItem));
             }
         }
     }
-
 }
