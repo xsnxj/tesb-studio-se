@@ -8,7 +8,7 @@
             appearsBefore="org.talend.repository.viewer.root.recycleBin"
             contentProvider="org.talend.repository.view.esb.viewer.content.RoutesContentProvider"
             icon="icons/routes.png"
-            id="org.talend.repository.view.root.esb.routes"
+            id="org.talend.repository.viewer.esb.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Routes"
             priority="high">
@@ -32,19 +32,20 @@
             activeByDefault="true"
             contentProvider="org.talend.repository.view.esb.viewer.content.BeansContentProvider"
             icon="icons/beans.gif"
-            id="org.talend.repository.view.root.esb.beans"
+            id="org.talend.repository.viewer.esb.beans"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Beans"
             priority="normal">
          <triggerPoints>
-            <or>
-               <adapt
-                     type="org.talend.repository.model.ProjectRepositoryNode">
-               </adapt>
+            <and>
                <instanceof
-                     value="org.talend.repository.model.ProjectRepositoryNode">
+                     value="org.talend.repository.model.RepositoryNode">
                </instanceof>
-            </or>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isCodeTopNode">
+               </test>
+            </and>
          </triggerPoints>
          <possibleChildren>
             <instanceof
@@ -55,6 +56,50 @@
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerContentBinding
+            viewerId="org.talend.repository.cnf.view">
+         <includes>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.esb.routes">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.esb.beans">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   <extension
+         point="org.talend.repository.viewer.perspective.filter">
+      <perspectiveFilter
+            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
+            perspectiveId="org.talend.camel.perspective">
+         <includes>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.esb.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.root.contexts">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.root.code">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.root.recycleBin">
+            </contentExtension>
+         </includes>
+      </perspectiveFilter>
+      <perspectiveFilter
+            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
+            perspectiveId="org.talend.rcp.perspective">
+         <excludes>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.esb.*">
+            </contentExtension>
+         </excludes>
+      </perspectiveFilter>
    </extension>
 
 </plugin>
