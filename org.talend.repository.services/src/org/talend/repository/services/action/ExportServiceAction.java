@@ -40,7 +40,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ExportServiceAction extends AContextualAction {
 
-    protected static final String EXPORT_SERVICE_LABEL = Messages.ExportServiceAction_Action_Label; 
+    protected static final String EXPORT_SERVICE_LABEL = Messages.ExportServiceAction_Action_Label;
 
     /*
      * (non-Javadoc)
@@ -54,9 +54,9 @@ public class ExportServiceAction extends AContextualAction {
             setEnabled(false);
             return;
         }
-        
+
         @SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
             if (node.getType() != ENodeType.REPOSITORY_ELEMENT
                     || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
@@ -85,7 +85,7 @@ public class ExportServiceAction extends AContextualAction {
 
     protected void doRun() {
         ServiceExportWizard processWizard = new ServiceExportWizard();
-        IWorkbench workbench = this.getViewPart().getViewSite().getWorkbenchWindow().getWorkbench();
+        IWorkbench workbench = getWorkbench();
         processWizard.setWindowTitle(EXPORT_SERVICE_LABEL);
         processWizard.init(workbench, (IStructuredSelection) this.getSelection());
 

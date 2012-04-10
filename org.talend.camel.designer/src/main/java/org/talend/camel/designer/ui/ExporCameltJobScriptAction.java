@@ -82,7 +82,7 @@ public class ExporCameltJobScriptAction extends AContextualAction {
 
     protected void doRun() {
         JobCamelScriptsExportWizard processWizard = new JobCamelScriptsExportWizard();
-        IWorkbench workbench = this.getViewPart().getViewSite().getWorkbenchWindow().getWorkbench();
+        IWorkbench workbench = getWorkbench();
         processWizard.setWindowTitle(EXPORTJOBSCRIPTS);
         processWizard.init(workbench, (IStructuredSelection) this.getSelection());
 

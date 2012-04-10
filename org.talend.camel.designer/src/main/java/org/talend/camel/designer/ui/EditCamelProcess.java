@@ -147,7 +147,10 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
                 MessageBoxExceptionHandler.process(e);
             }
         } else {
-            getViewPart().refresh(ERepositoryObjectType.PROCESS);
+            IRepositoryView viewPart = getViewPart();
+            if (viewPart != null) {
+                viewPart.refresh(ERepositoryObjectType.PROCESS);
+            }
         }
     }
 
@@ -256,8 +259,9 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
             return getSelection();
         } else {
             RepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(params.getProperty("nodeId"), false);
-            if (repositoryNode != null) {
-                RepositoryNodeUtilities.expandParentNode(getViewPart(), repositoryNode);
+            IRepositoryView viewPart = getViewPart();
+            if (repositoryNode != null && viewPart != null) {
+                RepositoryNodeUtilities.expandParentNode(viewPart, repositoryNode);
                 return new StructuredSelection(repositoryNode);
             }
             return null;
