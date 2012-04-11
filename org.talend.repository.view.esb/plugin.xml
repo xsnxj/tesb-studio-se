@@ -27,6 +27,26 @@
                   value="org.talend.repository.model.RepositoryNode">
             </instanceof>
          </possibleChildren>
+         <actionProvider
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+            <enablement>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.isRoutesTopNode">
+                  </test>
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.talend.repository.node.isDeleted">
+                     </test>
+                  </not>
+               </and>
+            </enablement>
+         </actionProvider>
       </navigatorContent>
       <navigatorContent
             activeByDefault="true"
@@ -52,10 +72,44 @@
                   value="org.talend.repository.model.RepositoryNode">
             </instanceof>
          </possibleChildren>
+         <actionProvider
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+            <enablement>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.code.isBeans">
+                  </test>
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.talend.repository.node.isDeleted">
+                     </test>
+                  </not>
+               </and>
+            </enablement>
+         </actionProvider>
       </navigatorContent>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.talend.repository.view.esb.viewer.tester.RoutesNodeTester"
+            id="org.talend.repository.node.tester.routes"
+            namespace="org.talend.repository.node"
+            properties="isRoutesTopNode"
+            type="org.talend.repository.model.RepositoryNode">
+      </propertyTester>
+      <propertyTester
+            class="org.talend.repository.view.esb.viewer.tester.BeansNodeTester"
+            id="org.talend.repository.node.tester.code.beans"
+            namespace="org.talend.repository.node.code"
+            properties="isBeans"
+            type="org.talend.repository.model.RepositoryNode">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -63,10 +117,7 @@
             viewerId="org.talend.repository.cnf.view">
          <includes>
             <contentExtension
-                  pattern="org.talend.repository.viewer.esb.routes">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.esb.beans">
+                  pattern="org.talend.repository.viewer.esb.*">
             </contentExtension>
          </includes>
       </viewerContentBinding>
