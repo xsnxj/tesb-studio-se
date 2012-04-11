@@ -15,9 +15,9 @@ package org.talend.repository.view.esb.viewer.action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
-import org.talend.repository.view.di.viewer.action.RepositoryNodeActionProvider;
+import org.talend.repository.viewer.action.RepoNodeActionProvider;
 
-public class ESBRepositoryNodeActionProvider extends RepositoryNodeActionProvider {
+public class ESBRepositoryNodeActionProvider extends RepoNodeActionProvider {
 
     public ESBRepositoryNodeActionProvider() {
         //

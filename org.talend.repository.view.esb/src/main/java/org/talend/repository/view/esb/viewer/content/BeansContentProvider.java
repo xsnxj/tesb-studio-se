@@ -15,7 +15,7 @@ package org.talend.repository.view.esb.viewer.content;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.view.di.viewer.content.code.AbstractCodeContentProvider;
+import org.talend.repository.viewer.content.code.AbstractCodeContentProvider;
 
 public class BeansContentProvider extends AbstractCodeContentProvider {
 

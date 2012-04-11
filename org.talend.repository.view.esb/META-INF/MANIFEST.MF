@@ -13,7 +13,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.core.runtime,
  org.talend.core.repository,
  org.talend.repository.view;visibility:=reexport,
- org.talend.camel.designer,
- org.talend.repository.view.di
+ org.talend.camel.designer
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

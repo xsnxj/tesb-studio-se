@@ -93,7 +93,7 @@
        point="org.eclipse.ui.navigator.navigatorContent">
     <navigatorContent
           activeByDefault="true"
-          appearsBefore="org.talend.repository.viewer.root.code"
+          appearsBefore="org.talend.repository.viewer.root.contexts"
           contentProvider="org.talend.repository.services.ui.viewer.content.ServicesContentProvider"
           icon="icons/services.png"
           id="org.talend.repository.viewer.root.services"
@@ -116,7 +116,7 @@
             </instanceof>
          </possibleChildren>
          <actionProvider
-               class="org.talend.repository.view.di.viewer.action.RepositoryNodeActionProvider">
+               class="org.talend.repository.view.di.viewer.action.DIRepositoryNodeActionProvider">
             <enablement>
                <and>
                   <instanceof
