@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="org.talend.esb.tooling-feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.wst.server.core"
          download-size="0"
@@ -390,7 +394,7 @@
          install-size="0"
          version="1.5.1.v201005080630"
          unpack="false"/>
-         
+
    <plugin
          id="javax.xml"
          download-size="190"
@@ -543,13 +547,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-   <plugin
+
+   <!--plugin
          id="org.talend.designer.esb.webservice"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="true"/>
+         unpack="true"/-->
 
    <plugin
          id="javax.xml.soap"
