@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.talend.esb.tooling_feature"
+      id="org.talend.esb.tooling-feature"
       label="ESB Tooling feature"
-      version="1.0.0.qualifier">
+      version="5.1.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -16,18 +16,16 @@
       [Enter License Description here.]
    </license>
 
-   <plugin
-         id="org.talend.designer.esb.webservice"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+   <includes
+         id="org.talend.esb.tooling.ws.consumer-feature"
+         version="0.0.0"/>
 
-    <plugin
-         id="javax.wsdl"
-         download-size="0"
-         install-size="0"
-         version="1.5.1"
-         unpack="false"/>
+   <includes
+         id="org.talend.esb.tooling.ws.provider-feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.talend.esb.tooling.rs.provider-feature"
+         version="0.0.0"/>
 
 </feature>
