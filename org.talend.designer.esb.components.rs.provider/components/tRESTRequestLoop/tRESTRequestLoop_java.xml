@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMPONENT>
+	<HEADER AUTHOR="ITOS" RELEASE_DATE="20110805A"
+			VERSION="0.101" STATUS="ALPHA"
+			COMPATIBILITY="ALL" PLATEFORM="ALL"
+			SERIAL="" STARTABLE="true"
+			SCHEMA_AUTO_PROPAGATE="true"
+			DATA_AUTO_PROPAGATE="false"
+			TECHNICAL="true">
+		<SIGNATURE />
+	</HEADER>
+	<FAMILIES>
+		<FAMILY>Technical</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="1" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="COMPONENT_OK" COLOR="0000FF" />
+		<CONNECTOR CTYPE="COMPONENT_ERROR" COLOR="FF0000" />
+		<CONNECTOR CTYPE="RUN_IF" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<!-- rest service endpoint -->
+		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
+			<DEFAULT>"http://localhost:8088/"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="SCHEMAS" FIELD="TABLE" NUM_ROW="10" REQUIRED="true" NB_LINES="5">
+			<ITEMS>
+				<ITEM NAME="SCHEMA" FIELD="SCHEMA_TYPE" />
+				<ITEM NAME="HTTP_VERB" FIELD="CLOSED_LIST">
+					<ITEMS DEFAULT="GET">
+						<ITEM NAME="GET" VALUE="GET" />
+						<ITEM NAME="POST" VALUE="POST" />
+						<ITEM NAME="PUT" VALUE="PUT" />
+						<ITEM NAME="DELETE" VALUE="DELETE" />
+					</ITEMS>
+				</ITEM>
+				<ITEM NAME="URI_PATTERN" FIELD="TEXT" VALUE='"/"'/>
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="KEEPLISTENING" FIELD="CHECK" NUM_ROW="250"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="jsr311-api"
+					MODULE="jsr311-api-1.1.1.jar"
+					BundleID="org.apache.servicemix.specs.jsr311-api-1.1.1"
+					REQUIRED="true" />
+			<IMPORT NAME="jettison"
+					MODULE="jettison-1.3.jar"
+					BundleID="org.codehaus.jettison.jettison"
+					REQUIRED="true" />
+			<!--IMPORT NAME="jra"
+					MODULE="${tesb-jra}"
+					REQUIRED="true" /-->
+
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					BundleID="org.apache.servicemix.bundles.dom4j"
+					REQUIRED="true" />
+
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="cxf-bundle"
+					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
+					BundleID="org.apache.cxf.bundle"
+					REQUIRED="true" />
+
+			<IMPORT NAME="neethi"
+					MODULE="neethi-3.0.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmlschema-core"
+					MODULE="xmlschema-core-2.0.2-SNAPSHOT.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="geronimo-activation_1.1_spec"
+					MODULE="geronimo-activation_1.1_spec-1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-annotation_1.0_spec"
+					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-jaxws_2.2_spec"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-stax-api_1.0_spec"
+					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="jaxb-api"
+					MODULE="jaxb-api-2.2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jaxb-impl"
+					MODULE="jaxb-impl-2.2.5.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="stax2-api"
+					MODULE="stax2-api-3.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="woodstox-core-asl-4.1.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="geronimo-servlet_2.5_spec"
+					MODULE="geronimo-servlet_2.5_spec-1.1.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-continuation"
+					MODULE="jetty-continuation-7.5.4.v20111024.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-http"
+					MODULE="jetty-http-7.5.4.v20111024.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-io"
+					MODULE="jetty-io-7.5.4.v20111024.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-server"
+					MODULE="jetty-server-7.5.4.v20111024.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-util"
+					MODULE="jetty-util-7.5.4.v20111024.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<!-- IMPORT NAME="slf4j-api"
+					MODULE="slf4j-api-1.6.2.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j-jdk14"
+					MODULE="${tesb-slf4j-jdk14}"
+					REQUIRED="true"/ -->
+
+			<IMPORT NAME="spring-aop"
+					MODULE="spring-aop-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-asm"
+					MODULE="spring-asm-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-beans"
+					MODULE="spring-beans-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-context"
+					MODULE="spring-context-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-core"
+					MODULE="spring-core-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-expression"
+					MODULE="spring-expression-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<!--IMPORT NAME="spring-web"
+					MODULE="${tesb-spring-web}"
+					BundleID=""
+					REQUIRED="true" /-->
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS>
+		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer" />
+		<RETURN AVAILABILITY="FLOW" NAME="URI" TYPE="id_String" />
+		<RETURN AVAILABILITY="FLOW" NAME="URI_BASE" TYPE="id_String" />
+		<RETURN AVAILABILITY="FLOW" NAME="URI_ABSOLUTE" TYPE="id_String" />
+		<RETURN AVAILABILITY="FLOW" NAME="HTTP_METHOD" TYPE="id_String" />
+	</RETURNS>
+
+</COMPONENT>
