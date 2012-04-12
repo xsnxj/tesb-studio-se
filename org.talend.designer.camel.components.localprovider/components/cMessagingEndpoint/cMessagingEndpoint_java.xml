@@ -88,6 +88,7 @@
 						<ITEM NAME="JT400" VALUE="camel-jt400-alldep-2.9.2-SNAPSHOT.jar" />
 						<ITEM NAME="JUEL" VALUE="camel-juel-alldep-2.9.2-SNAPSHOT.jar" />
 						<ITEM NAME="JXPATH" VALUE="camel-jxpath-alldep-2.9.2-SNAPSHOT.jar" />
+						<ITEM NAME="JSCH" VALUE="camel-jsch-alldep-2.9.2-SNAPSHOT.jar" />
 						<ITEM NAME="KESTREL" VALUE="camel-kestrel-alldep-2.9.2-SNAPSHOT.jar" />
 						<ITEM NAME="LDAP" VALUE="camel-ldap-alldep-2.9.2-SNAPSHOT.jar" />
 						<ITEM NAME="LUCENE" VALUE="camel-lucene-alldep-2.9.2-SNAPSHOT.jar" />
@@ -270,6 +271,8 @@
 			<IMPORT NAME="talend-camel-josql" MODULE="camel-josql-alldep-2.9.2-SNAPSHOT.jar"
 				REQUIRED="false" />
 			<IMPORT NAME="talend-camel-jpa" MODULE="camel-jpa-alldep-2.9.2-SNAPSHOT.jar"
+				REQUIRED="false" />
+			<IMPORT NAME="talend-camel-jsch" MODULE="camel-jsch-alldep-2.9.2-SNAPSHOT.jar"
 				REQUIRED="false" />
 			<IMPORT NAME="talend-camel-jt400" MODULE="camel-jt400-alldep-2.9.2-SNAPSHOT.jar"
 				REQUIRED="false" />

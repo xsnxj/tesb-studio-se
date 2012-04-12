@@ -141,6 +141,9 @@
 	<FeatureMap HotLib="camel-juel-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-juel</Feature>
 	</FeatureMap>
+	<FeatureMap HotLib="camel-jsch-alldep-2.9.2-SNAPSHOT.jar">
+		<Feature version="[2,5)">camel-jsch</Feature>
+	</FeatureMap>
 	<FeatureMap HotLib="camel-jxpath-alldep-2.9.2-SNAPSHOT.jar">
 		<Feature version="[2,5)">camel-jxpath</Feature>
 	</FeatureMap>
