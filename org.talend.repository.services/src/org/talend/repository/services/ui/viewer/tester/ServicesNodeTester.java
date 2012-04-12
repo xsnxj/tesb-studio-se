@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.ui.viewer.tester;
 
+import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.tester.AbstractNodeTester;
@@ -42,5 +43,11 @@ public class ServicesNodeTester extends AbstractNodeTester {
 
     public boolean isServicesTopNode(RepositoryNode repositoryNode) {
         return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
+    }
+
+    @Override
+    public boolean isTypeNode(RepositoryNode repositoryNode, ERepositoryObjectType type) {
+        boolean is = repositoryNode.getContentType() == type;
+        return is;
     }
 }
