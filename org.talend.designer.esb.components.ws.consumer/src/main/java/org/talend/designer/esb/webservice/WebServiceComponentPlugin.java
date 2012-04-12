@@ -13,7 +13,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 	public boolean hasRepositoryServices = false;
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.talend.designer.esb.webservice";
+	public static final String PLUGIN_ID = "org.talend.designer.esb.components.ws.consumer";
 
 	public static final String WS_HTTP_PORT_PREFERENCE = "wsHttpPort";
 
@@ -28,7 +28,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
@@ -60,7 +60,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
@@ -72,7 +72,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static WebServiceComponentPlugin getDefault() {
