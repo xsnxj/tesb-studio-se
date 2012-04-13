@@ -16,7 +16,7 @@
 
 	<extension point="org.talend.core.migrationTask">
 		<projecttask
-			id="org.talend.designer.esb.components.rs.provider.RestRequestWrongCallMigrationTask"
+			id="org.talend.designer.esb.webservice.RestRequestWrongCallMigrationTask"
 			class="org.talend.designer.esb.components.rs.provider.migration.RestRequestWrongCallMigrationTask"
 			name="RestRequestWrongCallMigrationTask"
 			description="Add more information to wrong call flow migration task"
