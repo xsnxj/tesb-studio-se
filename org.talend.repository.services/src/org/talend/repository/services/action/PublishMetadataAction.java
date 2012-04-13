@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,16 +39,19 @@ import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -85,7 +89,6 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.FolderNameUtil;
@@ -157,10 +160,9 @@ public class PublishMetadataAction extends AContextualAction {
     }
 
     protected void doRun() {
-        UIJob job = new UIJob("importing...") {
+        final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
-            @Override
-            public IStatus runInUIThread(IProgressMonitor monitor) {
+            public void run(IProgressMonitor monitor) throws CoreException {
                 monitor.beginTask("importing", 100);
                 if (nodes == null) {
                     nodes = (List<RepositoryNode>) selection.toList();
@@ -172,25 +174,44 @@ public class PublishMetadataAction extends AContextualAction {
                 }
                 for (RepositoryNode node : nodes) {
                     monitor.worked(step);
-                    try {
-                        WSDLUtils.validateWsdl(node);
-                        Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
-                        process(wsdlDefinition);
-                    } catch (CoreException e) {
-                        e.printStackTrace();
-                        monitor.done();
-                        nodes = null;
-                        return new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage(), e);
+                    WSDLUtils.validateWsdl(node);
+                    Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
+                    process(wsdlDefinition);
+                    if (monitor.isCanceled()) {
+                        break;
                     }
                 }
                 nodes = null;
                 monitor.done();
-                return Status.OK_STATUS;
             }
 
         };
-        job.setUser(true);
-        job.schedule();
+        IRunnableWithProgress iRunnableWithProgress = new IRunnableWithProgress() {
+
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                IWorkspace workspace = ResourcesPlugin.getWorkspace();
+                try {
+                    ISchedulingRule schedulingRule = workspace.getRoot();
+                    // the update the project files need to be done in the workspace runnable to avoid all
+                    // notification
+                    // of changes before the end of the modifications.
+                    workspace.run(op, schedulingRule, IWorkspace.AVOID_UPDATE, monitor);
+                } catch (CoreException e) {
+                    nodes = null;
+                    throw new InvocationTargetException(e);
+                }
+
+            }
+        };
+
+        try {
+            new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
+        } catch (InvocationTargetException e) {
+            ExceptionHandler.process(e);
+            nodes = null;
+        } catch (InterruptedException e) {
+            //
+        }
     }
 
     public void process(Definition wsdlDefinition) {
@@ -421,7 +442,7 @@ public class PublishMetadataAction extends AContextualAction {
             // if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
             // path = path.removeFirstSegments(1);
             // }
-            factory.create(connectionItem, path);
+            factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if existing in the same path
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
