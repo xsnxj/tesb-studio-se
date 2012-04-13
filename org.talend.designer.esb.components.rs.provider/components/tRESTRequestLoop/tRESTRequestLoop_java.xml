@@ -83,7 +83,7 @@
 
 			<IMPORT NAME="cxf-bundle"
 					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
-					BundleID="org.apache.cxf.bundle"
+					BundleID="org.apache.cxf.bundle,org.apache.cxf.cxf-rt-frontend-jaxrs,org.apache.cxf.cxf-rt-rs-extension-providers"
 					REQUIRED="true" />
 
 			<IMPORT NAME="neethi"
