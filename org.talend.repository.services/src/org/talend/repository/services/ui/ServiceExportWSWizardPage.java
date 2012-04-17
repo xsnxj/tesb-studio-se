@@ -35,6 +35,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 
 /**
@@ -43,18 +44,18 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
  */
 public class ServiceExportWSWizardPage extends WizardPage {
 
-	private String serviceName;
-	private String serviceVersion;
-	private String destinationValue;
-	private Text destinationText;
+    private String serviceName;
+    private String serviceVersion;
+    private String destinationValue;
+    private Text destinationText;
 
     public ServiceExportWSWizardPage(IStructuredSelection selection) {
         super(org.talend.repository.services.Messages.ServiceExportWizard_Wizard_Title);
         @SuppressWarnings("unchecked")
-		List<RepositoryNode> nodes = selection.toList();
+        List<RepositoryNode> nodes = selection.toList();
         serviceName = "";
         serviceVersion = "";
-		if (nodes.size() >= 1) {
+        if (nodes.size() >= 1) {
             RepositoryNode node = nodes.get(0);
             if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
                 IRepositoryViewObject repositoryObject = node.getObject();
@@ -64,7 +65,6 @@ public class ServiceExportWSWizardPage extends WizardPage {
                 }
             }
         }
-
     }
 
     protected void handleDestinationBrowseButtonPressed() {
@@ -83,75 +83,73 @@ public class ServiceExportWSWizardPage extends WizardPage {
         destinationValue = selectedFileName;
     }
 
-	private void checkDestination(String fileName) {
-		File destination;
-		destination = new File(fileName);
+    private void checkDestination(String fileName) {
+        File destination;
+        destination = new File(fileName);
         if (destination.exists()) {
-        	setMessage("Destination file exists and will be overwrited!");
+            setMessage(Messages.ServiceExportWizard_WarningMessage_WillBeOverwritten);
         } else {
-        	setMessage(null);
+            setMessage(null);
         }
-	}
+    }
 
-    
-	public String getDestinationValue() {
-		if (null == destinationValue) {
-			String bundleName = serviceName + "-" + serviceVersion
-					+ getOutputSuffix();
-			String storedDir = getDialogSettings().get(getClass().getName());
-			if (storedDir == null) {
-				storedDir = System.getProperty("user.dir");
-			}
-			IPath path = new Path(storedDir).append(bundleName);
-	        destinationValue = path.toOSString();
-		}
-		return destinationValue;
-	}
+    public String getDestinationValue() {
+        if (null == destinationValue) {
+            String bundleName = serviceName + "-" + serviceVersion + getOutputSuffix();
+            String storedDir = getDialogSettings().get(getClass().getName());
+            if (storedDir == null) {
+                storedDir = System.getProperty("user.dir");
+            }
+            IPath path = new Path(storedDir).append(bundleName);
+            destinationValue = path.toOSString();
+        }
+        return destinationValue;
+    }
 
-	protected String getOutputSuffix() {
-		return ".kar";
-	}
+    protected String getOutputSuffix() {
+        return ".kar";
+    }
 
-	public void createControl(Composite parent) {
-		setControl(parent);
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		container.setLayout(new GridLayout(1, false));
+    public void createControl(Composite parent) {
+        setControl(parent);
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        container.setLayout(new GridLayout(1, false));
 
-		Group destinationGroup = new Group(container, SWT.NONE);
-		destinationGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		destinationGroup.setText("Destination");
-		destinationGroup.setLayout(new GridLayout(2, false));
+        Group destinationGroup = new Group(container, SWT.NONE);
+        destinationGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        destinationGroup.setText("Destination");
+        destinationGroup.setLayout(new GridLayout(2, false));
 
-		destinationText = new Text(destinationGroup, SWT.SINGLE | SWT.BORDER);
-		destinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		destinationText.setText(getDestinationValue());
-		destinationText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				destinationValue = destinationText.getText();
-				checkDestination(destinationValue);
-			}
-		});
-		Button browseButton = new Button(destinationGroup, SWT.PUSH);
-		browseButton.setText("Browse");
-		browseButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				handleDestinationBrowseButtonPressed();
-				destinationText.setText(destinationValue);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {;}
-		});
+        destinationText = new Text(destinationGroup, SWT.SINGLE | SWT.BORDER);
+        destinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        destinationText.setText(getDestinationValue());
+        destinationText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e) {
+                destinationValue = destinationText.getText();
+                checkDestination(destinationValue);
+            }
+        });
+        Button browseButton = new Button(destinationGroup, SWT.PUSH);
+        browseButton.setText("Browse");
+        browseButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                handleDestinationBrowseButtonPressed();
+                destinationText.setText(destinationValue);
+            }
 
-	}
+            public void widgetDefaultSelected(SelectionEvent e) {
+                ;
+            }
+        });
+    }
 
-	public void finish() {
-		String destination = destinationText.getText().trim();
-		if (!"".equals(destination)) {
-			getDialogSettings().put(
-					getClass().getName(),
-					destination.substring(0,
-							destination.lastIndexOf(File.separator)));
-		}
-	}
+    public void finish() {
+        String destination = destinationText.getText().trim();
+        if (!"".equals(destination)) {
+            getDialogSettings().put(getClass().getName(),
+                    destination.substring(0, destination.lastIndexOf(File.separator)));
+        }
+    }
 
 }

@@ -20,6 +20,8 @@ public class Messages extends NLS {
 
     public static String ServiceExportWizard_Wizard_Title;
 
+    public static String ServiceExportWizard_WarningMessage_WillBeOverwritten;
+
     public static String AssignWsdlDialog_Title;
 
     public static String AssignWsdlDialog_Description;
