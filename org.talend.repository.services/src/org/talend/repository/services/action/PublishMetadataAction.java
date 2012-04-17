@@ -442,7 +442,8 @@ public class PublishMetadataAction extends AContextualAction {
             // if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
             // path = path.removeFirstSegments(1);
             // }
-            factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if existing in the same path
+            factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
+                                                        // existing in the same path
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
@@ -469,6 +470,9 @@ public class PublishMetadataAction extends AContextualAction {
         MetadataColumn column = null;
         switch (node.getType()) {
         case ATreeNode.ATTRIBUTE_TYPE:
+            // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
+            // xpath
+            xmlNode.setXMLPath("" + node.getValue());
             xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
