@@ -5,7 +5,7 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            appearsBefore="org.talend.repository.viewer.root.recycleBin"
+            appearsBefore="org.talend.repository.viewer.root.contexts"
             contentProvider="org.talend.repository.view.esb.viewer.content.RoutesContentProvider"
             icon="icons/routes.png"
             id="org.talend.repository.viewer.esb.routes"
