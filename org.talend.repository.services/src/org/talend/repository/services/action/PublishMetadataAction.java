@@ -448,6 +448,9 @@ public class PublishMetadataAction extends AContextualAction {
         MetadataColumn column = null;
         switch (node.getType()) {
         case ATreeNode.ATTRIBUTE_TYPE:
+            // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
+            // xpath
+            xmlNode.setXMLPath("" + node.getValue());
             xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
