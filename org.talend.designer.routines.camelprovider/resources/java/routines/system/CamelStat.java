@@ -355,6 +355,9 @@ public class CamelStat implements Runnable {
                 // System.out.println(nodeName);
                 break;
             }
+
+			// http://jira.talendforge.org/browse/TESB-5628 Fix bug LiXiaopeng
+			routeMBean = null;
         }
 
         // javax.management.ObjectName routeMBean = iterator.next();
