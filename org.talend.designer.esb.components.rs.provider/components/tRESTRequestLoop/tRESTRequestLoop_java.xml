@@ -67,9 +67,6 @@
 					MODULE="jettison-1.3.jar"
 					BundleID="org.codehaus.jettison.jettison"
 					REQUIRED="true" />
-			<!--IMPORT NAME="jra"
-					MODULE="${tesb-jra}"
-					REQUIRED="true" /-->
 
 			<IMPORT NAME="dom4j"
 					MODULE="dom4j-1.6.1.jar"
@@ -82,12 +79,12 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
+					MODULE="cxf-bundle-2.6.0.jar"
 					BundleID="org.apache.cxf.bundle,org.apache.cxf.cxf-rt-frontend-jaxrs,org.apache.cxf.cxf-rt-rs-extension-providers"
 					REQUIRED="true" />
 
 			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.1.jar"
+					MODULE="neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
@@ -95,7 +92,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.2-SNAPSHOT.jar"
+					MODULE="xmlschema-core-2.0.2.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -190,10 +187,6 @@
 					MODULE="spring-expression-3.0.7.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true" />
-			<!--IMPORT NAME="spring-web"
-					MODULE="${tesb-spring-web}"
-					BundleID=""
-					REQUIRED="true" /-->
 		</IMPORTS>
 	</CODEGENERATION>
 
