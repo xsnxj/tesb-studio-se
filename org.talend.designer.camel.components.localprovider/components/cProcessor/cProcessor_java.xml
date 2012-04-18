@@ -36,7 +36,10 @@
 
   <PARAMETERS>
       <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="2" NB_LINES="9" CONTEXT="begin">
-	      <DEFAULT>System.out.println("Roger.");</DEFAULT>
+	      <DEFAULT>/*
+* Provide own codes to consume or translate the message exchanges.
+* @param org.apache.camel.Exchange exchange
+*/</DEFAULT>
 	  </PARAMETER>
    </PARAMETERS>
    
