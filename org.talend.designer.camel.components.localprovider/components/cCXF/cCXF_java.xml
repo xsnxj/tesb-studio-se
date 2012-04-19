@@ -135,7 +135,7 @@
 				REQUIRED="true" />
 			<IMPORT NAME="talend-camel-jetty" MODULE="camel-jetty-alldep-2.9.2.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="cxf-bundle" MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
+			<IMPORT NAME="cxf-bundle" MODULE="cxf-bundle-2.6.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="locator" MODULE="locator-5.1.0.jar"
 				REQUIRED="true" />
