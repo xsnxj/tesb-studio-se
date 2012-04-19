@@ -192,6 +192,13 @@
             description="Switch292CamelCXFLibraryVersionMigrationTask"
             id="org.talend.camel.designer.switch292CamelCXFLibraryVersionMigrationTask"
             name="Switch292CamelCXFLibraryVersionMigrationTask">
+       </projecttask>
+             <projecttask
+            beforeLogon="false"
+            class="org.talend.camel.designer.migration.Switch292ReleaseCamelVersionTask"
+            description="Switch292ReleaseCamelCXFLibraryVersionMigrationTask"
+            id="org.talend.camel.designer.switch292ReleaseCamelVersionTask"
+            name="Switch292ReleaseCamelVersionTask">
       </projecttask>
              <projecttask
                    beforeLogon="false"
