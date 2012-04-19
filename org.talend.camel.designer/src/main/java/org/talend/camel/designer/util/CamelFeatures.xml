@@ -1,276 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FeatureMAPS>
-	<FeatureMap HotLib="camel-amqp-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-amqp-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-amqp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-atom-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-atom-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-atom</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-aws-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-aws-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-aws</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-bam-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-bam-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-bam</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-bean-validator-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-bean-validator-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-bean-validator</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-bindy-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-bindy-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-bindy</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-blueprint-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-blueprint-2.9.2.jar">
 		<Feature version="[2,5)">camel-blueprint</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-cache-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-cache-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-cache</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-castor-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-castor-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-castor</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-cometd-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-cometd-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-cometd</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-crypto-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-crypto-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-crypto</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-csv-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-csv-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-csv</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-cxf-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-cxf-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-cxf</Feature>
 		<Feature version="[2,5)">cxf</Feature><!--
 		<Feature version="[2,5)">cxf-specs</Feature>
 		<Feature version="[2,5)">cxf-jaxb</Feature>
 		<Feature version="[2,5)">cxf-abdera</Feature>
 	--></FeatureMap>
-	<FeatureMap HotLib="camel-dns-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-dns-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-dns</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-dozer-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-dozer-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-dozer</Feature>
 	</FeatureMap>
-	<!--<FeatureMap HotLib="camel-eclipse-2.9.2-SNAPSHOT.jar"> <Feature version="[2,5)">camel-eclipse</Feature> 
-		</FeatureMap> <FeatureMap HotLib="camel-ejb-alldep-2.9.2-SNAPSHOT.jar"> <Feature version="[2,5)">camel-ejb</Feature> 
+	<!--<FeatureMap HotLib="camel-eclipse-2.9.2.jar"> <Feature version="[2,5)">camel-eclipse</Feature> 
+		</FeatureMap> <FeatureMap HotLib="camel-ejb-alldep-2.9.2.jar"> <Feature version="[2,5)">camel-ejb</Feature> 
 		</FeatureMap> -->
-	<FeatureMap HotLib="camel-eventadmin-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-eventadmin-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-eventadmin</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-exec-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-exec-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-exec</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-flatpack-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-flatpack-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-flatpack</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-freemarker-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-freemarker-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-freemarker</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-ftp-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-ftp-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-ftp</Feature>
 	</FeatureMap>
-	<!--<FeatureMap HotLib="camel-gae-alldep-2.9.2-SNAPSHOT.jar"> <Feature version="[2,5)">camel-gae</Feature> 
+	<!--<FeatureMap HotLib="camel-gae-alldep-2.9.2.jar"> <Feature version="[2,5)">camel-gae</Feature> 
 		</FeatureMap> -->
-	<FeatureMap HotLib="camel-groovy-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-groovy-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-groovy</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-guice-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-guice-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-guice</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-hawtdb-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-hawtdb-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-hawtdb</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-hazelcast-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-hazelcast-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-hazelcast</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-hl7-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-hl7-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-hl7</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-http-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-http-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-http</Feature>
 		<Feature version="[2,5)">http</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-http4-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-http4-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-http4</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-ibatis-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-ibatis-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-ibatis</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-irc-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-irc-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-irc</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jackson-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jackson-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jackson</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jasypt-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jasypt-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jasypt</Feature>
 	</FeatureMap>
-	<!--<FeatureMap HotLib="camel-javaspace-alldep-2.9.2-SNAPSHOT.jar"> <Feature version="[2,5)">camel-javaspace</Feature> 
+	<!--<FeatureMap HotLib="camel-javaspace-alldep-2.9.2.jar"> <Feature version="[2,5)">camel-javaspace</Feature> 
 		</FeatureMap> -->
-	<FeatureMap HotLib="camel-jaxb-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jaxb-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jaxb</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jcr-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jcr-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jcr</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jdbc-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jdbc-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jdbc</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jetty-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jetty-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jetty</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jibx-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jibx-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jibx</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jing-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jing-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jing</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jms-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jms-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jms</Feature>
 		<Feature version="[2,5)">spring-jms</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jmx-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jmx-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jmx</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-josql-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-josql-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-josql</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jpa-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jpa-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jpa</Feature>
 	</FeatureMap>
-	<!--<FeatureMap HotLib="camel-jt400-alldep-2.9.2-SNAPSHOT.jar"> <Feature version="[2,5)">camel-jt400</Feature> 
+	<!--<FeatureMap HotLib="camel-jt400-alldep-2.9.2.jar"> <Feature version="[2,5)">camel-jt400</Feature> 
 		</FeatureMap> -->
-	<FeatureMap HotLib="camel-juel-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-juel-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-juel</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jsch-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jsch-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jsch</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jxpath-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-jxpath-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-jxpath</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-kestrel-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-kestrel-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-kestrel</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-ldap-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-ldap-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-ldap</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-lucene-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-lucene-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-lucene</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mail-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-mail-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-mail</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mina-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-mina-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-mina</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-msv-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-msv-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-msv</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mvel-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-mvel-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-mvel</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mybatis-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-mybatis-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-mybatis</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-nagios-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-nagios-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-nagios</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-netty-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-netty-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-netty</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-ognl-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-ognl-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-ognl</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-paxlogging-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-paxlogging-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-paxlogging</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-printer-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-printer-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-printer</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-protobuf-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-protobuf-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-protobuf</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-quartz-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-quartz-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-quartz</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-quickfix-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-quickfix-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-quickfix</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-restlet-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-restlet-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-restlet</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-rmi-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-rmi-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-rmi</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-routebox-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-routebox-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-routebox</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-rss-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-rss-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-rss</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-ruby-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-ruby-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-ruby</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-saxon-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-saxon-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-saxon</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-scala-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-scala-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-scala</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-script-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-script-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-script</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-servlet-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-servlet-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-servlet</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-shiro-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-shiro-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-shiro</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-sip-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-sip-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-sip</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-smpp-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-smpp-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-smpp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-snmp-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-snmp-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-snmp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-soap-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-soap-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-soap</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-spring-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-spring-2.9.2.jar">
 		<Feature version="[2,5)">camel-spring</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-sql-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-sql-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-sql</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-stream-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-stream-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-stream</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-stringtemplate-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-stringtemplate-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-stringtemplate</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-syslog-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-syslog-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-syslog</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-tagsoup-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-tagsoup-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-tagsoup</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-velocity-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-velocity-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-velocity</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-xmlbeans-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-xmlbeans-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-xmlbeans</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-xmlsecurity-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-xmlsecurity-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-xmlsecurity</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-xmpp-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-xmpp-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-xmpp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-xstream-alldep-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-xstream-alldep-2.9.2.jar">
 		<Feature version="[2,5)">camel-xstream</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-tis-2.9.2-SNAPSHOT.jar">
+	<FeatureMap HotLib="camel-tis-2.9.2.jar">
 		<Feature version="[2,10)">camel-talendjob</Feature>
 	</FeatureMap><!--
 	<FeatureMap HotLib="locator-5.1.0.jar">
