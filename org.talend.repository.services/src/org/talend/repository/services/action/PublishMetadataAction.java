@@ -57,6 +57,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
+import org.talend.commons.utils.data.list.UniqueStringGenerator;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.general.Project;
@@ -195,6 +196,7 @@ public class PublishMetadataAction extends AContextualAction {
 
     public void process(Definition wsdlDefinition) {
         populationUtil = new XSDPopulationUtil2();
+        List<String> alreadyCreated = new ArrayList<String>();
         SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
         int index = 0;
         // to modify later, have a map done on the byte[] is really not good.
@@ -223,8 +225,14 @@ public class PublishMetadataAction extends AContextualAction {
                     if (inDef != null) {
                         Message inMsg = inDef.getMessage();
                         if (inMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(inMsg), portType.getQName(), oper,
-                                    fileToSchemaMap);
+                            // fix for TDI-20699
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
+                            }
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
                         }
                     }
 
@@ -232,16 +240,26 @@ public class PublishMetadataAction extends AContextualAction {
                     if (outDef != null) {
                         Message outMsg = outDef.getMessage();
                         if (outMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(outMsg), portType.getQName(), oper,
-                                    fileToSchemaMap);
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
+                            }
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
                         }
                     }
                     Collection<Fault> faults = oper.getFaults().values();
                     for (Fault fault : faults) {
                         Message faultMsg = fault.getMessage();
                         if (faultMsg != null) {
-                            populateMessage2(schemaUtil.getParameterFromMessage(faultMsg), portType.getQName(), oper,
-                                    fileToSchemaMap);
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
+                            }
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
                         }
                     }
                 }
@@ -446,16 +464,18 @@ public class PublishMetadataAction extends AContextualAction {
         xmlNode.setAttribute("attri");
         xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
         MetadataColumn column = null;
+        MetadataTable metadataTable = ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0];
         switch (node.getType()) {
         case ATreeNode.ATTRIBUTE_TYPE:
             // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
             // xpath
             xmlNode.setXMLPath("" + node.getValue());
-            xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
-            column.setLabel(nameWithoutPrefixForColumn);
-            ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0].getColumns().add(column);
+            String uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
+            column.setLabel(uniqueName);
+            xmlNode.setRelatedColumn(uniqueName);
+            metadataTable.getColumns().add(column);
             break;
         case ATreeNode.ELEMENT_TYPE:
             boolean haveElementOrAttributes = false;
@@ -467,11 +487,12 @@ public class PublishMetadataAction extends AContextualAction {
             }
             if (!haveElementOrAttributes) {
                 xmlNode.setAttribute("branch");
-                xmlNode.setRelatedColumn(nameWithoutPrefixForColumn);
                 column = ConnectionFactory.eINSTANCE.createMetadataColumn();
                 column.setTalendType(xmlNode.getType());
-                column.setLabel(nameWithoutPrefixForColumn);
-                ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0].getColumns().add(column);
+                uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
+                column.setLabel(uniqueName);
+                xmlNode.setRelatedColumn(uniqueName);
+                metadataTable.getColumns().add(column);
             } else {
                 xmlNode.setAttribute("main");
             }
@@ -538,6 +559,29 @@ public class PublishMetadataAction extends AContextualAction {
             ExceptionHandler.process(e);
         }
         return temfile.getPath();
+    }
+
+    private String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
+
+        String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr;
+        columnName = columnName.replaceAll("[^a-zA-Z0-9]", "_");
+
+        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(columnName,
+                fullSchemaTargetList) {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.talend.commons.utils.data.list.UniqueStringGenerator#getBeanString(java.lang.Object)
+             */
+            @Override
+            protected String getBeanString(MetadataColumn bean) {
+                return bean.getLabel();
+            }
+
+        };
+        columnName = uniqueStringGenerator.getUniqueString();
+        return columnName;
     }
 
 }
