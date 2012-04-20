@@ -23,7 +23,6 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
 import org.talend.commons.exception.SystemException;
@@ -35,7 +34,6 @@ import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
@@ -193,13 +191,16 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 		a.put(new Attributes.Name("Bundle-SymbolicName"), artefactName); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-Version"), serviceVersion); //$NON-NLS-1$
 		a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
-        IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
-                IBrandingService.class);
-		a.put(new Attributes.Name("Created-By"), brandingService.getFullProductName()+" ("+brandingService.getAcronym()+"_"+RepositoryPlugin.getDefault().getBundle().getVersion().toString()+")");
+		IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault()
+				.getService(IBrandingService.class);
+		a.put(new Attributes.Name("Created-By"), brandingService.getFullProductName()
+				+ " (" + brandingService.getAcronym() + "_"
+				+ RepositoryPlugin.getDefault().getBundle().getVersion().toString() + ")");
 		a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
 				"javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
 				+ ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
 				+ ",org.apache.ws.security.validate" //$NON-NLS-1$
+				+ ",org.apache.cxf.management.counters" //$NON-NLS-1$
 			);
 		a.put(new Attributes.Name("Require-Bundle"), //$NON-NLS-1$
 				"org.apache.cxf.bundle" //$NON-NLS-1$

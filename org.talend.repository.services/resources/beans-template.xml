@@ -44,9 +44,9 @@
 #end
 #if (${endpoint.useSecuritySAML})
 #[[
-			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}"/>
-			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}"/>
-			<entry key="ws-security.callback-handler"><ref bean="callback"/></entry>
+			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
+			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
+			<entry key="ws-security.callback-handler"><ref bean="callback" /></entry>
 ]]#
 #end
 		</jaxws:properties>
@@ -76,22 +76,26 @@
 #if (${endpoint.useSecurityToken} && ${endpoint.useSecuritySAML})
 					<wsp:ExactlyOne>
 						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 						</wsp:All>
 						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
+							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
 						</wsp:All>
 					</wsp:ExactlyOne>
 #elseif (${endpoint.useSecurityToken})
-					<wsp:PolicyReference URI="org.talend.esb.job.token.policy"/>
+					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 #elseif (${endpoint.useSecuritySAML})
-					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy"/>
+					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
 #end
 				</wsp:Policy>
 			</p:policies>
 #end
 		</jaxws:features>
 	</jaxws:endpoint>
+
+	<bean class="org.apache.cxf.management.counters.CounterRepository">
+		<property name="bus" ref="cxf" />
+	</bean>
 
 #if (${endpoint.useSecurityToken})
 	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
@@ -113,7 +117,7 @@
 ]]#
 #end
 
-	<osgi:reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory"/>
+	<osgi:reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory" />
 	<bean id="genericServiceProvider" factory-bean="providerFactory" factory-method="create">
 		<constructor-arg>
 			<map>
