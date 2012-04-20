@@ -99,7 +99,7 @@
           id="org.talend.repository.viewer.root.services"
           labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
           name="Services"
-          priority="high">
+          priority="normal">
          <triggerPoints>
             <or>
                <adapt
