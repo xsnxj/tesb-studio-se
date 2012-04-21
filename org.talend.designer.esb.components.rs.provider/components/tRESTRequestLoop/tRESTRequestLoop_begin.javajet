@@ -1,6 +1,5 @@
 <%@ jet
 	imports="
-		org.talend.core.model.process.ElementParameterParser
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
@@ -16,21 +15,20 @@
 	INode node = (INode) codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
-
-if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) {
 %>
+
+<% if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) { %>
 	if (true) {
 		throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
 	}
-<%
-}
-if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 0) { %>
+<% } %>
+<% if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 0) { %>
 	if (true) {
 		throw new RuntimeException("cannot instantiate service: job contains both tESBProviderRequest and tRESTRequest components");
 	}
-<%
-}
+<% } %>
 
+<%
 	List<? extends IConnection> conns = node.getProcess().getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 	boolean hasOutputConnection = false;
 	if (null != conns && !conns.isEmpty()) {
@@ -43,45 +41,43 @@ if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").size() > 0) { %>
 			}
 		}
 	}
-	if (!hasOutputConnection) {
-	%>
-		if (true) {
-			throw new RuntimeException("cannot instantiate REST service: tRESTRequest component has no any output connections");
-		}
-	<%
+%>
+<% if (!hasOutputConnection) { %>
+	if (true) {
+		throw new RuntimeException("cannot instantiate REST service: tRESTRequest component has no any output connections");
 	}
-	%>
-
-	//*** external processor(s) initialization
-	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
-
-	if (null == providerCallback_<%=cid%>) {
-		final QueuedMessageHandlerImpl handler_<%=cid%> = new QueuedMessageHandlerImpl();
-		handlerThread_<%=cid%> = new HandlerThread_<%=cid%>(handler_<%=cid%>);
-		handlerThread_<%=cid%>.start();
-		providerCallback_<%=cid%> = handler_<%=cid%>;
-	}
-
-	globalMap.put("esbHandler", providerCallback_<%=cid%>);
-
-	//*** external processor(s) initialization finish
+<% } %>
 
 	int nb_line_<%=cid%> = 0;
 
 	try {
-		// This is a beginning of the REST provider request component cycle
-		globalMap.put("restRequestReceivedAndResponseSentBack", true);
-		while(true) {
-			try {
-				ESBProviderCallback esbHandler_<%=cid%> =
-					(ESBProviderCallback) globalMap.get("esbHandler");
 
-				if (!(Boolean) globalMap.get("restRequestReceivedAndResponseSentBack")) {
-					esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
-					globalMap.put("restRequestReceivedAndResponseSentBack", true);
+		java.util.Map<String, Object> requestMessage_<%=cid%> =
+				(java.util.Map<String, Object>) globalMap.get("restRequest");
+
+		if (null == requestMessage_<%=cid%>) {
+
+			if (restTalendJobAlreadyStarted) {
+				throw new RuntimeException("request is not provided");
+			} else {
+				if (!runInTalendEsbRuntimeContainer && null == thread4RestServiceProviderEndpoint) {
+					// *** external thread for endpoint initialization
+					thread4RestServiceProviderEndpoint = new Thread4RestServiceProviderEndpoint(this);
+					thread4RestServiceProviderEndpoint.start();
+					// *** external thread for endpoint initialization
 				}
 
-				java.util.Map<String, Object> requestMessage_<%=cid%> =
-					(java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
+				restTalendJobAlreadyStarted = true;
 
-				globalMap.put("restRequestReceivedAndResponseSentBack", false);
+				Thread.currentThread();
+				try {
+					while(true) {
+						Thread.sleep(60000);
+					}
+				} catch (InterruptedException e) {
+					// e.printStackTrace();
+					// throw new TalendException(e, "wholeJob", globalMap);
+				}
+			}
+			return;
+		}

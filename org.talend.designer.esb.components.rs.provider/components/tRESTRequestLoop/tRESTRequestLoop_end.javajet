@@ -1,7 +1,6 @@
 <%@ jet
 	imports="
 		org.talend.core.model.process.INode
-		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 	"
 %>
@@ -11,48 +10,39 @@
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
 %>
-			//} catch (ESBJobInterruptedException e) {
-			//	// job interrupted from outside
-			//	break;
-			} catch (Throwable e) {
-				if (e instanceof InterruptedException) {
-					break;
-				}
-				if (e instanceof RuntimeException
-						&& null != e.getCause()
-						&& e.getCause() instanceof InterruptedException) {
-					// expected job stopped in OSGi container
-					break;
-				}
-				if (e instanceof RuntimeException
-						&& null != e.getCause()
-						&& null != e.getCause().getCause()
-						&& e.getCause().getCause() instanceof InterruptedException) {
-					// expected job stopped in OSGi container during processing call
-					break;
-				}
-				e.printStackTrace();
-			} finally {
-				// Exit from this loop is made by the configuring "Keep listening"
-				// parameter to false. Then we will have a break before.
-				if ("false".equals("<%=ElementParameterParser.getValue(node, "__KEEPLISTENING__")%>")) {
-					break;
-				}
-			}
-			nb_line_<%=cid%>++;
-			globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
-		} // This is the end of the REST Provider loop
-	} finally {
-		try {
-			// for "keep listening" == false web service need a time to serve response
-			Thread.currentThread();
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// ignore
-		}
-		// unsubscribe
-		if (null != handlerThread_<%=cid%>) {
-			// stop endpoint in case it was opened by job
-			handlerThread_<%=cid%>.stopEndpoint();
-		}
+	} catch (Throwable e) {
+		java.util.Map<String, Object> restFault_<%=cid%> = new java.util.HashMap<String, Object>();
+		// restFault_<%=cid%>.put("BODY", <error>job exception error);
+		restFault_<%=cid%>.put("STATUS", 500);
+		globalMap.put("restResponse", restFault_<%=cid%>);
+
+//				if (e instanceof InterruptedException) {
+//					break;
+//				}
+//				if (e instanceof RuntimeException
+//						&& null != e.getCause()
+//						&& e.getCause() instanceof InterruptedException) {
+//					// expected job stopped in OSGi container
+//					break;
+//				}
+//				if (e instanceof RuntimeException
+//						&& null != e.getCause()
+//						&& null != e.getCause().getCause()
+//						&& e.getCause().getCause() instanceof InterruptedException) {
+//					// expected job stopped in OSGi container during processing call
+//					break;
+//				}
+//				e.printStackTrace();
+
 	}
+	nb_line_<%=cid%>++;
+	globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
+
+
+//	} finally {
+//		// unsubscribe
+//		if (null != handlerThread_<%=cid%>) {
+//			// stop endpoint in case it was opened by job
+//			handlerThread_<%=cid%>.stopEndpoint();
+//		}
+//	}

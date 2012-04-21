@@ -61,16 +61,11 @@ if (null != metadatas && 0 < metadatas.size()) {
 <%
 				}
 %>
+	java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
+	restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
+	restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
 
-	ESBProviderCallback esbHandler_<%=cid%> = (ESBProviderCallback) globalMap.get("esbHandler");
-	if (null != esbHandler_<%=cid%>) {
-		java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
-		restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
-		restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
-
-		esbHandler_<%=cid%>.sendResponse(restResponse_<%=cid%>);
-		globalMap.put("restRequestReceivedAndResponseSentBack", true);
-	}
+	globalMap.put("restResponse", restResponse_<%=cid%>);
 <%
 			}
 		}

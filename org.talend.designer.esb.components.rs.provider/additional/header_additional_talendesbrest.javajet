@@ -40,7 +40,6 @@ IProcess process = (IProcess) v.get(0);
 List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequestLoop");
 if (!httpRequestComponentsList.isEmpty()) {
 
-
 	final class URITemplateUtils {
 
 		public static final String TEMPLATE_PARAMETERS = "jaxrs.template.parameters";
@@ -445,154 +444,10 @@ if (!httpRequestComponentsList.isEmpty()) {
 	}
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
-	String tRESTRequestNodeCid = tRESTRequestNode.getUniqueName();
-	tRESTRequestNodeCid = tRESTRequestNodeCid.replaceAll("_Loop", "");
+	String cid = tRESTRequestNode.getUniqueName();
+	cid = cid.replaceAll("_Loop", "");
 	boolean isOneWayRest = tRESTRequestNode.getProcess().getNodesOfType("tRESTResponse").isEmpty();
 %>
-
-/**
- * queued message exchange
- */
-static class QueuedExchangeContextImpl {
-
-	/**
-	 * Exchange timeout in seconds
-	 */
-	private static final long EXCHANGE_TIMEOUT = 50;
-
-	private final java.util.concurrent.Exchanger<Exception> exceptionExchange =
-		new java.util.concurrent.Exchanger<Exception>();
-	private final java.util.concurrent.CountDownLatch latch =
-		new java.util.concurrent.CountDownLatch(1);
-
-	private final java.util.Map<String, Object> input;
-
-	private java.util.Map<String, Object> output = null;
-
-	public QueuedExchangeContextImpl(java.util.Map<String, Object> input) {
-		this.input = input;
-	}
-
-	/**
-	 * Don't forget to call this method when you are done
-	 * with processing of the {@link QueuedExchangeContext}
-	 */
-	public void release() throws Exception {
-		latch.countDown();
-		Exception exception;
-		try {
-			exception = exceptionExchange.exchange(null, EXCHANGE_TIMEOUT,
-					java.util.concurrent.TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			throw new Exception(e);
-		} catch (java.util.concurrent.TimeoutException e) {
-			throw new Exception(e);
-		}
-		if (exception != null) {
-			throw exception;
-		}
-	}
-
-	/**
-	 * This operation have to be called on the Web Service
-	 * thread to send response if required
-	 *
-	 * @throws InterruptedException
-	 */
-	public void completeQueuedProcessing() throws InterruptedException {
-		exceptionExchange.exchange(null);
-	}
-
-	/**
-	 * @throws InterruptedException
-	 */
-	void waitForRelease(long timeout, java.util.concurrent.TimeUnit unit)
-			throws InterruptedException {
-		latch.await(timeout, unit);
-	}
-
-	public java.util.Map<String, Object> getInput() {
-		return input;
-	}
-
-	public void serveOutput(java.util.Map<String, Object> response) {
-		output = response;
-	}
-
-	public java.util.Map<String, Object> getResponse() {
-		return output;
-	}
-}
-
-/**
- * message exchange controller
- */
-public static class QueuedMessageHandlerImpl implements ESBProviderCallback {
-	private final int MAX_QUEUE_SIZE = 1000;
-
-	private final int WAIT_TIMEOUT_SECONDS = 120;
-
-	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl> queue =
-		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl>(MAX_QUEUE_SIZE);
-
-	/**
-	 * This method add a newly created
-	 * {@link QueuedExchangeContextImpl} into the internal
-	 * blocking queue where consumer thread is waiting for it.
-	 * Then it waits until the {@link QueuedExchangeContextImpl}
-	 * will be completed for request-response operations
-	 */
-	public QueuedExchangeContextImpl invoke(java.util.Map<String, Object> request) {
-		QueuedExchangeContextImpl context =
-			new QueuedExchangeContextImpl(request);
-		boolean inserted = queue.offer(context);
-		if (!inserted) {
-			try {
-				context.release();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			throw new RuntimeException(
-					"Can't queue request, queue size of "
-							+ MAX_QUEUE_SIZE + " is exceeded");
-		} else {
-			try {
-				context.waitForRelease(WAIT_TIMEOUT_SECONDS,
-						java.util.concurrent.TimeUnit.SECONDS);
-			} catch (InterruptedException ie) {
-				throw new RuntimeException(
-						"job execution timeout: " + ie.getMessage());
-			}
-		}
-		return context;
-	}
-
-	QueuedExchangeContextImpl currentExchangeContext;
-
-	public java.util.Map<String, Object> getRequest() throws ESBJobInterruptedException {
-		currentExchangeContext = null;
-		try {
-			currentExchangeContext = (QueuedExchangeContextImpl) queue.take();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-		return currentExchangeContext.getInput();
-	}
-
-	public void sendResponse(Object output) {
-		if (null == currentExchangeContext) {
-			throw new RuntimeException("sendResponse() invoked before getRequest()");
-		}
-
-		currentExchangeContext.serveOutput((java.util.Map<String, Object>) output);
-
-		try {
-			currentExchangeContext.release();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-}
 
 /**
  * A special Dom4J provider implementation to help conversion in JAX-RS
@@ -600,76 +455,85 @@ public static class QueuedMessageHandlerImpl implements ESBProviderCallback {
  */
 @javax.ws.rs.Produces({"application/xml", "application/json"})
 @javax.ws.rs.Consumes({"application/xml", "application/json"})
-public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>, javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
+public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>,
+		javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
 
-		private static final Class<org.w3c.dom.Document> DOM_DOC_CLS = org.w3c.dom.Document.class;
+	private static final Class<org.w3c.dom.Document> DOM_DOC_CLS = org.w3c.dom.Document.class;
 
-		private javax.ws.rs.ext.Providers providers;
+	private javax.ws.rs.ext.Providers providers;
 
-		@javax.ws.rs.core.Context
-		public void setProviders(javax.ws.rs.ext.Providers providers) {
-			this.providers = providers;
+	@javax.ws.rs.core.Context
+	public void setProviders(javax.ws.rs.ext.Providers providers) {
+		this.providers = providers;
+	}
+
+	public boolean isReadable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns,
+			javax.ws.rs.core.MediaType mt) {
+		return org.dom4j.Document.class.isAssignableFrom(cls);
+	}
+
+	public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls, java.lang.reflect.Type type,
+			java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
+			javax.ws.rs.core.MultivaluedMap<String, String> headers, java.io.InputStream is)
+			throws IOException, javax.ws.rs.WebApplicationException {
+		javax.ws.rs.ext.MessageBodyReader<org.w3c.dom.Document> reader =
+				providers.getMessageBodyReader(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
+		if (reader == null) {
+			throw new javax.ws.rs.WebApplicationException(415);
 		}
+		org.w3c.dom.Document domDoc =
+				reader.readFrom(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, is);
+		return new org.dom4j.io.DOMReader().read(domDoc);
+	}
 
-		public boolean isReadable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns,
-				javax.ws.rs.core.MediaType mt) {
-			return org.dom4j.Document.class.isAssignableFrom(cls);
-		}
+	public long getSize(org.dom4j.Document doc, Class<?> cls, java.lang.reflect.Type type,
+			java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
+		return -1;
+	}
 
-		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls, java.lang.reflect.Type type,
-				java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
-				javax.ws.rs.core.MultivaluedMap<String, String> headers, java.io.InputStream is)
-				throws IOException, javax.ws.rs.WebApplicationException {
-			javax.ws.rs.ext.MessageBodyReader<org.w3c.dom.Document> reader =
-					providers.getMessageBodyReader(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
-			if (reader == null) {
-				throw new javax.ws.rs.WebApplicationException(415);
+	public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type,
+			java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
+		return org.dom4j.Document.class.isAssignableFrom(cls);
+	}
+
+	public void writeTo(org.dom4j.Document doc,Class<?> cls, java.lang.reflect.Type type,
+			java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
+			javax.ws.rs.core.MultivaluedMap<String, Object> headers, java.io.OutputStream os)
+			throws IOException, javax.ws.rs.WebApplicationException {
+		if (mt.getSubtype().contains("xml")) {
+			org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(os);
+			writer.write(doc);
+			writer.flush();
+		} else {
+			 org.w3c.dom.Document domDoc = convertToDOM(doc);
+
+			javax.ws.rs.ext.MessageBodyWriter<org.w3c.dom.Document> writer =
+					 providers.getMessageBodyWriter(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
+			if (writer == null) {
+				throw new javax.ws.rs.WebApplicationException(406);
 			}
-			org.w3c.dom.Document domDoc =
-					reader.readFrom(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, is);
-			return new org.dom4j.io.DOMReader().read(domDoc);
+			writer.writeTo(domDoc, DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, os);
 		}
+	}
 
-		public long getSize(org.dom4j.Document doc, Class<?> cls, java.lang.reflect.Type type,
-				java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
-			return -1;
+	private org.w3c.dom.Document convertToDOM(org.dom4j.Document doc) {
+		String xml = doc.asXML();
+		try {
+			return org.apache.cxf.helpers.DOMUtils.readXml(new java.io.StringReader(xml));
+		} catch (Exception ex) {
+			throw new javax.ws.rs.WebApplicationException(ex);
 		}
-
-		public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type,
-				java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
-			return org.dom4j.Document.class.isAssignableFrom(cls);
-		}
-
-		public void writeTo(org.dom4j.Document doc,Class<?> cls, java.lang.reflect.Type type,
-				java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt,
-				javax.ws.rs.core.MultivaluedMap<String, Object> headers, java.io.OutputStream os)
-				throws IOException, javax.ws.rs.WebApplicationException {
-			if (mt.getSubtype().contains("xml")) {
-				org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(os);
-				writer.write(doc);
-				writer.flush();
-			} else {
-				 org.w3c.dom.Document domDoc = convertToDOM(doc);
-
-				javax.ws.rs.ext.MessageBodyWriter<org.w3c.dom.Document> writer =
-						 providers.getMessageBodyWriter(DOM_DOC_CLS, DOM_DOC_CLS, anns, mt);
-				if (writer == null) {
-					throw new javax.ws.rs.WebApplicationException(406);
-				}
-				writer.writeTo(domDoc, DOM_DOC_CLS, DOM_DOC_CLS, anns, mt, headers, os);
-			}
-		}
-
-		private org.w3c.dom.Document convertToDOM(org.dom4j.Document doc) {
-			String xml = doc.asXML();
-			try {
-				return org.apache.cxf.helpers.DOMUtils.readXml(new java.io.StringReader(xml));
-			} catch (Exception ex) {
-				throw new javax.ws.rs.WebApplicationException(ex);
-			}
-		}
-
+	}
 }
+
+
+private boolean runInTalendEsbRuntimeContainer = false;
+
+public void setRunInTalendEsbRuntimeContainer(boolean flag) {
+	runInTalendEsbRuntimeContainer = flag;
+}
+
+private boolean restTalendJobAlreadyStarted = false;
 
 /**
  * REST provider implementation
@@ -677,44 +541,44 @@ public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<o
 @javax.ws.rs.Path("/")
 @javax.ws.rs.Produces({"application/xml", "application/json"})
 @javax.ws.rs.Consumes({"application/xml", "application/json"})
-public static class RESTProvider_<%=tRESTRequestNodeCid%> {
+public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
 
-	private QueuedMessageHandlerImpl messageHandler;
+	private final <%=process.getName()%> job;
 
-	public RESTProvider_<%=tRESTRequestNodeCid%>(QueuedMessageHandlerImpl messageHandler) {
-		this.messageHandler = messageHandler;
+	public RestServiceProviderImpl4TalendJob(<%=process.getName()%> job) {
+		this.job = job;
 	}
-
 
 	private javax.ws.rs.core.Response processRequest(java.util.Map<String, Object> request) {
 		try {
-			QueuedExchangeContextImpl messageExchange = messageHandler.invoke(request);
+			java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
+			globalMap.put("restRequest", request);
 
-			try {
+			job.tRESTRequest_1_LoopProcess(globalMap);
+
+			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
+
 <% if (isOneWayRest) { %>
-				Integer status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
-				return javax.ws.rs.core.Response.status(status).build();
+			Integer status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
+			return javax.ws.rs.core.Response.status(status).build();
 <% } else { %>
-				java.util.Map<String, Object> responseMap = messageExchange.getResponse();
-				Object responseBody = responseMap.get("BODY");
-				Integer status = (Integer) responseMap.get("STATUS");
-				if (null == status) {
-					status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
-				}
-				return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
-<% } %>
-			} finally {
-				messageExchange.completeQueuedProcessing();
+			Object responseBody = response.get("BODY");
+			Integer status = (Integer) response.get("STATUS");
+			if (null == status) {
+				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
 			}
-
+			return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
+<% } %>
 		} catch (RuntimeException ex) {
 			ex.printStackTrace();
-			throw new javax.ws.rs.WebApplicationException(ex, 500);
+			//throw new javax.ws.rs.WebApplicationException(ex, 500);
+			throw ex;
 		} catch (Throwable ex) {
 			ex.printStackTrace();
-			throw new javax.ws.rs.WebApplicationException(ex, 500);
+			//throw new javax.ws.rs.WebApplicationException(ex, 500);
+			throw new RuntimeException(ex);
 		}
 	}
 
@@ -1001,13 +865,13 @@ if (null != conns && !conns.isEmpty()) {
 	}
 }
 
-public static class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
+public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper {
 
 	@javax.ws.rs.core.Context private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
-	private RESTProvider_<%=tRESTRequestNodeCid%> provider;
+	private RestServiceProviderImpl4TalendJob provider;
 
-	public RestExceptionMapper_<%=tRESTRequestNodeCid%>(RESTProvider_<%=tRESTRequestNodeCid%> provider) {
+	public ExceptionMapper4TalendJobRestService(RestServiceProviderImpl4TalendJob provider) {
 		this.provider = provider;
 	}
 
@@ -1034,10 +898,9 @@ public static class RestExceptionMapper_<%=tRESTRequestNodeCid%> extends org.apa
 }
 
 
-class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
+Thread4RestServiceProviderEndpoint thread4RestServiceProviderEndpoint = null;
 
-	private QueuedMessageHandlerImpl handler;
-
+class Thread4RestServiceProviderEndpoint extends Thread {
 <%
 	String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
 	if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
@@ -1052,8 +915,10 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 
 	private org.apache.cxf.endpoint.Server server;
 
-	public HandlerThread_<%=tRESTRequestNodeCid%>(QueuedMessageHandlerImpl handler) {
-		this.handler = handler;
+	private final <%=process.getName()%> job;
+
+	public Thread4RestServiceProviderEndpoint(<%=process.getName()%> job) {
+		this.job = job;
 	}
 
 	public void run() {
@@ -1067,13 +932,12 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 				endpointUrl = defaultEndpointUrl + endpointUrl;
 			}
 
-			RESTProvider_<%=tRESTRequestNodeCid%> provider =
-					new RESTProvider_<%=tRESTRequestNodeCid%>(handler);
+			RestServiceProviderImpl4TalendJob provider = new RestServiceProviderImpl4TalendJob(job);
 
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
 					new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
 			java.util.List<Object> providers = new java.util.ArrayList<Object>();
-			providers.add(new RestExceptionMapper_<%=tRESTRequestNodeCid%>(provider));
+			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new DOM4JProvider());
 			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider =
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
@@ -1081,8 +945,8 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
-			sf.setResourceClasses(RESTProvider_<%=tRESTRequestNodeCid%>.class);
-			sf.setResourceProvider(RESTProvider_<%=tRESTRequestNodeCid%>.class,
+			sf.setResourceClasses(RestServiceProviderImpl4TalendJob.class);
+			sf.setResourceProvider(RestServiceProviderImpl4TalendJob.class,
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 			server = sf.create();
@@ -1101,14 +965,6 @@ class HandlerThread_<%=tRESTRequestNodeCid%> extends Thread {
 		}
 	}
 }
-
-
-private ESBProviderCallback providerCallback_<%=tRESTRequestNodeCid%>;
-
-public void setProviderCallback(ESBProviderCallback callback) {
-	providerCallback_<%=tRESTRequestNodeCid%> = callback;
-}
-
 <%
 }
 %>
