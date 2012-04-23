@@ -276,5 +276,9 @@
 	<FeatureMap HotLib="locator-5.1.0.jar">
 		<Feature version="[2,10)">tesb-zookeeper</Feature>
 	</FeatureMap>
---></FeatureMAPS>
+-->
+    <FeatureMap HotLib="activemq-all-5.5.1.jar">
+		<Feature version="[5,10)">activemq</Feature>
+	</FeatureMap>
+</FeatureMAPS>
 	
