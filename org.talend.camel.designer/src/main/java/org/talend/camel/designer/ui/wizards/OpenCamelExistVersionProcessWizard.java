@@ -38,7 +38,6 @@ import org.talend.core.model.properties.BusinessProcessItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.SQLPatternItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -125,7 +124,6 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
         } catch (LoginException e) {
             ExceptionHandler.process(e);
         }
-        RepositoryManager.refreshCreatedNode(ERepositoryObjectType.PROCESS);
     }
 
     /*

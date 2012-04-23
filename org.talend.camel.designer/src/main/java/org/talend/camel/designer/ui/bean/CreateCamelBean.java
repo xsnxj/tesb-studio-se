@@ -36,7 +36,6 @@ import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.images.OverlayImageProvider;
@@ -79,6 +78,7 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = !selection.isEmpty() && selection.size() == 1;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -114,6 +114,7 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     protected void doRun() {
         // RepositoryNode codeNode = getViewPart().getRoot().getChildren().get(4);
         // RepositoryNode routineNode = codeNode.getChildren().get(0);
@@ -140,7 +141,6 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), beanWizard);
 
         if (dlg.open() == Window.OK) {
-            RepositoryManager.refreshCreatedNode(CamelRepositoryNodeType.repositoryBeansType);
 
             try {
                 openBeanEditor(beanWizard.getBean(), false);

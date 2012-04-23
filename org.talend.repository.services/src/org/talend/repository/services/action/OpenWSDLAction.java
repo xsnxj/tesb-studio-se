@@ -32,9 +32,9 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
  */
 public class OpenWSDLAction extends AbstractCreateAction {
 
-    private String createLabel = "Assign WSDL";
+    private final String createLabel = "Assign WSDL";
 
-    private ERepositoryObjectType currentNodeType;
+    private final ERepositoryObjectType currentNodeType;
 
     private boolean creation = false;
 
@@ -93,6 +93,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         setEnabled(true);
     }
 
+    @Override
     protected void doRun() {
         if (repositoryNode == null) {
             repositoryNode = getCurrentRepositoryNode();
@@ -125,6 +126,5 @@ public class OpenWSDLAction extends AbstractCreateAction {
         wizardDialog.create();
 
         wizardDialog.open();
-        RepositoryManager.refreshCreatedNode(ESBRepositoryNodeType.SERVICES);
     }
 }

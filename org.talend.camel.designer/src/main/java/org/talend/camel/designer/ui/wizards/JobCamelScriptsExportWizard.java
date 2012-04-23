@@ -27,11 +27,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWizardPage;
@@ -86,6 +84,7 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
     /*
      * (non-Javadoc) Method declared on IWizard.
      */
+    @Override
     public void addPages() {
         super.addPages();
 
@@ -117,9 +116,10 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
     /*
      * (non-Javadoc) Method declared on IWizard.
      */
+    @Override
     public boolean performFinish() {
-		boolean finish = mainPage.finish();
-		return finish;
+        boolean finish = mainPage.finish();
+        return finish;
     }
 
     /*
@@ -130,7 +130,6 @@ public class JobCamelScriptsExportWizard extends Wizard implements IExportWizard
     @Override
     public boolean performCancel() {
         ProcessorUtilities.resetExportConfig();
-        RepositoryManager.refreshCreatedNode(CamelRepositoryNodeType.repositoryRoutesType);
         selection = null;
         mainPage = null;
         return true;

@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -32,7 +31,6 @@ import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
@@ -108,6 +106,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     protected void doRun() {
         RepositoryNode beanNode = getCurrentRepositoryNode();
         if (isToolbar()) {
@@ -132,9 +131,6 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
         ESBWizard beanWizard = new ESBWizard(PlatformUI.getWorkbench(), true, selection);
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), beanWizard);
 
-        if (dlg.open() == Window.OK) {
-            RepositoryManager.refreshCreatedNode(ESBRepositoryNodeType.SERVICES);
-        }
     }
 
     /*

@@ -55,7 +55,6 @@ import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.repository.RepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
@@ -73,7 +72,6 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
-import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.TemplateProcessor;
 
 /**
@@ -91,11 +89,11 @@ public class OpenWSDLPage extends WizardPage {
 
     private boolean createWSDL;
 
-    private ServiceItem item;
+    private final ServiceItem item;
 
-    private boolean creation;
+    private final boolean creation;
 
-    private IPath pathToSave;
+    private final IPath pathToSave;
 
     private Button checkImport;
 
@@ -125,6 +123,7 @@ public class OpenWSDLPage extends WizardPage {
         radioCreateWsdl.setText(Messages.AssignWsdlDialog_WsdlChoice_CreateNew);
         radioCreateWsdl.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(false);
                 checkImport.setVisible(false);
@@ -139,6 +138,7 @@ public class OpenWSDLPage extends WizardPage {
         radioImportWsdl.setText(Messages.AssignWsdlDialog_WsdlChoice_ImportExistent);
         radioImportWsdl.addSelectionListener(new SelectionAdapter() {
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 wsdlText.setVisible(true);
                 checkImport.setVisible(true);
@@ -177,7 +177,7 @@ public class OpenWSDLPage extends WizardPage {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
      */
     @Override
@@ -192,7 +192,7 @@ public class OpenWSDLPage extends WizardPage {
 
     @SuppressWarnings("unchecked")
     public boolean finish() {
-      //changed by hqzhang for TDI-19527, label=displayName
+        // changed by hqzhang for TDI-19527, label=displayName
         item.getProperty().setLabel(item.getProperty().getDisplayName());
         String label = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
@@ -276,7 +276,6 @@ public class OpenWSDLPage extends WizardPage {
         try {
             factory.save(item);
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-            RepositoryManager.refreshCreatedNode(ESBRepositoryNodeType.SERVICES);
             repositoryNode = RepositoryNodeUtilities.getRepositoryNode(new RepositoryViewObject(item.getProperty()));
             OpenWSDLEditorAction action = new OpenWSDLEditorAction();
             action.setRepositoryNode(repositoryNode);
