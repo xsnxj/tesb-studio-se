@@ -10,7 +10,7 @@
             icon="icons/routes.png"
             id="org.talend.repository.viewer.esb.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="Routes"
+            name="%NavigatorContent.routes"
             priority="high">
          <triggerPoints>
             <or>
@@ -54,7 +54,7 @@
             icon="icons/beans.gif"
             id="org.talend.repository.viewer.esb.beans"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="Beans"
+            name="%NavigatorContent.beans"
             priority="normal">
          <triggerPoints>
             <and>
