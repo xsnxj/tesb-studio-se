@@ -130,7 +130,7 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
 
         ESBWizard beanWizard = new ESBWizard(PlatformUI.getWorkbench(), true, selection);
         WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), beanWizard);
-
+        dlg.open();
     }
 
     /*
