@@ -140,6 +140,9 @@
             <contentExtension
                   pattern="org.talend.repository.viewer.root.recycleBin">
             </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.viewer.root.content.refproject.content">
+            </contentExtension>
          </includes>
       </perspectiveFilter>
       <perspectiveFilter
