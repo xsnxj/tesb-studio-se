@@ -12,37 +12,8 @@
 %>
 	} catch (Throwable e) {
 		java.util.Map<String, Object> restFault_<%=cid%> = new java.util.HashMap<String, Object>();
-		// restFault_<%=cid%>.put("BODY", <error>job exception error);
 		restFault_<%=cid%>.put("STATUS", 500);
 		globalMap.put("restResponse", restFault_<%=cid%>);
-
-//				if (e instanceof InterruptedException) {
-//					break;
-//				}
-//				if (e instanceof RuntimeException
-//						&& null != e.getCause()
-//						&& e.getCause() instanceof InterruptedException) {
-//					// expected job stopped in OSGi container
-//					break;
-//				}
-//				if (e instanceof RuntimeException
-//						&& null != e.getCause()
-//						&& null != e.getCause().getCause()
-//						&& e.getCause().getCause() instanceof InterruptedException) {
-//					// expected job stopped in OSGi container during processing call
-//					break;
-//				}
-//				e.printStackTrace();
-
 	}
 	nb_line_<%=cid%>++;
 	globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
-
-
-//	} finally {
-//		// unsubscribe
-//		if (null != handlerThread_<%=cid%>) {
-//			// stop endpoint in case it was opened by job
-//			handlerThread_<%=cid%>.stopEndpoint();
-//		}
-//	}
