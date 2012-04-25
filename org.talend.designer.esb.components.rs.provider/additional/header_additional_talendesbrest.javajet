@@ -564,8 +564,12 @@ public static class RestServiceProviderImpl4TalendJob {
 			Integer status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
 			return javax.ws.rs.core.Response.status(status).build();
 <% } else { %>
-			Object responseBody = response.get("BODY");
-			Integer status = (Integer) response.get("STATUS");
+			Object responseBody = null;
+			Integer status = null;
+			if (null != response) {
+				responseBody = response.get("BODY");
+				status = (Integer) response.get("STATUS");
+			}
 			if (null == status) {
 				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
 			}
