@@ -424,9 +424,9 @@ public class ESBService implements IESBService {
         if (param != null) {
             param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.REPOSITORY);
             param.getChildParameters().get(EParameterName.REPOSITORY_PROPERTY_TYPE.getName()).setValue("");
-            String serviceId = connectionItem.getProperty().getId();
-            String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
-            String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
+            connectionItem.getProperty().getId();
+            ((PortRepositoryObject) repNode.getParent().getObject()).getId();
+            ((OperationRepositoryObject) repNode.getObject()).getId();
             ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, null, param.getName()
                     + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
             command2.execute();
@@ -685,7 +685,7 @@ public class ESBService implements IESBService {
                 }
             }
         }
-        RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
+        // RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
     }
 
     private List<IRepositoryNode> getJobObject(IRepositoryNode folderObj) {
@@ -702,7 +702,6 @@ public class ESBService implements IESBService {
     }
 
     public void deleteOldRelation(String jobID) {
-        boolean flag = false;
         boolean portBreak = false;
         boolean serviceBreak = false;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -720,7 +719,6 @@ public class ESBService implements IESBService {
                             if (referenceJobId.equals(jobID)) {
                                 operation.setLabel(operation.getName());
                                 operation.setReferenceJobId(null);
-                                flag = true;
                                 portBreak = true;
                                 break;
                             }
