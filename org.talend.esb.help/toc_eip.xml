@@ -1,25 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?NLS TYPE="org.eclipse.help.toc"?>
+<?xml version="1.0" encoding="ISO-8859-15"?>
 
-<toc label="Talend User documentation">  
-  <topic label="Enteprise Integration Patterns">
+<toc>
+  <topic label="Components">
     <topic label="cAggregate" href="guide/components/en/cAggregate.html"/>
     <topic label="cBean" href="guide/components/en/cBean.html"/>
+    <topic label="cCXF" href="guide/components/en/cCXF.html"/>
     <topic label="cConfig" href="guide/components/en/cConfig.html"/>
     <topic label="cContentEnricher" href="guide/components/en/cContentEnricher.html"/>
     <topic label="cConvertBodyTo" href="guide/components/en/cConvertBodyTo.html"/>
-    <topic label="cCXF" href="guide/components/en/cCXF.html"/>
     <topic label="cDelayer" href="guide/components/en/cDelayer.html"/>
     <topic label="cDynamicRouter" href="guide/components/en/cDynamicRouter.html"/>
+    <topic label="cErrorHandler" href="guide/components/en/cErrorHandler.html"/>
     <topic label="cExchangePattern" href="guide/components/en/cExchangePattern.html"/>
+    <topic label="cFTP" href="guide/components/en/cFTP.html"/>
     <topic label="cFile" href="guide/components/en/cFile.html"/>
-    <topic label="cFtp" href="guide/components/en/cFtp.html"/>
+    <topic label="cHttp" href="guide/components/en/cHttp.html"/>
     <topic label="cIdempotentConsumer" href="guide/components/en/cIdempotentConsumer.html"/>
     <topic label="cIntercept" href="guide/components/en/cIntercept.html"/>
-    <topic label="cJavaDSLProcessor" href="guide/components/en/cJavaDSLProcessor.html"/>
     <topic label="cJMS" href="guide/components/en/cJMS.html"/>
+    <topic label="cJMSConnectionFactory" href="guide/components/en/cJMSConnectionFactory.html"/>
+    <topic label="cJavaDSLProcessor" href="guide/components/en/cJavaDSLProcessor.html"/>
     <topic label="cLoadBalancer" href="guide/components/en/cLoadBalancer.html"/>
+    <topic label="cLog" href="guide/components/en/cLog.html"/>
     <topic label="cLoop" href="guide/components/en/cLoop.html"/>
+    <topic label="cMail" href="guide/components/en/cMail.html"/>
     <topic label="cMessageFilter" href="guide/components/en/cMessageFilter.html"/>
     <topic label="cMessageRouter" href="guide/components/en/cMessageRouter.html"/>
     <topic label="cMessagingEndpoint" href="guide/components/en/cMessagingEndpoint.html"/>
@@ -37,5 +41,5 @@
     <topic label="cThrottler" href="guide/components/en/cThrottler.html"/>
     <topic label="cTry" href="guide/components/en/cTry.html"/>
     <topic label="cWireTap" href="guide/components/en/cWireTap.html"/>
-  </topic> 
+  </topic>
 </toc>

@@ -1,0 +1,82 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cIntercept</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch02.html" title="Chapter&nbsp;2.&nbsp;Exception components"><link rel="prev" href="cErrorHandler.html" title="cErrorHandler"><link rel="next" href="cOnException.html" title="cOnException"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cIntercept"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cIntercept"></a>cIntercept</h2></div></div></div><div class="mediaobject"><img src="../images/cIntercept_icon32_white.png"></div><div class="section" title="cIntercept properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1522"></a>cIntercept properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Exception</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> intercepts the messages in all the sub-routes on a
+								Route before they are produced, and routes them in a new single
+								sub-route without modifying the original ones. When this detour is
+								complete, message routing to the originally intended target
+								endpoints continues.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> intercepts each message sub-route and redirects it
+								in another sub-route without modifying the original one. This can be
+								useful at testing time to simulate error handling.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIntercept</strong></span> is a start component of a sub-route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Connections</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Row / Route</em></span></p>
+						</td><td valign="top"><p>Select the <span class="bold"><strong>Route</strong></span> link to intercept all the messages of all
+								the sub-routes listened to by the <span class="bold"><strong>cIntercept</strong></span>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Trigger / When</em></span></p>
+						</td><td valign="top"><p>Select the <span class="bold"><strong>When</strong></span>
+								link to filter the messages to intercept and click the <span class="bold"><strong>Component</strong></span> view.</p><p>In the
+									<span class="bold"><strong>Type</strong></span> list, select the type of
+								language you will use to declare your condition.</p><p>In the
+									<span class="bold"><strong>Condition</strong></span> field, type in the
+								condition that will be used to filter the messages.</p><p>All
+								the messages that do not match this condition are dropped by default
+								or can be retrieved with the <span class="bold"><strong>Otherwise</strong></span> link to a different channel. </p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2" valign="top"><p> To keep the original sub-routes untouched, cIntercept only be used in a separate sub-route
+								.</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Intercepting several routes and redirect them in a single new route"><div class="titlepage"><div><div><h3 class="title"><a name="Raa87706"></a>Scenario: Intercepting several routes and redirect them in a single new route</h3></div></div></div><p>In this scenario, messages on two sub-routes are intercepted and routed along a new
+			sub-route, which is then terminated before the original sub-routes continue.</p><div class="mediaobject"><img src="../images/use_case_cintercept1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1651"></a>Dropping and linking the components</h4></div></div></div><p>This scenario requires five <span class="bold"><strong>cFile</strong></span> components, one
+					<span class="bold"><strong>cIntercept</strong></span> component, one <span class="bold"><strong>cProcessor</strong></span> component, and one <span class="bold"><strong>cStop</strong></span>
+				component.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="bold"><strong>Messaging</strong></span> folder of the
+							<span class="bold"><strong>Palette</strong></span>, drop four <span class="bold"><strong>cFile</strong></span> components onto the design workspace.
+					</p></li><li class="step" title="Step 2"><p>Connect the two pairs of <span class="bold"><strong>cFile</strong></span> components
+						using <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connections. Messages on these two sub-routes will be
+						intercepted.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Exception</strong></span> folder, drop a <span class="bold"><strong>cIntercept</strong></span> component onto the design workspace.</p></li><li class="step" title="Step 4"><p>From the <span class="bold"><strong>Processor</strong></span> folder, drop a
+							<span class="bold"><strong>cProcessor</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 5"><p>From the <span class="bold"><strong>Messaging</strong></span> folder, drop a fifth
+							<span class="bold"><strong>cFile</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 6"><p>From the <span class="bold"><strong>Miscellaneous</strong></span> folder, drop a
+							<span class="bold"><strong>cStop</strong></span> component onto the design
+						workspace. </p></li><li class="step" title="Step 7"><p>Connect these four components one to the next using <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connections.
+						Along this sub-route, intercepted messages will be directed to a new
+						endpoint before the entire Route is terminated.</p></li><li class="step" title="Step 8"><p>Label the components to better identify their roles in the Route.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1741"></a>Configuring the components and connections</h4></div></div></div><p>In this scenario, the <span class="bold"><strong>cIntercept</strong></span> component intercepts all
+				the messages on all the sub-routes as soon as the messages are sent and does not
+				have properties to set. The <span class="bold"><strong>cStop</strong></span> component stops
+				the sub-route on which it is dropped before it completes and does not have
+				properties to set. Therefore, you only need to configure the messaging endpoints and
+				monitor components.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Sender_1</span> to display its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject"><img src="../images/use_case_cintercept2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path
+						to the first source your are going to send messages from, and leave the
+						other parameters as they are.</p></li><li class="step" title="Step 3"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Receiver_1</span> to display its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cintercept3.png"></div></li><li class="step" title="Step 4"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path
+						to the first destination you are going to send messages to, and leave the
+						other parameters as they are.</p></li><li class="step" title="Step 5"><p>In the same way, set the <span class="bold"><strong>cFile</strong></span> components
+						labeled <span class="italic">Sender_2</span> and <span class="italic">Receiver_2</span> across the second sub-route.</p></li><li class="step" title="Step 6"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component,
+						which is labeled <span class="italic">Monitor</span>, to display its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab, and customize the code in the
+							<span class="bold"><strong>Code</strong></span> area to display the file names of
+						the messages intercepted on the console:</p><pre class="programlisting">System.out.println("Message intercepted: "+
+exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="Step 7"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Receiver_3</span> to display its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject"><img src="../images/use_case_cintercept7.png"></div></li><li class="step" title="Step 8"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path
+						to the destination for the intercepted messages, and leave the other
+						parameters as they are.</p></li><li class="step" title="Step 9"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1863"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/use_case_cintercept8.png"></div><p>As shown in this piece of code, <span class="italic">Interceptor</span> intercepts
+						all messages on route, the intercepted messages are directed
+							<code class="code">.to</code> the endpoint <span class="italic">Receiver_3</span>, and <span class="italic">cStop_1</span>
+						terminates message routing before the messages are routed <code class="code">from</code>
+						the endpoint <span class="italic">Sender_1</span>
+						<code class="code">.to</code> the endpoint <span class="italic">Receiver_1</span>
+						and <code class="code">from</code> the endpoint <span class="italic">Sender_2</span>
+						<code class="code">.to</code> the endpoint <span class="italic">Receiver_2</span>. </p></li><li class="step" title="Step 2"><p>Click the <span class="bold"><strong>Run</strong></span> view and click the
+							<span class="bold"><strong>Run</strong></span> button to launch the execution of
+						your Route. You can also press <span class="bold"><strong>F6</strong></span> to
+						execute it. </p><p>RESULT: Files are sent from the endpoints, caught by the <span class="bold"><strong>cIntercept</strong></span> component, monitored by the <span class="bold"><strong>cProcessor</strong></span> component and sent to a new endpoint, and then
+						the original sub-routes are terminated before they can continue.</p><div class="mediaobject"><img src="../images/use_case_cintercept9.png"></div></li></ol></div></div></div></div></body></html>

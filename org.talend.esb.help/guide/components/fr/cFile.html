@@ -1,0 +1,118 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cFile</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch03.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"><link rel="prev" href="cCXF.html" title="cCXF"><link rel="next" href="cFTP.html" title="cFTP"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cFile"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cFile"></a>cFile</h2></div></div></div><div class="mediaobject"><img src="../images/cfile_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cFile"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3752"></a>Propri&eacute;t&eacute;s du cFile</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cFile</strong></span> offre un acc&egrave;s aux syst&egrave;mes de
+								fichiers.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cFile</strong></span> permet de faire traiter des fichiers par
+								d'autres composants Camel ou de sauvegarder sur le disque des
+								messages d'autres composants. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Path</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Chemin d'acc&egrave;s au(x) fichier(s) au(x)quel(s) acc&eacute;der ou &agrave; sauvegarder.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Parameters/Noop</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case afin de laisser le(s) fichier(s) dans le dossier original apr&egrave;s
+								lecture.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Parameters/Flatten</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour supprimer le nom des sous-r&eacute;pertoires dans le chemin d'acc&egrave;s au
+								fichier. Cela vous permet de consommer de mani&egrave;re r&eacute;cursive dans les
+								sous-r&eacute;pertoires, mais quand vous &eacute;crivez, par exemple, les fichiers
+								dans un autre r&eacute;pertoire, ils seront &eacute;crits dans un seul r&eacute;pertoire. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Parameters/AutoCreate</em></span>
+							</p>
+						</td><td valign="top">Cochez cette case pour cr&eacute;er automatiquement le r&eacute;pertoire sp&eacute;cifi&eacute; dans
+							le champ <span class="bold"><strong>Path</strong></span> s'il n'existe
+							pas.</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Parameters/BufferSize(kb)</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Saisissez la taille de la m&eacute;moire tampon, en kilooctets.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Encoding</em></span>
+						</td><td valign="top">S&eacute;lectionnez l'encodage du fichier, <span class="bold"><strong>ISO-8859-15</strong></span>, <span class="bold"><strong>UTF-8</strong></span>, ou
+								<span class="bold"><strong>CUSTOM</strong></span>.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>FileName</em></span>
+						</td><td valign="top">Nom du fichier &agrave; traiter. Utilisez cette option si vous souhaitez
+							consommer uniquement un fichier dans le r&eacute;pertoire sp&eacute;cifi&eacute;.</td></tr><tr><td>
+							<span class="bold"><strong>Advanced settings</strong></span>
+						</td><td valign="top">
+							<span class="emphasis"><em>Advanced</em></span>
+						</td><td valign="top">Configurez les arguments facultatifs dans la table correspondante. Cliquez
+							sur le bouton <span class="bold"><strong>[+]</strong></span> autant de fois que
+							n&eacute;cessaire pour ajouter des arguments &agrave; la table. Cliquez ensuite sur le
+							champ <span class="bold"><strong>Value</strong></span> correspondant pour saisir
+							une valeur. Consultez le site <a class="link" href="http://camel.apache.org/file2.html" target="_top">http://camel.apache.org/file2.html</a> (en anglais) pour voir
+							les options d'URI disponibles.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cFile</strong></span> peut &ecirc;tre un composant de d&eacute;but, un
+								composant interm&eacute;diaire ou un composant de fin dans une
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Lire des fichiers d'un r&eacute;pertoire et les &eacute;crire dans un autre"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3987"></a>Sc&eacute;nario : Lire des fichiers d'un r&eacute;pertoire et les &eacute;crire dans un autre</h3></div></div></div><p>Dans ce sc&eacute;nario, un composant d'entr&eacute;e <span class="bold"><strong>cFile</strong></span> est configur&eacute;
+			pour parcourir un r&eacute;pertoire de fichiers locaux et envoyer les fichiers dans un
+			composant <span class="bold"><strong>cFile</strong></span> de sortie qui &eacute;crit ces fichiers dans
+			un autre r&eacute;pertoire.</p><div class="mediaobject"><img src="../images/use_case_cfile1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4001"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="bold"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="bold"><strong>Messaging</strong></span> et s&eacute;lectionnez le composant <span class="bold"><strong>cFile</strong></span>. D&eacute;posez-en un comme composant d'entr&eacute;e et
+						un comme composant de sortie, dans l'espace de mod&eacute;lisation
+						graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez-droit sur le composant d'entr&eacute;e <span class="bold"><strong>cFile</strong></span>,
+						s&eacute;lectionnez <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> dans le menu contextuel et cliquez sur le composant de
+						sortie <span class="bold"><strong>cFile</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Nommez les composants afin de mieux identifier leur fonctionnalit&eacute;.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4035"></a>Configurer les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant d'entr&eacute;e <span class="bold"><strong>cFile</strong></span> pour
+						afficher sa vue <span class="bold"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cfile2.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>Path</strong></span>, parcourez votre syst&egrave;me ou saisissez
+						le chemin d'acc&egrave;s au fichier d'entr&eacute;e et laissez les autres champs tels
+						qu'ils sont.</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant de sortie <span class="bold"><strong>cFile</strong></span> pour
+						afficher sa vue <span class="bold"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cfile3.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>Path</strong></span>, parcourez votre syst&egrave;me ou saisissez
+						le chemin d'acc&egrave;s au fichier de sortie, comme dans la  capture d'&eacute;cran
+						ci-dessus. Laissez les autres param&egrave;tres tels qu'ils sont.</p></li><li class="step" title="&Eacute;tape 5"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4081"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_cfile4.png"></div><p>Comme affich&eacute; dans le code, une route de message est construite d'un (<code class="code">from</code>)
+						endpoint vers (<code class="code">.to</code>) un autre.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez sur la vue <span class="bold"><strong>Run</strong></span> pour l'afficher et cliquez sur le
+						bouton <span class="bold"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre
+						Route. Vous pouvez &eacute;galement appuyer sur <span class="bold"><strong>F6</strong></span>
+						pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Les fichiers d'entr&eacute;e sont &eacute;crits dans le r&eacute;pertoire de sortie
+						sp&eacute;cifi&eacute;.</p></li></ol></div></div></div></div></body></html>

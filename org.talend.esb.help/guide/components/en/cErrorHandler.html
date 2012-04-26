@@ -1,0 +1,114 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cErrorHandler</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch02.html" title="Chapter&nbsp;2.&nbsp;Exception components"><link rel="prev" href="ch02.html" title="Chapter&nbsp;2.&nbsp;Exception components"><link rel="next" href="cIntercept.html" title="cIntercept"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cErrorHandler"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cErrorHandler"></a>cErrorHandler</h2></div></div></div><div class="mediaobject"><img src="../images/cErrorHandler_icon32_white.png"></div><div class="section" title="cErrorHandler properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1045"></a>cErrorHandler properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cErrorHandler</strong></span> provides multiple
+								strategies to deal with errors processing an Event Driven
+								Consumer.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cErrorHandler</strong></span> offers different
+								strategies for error handling during the processing.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Default Handler</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This error handler does not support a dead letter queue and will
+								return exceptions back to the caller.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Set Maximum Redeliveries</strong></span>: select this check box to set
+								the number of redeliveries in the <span class="bold"><strong>Maximum
+									Redeliveries (int)</strong></span> field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Set Redelivery Delay</strong></span>: select this
+								check box to set the initial redelivery delay (in milliseconds) in
+								the <span class="bold"><strong>Redelivery Delay (long)</strong></span>
+								field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Set Retry Attempted Log Level</strong></span>: select this check box
+								to select the log level in the <span class="bold"><strong>Level</strong></span> list for log messages when retries are
+								attempted.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Asynchronized Delayed Redelivery</strong></span>:
+								select this check box to allow asynchronous delayed
+								redelivery.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Use Original Message</strong></span>: select this
+								check box to use the original message for redelivery. </p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>More Configurations by Code</strong></span>:
+								select this check box to enter codes in the <span class="bold"><strong>Code</strong></span> box for further configuration.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Dead Letter</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This handler supports attempting to redeliver the message exchange
+								a number of times before sending it to a dead letter
+								endpoint.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Dead Letter Uri</strong></span>: select this
+								check box to define the endpoint of the dead letter queue. </p>
+							<p>Other parameters share the same meaning as those of the default
+								handler.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Logging Handler</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This handler logs the exceptions.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Set Logger Name</strong></span>: select this
+								check box to give a name to the logger in the <span class="bold"><strong>Name</strong></span> field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">&nbsp;</td><td valign="top">
+							<p><span class="bold"><strong>Set Log Level</strong></span>: select this check
+								box to decide the log level from the <span class="bold"><strong>Level</strong></span> list. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cErrorHandler</strong></span> provides multiple
+								strategies to deal with errors processing an Event Driven
+								Consumer.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Logging the exception thrown during a client/server talk"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1293"></a>Scenario: Logging the exception thrown during a client/server talk</h3></div></div></div><p>In this scenario, a Jetty server is started before a client browser requests access to it.
+			Then an exception is thrown at the server side and logged by <span class="bold"><strong>cErrorHandler</strong></span>. </p><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1301"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Drop the following components from the <span class="bold"><strong>Palette</strong></span> onto the
+						workspace: <span class="bold"><strong>cMessagingEndpoint</strong></span>, <span class="bold"><strong>cErrorHandler</strong></span> and <span class="bold"><strong>cProcessor</strong></span>, labelled as <span class="bold"><strong>Jetty_Server</strong></span>, <span class="bold"><strong>Error_Handler</strong></span>
+						and <span class="bold"><strong>Throw_Exception</strong></span> respectively.</p></li><li class="step" title="Step 2"><p>Link <span class="bold"><strong>cMessagingEndpoint</strong></span> and <span class="bold"><strong>cProcessor</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt;
+							<span class="bold"><strong>Route</strong></span> connection.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_1.png"></div></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1347"></a>Configuring the components </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click <span class="bold"><strong>cErrorHandler</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_2.png"></div></li><li class="step" title="Step 2"><p>Select <span class="bold"><strong>Logging Handler</strong></span> to log the exceptions that are
+						thrown.</p></li><li class="step" title="Step 3"><p>Double-click <span class="bold"><strong>cMessagingEndpoint</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_cerrorhandler_3.png" align="middle"></div></li><li class="step" title="Step 4"><p>In the <span class="bold"><strong>Uri</strong></span> field, enter
+							<code class="code">jetty:http://localhost:8889/service</code> to specify the Jetty
+						server.</p></li><li class="step" title="Step 5"><p>Click <span class="bold"><strong>Advanced settings</strong></span> for further setup.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_4.png"></div></li><li class="step" title="Step 6"><p>In the <span class="bold"><strong>Dependencies</strong></span> table, click the <span class="bold"><strong>[+]</strong></span> button to add a line and select
+							<code class="code">jetty</code> from the <span class="bold"><strong>Camel
+							component</strong></span> list.</p></li><li class="step" title="Step 7"><p>Double-click <span class="bold"><strong>cProcessor</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_cerrorhandler_5.png" align="middle"></div></li><li class="step" title="Step 8"><p>In the <span class="bold"><strong>Code</strong></span> box, enter <code class="code">throw new Exception("server
+							side error")</code> to throw an exception.</p></li><li class="step" title="Step 9"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e1450"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace
+						to check the generated code.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_6.png"></div><p>As shown above, the route starts <code class="code">from</code> the endpoint <code class="code">Jetty_Server</code>
+						and throws the exception of <code class="code">server side error</code> via
+							<code class="code">cProcessor_1</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="bold"><strong>F6</strong></span> to execute the Route.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_7.png"></div><p>The Jetty server has started.</p></li><li class="step" title="Step 3"><p>Launch an Internet browser and enter
+							<code class="code">http://localhost:8889/service</code> (the Jetty server URI
+						configured above) in the address bar to access the server.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_8.png"></div><p>As shown above, the request failed due to the server error. </p></li><li class="step" title="Step 4"><p>Go to the Studio and check the results in the <span class="bold"><strong>Run</strong></span>
+						tab.</p><div class="mediaobject"><img src="../images/use_case_cerrorhandler_9.png"></div><p>As shown above, <span class="bold"><strong>cErrorHandler</strong></span> has logged the exception
+						at the level of <span class="italic">ERROR</span>.</p></li></ol></div></div></div></div></body></html>

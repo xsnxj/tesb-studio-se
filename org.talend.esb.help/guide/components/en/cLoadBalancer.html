@@ -1,0 +1,124 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cLoadBalancer</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch06.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cIdempotentConsumer.html" title="cIdempotentConsumer"><link rel="next" href="cMessageFilter.html" title="cMessageFilter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cLoadBalancer"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cLoadBalancer"></a>cLoadBalancer</h2></div></div></div><div class="mediaobject"><img src="../images/cLoadBalancer_icon32_white.png"></div><div class="section" title="cLoadBalancer properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e12053"></a>cLoadBalancer properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Routing</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> allows you to distribute messages
+								across multiple endpoints using different load balancing
+								strategies.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> allows you to distribute messages
+								among several endpoints using a variety of load balancing
+								strategies.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Strategy</em></span></p>
+						</td><td valign="top"><p>Select between <span class="bold"><strong>Random</strong></span>, <span class="bold"><strong>Round
+								Robin</strong></span>, <span class="bold"><strong>Sticky</strong></span>, <span class="bold"><strong>Topic</strong></span>, <span class="bold"><strong>Failover</strong></span>, and <span class="bold"><strong>Custom</strong></span>. Each method is described below.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Random</span></p>
+						</td><td colspan="2" valign="top"><p>The receiving endpoint is
+								chosen randomly at each exchange.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Round
+								Robin</span></p>
+						</td><td colspan="2" valign="top"><p>Messages are distributed
+								according to the round robin method which distributes the load
+								evenly.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Sticky</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Language</em></span></p>
+						</td><td valign="top"><p>Select the language of the expression to use in
+								the <span class="bold"><strong>Expression</strong></span> field to distribute
+								the messages.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression that will be used to
+								calculate a correlation key that will determine the endpoint to
+								choose. </p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Topic</span></p>
+						</td><td colspan="2" valign="top"><p>Select this option to
+								send all the messages to all the endpoints.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Failover</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Basic mode</em></span></p>
+						</td><td valign="top"><p>By default, the failover load balancing always
+								sends the messages to the first endpoint. If the first endpoint
+								fails, the messages are sent to subsequent endpoints.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Specify exceptions</em></span></p>
+						</td><td valign="top"><p>Specify the exceptions to which the failover
+								should react to in the <span class="bold"><strong>Exception</strong></span>
+								table.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Use with Round robin</em></span></p>
+						</td><td valign="top"><p>Select this option to use failover with advanced
+								options.</p><p>From the <span class="bold"><strong>Maximum failover
+									attempt</strong></span> list, select the number of attempt to be
+								proceed before giving up the transfer: </p><p> -<span class="bold"><strong>Attempt forever</strong></span>: always attempts to
+								transfer the messages and always try to failover. </p><p>
+									-<span class="bold"><strong>Never failover</strong></span>: gives up
+								immediately the transfer of messages and never try to
+								failover.</p><p> -<span class="bold"><strong>A number of
+									attempts</strong></span>: attempts <span class="emphasis"><em>n</em></span> number of
+								time to transfer messages, specify that number in the <span class="bold"><strong>Number of attempts</strong></span>
+									field.</p><p><span class="bold"><strong>Inherit error
+									handler</strong></span>: Select <span class="emphasis"><em>true</em></span> if you want
+								Camel error handler to be used. If you select
+									<span class="emphasis"><em>false</em></span>, the load balancer will immediately
+								failover when an exception is thrown. </p><p><span class="bold"><strong>Use Round robin</strong></span>: Select
+									<span class="emphasis"><em>true</em></span> if you want to combine failover with
+								round robin. Failover load balancing with round robin mode
+								distributes the load evenly between the services, and it provides
+								automatic failover.</p>
+						</td></tr><tr><td valign="top"><p><span class="italic">Custom</span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Load balancer</em></span></p>
+						</td><td valign="top"><p>Type in the name of your custom load
+								balancer.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cLoadBalancer</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><span class="bold"><strong>Connections</strong></span></td><td valign="top"><span class="italic">Load Balance</span></td><td valign="top">Select this link to route messages to the next endpoint according to the
+							selected load-balancing strategy.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="italic">Route</span></td><td valign="top">Select this link to route all the messages from the
+							sender to the next endpoint. </td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Distributing messages to receiver endpoints based on round robin"><div class="titlepage"><div><div><h3 class="title"><a name="d0e12333"></a>Scenario: Distributing messages to receiver endpoints based on round robin </h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cLoadBalancer</strong></span> component is used
+			to distribute four messages evenly to two receiving endpoints in accordance with the
+			round robin load balancing method.</p><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e12341"></a>Dropping and linking the components</h4></div></div></div><p>This scenario requires one <span class="bold"><strong>cFile</strong></span> component as the
+				message sender, one <span class="bold"><strong>cLoadBalancer</strong></span> component to
+				distribute the messages to two different receivers in a load balancing manner, two
+					<span class="bold"><strong>cJavaDSLProcessor</strong></span> components to define the URIs
+				of the receivers, two <span class="bold"><strong>cMessagingEndpoint</strong></span> components
+				to retrieve the messages routed to the two receivers, and two <span class="bold"><strong>cProcessor</strong></span> components to display the effect of round robin load
+				balancing.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_1.png" align="middle"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="bold"><strong>Messaging</strong></span> folder of the
+							<span class="bold"><strong>Palette</strong></span>, drop one <span class="bold"><strong>cFile</strong></span> component and two <span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the workspace, and label
+						them according to their roles in the Route: <span class="italic">Sender</span>, <span class="italic">Receiver_A</span>, and
+							<span class="italic">Receiver_B</span> respectively. </p></li><li class="step" title="Step 2"><p>From the <span class="bold"><strong>Routing</strong></span> folder, drop a <span class="bold"><strong>cLoadBalancer</strong></span> component onto the design
+						workspace, and label it <span class="italic">Load_balancer</span>.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Processor</strong></span> folder, drop two <span class="bold"><strong>cJavaDSLProcessor</strong></span> components and two <span class="bold"><strong>cProcessor</strong></span> components onto the design workspace,
+						and label them according to their roles in the Route: <span class="italic">To_Receiver_A</span>, <span class="italic">To_Receiver_B</span>, <span class="italic">Monitor_A</span>,
+						and <span class="italic">Monitor_B</span> respectively.</p></li><li class="step" title="Step 4"><p>Link the <span class="bold"><strong>cFile</strong></span> component to the <span class="bold"><strong>cLoadBalancer</strong></span> component using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>
+						connection. </p></li><li class="step" title="Step 5"><p>Link <span class="bold"><strong>cLoadBalancer</strong></span> to each of the two <span class="bold"><strong>cJavaDSLProcessor</strong></span> components using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Load
+							Balance</strong></span> connection.</p></li><li class="step" title="Step 6"><p>Link each of the two <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						components to the corresponding <span class="bold"><strong>cProcessor</strong></span>
+						component using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e12470"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component to open
+						its <span class="bold"><strong>Basic Settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_2.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path
+						to message source.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Encoding</strong></span> list, select the
+						encoding type of your message files. Leave the other parameters as they
+						are.</p></li><li class="step" title="Step 4"><p>Double-click the <span class="bold"><strong>cLoadBalancer</strong></span> component
+						to open its <span class="bold"><strong>Basic Settings</strong></span> view in the
+							<span class="bold"><strong>Component</strong></span> tab, and select the load
+						balancing method you want to use from the <span class="bold"><strong>Strategy</strong></span> list. In this scenario, we use the default
+							<span class="bold"><strong>Round robin</strong></span> method.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_6.png" align="middle"></div></li><li class="step" title="Step 5"><p>Double-click the <span class="bold"><strong>cJavaDSLProcessor</strong></span>
+						component labeled <span class="italic">To_Receiver_A</span> to open
+						its <span class="bold"><strong>Basic Settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab, and enter URI of the first
+						receiver between the double quotation marks in the <span class="bold"><strong>Code</strong></span> area, <code class="code">direct:a</code> in this example.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_3.png" align="middle"></div><p>Repeat this step to define the URI of the other receiver,
+							<code class="code">direct:b</code>, in the <span class="bold"><strong>cJavaDSLProcessor</strong></span> component labeled <span class="italic">To_Receiver_B</span>.</p></li><li class="step" title="Step 6"><p>Double-click the <span class="bold"><strong>cMessagingEndpoint</strong></span>
+						component labeled <span class="italic">Receiver_A</span> to open its
+							<span class="bold"><strong>Basic Settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab, and enter URI of the first
+						receiver between the double quotation marks in the <span class="bold"><strong>URI</strong></span> field, <code class="code">direct:a</code> in this example.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_4.png" align="middle"></div><p>Repeat this step to define the URI of the other receiver,
+							<code class="code">direct:b</code>, in the <span class="bold"><strong>cMessagingEndpoint</strong></span> component labeled <span class="italic">Receiver_B</span>.</p></li><li class="step" title="Step 7"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component labeled <span class="italic">Monitor_A</span> to open its <span class="bold"><strong>Basic Settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab, and customize the code in the <span class="bold"><strong>Code</strong></span> area to display the file names of the
+						messages routed to <span class="italic">Receiver_A</span> on the
+						console:</p><pre class="programlisting">System.out.println("Message on Receiver_A: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><p>Repeat this step to customize the code in the cProcessor component labeled
+						Monitor_B to display the file names of the messages routed to <span class="italic">Receiver_B</span> on the console.</p></li><li class="step" title="Step 8"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing the code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e12626"></a>Viewing the code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to check the generated code: </p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_7.png" align="middle"></div><p>As shown above, while messages are routed <code class="code">from</code> the source endpoint
+							<code class="code">.to</code> the destination endpoints, routing load balancing is
+						implemented according to the <code class="code">.roundRobin()</code> method by
+							<code class="code">cLoadBalancer_1</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="bold"><strong>F6</strong></span> to run your Route.</p><p>RESULT: Of the four messages from the sender, two are routed to <span class="italic">Receiver_A</span> and two are routed to <span class="italic">Receiver_B</span> in a round robin manner.</p><div class="mediaobject" align="center"><img src="../images/use_case_cloadbalancer_5.png" align="middle"></div></li></ol></div></div></div></div></body></html>
