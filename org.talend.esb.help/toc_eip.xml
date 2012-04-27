@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="ISO-8859-15"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc>
+<toc label="Talend User documentation">
   <topic label="Components">
     <topic label="cAggregate" href="guide/components/en/cAggregate.html"/>
     <topic label="cBean" href="guide/components/en/cBean.html"/>
@@ -12,7 +13,7 @@
     <topic label="cDynamicRouter" href="guide/components/en/cDynamicRouter.html"/>
     <topic label="cErrorHandler" href="guide/components/en/cErrorHandler.html"/>
     <topic label="cExchangePattern" href="guide/components/en/cExchangePattern.html"/>
-    <topic label="cFTP" href="guide/components/en/cFTP.html"/>
+    <topic label="cFtp" href="guide/components/en/cFtp.html"/>
     <topic label="cFile" href="guide/components/en/cFile.html"/>
     <topic label="cHttp" href="guide/components/en/cHttp.html"/>
     <topic label="cIdempotentConsumer" href="guide/components/en/cIdempotentConsumer.html"/>
