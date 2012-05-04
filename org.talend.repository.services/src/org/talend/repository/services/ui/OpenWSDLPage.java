@@ -36,9 +36,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -59,14 +56,12 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryViewObject;
-import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
-import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.Messages;
@@ -77,9 +72,7 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
-import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.TemplateProcessor;
-import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * hwang class global comment. Detailed comment
@@ -292,31 +285,6 @@ public class OpenWSDLPage extends WizardPage {
                 PublishMetadataAction publishAction = new PublishMetadataAction();
                 publishAction.setNodes(Arrays.asList(new RepositoryNode[] { repositoryNode }));
                 publishAction.run();
-            }
-
-            // find repository node
-            IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
-            RepositoryNode repositoryNode = ((ProjectRepositoryNode) view.getRoot())
-                    .getRootRepositoryNode(ESBRepositoryNodeType.SERVICES);
-            if (null != repositoryNode) {
-                // expand/select repository node
-                final StructuredViewer viewer = view.getViewer();
-                if (viewer instanceof TreeViewer) {
-                    ((TreeViewer) viewer).expandToLevel(repositoryNode, 1);
-                }
-                viewer.setSelection(new StructuredSelection(repositoryNode));
-                view.getViewer().refresh(repositoryNode);
-
-                // find node item
-                RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(item.getProperty().getId(), false);
-                if (null != nodeItem) {
-                    // expand/select node item
-                    if (viewer instanceof TreeViewer) {
-                        ((TreeViewer) viewer).expandToLevel(nodeItem, 2);
-                    }
-                    viewer.setSelection(new StructuredSelection(nodeItem));
-                }
-                view.getViewer().refresh(nodeItem);
             }
 
             return true;
