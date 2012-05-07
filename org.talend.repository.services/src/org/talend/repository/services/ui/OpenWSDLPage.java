@@ -34,8 +34,15 @@ import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -47,9 +54,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.osgi.framework.FrameworkUtil;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
@@ -166,7 +175,7 @@ public class OpenWSDLPage extends WizardPage {
                 setPageComplete(isPageComplete());
             }
         });
-        Label lab = new Label(wsdlFileArea, SWT.NONE);
+        new Label(wsdlFileArea, SWT.NONE);
         checkImport = new Button(wsdlFileArea, SWT.CHECK);
         checkImport.setText("Import WSDL Schemas on finish");
         checkImport.setVisible(false);
@@ -194,88 +203,105 @@ public class OpenWSDLPage extends WizardPage {
     public boolean finish() {
         // changed by hqzhang for TDI-19527, label=displayName
         item.getProperty().setLabel(item.getProperty().getDisplayName());
-        String label = item.getProperty().getLabel();
+        final String label = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
-        String wsdlFileName = label + "_" + version + ".wsdl"; //$NON-NLS-1$ //$NON-NLS-2$
+        final String wsdlFileName = label + "_" + version + ".wsdl"; //$NON-NLS-1$ //$NON-NLS-2$
 
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        if (creation) {
-            item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
-            item.getProperty().setId(factory.getNextId());
-            try {
-                factory.create(item, pathToSave);
-            } catch (PersistenceException e) {
-                ExceptionHandler.process(e);
+        IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+
+            public void run(final IProgressMonitor monitor) throws CoreException {
+                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                if (creation) {
+                    item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
+                    item.getProperty().setId(factory.getNextId());
+                    try {
+                        factory.create(item, pathToSave);
+                    } catch (PersistenceException e) {
+                        ExceptionHandler.process(e);
+                    }
+                    repositoryNode = new RepositoryNode(new RepositoryViewObject(item.getProperty()), repositoryNode.getParent(),
+                            ENodeType.REPOSITORY_ELEMENT);
+                }
+                try {
+                    IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+                    String foldPath = item.getState().getPath();
+                    String folder = !foldPath.equals("") ? "/" + foldPath : ""; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                    IFile fileTemp = currentProject.getFolder("services" + folder).getFile(wsdlFileName);
+
+                    try {
+                        item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
+                        ((ServiceConnection) item.getConnection()).setWSDLPath(path);
+                        ((ServiceConnection) item.getConnection()).getServicePort().clear();
+
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                        if (createWSDL) {
+                            // create new WSDL file from template
+                            TemplateProcessor.processTemplate(TEMPLATE_SERVICE_WSDL,
+                                    Collections.singletonMap("serviceName", (Object) label), new OutputStreamWriter(baos));
+                        } else {
+                            // copy WSDL file
+                            readWsdlFile(new File(path), baos);
+                        }
+
+                        // store WSDL in service
+                        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
+                        if (!fileTemp.exists()) {
+                            fileTemp.create(byteArrayInputStream, true, null);
+                        } else {
+                            fileTemp.setContents(byteArrayInputStream, 0, null);
+                        }
+
+                        //
+                        ReferenceFileItem createReferenceFileItem = null;
+                        if (item.getReferenceResources().isEmpty()) {
+                            createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+                            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+                            createReferenceFileItem.setContent(byteArray);
+                            createReferenceFileItem.setExtension("wsdl");
+                            item.getReferenceResources().add(createReferenceFileItem);
+                        } else {
+                            createReferenceFileItem = (ReferenceFileItem) item.getReferenceResources().get(0);
+                        }
+                        createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
+
+                        //
+                        populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString(), item, repositoryNode);
+
+                    } catch (SystemException e) {
+                        throwCoreException(e);
+                    } catch (CoreException e) {
+                        throwCoreException(e);
+                    } catch (IOException e) {
+                        throwCoreException(e);
+                    }
+
+                    try {
+                        factory.save(item);
+                        ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+
+                    } catch (PersistenceException e) {
+                        throwCoreException(e);
+                    }
+
+                } catch (PersistenceException e) {
+                    throwCoreException(e);
+                }
+
             }
-            repositoryNode = new RepositoryNode(new RepositoryViewObject(item.getProperty()), repositoryNode.getParent(),
-                    ENodeType.REPOSITORY_ELEMENT);
-        }
 
-        IProject currentProject;
+            void throwCoreException(Exception initialException) throws CoreException {
+                throw new CoreException(new Status(IStatus.ERROR, FrameworkUtil.getBundle(OpenWSDLPage.this.getClass())
+                        .getSymbolicName(), "WDSL creation failed", initialException));
+            }
+        };
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
         try {
-            currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-            return false;
-        }
-        String foldPath = item.getState().getPath();
-        String folder = "";
-        if (!foldPath.equals("")) {
-            folder = "/" + foldPath;
-        }
-        IFile fileTemp = currentProject.getFolder("services" + folder).getFile(wsdlFileName);
-
-        try {
-            item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
-            ((ServiceConnection) item.getConnection()).setWSDLPath(path);
-            ((ServiceConnection) item.getConnection()).getServicePort().clear();
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            if (createWSDL) {
-                // create new WSDL file from template
-                TemplateProcessor.processTemplate(TEMPLATE_SERVICE_WSDL, Collections.singletonMap("serviceName", (Object) label),
-                        new OutputStreamWriter(baos));
-            } else {
-                // copy WSDL file
-                readWsdlFile(new File(path), baos);
-            }
-
-            // store WSDL in service
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(baos.toByteArray());
-            if (!fileTemp.exists()) {
-                fileTemp.create(byteArrayInputStream, true, null);
-            } else {
-                fileTemp.setContents(byteArrayInputStream, 0, null);
-            }
-
-            //
-            ReferenceFileItem createReferenceFileItem = null;
-            if (item.getReferenceResources().isEmpty()) {
-                createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-                createReferenceFileItem.setContent(byteArray);
-                createReferenceFileItem.setExtension("wsdl");
-                item.getReferenceResources().add(createReferenceFileItem);
-            } else {
-                createReferenceFileItem = (ReferenceFileItem) item.getReferenceResources().get(0);
-            }
-            createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
-
-            //
-            populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString(), item, repositoryNode);
-
-        } catch (SystemException e) {
-            ExceptionHandler.process(e);
-        } catch (CoreException e) {
-            ExceptionHandler.process(e);
-        } catch (IOException e) {
-            ExceptionHandler.process(e);
-        }
-
-        try {
-            factory.save(item);
-            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+            ISchedulingRule schedulingRule = workspace.getRoot();// we use the workspace scheduling rule to lock all
+                                                                 // workspace modifications during the run.
+            // the update of the project files need to be done in the workspace runnable to avoid all notification
+            // of changes before the end of the modifications.
+            workspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, null);
             repositoryNode = RepositoryNodeUtilities.getRepositoryNode(new RepositoryViewObject(item.getProperty()));
             OpenWSDLEditorAction action = new OpenWSDLEditorAction();
             action.setRepositoryNode(repositoryNode);
@@ -286,10 +312,9 @@ public class OpenWSDLPage extends WizardPage {
                 publishAction.setNodes(Arrays.asList(new RepositoryNode[] { repositoryNode }));
                 publishAction.run();
             }
-
             return true;
-        } catch (PersistenceException e) {
-            e.printStackTrace();
+        } catch (CoreException e) {
+            MessageBoxExceptionHandler.process(e);
         }
         return false;
     }
