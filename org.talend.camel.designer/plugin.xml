@@ -114,15 +114,6 @@
       </editor>
    </extension>
    <extension
-         point="org.talend.repository.toolbar_creation">
-      <CreationToolAction
-            class="org.talend.camel.designer.ui.CreateCamelProcess">
-      </CreationToolAction>
-      <CreationToolAction
-            class="org.talend.camel.designer.ui.bean.CreateCamelBean">
-      </CreationToolAction>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.talend.camel.designer.CamelPerspectiveFactory"
