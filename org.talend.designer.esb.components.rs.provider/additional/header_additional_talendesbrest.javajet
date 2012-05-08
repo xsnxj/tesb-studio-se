@@ -446,7 +446,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String cid = tRESTRequestNode.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
-	boolean isOneWayRest = tRESTRequestNode.getProcess().getNodesOfType("tRESTResponse").isEmpty();
 %>
 
 /**
@@ -560,10 +559,6 @@ public static class RestServiceProviderImpl4TalendJob {
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
 
-<% if (isOneWayRest) { %>
-			Integer status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
-			return javax.ws.rs.core.Response.status(status).build();
-<% } else { %>
 			Object responseBody = null;
 			Integer status = null;
 			if (null != response) {
@@ -571,10 +566,9 @@ public static class RestServiceProviderImpl4TalendJob {
 				status = (Integer) response.get("STATUS");
 			}
 			if (null == status) {
-				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 200;
+				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 404;
 			}
 			return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
-<% } %>
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
