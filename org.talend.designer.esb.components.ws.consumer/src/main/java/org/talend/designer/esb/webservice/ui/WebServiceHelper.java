@@ -54,7 +54,7 @@ public class WebServiceHelper implements IWebService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.repository.ui.wizards.metadata.connection.wsdl.IWebService#getWebServiceUI(org.eclipse.swt.widgets
      * .Composite, org.talend.core.model.components.IComponent)
@@ -70,6 +70,7 @@ public class WebServiceHelper implements IWebService {
         if (connectionItem.getState() != null) {
             WSDLSchemaConnection connection = (WSDLSchemaConnection) connectionItem.getConnection();
             wenCom.getElementParameter("ENDPOINT").setValue(connection.getEndpointURI());
+            wenCom.getElementParameter("WSDL_LOCATION").setValue(connection.getEndpointURI());
             String currentURL = connection.getWSDL();
             String method = connection.getMethodName();
             String currePortName = connection.getPortName();
@@ -79,6 +80,8 @@ public class WebServiceHelper implements IWebService {
             if (!"".equals(currentURL) && currentURL != null) {
                 IElementParameter ENDPOINTPara = wenCom.getElementParameter("ENDPOINT");
                 ENDPOINTPara.setValue(currentURL);
+                IElementParameter wsdlLocationPara = wenCom.getElementParameter("WSDL_LOCATION");
+                wsdlLocationPara.setValue(currentURL);
             }
 
             if (currePortName != null) {
@@ -170,7 +173,7 @@ public class WebServiceHelper implements IWebService {
         inputMetadata.setLabel("Input");
 //        List<org.talend.core.model.metadata.IMetadataColumn> newColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
 //        List<org.talend.core.model.metadata.IMetadataColumn> newInputColumnList = new ArrayList<org.talend.core.model.metadata.IMetadataColumn>();
-        
+
 //        if (connectionItem.getState() != null) {
 //            outputMetadaTable = new MetadataTable();
 //            outputMetadaTable.setAttachedConnector("OUTPUT");
@@ -239,7 +242,7 @@ public class WebServiceHelper implements IWebService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.ui.IWebService#getCurrentFunction()
      */
     public Boolean getCurrentFunction() {
@@ -252,7 +255,7 @@ public class WebServiceHelper implements IWebService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.ui.IWebService#getTabFolder()
      */
     public CTabFolder getTabFolder() {
@@ -261,7 +264,7 @@ public class WebServiceHelper implements IWebService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.ui.IWebService#getTable()
      */
     public Table getTable() {
@@ -270,7 +273,7 @@ public class WebServiceHelper implements IWebService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.wizards.metadata.connection.wsdl.webService.tree.WebServiceSaveListener#saveValue()
      */
     public void saveValue() {

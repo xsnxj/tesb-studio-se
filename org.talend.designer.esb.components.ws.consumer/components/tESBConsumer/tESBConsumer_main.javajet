@@ -1,26 +1,21 @@
 <%@ jet
-imports="
-    org.talend.core.model.process.INode
-    org.talend.core.model.process.IConnection
-    org.talend.core.model.process.ElementParameterParser
-    org.talend.core.model.process.IConnectionCategory
-    org.talend.core.model.metadata.IMetadataTable
-    org.talend.core.model.metadata.IMetadataColumn
-    org.talend.designer.codegen.config.CodeGeneratorArgument
-    org.talend.core.model.metadata.types.JavaTypesManager
-    org.talend.core.model.metadata.types.JavaType
-    java.util.List
-    java.util.ArrayList
-    java.util.Map
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		java.util.List
+		java.util.Map
 "
 %>
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-INode node = (INode)codeGenArgument.getArgument();
+INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
-String dieOnError = ElementParameterParser.getValue(node, "__DIE_ON_ERROR__");
-String methodTemp = ElementParameterParser.getValue(node,"__METHOD__");
+String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
 IConnection inputConn = null;
@@ -69,7 +64,7 @@ if (inputConn != null) {
 						requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 			} else {
 				java.util.Map<String, String> customProps_<%=cid%> = null;
-				<%	if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+				<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
 					List<Map<String, String>> customProperties = (List<Map<String,String>>)
 							ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
 					if (!customProperties.isEmpty()) { %>
@@ -82,19 +77,21 @@ if (inputConn != null) {
 				Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
 				responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
 			}
-			<% if (null != connResponse) { %>
-				if (<%=connResponse.getName()%> == null) {
-					<%=connResponse.getName()%> = new <%=connResponse.getName()%>Struct();
+			<% if (null != connResponse) {
+				String connResponseName = connResponse.getName(); %>
+				if (<%=connResponseName%> == null) {
+					<%=connResponseName%> = new <%=connResponseName%>Struct();
 				}
 				Document responseTalendDoc_<%=cid%> = null;
 				if (null != responseDoc_<%=cid%>) {
 					responseTalendDoc_<%=cid%> = new Document();
 					responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
 				}
-				<%=connResponse.getName()%>.payload = responseTalendDoc_<%=cid%>;
+				<%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
 			<% } %>
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
-			<% if (null != connFault) { %>
+			<% if (null != connFault) {
+				String connFaultName = connFault.getName(); %>
 				org.dom4j.Document faultDoc_<%=cid%> = null;
 				if (null != e.getFault().getDetail()
 					&& null != e.getFault().getDetail().getFirstChild()) {
@@ -112,34 +109,33 @@ if (inputConn != null) {
 					}
 				}
 
-				if (<%=connFault.getName()%> == null) {
-					<%=connFault.getName()%> = new <%=connFault.getName()%>Struct();
+				if (<%=connFaultName%> == null) {
+					<%=connFaultName%> = new <%=connFaultName%>Struct();
 				}
-				// <%=connFault.getName()%>.faultCode = e.getFault().getFaultCode();
-				<%=connFault.getName()%>.faultCode = e.getFault().getFaultCodeAsQName().toString();
-				<%=connFault.getName()%>.faultString = e.getFault().getFaultString();
-				<%=connFault.getName()%>.faultActor = e.getFault().getFaultActor();
+				<%=connFaultName%>.faultCode = e.getFault().getFaultCodeAsQName().toString();
+				<%=connFaultName%>.faultString = e.getFault().getFaultString();
+				<%=connFaultName%>.faultActor = e.getFault().getFaultActor();
 				try {
 					// SOAP 1.2
-					<%=connFault.getName()%>.faultNode = e.getFault().getFaultNode();
-					<%=connFault.getName()%>.faultRole = e.getFault().getFaultRole();
+					<%=connFaultName%>.faultNode = e.getFault().getFaultNode();
+					<%=connFaultName%>.faultRole = e.getFault().getFaultRole();
 				} catch (java.lang.UnsupportedOperationException uoe) {
 					// SOAP 1.1
-					<%=connFault.getName()%>.faultNode = null;
-					<%=connFault.getName()%>.faultRole = null;
+					<%=connFaultName%>.faultNode = null;
+					<%=connFaultName%>.faultRole = null;
 				}
 				Document faultTalendDoc_<%=cid%> = null;
 				if (null != faultDoc_<%=cid%>) {
 					faultTalendDoc_<%=cid%> = new Document();
 					faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
 				}
-				<%=connFault.getName()%>.faultDetail = faultTalendDoc_<%=cid%>;
+				<%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
 			<% } else { %>
 				e.printStackTrace();
 			<% } %>
 		}
 	} catch(Exception e){
-		<% if (("true").equals(dieOnError)) { %>
+		<% if (("true").equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
 			throw(e);
 		<% } else { %>
 			System.err.print(e.getMessage());

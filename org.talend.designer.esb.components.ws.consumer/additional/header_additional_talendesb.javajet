@@ -19,7 +19,7 @@ IProcess process = (IProcess) v.get(0);
 boolean actAsProvider = !process.getNodesOfType("tESBProviderRequestLoop").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 
-if (actAsProvider || actAsConsumer
+if (actAsProvider
 	|| !process.getNodesOfType("tESBProviderResponse").isEmpty()
 	|| !process.getNodesOfType("tESBProviderFault").isEmpty()) { %>
 	interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
