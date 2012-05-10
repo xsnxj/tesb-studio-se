@@ -7,4 +7,11 @@
 			class="org.talend.designer.esb.components.ws.provider.ComponentsProvider"
 			folderName="components" />
 	</extension>
+
+	<extension point="org.talend.designer.codegen.additional_jetfile">
+		<jetProvider
+			id="org.talend.designer.esb.components.ws.provider.ESBJetFileProvider"
+			class="org.talend.designer.esb.components.ws.provider.ESBJetFileProvider" />
+	</extension>
+
 </plugin>

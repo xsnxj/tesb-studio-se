@@ -10,5 +10,10 @@ Bundle-Activator: org.talend.designer.esb.components.ws.provider.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.osgi
  ,org.eclipse.core.runtime
+ ,org.eclipse.ui
+ ,org.eclipse.ui.workbench
  ,org.talend.core
+ ,org.talend.core.repository
+ ,org.talend.model
+ ,org.talend.designer.codegen
  ,org.apache.log4j
