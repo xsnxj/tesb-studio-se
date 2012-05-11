@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -82,6 +83,7 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.utils.TemplateProcessor;
+import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
  * hwang class global comment. Detailed comment
@@ -102,7 +104,7 @@ public class OpenWSDLPage extends WizardPage {
 
     private final boolean creation;
 
-    private final IPath pathToSave;
+    private IPath pathToSave;
 
     private Button checkImport;
 
@@ -199,6 +201,20 @@ public class OpenWSDLPage extends WizardPage {
                 && (radioCreateWsdl.getSelection() || (radioImportWsdl.getSelection() && !path.trim().isEmpty()));
     }
 
+    /**
+     * Gets the path to save the Service node. Created by Marvin Wang on May 11, 2012.
+     * 
+     * @return
+     */
+    protected IPath getDestinationPath() {
+        IWizardPage previousPage = this.getPreviousPage();
+        if (previousPage instanceof PropertiesWizardPage) {
+            PropertiesWizardPage wizardPage = (PropertiesWizardPage) previousPage;
+            pathToSave = wizardPage.getDestinationPath();
+        }
+        return pathToSave;
+    }
+
     @SuppressWarnings("unchecked")
     public boolean finish() {
         // changed by hqzhang for TDI-19527, label=displayName
@@ -215,7 +231,7 @@ public class OpenWSDLPage extends WizardPage {
                     item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
                     item.getProperty().setId(factory.getNextId());
                     try {
-                        factory.create(item, pathToSave);
+                        factory.create(item, getDestinationPath());
                     } catch (PersistenceException e) {
                         ExceptionHandler.process(e);
                     }
