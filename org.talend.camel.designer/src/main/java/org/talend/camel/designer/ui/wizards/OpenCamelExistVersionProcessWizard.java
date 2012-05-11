@@ -113,19 +113,6 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
         }
     }
 
-    private void unlockObject() {
-        IProxyRepositoryFactory repositoryFactory = CorePlugin.getDefault().getRepositoryService().getProxyRepositoryFactory();
-        try {
-            if (repositoryFactory.getStatus(processObject).equals(ERepositoryStatus.LOCK_BY_USER)) {
-                repositoryFactory.unlock(processObject);
-            }
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        } catch (LoginException e) {
-            ExceptionHandler.process(e);
-        }
-    }
-
     /*
      * (non-Javadoc)
      * 

@@ -29,7 +29,6 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
@@ -97,7 +96,6 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
                     } catch (Exception e) {
                         ExceptionHandler.process(e);
                     }
-                    RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
                 }
             }
 
@@ -125,7 +123,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         if (!currentNodeType.equals(nodeType)) {
             return;
         }
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        ProxyRepositoryFactory.getInstance();
         switch (node.getType()) {
         case REPOSITORY_ELEMENT:
             break;
@@ -139,6 +137,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         setEnabled(flag);
     }
 
+    @Override
     public Class getClassForDoubleClick() {
         return ServiceItem.class;
     }
@@ -182,12 +181,12 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
             }
             // lock
             if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
+                // TO BE REMOVED and Checked but the above line does the lock already so no need to do it twice.
                 DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
                 scriptList.add(serviceItem);
             } else {
                 wsdlEditor.setReadOnly(true);
             }
-            RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
         } catch (CoreException e) {
             ExceptionHandler.process(e);
         } catch (LoginException e) {
