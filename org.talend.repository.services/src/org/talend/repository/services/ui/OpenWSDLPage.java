@@ -12,12 +12,16 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -188,7 +192,7 @@ public class OpenWSDLPage extends WizardPage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
      */
     @Override
@@ -203,7 +207,7 @@ public class OpenWSDLPage extends WizardPage {
 
     /**
      * Gets the path to save the Service node. Created by Marvin Wang on May 11, 2012.
-     * 
+     *
      * @return
      */
     protected IPath getDestinationPath() {
@@ -257,7 +261,13 @@ public class OpenWSDLPage extends WizardPage {
                                     Collections.singletonMap("serviceName", (Object) label), new OutputStreamWriter(baos));
                         } else {
                             // copy WSDL file
-                            readWsdlFile(new File(path), baos);
+                            InputStream wsdlInputStream = null;
+                            if (path.startsWith("http://") || path.startsWith("https://")){
+                                wsdlInputStream = new URL(path).openStream();
+                            } else {
+                                wsdlInputStream = new FileInputStream(new File(path));
+                            }
+                            readWsdlFile(wsdlInputStream, baos);
                         }
 
                         // store WSDL in service
@@ -335,19 +345,18 @@ public class OpenWSDLPage extends WizardPage {
         return false;
     }
 
-    private void readWsdlFile(File file, ByteArrayOutputStream bos) throws IOException {
-        FileInputStream source = null;
+    private void readWsdlFile(InputStream is, OutputStream os) throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(is);
         try {
-            source = new FileInputStream(file);
             byte[] buf = new byte[1024];
             int i = 0;
-            while ((i = source.read(buf)) != -1) {
-                bos.write(buf, 0, i);
+            while ((i = bis.read(buf)) != -1) {
+                os.write(buf, 0, i);
             }
         } finally {
-            if (null != source) {
+            if (null != bis) {
                 try {
-                    source.close();
+                    bis.close();
                 } catch (Exception e) {
                 }
             }
