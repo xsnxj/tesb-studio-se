@@ -92,13 +92,12 @@ if (inputConn != null) {
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
 			<% if (null != connFault) {
 				String connFaultName = connFault.getName(); %>
+				javax.xml.soap.SOAPFault soapFault_<%=cid%> = e.getFault();
 				org.dom4j.Document faultDoc_<%=cid%> = null;
-				if (null != e.getFault().getDetail()
-					&& null != e.getFault().getDetail().getFirstChild()) {
+				if (null != soapFault_<%=cid%>.getDetail() && null != soapFault_<%=cid%>.getDetail().getFirstChild()) {
 					try {
 						javax.xml.transform.Source faultSource_<%=cid%> =
-							new javax.xml.transform.dom.DOMSource(
-									e.getFault().getDetail().getFirstChild());
+							new javax.xml.transform.dom.DOMSource(soapFault_<%=cid%>.getDetail().getFirstChild());
 
 						org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
 						javax.xml.transform.TransformerFactory.newInstance()
@@ -112,18 +111,20 @@ if (inputConn != null) {
 				if (<%=connFaultName%> == null) {
 					<%=connFaultName%> = new <%=connFaultName%>Struct();
 				}
-				<%=connFaultName%>.faultCode = e.getFault().getFaultCodeAsQName().toString();
-				<%=connFaultName%>.faultString = e.getFault().getFaultString();
-				<%=connFaultName%>.faultActor = e.getFault().getFaultActor();
-				try {
+				<%=connFaultName%>.faultCode = soapFault_<%=cid%>.getFaultCodeAsQName().toString();
+				<%=connFaultName%>.faultString = soapFault_<%=cid%>.getFaultString();
+				<%=connFaultName%>.faultActor = soapFault_<%=cid%>.getFaultActor();
+
+				<%=connFaultName%>.faultNode = null;
+				<%=connFaultName%>.faultRole = null;
+				if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault_<%=cid%>.getNamespaceURI())) {
 					// SOAP 1.2
-					<%=connFaultName%>.faultNode = e.getFault().getFaultNode();
-					<%=connFaultName%>.faultRole = e.getFault().getFaultRole();
-				} catch (java.lang.UnsupportedOperationException uoe) {
-					// SOAP 1.1
-					<%=connFaultName%>.faultNode = null;
-					<%=connFaultName%>.faultRole = null;
+					try {
+						<%=connFaultName%>.faultNode = soapFault_<%=cid%>.getFaultNode();
+						<%=connFaultName%>.faultRole = soapFault_<%=cid%>.getFaultRole();
+					} catch (java.lang.UnsupportedOperationException uoe) { }
 				}
+
 				Document faultTalendDoc_<%=cid%> = null;
 				if (null != faultDoc_<%=cid%>) {
 					faultTalendDoc_<%=cid%> = new Document();
