@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Button;
@@ -33,6 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
+import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.CommonsPlugin;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -41,6 +43,7 @@ import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.ui.IUIRefresher;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.repository.editor.JobEditorInput;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 
@@ -170,4 +173,35 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
             }
         }
     }
+
+    //http://jira.talendforge.org/browse/TESB-5930
+	public void init(TreeViewer viewer, IStructuredSelection selection) {
+		boolean canWork = selection.size() == 1;
+		if (canWork) {
+			Object o = ((IStructuredSelection) selection).getFirstElement();
+			if (o instanceof RepositoryNode) {
+				RepositoryNode node = (RepositoryNode) o;
+				switch (node.getType()) {
+				case REPOSITORY_ELEMENT:
+					if (node.getObjectType() == CamelRepositoryNodeType.repositoryRoutesType) {
+						canWork = true;
+					} else {
+						canWork = false;
+					}
+					break;
+				default:
+					canWork = false;
+					break;
+				}
+				if (canWork) {
+					canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
+				}
+				if (canWork) {
+					canWork = isLastVersion(node);
+				}
+			}
+		}
+		setEnabled(canWork);
+	}
+
 }
