@@ -44,7 +44,7 @@ imports="
 		sb.append("constant(");
 		sb.append(argValue);
 		sb.append("))");
-		if("Content-Type".equals(argName)){
+		if("\"Content-Type\"".equals(argName)){
 			hasContentType = true;
 		}
 	}
