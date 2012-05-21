@@ -14,6 +14,7 @@ package org.talend.repository.services.action;
 
 import java.util.Properties;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -139,9 +140,14 @@ public class CreateESBAction extends AContextualAction implements IIntroAction {
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
-        PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
-        selectRootObject(params);
-        doRun();
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        if (factory.isUserReadOnlyOnCurrentProject()) {
+            MessageDialog.openWarning(null, "User Authority", "Can't create Service! Current user is read-only on this project!");
+        } else {
+            PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
+            selectRootObject(params);
+            doRun();
+        }
     }
 
     private void selectRootObject(Properties params) {
