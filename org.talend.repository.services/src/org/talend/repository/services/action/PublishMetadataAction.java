@@ -388,6 +388,7 @@ public class PublishMetadataAction extends AContextualAction {
             loopElementFound = false;
             if (ConnectionHelper.getTables(connection).isEmpty()) {
                 MetadataTable table = ConnectionFactory.eINSTANCE.createMetadataTable();
+                table.setId(ProxyRepositoryFactory.getInstance().getNextId());
                 RecordFile record = (RecordFile) ConnectionHelper.getPackage(connection.getName(), connection, RecordFile.class);
                 if (record != null) { // hywang
                     PackageHelper.addMetadataTable(table, record);
