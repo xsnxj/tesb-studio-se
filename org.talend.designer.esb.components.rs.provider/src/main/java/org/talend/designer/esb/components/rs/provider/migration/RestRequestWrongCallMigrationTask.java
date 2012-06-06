@@ -28,67 +28,70 @@ import org.talend.designer.core.model.utils.emf.talendfile.MetadataType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
-public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask{
+public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask {
 
-	private static final String httpMethod = "method";
+    private static final String httpMethod = "method";
 
-	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory.getInstance();
+    private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory.getInstance();
 
-	public Date getOrder() {
-		GregorianCalendar gc = new GregorianCalendar(2011, 12, 30, 17, 21, 00);
-		return gc.getTime();
-	}
+    public Date getOrder() {
+        GregorianCalendar gc = new GregorianCalendar(2011, 12, 30, 17, 21, 00);
+        return gc.getTime();
+    }
 
-	public ExecutionResult execute(Item item) {
-		try {
-			addMoreWrongCallInfo(item);
-		} catch (Exception e) {
-			ExceptionHandler.process(e);
-			return ExecutionResult.FAILURE;
-		}
-		return ExecutionResult.SUCCESS_NO_ALERT;
-	}
+    public ExecutionResult execute(Item item) {
+        try {
+            addMoreWrongCallInfo(item);
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            return ExecutionResult.FAILURE;
+        }
+        return ExecutionResult.SUCCESS_NO_ALERT;
+    }
 
-	private void addMoreWrongCallInfo(Item item)
-			throws PersistenceException {
-		if (item instanceof ProcessItem) {
-			for (Object o : ((ProcessItem) item).getProcess().getNode()) {
-				if (o instanceof NodeType) {
-					NodeType currentNode = (NodeType) o;
-					if ("tRESTRequest".equals(currentNode.getComponentName())) {
-						Iterator iterator = currentNode.getMetadata().iterator();
-						while (iterator.hasNext()) {
-							MetadataType metadataType = (MetadataType) iterator.next();
-							if ("WRONG_CALLS".equals(metadataType.getConnector())) {
-								addColumn(metadataType.getColumn(), httpMethod);
-							}
-						}
-					}
-				}
-			}
-			FACTORY.save(item, true);
-		}
-	}
+    private void addMoreWrongCallInfo(Item item) throws PersistenceException {
+        if (item instanceof ProcessItem) {
+            boolean modified = false;
+            for (Object o : ((ProcessItem) item).getProcess().getNode()) {
+                if (o instanceof NodeType) {
+                    NodeType currentNode = (NodeType) o;
+                    if ("tRESTRequest".equals(currentNode.getComponentName())) {
+                        Iterator iterator = currentNode.getMetadata().iterator();
+                        while (iterator.hasNext()) {
+                            MetadataType metadataType = (MetadataType) iterator.next();
+                            if ("WRONG_CALLS".equals(metadataType.getConnector())) {
+                                addColumn(metadataType.getColumn(), httpMethod);
+                                modified = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (modified) {
+                FACTORY.save(item, true);
+            }
+        }
+    }
 
-	private void addColumn(EList columns, String name) {
-		Iterator iterator = columns.iterator();
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			if (next != null && next instanceof ColumnType) {
-				if (name.equals(((ColumnType) next).getName())) {
-					return;
-				}
-			}
-		}
-		ColumnType columnType = TalendFileFactory.eINSTANCE.createColumnType();
-		columnType.setKey(false);
-		columnType.setName(name);
-		columnType.setSourceType("");
-		columnType.setType("id_String");
-		columnType.setLength(255);
-		columnType.setPrecision(0);
-		columnType.setNullable(true);
-		columns.add(columnType);
-	}
+    private void addColumn(EList columns, String name) {
+        Iterator iterator = columns.iterator();
+        while (iterator.hasNext()) {
+            Object next = iterator.next();
+            if (next != null && next instanceof ColumnType) {
+                if (name.equals(((ColumnType) next).getName())) {
+                    return;
+                }
+            }
+        }
+        ColumnType columnType = TalendFileFactory.eINSTANCE.createColumnType();
+        columnType.setKey(false);
+        columnType.setName(name);
+        columnType.setSourceType("");
+        columnType.setType("id_String");
+        columnType.setLength(255);
+        columnType.setPrecision(0);
+        columnType.setNullable(true);
+        columns.add(columnType);
+    }
 
 }
