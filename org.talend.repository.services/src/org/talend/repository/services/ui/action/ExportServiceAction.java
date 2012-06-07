@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -32,6 +33,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.SaveAction;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.repository.documentation.ArchiveFileExportOperationFullPath;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -182,7 +184,7 @@ public class ExportServiceAction extends WorkspaceJob {
         return StatusUtil.newStatus(IStatus.OK, "Done", null);
     }
 
-    public IStatus runInCommandline(IProgressMonitor arg0) throws CoreException {
+    public IStatus runInCommandline(final IProgressMonitor monitor) throws CoreException {
         String directoryName = serviceManager.getRootFolderName(serviceManager.getDestinationPath());
         Map<String, String> bundles = new HashMap<String, String>();
         for (RepositoryNode node : nodes) {
@@ -191,13 +193,33 @@ public class ExportServiceAction extends WorkspaceJob {
             JobExportAction job = new JobExportAction(
                     Arrays.asList(new RepositoryNode[] { node }), node
                             .getObject().getVersion(), getBundleVersion(),
-                    manager, directoryName, "Service");
+                    manager, directoryName, "Service") {
+            	@Override
+            	protected boolean executeExportOperation(
+            			ArchiveFileExportOperationFullPath op) {
+                    op.setCreateLeadupStructure(true);
+                    op.setUseCompression(true);
+
+                    try {
+                        op.run(monitor);
+                    } catch (InvocationTargetException e) {
+                    	throw new RuntimeException(e.getCause());
+                    } catch (InterruptedException e) {
+                    }
+
+                    IStatus status = op.getStatus();
+                    if (!status.isOK()) {
+                        return false;
+                    }
+
+                    return true;
+            	}
+            };
             try {
-                job.run(arg0);
+                job.run(monitor);
             } catch (InvocationTargetException e) {
-                ExceptionHandler.process(e);
+            	throw new RuntimeException(e.getCause());
             } catch (InterruptedException e) {
-                ExceptionHandler.process(e);
             }
             bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
         }
@@ -212,7 +234,7 @@ public class ExportServiceAction extends WorkspaceJob {
             return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
         }
 
-        return StatusUtil.newStatus(IStatus.OK, "Done", null);
+        return Status.OK_STATUS;
     }
 
     private String generateControlBundle(String groupId, String artefactName)
