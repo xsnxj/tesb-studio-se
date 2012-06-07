@@ -43,6 +43,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
@@ -152,8 +153,8 @@ public class WSDLUtils {
         return isValid;
     }
 
-    public static IFile getWsdlFile(IRepositoryNode repositoryNode) {
-        ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
+    public static IFile getWsdlFile(IRepositoryViewObject serviceViewObject) {
+        ServiceItem serviceItem = (ServiceItem) serviceViewObject.getProperty().getItem();
         try {
             IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
             List<ReferenceFileItem> list = serviceItem.getReferenceResources();
@@ -166,8 +167,8 @@ public class WSDLUtils {
                 folder = "/" + foldPath;
             }
             IFile file = currentProject.getFolder("services" + folder).getFile(
-                    repositoryNode.getObject().getProperty().getLabel() + "_"
-                            + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
+                    serviceViewObject.getProperty().getLabel() + "_"
+                            + serviceViewObject.getProperty().getVersion() + ".wsdl");
             if (!file.exists()) {
                 // copy file to item
                 IFile fileTemp = null;
@@ -177,8 +178,8 @@ public class WSDLUtils {
                         folder = "/" + foldPath;
                     }
                     fileTemp = currentProject.getFolder("services" + folder).getFile(
-                            repositoryNode.getObject().getProperty().getLabel() + "_"
-                                    + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
+                            serviceViewObject.getProperty().getLabel() + "_"
+                                    + serviceViewObject.getProperty().getVersion() + ".wsdl");
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
                     if (!fileTemp.exists()) {
                         fileTemp.create(byteArrayInputStream, true, null);
@@ -208,6 +209,10 @@ public class WSDLUtils {
             ExceptionHandler.process(e);
         }
         return null;
+    }
+
+       public static IFile getWsdlFile(IRepositoryNode repositoryNode) {
+           return getWsdlFile(repositoryNode.getObject());
     }
 
     public static IFile getWsdlFile(ServiceItem serviceItem) {
@@ -283,35 +288,35 @@ public class WSDLUtils {
     public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
         return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
     }
-    
+
     /**
      * Validate WSDL file.
      * @param node
      * @throws CoreException
      */
-	public static void validateWsdl(RepositoryNode node) throws CoreException {
-    	IFile wsdlFile = getWsdlFile(node);
-    	if (null == wsdlFile) {
-    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_found));
-    	}
-    	String wsdlPath = wsdlFile.getLocationURI().toString();
-    	validateWsdl(wsdlPath);
+    public static void validateWsdl(RepositoryNode node) throws CoreException {
+        IFile wsdlFile = getWsdlFile(node);
+        if (null == wsdlFile) {
+            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_found));
+        }
+        String wsdlPath = wsdlFile.getLocationURI().toString();
+        validateWsdl(wsdlPath);
     }
-    
+
     /**
      * Validate WSDL file.
      * @param wsdlUri
      * @throws CoreException
      */
     @SuppressWarnings("restriction")
-	public static void validateWsdl(String wsdlUri) throws CoreException {
-    	WSDLValidator wsdlValidator = WSDLValidator.getInstance();
-    	//wsdlValidator.addURIResolver(new URIResolverWrapper());
-    	IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
-    	
-    	if (!validationReport.isWSDLValid()) {
-    		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_valid));
-    	}
+    public static void validateWsdl(String wsdlUri) throws CoreException {
+        WSDLValidator wsdlValidator = WSDLValidator.getInstance();
+        //wsdlValidator.addURIResolver(new URIResolverWrapper());
+        IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
+
+        if (!validationReport.isWSDLValid()) {
+            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, Messages.PublishMetadata_Exception_wsdl_not_valid));
+        }
     }
 
 }

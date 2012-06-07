@@ -1,10 +1,8 @@
 package org.talend.repository.services.ui.action;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.core.model.properties.Item;
@@ -25,85 +23,89 @@ public class ContextNodeRetriever {
 		return getContextsMap(node).keySet().toArray(new String[0]);
 	}
 
-	public static Map<String, Map<String, String>> getContextsMap(
-			RepositoryNode node) {
-		Map <String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
+	public static Map<String, Map<String, String>> getContextsMap(RepositoryNode node) {
 		try {
 			Item item = node.getObject().getProperty().getItem();
 			if (item instanceof ServiceItem) {
-				ServiceItem serviceItem = (ServiceItem) node.getObject()
-						.getProperty().getItem();
-				ServiceConnection connection = (ServiceConnection) serviceItem
-						.getConnection();
-				EList<ServicePort> servicePort = connection.getServicePort();
-				for (ServicePort sp : servicePort) {
-					EList<ServiceOperation> serviceOperation = sp
-							.getServiceOperation();
-					for (ServiceOperation so : serviceOperation) {
-						String jobId = so.getReferenceJobId();
-						if (jobId == null) {
-							continue;
-						}
-						RepositoryNode jobNode = RepositoryNodeUtilities
-								.getRepositoryNode(jobId, false);
-						if (jobNode == null) {
-							continue;
-						}
-						ProcessItem processItem = (ProcessItem) jobNode
-								.getObject().getProperty().getItem();
-						ProcessType process = processItem.getProcess();
-						if (process == null) {
-							continue;
-						}
-						EList contexts = process.getContext();
-						if (contexts == null) {
-							continue;
-						}
-						Iterator iterator = contexts.iterator();
-						while (iterator.hasNext()) {
-							Object next = iterator.next();
-							if (!(next instanceof ContextType)) {
-								continue;
-							}
-							ContextType ct = (ContextType) next;
-							String name = ct.getName();
-							Map<String, String> contextParams = contextValues.get(name); 
-							if (contextParams == null)	{
-								contextParams = new HashMap<String, String>();
-							}
-							contextValues.put(name, contextParams);
-							EList<ContextParameterType> params = ct.getContextParameter();
-							for (ContextParameterType param : params) {
-								contextParams.put(param.getName(), param.getValue());
-							}
-						}
-					}
-				}
+				return getContextsMap((ServiceItem) item);
 			} else if (item instanceof ProcessItem) {
-				ProcessType process = ((ProcessItem) item).getProcess();
-				if (process != null) {
-					EList context = process.getContext();
-					if (context != null) {
-						Iterator iterator = context.iterator();
-						while (iterator.hasNext()) {
-							Object next = iterator.next();
-							if (!(next instanceof ContextType))
-								continue;
-							ContextType ct = (ContextType) next;
-							String name = ct.getName();
-							HashMap<String, String> contextParams = new HashMap<String, String>();
-							contextValues.put(name, contextParams);
-							EList<ContextParameterType> params = ct.getContextParameter();
-							for (ContextParameterType param : params) {
-								contextParams.put(param.getName(), param.getValue());
-							}
-						}
-					}
-				}
-
+				return getContextsMap((ProcessItem) item);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return new HashMap<String, Map<String, String>>();
+	}
+
+	public static Map<String, Map<String, String>> getContextsMap(ServiceItem serviceItem) {
+		Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
+		ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+		EList<ServicePort> servicePort = connection.getServicePort();
+		for (ServicePort sp : servicePort) {
+			EList<ServiceOperation> serviceOperation = sp.getServiceOperation();
+			for (ServiceOperation so : serviceOperation) {
+				String jobId = so.getReferenceJobId();
+				if (jobId == null) {
+					continue;
+				}
+				RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
+				if (jobNode == null) {
+					continue;
+				}
+				ProcessItem processItem = (ProcessItem) jobNode.getObject().getProperty().getItem();
+				ProcessType process = processItem.getProcess();
+				if (process == null) {
+					continue;
+				}
+				EList contexts = process.getContext();
+				if (contexts == null) {
+					continue;
+				}
+				Iterator iterator = contexts.iterator();
+				while (iterator.hasNext()) {
+					Object next = iterator.next();
+					if (!(next instanceof ContextType)) {
+						continue;
+					}
+					ContextType ct = (ContextType) next;
+					String name = ct.getName();
+					Map<String, String> contextParams = contextValues.get(name);
+					if (contextParams == null)	{
+						contextParams = new HashMap<String, String>();
+					}
+					contextValues.put(name, contextParams);
+					EList<ContextParameterType> params = ct.getContextParameter();
+					for (ContextParameterType param : params) {
+						contextParams.put(param.getName(), param.getValue());
+					}
+				}
+			}
+		}
+		return contextValues;
+	}
+
+	public static Map<String, Map<String, String>> getContextsMap(ProcessItem processItem) {
+		Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
+		ProcessType process = processItem.getProcess();
+		if (process != null) {
+			EList context = process.getContext();
+			if (context != null) {
+				Iterator iterator = context.iterator();
+				while (iterator.hasNext()) {
+					Object next = iterator.next();
+					if (!(next instanceof ContextType)) {
+						continue;
+					}
+					ContextType ct = (ContextType) next;
+					String name = ct.getName();
+					HashMap<String, String> contextParams = new HashMap<String, String>();
+					contextValues.put(name, contextParams);
+					EList<ContextParameterType> params = ct.getContextParameter();
+					for (ContextParameterType param : params) {
+						contextParams.put(param.getName(), param.getValue());
+					}
+				}
+			}
 		}
 		return contextValues;
 	}
