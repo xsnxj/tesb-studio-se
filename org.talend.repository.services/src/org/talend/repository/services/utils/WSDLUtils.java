@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -77,6 +78,13 @@ public class WSDLUtils {
     public static final String ENDPOINT_URI = "ENDPOINT_URI"; //$NON-NLS-1$
 
     public static final String WSDL_LOCATION = "WSDL_LOCATION"; //$NON-NLS-1$
+    
+    public static final String COMMUNICATION_STYLE = "COMMUNICATION_STYLE"; //$NON-NLS-1$        
+    
+    public static final String ONE_WAY = "one-way"; //$NON-NLS-1$
+    
+    public static final String REQUEST_RESPONSE = "request-response"; //$NON-NLS-1$
+    
 
     public static Map<String, String> getServiceOperationParameters(String wsdlURI,
             String operationName, String portTypeName) throws CoreException {
@@ -92,7 +100,7 @@ public class WSDLUtils {
         if (null == wsdl.getPortType(portTypeQName)) { // portType not found
             return map;
         }
-
+        boolean isOneWay = false;
         String serviceName = null;
         String portName = null;
         String endpointUri = null;
@@ -102,7 +110,14 @@ public class WSDLUtils {
                 Port port = (Port) portObject;
                 if(portTypeQName.equals(port.getBinding().getPortType().getQName())) {
                     portName = port.getName();
-
+                    BindingOutput out = port.getBinding().getBindingOperation(operationName, null, null).getBindingOutput();
+                    if (null == out) {
+                    	// it is oneway
+                    	 isOneWay = true;
+                    } else { 
+                    	// it is request response
+                   	 	 isOneWay = false;
+                    }
                     @SuppressWarnings("rawtypes")
                     List extElements = port.getExtensibilityElements();
                     if (null != extElements) {
@@ -133,6 +148,11 @@ public class WSDLUtils {
 //            map.put(OPERATION_NS, targetNs);
             map.put(ENDPOINT_URI, endpointUri);
             map.put(WSDL_LOCATION, wsdlURI);
+            if (isOneWay) {	
+            	map.put(COMMUNICATION_STYLE, ONE_WAY);
+            } else {
+            	map.put(COMMUNICATION_STYLE, REQUEST_RESPONSE);
+            }
         }
         return map;
     }
