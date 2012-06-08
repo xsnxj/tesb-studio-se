@@ -15,28 +15,47 @@
           class="org.talend.repository.services.action.CreateESBAction"
           id="org.talend.repository.services.action.CreateESBAction"
           level="1"
-          name="Metadata/Copy to Generic schema action">
+          name="Create Service">
+    </Action>
+           
+    <Action
+          class="org.talend.repository.services.action.OpenWSDLEditorAction"
+          id="org.talend.repository.services.action.OpenWSDLEditorAction"
+          level="1"
+          name="Open WSDL Editor">
     </Action>
     <Action
           class="org.talend.repository.services.action.OpenWSDLAction"
           id="org.talend.repository.services.action.OpenWSDLAction"
-          level="1"
-          name="open wsdl">
+          level="2"          
+          name="Assign WSDL">
     </Action>
+    <Action
+            class="org.talend.repository.services.action.PublishMetadataAction"
+            id="org.talend.repository.services.action.PublishMetadataAction"
+            level="3"            
+            name="Import WSDL Schemas"/>
+    <Action
+            class="org.talend.repository.services.action.ServiceMetadataAction"
+            id="org.talend.repository.services.action.ServiceMetadataAction"
+            level="4"            
+            name="ESB Runtime Options"/>
+    <Action
+            class="org.talend.repository.services.action.ExportServiceAction"
+            id="org.talend.repository.services.action.ExportServiceAction"
+            level="5"
+            name="Export Service"/>
+            
     <Action
           class="org.talend.repository.services.action.ServiceEditPropertiesAction"
           id="org.talend.repository.services.action.ServiceEditPropertiesAction"
           name="Edit Properties">
     </Action>
+
     <Action
           class="org.talend.repository.services.action.AssignJobAction"
           id="org.talend.repository.services.action.AssignJobAction"
           name="Assign Job">
-    </Action>
-    <Action
-          class="org.talend.repository.services.action.OpenJobAction"
-          id="org.talend.repository.services.action.OpenJobAction"
-          name="Open Assigned Job">
     </Action>
     <Action
           class="org.talend.repository.services.action.CreateNewJobAction"
@@ -44,24 +63,11 @@
           name="Create New Job">
     </Action>
     <Action
-          class="org.talend.repository.services.action.OpenWSDLEditorAction"
-          id="org.talend.repository.services.action.OpenWSDLEditorAction"
-          name="Open WSDL Editor">
+          class="org.talend.repository.services.action.OpenJobAction"
+          id="org.talend.repository.services.action.OpenJobAction"
+          name="Open Assigned Job">
     </Action>
-    <Action
-            class="org.talend.repository.services.action.ExportServiceAction"
-            id="org.talend.repository.services.action.ExportServiceAction"
-            level="99"
-            name="Export Service"/>
-    <Action
-            class="org.talend.repository.services.action.ServiceMetadataAction"
-            id="org.talend.repository.services.action.ServiceMetadataAction"
-            name="Service Metadata"/>
-    <Action
-            class="org.talend.repository.services.action.PublishMetadataAction"
-            id="org.talend.repository.services.action.PublishMetadataAction"
-            name="Import WSDL Schemas"/>
-    
+
  </extension>
  <extension
        point="org.talend.core.repository.repository_node_provider">
