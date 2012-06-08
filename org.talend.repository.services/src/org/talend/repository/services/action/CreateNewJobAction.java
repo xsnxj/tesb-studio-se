@@ -205,15 +205,15 @@ public class CreateNewJobAction extends AbstractCreateAction {
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
                                 3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 cNcc.execute();
-
-                Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
+                if (!serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE).equals(WSDLUtils.ONE_WAY)){ 
+                	Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
-                nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand(
+                	nc = new NodeContainer(node2);
+                	cNcc = new CreateNodeContainerCommand(
                         (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
                                 9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
-                commandStack.execute(cNcc);
-
+                	commandStack.execute(cNcc);
+                }
                 // openEditor.doSave(new NullProgressMonitor());
 
                 EList<ServicePort> listPort = serviceConnection.getServicePort();
