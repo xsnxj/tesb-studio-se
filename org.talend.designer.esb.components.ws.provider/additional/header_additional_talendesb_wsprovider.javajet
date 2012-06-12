@@ -84,15 +84,16 @@ if (actAsProvider
 	if (null == operationNS || operationNS.isEmpty()) {
 		operationNS = serviceNS;
 	}
+
 	String communicationStyle = ElementParameterParser.getValue(tESBProviderRequestNode, "__COMMUNICATION_STYLE__");
 	boolean isOneWay = false;
-	if ((null != communicationStyle) && !communicationStyle.isEmpty()) {
-	    isOneWay = (communicationStyle.equals("one-way"));
+	if (null != communicationStyle && !communicationStyle.isEmpty()) {
+		isOneWay = "one-way".equals(communicationStyle);
 	} else {
-		isOneWay = (process.getNodesOfType("tESBProviderFault").isEmpty()
-			&& process.getNodesOfType("tESBProviderResponse").isEmpty());
+		isOneWay = process.getNodesOfType("tESBProviderFault").isEmpty()
+			&& process.getNodesOfType("tESBProviderResponse").isEmpty();
 	}
-	%>
+%>
 	public ESBEndpointInfo getEndpoint() {
 		return new ESBEndpointInfo() {
 			@SuppressWarnings("serial")
