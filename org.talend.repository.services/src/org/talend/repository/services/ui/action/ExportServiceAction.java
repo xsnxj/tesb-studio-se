@@ -7,25 +7,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.internal.ide.StatusUtil;
-import org.eclipse.ui.progress.IProgressService;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -33,7 +29,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.SaveAction;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.repository.documentation.ArchiveFileExportOperationFullPath;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -48,7 +43,7 @@ import org.talend.repository.ui.utils.ZipToFile;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 
-public class ExportServiceAction extends WorkspaceJob {
+public class ExportServiceAction implements IRunnableWithProgress {
 
     private List<RepositoryNode> nodes = new ArrayList<RepositoryNode>();
 
@@ -77,7 +72,6 @@ public class ExportServiceAction extends WorkspaceJob {
     }
 
     public ExportServiceAction(RepositoryNode node, String targetPath) throws CoreException {
-        super("Exporting service");
         if (node.getType() == ENodeType.REPOSITORY_ELEMENT
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
             this.serviceViewObject = node.getObject();
@@ -89,7 +83,6 @@ public class ExportServiceAction extends WorkspaceJob {
     }
 
     public ExportServiceAction(IRepositoryViewObject viewObject, String targetPath) throws CoreException {
-        super("Exporting service");
         this.serviceViewObject = viewObject;
         init(targetPath);
     }
@@ -149,25 +142,20 @@ public class ExportServiceAction extends WorkspaceJob {
         return null;
     }
 
-    @Override
-    public IStatus runInWorkspace(IProgressMonitor arg0) throws CoreException {
-        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         String directoryName = serviceManager.getRootFolderName(serviceManager.getDestinationPath());
         Map<String, String> bundles = new HashMap<String, String>();
         for (RepositoryNode node : nodes) {
             JobScriptsManager manager = serviceManager.getJobManager(node,
                     getGroupId(), getServiceVersion());
             JobExportAction job = new JobExportAction(
-                    Arrays.asList(new RepositoryNode[] { node }), node
-                            .getObject().getVersion(), getBundleVersion(),
-                    manager, directoryName, "Service");
-            try {
-                progressService.run(false, true, job);
-            } catch (InvocationTargetException e) {
-                ExceptionHandler.process(e);
-            } catch (InterruptedException e) {
-                ExceptionHandler.process(e);
-            }
+                    Collections.singletonList(node),
+                    node.getObject().getVersion(),
+                    getBundleVersion(),
+                    manager,
+                    directoryName,
+                    "Service");
+            job.run(monitor);
             bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
         }
         try {
@@ -177,64 +165,9 @@ public class ExportServiceAction extends WorkspaceJob {
             String destinationPath = serviceManager.getDestinationPath();
             processFinalResult(destinationPath);
 
-        } catch (IOException e) {
-            return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
+        } catch (Exception e) {
+            throw new InvocationTargetException(e);
         }
-
-        return StatusUtil.newStatus(IStatus.OK, "Done", null);
-    }
-
-    public IStatus runInCommandline(final IProgressMonitor monitor) throws CoreException {
-        String directoryName = serviceManager.getRootFolderName(serviceManager.getDestinationPath());
-        Map<String, String> bundles = new HashMap<String, String>();
-        for (RepositoryNode node : nodes) {
-            JobScriptsManager manager = serviceManager.getJobManager(node,
-                    getGroupId(), getServiceVersion());
-            JobExportAction job = new JobExportAction(
-                    Arrays.asList(new RepositoryNode[] { node }), node
-                            .getObject().getVersion(), getBundleVersion(),
-                    manager, directoryName, "Service") {
-            	@Override
-            	protected boolean executeExportOperation(
-            			ArchiveFileExportOperationFullPath op) {
-                    op.setCreateLeadupStructure(true);
-                    op.setUseCompression(true);
-
-                    try {
-                        op.run(monitor);
-                    } catch (InvocationTargetException e) {
-                    	throw new RuntimeException(e.getCause());
-                    } catch (InterruptedException e) {
-                    }
-
-                    IStatus status = op.getStatus();
-                    if (!status.isOK()) {
-                        return false;
-                    }
-
-                    return true;
-            	}
-            };
-            try {
-                job.run(monitor);
-            } catch (InvocationTargetException e) {
-            	throw new RuntimeException(e.getCause());
-            } catch (InterruptedException e) {
-            }
-            bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
-        }
-        try {
-            final String artefactName = getServiceName() + "-control-bundle";
-            bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
-            processFeature(generateFeature(bundles));
-            String destinationPath = serviceManager.getDestinationPath();
-            processFinalResult(destinationPath);
-
-        } catch (IOException e) {
-            return StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e);
-        }
-
-        return Status.OK_STATUS;
     }
 
     private String generateControlBundle(String groupId, String artefactName)

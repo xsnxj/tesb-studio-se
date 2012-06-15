@@ -12,9 +12,9 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -27,6 +27,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.ui.action.ExportServiceAction;
@@ -44,8 +46,6 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
     protected String exportType;
 
     private ServiceExportWSWizardPage mainPage;
-
-    private static Logger log = Logger.getLogger(ServiceExportWizard.class);
 
     /**
      * Creates a wizard for exporting workspace resources to a zip file.
@@ -97,13 +97,18 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
             @SuppressWarnings("unchecked")
             List<RepositoryNode> nodes = selection.toList();
             for (RepositoryNode node : nodes) {
-                new ExportServiceAction(node, mainPage.getDestinationValue()).runInWorkspace(null);
+            	getContainer().run(false, true, new ExportServiceAction(node, mainPage.getDestinationValue()));
             }
             mainPage.finish();
         } catch (CoreException e) {
-            log.error(e);
+        	MessageBoxExceptionHandler.process(e, getShell());
             return false;
-        }
+        } catch (InvocationTargetException e) {
+        	MessageBoxExceptionHandler.process(e, getShell());
+            return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
         return true;
     }
 
