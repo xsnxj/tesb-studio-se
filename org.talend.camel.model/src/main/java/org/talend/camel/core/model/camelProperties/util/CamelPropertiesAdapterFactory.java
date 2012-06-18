@@ -8,23 +8,22 @@ package org.talend.camel.core.model.camelProperties.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.talend.camel.core.model.camelProperties.*;
-
+import org.talend.camel.core.model.camelProperties.BeanItem;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Adapter Factory</b> for the model.
- * It provides an adapter <code>createXXX</code> method for each class of the model.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> The <b>Adapter Factory</b> for the model. It provides
+ * an adapter <code>createXXX</code> method for each class of the model. <!--
+ * end-user-doc -->
+ * 
  * @see org.talend.camel.core.model.camelProperties.CamelPropertiesPackage
  * @generated
  */
@@ -85,6 +84,10 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
                 return createCamelProcessItemAdapter();
             }
             @Override
+            public Adapter caseRouteResourceItem(RouteResourceItem object) {
+                return createRouteResourceItemAdapter();
+            }
+            @Override
             public Adapter caseItem(Item object) {
                 return createItemAdapter();
             }
@@ -121,13 +124,13 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
 
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.camel.core.model.camelProperties.BeanItem <em>Bean Item</em>}'.
+     * Creates a new adapter for an object of class '{@link camelProperties.BeanItem <em>Bean Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.camel.core.model.camelProperties.BeanItem
+     * @see camelProperties.BeanItem
      * @generated
      */
     public Adapter createBeanItemAdapter() {
@@ -135,13 +138,13 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.camel.core.model.camelProperties.CamelProcessItem <em>Camel Process Item</em>}'.
+     * Creates a new adapter for an object of class '{@link camelProperties.CamelProcessItem <em>Camel Process Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.camel.core.model.camelProperties.CamelProcessItem
+     * @see camelProperties.CamelProcessItem
      * @generated
      */
     public Adapter createCamelProcessItemAdapter() {
@@ -149,13 +152,27 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.Item <em>Item</em>}'.
+     * Creates a new adapter for an object of class '{@link camelProperties.RouteResourceItem <em>Route Resource Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.core.model.properties.Item
+     * @see camelProperties.RouteResourceItem
+     * @generated
+     */
+    public Adapter createRouteResourceItemAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link properties.Item <em>Item</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see properties.Item
      * @generated
      */
     public Adapter createItemAdapter() {
@@ -163,13 +180,13 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.FileItem <em>File Item</em>}'.
+     * Creates a new adapter for an object of class '{@link properties.FileItem <em>File Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.core.model.properties.FileItem
+     * @see properties.FileItem
      * @generated
      */
     public Adapter createFileItemAdapter() {
@@ -177,13 +194,13 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.RoutineItem <em>Routine Item</em>}'.
+     * Creates a new adapter for an object of class '{@link properties.RoutineItem <em>Routine Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.core.model.properties.RoutineItem
+     * @see properties.RoutineItem
      * @generated
      */
     public Adapter createRoutineItemAdapter() {
@@ -191,13 +208,13 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.ProcessItem <em>Process Item</em>}'.
+     * Creates a new adapter for an object of class '{@link properties.ProcessItem <em>Process Item</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.talend.core.model.properties.ProcessItem
+     * @see properties.ProcessItem
      * @generated
      */
     public Adapter createProcessItemAdapter() {

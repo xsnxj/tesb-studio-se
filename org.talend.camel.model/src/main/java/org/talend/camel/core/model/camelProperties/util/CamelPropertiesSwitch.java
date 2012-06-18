@@ -10,24 +10,23 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-
-import org.talend.camel.core.model.camelProperties.*;
-
+import org.talend.camel.core.model.camelProperties.BeanItem;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
 
 /**
- * <!-- begin-user-doc -->
- * The <b>Switch</b> for the model's inheritance hierarchy.
- * It supports the call {@link #doSwitch(EObject) doSwitch(object)}
+ * <!-- begin-user-doc --> The <b>Switch</b> for the model's inheritance
+ * hierarchy. It supports the call {@link #doSwitch(EObject) doSwitch(object)}
  * to invoke the <code>caseXXX</code> method for each class of the model,
- * starting with the actual class of the object
- * and proceeding up the inheritance hierarchy
- * until a non-null result is returned,
- * which is the result of the switch.
- * <!-- end-user-doc -->
+ * starting with the actual class of the object and proceeding up the
+ * inheritance hierarchy until a non-null result is returned, which is the
+ * result of the switch. <!-- end-user-doc -->
+ * 
  * @see org.talend.camel.core.model.camelProperties.CamelPropertiesPackage
  * @generated
  */
@@ -109,6 +108,14 @@ public class CamelPropertiesSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case CamelPropertiesPackage.ROUTE_RESOURCE_ITEM: {
+                RouteResourceItem routeResourceItem = (RouteResourceItem)theEObject;
+                T result = caseRouteResourceItem(routeResourceItem);
+                if (result == null) result = caseFileItem(routeResourceItem);
+                if (result == null) result = caseItem(routeResourceItem);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             default: return defaultCase(theEObject);
         }
     }
@@ -140,6 +147,21 @@ public class CamelPropertiesSwitch<T> {
      * @generated
      */
     public T caseCamelProcessItem(CamelProcessItem object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Route Resource Item</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Route Resource Item</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseRouteResourceItem(RouteResourceItem object) {
         return null;
     }
 

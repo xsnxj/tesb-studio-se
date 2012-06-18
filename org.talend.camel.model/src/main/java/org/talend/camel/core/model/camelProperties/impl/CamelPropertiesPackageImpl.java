@@ -7,14 +7,13 @@ package org.talend.camel.core.model.camelProperties.impl;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.PropertiesPackage;
-import org.talend.designer.core.model.utils.emf.component.ComponentPackage;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model <b>Package</b>. <!-- end-user-doc -->
@@ -33,6 +32,13 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
      * @generated
      */
     private EClass camelProcessItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	private EClass routeResourceItemEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
@@ -140,6 +146,8 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
         beanItemEClass = createEClass(BEAN_ITEM);
 
         camelProcessItemEClass = createEClass(CAMEL_PROCESS_ITEM);
+
+		routeResourceItemEClass = createEClass(ROUTE_RESOURCE_ITEM);
     }
 
     /**
@@ -173,14 +181,24 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
         // Add supertypes to classes
         beanItemEClass.getESuperTypes().add(thePropertiesPackage.getRoutineItem());
         camelProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getProcessItem());
+		routeResourceItemEClass.getESuperTypes().add(
+				thePropertiesPackage.getFileItem());
 
         // Initialize classes and features; add operations and parameters
         initEClass(beanItemEClass, BeanItem.class, "BeanItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(camelProcessItemEClass, CamelProcessItem.class, "CamelProcessItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+		initEClass(routeResourceItemEClass, RouteResourceItem.class,
+				"RouteResourceItem", !IS_ABSTRACT, !IS_INTERFACE,
+				IS_GENERATED_INSTANCE_CLASS);
+
         // Create resource
         createResource(eNS_URI);
     }
+
+	public EClass getRouteResourceItem() {
+		return routeResourceItemEClass;
+	}
 
 } // CamelPropertiesPackageImpl
