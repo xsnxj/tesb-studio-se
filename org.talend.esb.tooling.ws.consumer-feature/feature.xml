@@ -31,6 +31,13 @@
          unpack="true"/>
 
    <plugin
+         id="org.talend.designer.esb.components.rs.consumer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="true"/>
+
+   <plugin
          id="javax.wsdl"
          download-size="0"
          install-size="0"
