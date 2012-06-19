@@ -23,9 +23,14 @@ public class CamelRepositoryNodeType {
 
     public static final String BEANS = "BEANS";
 
+	public static final String ROUTE_RESOURCES = "ROUTE_RESOURCES";
+
     public static ERepositoryObjectType repositoryRoutesType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, ROUTES);
 
     public static ERepositoryObjectType repositoryBeansType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, BEANS);
+
+	public static ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
+			.valueOf(ERepositoryObjectType.class, ROUTE_RESOURCES);
 }

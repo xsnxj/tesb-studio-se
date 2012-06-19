@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.PersistenceException;
@@ -50,7 +51,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
 
     public boolean isRepObjType(ERepositoryObjectType type) {
         boolean isCamelType = false;
-        if (type == CamelRepositoryNodeType.repositoryRoutesType || type == CamelRepositoryNodeType.repositoryBeansType) {
+		if (type == CamelRepositoryNodeType.repositoryRoutesType
+				|| type == CamelRepositoryNodeType.repositoryBeansType
+				|| type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             isCamelType = true;
         }
         return isCamelType;
@@ -86,6 +89,11 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             itemResource = create(project, (FileItem) item, path, type);
             return itemResource;
         }
+		if (item instanceof RouteResourceItem) {
+			type = CamelRepositoryNodeType.repositoryRouteResourceType;
+			itemResource = create(project, (FileItem) item, path, type);
+			return itemResource;
+		}
         return null;
     }
 
@@ -159,7 +167,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             return ECamelCoreImage.ROUTES_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             return ECamelCoreImage.BEAN_ICON;
-        }
+		} else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
+			return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+		}
         return null;
     }
 
@@ -175,6 +185,8 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             item = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             item = CamelPropertiesFactory.eINSTANCE.createBeanItem();
+		} else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
+			item = CamelPropertiesFactory.eINSTANCE.createRouteResourceItem();
         }
         return item;
     }
@@ -186,6 +198,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         if (item instanceof BeanItem) {
             return CamelRepositoryNodeType.repositoryBeansType;
         }
+		if (item instanceof RouteResourceItem) {
+			return CamelRepositoryNodeType.repositoryRouteResourceType;
+		}
         return null;
     }
 

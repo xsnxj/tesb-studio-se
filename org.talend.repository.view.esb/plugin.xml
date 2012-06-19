@@ -93,6 +93,52 @@
             </enablement>
          </actionProvider>
       </navigatorContent>
+      <navigatorContent
+            activeByDefault="true"
+            appearsBefore="org.talend.repository.viewer.root.contexts"
+            contentProvider="org.talend.repository.view.esb.viewer.content.RouteResourceContentProvider"
+            icon="icons/resource.gif"
+            id="org.talend.repository.viewer.esb.route_resource"
+            labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
+            name="Route Resources"
+            priority="normal">
+         <triggerPoints>
+            <or>
+               <adapt
+                     type="org.talend.repository.model.ProjectRepositoryNode">
+               </adapt>
+               <instanceof
+                     value="org.talend.repository.model.ProjectRepositoryNode">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <actionProvider
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+            <enablement>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.isRouteResourceNode">
+                  </test>
+                  <not>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.talend.repository.node.isDeleted">
+                     </test>
+                  </not>
+               </and>
+            </enablement>
+         </actionProvider>
+         <possibleChildren>
+            <instanceof
+                  value="org.talend.repository.model.RepositoryNode">
+            </instanceof>
+         </possibleChildren>
+      </navigatorContent>
+     
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -108,6 +154,13 @@
             id="org.talend.repository.node.tester.code.beans"
             namespace="org.talend.repository.node.code"
             properties="isBeans"
+            type="org.talend.repository.model.RepositoryNode">
+      </propertyTester>
+      <propertyTester
+            class="org.talend.repository.view.esb.viewer.tester.RouteResourceNodeTester"
+            id="org.talend.repository.node.tester.route_resource"
+            namespace="org.talend.repository.node"
+            properties="isRouteResourceNode"
             type="org.talend.repository.model.RepositoryNode">
       </propertyTester>
    </extension>
