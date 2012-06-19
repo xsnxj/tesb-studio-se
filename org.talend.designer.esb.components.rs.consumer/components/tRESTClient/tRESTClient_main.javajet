@@ -54,13 +54,13 @@ if (connsFault.size() == 1) {
 
 String url = ElementParameterParser.getValue(node,"__URL__");
 
-String receiveTimeoutString = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
-String receiveTimeoutSec = (null != receiveTimeoutString && !receiveTimeoutString.trim().isEmpty()) ? receiveTimeoutString : "30";
-long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
-
 String connectionTimeoutString = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
-String connectionTimeoutSec = (null != connectionTimeoutString && !connectionTimeoutString.trim().isEmpty()) ? connectionTimeoutString : "20";
+String connectionTimeoutSec = (null != connectionTimeoutString && !connectionTimeoutString.trim().isEmpty()) ? connectionTimeoutString : "30";
 long connectionTimeout = (long) (Double.valueOf(connectionTimeoutSec) * 1000);
+
+String receiveTimeoutString = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
+String receiveTimeoutSec = (null != receiveTimeoutString && !receiveTimeoutString.trim().isEmpty()) ? receiveTimeoutString : "60";
+long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
 
 List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
 List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
