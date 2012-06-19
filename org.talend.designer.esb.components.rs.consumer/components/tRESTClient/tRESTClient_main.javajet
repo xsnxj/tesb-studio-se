@@ -1,0 +1,208 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		java.util.List
+		java.util.Map
+"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode) codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+
+
+IConnection inputConn = null;
+List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+if (incomingConnections != null && !incomingConnections.isEmpty()) {
+	for (IConnection conn : incomingConnections) {
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+			inputConn = conn;
+			break;
+		}
+	}
+}
+
+List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+if (conns != null && conns.size() > 0) {
+	for (int i = 0; i < conns.size(); i++) {
+		IConnection conn = conns.get(i);
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+%>
+	<%=conn.getName()%> = null;
+<%
+		}
+	}
+}
+
+List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+IConnection connResponse = null;
+IConnection connFault = null;
+if (connsResponse.size() == 1) {
+	connResponse = connsResponse.get(0);
+}
+if (connsFault.size() == 1) {
+	connFault = connsFault.get(0);
+}
+
+
+
+String url = ElementParameterParser.getValue(node,"__URL__");
+
+String receiveTimeoutString = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
+String receiveTimeoutSec = (null != receiveTimeoutString && !receiveTimeoutString.trim().isEmpty()) ? receiveTimeoutString : "30";
+long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
+
+String connectionTimeoutString = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
+String connectionTimeoutSec = (null != connectionTimeoutString && !connectionTimeoutString.trim().isEmpty()) ? connectionTimeoutString : "20";
+long connectionTimeout = (long) (Double.valueOf(connectionTimeoutSec) * 1000);
+
+List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
+List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
+
+String method = ElementParameterParser.getValue(node,"__METHOD__");
+
+String acceptType = ElementParameterParser.getValue(node,"__ACCEPT_TYPE__");
+if (acceptType == null) {
+	acceptType = "application/xml";
+}
+
+String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
+if (contentType == null) {
+	contentType = "application/xml";
+}
+%>
+
+try {
+	// request body
+	org.dom4j.Document requestDoc_<%=cid%> = null;
+	String requestString_<%=cid%> = null;
+	<% if (null != inputConn) { %>
+		if (null != <%=inputConn.getName()%>.body) {
+			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+		}
+		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
+	<% } %>
+
+	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
+
+	// expected response body
+	Object responseDoc_<%=cid%> = null;
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType)) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+
+	// create web client instance
+	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
+		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+	factoryBean_<%=cid%>.setAddress(<%=url%>);
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"))) { %>
+		factoryBean_<%=cid%>.setUsername(<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>);
+		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
+	<% } %>
+
+	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
+	providers_<%=cid%>.add(new ClientDOM4JProvider());
+	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
+		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
+	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
+	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
+
+	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
+
+	// set connection properties
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout(<%=receiveTimeout%>);
+	conduit_<%=cid%>.getClient().setConnectionTimeout(<%=connectionTimeout%>);
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+	<% } %>
+
+	// set Content-Type
+	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
+		webClient_<%=cid%>.type("<%=contentType%>");
+	<% } %>
+	// set Accept-Type
+	<% if (!acceptType.isEmpty()) { %>
+		webClient_<%=cid%>.accept("<%=acceptType%>");
+	<% } %>
+
+	// set optional query and header properties if any
+	<% for (Map<String, String> header : headers) { %>
+		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
+	<% } %>
+
+	// if FORM request then capture query parameters into Form, otherwise set them as queries
+	<% if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
+		<% for (Map<String, String> query : queries) { %>
+			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+		requestBody_<%=cid%> = form_<%=cid%>;
+	<% } else { %>
+		<% for (Map<String, String> query : queries) { %>
+			webClient_<%=cid%>.query(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+	<% } %>
+
+
+	try {
+
+		<% if ("GET".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
+		<% } else if ("POST".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else { %>
+			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
+		<% } %>
+
+		<% if (null != connResponse) {
+			String connResponseName = connResponse.getName(); %>
+			if (<%=connResponseName%> == null) {
+				<%=connResponseName%> = new <%=connResponseName%>Struct();
+			}
+
+			<%=connResponseName%>.statusCode = webClient_<%=cid%>.getResponse().getStatus();
+			if (responseDoc_<%=cid%> != null) {
+				if (responseClass_<%=cid%> == String.class) {
+					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
+				} else {
+					Document responseTalendDoc_<%=cid%> = null;
+					if (null != responseDoc_<%=cid%>) {
+						responseTalendDoc_<%=cid%> = new Document();
+						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
+					}
+					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
+				}
+			}
+		<% } %>
+
+	} catch (org.apache.cxf.jaxrs.client.ServerWebApplicationException ex_<%=cid%>) {
+		<% if (null != connFault) {
+			String connFaultName = connFault.getName(); %>
+			if (<%=connFaultName%> == null) {
+				<%=connFaultName%> = new <%=connFaultName%>Struct();
+			}
+			<%=connFaultName%>.errorCode = ex_<%=cid%>.getStatus();
+			<%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
+		<% } else { %>
+			System.out.println("error response: " + ex_<%=cid%>.getStatus() + ":" + ex_<%=cid%>.getMessage());
+		<% } %>
+	}
+
+} catch(Exception e_<%=cid%>) {
+	<% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+		throw(e_<%=cid%>);
+	<% } else { %>
+		System.err.print(e_<%=cid%>.getMessage());
+	<% } %>
+}
