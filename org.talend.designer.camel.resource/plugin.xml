@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+               point="org.talend.core.repository.repository_node_provider">
+            <repositoryNode
+                  class="org.talend.designer.camel.resource.ui.models.RouteResourceExtendRepositoryNode"
+                  folder="route_resources"
+                  isResouce="true"
+                  label="Route Resources"
+                  products="CAMEL"
+                  type="ROUTE_RESOURCES">
+            </repositoryNode>
+         </extension>
+         
+         
+   <extension
+         point="org.talend.core.repositoryContextualsActions">
+      <Action
+            class="org.talend.designer.camel.resource.ui.actions.ManageRouteResourcesAction"
+            id="org.talend.designer.camel.resource.ManageRouteResourcesAction"
+            level="20"
+            name="Manage Route Resources">
+              
+      </Action>
+       <Action
+                  class="org.talend.designer.camel.resource.ui.actions.CreateRouteResourceAction"
+                  id="org.talend.designer.camel.resource.CreateRouteResource"
+                  isEditAction="true"
+                  level="1"
+                  name="Create Route Resource">
+            </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.EditRouteResourceAction"
+             id="org.talend.designer.camel.resource.EditRouteResourceAction"
+             isEditAction="true"
+             level="3"
+             name="Edit Route Resource">
+       </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.EditRouteResourcePropertiesAction"
+             id="org.talend.designer.camel.resource.EditRouteResourcePropertiesAction"
+             isPropertiesAction="true"
+             level="4"
+             name="Edit Properties">
+       </Action>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.talend.designer.camel.resource.editors.RouteResourceEditor"
+            extensions="item"
+            icon="icons/resource.gif"
+            id="org.talend.designer.camel.resource.editors.RouteResourceEditor"
+            name="Route Resource Editor">
+      </editor>
+   </extension>
+
+</plugin>
