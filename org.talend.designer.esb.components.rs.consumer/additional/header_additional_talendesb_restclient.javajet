@@ -1,8 +1,23 @@
 <%@ jet
 	package="org.talend.designer.codegen.translators.common"
-	imports=""
+	imports="
+		java.util.Vector
+
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		org.talend.core.model.process.IProcess
+	"
 	class="Header_additional"
 %>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+Vector v = (Vector) codeGenArgument.getArgument();
+IProcess process = (IProcess) v.get(0);
+
+boolean jobHasRestConsumerComponent = !process.getNodesOfType("tRESTClient").isEmpty();
+
+if (jobHasRestConsumerComponent) { %>
+
 /**
  * A special Dom4J provider implementation to help conversion in JAX-RS
  * @see http://jira.talendforge.org/browse/TESB-3329
@@ -81,3 +96,5 @@ public static class ClientDOM4JProvider
 		}
 	}
 }
+
+<% } %>
