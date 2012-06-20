@@ -14,6 +14,7 @@ package org.talend.camel.designer.ui.wizards;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
@@ -52,6 +54,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.KarFileGenerator;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
@@ -1466,7 +1469,12 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 			}
 
 			// generated bundle jar first
-			String bundlePath = exportKarOsgiBundle();
+			String bundlePath = null;
+			try {
+				bundlePath = exportKarOsgiBundle();
+			} catch (InvocationTargetException e) {
+				MessageBoxExceptionHandler.process(e.getCause(), getShell());
+			}
 			if (bundlePath == null) {
 				return false;
 			}
@@ -1493,7 +1501,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
 	}
 
-	private String exportKarOsgiBundle() {
+	private String exportKarOsgiBundle() throws InvocationTargetException {
 		if (nodes == null || nodes.length < 1) {
 			return null;
 		}
@@ -1513,13 +1521,15 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 				version, version, manager, getTempDir(), type);
 		IProgressService progressService = PlatformUI.getWorkbench()
 				.getProgressService();
+
 		try {
 			progressService.run(false, false, action);
-			return destinationPath;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			throw e;
+		} catch (InterruptedException e) {
 			return null;
 		}
+		return destinationPath;
 	}
 
 	protected String getTempDir() {
