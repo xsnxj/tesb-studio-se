@@ -201,6 +201,10 @@
       <classpath
             attributeName="LIBRARY"
             componentName="cTalendJob">
+         <predicate
+               attributeName="FROM_EXTERNAL_JAR"
+               attributeValue="true">
+         </predicate>
       </classpath>
    </extension>
    <extension

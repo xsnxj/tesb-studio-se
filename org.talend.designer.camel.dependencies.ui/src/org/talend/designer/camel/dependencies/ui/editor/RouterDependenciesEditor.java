@@ -62,7 +62,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 	private void initialize() {
 		RouterOsgiDependenciesResolver resolver = new RouterOsgiDependenciesResolver(
-				((ProcessItem) property.getItem()).getProcess(),
+				(ProcessItem) property.getItem(),
 				property.getAdditionalProperties());
 		importPackages.addAll(resolver.getImportPackages());
 		requireBundles.addAll(resolver.getRequireBundles());

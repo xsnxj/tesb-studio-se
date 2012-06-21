@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.emf.common.util.EList;
+import org.talend.camel.designer.model.ExportKarBundleModel;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
@@ -24,89 +26,83 @@ import org.talend.repository.model.RepositoryNode;
 
 public class KarFileGenerator {
 
-	public static boolean generateKarFile(String jarFile, String version,
-			RepositoryNode node, String destination) throws IOException {
+	public static boolean generateKarFile(
+			List<ExportKarBundleModel> bundleModels, RepositoryNode routerNode,
+			String version, String destination) throws IOException {
 
-		String itemName = node.getObject().getProperty().getDisplayName();
-		String projectName = node.getObject().getProjectLabel().toLowerCase();
+		String itemName = routerNode.getObject().getProperty().getDisplayName();
+		String projectName = routerNode.getObject().getProjectLabel()
+				.toLowerCase();
 
 		ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(
 				new FileOutputStream(destination)));
 
+		StringBuilder sb = new StringBuilder();
+		sb.append("repository/").append(projectName).append("/")
+				.append(itemName).append("/");
 		/*
 		 * Bundle File path:
 		 * repository/[projectName]/[itemName]/[itemName]-bundle
 		 * /[itemVersion]/[itemName]-bundle-[itemVersion].jar
 		 */
-		StringBuilder sb = new StringBuilder();
-		sb.append("repository/");
-		sb.append(projectName);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("-bundle/");
-		sb.append(version);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("-bundle-");
-		sb.append(version);
-		sb.append(".jar");
-
-		File f = new File(jarFile);
-		ZipEntry entry = new ZipEntry(sb.toString());
-		entry.setSize(f.length());
-		entry.setTime(f.lastModified());
-		output.putNextEntry(entry);
-
-		// write file content
-		byte[] buf = new byte[1024];
-		int readLen = 0;
-		InputStream is = new BufferedInputStream(new FileInputStream(f));
-		while ((readLen = is.read(buf)) != -1) {
-			output.write(buf, 0, readLen);
-		}
-		is.close();
-
+		String groupPrefix = sb.toString();
 		/*
 		 * feature file path:
 		 * repository/[projectName]/[itemName]/[itemName]-feature
 		 * /[itemVersion]/[itemName]-feature-[itemVersion]-feature.xml
 		 */
-		sb = new StringBuilder();
-		sb.append("repository/");
-		sb.append(projectName);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("-feature");
-		sb.append("/");
-		sb.append(version);
-		sb.append("/");
-		sb.append(itemName);
-		sb.append("-feature-");
-		sb.append(version);
-		sb.append("-feature.xml");
-
-		String groupId = projectName + "." + itemName;
-		BundleModel bundleModel = new BundleModel(f, groupId, itemName
-				+ "-bundle",
-				version);
+		String featurePrefix = sb.append(itemName).append("-feature/")
+				.append(version).append("/").append(itemName)
+				.append("-feature-").append(version).append("-feature.xml")
+				.toString();
 		FeaturesModel featuresModel = new FeaturesModel(projectName + "."
 				+ itemName, itemName, version);
-		featuresModel.setContexts(getContextsMap(node));
+		String groupId = projectName + "." + itemName;
 
-		featuresModel.addSubBundle(bundleModel);
+		for (ExportKarBundleModel p : bundleModels) {
+			if (p == null || p.getBundleFilePath() == null)
+				;
+			File f = new File(p.getBundleFilePath());
+			if (!f.exists()) {
+				continue;
+			}
+			// add bundle jar file
+			RepositoryNode repositoryNode = p.getRepositoryNode();
+			String displayName = repositoryNode.getObject().getProperty()
+					.getDisplayName();
+			if (repositoryNode.equals(routerNode)) {
+				displayName += "-bundle";
+			}
+			ZipEntry entry = new ZipEntry(groupPrefix + displayName + "/"
+					+ version + "/" + f.getName());
+			entry.setSize(f.length());
+			entry.setTime(f.lastModified());
+			output.putNextEntry(entry);
 
-		String[][] subFeatures = getSubFeatures(node);
-		for (String[] fm : subFeatures) {
-			featuresModel.addSubFeature(fm[0], fm[1]);
+			// write file content
+			byte[] buf = new byte[1024];
+			int readLen = 0;
+			InputStream is = new BufferedInputStream(new FileInputStream(f));
+			while ((readLen = is.read(buf)) != -1) {
+				output.write(buf, 0, readLen);
+			}
+			is.close();
+
+			// add bundle dependencies
+			BundleModel bundleModel = new BundleModel(f, groupId, displayName,
+					p.getRepositoryVersion());
+			featuresModel.setContexts(getContextsMap(repositoryNode));
+
+			featuresModel.addSubBundle(bundleModel);
+			String[][] subFeatures = getSubFeatures(repositoryNode);
+			for (String[] fm : subFeatures) {
+				featuresModel.addSubFeature(fm[0], fm[1]);
+			}
 		}
 
 		byte[] featureContent = featuresModel.toString().getBytes();
 
-		entry = new ZipEntry(sb.toString());
+		ZipEntry entry = new ZipEntry(featurePrefix);
 		entry.setSize(featureContent.length);
 		entry.setTime(System.currentTimeMillis());
 		output.putNextEntry(entry);

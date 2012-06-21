@@ -8,11 +8,11 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.EMap;
 import org.talend.core.IOsgiDependenciesService;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.camel.dependencies.core.ext.ExDependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 
 public class RouterOsgiDependenciesResolver implements IOsgiDependenciesService {
 
@@ -20,16 +20,16 @@ public class RouterOsgiDependenciesResolver implements IOsgiDependenciesService 
 	private Set<RequireBundle> requireBundles = new HashSet<RequireBundle>();
 	private Set<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
 
-	public RouterOsgiDependenciesResolver(ProcessType processType, EMap additions) {
-		initialize(processType, additions);
+	public RouterOsgiDependenciesResolver(ProcessItem pi, EMap additions) {
+		initialize(pi, additions);
 	}
 	
 	public RouterOsgiDependenciesResolver() {
 	}
 
-	private void initialize(ProcessType processType, EMap additions) {
+	private void initialize(ProcessItem pi, EMap additions) {
 		ExDependenciesResolver resolver = new ExDependenciesResolver(
-				processType);
+				pi);
 		importPackages.addAll(Arrays.asList(resolver.getImportPackages()));
 		requireBundles.addAll(Arrays.asList(resolver.getRequireBundles()));
 		bundleClasspaths.addAll(Arrays.asList(resolver.getBundleClasspaths()));
@@ -53,12 +53,12 @@ public class RouterOsgiDependenciesResolver implements IOsgiDependenciesService 
 	}
 
 	@Override
-	public Map<String, String> getBundleDependences(ProcessType pt,
+	public Map<String, String> getBundleDependences(ProcessItem pi,
 			EMap additionProperties) {
 		Set<ImportPackage> importPackages = new HashSet<ImportPackage>();
 		Set<RequireBundle> requireBundles = new HashSet<RequireBundle>();
 		Set<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
-		ExDependenciesResolver resolver = new ExDependenciesResolver(pt);
+		ExDependenciesResolver resolver = new ExDependenciesResolver(pi);
 		importPackages.addAll(Arrays.asList(resolver.getImportPackages()));
 		requireBundles.addAll(Arrays.asList(resolver.getRequireBundles()));
 		bundleClasspaths.addAll(Arrays.asList(resolver.getBundleClasspaths()));
