@@ -555,6 +555,11 @@ public static class RestServiceProviderImpl4TalendJob {
 			java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 			globalMap.put("restRequest", request);
 			globalMap.put(KEY_DB_DATASOURCES, job.globalMap.get(KEY_DB_DATASOURCES));
+			for(java.util.Map.Entry<String, Object> entry : job.globalMap.entrySet()) {
+				if (entry.getKey().startsWith("conn_")) {
+					globalMap.put(entry.getKey(), entry.getValue());
+				}
+			}
 
 			job.tRESTRequest_1_LoopProcess(globalMap);
 
