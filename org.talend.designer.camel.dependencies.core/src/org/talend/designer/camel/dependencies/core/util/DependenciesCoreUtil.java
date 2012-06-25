@@ -1,16 +1,16 @@
 package org.talend.designer.camel.dependencies.core.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EMap;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
-import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 
+@SuppressWarnings({"rawtypes","unchecked"})
 public class DependenciesCoreUtil {
 
 	private static final String DELIMITER_REGEX = "\\|";
@@ -68,116 +68,86 @@ public class DependenciesCoreUtil {
 		map.put(REQUIRE_BUNDLE_ID, sb.toString());
 	}
 
-	public static Set<ImportPackage> getStoredImportPackages(EMap map) {
+	public static List<ImportPackage> getStoredImportPackages(EMap map) {
 		Object stored = map.get(IMPORT_PACKAGE_ID);
 		if (stored != null) {
 			return convertToImportPackages(stored.toString());
 		}
-		return Collections.EMPTY_SET;
+		return Collections.EMPTY_LIST;
 	}
 
-	public static Set<RequireBundle> getStoredRequireBundles(EMap map) {
+	public static List<RequireBundle> getStoredRequireBundles(EMap map) {
 		Object stored = map.get(REQUIRE_BUNDLE_ID);
 		if (stored != null) {
 			return convertToRequireBundles(stored.toString());
 		}
-		return Collections.EMPTY_SET;
+		return Collections.EMPTY_LIST;
 	}
 
 	/**
 	 * 
-	 * @param bundleString
-	 * @return {@link Set<RequireBundle>}
+	 * @param input
+	 * @return {@link List<RequireBundle>}
 	 */
-	private static Set<RequireBundle> convertToRequireBundles(String bundleString) {
-		if(bundleString==null||bundleString.trim().equals("")){
-			return Collections.EMPTY_SET;
+	private static List<RequireBundle> convertToRequireBundles(String input) {
+		if(input==null||input.trim().equals("")){
+			return Collections.EMPTY_LIST;
 		}
-		Set<RequireBundle> set = new HashSet<RequireBundle>();
-		String[] split = bundleString.split(DELIMITER_REGEX);
+		List<RequireBundle> list = new ArrayList<RequireBundle>();
+		String[] split = input.split(DELIMITER_REGEX);
 		for (String s : split) {
 			RequireBundle bundle = convertToRequireBundle(s);
 			if (bundle != null) {
-				set.add(bundle);
+				list.add(bundle);
 			}
 		}
-		return Collections.unmodifiableSet(set);
+		return Collections.unmodifiableList(list);
 	}
 
 	/**
 	 * 
-	 * @param bundleString
+	 * @param input
 	 * @return {@link RequireBundle} or null if failed to convert
 	 */
-	private static RequireBundle convertToRequireBundle(String bundleString) {
-		if(bundleString==null||bundleString.trim().equals("")){
+	private static RequireBundle convertToRequireBundle(String input) {
+		if(input==null||input.trim().equals("")){
 			return null;
 		}
-		RequireBundle requireBundle = new RequireBundle();
-		return convertToDependencies(bundleString, requireBundle);
+		RequireBundle requireBundle = new RequireBundle(input);
+		return requireBundle;
 	}
 
 	/**
 	 * 
-	 * @param bundleString
-	 * @return {@link Set<ImportPackage>}
+	 * @param input
+	 * @return {@link List<ImportPackage>}
 	 */
-	private static Set<ImportPackage> convertToImportPackages(String bundleString) {
-		if(bundleString==null||bundleString.trim().equals("")){
-			return Collections.EMPTY_SET;
+	private static List<ImportPackage> convertToImportPackages(String input) {
+		if(input==null||input.trim().equals("")){
+			return Collections.EMPTY_LIST;
 		}
-		Set<ImportPackage> set = new HashSet<ImportPackage>();
-		String[] split = bundleString.split(DELIMITER_REGEX);
+		List<ImportPackage> list = new ArrayList<ImportPackage>();
+		String[] split = input.split(DELIMITER_REGEX);
 		for (String s : split) {
 			ImportPackage importPackage = convertToImportPackage(s);
 			if (importPackage != null) {
-				set.add(importPackage);
+				list.add(importPackage);
 			}
 		}
-		return Collections.unmodifiableSet(set);
+		return Collections.unmodifiableList(list);
 	}
 
 	/**
 	 * 
-	 * @param bundleString
+	 * @param input
 	 * @return {@link ImportPackage} or null if failed to convert
 	 */
-	private static ImportPackage convertToImportPackage(String bundleString) {
-		if(bundleString==null||bundleString.trim().equals("")){
+	private static ImportPackage convertToImportPackage(String input) {
+		if(input==null||input.trim().equals("")){
 			return null;
 		}
-		ImportPackage importPackage = new ImportPackage();
-		return convertToDependencies(bundleString, importPackage);
-	}
-
-	private static <T extends OsgiDependencies> T convertToDependencies(
-			String bundleString, T dependencies) {
-		try {
-			String[] split = bundleString.split(";");
-			dependencies.setName(split[0]);
-			if (split.length > 1) {
-				int firstQuote = split[1].indexOf("\"");
-				int lastQuote = split[1].lastIndexOf("\"");
-
-				if (split[1].indexOf(",") != -1) {
-					String s = split[1]
-							.substring(firstQuote + 2, lastQuote - 1);
-					String[] versions = s.split(",");
-					dependencies.setMaxVersion(versions[1]);
-					dependencies.setMinVersion(versions[0]);
-				} else {
-					dependencies.setMinVersion(split[1].substring(
-							firstQuote + 1, lastQuote));
-				}
-			}
-
-			if (split.length > 2) {
-				dependencies.setOptional(true);
-			}
-			return dependencies;
-		} catch (Exception e) {
-			return null;
-		}
+		ImportPackage importPackage = new ImportPackage(input);
+		return importPackage;
 	}
 
 }

@@ -137,12 +137,21 @@ public class RouterDependenciesPanel extends Composite implements
 	}
 
 	private void editSelected() {
-		OsgiDependencies selected = (OsgiDependencies)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+		OsgiDependencies<?> selected = (OsgiDependencies<?>)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
 				selected, getShell(), type);
 		int open = dialog.open();
 		if (open == Dialog.OK) {
-			tableViewer.update(selected, null);
+			if(dialog.isChanged()){
+				OsgiDependencies<?> item = dialog.getDependencyItem();
+				selected.setName(item.getName());
+				selected.setMaxVersion(item.getMaxVersion());
+				selected.setMinVersion(item.getMinVersion());
+				selected.setOptional(item.isOptional());
+				
+				tableViewer.update(selected, null);
+				fireDependenciesChangedListener();
+			}
 		}
 	}
 
@@ -173,6 +182,7 @@ public class RouterDependenciesPanel extends Composite implements
 		tableViewer.refresh();
 		tableViewer.setSelection(new StructuredSelection(selected));
 		tableViewer.getTable().showSelection();
+		fireDependenciesChangedListener();
 	}
 
 	private void moveUp() {
@@ -205,6 +215,7 @@ public class RouterDependenciesPanel extends Composite implements
 		tableViewer.refresh();
 		tableViewer.setSelection(new StructuredSelection(selected));
 		tableViewer.getTable().showSelection();
+		fireDependenciesChangedListener();
 	}
 
 	private void removeItems() {
@@ -223,7 +234,7 @@ public class RouterDependenciesPanel extends Composite implements
 	}
 
 	private void addNewItem(NewOrEditDependencyDialog dialog) {
-		OsgiDependencies addedItem = dialog.getProcessedItem();
+		OsgiDependencies addedItem = dialog.getDependencyItem();
 		List input = (List) tableViewer.getInput();
 		input.add(addedItem);
 		tableViewer.refresh();

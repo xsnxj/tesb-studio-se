@@ -25,10 +25,15 @@ public class Messages extends NLS {
 	public static String NewDependencyItemDialog_nameIsNullMessage;
 	public static String NewDependencyItemDialog_optional;
 	public static String NewDependencyItemDialog_requireBundle;
+	public static String NewOrEditDependencyDialog_nameInvalidMsg;
+	public static String RelativeEditorsSaveDialog_saveEditorsMsg;
+	public static String RelativeEditorsSaveDialog_saveEditorsTitle;
 	public static String RouterDependenciesEditor_classpathSec;
 	public static String RouterDependenciesEditor_filterLabel;
 	public static String RouterDependenciesEditor_hideBuiltInItems;
 	public static String RouterDependenciesEditor_importPackageSec;
+	public static String RouterDependenciesEditor_refreshDependenciesTooltip;
+	public static String RouterDependenciesEditor_refreshing;
 	public static String RouterDependenciesEditor_requireBundleSec;
 	public static String RouterDependenciesPanel_addBtn;
 	public static String RouterDependenciesPanel_deleteMsg;

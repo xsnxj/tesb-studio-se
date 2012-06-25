@@ -1,6 +1,48 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-public class RequireBundle extends OsgiDependencies {
+public class RequireBundle extends OsgiDependencies<RequireBundle> {
+	
+	public RequireBundle() {
+		super();
+	}
+
+	public RequireBundle(String inputString) {
+		super(inputString);
+	}
+
+	public RequireBundle(RequireBundle copied) {
+		super(copied);
+	}
+
+	@Override
+	protected void parse(String inputString) {
+		String[] split = inputString.split(";");
+		setName(split[0]);
+		if(split.length<=1){
+			return;
+		}
+		for(int i = 1;i<split.length;i++){
+			String s = split[i];
+			if("resolution:=optional".equals(s)){
+				setOptional(true);
+			}else if(s.startsWith("bundle-version=")){
+				parseVersions(s);
+			}
+		}
+	}
+	
+	private void parseVersions(String input) {
+		int firstQuote = input.indexOf("\"");
+		int lastQuote = input.lastIndexOf("\"");
+		int commaIndex = input.indexOf(",");
+		if(commaIndex == -1){
+			setMinVersion(input.substring(firstQuote+1, lastQuote));
+		}else{
+			setMinVersion(input.substring(firstQuote+2, commaIndex));
+			setMaxVersion(input.substring(commaIndex+1, lastQuote-1));
+		}
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

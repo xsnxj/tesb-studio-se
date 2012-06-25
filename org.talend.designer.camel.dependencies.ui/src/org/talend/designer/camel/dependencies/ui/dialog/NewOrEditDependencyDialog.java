@@ -26,24 +26,46 @@ import org.talend.designer.camel.dependencies.ui.Messages;
 public class NewOrEditDependencyDialog extends TitleAreaDialog {
 
 	private int type;
-	private OsgiDependencies item;
+	private OsgiDependencies<?> item;
 	private List<?> input;
 
 	private boolean isNew = false;
+	
+	private boolean isChanged = false;
 
 	public NewOrEditDependencyDialog(List<?> input, Shell parentShell, int type) {
 		super(parentShell);
 		this.input = input;
 		this.type = type;
 		this.isNew = true;
+		switch (type) {
+		case IDependencyItem.IMPORT_PACKAGE:
+			item = new ImportPackage();
+			break;
+		case IDependencyItem.REQUIRE_BUNDLE:
+			item = new RequireBundle();
+			break;
+		default:
+			break;
+		}
 	}
 
-	public NewOrEditDependencyDialog(OsgiDependencies item, Shell parentShell,
+	public NewOrEditDependencyDialog(OsgiDependencies<?> sourceItem, Shell parentShell,
 			int type) {
 		super(parentShell);
-		this.item = item;
+		this.item = sourceItem;
 		this.type = type;
 		this.isNew = false;
+		switch (type) {
+		case IDependencyItem.IMPORT_PACKAGE:
+			this.item = new ImportPackage((ImportPackage)sourceItem);
+			break;
+		case IDependencyItem.REQUIRE_BUNDLE:
+			this.item = new RequireBundle((RequireBundle)sourceItem);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -54,13 +76,11 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 				getShell().setText(Messages.NewDependencyItemDialog_addImportPackage);
 				setTitle(Messages.NewDependencyItemDialog_importPackage);
 				setMessage(Messages.NewDependencyItemDialog_importPackageMessage);
-				item = new ImportPackage();
 				break;
 			case IDependencyItem.REQUIRE_BUNDLE:
 				getShell().setText(Messages.NewDependencyItemDialog_addRequireBundle);
 				setTitle(Messages.NewDependencyItemDialog_requireBundle);
 				setMessage(Messages.NewDependencyItemDialog_addRequireBundleMsg);
-				item = new RequireBundle();
 				break;
 
 			default:
@@ -121,6 +141,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setName(((Text) e.getSource()).getText());
+				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
@@ -129,6 +150,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setMinVersion(((Text) e.getSource()).getText());
+				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
@@ -137,12 +159,14 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setMaxVersion(((Text) e.getSource()).getText());
+				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
 		optionalBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				isChanged = true;
 				item.setOptional(((Button) e.getSource()).getSelection());
 			}
 		});
@@ -168,6 +192,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		case OsgiDependencies.NAME_NULL:
 			setErrorMessage(Messages.NewDependencyItemDialog_nameIsNullMessage);
 			return false;
+		case OsgiDependencies.NAME_INVALID:
+			setErrorMessage(Messages.NewOrEditDependencyDialog_nameInvalidMsg);
+			return false;
 		case OsgiDependencies.MIN_INVALID:
 			setErrorMessage(Messages.NewDependencyItemDialog_minVersionInvalidMsg);
 			return false;
@@ -184,7 +211,11 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		return true;
 	}
 
-	public OsgiDependencies getProcessedItem() {
+	public OsgiDependencies<?> getDependencyItem() {
 		return item;
+	}
+	
+	public boolean isChanged() {
+		return isChanged;
 	}
 }

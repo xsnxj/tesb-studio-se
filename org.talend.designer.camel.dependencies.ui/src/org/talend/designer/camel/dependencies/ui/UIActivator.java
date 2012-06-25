@@ -17,10 +17,11 @@ public class UIActivator extends AbstractUIPlugin {
 	// The shared instance
 	private static UIActivator plugin;
 	
-	public static final String DEPEN_ICON = "icons/dependencies.gif";
-	public static final String IMPORT_PKG_ICON = "icons/importPackage.gif";
-	public static final String REQUIRE_BD_ICON = "icons/requireBundle.gif";
-	public static final String BUNDLE_CP_ICON = "icons/bundleClass.gif";
+	public static final String DEPEN_ICON = "icons/dependencies.gif"; //$NON-NLS-1$
+	public static final String IMPORT_PKG_ICON = "icons/importPackage.gif"; //$NON-NLS-1$
+	public static final String REQUIRE_BD_ICON = "icons/requireBundle.gif"; //$NON-NLS-1$
+	public static final String BUNDLE_CP_ICON = "icons/bundleClass.gif"; //$NON-NLS-1$
+	public static final String REFRESH_ICON = "icons/refresh.gif"; //$NON-NLS-1$
 	/**
 	 * The constructor
 	 */
@@ -63,6 +64,8 @@ public class UIActivator extends AbstractUIPlugin {
 		reg.put(REQUIRE_BD_ICON, getImageDescriptor(REQUIRE_BD_ICON)
 				.createImage());
 		reg.put(IMPORT_PKG_ICON, getImageDescriptor(IMPORT_PKG_ICON)
+				.createImage());
+		reg.put(REFRESH_ICON, getImageDescriptor(REFRESH_ICON)
 				.createImage());
 	}
 

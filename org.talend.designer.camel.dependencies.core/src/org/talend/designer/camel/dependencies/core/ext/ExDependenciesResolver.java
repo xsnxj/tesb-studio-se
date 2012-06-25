@@ -16,8 +16,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 
 public class ExDependenciesResolver {
 
-//	private static final String JAVA_LIB_DIRECTORY = "lib";
-//	private static final String JAVA_PROJECT_NAME = ".Java";
 	private EList<?> nodes;
 
 	private Set<BundleClasspath> classpaths = new HashSet<BundleClasspath>();
@@ -84,7 +82,7 @@ public class ExDependenciesResolver {
 				String jobId = null;
 				String jobVersion = null;
 				String jobName = null;
-				EList parameters = n.getElementParameter();
+				EList<?> parameters = n.getElementParameter();
 				for (Object p : parameters) {
 					if (!(p instanceof ElementParameterType)) {
 						continue;

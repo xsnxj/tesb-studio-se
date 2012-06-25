@@ -31,7 +31,7 @@ public class ExBundleClasspath extends AbstractExPredicator<BundleClasspath> {
 		for (Object e : t.getElementParameter()) {
 			ElementParameterType p = (ElementParameterType) e;
 			if (attributeName.equals(p.getName())) {
-				EList elementValue = p.getElementValue();
+				EList<?> elementValue = p.getElementValue();
 				if (elementValue.isEmpty()) {
 					String evtValue = p.getValue();
 					if (evtValue != null) {
