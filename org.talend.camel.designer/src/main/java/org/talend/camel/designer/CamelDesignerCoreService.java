@@ -53,6 +53,8 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	// private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
+	private static final String ROUTE_RESOURCES = RouteResourceItem.ROUTE_RESOURCES_FOLDER;
+
 	/*
 	 * (non-Jsdoc)
 	 * 
@@ -140,41 +142,37 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			return;
 		}
 
-		try {
-			//Get Route Resources from Item properties
-			CamelProcessItem camelItem = (CamelProcessItem) item;
-			EMap additionalProperties = camelItem.getProperty()
-					.getAdditionalProperties();
-			if (additionalProperties != null) {
-				Object resourcesObj = additionalProperties
-						.get("ROUTE_RESOURCES_PROP");
-				if (resourcesObj != null) {
-					String[] resourceIds = resourcesObj.toString().split(",");
-					for (String id : resourceIds) {
-						IRepositoryViewObject rvo;
-						try {
-							rvo = ProxyRepositoryFactory.getInstance()
-									.getLastVersion(id);
-							if (rvo != null) {
-								Item it = rvo.getProperty().getItem();
-								copyResources((RouteResourceItem) it);
-							}
-						} catch (PersistenceException e) {
+		// Get Route Resources from Item properties
+		CamelProcessItem camelItem = (CamelProcessItem) item;
+		EMap additionalProperties = camelItem.getProperty()
+				.getAdditionalProperties();
+		if (additionalProperties != null) {
+			Object resourcesObj = additionalProperties
+					.get("ROUTE_RESOURCES_PROP");
+			if (resourcesObj != null) {
+				String[] resourceIds = resourcesObj.toString().split(",");
+				for (String id : resourceIds) {
+					IRepositoryViewObject rvo;
+					try {
+						rvo = ProxyRepositoryFactory.getInstance()
+								.getLastVersion(id);
+						if (rvo != null) {
+							Item it = rvo.getProperty().getItem();
+							copyResources((RouteResourceItem) it);
 						}
-
+					} catch (PersistenceException e) {
 					}
 
 				}
-			}
 
-		} catch (CoreException e) {
+			}
 		}
 
 	}
 
 	private static IFolder getRouteResourceFolder() {
 		IPath path = new Path(JavaUtils.JAVA_SRC_DIRECTORY);
-		path = path.append("route_resources");
+		path = path.append(ROUTE_RESOURCES);
 
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(JavaUtils.JAVA_PROJECT_NAME);
@@ -187,27 +185,40 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 	 * @param item
 	 * @throws CoreException
 	 */
-	public static void copyResources(FileItem item) throws CoreException {
+	public static void copyResources(FileItem item) {
 
 		IFolder folder = getRouteResourceFolder();
-
-		File resFolder = folder.getLocation().toFile();
-		if (!resFolder.exists()) {
-			resFolder.mkdirs();
-		}
 
 		ByteArray content = item.getContent();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(
 				content.getInnerContent());
 
-		IFile resFile = folder.getFile(item.getProperty().getLabel());
+		String path = item.getState().getPath();
+		String label = item.getProperty().getLabel();
+		IFolder resFolder = folder;
+		if (path != null && !path.isEmpty()) {
+			resFolder = folder.getFolder(path);
+		}
+
+		File resFileFolder = resFolder.getLocation().toFile();
+
+		if (!resFileFolder.exists()) {
+			resFileFolder.mkdirs();
+		}
+
+		IFile resFile = resFolder.getFile(label);
 
 		File file = resFile.getLocation().toFile();
 		if (file.exists()) {
 			file.delete();
 		}
-		folder.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-		resFile.create(inputStream, true, new NullProgressMonitor());
+		try {
+			resFolder.refreshLocal(IResource.DEPTH_ONE,
+					new NullProgressMonitor());
+			resFile.create(inputStream, true, new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

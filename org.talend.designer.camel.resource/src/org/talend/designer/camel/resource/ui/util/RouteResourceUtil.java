@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
@@ -101,7 +102,7 @@ public class RouteResourceUtil {
 
 	private static IFolder getRouteResourceFolder() {
 		IPath path = new Path(JavaUtils.JAVA_SRC_DIRECTORY);
-		path = path.append("route_resources");
+		path = path.append(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
 
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(JavaUtils.JAVA_PROJECT_NAME);

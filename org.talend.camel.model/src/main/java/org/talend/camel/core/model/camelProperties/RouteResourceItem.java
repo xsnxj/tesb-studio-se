@@ -19,4 +19,7 @@ import org.talend.core.model.properties.FileItem;
  * @generated
  */
 public interface RouteResourceItem extends FileItem {
+
+	public static final String ROUTE_RESOURCES_FOLDER = "route_resources";
+
 } // RouteResourceItem

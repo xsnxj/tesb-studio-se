@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.camel.resource.ui.dialogs;
+package org.talend.camel.designer.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -32,14 +33,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.utils.time.TimeMeasure;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.nodes.IProjectRepositoryNode;
-import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.RecombineRepositoryNodeUtil;
 import org.talend.repository.viewer.ui.provider.RepositoryViewerProvider;
 import org.talend.repository.viewer.ui.viewer.RepositoryTreeViewer;
@@ -57,6 +57,8 @@ public class RouteResourceSelectionDialog extends Dialog {
 	private RepositoryNode result;
 
 	private RepositoryTreeViewer repositoryTreeViewer;
+
+	private String selectedNodeId;
 
 	public RouteResourceSelectionDialog(Shell parentShell) {
 		super(parentShell);
@@ -91,6 +93,8 @@ public class RouteResourceSelectionDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
+
+		selectNode();
 	}
 
 	/*
@@ -137,9 +141,6 @@ public class RouteResourceSelectionDialog extends Dialog {
 				new GridData(GridData.FILL_BOTH));
 
 		repositoryTreeViewer.expandAll();
-
-		TimeMeasure.step(RepositoryReviewDialog.class.getSimpleName(),
-				"expandAll"); //$NON-NLS-1$
 
 		repositoryTreeViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -225,6 +226,53 @@ public class RouteResourceSelectionDialog extends Dialog {
 				.getSelection();
 		result = (RepositoryNode) selection.getFirstElement();
 		super.okPressed();
+	}
+
+
+	public void selectItem(IRepositoryNode node) {
+		if (node != null) {
+			repositoryTreeViewer.setSelection(new StructuredSelection(node));
+		}
+
+	}
+
+	private void selectNode() {
+		RepositoryNode root = (RepositoryNode) getRepositoryTreeViewer()
+				.getInput();
+		selectNode(root, CamelRepositoryNodeType.repositoryRouteResourceType,
+				this.selectedNodeId, true);
+	}
+
+
+	private void selectNode(RepositoryNode root,
+			ERepositoryObjectType selectionType, String idOrLabel,
+			boolean isSelectionId) {
+		if (idOrLabel == null) {
+			return;
+		}
+
+		boolean valid = false;
+		if (isSelectionId) {
+			IRepositoryViewObject object = root.getObject();
+			if (object != null && idOrLabel.equals(object.getId())) {
+				valid = true;
+			}
+		} else if (idOrLabel.equals(root.getProperties(EProperties.LABEL))) {
+			valid = true;
+		}
+		if (valid) {
+			getRepositoryTreeViewer().setSelection(
+					new StructuredSelection(root), true);
+		} else if (root.hasChildren()) {
+			for (IRepositoryNode child : root.getChildren()) {
+				selectNode((RepositoryNode) child, selectionType, idOrLabel,
+						isSelectionId);
+			}
+		}
+	}
+
+	public void setSelectedNodeId(String selectionNode) {
+		this.selectedNodeId = selectionNode;
 	}
 
 }
