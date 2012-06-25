@@ -7,7 +7,7 @@
                   class="org.talend.designer.camel.resource.ui.models.RouteResourceExtendRepositoryNode"
                   folder="route_resources"
                   isResouce="true"
-                  label="Route Resources"
+                  label="Resources"
                   products="CAMEL"
                   type="ROUTE_RESOURCES">
             </repositoryNode>
