@@ -5,14 +5,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 
 public class ExDependenciesResolver {
 
@@ -130,6 +133,50 @@ public class ExDependenciesResolver {
 		exImportPackages = null;
 
 		exRequireBundles = null;
+
+		// Add Route Resource Import packages
+		// http://jira.talendforge.org/browse/TESB-6227
+		addRouteResourcePackages();
+	}
+
+	/**
+	 * Add route resource packages.
+	 */
+	private void addRouteResourcePackages() {
+		EMap additionalProperties = item.getProperty()
+				.getAdditionalProperties();
+		if (additionalProperties == null) {
+			return;
+		}
+		Object resourcesObj = additionalProperties.get("ROUTE_RESOURCES_PROP");
+		if (resourcesObj == null) {
+			return;
+		}
+
+		String[] resourceIds = resourcesObj.toString().split(",");
+		for (String id : resourceIds) {
+			try {
+				IRepositoryViewObject rvo = ProxyRepositoryFactory
+						.getInstance().getLastVersion(id);
+				if (rvo != null) {
+					ImportPackage importPackage = new ImportPackage();
+					importPackage.setBuiltIn(true);
+
+					Item item = rvo.getProperty().getItem();
+					String path = item.getState().getPath();
+					if (path != null && !path.isEmpty()) {
+						importPackage.setName("route_resources."
+								+ path.replace("/", "."));
+					} else {
+						importPackage.setName("route_resources");
+					}
+					packages.add(importPackage);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	public BundleClasspath[] getBundleClasspaths() {
