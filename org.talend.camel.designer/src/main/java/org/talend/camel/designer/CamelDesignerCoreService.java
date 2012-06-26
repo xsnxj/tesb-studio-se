@@ -14,6 +14,8 @@ package org.talend.camel.designer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -136,10 +138,12 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 		return isCamelEditor;
 	}
 
-	public void synchronizeRouteResource(Item item) {
+	public List<IPath> synchronizeRouteResource(Item item) {
+
+		List<IPath> paths = new ArrayList<IPath>();
 
 		if (!(item instanceof CamelProcessItem)) {
-			return;
+			return paths;
 		}
 
 		// Get Route Resources from Item properties
@@ -158,7 +162,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 								.getLastVersion(id);
 						if (rvo != null) {
 							Item it = rvo.getProperty().getItem();
-							copyResources((RouteResourceItem) it);
+							IFile file = copyResources((RouteResourceItem) it);
+							if (file != null) {
+								paths.add(file.getLocation());
+							}
 						}
 					} catch (PersistenceException e) {
 					}
@@ -167,7 +174,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 			}
 		}
-
+		return paths;
 	}
 
 	private static IFolder getRouteResourceFolder() {
@@ -185,7 +192,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 	 * @param item
 	 * @throws CoreException
 	 */
-	public static void copyResources(FileItem item) {
+	public static IFile copyResources(FileItem item) {
 
 		IFolder folder = getRouteResourceFolder();
 
@@ -216,9 +223,11 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			resFolder.refreshLocal(IResource.DEPTH_ONE,
 					new NullProgressMonitor());
 			resFile.create(inputStream, true, new NullProgressMonitor());
+			return resFile;
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 }
