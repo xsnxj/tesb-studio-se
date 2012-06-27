@@ -75,7 +75,7 @@ public class EditDependenciesContextualAction extends AContextualAction {
 		}
 		try {
 			Item item = node.getObject().getProperty().getItem();
-			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput((CamelProcessItem) item, false, true);
+			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput((CamelProcessItem) item, true, true, false);
 			
 			IWorkbenchPage activePage = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage();
