@@ -65,7 +65,7 @@ public class RouteResourceChangeCommand extends PropertyChangeCommand {
 			if (parentPaths != null && !parentPaths.isEmpty()) {
 				label = parentPaths + "/" + label;
 			}
-			label = "classpath:// " + RouteResourceItem.ROUTE_RESOURCES_FOLDER
+			label = "classpath:" + RouteResourceItem.ROUTE_RESOURCES_FOLDER
 					+ "/" + label;
 			uriParam.setValue(label);
 		} catch (Exception e) {
