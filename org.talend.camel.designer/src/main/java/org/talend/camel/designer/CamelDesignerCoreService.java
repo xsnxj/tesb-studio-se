@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -174,7 +175,24 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 			}
 		}
+
+		forceBuildProject();
+
 		return paths;
+	}
+
+	/**
+	 * Build project
+	 */
+	private void forceBuildProject() {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(JavaUtils.JAVA_PROJECT_NAME);
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,
+					new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static IFolder getRouteResourceFolder() {
