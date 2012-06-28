@@ -161,14 +161,14 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 			return NAME_INVALID;
 		}
 		
-		if (minVersion != null) {
+		if (minVersion != null && !minVersion.trim().equals("")) {
 			Matcher matcher = versionPattern.matcher(minVersion);
 			if (!matcher.matches()) {
 				return MIN_INVALID;
 			}
 		}
 
-		if (maxVersion != null) {
+		if (maxVersion != null && !maxVersion.trim().equals("")) {
 			Matcher matcher = versionPattern.matcher(maxVersion);
 			if (!matcher.matches()) {
 				return MAX_INVALID;
@@ -182,7 +182,7 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	}
 
 	private boolean compareMinMax() {
-		if (maxVersion == null || minVersion == null) {
+		if (maxVersion == null || maxVersion.trim().equals("") || minVersion == null || minVersion.trim().equals("")) {
 			return true;
 		}
 		String[] maxSplit = maxVersion.split("\\.");

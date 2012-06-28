@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
@@ -29,7 +28,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -165,8 +163,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 			IWorkbenchPage activePage = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage();
 			Item item = property.getItem();
-			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput(
-					(CamelProcessItem) item, false, true);
+			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput((CamelProcessItem) item, true, true, false);
 
 			IEditorPart processEditor = activePage
 					.findEditor((IEditorInput) processEditorInput);
