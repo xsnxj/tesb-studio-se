@@ -143,30 +143,33 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-        String directoryName = serviceManager.getRootFolderName(serviceManager.getDestinationPath());
-        Map<String, String> bundles = new HashMap<String, String>();
-        for (RepositoryNode node : nodes) {
-            JobScriptsManager manager = serviceManager.getJobManager(node,
-                    getGroupId(), getServiceVersion());
-            JobExportAction job = new JobExportAction(
-                    Collections.singletonList(node),
-                    node.getObject().getVersion(),
-                    getBundleVersion(),
-                    manager,
-                    directoryName,
-                    "Service");
-            job.run(monitor);
-            bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
-        }
+        final String destinationPath = serviceManager.getDestinationPath();
         try {
-            final String artefactName = getServiceName() + "-control-bundle";
-            bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
-            processFeature(generateFeature(bundles));
-            String destinationPath = serviceManager.getDestinationPath();
-            processFinalResult(destinationPath);
-
-        } catch (Exception e) {
-            throw new InvocationTargetException(e);
+	        String directoryName = serviceManager.getRootFolderName(destinationPath);
+	        Map<String, String> bundles = new HashMap<String, String>();
+	        for (RepositoryNode node : nodes) {
+	            JobScriptsManager manager = serviceManager.getJobManager(node,
+	                    getGroupId(), getServiceVersion());
+	            JobExportAction job = new JobExportAction(
+	                    Collections.singletonList(node),
+	                    node.getObject().getVersion(),
+	                    getBundleVersion(),
+	                    manager,
+	                    directoryName,
+	                    "Service");
+	            job.run(monitor);
+	            bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
+	        }
+	        try {
+	            final String artefactName = getServiceName() + "-control-bundle";
+	            bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
+	            processFeature(generateFeature(bundles));
+	            processFinalResult(destinationPath);
+	        } catch (Exception e) {
+	            throw new InvocationTargetException(e);
+	        }
+        } finally {
+            FilesUtils.removeFolder(destinationPath, true);
         }
     }
 
@@ -193,6 +196,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
         try {
             ZipToFile.zipFile(temp.getAbsolutePath(), file.getAbsolutePath());
             FilesUtils.removeFolder(temp, true);
+        } catch (IOException e) {
+        	throw e;
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
@@ -226,7 +231,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
             File destination = new File(destinationPath);
             String s = destination.getAbsolutePath() + ".kar";
             ZipToFile.zipFile(destinationPath, s);
-            FilesUtils.removeFolder(destinationPath, true);
+        } catch (IOException e) {
+            throw e;
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
