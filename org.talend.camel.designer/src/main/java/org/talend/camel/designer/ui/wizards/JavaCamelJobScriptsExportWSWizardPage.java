@@ -13,10 +13,8 @@
 package org.talend.camel.designer.ui.wizards;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,30 +45,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.progress.IProgressService;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.model.ExportKarBundleModel;
-import org.talend.camel.designer.util.KarFileGenerator;
+import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
-import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
-import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
-import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -809,7 +796,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     protected Map<ExportChoice, Object> getExportChoiceMap() {
     	return getExportChoiceMap(exportTypeCombo.getText());
     }
-    
+
     protected Map<ExportChoice, Object> getExportChoiceMap(String exportType) {
 
         if (EXPORTTYPE_POJO.equals(exportType)) {
@@ -1452,21 +1439,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     public boolean finish() {
     	//TESB-5328
 		if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-			return exportKarFile();
-		} else {
-			manager = createJobScriptsManager();
-			manager.setMultiNodes(isMultiNodes());
-			manager.setDestinationPath(getDestinationValue());
-
-			return super.finish();
-		}
-    }
-
-    /*
-     * TESB-5328
-     */
-	private boolean exportKarFile() {
-		try {
 			String version = getSelectedJobVersion();
 			String destinationKar = getDestinationValue();
 			if (new File(destinationKar).exists()) {
@@ -1479,166 +1451,28 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 					return false;
 				}
 			}
-
-			// generated bundle jar first
-			List<ExportKarBundleModel> bundleModels = null;
+			JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
 			try {
-				bundleModels = exportKarOsgiBundles();
-			} catch (Exception e) {
+				getContainer().run(false, true, action);
+			} catch (InvocationTargetException e) {
 				MessageBoxExceptionHandler.process(e.getCause(), getShell());
-			}
-			if (bundleModels == null) {
+				return false;
+			} catch (InterruptedException e) {
 				return false;
 			}
-
-			// create kar file
-			boolean generateKarFile = KarFileGenerator.generateKarFile(bundleModels, nodes[0], version, destinationKar);
-
+			manager = action.getManager();
 			// save output directory
 			manager.setDestinationPath(destinationKar);
 			saveWidgetValues();
+			return true;
+		} else {
+			manager = createJobScriptsManager();
+			manager.setMultiNodes(isMultiNodes());
+			manager.setDestinationPath(getDestinationValue());
 
-			// remove generated jar file
-			for(ExportKarBundleModel p: bundleModels){
-				if(p==null || p.getBundleFilePath()==null){
-					continue;
-				}
-				File file = new File(p.getBundleFilePath());
-				if (file.exists()) {
-					file.delete();
-				}
-			}
-
-			return generateKarFile;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
+			return super.finish();
 		}
-
-	}
-
-	private List<ExportKarBundleModel> exportKarOsgiBundles() throws InvocationTargetException, PersistenceException {
-		if (nodes == null || nodes.length < 1) {
-			return null;
-		}
-		String displayName = nodes[0].getObject().getProperty()
-				.getDisplayName();
-		String type = "Route";
-		String version = getSelectedJobVersion();
-		String parentPath = getTempDir() + File.separator;
-		String routerBundlePath = parentPath + displayName + "-bundle-" + version
-				+ ".jar";
-		
-		List<ExportKarBundleModel> models = new ArrayList<ExportKarBundleModel>();
-		
-		manager = exportOsgiBundle(nodes[0], routerBundlePath, version, type, EXPORTTYPE_KAR);
-		models.add(new ExportKarBundleModel(routerBundlePath, nodes[0], version));
-		
-		exportAllReferenceJobs(nodes[0], parentPath, "Job", models);
-		return models;
-	}
-	
-	protected void exportAllReferenceJobs(RepositoryNode n, String parentPath, String type, List<ExportKarBundleModel> models)
-			throws InvocationTargetException, PersistenceException {
-		ProcessItem item = (ProcessItem) n.getObject().getProperty().getItem();
-		EList components = item.getProcess().getNode();
-		for (Object o : components) {
-			if (!(o instanceof NodeType)) {
-				continue;
-			}
-			NodeType nt = (NodeType) o;
-			String componentName = nt.getComponentName();
-			if (!"cTalendJob".equals(componentName)) {
-				continue;
-			}
-			exportReferencedJob(parentPath, nt, models);
-		}
-	}
-
-	protected void exportReferencedJob(String parentPath, NodeType cTalendJob, List<ExportKarBundleModel> models)
-			throws InvocationTargetException, PersistenceException {
-		EList parameters = cTalendJob.getElementParameter();
-		String jobId = null;
-		String jobVersion = null;
-		for (Object o : parameters) {
-			if (!(o instanceof ElementParameterType)) {
-				continue;
-			}
-			ElementParameterType ept = (ElementParameterType) o;
-			String eptName = ept.getName();
-			if ("FROM_EXTERNAL_JAR".equals(eptName)
-					&& "true".equals(ept.getValue())) {
-				return ;
-			}
-			if (jobId == null && "SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) {
-				jobId = ept.getValue();
-			}
-			if (jobVersion == null && "SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) {
-				jobVersion = ept.getValue();
-			}
-		}
-
-		if (jobId == null || jobVersion == null) {
-			return ;
-		}
-		RepositoryNode referencedJobNode = getJobRepositoryNode(jobId);
-		if(JobScriptsExportWizardPage.ALL_VERSIONS.equals(jobVersion)){
-			jobVersion = referencedJobNode.getObject().getVersion();
-		}
-
-		String displayName = referencedJobNode.getObject().getProperty()
-				.getDisplayName();
-		String type = "Job";
-		String filePath = parentPath + File.separator + displayName+"-"
-				+ jobVersion + ".jar";
-		exportOsgiBundle(referencedJobNode, filePath, jobVersion, type,
-				EXPORTTYPE_OSGI);
-		models.add(new ExportKarBundleModel(filePath, referencedJobNode, jobVersion));
-	}
-
-    private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
-        List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance()
-                .getAll(ERepositoryObjectType.PROCESS);
-        for (IRepositoryViewObject job : jobs) {
-            if (job.getId().equals(jobId)) {
-                return new RepositoryNode(job, null, ENodeType.REPOSITORY_ELEMENT);
-            }
-        }
-        return null;
     }
-	
-	protected JobJavaScriptOSGIForESBManager exportOsgiBundle(RepositoryNode node, String filePath,
-			String version, String itemType, String exportType)
-			throws InvocationTargetException {
-		JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(
-				getExportChoiceMap(exportType), null, null,
-				IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-		manager.setMultiNodes(false);
-		manager.setDestinationPath(filePath);
-		JobExportAction action = new JobExportAction(Arrays.asList(node),
-				version, version, manager, getTempDir(), itemType);
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
 
-		try {
-			progressService.run(false, false, action);
-		} catch (InvocationTargetException e) {
-			throw e;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return manager;
-	}
 	
-	protected String getTempDir() {
-		String userHome = System.getProperty("user.home"); //$NON-NLS-1$
-		String path = userHome + File.separator + "tmp" + File.separator; //$NON-NLS-1$
-		File file = new File(path);
-		if (!file.exists() || !file.isDirectory()) {
-			file.mkdirs();
-		}
-
-		return path;
-	}
-	//END of TESB-5328
 }
