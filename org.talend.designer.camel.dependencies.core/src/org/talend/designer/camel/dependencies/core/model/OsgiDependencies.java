@@ -117,7 +117,7 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	 * @return
 	 */
 	protected String normalizeVersion(String version) {
-		if (version == null)
+		if (version == null || version.trim().equals(""))
 			return null;
 		int dotCount = 0;
 		int length = version.length();
@@ -153,7 +153,7 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	 *         {@link #MAX_INVALID} {@link #MIN_MAX_INVALID}
 	 */
 	public int isValid() {
-		if (name == null) {
+		if (name == null || name.trim().equals("")) {
 			return NAME_NULL;
 		}
 		

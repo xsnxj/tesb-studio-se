@@ -173,12 +173,6 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		return c;
 	}
 
-	@Override
-	protected Control createButtonBar(Composite parent) {
-		Control buttonBar = super.createButtonBar(parent);
-		getButton(Dialog.OK).setEnabled(true);
-		return buttonBar;
-	}
 
 	private boolean validate() {
 		if (isNew && input.contains(item)) {
@@ -209,6 +203,12 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		}
 		setErrorMessage(null);
 		return true;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(OK).setEnabled(false);
 	}
 
 	public OsgiDependencies<?> getDependencyItem() {
