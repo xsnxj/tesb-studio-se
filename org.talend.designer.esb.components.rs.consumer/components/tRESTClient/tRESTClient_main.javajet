@@ -109,6 +109,7 @@ try {
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+        jsonProvider_<%=cid%>.setAttributesToElements(true); 
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
