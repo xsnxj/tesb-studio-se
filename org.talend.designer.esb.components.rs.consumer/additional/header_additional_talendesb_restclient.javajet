@@ -23,8 +23,8 @@ if (jobHasRestConsumerComponent) { %>
  * @see http://jira.talendforge.org/browse/TESB-3329
  * TODO: replace with org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider once CXF version gets updated to 2.6.2
  */
-@javax.ws.rs.Produces({"application/xml", "application/json"})
-@javax.ws.rs.Consumes({"application/xml", "application/json"})
+@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json"})
+@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class ClientDOM4JProvider
 		implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>,
 			javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
