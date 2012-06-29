@@ -74,7 +74,7 @@ public class KarFileGenerator {
 				displayName += "-bundle";
 			}
 			ZipEntry entry = new ZipEntry(groupPrefix + displayName + "/"
-					+ version + "/" + f.getName());
+					+ p.getRepositoryVersion() + "/" + f.getName());
 			entry.setSize(f.length());
 			entry.setTime(f.lastModified());
 			output.putNextEntry(entry);

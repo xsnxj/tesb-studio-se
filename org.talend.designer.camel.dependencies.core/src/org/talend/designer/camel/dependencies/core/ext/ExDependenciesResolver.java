@@ -112,8 +112,6 @@ public class ExDependenciesResolver {
 					} catch (Exception e) {
 						jobVersion = null;
 					}
-				}else{
-					jobVersion = null;
 				}
 				if (jobName!=null && jobVersion != null) {
 			        String jobFolderName = JavaResourcesHelper.getJobFolderName(jobName, jobVersion);
