@@ -452,8 +452,8 @@ if (!httpRequestComponentsList.isEmpty()) {
  * A special Dom4J provider implementation to help conversion in JAX-RS
  * @see http://jira.talendforge.org/browse/TESB-3329
  */
-@javax.ws.rs.Produces({"application/xml", "application/json"})
-@javax.ws.rs.Consumes({"application/xml", "application/json"})
+@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json"})
+@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class DOM4JProvider implements javax.ws.rs.ext.MessageBodyReader<org.dom4j.Document>,
 		javax.ws.rs.ext.MessageBodyWriter<org.dom4j.Document> {
 
@@ -538,8 +538,8 @@ private boolean restTalendJobAlreadyStarted = false;
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
-@javax.ws.rs.Produces({"application/xml", "application/json"})
-@javax.ws.rs.Consumes({"application/xml", "application/json"})
+@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json"})
+@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
