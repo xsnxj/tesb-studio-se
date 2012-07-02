@@ -19,7 +19,7 @@ IProcess process = (IProcess) v.get(0);
 boolean jobHasRouteInputComponent = !process.getNodesOfType("tRouteInput").isEmpty();
 boolean jobHasRouteOutputComponent = !process.getNodesOfType("tRouteOutput").isEmpty();
 
-if (jobHasRouteInputComponent) {%>
+if (jobHasRouteInputComponent || jobHasRouteOutputComponent) {%>
 
 private org.apache.camel.Exchange routerExchange = null;
 
@@ -29,6 +29,4 @@ public void setExchange(org.apache.camel.Exchange exchange){
 
 <%
 }
-if(jobHasRouteOutputComponent){
 %>
-<%}%>

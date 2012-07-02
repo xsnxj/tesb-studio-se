@@ -55,7 +55,6 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 	            	String label = tableValue.get("SCHEMA_COLUMN");
 		            String value = tableValue.get("VALUE");
 		            IMetadataColumn column = metadata.getColumn(label);
-	            	System.out.println("-------"+label+"------------"+value+"----------------------------sssdf");
 		            String talendType = column.getTalendType();
 		            JavaType javaType = JavaTypesManager.getJavaTypeFromId(talendType);
 		            String typeToGenerate = JavaTypesManager.getTypeToGenerate(javaType, true);

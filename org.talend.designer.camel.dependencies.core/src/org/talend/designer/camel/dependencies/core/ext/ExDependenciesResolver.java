@@ -89,7 +89,6 @@ public class ExDependenciesResolver {
 					}
 					ElementParameterType ept = (ElementParameterType) p;
 					String eptName = ept.getName();
-					System.out.println(eptName);
 					if ("FROM_EXTERNAL_JAR".equals(eptName)
 							&& "true".equals(ept.getValue())) {
 						jobName = null;
