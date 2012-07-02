@@ -5,7 +5,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -54,7 +53,6 @@ public class RouterDependenciesTableViewer extends TableViewer implements
 
 		setLabelProvider(new DependenciesTableLabelProvider());
 		setContentProvider(new ArrayContentProvider());
-//		setSorter(new DependenciesTableSorter());
 		addFilter(new DependencesTableFilter());
 
 		getTable().addListener(SWT.PaintItem, this);
@@ -203,43 +201,4 @@ public class RouterDependenciesTableViewer extends TableViewer implements
 
 	}
 
-//	/**
-//	 * builtIn items will be sorted automatically and can't be re-sorted
-//	 * Non-BuiltIn items no sort and can be re-sorted
-//	 * @author liugang
-//	 *
-//	 */
-//	private class DependenciesTableSorter extends ViewerSorter {
-//
-//		@Override
-//		public int category(Object element) {
-//			if (element instanceof IDependencyItem) {
-//				if (((IDependencyItem) element).isBuiltIn()) {
-//					return -1;
-//				}
-//				return 0;
-//			}
-//			return super.category(element);
-//		}
-//
-//		@Override
-//		public int compare(Viewer viewer, Object e1, Object e2) {
-//			if (e1 != null && e2 != null && e1 instanceof IDependencyItem
-//					&& e2 instanceof IDependencyItem) {
-//				boolean builtIn1 = ((IDependencyItem) e1).isBuiltIn();
-//				boolean builtIn2 = ((IDependencyItem) e2).isBuiltIn();
-//				if (builtIn1 && builtIn2) {
-//					return ((IDependencyItem) e1).getLabel().compareTo(
-//							((IDependencyItem) e2).getLabel());
-//				}
-//				if (builtIn1 && !builtIn2) {
-//					return -1;
-//				} else if (!builtIn1 && builtIn2) {
-//					return 1;
-//				}
-//			}
-//			return 0;
-//		}
-//
-//	}
 }

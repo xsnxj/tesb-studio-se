@@ -2,7 +2,6 @@ package org.talend.designer.camel.dependencies.ui.dialog;
 
 import java.util.List;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

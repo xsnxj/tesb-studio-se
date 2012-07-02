@@ -7,15 +7,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -186,17 +183,6 @@ public class RouterDependenciesEditor extends EditorPart implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private ILabelProvider createDialogLabelProvider() {
-		return new LabelProvider() {
-			public Image getImage(Object element) {
-				return ((IEditorPart) element).getTitleImage();
-			}
-			public String getText(Object element) {
-				return ((IEditorPart) element).getTitle();
-			}
-		};
 	}
 
 	private void updateInput() {

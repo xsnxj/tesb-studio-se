@@ -252,27 +252,54 @@ public class RouterDependenciesPanel extends Composite implements
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event
 				.getSelection();
-		Object[] array = selection.toArray();
+		if(selection == null || selection.isEmpty()){
+			remBtn.setEnabled(false);
+			upBtn.setEnabled(false);
+			downBtn.setEnabled(false);
+			editBtn.setEnabled(false);
+			return;
+		}
+		
+		int nonBuiltInCount = 0;
+		List<?> input = (List<?>) tableViewer.getInput();
+		Iterator<?> iterator = input.iterator();
+		while(iterator.hasNext()){
+			Object next = iterator.next();
+			if(next!=null && next instanceof IDependencyItem){
+				if(!((IDependencyItem)next).isBuiltIn()){
+					nonBuiltInCount ++;
+				}
+			}
+		}
+		
 		boolean hasBuiltIn = false;
-		for (Object o : array) {
-			if (o instanceof IDependencyItem) {
-				if (((IDependencyItem) o).isBuiltIn()) {
+		iterator = selection.iterator();
+		while(iterator.hasNext()){
+			Object next = iterator.next();
+			if(next!=null && next instanceof IDependencyItem){
+				if(((IDependencyItem)next).isBuiltIn()){
 					hasBuiltIn = true;
 					break;
 				}
 			}
 		}
+
 		if (hasBuiltIn) {
 			remBtn.setEnabled(false);
 		} else {
 			remBtn.setEnabled(true);
 		}
-		if (hasBuiltIn || array.length > 1 || ((List)tableViewer.getInput()).size()<2) {
-			upBtn.setEnabled(false);
-			downBtn.setEnabled(false);
+		
+		if (hasBuiltIn || selection.size() > 1) {
 			editBtn.setEnabled(false);
 		} else {
 			editBtn.setEnabled(true);
+		}
+		
+		if(hasBuiltIn || selection.size()>1 || nonBuiltInCount < 2){
+			upBtn.setEnabled(false);
+			downBtn.setEnabled(false);
+		}else {
 			upBtn.setEnabled(true);
 			downBtn.setEnabled(true);
 		}
