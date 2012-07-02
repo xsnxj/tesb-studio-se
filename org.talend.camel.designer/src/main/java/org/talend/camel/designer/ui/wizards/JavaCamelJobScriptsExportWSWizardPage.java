@@ -58,11 +58,11 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextExportDialog;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextExportType;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextTypeDefinition;
@@ -92,9 +92,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     public static final String EXPORTTYPE_PETALSESB = "Petals ESB"; //$NON-NLS-1$
 
-	public static final String EXPORTTYPE_OSGI = "OSGI Bundle For ESB"; //$NON-NLS-1$
+    public static final String EXPORTTYPE_OSGI = "OSGI Bundle For ESB"; //$NON-NLS-1$
 
-	public static final String EXPORTTYPE_KAR = "ESB Runtime Kar File"; //$NON-NLS-1$
+    public static final String EXPORTTYPE_KAR = "ESB Runtime Kar File"; //$NON-NLS-1$
 
     protected Combo exportTypeCombo;
 
@@ -166,18 +166,18 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     public String getCurrentExportType() {
-		// TESB-5328
-		//        if (exportTypeCombo != null && !exportTypeCombo.getText().equals("")) { //$NON-NLS-1$
-		// return exportTypeCombo.getText();
-		// } else {
-		// IDialogSettings settings = getDialogSettings();
-		// if (settings != null && settings.get(STORE_EXPORTTYPE_ID) != null) {
-		// return settings.get(STORE_EXPORTTYPE_ID);
-		// }
-		// }
+        // TESB-5328
+        //        if (exportTypeCombo != null && !exportTypeCombo.getText().equals("")) { //$NON-NLS-1$
+        // return exportTypeCombo.getText();
+        // } else {
+        // IDialogSettings settings = getDialogSettings();
+        // if (settings != null && settings.get(STORE_EXPORTTYPE_ID) != null) {
+        // return settings.get(STORE_EXPORTTYPE_ID);
+        // }
+        // }
         // Fix but TESB-2944 set default export type to OSGI
-		// return EXPORTTYPE_OSGI;
-		return EXPORTTYPE_KAR;
+        // return EXPORTTYPE_OSGI;
+        return EXPORTTYPE_KAR;
     }
 
     /*
@@ -282,11 +282,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         gd.horizontalSpan = 1;
         exportTypeCombo.setLayoutData(gd);
 
-		//TESB-5328
+        // TESB-5328
         //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.POJO + ".hide")) { //$NON-NLS-1$ //$NON-NLS-2$
-		// exportTypeCombo.add(EXPORTTYPE_POJO);
-		// }
-        
+        // exportTypeCombo.add(EXPORTTYPE_POJO);
+        // }
+
         // TESB-3222 Remove unnecessary export type in export wizard page LiXiaopeng
         //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSWAR + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
         // exportTypeCombo.add(EXPORTTYPE_WSWAR);
@@ -301,10 +301,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         // exportTypeCombo.add(EXPORTTYPE_PETALSESB);
         // }
         if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.OSGI + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-        	//TESB-5328
-        	// exportTypeCombo.add(EXPORTTYPE_OSGI);
-			exportTypeCombo.add(EXPORTTYPE_KAR);
-			exportTypeCombo.setEnabled(false); // only can export kar file
+            // TESB-5328
+            // exportTypeCombo.add(EXPORTTYPE_OSGI);
+            exportTypeCombo.add(EXPORTTYPE_KAR);
+            exportTypeCombo.setEnabled(false); // only can export kar file
         }
 
         // exportTypeCombo.add("JBI (JSR 208)");
@@ -319,8 +319,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         chkButton = new Button(left, SWT.CHECK);
         chkButton.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.extractZipFile")); //$NON-NLS-1$
         if (exportTypeCombo.getText().equals(EXPORTTYPE_WSWAR) || exportTypeCombo.getText().equals(EXPORTTYPE_PETALSESB)
-				|| exportTypeCombo.getText().equals(EXPORTTYPE_OSGI)
-				|| exportTypeCombo.getText().equals(EXPORTTYPE_KAR)) {
+                || exportTypeCombo.getText().equals(EXPORTTYPE_OSGI) || exportTypeCombo.getText().equals(EXPORTTYPE_KAR)) {
             chkButton.setVisible(false);
             zipOption = null;
         } else {
@@ -356,9 +355,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 createOptionsGroupButtons(pageComposite);
 
                 pageComposite.layout();
-				if (exportTypeCombo.getText().equals(EXPORTTYPE_WSWAR)
-						|| exportTypeCombo.getText().equals(EXPORTTYPE_OSGI)
-						|| exportTypeCombo.getText().equals(EXPORTTYPE_KAR)) {
+                if (exportTypeCombo.getText().equals(EXPORTTYPE_WSWAR) || exportTypeCombo.getText().equals(EXPORTTYPE_OSGI)
+                        || exportTypeCombo.getText().equals(EXPORTTYPE_KAR)) {
                     chkButton.setVisible(false);
                     zipOption = null;
                 } else {
@@ -391,8 +389,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             return ".esb"; //$NON-NLS-1$ 
         } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
             return ".jar"; //$NON-NLS-1$ 
-		} else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-			return ".kar"; //$NON-NLS-1$ 
+        } else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+            return ".kar"; //$NON-NLS-1$ 
         } else {
             return ".zip"; //$NON-NLS-1$
         }
@@ -414,8 +412,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             dialog.setFilterExtensions(new String[] { "*.esb", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
             dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-		} else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-			dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        } else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+            dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (getCurrentExportType().equals(EXPORTTYPE_PETALSESB)) {
             dialog.setFilterExtensions(new String[] { "*.zip", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
@@ -661,18 +659,16 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         if (settings != null) {
             String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
 
-			if (directoryNames != null && directoryNames.length > 0) {
-				String fileName = this.getDefaultFileName().get(0) + "_"
-						+ this.getDefaultFileName().get(1) + getOutputSuffix();
-				for (int i = 0; i < directoryNames.length; i++) {
-					String destination = new Path(directoryNames[i]).append(
-							fileName).toOSString();
-					addDestinationItem(destination);
-					setDestinationValue(destination);
-				}
-			} else {
-				setDefaultDestination();
-			}
+            if (directoryNames != null && directoryNames.length > 0) {
+                String fileName = this.getDefaultFileName().get(0) + "_" + this.getDefaultFileName().get(1) + getOutputSuffix();
+                for (int i = 0; i < directoryNames.length; i++) {
+                    String destination = new Path(directoryNames[i]).append(fileName).toOSString();
+                    addDestinationItem(destination);
+                    setDestinationValue(destination);
+                }
+            } else {
+                setDefaultDestination();
+            }
 
             shellLauncherButton.setSelection(settings.getBoolean(STORE_SHELL_LAUNCHER_ID));
             // systemRoutineButton.setSelection(settings.getBoolean(STORE_SYSTEM_ROUTINE_ID));
@@ -736,25 +732,23 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 settings.put(PETALS_EXPORT_DESTINATIONS, directoryNames);
                 return;
             }
-			// String[] directoryNames =
-			// settings.getArray(STORE_DESTINATION_NAMES_ID);
-			// if (directoryNames == null) {
-			// directoryNames = new String[0];
-			// }
-			// String destinationValue = manager.getDestinationPath();
-			// directoryNames = addToHistory(directoryNames, destinationValue);
-			String[] directoryNames = new String[1];
-			String destinationValue = manager.getDestinationPath();
-			if (destinationValue != null) {
-				destinationValue = destinationValue.substring(0,
-						destinationValue.lastIndexOf(File.separator));
-			}
-			directoryNames[0] = destinationValue;
+            // String[] directoryNames =
+            // settings.getArray(STORE_DESTINATION_NAMES_ID);
+            // if (directoryNames == null) {
+            // directoryNames = new String[0];
+            // }
+            // String destinationValue = manager.getDestinationPath();
+            // directoryNames = addToHistory(directoryNames, destinationValue);
+            String[] directoryNames = new String[1];
+            String destinationValue = manager.getDestinationPath();
+            if (destinationValue != null) {
+                destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf(File.separator));
+            }
+            directoryNames[0] = destinationValue;
 
             settings.put(STORE_EXPORTTYPE_ID, getCurrentExportType());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
-			if (getCurrentExportType().equals(EXPORTTYPE_OSGI)
-					|| getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+            if (getCurrentExportType().equals(EXPORTTYPE_OSGI) || getCurrentExportType().equals(EXPORTTYPE_KAR)) {
                 return;
             }
             if (contextButton != null) {
@@ -794,7 +788,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     @Override
     protected Map<ExportChoice, Object> getExportChoiceMap() {
-    	return getExportChoiceMap(exportTypeCombo.getText());
+        return getExportChoiceMap(exportTypeCombo.getText());
     }
 
     protected Map<ExportChoice, Object> getExportChoiceMap(String exportType) {
@@ -826,8 +820,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             return exportChoiceMap;
         }
 
-		if (EXPORTTYPE_OSGI.equals(exportType)
-				|| EXPORTTYPE_KAR.equals(exportType)) {
+        if (EXPORTTYPE_OSGI.equals(exportType) || EXPORTTYPE_KAR.equals(exportType)) {
             exportChoiceMap.put(ExportChoice.needMetaInfo, true);
             exportChoiceMap.put(ExportChoice.needContext, true);
             exportChoiceMap.put(ExportChoice.needJobItem, false);
@@ -889,8 +882,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             restoreWidgetValuesForESB();
         } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
             restoreWidgetValuesForOSGI();
-		} else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-			restoreWidgetValuesForKar();
+        } else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+            restoreWidgetValuesForKar();
         } else if (getCurrentExportType().equals(EXPORTTYPE_PETALSESB)) {
             createOptionsforPetalsESB(left, font);
             restoreWidgetValuesForPetalsESB();
@@ -901,47 +894,42 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     }
 
-	private void restoreWidgetValuesForKar() {
-		IDialogSettings settings = getDialogSettings();
-		if (settings != null) {
-			String[] directoryNames = settings
-					.getArray(STORE_DESTINATION_NAMES_ID);
-			if (directoryNames != null && directoryNames.length > 0) {
-				String fileName = getDefaultFileName().get(0) + "_"
-						+ getDefaultFileName().get(1) + getOutputSuffix();
-				for (int i = 0; i < directoryNames.length; i++) {
-					String destination = new Path(directoryNames[i]).append(
-							fileName).toOSString();
-					addDestinationItem(destination);
-					setDestinationValue(destination);
-				}
-			} else {
-				setDefaultDestination();
-			}
-		} else {
-			setDefaultDestination();
-		}
-
-	}
-
-	protected void restoreWidgetValuesForOSGI() {
+    private void restoreWidgetValuesForKar() {
         IDialogSettings settings = getDialogSettings();
         if (settings != null) {
             String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
-			if (directoryNames != null && directoryNames.length > 0) {
-				String fileName = getDefaultFileName().get(0) + "_"
-						+ getDefaultFileName().get(1) + getOutputSuffix();
+            if (directoryNames != null && directoryNames.length > 0) {
+                String fileName = getDefaultFileName().get(0) + "_" + getDefaultFileName().get(1) + getOutputSuffix();
                 for (int i = 0; i < directoryNames.length; i++) {
-					String destination = new Path(directoryNames[i]).append(
-							fileName).toOSString();
-					addDestinationItem(destination);
-					setDestinationValue(destination);
+                    String destination = new Path(directoryNames[i]).append(fileName).toOSString();
+                    addDestinationItem(destination);
+                    setDestinationValue(destination);
                 }
-			} else {
-				setDefaultDestination();
+            } else {
+                setDefaultDestination();
             }
-		} else {
-			setDefaultDestination();
+        } else {
+            setDefaultDestination();
+        }
+
+    }
+
+    protected void restoreWidgetValuesForOSGI() {
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
+            if (directoryNames != null && directoryNames.length > 0) {
+                String fileName = getDefaultFileName().get(0) + "_" + getDefaultFileName().get(1) + getOutputSuffix();
+                for (int i = 0; i < directoryNames.length; i++) {
+                    String destination = new Path(directoryNames[i]).append(fileName).toOSString();
+                    addDestinationItem(destination);
+                    setDestinationValue(destination);
+                }
+            } else {
+                setDefaultDestination();
+            }
+        } else {
+            setDefaultDestination();
         }
     }
 
@@ -1361,6 +1349,21 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         }
     }
 
+    protected ExportTreeViewer getExportTree() {
+        return new ExportCamelTreeViewer(selection, this) {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.talend.repository.ui.wizards.exportjob.ExportTreeViewer#checkSelection()
+             */
+            @Override
+            protected void checkSelection() {
+                checkExport();
+            }
+        };
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -1412,8 +1415,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             }
         }
 
-		if (getCurrentExportType().equals(EXPORTTYPE_OSGI)
-				|| getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+        if (getCurrentExportType().equals(EXPORTTYPE_OSGI) || getCurrentExportType().equals(EXPORTTYPE_KAR)) {
             if (this.isMultiNodes()) {
                 this.setErrorMessage("This type of export support actually only a single job export.");
                 this.setPageComplete(false);
@@ -1437,42 +1439,40 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     @Override
     public boolean finish() {
-    	//TESB-5328
-		if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-			String version = getSelectedJobVersion();
-			String destinationKar = getDestinationValue();
-			if (new File(destinationKar).exists()) {
-				boolean yes = MessageDialog
-						.openQuestion(
-								getShell(),
-								Messages.getString("JavaCamelJobScriptsExportWSWizardPage.OverwriteKarTitle"),
-								Messages.getString("JavaCamelJobScriptsExportWSWizardPage.OverwriteKarMessage"));
-				if (!yes) {
-					return false;
-				}
-			}
-			JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
-			try {
-				getContainer().run(false, true, action);
-			} catch (InvocationTargetException e) {
-				MessageBoxExceptionHandler.process(e.getCause(), getShell());
-				return false;
-			} catch (InterruptedException e) {
-				return false;
-			}
-			manager = action.getManager();
-			// save output directory
-			manager.setDestinationPath(destinationKar);
-			saveWidgetValues();
-			return true;
-		} else {
-			manager = createJobScriptsManager();
-			manager.setMultiNodes(isMultiNodes());
-			manager.setDestinationPath(getDestinationValue());
+        // TESB-5328
+        if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
+            String version = getSelectedJobVersion();
+            String destinationKar = getDestinationValue();
+            if (new File(destinationKar).exists()) {
+                boolean yes = MessageDialog.openQuestion(getShell(),
+                        Messages.getString("JavaCamelJobScriptsExportWSWizardPage.OverwriteKarTitle"),
+                        Messages.getString("JavaCamelJobScriptsExportWSWizardPage.OverwriteKarMessage"));
+                if (!yes) {
+                    return false;
+                }
+            }
+            JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar,
+                    false);
+            try {
+                getContainer().run(false, true, action);
+            } catch (InvocationTargetException e) {
+                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                return false;
+            } catch (InterruptedException e) {
+                return false;
+            }
+            manager = action.getManager();
+            // save output directory
+            manager.setDestinationPath(destinationKar);
+            saveWidgetValues();
+            return true;
+        } else {
+            manager = createJobScriptsManager();
+            manager.setMultiNodes(isMultiNodes());
+            manager.setDestinationPath(getDestinationValue());
 
-			return super.finish();
-		}
+            return super.finish();
+        }
     }
 
-	
 }
