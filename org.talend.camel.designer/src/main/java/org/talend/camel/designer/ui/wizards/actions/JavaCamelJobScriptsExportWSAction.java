@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -183,8 +183,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 			throws InvocationTargetException, InterruptedException {
 		manager.setMultiNodes(false);
 		manager.setDestinationPath(filePath);
-		JobExportAction action = new JobExportAction(Arrays.asList(node),
-				version, version, manager, getTempDir(), itemType);
+		JobExportAction action = new JobExportAction(Collections.singletonList(node),
+				version, bundleVersion, manager, getTempDir(), itemType);
 		action.run(monitor);
 	}
 
