@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
-import org.talend.designer.core.ui.action.SaveAsProcessAction;
+import org.talend.camel.designer.ui.SaveAsRoutesAction;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.designer.core.ui.editor.ITalendJobEditor;
 import org.talend.designer.core.ui.editor.process.Process;
@@ -50,7 +50,7 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
 
     @Override
     public void doSaveAs() {
-        SaveAsProcessAction saveAsAction = new SaveAsProcessAction(this);
+        SaveAsRoutesAction saveAsAction = new SaveAsRoutesAction(this);
         saveAsAction.run();
     }
 }
