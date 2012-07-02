@@ -55,6 +55,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -1319,6 +1320,22 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         } else {
             return null;
         }
+    }
+
+    @Override
+    protected ExportTreeViewer getExportTree() {
+        return new ExportCamelTreeViewer(selection, this) {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.talend.repository.ui.wizards.exportjob.ExportTreeViewer#checkSelection()
+             */
+            @Override
+            protected void checkSelection() {
+                checkExport();
+            }
+        };
     }
 
     /*
