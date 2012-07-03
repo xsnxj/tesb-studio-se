@@ -63,9 +63,13 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.9.2.jar"
-					REQUIRED="true" />
-			<IMPORT NAME="dom4j" MODULE="dom4j-1.6.1.jar" REQUIRED="true" />
+			<IMPORT NAME="apache-camel" 
+					MODULE="camel-core-2.9.2.jar"
+					REQUIRED="true" 
+					BundleID="org.apache.camel.core" />
+			<IMPORT NAME="dom4j" 
+					MODULE="dom4j-1.6.1.jar" 
+					REQUIRED="true"/>
 		</IMPORTS>
 	</CODEGENERATION>
 
