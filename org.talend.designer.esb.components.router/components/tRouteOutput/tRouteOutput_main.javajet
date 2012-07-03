@@ -50,40 +50,40 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
         if(conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {  // 2
         	boolean hasJudgedHeaders = false;
         	StringBuilder bodySb = new StringBuilder();
-        	StringBuilder headersSb = new StringBuilder();
-        	headersSb.append("java.util.Map<String,Object> headersExchange = new java.util.HashMap<String,Object>();\n");
         	
             for(Map<String, String> tableValue : tableValues) { // 3
             	String label = tableValue.get("SCHEMA_COLUMN");
 	            String value = tableValue.get("VALUE");
+	            String type = tableValue.get("TYPE");
+	            System.out.println(type);
 	            IMetadataColumn column = metadata.getColumn(label);
 	            String talendType = column.getTalendType();
 	            JavaType javaType = JavaTypesManager.getJavaTypeFromId(talendType);
 	            String typeToGenerate = JavaTypesManager.getTypeToGenerate(javaType, true);
-	            if("__BODY__".equals(label)){ 
-	                bodySb.append("routerExchange.getOut().setBody(");
-	                bodySb.append(conn.getName());
-	            	bodySb.append(".");
-	            	bodySb.append(label);
-	            	bodySb.append(");");          		
-	            } else {
-	            	headersSb.append("headersExchange.put(\"");
-	            	headersSb.append(label);
-	            	headersSb.append("\",");
-	            	headersSb.append(conn.getName());
-	            	headersSb.append(".");
-	            	headersSb.append(label);
-	            	headersSb.append(");\n");
+	            if("Body".equals(type)){ 
+	            	if("id_Document".equals(talendType)){
+	            		%>
+		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
+		            	<%
+	            	}else{
+	            		%>
+		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
+		            	<%
+	            	}
+	            }else if("Header".equals(type)){
+	            	%>
+	            	routerExchange.getOut().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	<%
+	            }else if("Property".equals(type)){
+	            	%>
+	            	routerExchange.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	<%
+	            }else if("System".equals(type)){
+	            	%>
+	            	System.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%> == null? null:<%=conn.getName()%>.<%=label%>.toString());
+	            	<%
 	            }
         } // 3
-		    headersSb.append("routerExchange.getOut().setHeaders(headersExchange);");        
-
-            if(tableValues.size()>=1){ // 5
-%>
-            	<%=bodySb.toString()%>
-            	<%=headersSb.toString()%>
-<%
-            }  // 5
     } // 2
 } // 1
 

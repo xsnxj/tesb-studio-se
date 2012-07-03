@@ -7,7 +7,7 @@
 			AUTHOR="ITOS"
 			RELEASE_DATE="20050320A"
 			SCHEMA_AUTO_PROPAGATE="true"
-			STARTABLE="true"
+			STARTABLE="false"
 			DATA_AUTO_PROPAGATE="false"
 			HAS_CONDITIONAL_OUTPUTS="true" >
 		<SIGNATURE />
@@ -34,19 +34,27 @@
 	<PARAMETERS>
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
 			<TABLE>
-				<!-- <COLUMN NAME="body" TYPE="id_Object" READONLY="true" /> -->
-				<COLUMN NAME="__BODY__" TYPE="id_Document" READONLY="false" CUSTOM="true" />
+				<!-- <COLUMN NAME="body" TYPE="id_Object" READONLY="true"  /> -->
+				<!-- <COLUMN NAME="__BODY__" TYPE="id_Document" READONLY="false" CUSTOM="true" /> -->
 			</TABLE>
 		</PARAMETER>
 		<PARAMETER NAME="VALUES" FIELD="TABLE" REQUIRED="true"
 			NUM_ROW="2" NB_LINES="5">
 			<ITEMS BASED_ON_SCHEMA="true">
+				<ITEM NAME="TYPE" FIELD="CLOSED_LIST">	
+					<ITEMS DEFAULT="HEADER">
+						<ITEM NAME="HEADER" VALUE="Header" />
+						<ITEM NAME="BODY" VALUE="Body" />
+						<ITEM NAME="PROPERTY" VALUE="Property" />
+						<ITEM NAME="SYSTEM" VALUE="System" />
+					</ITEMS>
+				</ITEM>
 				<ITEM NAME="VALUE" />	
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="NOTICE" FIELD="LABEL" REQUIRED="true"
 			NUM_ROW="3">
-			<DEFAULT>Please DO NOT set the "Key" of "__BODY__", it will be ignored</DEFAULT>
+			<DEFAULT>The "Name" with "Body" type will be ignored</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
 
