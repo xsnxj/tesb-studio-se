@@ -281,13 +281,25 @@ public class RouteResourceController extends
 										EParameterName.ROUTE_RESOURCE_TYPE_ID
 												.getName());
 						String value = (String) processTypeParameter.getValue();
-						IRepositoryViewObject lastVersion;
-						try {
-							lastVersion = ProxyRepositoryFactory.getInstance()
-									.getLastVersion(value);
-							resetTextValue(lastVersion.getProperty().getItem());
-						} catch (Exception e) {
+
+						if (value == null) {
+							labelText.setText("");
+						} else {
+							IRepositoryViewObject lastVersion;
+							try {
+								lastVersion = ProxyRepositoryFactory
+										.getInstance().getLastVersion(value);
+								if (lastVersion == null) {
+									processTypeParameter.setValue(null);
+									labelText.setText("");
+								} else {
+									resetTextValue(lastVersion.getProperty()
+											.getItem());
+								}
+							} catch (Exception e) {
+							}
 						}
+
 
 						if (elem != null && elem instanceof Node) {
 							((Node) elem).checkAndRefreshNode();
