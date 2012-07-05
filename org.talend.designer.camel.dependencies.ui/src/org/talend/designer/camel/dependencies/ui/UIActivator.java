@@ -22,6 +22,8 @@ public class UIActivator extends AbstractUIPlugin {
 	public static final String REQUIRE_BD_ICON = "icons/requireBundle.gif"; //$NON-NLS-1$
 	public static final String BUNDLE_CP_ICON = "icons/bundleClass.gif"; //$NON-NLS-1$
 	public static final String REFRESH_ICON = "icons/refresh.gif"; //$NON-NLS-1$
+	public static final String GRAY_REM_ICON = "icons/gray_rem.gif"; //$NON-NLS-1$
+	public static final String HIGHLIGHT_REM_ICON = "icons/highlight_rem.gif"; //$NON-NLS-1$
 	/**
 	 * The constructor
 	 */
@@ -66,6 +68,10 @@ public class UIActivator extends AbstractUIPlugin {
 		reg.put(IMPORT_PKG_ICON, getImageDescriptor(IMPORT_PKG_ICON)
 				.createImage());
 		reg.put(REFRESH_ICON, getImageDescriptor(REFRESH_ICON)
+				.createImage());
+		reg.put(GRAY_REM_ICON, getImageDescriptor(GRAY_REM_ICON)
+				.createImage());
+		reg.put(HIGHLIGHT_REM_ICON, getImageDescriptor(HIGHLIGHT_REM_ICON)
 				.createImage());
 	}
 

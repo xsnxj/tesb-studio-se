@@ -45,6 +45,7 @@ import org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesRe
 import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
 import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
+import org.talend.designer.camel.dependencies.ui.editor.controls.SearchControl;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
 
@@ -86,8 +87,12 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 		Label filterLabel = toolkit.createLabel(toolsPanel, Messages.RouterDependenciesEditor_filterLabel);
 		filterLabel.setBackground(toolsPanel.getBackground());
-		Text filterText = toolkit.createText(toolsPanel, ""); //$NON-NLS-1$
-		filterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		SearchControl searchComposite = new SearchControl(toolsPanel, SWT.NONE);
+		searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		searchComposite.setActiveImage(UIActivator.getImage(UIActivator.HIGHLIGHT_REM_ICON));
+		searchComposite.setDeactiveImage(UIActivator.getImage(UIActivator.GRAY_REM_ICON));
+		Text filterText = searchComposite.getText();
 
 		Button hideBuiltIn = toolkit.createButton(toolsPanel,
 				Messages.RouterDependenciesEditor_hideBuiltInItems, SWT.CHECK);
