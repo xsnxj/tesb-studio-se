@@ -167,6 +167,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				isChanged = true;
 				item.setOptional(((Button) e.getSource()).getSelection());
+				getButton(OK).setEnabled(validate());
 			}
 		});
 		return c;
