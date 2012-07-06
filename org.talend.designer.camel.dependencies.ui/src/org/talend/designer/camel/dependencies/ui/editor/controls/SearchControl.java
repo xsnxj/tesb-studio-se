@@ -31,7 +31,7 @@ public class SearchControl extends Composite implements PaintListener {
 	private Color backgroundColor;
 
 	public SearchControl(Composite parent, int style) {
-		super(parent, SWT.NONE);
+		super(parent, SWT.TRANSPARENT);
 		this.backgroundColor = getDisplay().getSystemColor(SWT.COLOR_WHITE);
 		initialize(style);
 		addPaintListener(this);
@@ -39,7 +39,6 @@ public class SearchControl extends Composite implements PaintListener {
 
 	private void initialize(int style) {
 		text = new Text(this, style);
-		text.setBackground(backgroundColor);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.setMessage("search what you want");
 		text.addFocusListener(new FocusAdapter() {
@@ -57,7 +56,6 @@ public class SearchControl extends Composite implements PaintListener {
 		});
 		
 		clear = new ImageControl(this, SWT.NONE);
-		clear.setBackground(backgroundColor);
 		clear.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
@@ -79,6 +77,8 @@ public class SearchControl extends Composite implements PaintListener {
 		layout.marginTop = 1;
 		layout.marginWidth = 0;
 		setLayout(layout);
+		
+		setBackground(backgroundColor);
 	}
 
 	@Override
@@ -88,15 +88,17 @@ public class SearchControl extends Composite implements PaintListener {
 		Rectangle bounds = getBounds();
 		Path path = new Path(getDisplay());
 		path.addArc(bounds.x, bounds.y, arcSize, arcSize, 90, 180);
-		path.addRectangle(bounds.x + arcSize / 2, bounds.y, bounds.width - arcSize,
-				arcSize);
+//		path.addRectangle(bounds.x + arcSize / 2, bounds.y, bounds.width - arcSize,
+//				arcSize);
 		path.addArc(bounds.x + bounds.width - arcSize, bounds.y, arcSize, arcSize,
 				270, 180);
-		gc.setClipping(path);
+//		gc.setClipping(path);
+		Color b = gc.getBackground();
 		gc.setBackground(backgroundColor);
 		gc.fillPath(path);
 		path.dispose();
 		gc.setAntialias(SWT.OFF);
+		gc.setBackground(b);
 	}
 
 	@Override
@@ -133,11 +135,11 @@ public class SearchControl extends Composite implements PaintListener {
 
 	@Override
 	public void setBackground(Color color) {
-		this.backgroundColor = color;
 		super.setBackground(getParent().getBackground());
-		redraw();
+		this.backgroundColor = color;
 		text.setBackground(backgroundColor);
 		clear.setBackground(backgroundColor);
+		redraw();
 	}
 
 	public void setActiveImage(Image activeImage) {
