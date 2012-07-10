@@ -54,5 +54,12 @@
             name="Route Resource Editor">
       </editor>
    </extension>
+   <extension
+         point="org.talend.core.repository.checkDeleteItemReference">
+      <check
+            class="org.talend.designer.camel.resource.delete.CheckRouteResourceDeleteReference"
+            priority="normal">
+      </check>
+   </extension>
 
 </plugin>
