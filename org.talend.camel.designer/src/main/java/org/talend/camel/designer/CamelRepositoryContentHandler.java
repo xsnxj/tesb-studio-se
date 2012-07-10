@@ -135,6 +135,10 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             itemResource = save((BeanItem) item);
             return itemResource;
         }
+		if (item instanceof RouteResourceItem) {
+			itemResource = save((RouteResourceItem) item);
+			return itemResource;
+		}
         return null;
     }
 
@@ -145,7 +149,7 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         return itemResource;
     }
 
-    private Resource save(FileItem item) {
+	private Resource save(RouteResourceItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
 
         ByteArray content = item.getContent();
