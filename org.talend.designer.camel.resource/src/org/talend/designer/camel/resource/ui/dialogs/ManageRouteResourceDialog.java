@@ -15,10 +15,12 @@ package org.talend.designer.camel.resource.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -38,13 +40,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
-import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
-import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.camel.resource.ui.providers.ResourceContentProvider;
 import org.talend.designer.camel.resource.ui.providers.ResourceLabelProvider;
 import org.talend.repository.model.RepositoryNode;
@@ -59,7 +60,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	private Button addBtn, delBtn;
 
-	private List<RouteResourceItem> selectedItems;
+	private List<ResourceDependencyModel> selectedModels;
 
 	private TableViewer resourcesTV;
 
@@ -82,42 +83,31 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		if (open == Dialog.OK) {
 			RepositoryNode result = dialog.getResult();
 			Item item = result.getObject().getProperty().getItem();
-			if (item instanceof RouteResourceItem
-					&& !selectedItems.contains(item)) {
-				selectedItems.add((RouteResourceItem) item);
+			if (item instanceof RouteResourceItem) {
+				for (ResourceDependencyModel rsmodel : selectedModels) {
+					if (rsmodel.getItem().getProperty().getId()
+							.equals(item.getProperty().getId())) {
+						resourcesTV.setSelection(new StructuredSelection(
+								rsmodel));
+						return;
+					}
+				}
+				ResourceDependencyModel model = new ResourceDependencyModel(
+						(RouteResourceItem) item);
+				selectedModels.add(model);
 				resourcesTV.refresh();
-				resourcesTV.setSelection(new StructuredSelection(item));
+				resourcesTV.setSelection(new StructuredSelection(model));
 			}
 		}
 
-	}
-
-	private String buildValue() {
-		StringBuffer sb = new StringBuffer();
-		for (RouteResourceItem item : selectedItems) {
-			sb.append(item.getProperty().getId());
-			sb.append(",");
-		}
-		return sb.toString();
 	}
 
 	@Override
 	protected void buttonPressed(int buttonId) {
 
 		if (buttonId == IDialogConstants.OK_ID) {
-			EMap additionalProperties = node.getObject().getProperty()
-					.getAdditionalProperties();
-
-			if (additionalProperties != null) {
-				additionalProperties.put(ROUTE_RESOURCES_PROP, buildValue());
-			}
-
-			try {
-				ProxyRepositoryFactory.getInstance().save(
-						node.getObject().getProperty().getItem(), false);
-			} catch (PersistenceException e) {
-			}
-
+			Item item = getSelectedRouteItem();
+			RouteResourceUtil.saveResourceDependency(item, selectedModels);
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -149,14 +139,57 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		resourcesTV = new TableViewer(area, SWT.BORDER | SWT.SINGLE);
 		Table table = resourcesTV.getTable();
 		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(
-				resourcesTV, 300);
-		tableViewerColumn.getColumn().setText("");
-		tableViewerColumn.getColumn().setWidth(300);
+				resourcesTV, SWT.NONE);
+		tableViewerColumn.getColumn().setText("Route Resource");
+		tableViewerColumn.getColumn().setWidth(200);
 		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
+
+		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
+		tableViewerColumn.getColumn().setText("Version");
+		tableViewerColumn.getColumn().setWidth(100);
+		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
+
+		tableViewerColumn.setEditingSupport(new EditingSupport(resourcesTV) {
+
+			ComboBoxCellEditor comboBoxCellEditor;
+
+			@Override
+			protected void setValue(Object element, Object value) {
+				ResourceDependencyModel model = (ResourceDependencyModel) element;
+				model.setSelectedVersion(model.getVersions().get(
+						(Integer) value));
+				resourcesTV.refresh(element);
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				ResourceDependencyModel model = (ResourceDependencyModel) element;
+				return model.getVersions().indexOf(model.getSelectedVersion());
+			}
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				if (comboBoxCellEditor == null) {
+					ResourceDependencyModel model = (ResourceDependencyModel) element;
+					comboBoxCellEditor = new ComboBoxCellEditor(resourcesTV
+							.getTable(), model.getVersions().toArray(
+							new String[0]), SWT.READ_ONLY | SWT.CENTER);
+				}
+				return comboBoxCellEditor;
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		});
+
 		resourcesTV.setLabelProvider(new ResourceLabelProvider());
 		resourcesTV.setContentProvider(new ResourceContentProvider());
-		resourcesTV.setInput(selectedItems);
+		resourcesTV.setInput(selectedModels);
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gridData);
@@ -165,8 +198,13 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		buttonComp.setLayout(new GridLayout(1, false));
 
+		GridData gd = new GridData();
+		gd.widthHint = 90;
+
 		addBtn = new Button(buttonComp, SWT.PUSH);
 		addBtn.setImage(ImageProvider.getImage(EImage.ADD_ICON));
+		addBtn.setText("Add");
+		addBtn.setLayoutData(gd);
 		addBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -175,6 +213,8 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		});
 
 		delBtn = new Button(buttonComp, SWT.PUSH);
+		delBtn.setText("Remove");
+		delBtn.setLayoutData(gd);
 		delBtn.setImage(ImageProvider.getImage(EImage.DELETE_ICON));
 		delBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -189,7 +229,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	protected void deleteData() {
 		RouteResourceItem item = getSelectiedItem();
 		if (item != null) {
-			selectedItems.remove(item);
+			selectedModels.remove(item);
 			resourcesTV.refresh();
 		}
 	}
@@ -207,34 +247,18 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	private void init() {
 
-		selectedItems = new ArrayList<RouteResourceItem>();
+		selectedModels = new ArrayList<ResourceDependencyModel>();
+		Item item = getSelectedRouteItem();
+		selectedModels.addAll(RouteResourceUtil.getResourceDependencies(item));
+	}
+
+	private Item getSelectedRouteItem() {
 		IStructuredSelection sselection = (IStructuredSelection) selection;
 		Object element = sselection.getFirstElement();
 		node = (RepositoryNode) element;
-
 		Property property = (Property) node.getObject().getProperty();
-
-		EMap additionalProperties = property.getAdditionalProperties();
-		if (additionalProperties != null) {
-			Object resourcesObj = additionalProperties
-					.get(ROUTE_RESOURCES_PROP);
-			if (resourcesObj != null) {
-				String[] resourceIds = resourcesObj.toString().split(",");
-				for (String id : resourceIds) {
-					try {
-						IRepositoryViewObject rvo = ProxyRepositoryFactory
-								.getInstance().getLastVersion(id);
-						if (rvo != null) {
-							Item item = rvo.getProperty().getItem();
-							selectedItems.add((RouteResourceItem) item);
-						}
-					} catch (PersistenceException e) {
-						e.printStackTrace();
-					}
-				}
-
-			}
-		}
+		Item item = property.getItem();
+		return item;
 	}
 
 }

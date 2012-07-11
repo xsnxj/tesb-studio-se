@@ -12,27 +12,26 @@
 // ============================================================================
 package org.talend.designer.camel.resource.ui.actions;
 
-import java.util.Properties;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
-import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.properties.Property;
+import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
-import org.talend.designer.camel.resource.editors.RouteResourceEditor;
+import org.talend.core.ui.IUIRefresher;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
-import org.talend.designer.camel.resource.i18n.Messages;
+import org.talend.designer.camel.resource.ui.dialogs.PropertyManagerWizardDialog;
+import org.talend.designer.camel.resource.ui.wizards.OpenAnotherVersionResrouceWizard;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.BinRepositoryNode;
@@ -40,20 +39,16 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.ui.actions.AContextualAction;
-import org.talend.repository.ui.views.IRepositoryView;
+import org.talend.repository.ui.actions.EditPropertiesAction;
 
 /**
- * DOC smallet class global comment. Detailled comment <br/>
  * 
- * $Id: EditProcess.java 52559 2010-12-13 04:14:06Z nrousseau $
+ * @author xpli
  * 
  */
-public class EditRouteResourceAction extends AContextualAction {
+public class OpenAnotherVersionResourceAction extends EditPropertiesAction {
 
-	private Properties params;
-
-	public EditRouteResourceAction() {
+	public OpenAnotherVersionResourceAction() {
 	}
 
 	/*
@@ -62,16 +57,34 @@ public class EditRouteResourceAction extends AContextualAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	protected void doRun() {
-		ISelection selection = getSelectedObject();
-		if (selection == null) {
-			return;
-		}
+
+		ISelection selection = getSelection();
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		if (obj == null) {
-			return;
-		}
 		RepositoryNode node = (RepositoryNode) obj;
-		openOrBindEditor(node);
+
+		IPath path = RepositoryNodeUtilities.getPath(node);
+		String originalName = node.getObject().getLabel();
+
+		RepositoryObject repositoryObj = new RepositoryObject(node.getObject()
+				.getProperty());
+		repositoryObj.setRepositoryNode(node.getObject().getRepositoryNode());
+		OpenAnotherVersionResrouceWizard wizard = new OpenAnotherVersionResrouceWizard(
+				repositoryObj);
+		PropertyManagerWizardDialog dialog = new PropertyManagerWizardDialog(
+				Display.getCurrent().getActiveShell(), wizard);
+		dialog.setPageSize(300, 250);
+		dialog.setTitle("Open another version"); //$NON-NLS-1$
+		if (dialog.open() == Dialog.OK) {
+			refresh(node);
+			// refresh the corresponding editor's name
+			IEditorPart part = getCorrespondingEditor(node);
+			if (part != null && part instanceof IUIRefresher) {
+				((IUIRefresher) part).refreshName();
+			} else {
+				processRoutineRenameOperation(originalName, node, path);
+			}
+		}
+
 	}
 
 	/*
@@ -84,22 +97,6 @@ public class EditRouteResourceAction extends AContextualAction {
 	@Override
 	public Class getClassForDoubleClick() {
 		return RouteResourceItem.class;
-	}
-
-	private ISelection getSelectedObject() {
-		if (params == null) {
-			return getSelection();
-		} else {
-			RepositoryNode repositoryNode = RepositoryNodeUtilities
-					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
-			IRepositoryView viewPart = getViewPart();
-			if (repositoryNode != null && viewPart != null) {
-				RepositoryNodeUtilities.expandParentNode(viewPart,
-						repositoryNode);
-				return new StructuredSelection(repositoryNode);
-			}
-			return null;
-		}
 	}
 
 	/*
@@ -158,47 +155,33 @@ public class EditRouteResourceAction extends AContextualAction {
 		}
 		setEnabled(canWork);
 
-		this.setText(Messages.getString("EditRouteResourceAction_Title"));
-		this.setToolTipText(Messages
-				.getString("EditRouteResourceAction_Tooltip"));
+		this.setText("Open another version");
+		this.setToolTipText("Open another version");
 		this.setImageDescriptor(ImageProvider
 				.getImageDesc(ECamelCoreImage.ROUTE_RESOURCE_ICON));
 	}
 
-	/**
-	 * Open or bind RouteResourceEditor
-	 * 
-	 * @param node
-	 */
-	private void openOrBindEditor(RepositoryNode node) {
+	protected IEditorPart getCorrespondingEditor(RepositoryNode node) {
+		IEditorReference[] eidtors = getActivePage().getEditorReferences();
 
-		Property property = (Property) node.getObject().getProperty();
-		RouteResourceItem item = null;
-		if (property != null) {
-
-			Assert.isTrue(property.getItem() instanceof RouteResourceItem);
-			item = (RouteResourceItem) property.getItem();
-			IWorkbenchPage page = getActivePage();
+		for (int i = 0; i < eidtors.length; i++) {
 			try {
-
-				IFile file = RouteResourceUtil.getSourceFile(item);
-
-				RouteResourceInput fileEditorInput = new RouteResourceInput(
-						file, item);
-				fileEditorInput.setRepositoryNode(node);
-
-				IEditorPart editorPart = page.findEditor(fileEditorInput);
-
-				if (editorPart == null) {
-					editorPart = page.openEditor(fileEditorInput,
-							RouteResourceEditor.ID, true);
-				} else {
-					page.openEditor(fileEditorInput, RouteResourceEditor.ID);
+				IEditorInput input = eidtors[i].getEditorInput();
+				if (!(input instanceof RouteResourceInput)) {
+					continue;
 				}
-			} catch (Exception e) {
-				MessageBoxExceptionHandler.process(e);
+
+				RouteResourceInput repositoryInput = (RouteResourceInput) input;
+				if (repositoryInput.getItem().equals(
+						node.getObject().getProperty().getItem())) {
+
+					return eidtors[i].getEditor(false);
+				}
+			} catch (PartInitException e) {
+				continue;
 			}
 		}
-
+		return null;
 	}
+
 }

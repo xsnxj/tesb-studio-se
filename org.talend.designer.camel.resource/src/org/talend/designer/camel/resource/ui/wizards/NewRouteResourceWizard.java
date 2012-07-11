@@ -12,15 +12,20 @@
 // ============================================================================
 package org.talend.designer.camel.resource.ui.wizards;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
@@ -122,16 +127,31 @@ public class NewRouteResourceWizard extends Wizard {
 		property.setLabel(property.getDisplayName());
 
 		ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-		try {
-			byteArray.setInnerContentFromFile(getFilePath().toFile());
-		} catch (IOException e) {
-			// Ignore?
-			ExceptionHandler.process(e);
-			return false;
+		URL url = mainPage.getUrl();
+		if (url == null) {
+			byteArray.setInnerContent(new byte[0]);
+		} else {
+			try {
+				InputStream inputStream = url.openStream();
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(inputStream, "utf-8"));
+				StringBuffer sb = new StringBuffer();
+				String line = bufferedReader.readLine();
+				while (line != null) {
+					sb.append(line).append(System.getProperty("line.separator"));
+					line = bufferedReader.readLine();
+				}
+				byteArray.setInnerContent(sb.toString().getBytes());
+			} catch (Exception e) {
+				MessageBoxExceptionHandler.process(e);
+				ExceptionHandler.process(e);
+				return false;
+			}
 		}
 		item.setContent(byteArray);
-		item.setName(getFilePath().removeFileExtension().lastSegment());
-		item.setExtension(getFilePath().getFileExtension());
+		Path p = new Path(property.getLabel());
+		item.setName(p.removeFileExtension().lastSegment());
+		item.setExtension(p.getFileExtension());
 
 		RepositoryWorkUnit<Object> workUnit = new RepositoryWorkUnit<Object>(
 				this.getWindowTitle(), this) {

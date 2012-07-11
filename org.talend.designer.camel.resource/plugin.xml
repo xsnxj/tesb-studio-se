@@ -44,6 +44,12 @@
              level="4"
              name="Edit Properties">
        </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.OpenAnotherVersionResourceAction"
+             id="org.talend.designer.camel.resource.OpenAnotherVersionResource"
+             level="4"
+             name="Open Another Version">
+       </Action>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

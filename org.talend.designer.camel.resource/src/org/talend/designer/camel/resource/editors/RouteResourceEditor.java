@@ -20,9 +20,10 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.talend.core.model.properties.FileItem;
+import org.talend.core.model.properties.Item;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
-import org.talend.designer.camel.resource.ui.util.RouteResourceUtil;
 
 /**
  * @author xpli
@@ -42,6 +43,12 @@ public class RouteResourceEditor extends TextEditor {
 					rrInput.getRepositoryNode().getObject());
 		} catch (Exception e) {
 		}
+		Item item = rrInput.getItem();
+		String displayName = item.getProperty().getDisplayName();
+		String version = item.getProperty().getVersion();
+		String partName = "Resource " + displayName + " " + version;
+		setPartName(partName);
+		setTitleToolTip(partName);
 	}
 
 	@Override

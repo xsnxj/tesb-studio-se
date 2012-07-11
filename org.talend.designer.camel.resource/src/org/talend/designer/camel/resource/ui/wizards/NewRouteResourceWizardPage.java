@@ -13,10 +13,14 @@
 package org.talend.designer.camel.resource.ui.wizards;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +46,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 
 	private Button browseBtn;
 	private Text filenameText;
-	private IPath filePath;
+	private URL url;
 
 	/**
 	 * Constructs a new NewProjectWizardPage.
@@ -66,12 +70,19 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 				String filename = dlg.open();
 				if (filename != null) {
 					filenameText.setText(filename);
-
-					File file = new File(filename);
-					String fileName = file.getName();
-					nameText.setText(fileName);
-					evaluateFields();
 				}
+			}
+		});
+		filenameText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				File file = new File(filenameText.getText());
+				String fileName = file.getName();
+				if (nameText.getText().isEmpty()) {
+					nameText.setText(fileName);
+				}
+				evaluateFields();
 			}
 		});
 	}
@@ -116,17 +127,43 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 	}
 
 	@Override
-	protected void evaluateFields() {
-		super.evaluateFields();
+	protected void evaluateTextField() {
+		
+		super.evaluateTextField();
 
-		filePath = new Path(filenameText.getText());
-		NewRouteResourceWizard wizard = (NewRouteResourceWizard) getWizard();
-		wizard.setFilePath(filePath);
+		String text = filenameText.getText();
+
+		// An empty file, allowed
+		if (text != null && !text.isEmpty()) {
+			File file = new File(text);
+			if (!file.exists()) {
+				try {
+					url = new URL(text);
+				} catch (MalformedURLException e) {
+					url = null;
+				}
+			} else {
+				try {
+					url = file.toURI().toURL();
+				} catch (MalformedURLException e) {
+					url = null;
+				}
+			}
+			if (url == null) {
+				nameStatus = createStatus(IStatus.ERROR,
+						"Can not load content from:  " + text + ".");
+			}
+			updatePageStatus();
+		}
 
 	}
 
 	public ERepositoryObjectType getRepositoryObjectType() {
 		return CamelRepositoryNodeType.repositoryRouteResourceType;
+	}
+
+	public URL getUrl() {
+		return url;
 	}
 
 }

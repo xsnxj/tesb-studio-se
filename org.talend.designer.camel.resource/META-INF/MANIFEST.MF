@@ -19,6 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.intro,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.ui.ide,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.talend.designer.camel.resource.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

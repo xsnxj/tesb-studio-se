@@ -15,7 +15,7 @@ package org.talend.designer.camel.resource.ui.providers;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 
 /**
  * @author xpli
@@ -23,6 +23,9 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
  */
 public class ResourceLabelProvider extends LabelProvider implements
 		ITableLabelProvider {
+
+	private static final int COL_NAME = 0;
+	private static final int COL_VERSION = 1;
 
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
@@ -32,11 +35,13 @@ public class ResourceLabelProvider extends LabelProvider implements
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 
-		if (element instanceof RouteResourceItem) {
-			RouteResourceItem item = (RouteResourceItem) element;
+		if (element instanceof ResourceDependencyModel) {
+			ResourceDependencyModel item = (ResourceDependencyModel) element;
 			switch (columnIndex) {
-			case 0:
-				return item.getProperty().getDisplayName();
+			case COL_NAME:
+				return item.getItem().getProperty().getDisplayName();
+			case COL_VERSION:
+				return item.getSelectedVersion();
 
 			default:
 				break;
