@@ -198,6 +198,13 @@
                    id="org.talend.camel.designer.switch284CamelCXFLibraryVersionMigrationTask"
                    name="Switch284CamelCXFLibraryVersionMigrationTask">
              </projecttask>
+             <projecttask
+                   beforeLogon="false"
+                   class="org.talend.camel.designer.migration.UpdatecJMSMigrationTask"
+                   description="Update cJMS to use new field"
+                   id="org.talend.camel.designer.migration.UpdatecJMSMigrationTask"
+                   name="UpdatecJMSMigrationTask">
+             </projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
@@ -217,5 +224,14 @@
                  mapping="ROUTE_COMPONENT_TYPE"
                  name="Route Component Type">
            </generator>
+        </extension>
+        <extension
+              point="org.talend.designer.core.check_nodes">
+           <checknodes
+                 class="org.talend.camel.designer.check.CheckCXFNodesService">
+           </checknodes>
+           <checknodes
+                 class="org.talend.camel.designer.check.CheckJMSNodesService">
+           </checknodes>
         </extension>
 </plugin>

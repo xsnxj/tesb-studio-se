@@ -185,8 +185,8 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	private static IFolder getRouteResourceFolder() {
 		IPath path = new Path(JavaUtils.JAVA_SRC_DIRECTORY);
-		path = path.append(ROUTE_RESOURCES);
-
+		// http://jira.talendforge.org/browse/TESB-6437
+		// path = path.append(ROUTE_RESOURCES);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(JavaUtils.JAVA_PROJECT_NAME);
 		return project.getFolder(path);
@@ -234,136 +234,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public void checkRouteComponent(INode node) {
-
-		// http://jira.talendforge.org/browse/TESB-6294
-		if (node.getComponent().getName().equals("cCXF")) {
-			IElementParameter resourceParam = node
-					.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
-							.getName());
-			IElementParameter wsdlFileParam = node
-					.getElementParameter("WSDL_FILE");
-			IElementParameter serviceParam = node
-					.getElementParameter("SERVICE_TYPE");
-			IElementParameter wsdlTypeParam = node
-					.getElementParameter("WSDL_TYPE");
-			IElementParameter clazzParam = node
-					.getElementParameter("SERVICE_CLASS");
-
-			// Select WSDL
-			if (serviceParam != null
-					&& "wsdlURL".equals(serviceParam.getValue())) {
-				// Select File
-				if (wsdlTypeParam != null
-						&& "file".equals(wsdlTypeParam.getValue())) {
-					// WSDL file is empty
-					if (wsdlFileParam == null
-							|| wsdlFileParam.getValue() == null
-							|| wsdlFileParam.getValue().toString().isEmpty()
-							|| wsdlFileParam.getValue().toString()
-									.equals("\"\"")) {
-						String errorMessage = "Parameter ("
-								+ wsdlFileParam.getDisplayName()
-								+ ") is empty but is required.";
-						Problems.add(ProblemStatus.ERROR, (Element) node,
-								errorMessage);
-					}
-				} // Select Repository
-				else if (wsdlTypeParam != null
-						&& "repo".equals(wsdlTypeParam.getValue())) {
-					// WSDL file is empty
-					String errorMessage = "";
-					if (resourceParam == null
-							|| resourceParam.getValue() == null
-							|| resourceParam.getValue().toString().isEmpty()) {
-						errorMessage = "Parameter ("
-								+ wsdlFileParam.getDisplayName()
-								+ ") is empty but is required.";
-								Problems.add(ProblemStatus.ERROR, (Element) node,
-										errorMessage);
-					} else {
-						String id = (String) resourceParam.getValue();
-						try {
-							IRepositoryViewObject lastVersion = ProxyRepositoryFactory
-									.getInstance().getLastVersion(id);
-							if (lastVersion == null) {
-								errorMessage = "Parameter ("
-										+ wsdlFileParam.getDisplayName()
-										+ ") doesn't exist.";
-								Problems.add(ProblemStatus.ERROR, (Element) node,
-										errorMessage);
-							} else if (lastVersion.isDeleted()) {
-								errorMessage = "Resource used by "
-										+ resourceParam.getDisplayName()
-										+ " has been deleted.";
-								Problems.add(ProblemStatus.ERROR, (Element) node,
-										errorMessage);
-							}
-						} catch (PersistenceException e) {
-							errorMessage = "Parameter ("
-									+ wsdlFileParam.getDisplayName()
-									+ ") is empty but is required.";
-							Problems.add(ProblemStatus.ERROR, (Element) node,
-									errorMessage);
-						}
-					}
-				}
-			}
-			// Select Service class
-			else if (serviceParam != null
-					&& "serviceClass".equals(serviceParam.getValue())) {
-				// Service class is empty
-				if (clazzParam == null || clazzParam.getValue() == null
-						|| clazzParam.getValue().toString().isEmpty()) {
-					String errorMessage = "Parameter ("
-							+ wsdlFileParam.getDisplayName()
-							+ ") is empty but is required.";
-					Problems.add(ProblemStatus.ERROR, (Element) node,
-							errorMessage);
-				}
-			}
-
-			return;
-		}
-
-		if (node.getComponent().getName().startsWith("cJMS")) {
-			List<? extends IElementParameter> parameters = node
-					.getElementParameters();
-			for (IElementParameter param : parameters) {
-				if (param.getFieldType() == EParameterFieldType.ROUTE_COMPONENT_TYPE) {
-					IElementParameter idParam = param.getChildParameters().get(
-							EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
-					if (idParam == null || idParam.getValue() == null
-							|| idParam.getValue().toString().isEmpty()) {
-						String errorMessage = "Parameter ("
-								+ param.getDisplayName()
-								+ ") is empty but is required.";
-						Problems.add(ProblemStatus.ERROR, (Element) node,
-								errorMessage);
-					} else {
-						List<? extends INode> graphicalNodes = node
-								.getProcess().getGraphicalNodes();
-						boolean has = false;
-						for (INode n : graphicalNodes) {
-							if (n.getUniqueName().equals(idParam.getValue())) {
-								has = true;
-								break;
-							}
-						}
-						if (!has) {
-							String errorMessage = "Parameter ("
-									+ param.getDisplayName()
-									+ ") doesn't exist.";
-							Problems.add(ProblemStatus.ERROR, (Element) node,
-									errorMessage);
-						}
-					}
-				}
-			}
-		}
-
 	}
 
 }
