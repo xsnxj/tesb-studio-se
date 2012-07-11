@@ -297,10 +297,14 @@ public class RouterDependenciesEditor extends EditorPart implements
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if(selection.isEmpty()){
-					return;
+				int size = selection.size();
+				if(size == 0){
+					setStatus(null);
+				}else if(selection.size()==1){
+					setStatus(((IDependencyItem)selection.getFirstElement()).getDescription());
+				}else{
+					setStatus(size+Messages.RouterDependenciesEditor_multiItemsSelectedStatusMsg);
 				}
-				setStatus(((IDependencyItem)selection.getFirstElement()).getDescription());
 			}
 		});
 		return c.getTableViewer();
