@@ -84,8 +84,11 @@ public class ExDependenciesResolver {
 						boolean found = false;
 						for(BundleClasspath obj :array){
 							if(obj!=null && obj.equals(bcp)){
+								obj.setChecked(obj.isChecked()
+										|| bcp.isChecked());
 								bcp = obj;
 								found = true;
+								break;
 							}
 						}
 						if(bcp != null){
@@ -110,6 +113,7 @@ public class ExDependenciesResolver {
 						if(obj!=null && obj.equals(target)){
 							target = obj;
 							found = true;
+							break;
 						}
 					}
 					target.addRelativeComponent(uniqueName);
@@ -132,6 +136,7 @@ public class ExDependenciesResolver {
 						if(obj!=null && obj.equals(target)){
 							target = obj;
 							found = true;
+							break;
 						}
 					}
 					target.addRelativeComponent(uniqueName);
