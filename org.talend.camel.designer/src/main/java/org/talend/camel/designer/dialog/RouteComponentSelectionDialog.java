@@ -147,7 +147,7 @@ public class RouteComponentSelectionDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
-		newShell.setText("Select Route " + nodeTypes + " Component:");
+		newShell.setText("Select a Node:");
 	}
 
 	@Override
