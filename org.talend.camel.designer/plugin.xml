@@ -212,5 +212,10 @@
                  mapping="ROUTE_RESOURCE_TYPE"
                  name="Route Resource Type">
            </generator>
+           <generator
+                 class="org.talend.camel.designer.generator.RouteComponentGenerator"
+                 mapping="ROUTE_COMPONENT_TYPE"
+                 name="Route Component Type">
+           </generator>
         </extension>
 </plugin>

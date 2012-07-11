@@ -16,6 +16,7 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
@@ -68,6 +69,7 @@ public class RouteResourceChangeCommand extends PropertyChangeCommand {
 			label = "classpath:" + RouteResourceItem.ROUTE_RESOURCES_FOLDER
 					+ "/" + label;
 			uriParam.setValue(label);
+			RelationshipItemBuilder.getInstance().addOrUpdateItem(item);
 		} catch (Exception e) {
 		}
 

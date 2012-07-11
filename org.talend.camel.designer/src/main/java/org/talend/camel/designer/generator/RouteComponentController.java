@@ -13,7 +13,9 @@
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -37,20 +39,20 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.designer.dialog.RouteComponentSelectionDialog;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.properties.tab.IDynamicProperty;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
@@ -60,7 +62,7 @@ import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectA
  * @author Xiaopeng Li
  * 
  */
-public class RouteResourceController extends
+public class RouteComponentController extends
 		AbstractElementPropertySectionController {
 
 	private static final String STRING = ":";
@@ -81,7 +83,7 @@ public class RouteResourceController extends
 		}
 	};
 
-	public RouteResourceController(IDynamicProperty dp) {
+	public RouteComponentController(IDynamicProperty dp) {
 		super(dp);
 	}
 
@@ -92,25 +94,35 @@ public class RouteResourceController extends
 	 * @return
 	 */
 	private Command createButtonCommand(Button button) {
-		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(
-				button.getShell());
 
-		selectNodeIfExists(button, dialog);
+		Object[] listItemsValue = curParameter.getListItemsValue();
 
-		if (dialog.open() == Window.OK) {
+		RouteComponentSelectionDialog dlg = null;
+		if (listItemsValue == null) {
+			dlg = new RouteComponentSelectionDialog(button.getShell(), null,
+					(INode) elem);
+		} else {
 
-			IRepositoryViewObject repositoryObject = dialog.getResult()
-					.getObject();
+			String[] types = new String[listItemsValue.length];
+			for (int index = 0; index < types.length; index++) {
+				types[index] = (String) listItemsValue[index];
+			}
+			dlg = new RouteComponentSelectionDialog(button.getShell(), types,
+					(INode) elem);
+		}
 
-			refreshItemeProperty(repositoryObject);
+		IElementParameter itemParam = curParameter.getChildParameters().get(
+				EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
 
-			final Item item = repositoryObject.getProperty().getItem();
-			String id = item.getProperty().getId();
+		dlg.setSelectedId((String) itemParam.getValue());
+		if (dlg.open() == Window.OK) {
+			INode node = dlg.getResult();
 			String paramName = (String) button.getData(PARAMETER_NAME);
-
-			return new RouteResourceChangeCommand(elem, paramName, id);
+			return new RouteComponentChangeCommand(elem, paramName,
+					node.getUniqueName());
 		}
 		return null;
+
 	}
 
 	private Command createCommand(SelectionEvent selectionEvent) {
@@ -129,7 +141,7 @@ public class RouteResourceController extends
 		FormData data;
 
 		IElementParameter processTypeParameter = param.getChildParameters()
-				.get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
+				.get(EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
 
 		final DecoratedField dField = new DecoratedField(subComposite,
 				SWT.BORDER | SWT.READ_ONLY, new SelectAllTextControlCreator());
@@ -240,7 +252,7 @@ public class RouteResourceController extends
 					public Control createControl(Composite parent, int style) {
 						return getWidgetFactory().createButton(
 								parent,
-								EParameterName.ROUTE_RESOURCE_TYPE
+								EParameterName.ROUTE_COMPONENT_TYPE
 										.getDisplayName(), SWT.None);
 					}
 
@@ -277,30 +289,32 @@ public class RouteResourceController extends
 						if (hashCurControls == null) {
 							return;
 						}
-						IElementParameter processTypeParameter = param
-								.getChildParameters().get(
-										EParameterName.ROUTE_RESOURCE_TYPE_ID
-												.getName());
-						String value = (String) processTypeParameter.getValue();
 
+						IElementParameter param = elem
+								.getElementParameter(EParameterName.ROUTE_COMPONENT_TYPE_ID
+										.getName());
+						String value = (String) param.getValue();
 						if (value == null) {
 							labelText.setText("");
+							param.setValue("");
 						} else {
-							IRepositoryViewObject lastVersion;
-							try {
-								lastVersion = ProxyRepositoryFactory
-										.getInstance().getLastVersion(value);
-								if (lastVersion == null) {
-									processTypeParameter.setValue(null);
-									labelText.setText("");
-								} else {
-									resetTextValue(lastVersion.getProperty()
-											.getItem());
+							boolean has = false;
+							INode node = (INode) elem;
+							List<? extends INode> graphicalNodes = node
+									.getProcess().getGraphicalNodes();
+							for (INode n : graphicalNodes) {
+								if (n.getUniqueName().equals(value)) {
+									labelText.setText(n.getLabel());
+									has = true;
+									break;
 								}
-							} catch (Exception e) {
 							}
-						}
+							if (!has) {
+								labelText.setText("");
+								param.setValue("");
+							}
 
+						}
 
 						if (elem != null && elem instanceof Node) {
 							((Node) elem).checkAndRefreshNode();
@@ -323,10 +337,38 @@ public class RouteResourceController extends
 			IEditorInput editorInput = camelEdtior.getEditorInput();
 			CamelProcessEditorInput input = (CamelProcessEditorInput) editorInput;
 			Item item = input.getItem();
-			ResourceDependencyModel model = new ResourceDependencyModel(
-					(RouteResourceItem) repositoryObject.getProperty()
-							.getItem());
-			RouteResourceUtil.addResourceDependency(item, model);
+
+			EMap additionalProperties = item.getProperty()
+					.getAdditionalProperties();
+
+			String id = repositoryObject.getId();
+
+			if (additionalProperties != null) {
+				Object object = additionalProperties
+						.get("ROUTE_RESOURCES_PROP");
+				if (object == null) {
+					additionalProperties.put("ROUTE_RESOURCES_PROP", id);
+				} else {
+					String idStrs = object.toString();
+					String[] strings = idStrs.split(",");
+					boolean contained = false;
+					for (String str : strings) {
+						if (str.trim().equals(id)) {
+							contained = true;
+						}
+					}
+					if (!contained) {
+						idStrs = idStrs + "," + id;
+						additionalProperties
+								.put("ROUTE_RESOURCES_PROP", idStrs);
+					}
+				}
+			}
+
+			try {
+				ProxyRepositoryFactory.getInstance().save(item, false);
+			} catch (PersistenceException e) {
+			}
 		}
 
 	}

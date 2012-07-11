@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
@@ -39,15 +38,24 @@ import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
+import org.talend.core.model.process.EParameterFieldType;
+import org.talend.core.model.process.Element;
+import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
+import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.designer.core.ICamelDesignerCoreService;
+import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
+import org.talend.designer.core.ui.views.problems.Problems;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -147,32 +155,12 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			return paths;
 		}
 
-		// Get Route Resources from Item properties
-		CamelProcessItem camelItem = (CamelProcessItem) item;
-		EMap additionalProperties = camelItem.getProperty()
-				.getAdditionalProperties();
-		if (additionalProperties != null) {
-			Object resourcesObj = additionalProperties
-					.get("ROUTE_RESOURCES_PROP");
-			if (resourcesObj != null) {
-				String[] resourceIds = resourcesObj.toString().split(",");
-				for (String id : resourceIds) {
-					IRepositoryViewObject rvo;
-					try {
-						rvo = ProxyRepositoryFactory.getInstance()
-								.getLastVersion(id);
-						if (rvo != null) {
-							Item it = rvo.getProperty().getItem();
-							IFile file = copyResources((RouteResourceItem) it);
-							if (file != null) {
-								paths.add(file.getLocation());
-							}
-						}
-					} catch (PersistenceException e) {
-					}
-
-				}
-
+		List<ResourceDependencyModel> models = RouteResourceUtil
+				.getResourceDependencies(item);
+		for (ResourceDependencyModel model : models) {
+			IFile file = copyResources(model.getItem());
+			if (file != null) {
+				paths.add(file.getLocation());
 			}
 		}
 
@@ -246,6 +234,136 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public void checkRouteComponent(INode node) {
+
+		// http://jira.talendforge.org/browse/TESB-6294
+		if (node.getComponent().getName().equals("cCXF")) {
+			IElementParameter resourceParam = node
+					.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
+							.getName());
+			IElementParameter wsdlFileParam = node
+					.getElementParameter("WSDL_FILE");
+			IElementParameter serviceParam = node
+					.getElementParameter("SERVICE_TYPE");
+			IElementParameter wsdlTypeParam = node
+					.getElementParameter("WSDL_TYPE");
+			IElementParameter clazzParam = node
+					.getElementParameter("SERVICE_CLASS");
+
+			// Select WSDL
+			if (serviceParam != null
+					&& "wsdlURL".equals(serviceParam.getValue())) {
+				// Select File
+				if (wsdlTypeParam != null
+						&& "file".equals(wsdlTypeParam.getValue())) {
+					// WSDL file is empty
+					if (wsdlFileParam == null
+							|| wsdlFileParam.getValue() == null
+							|| wsdlFileParam.getValue().toString().isEmpty()
+							|| wsdlFileParam.getValue().toString()
+									.equals("\"\"")) {
+						String errorMessage = "Parameter ("
+								+ wsdlFileParam.getDisplayName()
+								+ ") is empty but is required.";
+						Problems.add(ProblemStatus.ERROR, (Element) node,
+								errorMessage);
+					}
+				} // Select Repository
+				else if (wsdlTypeParam != null
+						&& "repo".equals(wsdlTypeParam.getValue())) {
+					// WSDL file is empty
+					String errorMessage = "";
+					if (resourceParam == null
+							|| resourceParam.getValue() == null
+							|| resourceParam.getValue().toString().isEmpty()) {
+						errorMessage = "Parameter ("
+								+ wsdlFileParam.getDisplayName()
+								+ ") is empty but is required.";
+								Problems.add(ProblemStatus.ERROR, (Element) node,
+										errorMessage);
+					} else {
+						String id = (String) resourceParam.getValue();
+						try {
+							IRepositoryViewObject lastVersion = ProxyRepositoryFactory
+									.getInstance().getLastVersion(id);
+							if (lastVersion == null) {
+								errorMessage = "Parameter ("
+										+ wsdlFileParam.getDisplayName()
+										+ ") doesn't exist.";
+								Problems.add(ProblemStatus.ERROR, (Element) node,
+										errorMessage);
+							} else if (lastVersion.isDeleted()) {
+								errorMessage = "Resource used by "
+										+ resourceParam.getDisplayName()
+										+ " has been deleted.";
+								Problems.add(ProblemStatus.ERROR, (Element) node,
+										errorMessage);
+							}
+						} catch (PersistenceException e) {
+							errorMessage = "Parameter ("
+									+ wsdlFileParam.getDisplayName()
+									+ ") is empty but is required.";
+							Problems.add(ProblemStatus.ERROR, (Element) node,
+									errorMessage);
+						}
+					}
+				}
+			}
+			// Select Service class
+			else if (serviceParam != null
+					&& "serviceClass".equals(serviceParam.getValue())) {
+				// Service class is empty
+				if (clazzParam == null || clazzParam.getValue() == null
+						|| clazzParam.getValue().toString().isEmpty()) {
+					String errorMessage = "Parameter ("
+							+ wsdlFileParam.getDisplayName()
+							+ ") is empty but is required.";
+					Problems.add(ProblemStatus.ERROR, (Element) node,
+							errorMessage);
+				}
+			}
+
+			return;
+		}
+
+		if (node.getComponent().getName().startsWith("cJMS")) {
+			List<? extends IElementParameter> parameters = node
+					.getElementParameters();
+			for (IElementParameter param : parameters) {
+				if (param.getFieldType() == EParameterFieldType.ROUTE_COMPONENT_TYPE) {
+					IElementParameter idParam = param.getChildParameters().get(
+							EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
+					if (idParam == null || idParam.getValue() == null
+							|| idParam.getValue().toString().isEmpty()) {
+						String errorMessage = "Parameter ("
+								+ param.getDisplayName()
+								+ ") is empty but is required.";
+						Problems.add(ProblemStatus.ERROR, (Element) node,
+								errorMessage);
+					} else {
+						List<? extends INode> graphicalNodes = node
+								.getProcess().getGraphicalNodes();
+						boolean has = false;
+						for (INode n : graphicalNodes) {
+							if (n.getUniqueName().equals(idParam.getValue())) {
+								has = true;
+								break;
+							}
+						}
+						if (!has) {
+							String errorMessage = "Parameter ("
+									+ param.getDisplayName()
+									+ ") doesn't exist.";
+							Problems.add(ProblemStatus.ERROR, (Element) node,
+									errorMessage);
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 }
