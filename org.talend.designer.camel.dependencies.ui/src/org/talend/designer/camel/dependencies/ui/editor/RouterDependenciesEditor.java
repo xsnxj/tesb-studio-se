@@ -299,7 +299,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				int size = selection.size();
 				if(size == 0){
-					setStatus(null);
+					setStatus("");
 				}else if(selection.size()==1){
 					setStatus(((IDependencyItem)selection.getFirstElement()).getDescription());
 				}else{
