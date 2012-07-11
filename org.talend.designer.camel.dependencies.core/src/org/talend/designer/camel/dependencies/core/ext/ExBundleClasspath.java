@@ -10,11 +10,21 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class ExBundleClasspath extends AbstractExPredicator<BundleClasspath> {
+public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>, BundleClasspath> {
 
 	private String attributeName;
+	
+	private boolean isChecked = true;
 
 	ExBundleClasspath() {
+	}
+	
+	public void setChecked(boolean isChecked) {
+		this.isChecked = isChecked;
+	}
+	
+	public boolean isChecked() {
+		return isChecked;
 	}
 
 	void setAttributeName(String attributeName) {
@@ -35,17 +45,18 @@ public class ExBundleClasspath extends AbstractExPredicator<BundleClasspath> {
 				if (elementValue.isEmpty()) {
 					String evtValue = p.getValue();
 					if (evtValue != null) {
-						if (evtValue.startsWith("\"")) {
+						if (evtValue.startsWith("\"")) { //$NON-NLS-1$
 							evtValue = evtValue.substring(1);
 						}
-						if (evtValue.endsWith("\"")) {
+						if (evtValue.endsWith("\"")) { //$NON-NLS-1$
 							evtValue = evtValue.substring(0,
 									evtValue.length() - 1);
 						}
-						if (!evtValue.trim().equals("")) {
+						if (!evtValue.trim().equals("")) { //$NON-NLS-1$
 							BundleClasspath bundleClasspath = new BundleClasspath();
+							bundleClasspath.setChecked(isChecked);
 							bundleClasspath.setBuiltIn(true);
-							bundleClasspath.setPath(evtValue);
+							bundleClasspath.setName(evtValue);
 							bundleClasspaths.add(bundleClasspath);
 						}
 					}
@@ -55,7 +66,8 @@ public class ExBundleClasspath extends AbstractExPredicator<BundleClasspath> {
 						String evtValue = evt.getValue();
 						BundleClasspath bundleClasspath = new BundleClasspath();
 						bundleClasspath.setBuiltIn(true);
-						bundleClasspath.setPath(evtValue);
+						bundleClasspath.setChecked(isChecked);
+						bundleClasspath.setName(evtValue);
 						bundleClasspaths.add(bundleClasspath);
 					}
 				}

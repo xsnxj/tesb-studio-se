@@ -10,23 +10,24 @@ import org.eclipse.core.runtime.Platform;
 
 public class ExtensionPointsReader {
 
-	private static final String COMPONENT = "component";
-	private static final String REGEX = "regex";
-	private static final String ATTRIBUTE_VALUE = "attributeValue";
-	private static final String PREDICATE = "predicate";
-	private static final String BUNDLE_NAME = "bundleName";
-	private static final String REQUIRE_BUNDLE = "requireBundle";
-	private static final String ATTRIBUTE_NAME = "attributeName";
-	private static final String IMPORT_PACKAGE = "importPackage";
-	private static final String OPTIONAL = "optional";
-	private static final String MIN_VERSION = "minVersion";
-	private static final String MAX_VERSION = "maxVersion";
-	private static final String PACKAGE_NAME = "packageName";
-	private static final String COMPONENT_NAME = "componentName";
+	private static final String CHECKED = "checked"; //$NON-NLS-1$
+	private static final String COMPONENT = "component"; //$NON-NLS-1$
+	private static final String REGEX = "regex"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_VALUE = "attributeValue"; //$NON-NLS-1$
+	private static final String PREDICATE = "predicate"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "bundleName"; //$NON-NLS-1$
+	private static final String REQUIRE_BUNDLE = "requireBundle"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_NAME = "attributeName"; //$NON-NLS-1$
+	private static final String IMPORT_PACKAGE = "importPackage"; //$NON-NLS-1$
+	private static final String OPTIONAL = "optional"; //$NON-NLS-1$
+	private static final String MIN_VERSION = "minVersion"; //$NON-NLS-1$
+	private static final String MAX_VERSION = "maxVersion"; //$NON-NLS-1$
+	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
+	private static final String COMPONENT_NAME = "componentName"; //$NON-NLS-1$
 
-	private static final String REQUIRE_BUNDLE_EXT = "org.talend.designer.camel.dependencies.requireBundle";
-	private static final String IMPORT_PACKAGE_EXT = "org.talend.designer.camel.dependencies.importPackage";
-	private static final String BUNDLE_CLASSPATH_EXT = "org.talend.designer.camel.dependencies.bundleClasspath";
+	private static final String REQUIRE_BUNDLE_EXT = "org.talend.designer.camel.dependencies.requireBundle"; //$NON-NLS-1$
+	private static final String IMPORT_PACKAGE_EXT = "org.talend.designer.camel.dependencies.importPackage"; //$NON-NLS-1$
+	private static final String BUNDLE_CLASSPATH_EXT = "org.talend.designer.camel.dependencies.bundleClasspath"; //$NON-NLS-1$
 
 	public static ExtensionPointsReader INSTANCE = new ExtensionPointsReader();
 
@@ -56,6 +57,7 @@ public class ExtensionPointsReader {
 		for (IConfigurationElement e : configurationElements) {
 			String attrName = e.getAttribute(ATTRIBUTE_NAME);
 			String cmpName = e.getAttribute(COMPONENT_NAME);
+			String isChecked = e.getAttribute(CHECKED);
 			Set<ExBundleClasspath> attributeSet = componentBundleClasspaths
 					.get(cmpName);
 			if (attributeSet == null) {
@@ -65,6 +67,12 @@ public class ExtensionPointsReader {
 
 			ExBundleClasspath bc = new ExBundleClasspath();
 			bc.setAttributeName(attrName);
+			
+			if("true".equals(isChecked)){ //$NON-NLS-1$
+				bc.setChecked(true);
+			}else if("false".equals(isChecked)){ //$NON-NLS-1$
+				bc.setChecked(false);
+			}
 
 			IConfigurationElement[] predicates = e.getChildren(PREDICATE);
 			if (predicates != null) {
@@ -75,7 +83,7 @@ public class ExtensionPointsReader {
 					ExPredicate exPredicate = new ExPredicate();
 					exPredicate.setAttributeName(name);
 					exPredicate.setAttributeValue(value);
-					if ("true".equals(isRegex)) {
+					if ("true".equals(isRegex)) { //$NON-NLS-1$
 						exPredicate.setRegex(true);
 					}
 					bc.addPredicate(exPredicate);
@@ -124,10 +132,10 @@ public class ExtensionPointsReader {
 
 		ExImportPackage importPackage = new ExImportPackage();
 		importPackage.setPackageName(packageName);
-		if (maxVersion != null && !"".equals(maxVersion)) {
+		if (maxVersion != null && !"".equals(maxVersion)) { //$NON-NLS-1$
 			importPackage.setMaxVersion(maxVersion);
 		}
-		if (minVersion != null && !"".equals(minVersion)) {
+		if (minVersion != null && !"".equals(minVersion)) { //$NON-NLS-1$
 			importPackage.setMinVersion(minVersion);
 		}
 		if (optional != null) {
@@ -143,7 +151,7 @@ public class ExtensionPointsReader {
 				ExPredicate exPredicate = new ExPredicate();
 				exPredicate.setAttributeName(name);
 				exPredicate.setAttributeValue(value);
-				if ("true".equals(isRegex)) {
+				if ("true".equals(isRegex)) { //$NON-NLS-1$
 					exPredicate.setRegex(true);
 				}
 				importPackage.addPredicate(exPredicate);
@@ -189,10 +197,10 @@ public class ExtensionPointsReader {
 
 		ExRequireBundle requireBundle = new ExRequireBundle();
 		requireBundle.setBundleName(bundleName);
-		if (maxVersion != null && !"".equals(maxVersion)) {
+		if (maxVersion != null && !"".equals(maxVersion)) { //$NON-NLS-1$
 			requireBundle.setMaxVersion(maxVersion);
 		}
-		if (minVersion != null && !"".equals(minVersion)) {
+		if (minVersion != null && !"".equals(minVersion)) { //$NON-NLS-1$
 			requireBundle.setMinVersion(minVersion);
 		}
 		if (optional != null) {
@@ -208,7 +216,7 @@ public class ExtensionPointsReader {
 				ExPredicate exPredicate = new ExPredicate();
 				exPredicate.setAttributeName(name);
 				exPredicate.setAttributeValue(value);
-				if ("true".equals(isRegex)) {
+				if ("true".equals(isRegex)) { //$NON-NLS-1$
 					exPredicate.setRegex(true);
 				}
 				requireBundle.addPredicate(exPredicate);

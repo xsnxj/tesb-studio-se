@@ -8,6 +8,7 @@ public interface IDependencyItem {
 	public static final int IMPORT_PACKAGE = 0x1;
 	public static final int REQUIRE_BUNDLE = 0x2;
 	public static final int CLASS_PATH = 0x4;
+	public static final int EXPORT_PACKAGE = 0x8;
 
 	public String getLabel();
 
@@ -19,4 +20,12 @@ public interface IDependencyItem {
 	 * @return
 	 */
 	public int getType();
+	
+	public boolean strictEqual(Object obj);
+	
+	public boolean isChecked();
+	
+	public void setChecked(boolean isChecked);
+	
+	public String getDescription();
 }

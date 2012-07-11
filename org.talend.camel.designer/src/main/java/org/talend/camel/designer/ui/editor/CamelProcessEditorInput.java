@@ -17,6 +17,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.core.ui.projectsetting.ProjectSettingManager;
 import org.talend.repository.editor.JobEditorInput;
+import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -65,5 +66,13 @@ public class CamelProcessEditorInput extends JobEditorInput {
 
     public Process getLoadedProcess() {
         return (Process) loadedProcess;
+    }
+    
+    @Override
+    public Object getAdapter(Class adapter) {
+    	if(adapter == RepositoryNode.class){
+    		return getRepositoryNode();
+    	}
+    	return super.getAdapter(adapter);
     }
 }

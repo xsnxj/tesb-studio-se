@@ -11,6 +11,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -18,10 +21,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
 import org.talend.designer.camel.dependencies.ui.Messages;
+import org.talend.designer.camel.dependencies.ui.dialog.NewExportPackageDialog;
 import org.talend.designer.camel.dependencies.ui.dialog.NewOrEditDependencyDialog;
 
 public class RouterDependenciesPanel extends Composite implements
@@ -29,28 +35,57 @@ public class RouterDependenciesPanel extends Composite implements
 
 	private int type;
 	private RouterDependenciesTableViewer tableViewer;
+	
 	private Button addBtn;
 	private Button remBtn;
 	private Button upBtn;
 	private Button downBtn;
+	private Button editBtn;
 
 	private List<IRouterDependenciesChangedListener> listeners = new ArrayList<IRouterDependenciesChangedListener>();
-	private Button editBtn;
+	private Button selectAll;
+	private Button deselectAll;
 
 	public RouterDependenciesPanel(Composite parent, int style, int type,
 			FormToolkit toolkit) {
-		super(parent, style);
+		super(parent, SWT.NONE);
 		this.type = type;
-		initialize(toolkit);
+		initialize(toolkit, style);
 	}
 
-	private void initialize(FormToolkit toolkit) {
+	private void initialize(FormToolkit toolkit, int style) {
 		setLayout(new GridLayout(2, false));
 		setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Table table = toolkit.createTable(this, SWT.BORDER | SWT.MULTI
-				| SWT.V_SCROLL | SWT.H_SCROLL);
+				| SWT.V_SCROLL | SWT.H_SCROLL | style);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(e.detail == SWT.CHECK){
+					((IDependencyItem)e.item.getData()).setChecked(((TableItem)e.item).getChecked());
+					fireDependenciesChangedListener();
+				}
+			}
+		});
+		table.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.stateMask == SWT.NONE) {
+					if (remBtn != null && remBtn.isEnabled()
+							&& e.keyCode == SWT.DEL) {
+						removeItems();
+					} else if (e.keyCode == SWT.INSERT) {
+						addNewItem();
+					} else if (editBtn != null && editBtn.isEnabled()
+							&& e.keyCode == SWT.F2) {
+						editSelected();
+					}
+				}
+			}
+		});
 
 		tableViewer = new RouterDependenciesTableViewer(table);
 		tableViewer.addSelectionChangedListener(this);
@@ -61,35 +96,44 @@ public class RouterDependenciesPanel extends Composite implements
 		layout.marginRight = 0;
 		bc.setLayout(layout);
 
-		addBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_addBtn, SWT.NONE);
-		addBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		addBtn.addSelectionListener(this);
+		if (type != IDependencyItem.CLASS_PATH) {
+			addBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_addBtn, SWT.NONE);
+			addBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			addBtn.addSelectionListener(this);
 
-		remBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_removeBtn, SWT.NONE);
-		remBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		remBtn.addSelectionListener(this);
-		remBtn.setEnabled(false);
-		
-		editBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_editBtn, SWT.NONE);
-		editBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		editBtn.setEnabled(false);
-		editBtn.addSelectionListener(this);
-		
-		if (type == IDependencyItem.CLASS_PATH) {
-			addBtn.setVisible(false);
-			remBtn.setVisible(false);
-			editBtn.setVisible(false);
+			remBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_removeBtn, SWT.NONE);
+			remBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			remBtn.addSelectionListener(this);
+			remBtn.setEnabled(false);
+
+			editBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_editBtn, SWT.NONE);
+			editBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			editBtn.setEnabled(false);
+			editBtn.addSelectionListener(this);
 		}
 		
-		upBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_upBtn, SWT.NONE);
-		upBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		upBtn.addSelectionListener(this);
-		upBtn.setEnabled(false);
-
-		downBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_downBtn, SWT.NONE);
-		downBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		downBtn.addSelectionListener(this);
-		downBtn.setEnabled(false);
+		if (type != IDependencyItem.EXPORT_PACKAGE && type != IDependencyItem.CLASS_PATH) {
+			upBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_upBtn, SWT.NONE);
+			upBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			upBtn.addSelectionListener(this);
+			upBtn.setEnabled(false);
+	
+			downBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_downBtn, SWT.NONE);
+			downBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			downBtn.addSelectionListener(this);
+			downBtn.setEnabled(false);
+		}
+		
+		if((style & SWT.CHECK) != 0){
+			selectAll = toolkit.createButton(bc, Messages.RouterDependenciesPanel_selectAll, SWT.NONE);
+			selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			selectAll.addSelectionListener(this);
+	
+			deselectAll = toolkit.createButton(bc, Messages.RouterDependenciesPanel_deselectAll, SWT.NONE);
+			deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			deselectAll.addSelectionListener(this);
+		}
+		
 	}
 
 	public RouterDependenciesTableViewer getTableViewer() {
@@ -118,25 +162,77 @@ public class RouterDependenciesPanel extends Composite implements
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if (e.getSource() == addBtn) {
-			NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
-					(List<?>) tableViewer.getInput(), getShell(), type);
-			int open = dialog.open();
-			if (open == Dialog.OK) {
-				addNewItem(dialog);
-			}
-		}else if(e.getSource() == remBtn){
+		if (addBtn != null && e.getSource() == addBtn) {
+			addNewItem();
+		}else if(remBtn !=null && e.getSource() == remBtn){
 			removeItems();
-		}else if(e.getSource() == upBtn){
+		}else if(upBtn != null && e.getSource() == upBtn){
 			moveUp();
-		}else if(e.getSource() == downBtn){
+		}else if(downBtn != null && e.getSource() == downBtn){
 			moveDown();
-		}else if(e.getSource() == editBtn){
+		}else if(editBtn != null && e.getSource() == editBtn){
 			editSelected();
+		}else if(deselectAll != null && e.getSource() == deselectAll){
+			deselectAll();
+		}else if(selectAll != null && e.getSource() == selectAll){
+			selectAll();
 		}
 	}
 
+	private void selectAll() {
+		List<?> input = (List<?>) getTableViewer().getInput();
+		for (Object o : input) {
+			if (o != null && o instanceof IDependencyItem) {
+				((IDependencyItem) o).setChecked(true);
+			}
+		}
+		TableItem[] items = getTableViewer().getTable().getItems();
+		for(TableItem ti:items){
+			ti.setChecked(true);
+		}
+		fireDependenciesChangedListener();
+	}
+
+	private void deselectAll() {
+		List<?> input = (List<?>) getTableViewer().getInput();
+		for (Object o : input) {
+			if (o != null && o instanceof IDependencyItem) {
+				((IDependencyItem) o).setChecked(false);
+			}
+		}
+		TableItem[] items = getTableViewer().getTable().getItems();
+		for(TableItem ti:items){
+			ti.setChecked(false);
+		}
+		fireDependenciesChangedListener();
+	}
+
 	private void editSelected() {
+		switch (type) {
+		case IDependencyItem.REQUIRE_BUNDLE:
+		case IDependencyItem.IMPORT_PACKAGE:
+			editRequiredItem();
+			break;
+		case IDependencyItem.EXPORT_PACKAGE:
+			editExportPackage();
+		default:
+			break;
+		}
+	}
+
+	private void editExportPackage() {
+		ExportPackage selected = (ExportPackage)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), selected);
+		if(Dialog.OK == dialog.open()){
+			ExportPackage exportPackage = dialog.getExportPackage();
+			selected.setName(exportPackage.getName());
+			selected.setVersion(exportPackage.getVersion());
+			tableViewer.update(selected, null);
+			fireDependenciesChangedListener();
+		}
+	}
+
+	private void editRequiredItem() {
 		OsgiDependencies<?> selected = (OsgiDependencies<?>)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
 				selected, getShell(), type);
@@ -233,7 +329,41 @@ public class RouterDependenciesPanel extends Composite implements
 		fireDependenciesChangedListener();
 	}
 
-	private void addNewItem(NewOrEditDependencyDialog dialog) {
+	private void addNewItem() {
+		switch (type) {
+		case IDependencyItem.IMPORT_PACKAGE:
+		case IDependencyItem.REQUIRE_BUNDLE:
+			addNewRequiredItem();
+			break;
+		case IDependencyItem.EXPORT_PACKAGE:
+			addNewExportPackage();
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void addNewExportPackage() {
+		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell());
+		if(Dialog.OK == dialog.open()){
+			ExportPackage exportPackage = dialog.getExportPackage();
+			List input = (List) tableViewer.getInput();
+			input.add(exportPackage);
+			tableViewer.refresh();
+			tableViewer.setSelection(new StructuredSelection(exportPackage));
+			tableViewer.getTable().showSelection();
+			tableViewer.getTable().setFocus();
+			fireDependenciesChangedListener();
+		}
+	}
+
+	private void addNewRequiredItem() {
+		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
+				(List<?>) tableViewer.getInput(), getShell(), type);
+		int open = dialog.open();
+		if (open != Dialog.OK) {
+			return;
+		}
 		OsgiDependencies addedItem = dialog.getDependencyItem();
 		List input = (List) tableViewer.getInput();
 		input.add(addedItem);
@@ -253,10 +383,14 @@ public class RouterDependenciesPanel extends Composite implements
 		IStructuredSelection selection = (IStructuredSelection) event
 				.getSelection();
 		if(selection == null || selection.isEmpty()){
-			remBtn.setEnabled(false);
-			upBtn.setEnabled(false);
-			downBtn.setEnabled(false);
-			editBtn.setEnabled(false);
+			if(remBtn !=null)
+				remBtn.setEnabled(false);
+			if(upBtn!=null)
+				upBtn.setEnabled(false);
+			if(downBtn!=null)
+				downBtn.setEnabled(false);
+			if(editBtn!=null)
+				editBtn.setEnabled(false);
 			return;
 		}
 		
@@ -284,24 +418,30 @@ public class RouterDependenciesPanel extends Composite implements
 			}
 		}
 
-		if (hasBuiltIn) {
-			remBtn.setEnabled(false);
-		} else {
-			remBtn.setEnabled(true);
+		if(remBtn!=null){
+			if (hasBuiltIn) {
+				remBtn.setEnabled(false);
+			} else {
+				remBtn.setEnabled(true);
+			}
 		}
 		
-		if (hasBuiltIn || selection.size() > 1) {
-			editBtn.setEnabled(false);
-		} else {
-			editBtn.setEnabled(true);
+		if(editBtn!=null){
+			if (hasBuiltIn || selection.size() > 1) {
+				editBtn.setEnabled(false);
+			} else {
+				editBtn.setEnabled(true);
+			}
 		}
 		
-		if(hasBuiltIn || selection.size()>1 || nonBuiltInCount < 2){
-			upBtn.setEnabled(false);
-			downBtn.setEnabled(false);
-		}else {
-			upBtn.setEnabled(true);
-			downBtn.setEnabled(true);
+		if(upBtn!=null && downBtn !=null){
+			if(hasBuiltIn || selection.size()>1 || nonBuiltInCount < 2){
+				upBtn.setEnabled(false);
+				downBtn.setEnabled(false);
+			}else {
+				upBtn.setEnabled(true);
+				downBtn.setEnabled(true);
+			}
 		}
 	}
 }

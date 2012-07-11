@@ -25,22 +25,35 @@ public class Messages extends NLS {
 	public static String NewDependencyItemDialog_nameIsNullMessage;
 	public static String NewDependencyItemDialog_optional;
 	public static String NewDependencyItemDialog_requireBundle;
+	public static String NewExportPackageDialog_addMsg;
+	public static String NewExportPackageDialog_addTitle;
+	public static String NewExportPackageDialog_dialogTitle;
+	public static String NewExportPackageDialog_editMsg;
+	public static String NewExportPackageDialog_editTitle;
+	public static String NewExportPackageDialog_name;
+	public static String NewExportPackageDialog_nameNullError;
+	public static String NewExportPackageDialog_version;
+	public static String NewExportPackageDialog_versionInvalidError;
 	public static String NewOrEditDependencyDialog_nameInvalidMsg;
 	public static String RelativeEditorsSaveDialog_saveEditorsMsg;
 	public static String RelativeEditorsSaveDialog_saveEditorsTitle;
 	public static String RouterDependenciesEditor_classpathSec;
+	public static String RouterDependenciesEditor_exportPackage;
 	public static String RouterDependenciesEditor_filterLabel;
 	public static String RouterDependenciesEditor_hideBuiltInItems;
 	public static String RouterDependenciesEditor_importPackageSec;
+	public static String RouterDependenciesEditor_KeyBindingw;
 	public static String RouterDependenciesEditor_refreshDependenciesTooltip;
 	public static String RouterDependenciesEditor_refreshing;
 	public static String RouterDependenciesEditor_requireBundleSec;
 	public static String RouterDependenciesPanel_addBtn;
 	public static String RouterDependenciesPanel_deleteMsg;
 	public static String RouterDependenciesPanel_deleteTitle;
+	public static String RouterDependenciesPanel_deselectAll;
 	public static String RouterDependenciesPanel_downBtn;
 	public static String RouterDependenciesPanel_editBtn;
 	public static String RouterDependenciesPanel_removeBtn;
+	public static String RouterDependenciesPanel_selectAll;
 	public static String RouterDependenciesPanel_upBtn;
 	static {
 		// initialize resource bundle

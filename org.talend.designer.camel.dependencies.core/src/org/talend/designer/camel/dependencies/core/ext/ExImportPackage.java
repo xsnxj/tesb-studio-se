@@ -1,13 +1,9 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class ExImportPackage extends AbstractExPredicator<ImportPackage> {
+public class ExImportPackage extends AbstractExPredicator<ImportPackage, ImportPackage> {
 
 	private String packageName;
 	private String minVersion;
@@ -33,11 +29,9 @@ public class ExImportPackage extends AbstractExPredicator<ImportPackage> {
 		this.isOptional = isOptional;
 	}
 
-	protected Set<ImportPackage> to(NodeType t) {
+	protected ImportPackage to(NodeType t) {
 		ImportPackage importPackage = toTargetIgnorePredicates();
-		Set<ImportPackage> s = new HashSet<ImportPackage>();
-		s.add(importPackage);
-		return Collections.unmodifiableSet(s);
+		return importPackage;
 	}
 
 	@Override

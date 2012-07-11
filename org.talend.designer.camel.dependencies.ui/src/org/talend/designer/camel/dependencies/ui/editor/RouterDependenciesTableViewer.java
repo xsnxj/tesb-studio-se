@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
+import org.talend.designer.camel.dependencies.core.model.ImportPackage;
+import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
 
 public class RouterDependenciesTableViewer extends TableViewer implements
@@ -84,22 +86,24 @@ public class RouterDependenciesTableViewer extends TableViewer implements
 
 		// set font and foreground for builtIn item
 		Object data = ti.getData();
-		if (data != null && data instanceof IDependencyItem
-				&& ((IDependencyItem) data).isBuiltIn()) {
-			TableItem[] selection = getTable().getSelection();
-			boolean isSelected = false;
-			for (TableItem i : selection) {
-				if (ti == i) {
-					isSelected = true;
-					break;
+		if (data != null && data instanceof IDependencyItem){
+			if( ((IDependencyItem) data).isBuiltIn()) {
+				TableItem[] selection = getTable().getSelection();
+				boolean isSelected = false;
+				for (TableItem i : selection) {
+					if (ti == i) {
+						isSelected = true;
+						break;
+					}
 				}
+				if (isSelected) {
+					gc.setForeground(selectedFc);
+				} else {
+					gc.setForeground(builtInFc);
+				}
+				gc.setFont(builtInFont);
 			}
-			if (isSelected) {
-				gc.setForeground(selectedFc);
-			} else {
-				gc.setForeground(builtInFc);
-			}
-			gc.setFont(builtInFont);
+			ti.setChecked(((IDependencyItem)data).isChecked());
 		}
 
 		// draw image
@@ -187,11 +191,19 @@ public class RouterDependenciesTableViewer extends TableViewer implements
 			if (element instanceof IDependencyItem) {
 				switch (((IDependencyItem) element).getType()) {
 				case IDependencyItem.IMPORT_PACKAGE:
-					return UIActivator.getImage(UIActivator.IMPORT_PKG_ICON);
+					if (((ImportPackage) element).isOptional()) {
+						return UIActivator.getImage(UIActivator.IMPORT_PACKAGE_OVERLAY_ICON);
+					} else
+						return UIActivator.getImage(UIActivator.IMPORT_PKG_ICON);
 				case IDependencyItem.REQUIRE_BUNDLE:
-					return UIActivator.getImage(UIActivator.REQUIRE_BD_ICON);
+					if (((RequireBundle) element).isOptional()) {
+						return UIActivator.getImage(UIActivator.REQUIRE_BUNDLE_OVERLAY_ICON);
+					} else
+						return UIActivator.getImage(UIActivator.REQUIRE_BD_ICON);
 				case IDependencyItem.CLASS_PATH:
 					return UIActivator.getImage(UIActivator.BUNDLE_CP_ICON);
+				case IDependencyItem.EXPORT_PACKAGE:
+					return UIActivator.getImage(UIActivator.IMPORT_PKG_ICON);
 				default:
 					break;
 				}

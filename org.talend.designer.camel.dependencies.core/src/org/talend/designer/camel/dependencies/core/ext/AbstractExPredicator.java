@@ -1,6 +1,5 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -9,7 +8,7 @@ import org.eclipse.emf.common.util.EList;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public abstract class AbstractExPredicator<T> {
+public abstract class AbstractExPredicator<T, K> {
 
 	private Set<ExPredicate> predicates = new HashSet<ExPredicate>();
 
@@ -49,14 +48,14 @@ public abstract class AbstractExPredicator<T> {
 		return true;
 	}
 
-	public Set<T> toTargets(NodeType t) {
+	public T toTargets(NodeType t) {
 		if (satisfy(t)) {
 			return to(t);
 		}
-		return Collections.emptySet();
+		return null;
 	}
 
-	protected abstract Set<T> to(NodeType t);
+	protected abstract T to(NodeType t);
 	
 	/**
 	 * only used to Import-Package and Require-Bundle
@@ -64,5 +63,5 @@ public abstract class AbstractExPredicator<T> {
 	 * all predicates will be ignore
 	 * @return
 	 */
-	public abstract T toTargetIgnorePredicates();
+	public abstract K toTargetIgnorePredicates();
 }

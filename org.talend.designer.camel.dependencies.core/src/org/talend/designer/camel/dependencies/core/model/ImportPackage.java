@@ -1,5 +1,6 @@
 package org.talend.designer.camel.dependencies.core.model;
 
+
 public class ImportPackage extends OsgiDependencies<ImportPackage> {
 
 	public ImportPackage() {
@@ -16,25 +17,25 @@ public class ImportPackage extends OsgiDependencies<ImportPackage> {
 
 	@Override
 	protected void parse(String inputString) {
-		String[] split = inputString.split(";");
+		String[] split = inputString.split(";"); //$NON-NLS-1$
 		setName(split[0]);
 		if(split.length<=1){
 			return;
 		}
 		for(int i = 1;i<split.length;i++){
 			String s = split[i];
-			if("resolution:=optional".equals(s)){
+			if("resolution:=optional".equals(s)){ //$NON-NLS-1$
 				setOptional(true);
-			}else if(s.startsWith("version=")){
+			}else if(s.startsWith("version=")){ //$NON-NLS-1$
 				parseVersions(s);
 			}
 		}
 	}
 	
 	private void parseVersions(String input) {
-		int firstQuote = input.indexOf("\"");
-		int lastQuote = input.lastIndexOf("\"");
-		int commaIndex = input.indexOf(",");
+		int firstQuote = input.indexOf("\""); //$NON-NLS-1$
+		int lastQuote = input.lastIndexOf("\""); //$NON-NLS-1$
+		int commaIndex = input.indexOf(","); //$NON-NLS-1$
 		if(commaIndex == -1){
 			setMinVersion(input.substring(firstQuote+1, lastQuote));
 		}else{
@@ -54,23 +55,23 @@ public class ImportPackage extends OsgiDependencies<ImportPackage> {
 		sb.append(name);
 
 		if (minVersion != null && maxVersion != null) {
-			sb.append(";version=\"[");
+			sb.append(";version=\"["); //$NON-NLS-1$
 			sb.append(minVersion);
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 			sb.append(maxVersion);
-			sb.append(")\"");
+			sb.append(")\""); //$NON-NLS-1$
 		} else if (minVersion != null) {
-			sb.append(";version=\"");
+			sb.append(";version=\""); //$NON-NLS-1$
 			sb.append(minVersion);
-			sb.append("\"");
+			sb.append("\""); //$NON-NLS-1$
 		} else if (maxVersion != null) {
-			sb.append(";version=\"");
+			sb.append(";version=\""); //$NON-NLS-1$
 			sb.append(maxVersion);
-			sb.append("\"");
+			sb.append("\""); //$NON-NLS-1$
 		}
 
 		if (isOptional) {
-			sb.append(";resolution:=optional");
+			sb.append(";resolution:=optional"); //$NON-NLS-1$
 		}
 
 		return sb.toString();

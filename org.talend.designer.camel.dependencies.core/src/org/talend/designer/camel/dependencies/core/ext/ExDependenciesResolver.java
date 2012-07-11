@@ -8,7 +8,9 @@ import org.eclipse.emf.common.util.EList;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.dependencies.core.Messages;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
+import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -19,9 +21,11 @@ public class ExDependenciesResolver {
 	private EList<?> nodes;
 
 	private Set<BundleClasspath> classpaths = new HashSet<BundleClasspath>();
-	private Set<ImportPackage> packages = new HashSet<ImportPackage>();
+	private Set<ImportPackage> importPackages = new HashSet<ImportPackage>();
 	private Set<RequireBundle> bundles = new HashSet<RequireBundle>();
+	private Set<ExportPackage> exportPackages = new HashSet<ExportPackage>();
 	private ProcessItem item;
+
 
 	public ExDependenciesResolver(ProcessItem item) {
 		this.item = item;
@@ -41,11 +45,15 @@ public class ExDependenciesResolver {
 		Set<ExImportPackage> importPackagesForAll = ExtensionPointsReader.INSTANCE.getImportPackagesForAll();
 		
 		for(ExRequireBundle rb: requireBundlesForAll){
-			bundles.add(rb.toTargetIgnorePredicates());
+			RequireBundle target = rb.toTargetIgnorePredicates();
+			target.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
+			bundles.add(target);
 		}
 		
 		for(ExImportPackage ip: importPackagesForAll){
-			packages.add(ip.toTargetIgnorePredicates());
+			ImportPackage target = ip.toTargetIgnorePredicates();
+			target.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
+			importPackages.add(target);
 		}
 
 		String projectFolderName = JavaResourcesHelper.getProjectFolderName(item);
@@ -54,31 +62,86 @@ public class ExDependenciesResolver {
 				continue;
 			}
 			NodeType n = (NodeType) o;
+			String uniqueName = ""; //$NON-NLS-1$
+			for (Object obj : n.getElementParameter()) {
+				ElementParameterType cpType = (ElementParameterType) obj;
+				if ("UNIQUE_NAME".equals(cpType.getName())) { //$NON-NLS-1$
+					uniqueName = cpType.getValue();
+					break;
+				}
+			}
+			
 			String componentName = n.getComponentName();
 			Set<ExBundleClasspath> bcs = exClasspaths.get(componentName);
 			if (bcs != null) {
 				for (ExBundleClasspath bc : bcs) {
 					Set<BundleClasspath> targets = bc.toTargets(n);
-					classpaths.addAll(targets);
+					if(targets == null){
+						continue;
+					}
+					BundleClasspath[] array = classpaths.toArray(new BundleClasspath[0]);
+					for(BundleClasspath bcp: targets){
+						boolean found = false;
+						for(BundleClasspath obj :array){
+							if(obj!=null && obj.equals(bcp)){
+								bcp = obj;
+								found = true;
+							}
+						}
+						if(bcp != null){
+							bcp.addRelativeComponent(uniqueName);
+						}
+						if(!found){
+							classpaths.add(bcp);
+						}
+					}
 				}
 			}
 			Set<ExImportPackage> ips = exImportPackages.get(componentName);
 			if (ips != null) {
 				for (ExImportPackage ip : ips) {
-					Set<ImportPackage> targets = ip.toTargets(n);
-					packages.addAll(targets);
+					ImportPackage target = ip.toTargets(n);
+					if(target == null){
+						continue;
+					}
+					ImportPackage[] array = importPackages.toArray(new ImportPackage[0]);
+					boolean found = false;
+					for(ImportPackage obj :array){
+						if(obj!=null && obj.equals(target)){
+							target = obj;
+							found = true;
+						}
+					}
+					target.addRelativeComponent(uniqueName);
+					if(!found){
+						importPackages.add(target);
+					}
 				}
 			}
 
 			Set<ExRequireBundle> rbs = exRequireBundles.get(componentName);
 			if (rbs != null) {
 				for (ExRequireBundle rb : rbs) {
-					Set<RequireBundle> targets = rb.toTargets(n);
-					bundles.addAll(targets);
+					RequireBundle target = rb.toTargets(n);
+					if(target == null){
+						continue;
+					}
+					RequireBundle[] array = bundles.toArray(new RequireBundle[0]);
+					boolean found = false;
+					for(RequireBundle obj :array){
+						if(obj!=null && obj.equals(target)){
+							target = obj;
+							found = true;
+						}
+					}
+					target.addRelativeComponent(uniqueName);
+					if(!found){
+						bundles.add(target);
+					}
 				}
 			}
 			
-			if("cTalendJob".equals(componentName)){
+			if("cTalendJob".equals(componentName)){ //$NON-NLS-1$
 				String jobId = null;
 				String jobVersion = null;
 				String jobName = null;
@@ -89,23 +152,23 @@ public class ExDependenciesResolver {
 					}
 					ElementParameterType ept = (ElementParameterType) p;
 					String eptName = ept.getName();
-					if ("FROM_EXTERNAL_JAR".equals(eptName)
-							&& "true".equals(ept.getValue())) {
+					if ("FROM_EXTERNAL_JAR".equals(eptName) //$NON-NLS-1$
+							&& "true".equals(ept.getValue())) { //$NON-NLS-1$
 						jobName = null;
 						break ;
 					}
-					if (jobId == null && "SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) {
+					if (jobId == null && "SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) { //$NON-NLS-1$
 						jobId = ept.getValue();
 					}
-					if (jobVersion == null && "SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) {
+					if (jobVersion == null && "SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) { //$NON-NLS-1$
 						jobVersion = ept.getValue();
 					}
-					if(jobName==null && "SELECTED_JOB_NAME".equals(eptName)){
+					if(jobName==null && "SELECTED_JOB_NAME".equals(eptName)){ //$NON-NLS-1$
 						jobName = ept.getValue();
 					}
 				}
 
-				if("Latest".equals(jobVersion)&& jobId!=null){
+				if("Latest".equals(jobVersion)&& jobId!=null){ //$NON-NLS-1$
 					try {
 						jobVersion = ProxyRepositoryFactory.getInstance().getLastVersion(jobId).getVersion();
 					} catch (Exception e) {
@@ -116,10 +179,27 @@ public class ExDependenciesResolver {
 			        String jobFolderName = JavaResourcesHelper.getJobFolderName(jobName, jobVersion);
 					ImportPackage importPackage = new ImportPackage();
 					importPackage.setBuiltIn(true);
-					importPackage.setName(projectFolderName+"."+jobFolderName);
-					packages.add(importPackage);
+					importPackage.setName(projectFolderName+"."+jobFolderName); //$NON-NLS-1$
+					importPackage.addRelativeComponent(uniqueName);
+					importPackages.add(importPackage);
 				}
 			}
+		}
+		
+		String version = item.getProperty().getVersion();
+		if("Latest".equals(version)){ //$NON-NLS-1$
+			try {
+				version = ProxyRepositoryFactory.getInstance().getLastVersion(item.getProperty().getId()).getVersion();
+			} catch (Exception e) {
+			}
+		}
+		if (version!=null) {
+	        String routePackageName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), version);
+			ExportPackage exportPackage = new ExportPackage();
+			exportPackage.setName(projectFolderName+"."+routePackageName); //$NON-NLS-1$
+			exportPackage.setBuiltIn(true);
+			exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
+			exportPackages.add(exportPackage);
 		}
 
 		exClasspaths = null;
@@ -140,7 +220,11 @@ public class ExDependenciesResolver {
 	}
 
 	public ImportPackage[] getImportPackages() {
-		return packages.toArray(new ImportPackage[0]);
+		return importPackages.toArray(new ImportPackage[0]);
+	}
+	
+	public ExportPackage[] getExportPackages() {
+		return exportPackages.toArray(new ExportPackage[0]);
 	}
 
 }

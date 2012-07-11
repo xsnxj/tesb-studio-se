@@ -2,6 +2,8 @@ package org.talend.designer.camel.dependencies.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -24,6 +26,9 @@ public class UIActivator extends AbstractUIPlugin {
 	public static final String REFRESH_ICON = "icons/refresh.gif"; //$NON-NLS-1$
 	public static final String GRAY_REM_ICON = "icons/gray_rem.gif"; //$NON-NLS-1$
 	public static final String HIGHLIGHT_REM_ICON = "icons/highlight_rem.gif"; //$NON-NLS-1$
+	public static final String OPTIONAL_OVERLAY_ICON = "icons/optional.gif"; //$NON-NLS-1$
+	public static final String IMPORT_PACKAGE_OVERLAY_ICON = "IMPORT_PACKAGE_OVERLAY_ICON"; //$NON-NLS-1$
+	public static final String REQUIRE_BUNDLE_OVERLAY_ICON = "REQUIRE_BUNDLE_OVERLAY_ICON"; //$NON-NLS-1$
 	/**
 	 * The constructor
 	 */
@@ -73,6 +78,18 @@ public class UIActivator extends AbstractUIPlugin {
 				.createImage());
 		reg.put(HIGHLIGHT_REM_ICON, getImageDescriptor(HIGHLIGHT_REM_ICON)
 				.createImage());
+		reg.put(OPTIONAL_OVERLAY_ICON, getImageDescriptor(OPTIONAL_OVERLAY_ICON)
+				.createImage());
+		reg.put(IMPORT_PACKAGE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(IMPORT_PKG_ICON)));
+		reg.put(REQUIRE_BUNDLE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(REQUIRE_BD_ICON)));
+	}
+	
+	private static Image getOptionalOverlayIcon(Image base) {
+		DecorationOverlayIcon decorationOverlayIcon = new DecorationOverlayIcon(
+				base, getImageDescriptor(UIActivator.OPTIONAL_OVERLAY_ICON),
+				IDecoration.TOP_LEFT);
+		return decorationOverlayIcon.createImage();
+
 	}
 
 	public static ImageDescriptor getImageDescriptor(String key) {

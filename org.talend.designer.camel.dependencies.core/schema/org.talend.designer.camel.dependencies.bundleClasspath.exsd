@@ -111,6 +111,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="checked" type="boolean">
+            <annotation>
+               <documentation>
+                  true by default
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

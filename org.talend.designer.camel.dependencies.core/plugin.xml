@@ -180,6 +180,7 @@
          point="org.talend.designer.camel.dependencies.bundleClasspath">
       <classpath
             attributeName="DRIVER_JAR"
+            checked="false"
             componentName="cConfig">
       </classpath>
       <classpath

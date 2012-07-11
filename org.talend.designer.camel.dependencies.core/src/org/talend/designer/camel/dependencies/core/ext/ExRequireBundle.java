@@ -1,13 +1,9 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class ExRequireBundle extends AbstractExPredicator<RequireBundle> {
+public class ExRequireBundle extends AbstractExPredicator<RequireBundle, RequireBundle> {
 
 	private String bundleName;
 	private String minVersion;
@@ -33,11 +29,9 @@ public class ExRequireBundle extends AbstractExPredicator<RequireBundle> {
 		this.isOptional = isOptional;
 	}
 
-	protected Set<RequireBundle> to(NodeType t) {
+	protected RequireBundle to(NodeType t) {
 		RequireBundle requireBundle = toTargetIgnorePredicates();
-		Set<RequireBundle> s = new HashSet<RequireBundle>();
-		s.add(requireBundle);
-		return Collections.unmodifiableSet(s);
+		return requireBundle;
 	}
 	
 	@Override

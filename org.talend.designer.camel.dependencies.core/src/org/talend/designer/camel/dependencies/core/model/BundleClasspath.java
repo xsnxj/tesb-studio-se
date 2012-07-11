@@ -1,26 +1,25 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-public class BundleClasspath implements IDependencyItem {
 
-	private String path = null;
+public class BundleClasspath extends AbstractDependencyItem {
 
-	private boolean isBuiltIn = false;
-
-	public void setBuiltIn(boolean isBuiltIn) {
-		this.isBuiltIn = isBuiltIn;
+	public BundleClasspath(){
+	}
+	
+	public BundleClasspath(String input) {
+		parse(input);
 	}
 
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	@Override
-	public boolean isBuiltIn() {
-		return isBuiltIn;
+	protected void parse(String inputString) {
+		String[] split = inputString.split(";"); //$NON-NLS-1$
+		setName(split.length < 1 ? null : split[0]);
+		if (split.length <= 1) {
+			return;
+		}
+		try {
+			setChecked(Boolean.parseBoolean(split[1]));
+		} catch (Exception e) {
+		}
 	}
 
 	@Override
@@ -34,33 +33,41 @@ public class BundleClasspath implements IDependencyItem {
 		if (!(obj instanceof BundleClasspath)) {
 			return false;
 		}
-		if (path == null) {
+		if (name == null) {
 			return false;
 		}
-		return path.equals(((BundleClasspath) obj).getPath());
+		return name.equals(((BundleClasspath) obj).getName());
 	}
 
 	@Override
 	public int hashCode() {
-		return path == null ? super.hashCode() : path.hashCode();
+		return name == null ? super.hashCode() : name.hashCode();
 	}
 
-	public boolean isValid() {
-		return path != null;
+	public int isValid() {
+		if(name == null || name.equals("")){ //$NON-NLS-1$
+			return NAME_NULL;
+		}
+		return OK;
 	}
 
 	@Override
 	public String getLabel() {
-		return path;
+		return name;
 	}
 
 	@Override
 	public String toString() {
-		return path;
+		return name;
 	}
 
 	@Override
 	public int getType() {
 		return CLASS_PATH;
+	}
+
+	@Override
+	public boolean strictEqual(Object obj) {
+		return equals(obj);
 	}
 }

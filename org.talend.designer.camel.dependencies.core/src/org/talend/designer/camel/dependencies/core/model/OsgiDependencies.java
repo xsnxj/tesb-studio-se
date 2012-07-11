@@ -1,26 +1,11 @@
 package org.talend.designer.camel.dependencies.core.model;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements IDependencyItem {
+public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends AbstractDependencyItem{
 	protected String minVersion = null;
 	protected String maxVersion = null;
 	protected boolean isOptional = false;
-	// import-package name or require-bundle name
-	protected String name = null;
-
-	// indicate the dependency is built-in or user added
-	private boolean isBuiltIn = false;
-
-	// version regular expression
-	protected static final String VERSION_REGEX = "\\d+\\.\\d+\\.\\d(\\.(\\w|-|_)+)?";
-	
-	// name regular expression
-	private static final String NAME_PATTERN = "[^\\s;=\"\\[\\]\\(\\),:|]+";
-
-	private Pattern versionPattern = Pattern.compile(VERSION_REGEX);
-	private Pattern namePattern = Pattern.compile(NAME_PATTERN);
 
 	public OsgiDependencies(){
 	}
@@ -41,14 +26,6 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	}
 	
 	protected abstract void parse(String inputString);
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
 
 	public void setMinVersion(String minVersion) {
 		this.minVersion = normalizeVersion(minVersion);
@@ -74,14 +51,6 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 		this.isOptional = isOptional;
 	}
 
-	public void setBuiltIn(boolean isBuiltIn) {
-		this.isBuiltIn = isBuiltIn;
-	}
-
-	public boolean isBuiltIn() {
-		return isBuiltIn;
-	}
-
 	/**
 	 * only care about the name, ignore others
 	 */
@@ -101,6 +70,18 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 		}
 		return name.equals(((OsgiDependencies<?>) obj).getName());
 	}
+	
+	@Override
+	public boolean strictEqual(Object obj) {
+		if(!equals(obj)){
+			return false;
+		}
+		OsgiDependencies<?> o = (OsgiDependencies<?>) obj;
+		if(minVersion == o.getMinVersion() && maxVersion == o.getMaxVersion()){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * only care about name
@@ -110,37 +91,6 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 		return name == null ? super.hashCode() : name.hashCode();
 	}
 
-	/**
-	 * normalize the version to "*.*.*" if it is not.
-	 * 
-	 * @param version
-	 * @return
-	 */
-	protected String normalizeVersion(String version) {
-		if (version == null || version.trim().equals(""))
-			return null;
-		int dotCount = 0;
-		int length = version.length();
-		for (int i = 0; i < length; i++) {
-			if ('.' == version.charAt(i)) {
-				dotCount++;
-			}
-		}
-		dotCount = 2 - dotCount;
-		if (dotCount == 0) {
-			return version;
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(version);
-		for (int i = 0; i < dotCount; i++) {
-			sb.append(".0");
-		}
-		return sb.toString();
-	}
-
-	public static final int OK = 0;
-	public static final int NAME_NULL = 1;
-	public static final int NAME_INVALID = 2;
 	public static final int MIN_INVALID = 4;
 	public static final int MAX_INVALID = 8;
 	public static final int MIN_MAX_INVALID = 16;
@@ -153,7 +103,7 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	 *         {@link #MAX_INVALID} {@link #MIN_MAX_INVALID}
 	 */
 	public int isValid() {
-		if (name == null || name.trim().equals("")) {
+		if (name == null || name.trim().equals("")) { //$NON-NLS-1$
 			return NAME_NULL;
 		}
 		
@@ -161,14 +111,14 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 			return NAME_INVALID;
 		}
 		
-		if (minVersion != null && !minVersion.trim().equals("")) {
+		if (minVersion != null && !minVersion.trim().equals("")) { //$NON-NLS-1$
 			Matcher matcher = versionPattern.matcher(minVersion);
 			if (!matcher.matches()) {
 				return MIN_INVALID;
 			}
 		}
 
-		if (maxVersion != null && !maxVersion.trim().equals("")) {
+		if (maxVersion != null && !maxVersion.trim().equals("")) { //$NON-NLS-1$
 			Matcher matcher = versionPattern.matcher(maxVersion);
 			if (!matcher.matches()) {
 				return MAX_INVALID;
@@ -182,11 +132,11 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 	}
 
 	private boolean compareMinMax() {
-		if (maxVersion == null || maxVersion.trim().equals("") || minVersion == null || minVersion.trim().equals("")) {
+		if (maxVersion == null || maxVersion.trim().equals("") || minVersion == null || minVersion.trim().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
-		String[] maxSplit = maxVersion.split("\\.");
-		String[] minSplit = minVersion.split("\\.");
+		String[] maxSplit = maxVersion.split("\\."); //$NON-NLS-1$
+		String[] minSplit = minVersion.split("\\."); //$NON-NLS-1$
 		for (int i = 0; i < 3; i++) {
 			try {
 				if (Integer.parseInt(maxSplit[i])
@@ -205,24 +155,30 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> implements
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		if (minVersion != null && maxVersion != null) {
-			sb.append("[");
+			sb.append(" ["); //$NON-NLS-1$
 			sb.append(minVersion);
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 			sb.append(maxVersion);
-			sb.append(")");
+			sb.append(")"); //$NON-NLS-1$
 		} else if (minVersion != null) {
-			sb.append("(");
+			sb.append(" ("); //$NON-NLS-1$
 			sb.append(minVersion);
-			sb.append(")");
+			sb.append(")"); //$NON-NLS-1$
 		} else if (maxVersion != null) {
-			sb.append("(");
+			sb.append(" ("); //$NON-NLS-1$
 			sb.append(maxVersion);
-			sb.append(")");
+			sb.append(")"); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}
 	
 //	public static void main(String[] args) {
+//		ImportPackage importPackage = new ImportPackage();
+//		importPackage.setName("aa");
+//		ImportPackage importPackage2 = new ImportPackage();
+//		importPackage2.setName("aa");
+//		importPackage.setMinVersion("1");
+//		System.out.println(importPackage.strictEqual(importPackage2));
 //		Pattern compile = Pattern.compile(NAME_PATTERN);
 //		Matcher matcher = compile.matcher("aA.aaa.bb");
 //		System.out.println(matcher.matches()==true);
