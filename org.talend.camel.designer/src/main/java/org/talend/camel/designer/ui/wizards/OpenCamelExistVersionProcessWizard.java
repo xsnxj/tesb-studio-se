@@ -104,7 +104,10 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
 
     @Override
     public boolean performCancel() {
-        restoreVersion();
+        // fix for http://jira.talendforge.org/browse/TESB-5928
+        if (!alreadyEditedByUser) {
+            restoreVersion();
+        }
         return super.performCancel();
     }
 
@@ -292,7 +295,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
         return this.originalVersion;
     }
 
-    public void restoreVersion() {
+    private void restoreVersion() {
         getProperty().setVersion(getOriginVersion());
     }
 
