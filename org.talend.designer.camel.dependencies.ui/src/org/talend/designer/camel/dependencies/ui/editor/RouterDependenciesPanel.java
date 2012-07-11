@@ -180,23 +180,38 @@ public class RouterDependenciesPanel extends Composite implements
 	}
 
 	private void selectAll() {
+		boolean hasChanged = false;
 		List<?> input = (List<?>) getTableViewer().getInput();
 		for (Object o : input) {
 			if (o != null && o instanceof IDependencyItem) {
+				if(((IDependencyItem)o).isChecked()){
+					continue;
+				}
+				hasChanged = true;
 				((IDependencyItem) o).setChecked(true);
 			}
 		}
 		TableItem[] items = getTableViewer().getTable().getItems();
 		for(TableItem ti:items){
+			if(ti.getChecked()){
+				continue;
+			}
 			ti.setChecked(true);
 		}
-		fireDependenciesChangedListener();
+		if(hasChanged){
+			fireDependenciesChangedListener();
+		}
 	}
 
 	private void deselectAll() {
+		boolean hasChanged = false;
 		List<?> input = (List<?>) getTableViewer().getInput();
 		for (Object o : input) {
 			if (o != null && o instanceof IDependencyItem) {
+				if(!((IDependencyItem)o).isChecked()){
+					continue;
+				}
+				hasChanged = true;
 				((IDependencyItem) o).setChecked(false);
 			}
 		}
@@ -204,7 +219,9 @@ public class RouterDependenciesPanel extends Composite implements
 		for(TableItem ti:items){
 			ti.setChecked(false);
 		}
-		fireDependenciesChangedListener();
+		if(hasChanged){
+			fireDependenciesChangedListener();
+		}
 	}
 
 	private void editSelected() {
