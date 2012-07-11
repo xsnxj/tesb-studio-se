@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.generator;
 
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
@@ -66,8 +65,8 @@ public class RouteResourceChangeCommand extends PropertyChangeCommand {
 			if (parentPaths != null && !parentPaths.isEmpty()) {
 				label = parentPaths + "/" + label;
 			}
-			label = "classpath:" + RouteResourceItem.ROUTE_RESOURCES_FOLDER
-					+ "/" + label;
+			// http://jira.talendforge.org/browse/TESB-6437
+			label = "classpath:" + label;
 			uriParam.setValue(label);
 			RelationshipItemBuilder.getInstance().addOrUpdateItem(item);
 		} catch (Exception e) {
