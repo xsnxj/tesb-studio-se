@@ -35,7 +35,7 @@ public abstract class AbstractExPredicator<T, K> {
 					if (value == null) {
 						return false;
 					} else {
-						if (!Pattern.matches(attributeValue, value)) {
+						if (!Pattern.matches(attributeValue, value.trim())) {
 							return false;
 						}
 

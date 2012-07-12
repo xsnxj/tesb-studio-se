@@ -175,6 +175,17 @@
       <importPackage
             packageName="routines.system.api">
       </importPackage>
+      <component
+            componentName="cMessagingEndpoint">
+         <importPackage
+               packageName="org.apache.camel.component.jetty">
+            <predicate
+                  attributeName="URI"
+                  attributeValue="&quot;jetty:https(.)+"
+                  regex="true">
+            </predicate>
+         </importPackage>
+      </component>
    </extension>
    <extension
          point="org.talend.designer.camel.dependencies.bundleClasspath">
