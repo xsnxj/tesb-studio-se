@@ -94,10 +94,11 @@ public class KarFileGenerator {
 			featuresModel.setContexts(getContextsMap(repositoryNode));
 
 			featuresModel.addSubBundle(bundleModel);
-			String[][] subFeatures = getSubFeatures(repositoryNode);
-			for (String[] fm : subFeatures) {
-				featuresModel.addSubFeature(fm[0], fm[1]);
-			}
+
+			// http://jira.talendforge.org/browse/TESB-6311, add sub-features
+			// and bundles, Xiaopeng Li
+			CamelFeatureUtil.addFeatureAndBundles(routerNode, featuresModel);
+
 		}
 
 		byte[] featureContent = featuresModel.toString().getBytes();
@@ -139,10 +140,6 @@ public class KarFileGenerator {
 			}
 		}
 		return contextValues;
-	}
-
-	private static String[][] getSubFeatures(RepositoryNode node) {
-		return CamelFeatureUtil.getFeaturesByNode(node);
 	}
 
 }

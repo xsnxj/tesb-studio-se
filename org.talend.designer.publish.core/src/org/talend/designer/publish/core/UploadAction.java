@@ -24,10 +24,10 @@ public class UploadAction {
 		this.password = password;
 	}
 
-	public boolean deployRoute(String configName, Map<String, Map<String, String>> contexts,
+	public boolean deployJob(String configName, Map<String, Map<String, String>> contexts,
 			String jarFilePath, String groupId, String artifactId,
 			String version, Set<DependencyModel> dependencies) throws Exception {
-		return deployRoute(configName, contexts, new File(jarFilePath),
+		return deployJob(configName, contexts, new File(jarFilePath),
 				groupId, artifactId, version, dependencies);
 	}
 
@@ -48,14 +48,12 @@ public class UploadAction {
 	public boolean deployRoute(String configName,
 			Map<String, Map<String, String>> contexts, String jarFilePath,
 			String groupId, String artifactId, String version,
-			Set<DependencyModel> dependencies, String[][] features)
+			Set<DependencyModel> dependencies, FeaturesModel featuresModel)
 			throws Exception {
 		BundleModel bundleModel = new BundleModel(new File(jarFilePath),
 				groupId, artifactId, version, repositoryUrl, username, password);
 		deployBundle(bundleModel);
 
-		FeaturesModel featuresModel = new FeaturesModel(groupId, artifactId,
-				version, repositoryUrl, username, password);
 		featuresModel.setConfigName(configName);
 		featuresModel.setContexts(contexts);
 		featuresModel.addSubBundle(bundleModel);
@@ -63,15 +61,11 @@ public class UploadAction {
 		featuresModel.addSubFeature(JOB_CONTROLLER_FEATURE,
 				JOB_CONTROLLER_VERSION);
 
-		for (String[] feature : features) {
-			featuresModel.addSubFeature(feature[0], feature[1]);
-		}
-
 		deployFeatures(featuresModel);
 		return true;
 	}
 
-	private boolean deployRoute(String configName, Map<String, Map<String, String>> contexts,
+	private boolean deployJob(String configName, Map<String, Map<String, String>> contexts,
 			File jarFile, String groupId, String artifactId, String version,
 			Set<DependencyModel> dependencies) throws Exception {
 		BundleModel bundleModel = new BundleModel(jarFile, groupId, artifactId,

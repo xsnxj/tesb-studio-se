@@ -30,6 +30,11 @@ public class BundleModel extends UploadableModel {
 		this.jarFile = model.jarFile;
 	}
 
+	// http://jira.talendforge.org/browse/TESB-6311
+	public BundleModel(String groupId, String artifactId, String version) {
+		this(null, groupId, artifactId, version, null, null, null);
+	}
+
 	@Override
 	public void upload() throws Exception {
 		uploadBundle();

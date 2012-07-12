@@ -13,12 +13,13 @@
 package org.talend.camel.designer.util;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -31,10 +32,12 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.editor.process.Process;
+import org.talend.designer.publish.core.models.BundleModel;
+import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.RepositoryNode;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * Camel component feature
@@ -52,28 +55,28 @@ public final class CamelFeatureUtil {
 	 * @author LiXiaopeng
 	 * 
 	 */
-	protected static class FeatureModel {
+	protected static class XMLFeatureModel {
 
 		private String name = "";
 
 		private String version = "";
 
-		public FeatureModel() {
+		public XMLFeatureModel() {
 		}
 
 		/**
 		 * @param name
 		 * @param version
 		 */
-		public FeatureModel(String name, String version) {
+		public XMLFeatureModel(String name, String version) {
 			this.name = name;
 			this.version = version;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj != null && obj instanceof FeatureModel) {
-				FeatureModel model = (FeatureModel) obj;
+			if (obj != null && obj instanceof XMLFeatureModel) {
+				XMLFeatureModel model = (XMLFeatureModel) obj;
 				return model.getName().equals(this.name);
 				// && model.getVersion().equals(this.version); // fix the equals
 				// method, only compare the name, else, camel-spring will be
@@ -112,13 +115,108 @@ public final class CamelFeatureUtil {
 		}
 	}
 
+	/**
+	 * Bundle model for XML parse.
+	 * 
+	 * @author xpli
+	 * 
+	 */
+	protected static class XMLBundleModel {
+
+		private String version = "";
+
+		private String symbolicName = "";
+
+		private String groudId = "";
+
+		/**
+		 * @return the groudId
+		 */
+		public String getGroudId() {
+			return groudId;
+		}
+
+		/**
+		 * @param groudId
+		 *            the groudId to set
+		 */
+		public void setGroudId(String groudId) {
+			this.groudId = groudId;
+		}
+
+		public XMLBundleModel() {
+
+		}
+
+		/**
+		 * @param version
+		 * @param symbolicName
+		 */
+		public XMLBundleModel(String symbolicName, String groupId,
+				String version) {
+			this.version = version;
+			this.groudId = groupId;
+			this.symbolicName = symbolicName;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof XMLBundleModel) {
+				return this.symbolicName
+						.equals(((XMLBundleModel) obj).symbolicName)
+						&& this.groudId.equals(((XMLBundleModel) obj).groudId);
+			}
+			return super.equals(obj);
+		}
+
+		/**
+		 * @param version
+		 *            the version to set
+		 */
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		/**
+		 * @return the version
+		 */
+		public String getVersion() {
+			return version;
+		}
+
+		/**
+		 * @return the symbolicName
+		 */
+		public String getSymbolicName() {
+			return symbolicName;
+		}
+
+		/**
+		 * @param symbolicName
+		 *            the symbolicName to set
+		 */
+		public void setSymbolicName(String symbolicName) {
+			this.symbolicName = symbolicName;
+		}
+
+		@Override
+		public int hashCode() {
+			if (symbolicName != null && groudId != null) {
+				return symbolicName.hashCode() * 31 + groudId.hashCode();
+			}
+			return super.hashCode();
+		}
+	}
+
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
 	private static final String CAMEL_VERSION_RANGE = "[2,5)";
 
 	private static final String SPRING_VERSION_RANGE = "[3,5)";
 
-	private static Map<String, Set<FeatureModel>> camelFeaturesMap;
+	private static Map<String, Set<XMLFeatureModel>> camelFeaturesMap;
+
+	private static Map<String, Set<XMLBundleModel>> camelBundlesMap;
 
 	/**
 	 * Check the node is Route
@@ -157,12 +255,31 @@ public final class CamelFeatureUtil {
 		return "true".equals(isNone);
 	}
 
-	private static Set<FeatureModel> computeFeature(String evtValue) {
+	/**
+	 * 
+	 * @param evtValue
+	 * @return
+	 */
+	private static Set<XMLFeatureModel> computeFeature(String evtValue) {
 		if (camelFeaturesMap == null || camelFeaturesMap.isEmpty()) {
 			initMap();
 		}
-		Set<FeatureModel> features = camelFeaturesMap.get(evtValue);
+		Set<XMLFeatureModel> features = camelFeaturesMap.get(evtValue);
 		return features;
+	}
+
+	/**
+	 * 
+	 * @param lib
+	 * @return
+	 */
+	private static Set<XMLBundleModel> computeBundle(String lib) {
+		if (camelBundlesMap == null || camelBundlesMap.isEmpty()) {
+			initMap();
+		}
+		initMap();
+		Set<XMLBundleModel> models = camelBundlesMap.get(lib);
+		return models;
 	}
 
 	protected static ElementParameterType findElementParameterByName(
@@ -177,43 +294,35 @@ public final class CamelFeatureUtil {
 	}
 
 	/**
+	 * Get bundle in feature.xml
 	 * 
 	 * @param node
 	 * @return
 	 */
-	public static String[][] getFeaturesByNode(RepositoryNode node) {
-
-		Set<FeatureModel> features = new HashSet<FeatureModel>();
-
-		features.addAll(getFeaturesOfRoute(node));
-
-		String[][] featureStrs = new String[features.size()][2];
-
-		int index = 0;
-		for (FeatureModel feature : features) {
-			featureStrs[index][0] = feature.getName();
-			featureStrs[index][1] = feature.getVersion();
-			index++;
+	private static Set<XMLBundleModel> getBundlesOfRoute(
+			Set<String> neededLibraries) {
+		Set<XMLBundleModel> bundles = new HashSet<XMLBundleModel>();
+		for (String lib : neededLibraries) {
+			Set<XMLBundleModel> model = computeBundle(lib);
+			if (model != null) {
+				bundles.addAll(model);
+			}
 		}
-
-		return featureStrs;
+		return bundles;
 	}
 
-	private static Collection<? extends FeatureModel> getFeaturesOfRoute(
-			RepositoryNode node) {
+	/**
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private static Set<XMLFeatureModel> getFeaturesOfRoute(
+			Set<String> neededLibraries, Property property) {
 
-		Set<FeatureModel> features = new HashSet<FeatureModel>();
-		if (!checkNode(node)) {
-			return features;
-		}
+		Set<XMLFeatureModel> features = new HashSet<XMLFeatureModel>();
 
-		Property property = (Property) node.getObject().getProperty();
-		Process process = new org.talend.designer.core.ui.editor.process.Process(
-				property);
-		process.loadXmlFile();
-		Set<String> neededLibraries = process.getNeededLibraries(true);
 		for (String lib : neededLibraries) {
-			Set<FeatureModel> featureModel = computeFeature(lib);
+			Set<XMLFeatureModel> featureModel = computeFeature(lib);
 			if (featureModel != null) {
 				features.addAll(featureModel);
 			}
@@ -222,14 +331,13 @@ public final class CamelFeatureUtil {
 		CamelProcessItem processItem = (CamelProcessItem) property.getItem();
 		ProcessType processType = processItem.getProcess();
 
-		features.add(new FeatureModel("camel-spring", CAMEL_VERSION_RANGE));
-		features.add(new FeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
-		features.add(new FeatureModel("camel", CAMEL_VERSION_RANGE));
-		features.add(new FeatureModel("camel-core", CAMEL_VERSION_RANGE));
-		features.add(new FeatureModel("spring", SPRING_VERSION_RANGE));
-		features.add(new FeatureModel("spring-tx", SPRING_VERSION_RANGE));
-		// features.add(new FeatureModel("spring-web", SPRING_VERSION_RANGE));
-		features.add(new FeatureModel("talend-job-controller", "[5,6)"));
+		features.add(new XMLFeatureModel("camel-spring", CAMEL_VERSION_RANGE));
+		features.add(new XMLFeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
+		features.add(new XMLFeatureModel("camel", CAMEL_VERSION_RANGE));
+		features.add(new XMLFeatureModel("camel-core", CAMEL_VERSION_RANGE));
+		features.add(new XMLFeatureModel("spring", SPRING_VERSION_RANGE));
+		features.add(new XMLFeatureModel("spring-tx", SPRING_VERSION_RANGE));
+		features.add(new XMLFeatureModel("talend-job-controller", "[5,6)"));
 
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
@@ -238,9 +346,9 @@ public final class CamelFeatureUtil {
 					boolean sam = computeCheckElementValue("ENABLE_SAM",
 							currentNode.getElementParameter());
 					if (sam) {
-						features.add(new FeatureModel("tesb-sam-common",
+						features.add(new XMLFeatureModel("tesb-sam-common",
 								"[2,10)"));
-						features.add(new FeatureModel("tesb-sam-agent",
+						features.add(new XMLFeatureModel("tesb-sam-agent",
 								"[2,10)"));
 					}
 
@@ -248,20 +356,22 @@ public final class CamelFeatureUtil {
 							currentNode.getElementParameter());
 					if (sl) {
 						// http://jira.talendforge.org/browse/TESB-5461
-						features.add(new FeatureModel("tesb-zookeeper",
+						features.add(new XMLFeatureModel("tesb-zookeeper",
 								"[2,10)"));
 					}
 				}
 			}
 		}
 
-		process.dispose();
-
 		return features;
 	}
 
+	/**
+	 * 
+	 */
 	private static void initMap() {
-		camelFeaturesMap = new HashMap<String, Set<FeatureModel>>();
+		camelFeaturesMap = new HashMap<String, Set<XMLFeatureModel>>();
+		camelBundlesMap = new HashMap<String, Set<XMLBundleModel>>();
 
 		XPathFactory xpFactory = XPathFactory.newInstance();
 		XPath newXPath = xpFactory.newXPath();
@@ -269,28 +379,59 @@ public final class CamelFeatureUtil {
 		try {
 			InputStream input = CamelFeatureUtil.class
 					.getResourceAsStream(MAPPING_XML_FILE);
-			try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
+			Document document = builder.parse(input);
 
-				NodeList list = (NodeList) newXPath.evaluate(
-						"//FeatureMap/Feature", new InputSource(input),
-						XPathConstants.NODESET);
+			try {
+				NodeList list = (NodeList) newXPath.evaluate("//FeatureMaps",
+						document, XPathConstants.NODESET);
+				String camelVersion = list.item(0).getAttributes()
+						.getNamedItem("CamelVersion").getNodeValue();
+				list = (NodeList) newXPath.evaluate("//FeatureMap/Feature",
+						document, XPathConstants.NODESET);
 
 				for (int index = 0; index < list.getLength(); index++) {
 
 					Node node = list.item(index);
 					String hotLib = node.getParentNode().getAttributes()
 							.getNamedItem("HotLib").getNodeValue();
-					Set<FeatureModel> features = camelFeaturesMap.get(hotLib);
+					// Use version properties
+					hotLib = hotLib.replace("$version$", camelVersion);
+					Set<XMLFeatureModel> features = camelFeaturesMap
+							.get(hotLib);
 					if (features == null) {
-						features = new HashSet<FeatureModel>();
+						features = new HashSet<XMLFeatureModel>();
 						camelFeaturesMap.put(hotLib, features);
 					}
 
 					String featureVersion = node.getAttributes()
 							.getNamedItem("version").getNodeValue();
 					String featureName = node.getFirstChild().getNodeValue();
-					features.add(new FeatureModel(featureName, featureVersion));
-					// camelFeaturesMap.put(hotLib, features);
+					features.add(new XMLFeatureModel(featureName,
+							featureVersion));
+				}
+				list = (NodeList) newXPath.evaluate("//FeatureMap/Bundle",
+						document, XPathConstants.NODESET);
+
+				for (int index = 0; index < list.getLength(); index++) {
+
+					Node node = list.item(index);
+					String hotLib = node.getParentNode().getAttributes()
+							.getNamedItem("HotLib").getNodeValue();
+					hotLib = hotLib.replace("$version$", camelVersion);
+					Set<XMLBundleModel> bundles = camelBundlesMap.get(hotLib);
+					if (bundles == null) {
+						bundles = new HashSet<XMLBundleModel>();
+						camelBundlesMap.put(hotLib, bundles);
+					}
+
+					String version = node.getAttributes()
+							.getNamedItem("version").getNodeValue();
+					String groupId = node.getAttributes()
+							.getNamedItem("groupId").getNodeValue();
+					String name = node.getFirstChild().getNodeValue();
+					bundles.add(new XMLBundleModel(name, groupId, version));
 				}
 			} finally {
 				input.close();
@@ -299,6 +440,42 @@ public final class CamelFeatureUtil {
 		} catch (Exception e) {
 			ExceptionHandler.process(e);
 		}
+
+	}
+
+	/**
+	 * Add feature and bundle to Feature Model
+	 * 
+	 * @param node
+	 * @param featuresModel
+	 */
+	public static void addFeatureAndBundles(RepositoryNode node,
+			FeaturesModel featuresModel) {
+
+		if (!checkNode(node)) {
+			return;
+		}
+
+		Property property = (Property) node.getObject().getProperty();
+		Process process = new org.talend.designer.core.ui.editor.process.Process(
+				property);
+		process.loadXmlFile();
+		Set<String> neededLibraries = process.getNeededLibraries(true);
+		Set<XMLFeatureModel> features = getFeaturesOfRoute(neededLibraries,
+				property);
+		Set<XMLBundleModel> bundles = getBundlesOfRoute(neededLibraries);
+
+		for (XMLFeatureModel model : features) {
+			featuresModel.addSubFeature(model.getName(), model.getVersion());
+		}
+
+		for (XMLBundleModel model : bundles) {
+			BundleModel bundleModel = new BundleModel(model.getGroudId(),
+					model.getSymbolicName(), model.getVersion());
+			featuresModel.addSubBundle(bundleModel);
+		}
+
+		process.dispose();
 
 	}
 
