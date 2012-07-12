@@ -49,7 +49,7 @@ imports="
 		}
 	}
 	
-	String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
+	//String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
 	String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
 	if(("true".equals(plainTextStyle)&&"POST".equals(method))||"PUT".equals(method)){
 		if(!hasContentType){
@@ -67,7 +67,8 @@ imports="
 			sb.append("\""+lines[i].trim()+"\"");
 		}
 		sb.append("))");
-	}else if("true".equals(formStyle)&&"POST".equals(method)){
+	} 
+	/* else if("true".equals(formStyle)&&"POST".equals(method)){
 		if(!hasContentType){
 			sb.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
 		}
@@ -103,7 +104,7 @@ imports="
 			}
 		}
 		sb.append("))");
-	}
+	} */
 	
     String uriRef = "uriMap.get(\"" + cid + "\")";
 %>
