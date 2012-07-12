@@ -25,6 +25,7 @@ imports="
 	StringBuilder sb = new StringBuilder();
 	
 	String method = ElementParameterParser.getValue(node, "__METHOD__");
+	String contentType = ElementParameterParser.getValue(node, "__CONTENT_TYPE__");
 	
 	sb.append(".setHeader(\"");
 	sb.append("CamelHttpMethod");
@@ -49,12 +50,12 @@ imports="
 		}
 	}
 	
-	//String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
+	String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
 	String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
-	if(("true".equals(plainTextStyle)&&"POST".equals(method))||"PUT".equals(method)){
-		if(!hasContentType){
-			sb.append(".setHeader(\"Content-Type\", constant(\"text/plain\"))");
-		}
+	
+	if("true".equals(plainTextStyle)&&("POST".equals(method)||"PUT".equals(method))){
+		sb.append(".setHeader(\"Content-Type\", constant(\""+ contentType + "\"))");
+		
 		String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
 		plainTextContent = plainTextContent.replaceAll("\"", "\\\\\"");
 		sb.append(".setBody(");
@@ -67,8 +68,7 @@ imports="
 			sb.append("\""+lines[i].trim()+"\"");
 		}
 		sb.append("))");
-	} 
-	/* else if("true".equals(formStyle)&&"POST".equals(method)){
+	}else if("true".equals(formStyle)&&("POST".equals(method)||"PUT".equals(method))){
 		if(!hasContentType){
 			sb.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
 		}
@@ -104,7 +104,7 @@ imports="
 			}
 		}
 		sb.append("))");
-	} */
+	}
 	
     String uriRef = "uriMap.get(\"" + cid + "\")";
 %>
