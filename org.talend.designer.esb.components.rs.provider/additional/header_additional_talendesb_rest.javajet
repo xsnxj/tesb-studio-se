@@ -574,7 +574,18 @@ public static class RestServiceProviderImpl4TalendJob {
 			if (null == status) {
 				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 404;
 			}
-			return javax.ws.rs.core.Response.status(status).entity(responseBody).build();
+
+			javax.ws.rs.core.Response.ResponseBuilder responseBuilder = javax.ws.rs.core.Response.status(status).entity(responseBody);
+
+			java.util.Map<String, String> headers = (java.util.Map<String, String>) response.get("HEADERS");
+			if (headers != null) {
+				for (java.util.Map.Entry<String, String> header : headers.entrySet()) {
+					responseBuilder.header(header.getKey(), header.getValue());
+				}
+			}
+
+			return responseBuilder.build();
+
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
@@ -941,7 +952,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider =
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
-                        jsonProvider.setAttributesToElements(true);
+			jsonProvider.setAttributesToElements(true);
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");

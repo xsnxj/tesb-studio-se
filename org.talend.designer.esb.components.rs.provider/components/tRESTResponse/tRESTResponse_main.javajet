@@ -10,6 +10,7 @@
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
 		java.util.List
+		java.util.Map
 	"
 %>
 <%
@@ -30,45 +31,54 @@ if (null != metadatas && 0 < metadatas.size()) {
 			IConnection conn = conns.get(0);
 			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 
-				String selectedStatusCode = ElementParameterParser.getValue(node, "__STATUS_CODE__");
-				if ("CUSTOM".equals(selectedStatusCode)) {
-%>
-	Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__CUSTOM_STATUS_CODE__")%>;
-<%
-				} else {
-%>
-	Integer restProviderStatusCode_<%=cid%> = <%= selectedStatusCode%>;
-<%
-				}
-%>
 
-	Object restProviderResponse_<%=cid%> = null;
+
+String selectedStatusCode = ElementParameterParser.getValue(node, "__STATUS_CODE__");
+if ("CUSTOM".equals(selectedStatusCode)) { %>
+		Integer restProviderStatusCode_<%=cid%> = <%= ElementParameterParser.getValue(node, "__CUSTOM_STATUS_CODE__")%>;
+<% } else { %>
+		Integer restProviderStatusCode_<%=cid%> = <%= selectedStatusCode%>;
+<% } %>
+
+
+
+		Object restProviderResponse_<%=cid%> = null;
 <%
-				IMetadataColumn column = conn.getMetadataTable().getColumn("string");
-				if (null != column && "id_String".equals(column.getTalendType())) {
-%>
-	restProviderResponse_<%=cid%> = <%=conn.getName()%>.string;
+IMetadataColumn column = conn.getMetadataTable().getColumn("string");
+if (null != column && "id_String".equals(column.getTalendType())) { %>
+		restProviderResponse_<%=cid%> = <%=conn.getName()%>.string;
+<% } %>
+
+
+
 <%
-				}
-%>
+column = conn.getMetadataTable().getColumn("body");
+if (null != column && "id_Document".equals(column.getTalendType())) { %>
+		if (null != <%=conn.getName()%>.body) {
+			restProviderResponse_<%=cid%> = <%=conn.getName()%>.body.getDocument();
+		}
+<% } %>
+
+
+
+		java.util.Map<String, String> restProviderResponseHeaders_<%=cid%> = new java.util.HashMap<String, String>();
 <%
-				column = conn.getMetadataTable().getColumn("body");
-				if (null != column && "id_Document".equals(column.getTalendType())) {
-%>
-	if (null != <%=conn.getName()%>.body) {
-		restProviderResponse_<%=cid%> = <%=conn.getName()%>.body.getDocument();
-	}
-<%
-				}
-%>
+List<Map<String, String>> headers = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node,"__RESPONSE_HEADERS__");
+for (Map<String, String> header : headers) { %>
+		restProviderResponseHeaders_<%=cid%>.put(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
+<% } %>
+
+
+
 	java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
 	restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
 	restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
-
+	restResponse_<%=cid%>.put("HEADERS", restProviderResponseHeaders_<%=cid%>);
 	globalMap.put("restResponse", restResponse_<%=cid%>);
+
 <%
-			}
-		}
-	}
-}
+			} // (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA))
+		} // (null != conns && 0 < conns.size())
+	} // (null != metadata)
+} // (null != metadatas && 0 < metadatas.size())
 %>
