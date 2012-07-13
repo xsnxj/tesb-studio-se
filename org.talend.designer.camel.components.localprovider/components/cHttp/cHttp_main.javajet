@@ -52,12 +52,18 @@ imports="
 	
 	String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
 	String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
+	String noContentStyle = ElementParameterParser.getValue(node, "__NO_CONTENT__");
+	String manualContentType = ElementParameterParser.getValue(node, "__MANUAL_CONTENT_TYPE__");
 	
-	if("true".equals(plainTextStyle)&&("POST".equals(method)||"PUT".equals(method))){
+	if (contentType.equals("")) {
+		contentType=manualContentType;
+	}
+	
+	if(("true".equals(plainTextStyle)||"true".equals(noContentStyle))&&("POST".equals(method)||"PUT".equals(method))){
 		sb.append(".setHeader(\"Content-Type\", constant(\""+ contentType + "\"))");
 		
 		String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
-		plainTextContent = plainTextContent.replaceAll("\"", "\\\\\"");
+		//plainTextContent = plainTextContent.replaceAll("\"", "\\\\\"");
 		sb.append(".setBody(");
 		sb.append("constant(");
 		String[] lines = plainTextContent.split("\r\n");

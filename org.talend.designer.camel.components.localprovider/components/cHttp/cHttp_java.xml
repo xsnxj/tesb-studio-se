@@ -44,17 +44,21 @@
 		
 		
 		
-		<PARAMETER NAME="CONTENT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5" SHOW_IF="((PLAIN_TEXT=='true') AND ((METHOD=='POST') OR (METHOD=='PUT')))">
+		<PARAMETER NAME="CONTENT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5" SHOW_IF="(((NO_CONTENT=='true') OR (PLAIN_TEXT=='true')) AND ((METHOD=='POST') OR (METHOD=='PUT')))">
 			<ITEMS DEFAULT="PLAIN">
 				<ITEM NAME="PLAIN" VALUE="text/plain" />
 				<ITEM NAME="HTML" VALUE="text/html" />
 				<ITEM NAME="XML" VALUE="text/xml" />
-				<ITEM NAME="CSS" VALUE="text/css" />
-				<ITEM NAME="JAVASCRIPT" VALUE="text/javascript" />
-				<ITEM NAME="CSV" VALUE="text/csv" />
+				<ITEM NAME="APP_FORM" VALUE="application/x-www-form-urlencoded" />
+				<ITEM NAME="APP_XML" VALUE="application/xml" />
+				<ITEM NAME="APP_JSON" VALUE="application/json" />
+				<ITEM NAME="OTHER" VALUE="" />
 			</ITEMS>
 		</PARAMETER>	
 		
+		<PARAMETER NAME="MANUAL_CONTENT_TYPE" FIELD="TEXT" NUM_ROW="5" SHOW_IF="(((METHOD=='POST') OR (METHOD=='PUT')) AND ((NO_CONTENT=='true') OR (PLAIN_TEXT =='true')) AND (CONTENT_TYPE.ITEM == 'OTHER'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
 		
 		<PARAMETER NAME="PLAIN_TEXT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="(METHOD=='POST') OR (METHOD=='PUT')">
 			<DEFAULT>true</DEFAULT>
