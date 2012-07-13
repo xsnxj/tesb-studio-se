@@ -227,7 +227,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	}
 
 	protected void deleteData() {
-		RouteResourceItem item = getSelectiedItem();
+		ResourceDependencyModel item = getSelectiedItem();
 		if (item != null) {
 			selectedModels.remove(item);
 			resourcesTV.refresh();
@@ -239,10 +239,10 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		return new Point(450, 350);
 	}
 
-	private RouteResourceItem getSelectiedItem() {
+	private ResourceDependencyModel getSelectiedItem() {
 		IStructuredSelection selection2 = (IStructuredSelection) resourcesTV
 				.getSelection();
-		return (RouteResourceItem) selection2.getFirstElement();
+		return (ResourceDependencyModel) selection2.getFirstElement();
 	}
 
 	private void init() {
