@@ -16,9 +16,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -75,7 +78,12 @@ public class CreateRouteResourceAction extends AContextualAction implements
 
 		WizardDialog dlg = new WizardDialog(Display.getCurrent()
 				.getActiveShell(), wizard);
-		dlg.open();
+		int open = dlg.open();
+		if (open == Window.OK) {
+			RouteResourceItem item = wizard.getItem();
+			IWorkbenchPage page = getActivePage();
+			EditRouteResourceAction.openEditor(page, node, item);
+		}
 	}
 
 	public void init(TreeViewer viewer, IStructuredSelection selection) {
@@ -112,5 +120,6 @@ public class CreateRouteResourceAction extends AContextualAction implements
 		}
 		setEnabled(canWork);
 	}
+
 
 }

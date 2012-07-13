@@ -37,6 +37,7 @@ import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
@@ -179,26 +180,38 @@ public class EditRouteResourceAction extends AContextualAction {
 			Assert.isTrue(property.getItem() instanceof RouteResourceItem);
 			item = (RouteResourceItem) property.getItem();
 			IWorkbenchPage page = getActivePage();
-			try {
-
-				IFile file = RouteResourceUtil.getSourceFile(item);
-
-				RouteResourceInput fileEditorInput = new RouteResourceInput(
-						file, item);
-				fileEditorInput.setRepositoryNode(node);
-
-				IEditorPart editorPart = page.findEditor(fileEditorInput);
-
-				if (editorPart == null) {
-					editorPart = page.openEditor(fileEditorInput,
-							RouteResourceEditor.ID, true);
-				} else {
-					page.openEditor(fileEditorInput, RouteResourceEditor.ID);
-				}
-			} catch (Exception e) {
-				MessageBoxExceptionHandler.process(e);
-			}
+			openEditor(page, node, item);
 		}
 
+	}
+
+	/**
+	 * Open or bind Route resource editor.
+	 * 
+	 * @param page
+	 * @param node
+	 * @param item
+	 */
+	public static void openEditor(IWorkbenchPage page, IRepositoryNode node,
+			RouteResourceItem item) {
+		try {
+
+			IFile file = RouteResourceUtil.getSourceFile(item);
+
+			RouteResourceInput fileEditorInput = new RouteResourceInput(file,
+					item);
+			fileEditorInput.setRepositoryNode(node);
+
+			IEditorPart editorPart = page.findEditor(fileEditorInput);
+
+			if (editorPart == null) {
+				editorPart = page.openEditor(fileEditorInput,
+						RouteResourceEditor.ID, true);
+			} else {
+				page.openEditor(fileEditorInput, RouteResourceEditor.ID);
+			}
+		} catch (Exception e) {
+			MessageBoxExceptionHandler.process(e);
+		}
 	}
 }
