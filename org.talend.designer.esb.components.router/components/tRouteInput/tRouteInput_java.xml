@@ -34,7 +34,7 @@
 	<PARAMETERS>
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
 			<TABLE>
-				<COLUMN NAME="body" TYPE="id_Object" />
+				<COLUMN NAME="body" TYPE="id_Document" />
 				<!-- <COLUMN NAME="body" VARIABLE="in.body" TYPE="id_Document"/> -->
 			</TABLE>
 		</PARAMETER>
