@@ -34,7 +34,6 @@ imports="
 	sb.append(method);
 	sb.append("\"))");
 	
-	boolean hasContentType = false;
 	List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
 	for (Map<String, String> map : arguments) {
 		String argName = map.get("KEY").trim();
@@ -45,9 +44,6 @@ imports="
 		sb.append("constant(");
 		sb.append(argValue);
 		sb.append("))");
-		if("\"Content-Type\"".equals(argName)){
-			hasContentType = true;
-		}
 	}
 	
 	String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
@@ -55,61 +51,57 @@ imports="
 	String noContentStyle = ElementParameterParser.getValue(node, "__NO_CONTENT__");
 	String manualContentType = ElementParameterParser.getValue(node, "__MANUAL_CONTENT_TYPE__");
 	
-	if (contentType.equals("")) {
+	if (contentType.equals("other")) {
 		contentType=manualContentType;
+	}else{
+		contentType = "\""+contentType+"\"";
 	}
-	
-	if(("true".equals(plainTextStyle)||"true".equals(noContentStyle))&&("POST".equals(method)||"PUT".equals(method))){
-		sb.append(".setHeader(\"Content-Type\", constant(\""+ contentType + "\"))");
-		
-		String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
-		//plainTextContent = plainTextContent.replaceAll("\"", "\\\\\"");
-		sb.append(".setBody(");
-		sb.append("constant(");
-		String[] lines = plainTextContent.split("\r\n");
-		for(int i = 0;i<lines.length;i++){
-			if(i!=0){
-				sb.append("\n+");
+	if(("POST".equals(method)||"PUT".equals(method))){
+		if("true".equals(plainTextStyle)||"true".equals(noContentStyle)){
+			sb.append(".setHeader(\"Content-Type\", constant("+ contentType + "))");
+			if("true".equals(plainTextStyle)){
+				String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
+				sb.append(".setBody(");
+				sb.append("constant(");
+				sb.append(plainTextContent);
+				sb.append("))");
 			}
-			sb.append("\""+lines[i].trim()+"\"");
-		}
-		sb.append("))");
-	}else if("true".equals(formStyle)&&("POST".equals(method)||"PUT".equals(method))){
-		if(!hasContentType){
+		}else if("true".equals(formStyle)){
+			// content-type of form is "application/x-www-form-urlencoded"
 			sb.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
-		}
-		List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
-		String encodeCharset = ElementParameterParser.getValue(node, "__ENCODER_CHARSET__");
-		boolean hasParam = false;
-		sb.append(".setBody(");
-		sb.append("constant(");
-		for (Map<String, String> map : parameters) {
-			String argName = map.get("KEY").trim();
-			String argValue = map.get("VALUE").trim();
-			try{
-				if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
-					argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
-					argName = "\""+argName+"\"";
-				}else{
-					argName = URLEncoder.encode(argName,encodeCharset);
+			List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
+			String encodeCharset = ElementParameterParser.getValue(node, "__ENCODER_CHARSET__");
+			boolean hasParam = false;
+			sb.append(".setBody(");
+			sb.append("constant(");
+			for (Map<String, String> map : parameters) {
+				String argName = map.get("KEY").trim();
+				String argValue = map.get("VALUE").trim();
+				try{
+					if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
+						argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
+						argName = "\""+argName+"\"";
+					}else{
+						argName = URLEncoder.encode(argName,encodeCharset);
+					}
+					if(argValue.startsWith("\"")&&argValue.endsWith("\"")&&argValue.length()>=2){
+						argValue = URLEncoder.encode(argValue.substring(1, argValue.length()-1),encodeCharset);
+						argValue = "\""+argValue+"\"";
+					}else{
+						argValue = URLEncoder.encode(argValue,encodeCharset);
+					}
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
 				}
-				if(argValue.startsWith("\"")&&argValue.endsWith("\"")&&argValue.length()>=2){
-					argValue = URLEncoder.encode(argValue.substring(1, argValue.length()-1),encodeCharset);
-					argValue = "\""+argValue+"\"";
-				}else{
-					argValue = URLEncoder.encode(argValue,encodeCharset);
+				if (hasParam) {
+					sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+				} else {
+					sb.append(argName + "+\"=\"+" + argValue);
+					hasParam = true;
 				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
 			}
-			if (hasParam) {
-				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-			} else {
-				sb.append(argName + "+\"=\"+" + argValue);
-				hasParam = true;
-			}
+			sb.append("))");
 		}
-		sb.append("))");
 	}
 	
     String uriRef = "uriMap.get(\"" + cid + "\")";
