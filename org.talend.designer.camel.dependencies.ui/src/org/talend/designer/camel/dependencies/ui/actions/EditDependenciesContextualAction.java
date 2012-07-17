@@ -1,5 +1,8 @@
 package org.talend.designer.camel.dependencies.ui.actions;
 
+import java.util.Arrays;
+
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorInput;
@@ -12,6 +15,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
+import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditor;
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditorInput;
 import org.talend.repository.model.ERepositoryStatus;
@@ -81,6 +85,14 @@ public class EditDependenciesContextualAction extends AContextualAction {
 					.getActiveWorkbenchWindow().getActivePage();
 			
 			IEditorPart processEditor = activePage.findEditor((IEditorInput) processEditorInput);
+			if(processEditor != null && processEditor.isDirty()){
+				RelativeEditorsSaveDialog dialog = new RelativeEditorsSaveDialog(activePage.getWorkbenchWindow().getShell(), Arrays.asList(processEditor));
+				int open = dialog.open();
+				if(open != Dialog.OK){
+					return;
+				}
+			}
+			
 			if(processEditor!=null){
 				node = (RepositoryNode) processEditor.getEditorInput().getAdapter(RepositoryNode.class);
 			}

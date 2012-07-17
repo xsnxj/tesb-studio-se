@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -40,6 +40,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -52,6 +53,7 @@ import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
 import org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver;
 import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
+import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
 import org.talend.designer.camel.dependencies.ui.editor.controls.SearchControl;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
@@ -220,7 +222,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		refreshBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateInput();
+				refreshDependencies();
 			}
 		});
 		
@@ -229,9 +231,38 @@ public class RouterDependenciesEditor extends EditorPart implements
 	}
 	
 	public void setStatus(String message){
+		if(message == null){
+			message = "";
+		}
 		statusLabel.setText(message);
+		statusLabel.setToolTipText(message);
 	}
 
+	protected void refreshDependencies() {
+		try {
+			List<IEditorPart> dirtyList = new ArrayList<IEditorPart>();
+			
+			IEditorPart processEditor = getCorrespondingProcessEditor();
+			if (processEditor != null && processEditor.isDirty()) {
+				dirtyList.add(processEditor);
+			}
+			if (isDirty()) {
+				dirtyList.add(this);
+			}
+			if (!dirtyList.isEmpty()) {
+				RelativeEditorsSaveDialog dialog = new RelativeEditorsSaveDialog(getSite().getShell(), dirtyList);
+				int open = dialog.open();
+				if( open != Dialog.OK){
+					return;
+				}
+			}
+			updateInput();
+			setDirty(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void updateInput() {
 		UIJob job = new UIJob(getSite().getShell().getDisplay(),
 				Messages.RouterDependenciesEditor_refreshing) {
@@ -239,7 +270,12 @@ public class RouterDependenciesEditor extends EditorPart implements
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//check camel editor and update the input source every time
-				checkProcessEditorStatus();
+				try {
+					updatePropertyFromProcessEditor(getCorrespondingProcessEditor());
+				} catch (PersistenceException e) {
+					e.printStackTrace();
+					return Status.CANCEL_STATUS;
+				}
 				
 				//clear all datas first
 				importPackages.clear();
@@ -319,7 +355,8 @@ public class RouterDependenciesEditor extends EditorPart implements
 	public void doSave(IProgressMonitor monitor) {
 		try {
 			//check editor and update the input source before saving
-			checkProcessEditorStatus();
+			IEditorPart processEditor = getCorrespondingProcessEditor();
+			updatePropertyFromProcessEditor(processEditor);
 			
 			//save all datas
 			DependenciesCoreUtil.saveToMap(property.getAdditionalProperties(),
@@ -329,10 +366,23 @@ public class RouterDependenciesEditor extends EditorPart implements
 					(List<ExportPackage>)exportPackageViewer.getInput());
 			
 			// save model
+			
+			//record process editor dirty signal first
+			boolean processEditorDirty = true;
+			if(processEditor !=null){
+				processEditorDirty = processEditor.isDirty();
+			}
+			
+			// save current editor
 			IProxyRepositoryFactory factory = ProxyRepositoryFactory
 					.getInstance();
 			factory.save(property.getItem());
 			setDirty(false);
+			
+			// save process editor if it was un-dirty
+			if(!processEditorDirty && processEditor!=null){
+				processEditor.doSave(monitor);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -340,27 +390,33 @@ public class RouterDependenciesEditor extends EditorPart implements
 	}
 	
 	/**
+	 * return Editor if the process editor exist
+	 * 
+	 * @return
+	 * @throws PersistenceException
+	 */
+	private IEditorPart getCorrespondingProcessEditor() throws PersistenceException {
+		IWorkbenchPage activePage = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		Item item = property.getItem();
+		CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput(
+				(CamelProcessItem) item, true, true, false);
+
+		IEditorPart processEditor = activePage
+				.findEditor((IEditorInput) processEditorInput);
+		return processEditor;
+	}
+	
+	/**
 	 * check the corresponding editor is opened or not
 	 * if it's opened, then reuse the property object with it
 	 * else no changes
 	 */
-	private void checkProcessEditorStatus() {
-		try {
-			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput(
-					(CamelProcessItem) property.getItem(), true, true, false);
-
-			IWorkbenchPage activePage = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
-
-			IEditorPart processEditor = activePage
-					.findEditor((IEditorInput) processEditorInput);
-			if (processEditor != null) {
-				property = ((RepositoryNode) processEditor.getEditorInput()
-						.getAdapter(RepositoryNode.class)).getObject()
-						.getProperty().getItem().getProperty();
-			}
-		} catch (PersistenceException e) {
-			e.printStackTrace();
+	private void updatePropertyFromProcessEditor(IEditorPart processEditor) {
+		if (processEditor != null) {
+			property = ((RepositoryNode) processEditor.getEditorInput()
+					.getAdapter(RepositoryNode.class)).getObject()
+					.getProperty().getItem().getProperty();
 		}
 	}
 
