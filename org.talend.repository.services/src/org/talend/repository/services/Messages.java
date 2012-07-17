@@ -38,7 +38,11 @@ public class Messages extends NLS {
 
     public static String PublishMetadata_Exception_wsdl_not_valid;
 
-    public static String AssignJobAction_WarningTitle;
+    public static String PublishMetadataAction_Importing;
+
+	public static String PublishMetadataAction_Name;
+
+	public static String AssignJobAction_WarningTitle;
 
     public static String AssignJobAction_WarningMessage;
 

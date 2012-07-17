@@ -90,6 +90,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.FolderNameUtil;
@@ -107,8 +108,6 @@ import orgomg.cwm.resource.record.RecordFile;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-    protected static final String ACTION_LABEL = "Import WSDL Schemas";
-
     private IStructuredSelection selection;
 
     private List<RepositoryNode> nodes;
@@ -123,8 +122,8 @@ public class PublishMetadataAction extends AContextualAction {
      */
     public PublishMetadataAction() {
         super();
-        this.setText(ACTION_LABEL);
-        this.setToolTipText(ACTION_LABEL);
+        this.setText(Messages.PublishMetadataAction_Name);
+        this.setToolTipText(Messages.PublishMetadataAction_Name);
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
     }
 
@@ -164,7 +163,7 @@ public class PublishMetadataAction extends AContextualAction {
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
             public void run(IProgressMonitor monitor) throws CoreException {
-                monitor.beginTask("importing", 100);
+                monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
                 if (nodes == null) {
                     nodes = (List<RepositoryNode>) selection.toList();
                 }
@@ -296,7 +295,7 @@ public class PublishMetadataAction extends AContextualAction {
         String name = /* componentName + "_"+ */parameter.getName();
         XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
         connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        connection.setXmlFilePath(name + ".xsd");
+        connection.setXmlFilePath(name + ".xsd"); //$NON-NLS-1$
         XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
         Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
         connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
@@ -313,7 +312,7 @@ public class PublishMetadataAction extends AContextualAction {
         connection.setFileContent(parameter.getSchema());
         XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
         connection.getSchema().add(xmlXPathLoopDescriptor);
-        xmlXPathLoopDescriptor.setAbsoluteXPathQuery("/" + parameter.getName());
+        xmlXPathLoopDescriptor.setAbsoluteXPathQuery('/' + parameter.getName());
         xmlXPathLoopDescriptor.setLimitBoucle(50);
         xmlXPathLoopDescriptor.setConnection(connection);
         for (String[] leaf : parameter.getLeafList()) {
@@ -326,7 +325,7 @@ public class PublishMetadataAction extends AContextualAction {
         // TODO: temporary make a fake root for the connection
         EList root = connection.getRoot();
         XMLFileNode xmlFileNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
-        String currentPath = "/" + name;
+        String currentPath = '/' + name;
         xmlFileNode.setXMLPath(currentPath);
         root.add(xmlFileNode);
 
@@ -335,7 +334,7 @@ public class PublishMetadataAction extends AContextualAction {
         String nextId = factory.getNextId();
         connectionProperty.setId(nextId);
         try {
-            factory.create(connectionItem, new Path(parameter.getNameSpace() + "/" + portTypeQName.getLocalPart()));
+            factory.create(connectionItem, new Path(parameter.getNameSpace() + '/' + portTypeQName.getLocalPart()));
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
@@ -358,7 +357,7 @@ public class PublishMetadataAction extends AContextualAction {
         String name = /* componentName + "_"+ */parameter.getName();
         XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
         connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        connection.setXmlFilePath(name + ".xsd");
+        connection.setXmlFilePath(name + ".xsd"); //$NON-NLS-1$
         XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
         Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
         connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
@@ -392,9 +391,9 @@ public class PublishMetadataAction extends AContextualAction {
             // once the we can get the correct prefix value from the wsdl, this code should be modified.
             for (ATreeNode curNode : rootNodes) {
                 String curName = (String) curNode.getValue();
-                if (curName.contains(":")) {
+                if (curName.contains(":")) { //$NON-NLS-1$
                     // if with prefix, don't care about it for now, just compare the name.
-                    if (curName.split(":")[1].equals(name)) {
+                    if (curName.split(":")[1].equals(name)) { //$NON-NLS-1$
                         node = curNode;
                         break;
                     }
@@ -427,7 +426,7 @@ public class PublishMetadataAction extends AContextualAction {
                     break;
                 }
             }
-            fillRootInfo(connection, node, "", !haveElement);
+            fillRootInfo(connection, node, "", !haveElement); //$NON-NLS-1$
         } catch (MalformedURLException e1) {
             ExceptionHandler.process(e1);
         } catch (URISyntaxException e1) {
@@ -443,7 +442,7 @@ public class PublishMetadataAction extends AContextualAction {
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix
-            String folderString = parameter.getNameSpace() + "/" + portTypeQName.getLocalPart();
+            String folderString = parameter.getNameSpace() + '/' + portTypeQName.getLocalPart();
             try {
                 URI uri = new URI(folderString);
                 String scheme = uri.getScheme();
@@ -453,11 +452,11 @@ public class PublishMetadataAction extends AContextualAction {
             } catch (URISyntaxException e) {
 
             }
-            if (folderString.startsWith(":")) {
+            if (folderString.startsWith(":")) { //$NON-NLS-1$
                 folderString = folderString.substring(1);
             }
             folderString = FolderNameUtil.replaceAllLimited(folderString);
-            IPath path = new Path(folderString + "/" + oper.getName());
+            IPath path = new Path(folderString + '/' + oper.getName());
             // if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
             // path = path.removeFirstSegments(1);
             // }
@@ -472,19 +471,19 @@ public class PublishMetadataAction extends AContextualAction {
 
     private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) throws OdaException {
         XMLFileNode xmlNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
-        xmlNode.setXMLPath(path + "/" + node.getValue());
+        xmlNode.setXMLPath(path + '/' + node.getValue());
         xmlNode.setOrder(orderId);
         orderId++;
         MappingTypeRetriever retriever;
         String nameWithoutPrefixForColumn;
         String curName = (String) node.getValue();
-        if (curName.contains(":")) {
-            nameWithoutPrefixForColumn = curName.split(":")[1];
+        if (curName.contains(":")) { //$NON-NLS-1$
+            nameWithoutPrefixForColumn = curName.split(":")[1]; //$NON-NLS-1$
         } else {
             nameWithoutPrefixForColumn = curName;
         }
-        retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id");
-        xmlNode.setAttribute("attri");
+        retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id"); //$NON-NLS-1$
+        xmlNode.setAttribute("attri"); //$NON-NLS-1$
         xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
         MetadataColumn column = null;
         MetadataTable metadataTable = ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0];
@@ -492,7 +491,7 @@ public class PublishMetadataAction extends AContextualAction {
         case ATreeNode.ATTRIBUTE_TYPE:
             // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
             // xpath
-            xmlNode.setXMLPath("" + node.getValue());
+            xmlNode.setXMLPath("" + node.getValue()); //$NON-NLS-1$
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
             String uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
@@ -509,7 +508,7 @@ public class PublishMetadataAction extends AContextualAction {
                 }
             }
             if (!haveElementOrAttributes) {
-                xmlNode.setAttribute("branch");
+                xmlNode.setAttribute("branch"); //$NON-NLS-1$
                 column = ConnectionFactory.eINSTANCE.createMetadataColumn();
                 column.setTalendType(xmlNode.getType());
                 uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
@@ -517,11 +516,11 @@ public class PublishMetadataAction extends AContextualAction {
                 xmlNode.setRelatedColumn(uniqueName);
                 metadataTable.getColumns().add(column);
             } else {
-                xmlNode.setAttribute("main");
+                xmlNode.setAttribute("main"); //$NON-NLS-1$
             }
             break;
         case ATreeNode.NAMESPACE_TYPE:
-            xmlNode.setAttribute("ns");
+            xmlNode.setAttribute("ns"); //$NON-NLS-1$
             // specific for namespace... no path set, there is only the prefix value.
             // this value is saved now in node.getDataType()
             xmlNode.setXMLPath(node.getDataType());
@@ -533,7 +532,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
         boolean subElementsInLoop = inLoop;
         // will try to get the first element (branch or main), and set it as loop.
-        if ((!loopElementFound && path.split("/").length == 2 && node.getType() == ATreeNode.ELEMENT_TYPE) || subElementsInLoop) {
+        if ((!loopElementFound && path.split("/").length == 2 && node.getType() == ATreeNode.ELEMENT_TYPE) || subElementsInLoop) { //$NON-NLS-1$
             connection.getLoop().add(xmlNode);
 
             loopElementFound = true;
@@ -543,7 +542,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
         if (node.getChildren().length > 0) {
             for (Object curNode : node.getChildren()) {
-                fillRootInfo(connection, (ATreeNode) curNode, path + "/" + node.getValue(), subElementsInLoop);
+                fillRootInfo(connection, (ATreeNode) curNode, path + '/' + node.getValue(), subElementsInLoop);
             }
         }
     }
@@ -561,7 +560,7 @@ public class PublishMetadataAction extends AContextualAction {
             return null;
         }
         String temPath = fsProject.getLocationURI().getPath() + File.separator + "temp"; //$NON-NLS-1$
-        String fileName = "tempXSDFile" + index + ".XSD";
+        String fileName = "tempXSDFile" + index + ".XSD"; //$NON-NLS-1$ //$NON-NLS-2$
         File temfile = new File(temPath + File.separator + fileName);
 
         if (!temfile.exists()) {
@@ -586,8 +585,8 @@ public class PublishMetadataAction extends AContextualAction {
 
     private String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
 
-        String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr;
-        columnName = columnName.replaceAll("[^a-zA-Z0-9]", "_");
+        String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr; //$NON-NLS-1$
+        columnName = columnName.replaceAll("[^a-zA-Z0-9]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 
         UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(columnName,
                 fullSchemaTargetList) {

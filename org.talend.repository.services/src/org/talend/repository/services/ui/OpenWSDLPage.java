@@ -335,7 +335,7 @@ public class OpenWSDLPage extends WizardPage {
 
             if (checkImport.isVisible() && checkImport.getSelection()) {
                 PublishMetadataAction publishAction = new PublishMetadataAction();
-                publishAction.setNodes(Arrays.asList(new RepositoryNode[] { repositoryNode }));
+                publishAction.setNodes(Collections.singletonList(repositoryNode));
                 publishAction.run();
             }
             return true;
