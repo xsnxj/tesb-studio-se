@@ -183,7 +183,7 @@ public class OpenWSDLPage extends WizardPage {
         });
         new Label(wsdlFileArea, SWT.NONE);
         checkImport = new Button(wsdlFileArea, SWT.CHECK);
-        checkImport.setText("Import WSDL Schemas on finish");
+        checkImport.setText(Messages.AssignWsdlDialog_ImportWsdlSchemas);
         checkImport.setVisible(false);
         checkImport.setSelection(true);
 
