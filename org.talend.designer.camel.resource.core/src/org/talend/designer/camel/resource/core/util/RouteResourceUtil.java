@@ -14,8 +14,9 @@ package org.talend.designer.camel.resource.core.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -31,13 +32,16 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.model.general.Project;
+import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.core.extension.ResourceCheckExtensionPointManager;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.repository.ProjectManager;
 
 /**
@@ -163,13 +167,16 @@ public class RouteResourceUtil {
 	 * @param models
 	 */
 	public static void saveResourceDependency(Item routeItem,
-			List<ResourceDependencyModel> models) {
+			Set<ResourceDependencyModel> models) {
 		EMap additionalProperties = routeItem.getProperty()
 				.getAdditionalProperties();
 
 		if (additionalProperties != null) {
 			StringBuffer sb = new StringBuffer();
 			for (ResourceDependencyModel item : models) {
+				if (item.isBuiltIn()) {
+					continue;
+				}
 				sb.append(item.getItem().getProperty().getId());
 				sb.append(RouteResourceUtil.SLASH_TAG);
 				sb.append(item.getSelectedVersion());
@@ -178,6 +185,8 @@ public class RouteResourceUtil {
 			if (sb.length() > 0) {
 				String string = sb.substring(0, sb.length() - 1);
 				additionalProperties.put(ROUTE_RESOURCES_PROP, string);
+			} else {
+				additionalProperties.put(ROUTE_RESOURCES_PROP, "");
 			}
 		}
 
@@ -193,10 +202,10 @@ public class RouteResourceUtil {
 	 * @param routeItem
 	 * @param models
 	 */
-	public static List<ResourceDependencyModel> getResourceDependencies(
+	public static Set<ResourceDependencyModel> getResourceDependencies(
 			Item routeItem) {
 
-		List<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>();
+		Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
 		Property property = routeItem.getProperty();
 
 		EMap additionalProperties = property.getAdditionalProperties();
@@ -231,6 +240,7 @@ public class RouteResourceUtil {
 							ResourceDependencyModel model = new ResourceDependencyModel(
 									(RouteResourceItem) item);
 							model.setSelectedVersion(versionPart);
+							model.setBuiltIn(false);
 							models.add(model);
 						}
 					} catch (PersistenceException e) {
@@ -240,6 +250,58 @@ public class RouteResourceUtil {
 
 			}
 		}
+		models.addAll(getBuiltInResourceDependencies(routeItem));
+		return models;
+	}
+	
+	/**
+	 * @param routeItem
+	 * 
+	 * @param models
+	 */
+	public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(
+			Item routeItem) {
+		
+		Property property = routeItem.getProperty();
+		Process process = new org.talend.designer.core.ui.editor.process.Process(
+				property);
+		process.loadXmlFile();
+		List<? extends INode> nodes = process.getGraphicalNodes();
+		Set<ResourceDependencyModel> models = getBuiltInResourceDependencies(nodes);
+		process.dispose();
+		return models;
+	}
+
+	/**
+	 * @param routeItem
+	 * 
+	 * @param models
+	 */
+	public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(
+			IRepositoryViewObject node) {
+		Property property = node.getProperty();
+		Process process = new org.talend.designer.core.ui.editor.process.Process(
+				property);
+		process.loadXmlFile();
+		List<? extends INode> nodes = process.getGraphicalNodes();
+		return getBuiltInResourceDependencies(nodes);
+	}
+
+	/**
+	 * @param nodes
+	 * 
+	 * @param models
+	 */
+	public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(
+			List<? extends INode> nodes) {
+
+		Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+		for (INode node : nodes) {
+			Set<ResourceDependencyModel> resourceModels = ResourceCheckExtensionPointManager.INSTANCE
+					.getResourceModel(node);
+			models.addAll(resourceModels);
+		}
+
 		return models;
 	}
 
@@ -289,5 +351,33 @@ public class RouteResourceUtil {
 		} catch (PersistenceException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @param version
+	 * @return
+	 */
+	public static ResourceDependencyModel createDependency(String id,
+			String version) {
+		IRepositoryViewObject rvo = null;
+		try {
+			if (RouteResourceUtil.LATEST_VERSION.equals(version)) {
+				rvo = ProxyRepositoryFactory.getInstance()
+						.getLastVersion(id);
+			} else {
+				rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(
+						id, version, true);
+			}
+		} catch (PersistenceException e) {
+			e.printStackTrace();
+		}
+		Item item = rvo.getProperty().getItem();
+		ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel(
+				(RouteResourceItem) item);
+		resourceDependencyModel.setSelectedVersion((String) version);
+		resourceDependencyModel.setBuiltIn(true);
+		return resourceDependencyModel;
 	}
 }

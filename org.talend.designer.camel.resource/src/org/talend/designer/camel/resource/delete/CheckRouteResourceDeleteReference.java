@@ -54,7 +54,7 @@ public class CheckRouteResourceDeleteReference extends
 			for (IRepositoryViewObject obj : allRoutes) {
 				Property property = obj.getProperty();
 				Item routeItem = property.getItem();
-				List<ResourceDependencyModel> models = RouteResourceUtil
+				Set<ResourceDependencyModel> models = RouteResourceUtil
 						.getResourceDependencies(routeItem);
 				for (ResourceDependencyModel model : models) {
 

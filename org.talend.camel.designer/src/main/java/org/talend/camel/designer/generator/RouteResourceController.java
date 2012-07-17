@@ -13,7 +13,11 @@
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -21,6 +25,7 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IControlCreator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -43,7 +48,9 @@ import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.commons.utils.VersionUtils;
 import org.talend.core.CorePlugin;
+import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -55,6 +62,7 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
+import org.talend.designer.runprocess.ProcessorUtilities;
 
 /**
  * @author Xiaopeng Li
@@ -67,7 +75,17 @@ public class RouteResourceController extends
 
 	public static final String COMMA = ";";
 
+	private static final String LATEST_VERSION = "Latest";
+
 	private Text labelText;
+
+	IControlCreator cbCtrl = new IControlCreator() {
+
+		public Control createControl(final Composite parent, final int style) {
+			CCombo cb = new CCombo(parent, style);
+			return cb;
+		}
+	};
 
 	SelectionListener listenerSelection = new SelectionListener() {
 
@@ -86,7 +104,6 @@ public class RouteResourceController extends
 	}
 
 	/**
-	 * DOC nrousseau Comment method "createButtonCommand".
 	 * 
 	 * @param source
 	 * @return
@@ -102,7 +119,7 @@ public class RouteResourceController extends
 			IRepositoryViewObject repositoryObject = dialog.getResult()
 					.getObject();
 
-			refreshItemeProperty(repositoryObject);
+			// refreshItemeProperty(repositoryObject);
 
 			final Item item = repositoryObject.getProperty().getItem();
 			String id = item.getProperty().getId();
@@ -117,7 +134,35 @@ public class RouteResourceController extends
 		if (selectionEvent.getSource() instanceof Button) {
 			return createButtonCommand((Button) selectionEvent.getSource());
 		}
+		if (selectionEvent.getSource() instanceof CCombo) {
+			return createComboCommand((CCombo) selectionEvent.getSource());
+		}
 		return null;
+	}
+
+	/**
+	 * DOC nrousseau Comment method "createComboCommand".
+	 * 
+	 * @param source
+	 * @return
+	 */
+	private Command createComboCommand(CCombo combo) {
+		String paramName = (String) combo.getData(PARAMETER_NAME);
+
+		IElementParameter param = elem.getElementParameter(paramName);
+
+		String value = combo.getText();
+
+		for (int j = 0; j < param.getListItemsValue().length; j++) {
+			if (combo.getText().equals(param.getListItemsDisplayName()[j])) {
+				value = (String) param.getListItemsValue()[j];
+			}
+		}
+		if (value.equals(param.getValue())) {
+			return null;
+		}
+
+		return new RouteResourceChangeCommand(elem, paramName, value);
 	}
 
 	@Override
@@ -218,10 +263,120 @@ public class RouteResourceController extends
 				labelText);
 		Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT,
 				SWT.DEFAULT);
-
+		Control lastControlUsed = btn;
+		lastControlUsed = addVersionCombo(
+				subComposite,
+				param.getChildParameters().get(
+						EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()),
+				lastControlUsed, numInRow + 1, nbInRow, top);
 		dynamicProperty.setCurRowSize(Math.max(initialSize.y, btnSize.y)
 				+ ITabbedPropertyConstants.VSPACE);
 		return btn;
+	}
+
+	/**
+	 * 
+	 * @param subComposite
+	 * @param param
+	 * @param lastControl
+	 * @param numInRow
+	 * @param nbInRow
+	 * @param top
+	 * @return
+	 */
+	private Control addVersionCombo(Composite subComposite,
+			IElementParameter param, Control lastControl, int numInRow,
+			int nbInRow, int top) {
+		DecoratedField dField = new DecoratedField(subComposite, SWT.BORDER,
+				cbCtrl);
+		if (param.isRequired()) {
+			FieldDecoration decoration = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
+			dField.addFieldDecoration(decoration, SWT.RIGHT | SWT.TOP, false);
+		}
+		if (param.isRepositoryValueUsed()) {
+			FieldDecoration decoration = FieldDecorationRegistry.getDefault()
+					.getFieldDecoration(
+							FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
+			decoration.setDescription(""); //$NON-NLS-1$
+			dField.addFieldDecoration(decoration, SWT.RIGHT | SWT.BOTTOM, false);
+		}
+
+		Control cLayout = dField.getLayoutControl();
+		CCombo combo = (CCombo) dField.getControl();
+		FormData data;
+		combo.setItems(getListToDisplay(param));
+		combo.setEditable(false);
+		cLayout.setBackground(subComposite.getBackground());
+		combo.setEnabled(!param.isReadOnly());
+		combo.addSelectionListener(listenerSelection);
+		combo.setData(PARAMETER_NAME, param.getName());
+		if (elem instanceof Node) {
+			combo.setToolTipText(VARIABLE_TOOLTIP + param.getVariableName());
+		}
+
+		CLabel labelLabel = getWidgetFactory().createCLabel(subComposite,
+				param.getDisplayName());
+		data = new FormData();
+		if (lastControl != null) {
+			data.left = new FormAttachment(lastControl, 0);
+		} else {
+			data.left = new FormAttachment(
+					(((numInRow - 1) * MAX_PERCENT) / nbInRow), 0);
+		}
+
+		data.top = new FormAttachment(0, top);
+		labelLabel.setLayoutData(data);
+		if (numInRow != 1) {
+			labelLabel.setAlignment(SWT.RIGHT);
+		}
+		// *********************
+		data = new FormData();
+		int currentLabelWidth = STANDARD_LABEL_WIDTH;
+		GC gc = new GC(labelLabel);
+		Point labelSize = gc.stringExtent(param.getDisplayName());
+		gc.dispose();
+
+		if ((labelSize.x + ITabbedPropertyConstants.HSPACE) > currentLabelWidth) {
+			currentLabelWidth = labelSize.x + ITabbedPropertyConstants.HSPACE;
+		}
+
+		if (numInRow == 1) {
+			if (lastControl != null) {
+				data.left = new FormAttachment(lastControl, currentLabelWidth);
+			} else {
+				data.left = new FormAttachment(0, currentLabelWidth);
+			}
+
+		} else {
+			data.left = new FormAttachment(labelLabel, 0, SWT.RIGHT);
+		}
+		data.top = new FormAttachment(0, top);
+		cLayout.setLayoutData(data);
+		// **********************
+		hashCurControls.put(param.getName(), combo);
+
+		return cLayout;
+	}
+
+	private String[] getListToDisplay(IElementParameter param) {
+		String[] originalList = param.getListItemsDisplayName();
+		List<String> stringToDisplay = new ArrayList<String>();
+		String[] itemsShowIf = param.getListItemsShowIf();
+		if (itemsShowIf != null) {
+			String[] itemsNotShowIf = param.getListItemsNotShowIf();
+			for (int i = 0; i < originalList.length; i++) {
+				if (param.isShow(itemsShowIf[i], itemsNotShowIf[i],
+						elem.getElementParameters())) {
+					stringToDisplay.add(originalList[i]);
+				}
+			}
+		} else {
+			for (int i = 0; i < originalList.length; i++) {
+				stringToDisplay.add(originalList[i]);
+			}
+		}
+		return stringToDisplay.toArray(new String[0]);
 	}
 
 	/*
@@ -274,6 +429,7 @@ public class RouteResourceController extends
 				Display.getDefault().syncExec(new Runnable() {
 
 					public void run() {
+						updateContextList(param);
 						if (hashCurControls == null) {
 							return;
 						}
@@ -296,11 +452,15 @@ public class RouteResourceController extends
 								} else {
 									resetTextValue(lastVersion.getProperty()
 											.getItem());
+									// version
+									refreshCombo(
+											param,
+											EParameterName.ROUTE_RESOURCE_TYPE_VERSION
+													.getName());
 								}
 							} catch (Exception e) {
 							}
 						}
-
 
 						if (elem != null && elem instanceof Node) {
 							((Node) elem).checkAndRefreshNode();
@@ -310,6 +470,46 @@ public class RouteResourceController extends
 
 			}
 		}.start();
+
+	}
+
+	/**
+	 * 
+	 * 
+	 */
+	private void refreshCombo(IElementParameter parentParam,
+			final String childParamName) {
+		if (parentParam == null || childParamName == null) {
+			return;
+		}
+		IElementParameter childParameter = parentParam.getChildParameters()
+				.get(childParamName);
+
+		CCombo combo = (CCombo) hashCurControls.get(childParameter.getName());
+
+		if (combo == null || combo.isDisposed()) {
+			return;
+		}
+		Object value = childParameter.getValue();
+		if (value instanceof String) {
+			String strValue = ""; //$NON-NLS-1$
+			int nbInList = 0, nbMax = childParameter.getListItemsValue().length;
+			String name = (String) value;
+			while (strValue.equals(new String("")) && nbInList < nbMax) { //$NON-NLS-1$
+				if (name.equals(childParameter.getListItemsValue()[nbInList])) {
+					strValue = childParameter.getListItemsDisplayName()[nbInList];
+				}
+				nbInList++;
+			}
+			String[] paramItems = getListToDisplay(childParameter);
+			String[] comboItems = combo.getItems();
+
+			if (!Arrays.equals(paramItems, comboItems)) {
+				combo.setItems(paramItems);
+			}
+			combo.setText(strValue);
+			combo.setVisible(true);
+		}
 
 	}
 
@@ -358,6 +558,128 @@ public class RouteResourceController extends
 			}
 		} catch (Throwable e) {
 			ExceptionHandler.process(e);
+		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param processParam
+	 */
+	private void updateContextList(IElementParameter processParam) {
+		if (processParam == null
+				|| processParam.getFieldType() != EParameterFieldType.ROUTE_RESOURCE_TYPE) {
+			return;
+		}
+		// for version type
+		List<String> versionNameList = new ArrayList<String>();
+		List<String> versionValueList = new ArrayList<String>();
+		versionNameList.add(LATEST_VERSION);
+		versionValueList.add(LATEST_VERSION);
+
+		IElementParameter jobNameParam = processParam.getChildParameters().get(
+				EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
+
+		Item item = null;
+		StringBuffer labels = new StringBuffer("");
+		List<IRepositoryViewObject> allVersion = new ArrayList<IRepositoryViewObject>();
+		final String strJobId = (String) jobNameParam.getValue();
+		String[] strJobIds = strJobId.split(COMMA);
+		for (int i = 0; i < strJobIds.length; i++) {
+			String id = strJobIds[i];
+			if (StringUtils.isNotEmpty(id)) {
+				allVersion = ProcessorUtilities.getAllVersionObjectById(id);
+
+				// IRepositoryObject lastVersionObject = null;
+				String label = null;
+				if (allVersion != null) {
+					String oldVersion = null;
+					for (IRepositoryViewObject obj : allVersion) {
+						String version = obj.getVersion();
+						if (oldVersion == null) {
+							oldVersion = version;
+						}
+						if (VersionUtils.compareTo(version, oldVersion) >= 0) {
+							item = obj.getProperty().getItem();
+							// lastVersionObject = obj;
+						}
+						oldVersion = version;
+						versionNameList.add(version);
+						versionValueList.add(version);
+					}
+					label = item.getProperty().getLabel();
+					if (i > 0) {
+						labels.append(COMMA);
+					}
+					labels.append(label);
+					// IPath path =
+					// RepositoryNodeUtilities.getPath(lastVersionObject);
+					// if (path != null) {
+					// label = path.toString() + IPath.SEPARATOR + label;
+					// }
+				} else {
+					final String parentName = processParam.getName() + ":"; //$NON-NLS-1$
+					elem.setPropertyValue(parentName + jobNameParam.getName(),
+							""); //$NON-NLS-1$
+				}
+			}
+		}
+		jobNameParam.setLabelFromRepository(labels.toString());
+
+		setProcessTypeRelatedValues(processParam, versionNameList,
+				versionValueList,
+				EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName(), null);
+
+	}
+
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+	private void setProcessTypeRelatedValues(IElementParameter parentParam,
+			List<String> nameList, List<String> valueList,
+			final String childName, final String defaultValue) {
+		if (parentParam == null || childName == null) {
+			return;
+		}
+		final String fullChildName = parentParam.getName() + ":" + childName; //$NON-NLS-1$
+		IElementParameter childParam = parentParam.getChildParameters().get(
+				childName);
+
+		IElementParameter jobNameParam = parentParam.getChildParameters().get(
+				EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
+		if (jobNameParam != null) {
+			String value = (String) jobNameParam.getValue();
+			if (value == null || "".equals(value)) { //$NON-NLS-1$
+				childParam.setValue(null);
+			}
+		}
+		if (nameList == null) {
+			childParam.setListItemsDisplayName(new String[0]);
+		} else {
+			childParam.setListItemsDisplayName(nameList.toArray(new String[0]));
+		}
+		if (valueList == null) {
+			childParam.setListItemsValue(new String[0]);
+		} else {
+			childParam.setListItemsValue(valueList.toArray(new String[0]));
+		}
+
+		if (elem != null) {
+			if (valueList != null && !valueList.contains(childParam.getValue())) {
+				if (nameList != null && nameList.size() > 0) {
+					// set default value
+					if (defaultValue != null) {
+						childParam.setValue(defaultValue);
+					} else {
+						elem.setPropertyValue(fullChildName,
+								valueList.get(valueList.size() - 1));
+					}
+				}
+			} else {
+				elem.setPropertyValue(fullChildName, childParam.getValue());
+			}
 		}
 	}
 }

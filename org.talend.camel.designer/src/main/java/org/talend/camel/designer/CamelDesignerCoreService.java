@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -36,26 +37,15 @@ import org.talend.camel.designer.ui.CreateCamelProcess;
 import org.talend.camel.designer.ui.bean.CreateCamelBean;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
-import org.talend.core.model.process.EParameterFieldType;
-import org.talend.core.model.process.Element;
-import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.process.INode;
-import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.core.model.properties.ByteArray;
-import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.designer.core.ICamelDesignerCoreService;
-import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.designer.core.ui.views.problems.Problems;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -63,8 +53,6 @@ import org.talend.designer.core.ui.views.problems.Problems;
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	// private XmiResourceManager xmiResourceManager = new XmiResourceManager();
-
-	private static final String ROUTE_RESOURCES = RouteResourceItem.ROUTE_RESOURCES_FOLDER;
 
 	/*
 	 * (non-Jsdoc)
@@ -155,10 +143,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			return paths;
 		}
 
-		List<ResourceDependencyModel> models = RouteResourceUtil
+		Set<ResourceDependencyModel> models = RouteResourceUtil
 				.getResourceDependencies(item);
 		for (ResourceDependencyModel model : models) {
-			IFile file = copyResources(model.getItem());
+			IFile file = copyResources(model);
 			if (file != null) {
 				paths.add(file.getLocation());
 			}
@@ -195,45 +183,50 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 	/**
 	 * Copy route resource
 	 * 
-	 * @param item
+	 * @param model
 	 * @throws CoreException
 	 */
-	public static IFile copyResources(FileItem item) {
+	public static IFile copyResources(ResourceDependencyModel model) {
 
 		IFolder folder = getRouteResourceFolder();
+
+		RouteResourceItem item = model.getItem();
 
 		ByteArray content = item.getContent();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(
 				content.getInnerContent());
 
-		String path = item.getState().getPath();
-		String label = item.getProperty().getLabel();
-		IFolder resFolder = folder;
-		if (path != null && !path.isEmpty()) {
-			resFolder = folder.getFolder(path);
+		String classPathUrl = model.getClassPathUrl();
+		IFile classpathFile = folder.getFile(new Path(classPathUrl));
+		IFolder parentFolder = (IFolder) classpathFile.getParent();
+
+		// Check parent folder exists
+		File parentFolderFile = parentFolder.getLocation().toFile();
+		if (!parentFolderFile.exists()) {
+			parentFolderFile.mkdirs();
 		}
 
-		File resFileFolder = resFolder.getLocation().toFile();
-
-		if (!resFileFolder.exists()) {
-			resFileFolder.mkdirs();
+		// Check resource class path file not exist
+		File classpathLocalFile = classpathFile.getLocation().toFile();
+		if (classpathLocalFile.exists()) {
+			classpathLocalFile.delete();
 		}
 
-		IFile resFile = resFolder.getFile(label);
-
-		File file = resFile.getLocation().toFile();
-		if (file.exists()) {
-			file.delete();
-		}
 		try {
-			resFolder.refreshLocal(IResource.DEPTH_ONE,
-					new NullProgressMonitor());
-			resFile.create(inputStream, true, new NullProgressMonitor());
-			return resFile;
-		} catch (CoreException e) {
+			try {
+				parentFolder.refreshLocal(IResource.DEPTH_ONE,
+						new NullProgressMonitor());
+				classpathFile.create(inputStream, true,
+						new NullProgressMonitor());
+			} finally {
+				inputStream.close();
+			}
+			return classpathFile;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+
 	}
 
 }

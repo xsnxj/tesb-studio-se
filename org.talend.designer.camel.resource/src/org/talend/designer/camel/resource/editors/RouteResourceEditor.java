@@ -39,8 +39,7 @@ public class RouteResourceEditor extends TextEditor {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		try {
-			ProxyRepositoryFactory.getInstance().lock(
-					rrInput.getRepositoryNode().getObject());
+			ProxyRepositoryFactory.getInstance().lock(rrInput.getItem());
 		} catch (Exception e) {
 		}
 		Item item = rrInput.getItem();
@@ -56,8 +55,7 @@ public class RouteResourceEditor extends TextEditor {
 		super.dispose();
 
 		try {
-			ProxyRepositoryFactory.getInstance().unlock(
-					rrInput.getRepositoryNode().getObject());
+			ProxyRepositoryFactory.getInstance().unlock(rrInput.getItem());
 		} catch (Exception e) {
 		}
 	}

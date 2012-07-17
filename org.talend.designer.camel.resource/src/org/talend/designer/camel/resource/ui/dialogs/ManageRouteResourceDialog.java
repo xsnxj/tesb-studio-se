@@ -13,20 +13,28 @@
 package org.talend.designer.camel.resource.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -56,8 +64,6 @@ import org.talend.repository.model.RepositoryNode;
  */
 public class ManageRouteResourceDialog extends TitleAreaDialog {
 
-	private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
-
 	private Button addBtn, delBtn;
 
 	private List<ResourceDependencyModel> selectedModels;
@@ -67,6 +73,8 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	private ISelection selection;
 
 	private RepositoryNode node;
+
+	private Button copyBtn;
 
 	public ManageRouteResourceDialog(Shell parentShell, ISelection iSelection) {
 		super(parentShell);
@@ -107,7 +115,9 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 		if (buttonId == IDialogConstants.OK_ID) {
 			Item item = getSelectedRouteItem();
-			RouteResourceUtil.saveResourceDependency(item, selectedModels);
+			Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+			models.addAll(selectedModels);
+			RouteResourceUtil.saveResourceDependency(item, models);
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -183,11 +193,23 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 			@Override
 			protected boolean canEdit(Object element) {
-				return true;
+				ResourceDependencyModel model = (ResourceDependencyModel) element;
+				return !model.isBuiltIn();
 			}
 		});
 
-		resourcesTV.setLabelProvider(new ResourceLabelProvider());
+		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
+		tableViewerColumn.getColumn().setText("Type");
+		tableViewerColumn.getColumn().setWidth(100);
+		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
+
+		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
+		tableViewerColumn.getColumn().setText("Path");
+		tableViewerColumn.getColumn().setWidth(200);
+		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
+
+		resourcesTV.setLabelProvider(new ResourceLabelProvider(resourcesTV
+				.getTable()));
 		resourcesTV.setContentProvider(new ResourceContentProvider());
 		resourcesTV.setInput(selectedModels);
 
@@ -205,6 +227,40 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		addBtn.setImage(ImageProvider.getImage(EImage.ADD_ICON));
 		addBtn.setText("Add");
 		addBtn.setLayoutData(gd);
+
+		delBtn = new Button(buttonComp, SWT.PUSH);
+		delBtn.setText("Remove");
+		delBtn.setLayoutData(gd);
+		delBtn.setImage(ImageProvider.getImage(EImage.DELETE_ICON));
+
+		copyBtn = new Button(buttonComp, SWT.PUSH);
+		copyBtn.setText("Copy Path");
+		copyBtn.setLayoutData(gd);
+
+		initListeners();
+
+		return container;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		Button createButton = createButton(parent, IDialogConstants.OK_ID,
+				IDialogConstants.OK_LABEL, true);
+		createButton.setFocus();
+		createButton(parent, IDialogConstants.CANCEL_ID,
+				IDialogConstants.CANCEL_LABEL, false);
+	}
+
+	private void initListeners() {
+		resourcesTV
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						refreshButtonState();
+					}
+				});
+
 		addBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -212,10 +268,6 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 			}
 		});
 
-		delBtn = new Button(buttonComp, SWT.PUSH);
-		delBtn.setText("Remove");
-		delBtn.setLayoutData(gd);
-		delBtn.setImage(ImageProvider.getImage(EImage.DELETE_ICON));
 		delBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -223,12 +275,57 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 			}
 		});
 
-		return container;
+		copyBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				copyPath();
+			}
+		});
+
+	}
+
+	protected void refreshButtonState() {
+		ResourceDependencyModel item = getSelectiedItem();
+		if (item != null) {
+			if (item.isBuiltIn()) {
+				delBtn.setEnabled(false);
+				setMessage(item.getItem().getProperty().getLabel() + "("
+						+ item.getSelectedVersion() + ") is used by "
+						+ item.getRefNodes());
+			} else {
+				delBtn.setEnabled(true);
+				setMessage(item.getItem().getProperty().getLabel() + "("
+						+ item.getSelectedVersion() + ")");
+			}
+		}
+
+	}
+
+	/**
+	 * Copy class path
+	 */
+	protected void copyPath() {
+		ResourceDependencyModel item = getSelectiedItem();
+		if (item != null) {
+			Clipboard clipboard = new Clipboard(copyBtn.getDisplay());
+			clipboard.setContents(new String[] { item.getClassPathUrl() },
+					new Transfer[] { TextTransfer.getInstance() });
+			MessageDialog.openInformation(getShell(), "Copy Successfully",
+					"'" + item.getClassPathUrl()
+							+ "' has been copied to clipboard.");
+		}
+
 	}
 
 	protected void deleteData() {
 		ResourceDependencyModel item = getSelectiedItem();
 		if (item != null) {
+			if (item.isBuiltIn()) {
+				MessageDialog.openWarning(getShell(), "Warning",
+						"This Resource is used by Node '" + item.getRefNodes()
+								+ "', can not be removed!");
+				return;
+			}
 			selectedModels.remove(item);
 			resourcesTV.refresh();
 		}
@@ -236,7 +333,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(450, 350);
+		return new Point(800, 480);
 	}
 
 	private ResourceDependencyModel getSelectiedItem() {
@@ -246,7 +343,6 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	}
 
 	private void init() {
-
 		selectedModels = new ArrayList<ResourceDependencyModel>();
 		Item item = getSelectedRouteItem();
 		selectedModels.addAll(RouteResourceUtil.getResourceDependencies(item));

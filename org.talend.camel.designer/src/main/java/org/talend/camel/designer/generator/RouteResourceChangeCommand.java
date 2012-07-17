@@ -14,10 +14,8 @@ package org.talend.camel.designer.generator;
 
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.properties.Item;
-import org.talend.core.model.relationship.RelationshipItemBuilder;
-import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 
@@ -54,22 +52,19 @@ public class RouteResourceChangeCommand extends PropertyChangeCommand {
 		IElementParameter uriParam = element
 				.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_RES_URI
 						.getName());
-		String value = (String) currentParam.getValue();
-		IRepositoryViewObject lastVersion;
-		try {
-			lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(
-					value);
-			Item item = lastVersion.getProperty().getItem();
-			String label = item.getProperty().getDisplayName();
-			String parentPaths = item.getState().getPath();
-			if (parentPaths != null && !parentPaths.isEmpty()) {
-				label = parentPaths + "/" + label;
-			}
-			// http://jira.talendforge.org/browse/TESB-6437
-			label = "classpath:" + label;
-			uriParam.setValue(label);
-			RelationshipItemBuilder.getInstance().addOrUpdateItem(item);
-		} catch (Exception e) {
+		IElementParameter versionParam = element
+				.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_VERSION
+						.getName());
+		IElementParameter idParam = element
+				.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
+						.getName());
+		String value = (String) idParam.getValue();
+		String version = (String) versionParam.getValue();
+
+		ResourceDependencyModel model = RouteResourceUtil.createDependency(
+				value, version);
+		if (model != null) {
+			uriParam.setValue("classpath:" + model.getClassPathUrl());
 		}
 
 	}
