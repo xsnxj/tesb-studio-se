@@ -13,6 +13,7 @@
 package org.talend.repository.services.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
@@ -94,21 +94,21 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
     @Override
     public boolean performFinish() {
         try {
-            @SuppressWarnings("unchecked")
-            List<RepositoryNode> nodes = selection.toList();
-            for (RepositoryNode node : nodes) {
-            	getContainer().run(false, true, new ExportServiceAction(node, mainPage.getDestinationValue()));
+            Iterator<?> iterator = selection.iterator();
+            while (iterator.hasNext()) {
+                getContainer().run(false, true,
+                    new ExportServiceAction((RepositoryNode)iterator.next(), mainPage.getDestinationValue()));
             }
             mainPage.finish();
         } catch (CoreException e) {
-        	MessageBoxExceptionHandler.process(e, getShell());
+            MessageBoxExceptionHandler.process(e, getShell());
             return false;
         } catch (InvocationTargetException e) {
-        	MessageBoxExceptionHandler.process(e, getShell());
+            MessageBoxExceptionHandler.process(e.getCause(), getShell());
             return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
+        } catch (InterruptedException e) {
+            return false;
+        }
         return true;
     }
 
