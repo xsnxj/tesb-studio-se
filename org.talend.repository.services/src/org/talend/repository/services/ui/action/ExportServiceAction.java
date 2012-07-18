@@ -14,13 +14,9 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -67,27 +63,23 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private ServiceConnection serviceConnection;
 
-    public ExportServiceAction(RepositoryNode node) throws CoreException {
-        this(node, null);
-    }
-
-    public ExportServiceAction(RepositoryNode node, String targetPath) throws CoreException {
+    public ExportServiceAction(RepositoryNode node, String targetPath) throws InvocationTargetException {
         if (node.getType() == ENodeType.REPOSITORY_ELEMENT
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
             this.serviceViewObject = node.getObject();
             init(targetPath);
         } else {
             IllegalArgumentException e = new IllegalArgumentException("provided node is not service node");
-            throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+            throw new InvocationTargetException(e);
         }
     }
 
-    public ExportServiceAction(IRepositoryViewObject viewObject, String targetPath) throws CoreException {
+    public ExportServiceAction(IRepositoryViewObject viewObject, String targetPath) throws InvocationTargetException {
         this.serviceViewObject = viewObject;
         init(targetPath);
     }
 
-    private void init(String targetPath) throws CoreException {
+    private void init(String targetPath) throws InvocationTargetException {
         serviceName = serviceViewObject.getLabel();
         serviceVersion = serviceViewObject.getVersion();
         serviceWsdl = WSDLUtils.getWsdlFile(serviceViewObject);
@@ -111,24 +103,15 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 ports.put(port, operations);
             }
         } catch (PersistenceException e) {
-            throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+            throw new InvocationTargetException(e);
         }
 
-        if (targetPath == null) {
-            String bundleName = serviceName + "-" + serviceVersion + File.separator;
-            String userDir = System.getProperty("user.dir"); //$NON-NLS-1$
-            IPath path = new Path(userDir).append(bundleName);
-            targetPath = path.toOSString();
-        } else {
-            String suffix = ".kar";
-            if (targetPath.endsWith(suffix)) {
-                targetPath = targetPath.substring(0, targetPath.length() - suffix.length());
-            }
+        String suffix = ".kar";
+        if (targetPath.endsWith(suffix)) {
+            targetPath = targetPath.substring(0, targetPath.length() - suffix.length());
         }
         this.serviceManager = new ServiceExportManager();
         serviceManager.setDestinationPath(targetPath);
-        final String serviceNS = WSDLUtils.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace();
-        groupId = getGroupId(serviceNS, getServiceName());
     }
 
     private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
@@ -247,6 +230,15 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public String getGroupId() {
+        if (null == groupId) {
+            try {
+				groupId = getGroupId(
+						WSDLUtils.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace(),
+						getServiceName());
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+        }
         return groupId;
     }
 
@@ -254,7 +246,6 @@ public class ExportServiceAction implements IRunnableWithProgress {
         return serviceVersion;
     }
 
-    // DO NOT OVERRIDE!! CALLED FROM CONSTRUCTOR
     private final String getGroupId(String serviceNS, String serviceName) {
         String schemeId;
         try {

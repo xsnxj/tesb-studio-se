@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -100,9 +99,6 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
                     new ExportServiceAction((RepositoryNode)iterator.next(), mainPage.getDestinationValue()));
             }
             mainPage.finish();
-        } catch (CoreException e) {
-            MessageBoxExceptionHandler.process(e, getShell());
-            return false;
         } catch (InvocationTargetException e) {
             MessageBoxExceptionHandler.process(e.getCause(), getShell());
             return false;
