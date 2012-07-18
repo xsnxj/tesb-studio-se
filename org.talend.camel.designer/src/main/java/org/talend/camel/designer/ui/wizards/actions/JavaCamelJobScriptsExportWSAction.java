@@ -107,10 +107,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
 	private void exportKarOsgiBundles() throws InvocationTargetException, InterruptedException {
 		String displayName = routeNode.getObject().getProperty().getDisplayName();
-		String routerBundlePath = getTempDir() + displayName + "-bundle-" + bundleVersion + ".jar";
+		String routerBundlePath = getTempDir() + displayName + "-bundle-" + version + ".jar";
 
 		exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route");
-		processRoute(routerBundlePath, routeNode, bundleVersion);
+		processRoute(routerBundlePath, routeNode, version);
 
 		exportAllReferenceJobs(routeNode);
 	}
