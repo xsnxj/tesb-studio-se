@@ -13,13 +13,9 @@
 package org.talend.designer.camel.resource.ui.providers;
 
 import org.eclipse.jface.viewers.ITableColorProvider;
-import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Table;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
@@ -29,17 +25,18 @@ import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
  * 
  */
 public class ResourceLabelProvider extends LabelProvider implements
-		ITableLabelProvider, ITableFontProvider, ITableColorProvider {
+		ITableLabelProvider, ITableColorProvider {
 
+	private static final Color BG_COLOR = new Color(null, 210, 210, 210);
 	private static final int COL_NAME = 0;
 	private static final int COL_VERSION = 1;
 	private static final int COL_TYPE = 2;
 	private static final int COL_PATH = 3;
 
-	private Table table;
+//	private Table table;
 
 	public ResourceLabelProvider(Table table) {
-		this.table = table;
+//		this.table = table;
 	}
 
 	@Override
@@ -70,22 +67,6 @@ public class ResourceLabelProvider extends LabelProvider implements
 	}
 
 	@Override
-	public Font getFont(Object element, int columnIndex) {
-		if (element instanceof ResourceDependencyModel) {
-			ResourceDependencyModel item = (ResourceDependencyModel) element;
-			if (item.isBuiltIn()) {
-				Font font = table.getFont();
-				FontData[] fontData = font.getFontData();
-				FontData data = fontData[0];
-				data.style = SWT.ITALIC;
-				Font newFont = new Font(null, data);
-				return newFont;
-			}
-		}
-		return table.getFont();
-	}
-
-	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
@@ -96,7 +77,7 @@ public class ResourceLabelProvider extends LabelProvider implements
 		if (element instanceof ResourceDependencyModel) {
 			ResourceDependencyModel item = (ResourceDependencyModel) element;
 			if (item.isBuiltIn()) {
-				return new Color(null, 210, 210, 210);
+				return BG_COLOR;
 			}
 		}
 		return null;
