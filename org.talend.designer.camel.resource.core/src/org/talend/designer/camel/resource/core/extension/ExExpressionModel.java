@@ -28,22 +28,22 @@ public class ExExpressionModel {
 
 	private ExExpressionModel rightModel;
 
-	private String opperator;
+	private String operator;
 
 	public boolean evalute(INode node) {
-		if (AND.equals(opperator)) {
+		if (AND.equals(operator)) {
 			if (leftModel != null && rightModel != null) {
 				return leftModel.evalute(node) && rightModel.evalute(node);
 			} else {
 				return false;
 			}
-		} else if (OR.equals(opperator)) {
+		} else if (OR.equals(operator)) {
 			if (leftModel != null && rightModel != null) {
 				return leftModel.evalute(node) || rightModel.evalute(node);
 			} else {
 				return false;
 			}
-		} else if (NOT.equals(opperator)) {
+		} else if (NOT.equals(operator)) {
 			if (leftModel != null) {
 				return !leftModel.evalute(node);
 			} else {
@@ -61,10 +61,10 @@ public class ExExpressionModel {
 	}
 
 	/**
-	 * @return the opperator
+	 * @return the operator
 	 */
-	public String getOpperator() {
-		return opperator;
+	public String getOperator() {
+		return operator;
 	}
 
 	/**
@@ -84,11 +84,11 @@ public class ExExpressionModel {
 	}
 
 	/**
-	 * @param opperator
-	 *            the opperator to set
+	 * @param operator
+	 *            the operator to set
 	 */
-	public void setOpperator(String opperator) {
-		this.opperator = opperator;
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 	/**

@@ -111,7 +111,7 @@ public class ResourceCheckExtensionPointManager {
 		}
 		rootElement = children[0];
 		ExExpressionModel root = new ExExpressionModel();
-		root.setOpperator(rootElement.getName());
+		root.setOperator(rootElement.getName());
 		hanldeChildrenElement(root, rootElement.getChildren());
 		return root;
 	}
@@ -178,7 +178,7 @@ public class ResourceCheckExtensionPointManager {
 			return attrModel;
 		} else {
 			ExExpressionModel exExpressionModel = new ExExpressionModel();
-			exExpressionModel.setOpperator(element.getName());
+			exExpressionModel.setOperator(element.getName());
 			return exExpressionModel;
 		}
 

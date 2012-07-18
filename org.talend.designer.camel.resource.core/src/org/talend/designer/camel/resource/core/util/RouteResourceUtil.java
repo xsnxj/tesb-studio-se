@@ -12,8 +12,15 @@
 // ============================================================================
 package org.talend.designer.camel.resource.core.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,6 +68,8 @@ public class RouteResourceUtil {
 	public static final String LATEST_VERSION = "Latest";
 
 	private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
+
+	private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
 
 	/**
 	 * Clear route resource
@@ -380,4 +389,108 @@ public class RouteResourceUtil {
 		resourceDependencyModel.setBuiltIn(true);
 		return resourceDependencyModel;
 	}
+
+	/**
+	 * Clear route resources before running
+	 */
+	public static void clearRouteResources() {
+
+		File localFile = getResourceDescFile();
+		IProject srcFolder = getProject();
+
+		Set<String> resFileNames = new HashSet<String>();
+		try {
+			InputStream fileInputStream = null;
+			BufferedReader reader = null;
+			try{
+				if (!localFile.exists()) {
+					localFile.createNewFile();
+				}
+				fileInputStream = new FileInputStream(localFile);
+				reader = new BufferedReader(new InputStreamReader(
+						fileInputStream, "utf-8"));
+				String line = reader.readLine();
+				while (line != null) {
+					resFileNames.add(line);
+					line = reader.readLine();
+
+				}
+			} finally {
+				if (reader != null) {
+					reader.close();
+				}
+				if (fileInputStream != null) {
+					fileInputStream.close();
+				}
+			}
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// Delete resources
+		for (String name : resFileNames) {
+			IFile resFile = srcFolder.getFile(new Path(name));
+			if (resFile.exists()) {
+				try {
+					resFile.delete(true, new NullProgressMonitor());
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	private static IProject getProject() {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(JavaUtils.JAVA_PROJECT_NAME);
+		return project;
+	}
+
+	private static File getResourceDescFile() {
+		IProject srcFolder = getProject();
+		IFile file = srcFolder.getFile(ROUTE_RESOURCES_DESC_FILE);
+		File localFile = file.getLocation().toFile();
+		return localFile;
+	}
+
+	/**
+	 * Add resources to .route_resources file
+	 * 
+	 * @param models
+	 */
+	public static void addRouteResourcesDesc(
+			Set<ResourceDependencyModel> models) {
+
+		File localFile = getResourceDescFile();
+		StringBuffer buffer = new StringBuffer();
+		for(ResourceDependencyModel model: models){
+			buffer.append(model.getClassPathUrl()).append("\n");
+		}
+		
+		try {
+			OutputStream outputStream = null;
+			OutputStreamWriter writer = null;
+			try {
+				outputStream = new FileOutputStream(localFile);
+				writer = new OutputStreamWriter(
+						outputStream, "utf-8");
+				writer.write(buffer.toString());
+				writer.flush();
+			} finally {
+				if (writer != null) {
+					writer.close();
+				}
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

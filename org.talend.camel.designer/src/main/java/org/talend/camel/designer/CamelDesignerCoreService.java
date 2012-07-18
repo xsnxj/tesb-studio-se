@@ -137,6 +137,8 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	public List<IPath> synchronizeRouteResource(Item item) {
 
+		RouteResourceUtil.clearRouteResources();
+
 		List<IPath> paths = new ArrayList<IPath>();
 
 		if (!(item instanceof CamelProcessItem)) {
@@ -151,6 +153,8 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 				paths.add(file.getLocation());
 			}
 		}
+
+		RouteResourceUtil.addRouteResourcesDesc(models);
 
 		forceBuildProject();
 
