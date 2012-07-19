@@ -131,7 +131,10 @@ public class OpenAnotherVersionPage extends WizardPage {
 		refreshButtonState(false);
 
         setPageComplete(false);
+
+		updatePageStatus();
     }
+
 
 	private void refreshButtonState(boolean state) {
 		versionMajorBtn.setEnabled(state);
@@ -192,7 +195,14 @@ public class OpenAnotherVersionPage extends WizardPage {
             }
         } else {
             setPageComplete(getSelection() != null);
+			setErrorMessage(null);
         }
+
+		if (alreadyEditedByUser || isContainedRefProject()) {
+			setMessage(Messages.getString("OpenAnotherVersionPage.LockMessage"));
+		} else {
+			setMessage(Messages.getString("OpenAnotherVersionPage.Message"));
+		}
     }
 
     public Object getSelection() {
