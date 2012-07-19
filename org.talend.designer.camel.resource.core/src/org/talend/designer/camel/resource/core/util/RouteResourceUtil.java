@@ -308,7 +308,20 @@ public class RouteResourceUtil {
 		for (INode node : nodes) {
 			Set<ResourceDependencyModel> resourceModels = ResourceCheckExtensionPointManager.INSTANCE
 					.getResourceModel(node);
-			models.addAll(resourceModels);
+			boolean isContained = false;
+			// Merge and add
+			for (ResourceDependencyModel rdm : resourceModels) {
+				for (ResourceDependencyModel model : models) {
+					if (model.equals(rdm)) {
+						model.getRefNodes().addAll(rdm.getRefNodes());
+						isContained = true;
+						break;
+					}
+				}
+				if (!isContained) {
+					models.add(rdm);
+				}
+			}
 		}
 
 		return models;

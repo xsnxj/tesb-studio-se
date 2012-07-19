@@ -64,7 +64,7 @@ public class RouteResourceChangeCommand extends PropertyChangeCommand {
 		ResourceDependencyModel model = RouteResourceUtil.createDependency(
 				value, version);
 		if (model != null) {
-			uriParam.setValue("classpath:" + model.getClassPathUrl());
+			uriParam.setValue(model.getClassPathUrl());
 		}
 
 	}
