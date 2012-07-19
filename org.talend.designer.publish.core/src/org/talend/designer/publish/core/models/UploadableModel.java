@@ -112,12 +112,10 @@ public abstract class UploadableModel {
 				outputStream.write(contents, 0, count);
 			}
 
-			System.out.println("response....");
 			int responseCode = connection.getResponseCode();
 			if (responseCode > 399) {
 				throw new IOException(connection.getHeaderField(0));
 			}
-			System.out.println("end");
 		} catch (IOException e) {
 			throw e;
 		} finally {
