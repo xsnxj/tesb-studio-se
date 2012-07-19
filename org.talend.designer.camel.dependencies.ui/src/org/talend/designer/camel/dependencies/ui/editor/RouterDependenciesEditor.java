@@ -214,6 +214,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 						importPackageViewer.setShowBuiltIn(!show);
 						requireBundleViewer.setShowBuiltIn(!show);
 						bundleClasspathViewer.setShowBuiltIn(!show);
+						exportPackageViewer.setShowBuiltIn(!show);
 					}
 				});
 			}
