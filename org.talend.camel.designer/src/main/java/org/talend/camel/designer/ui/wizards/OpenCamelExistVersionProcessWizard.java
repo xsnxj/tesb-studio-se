@@ -64,7 +64,7 @@ import org.talend.repository.ui.actions.routines.RoutineEditorInput;
  */
 public class OpenCamelExistVersionProcessWizard extends Wizard {
 
-    OpenCamelExistVersionProcessPage mainPage = null;
+	OpenAnotherVersionPage mainPage = null;
 
     private final IRepositoryViewObject processObject;
 
@@ -88,7 +88,8 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
 
     @Override
     public void addPages() {
-        mainPage = new OpenCamelExistVersionProcessPage(alreadyEditedByUser, processObject);
+		mainPage = new OpenAnotherVersionPage(alreadyEditedByUser,
+				processObject);
         addPage(mainPage);
         setWindowTitle(Messages.getString("NewProcessWizard.windowTitle")); //$NON-NLS-1$
     }

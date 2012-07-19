@@ -33,6 +33,7 @@ import org.talend.repository.ProjectManager;
 /**
  * DOC xye class global comment. Detailled comment
  */
+@Deprecated
 public class OpenCamelExistVersionProcessPage extends WizardPage {
 
     private final static String TITLE = Messages.getString("OpenExistVersionProcess.open.title"); //$NON-NLS-1$
