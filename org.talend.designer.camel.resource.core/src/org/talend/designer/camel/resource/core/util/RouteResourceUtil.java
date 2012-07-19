@@ -409,7 +409,7 @@ public class RouteResourceUtil {
 	public static void clearRouteResources() {
 
 		File localFile = getResourceDescFile();
-		IProject srcFolder = getProject();
+		IFolder srcFolder = getSrcFolder();
 
 		Set<String> resFileNames = new HashSet<String>();
 		try {
@@ -461,10 +461,14 @@ public class RouteResourceUtil {
 				.getProject(JavaUtils.JAVA_PROJECT_NAME);
 		return project;
 	}
+	
+	private static IFolder getSrcFolder() {
+		return getProject().getFolder(JavaUtils.JAVA_SRC_DIRECTORY);
+	}
 
 	private static File getResourceDescFile() {
-		IProject srcFolder = getProject();
-		IFile file = srcFolder.getFile(ROUTE_RESOURCES_DESC_FILE);
+		IProject project = getProject();
+		IFile file = project.getFile(ROUTE_RESOURCES_DESC_FILE);
 		File localFile = file.getLocation().toFile();
 		return localFile;
 	}
