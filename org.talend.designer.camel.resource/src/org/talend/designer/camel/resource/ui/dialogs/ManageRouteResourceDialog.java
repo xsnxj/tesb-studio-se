@@ -146,7 +146,8 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		area.setLayout(new GridLayout(2, false));
 		area.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		resourcesTV = new TableViewer(area, SWT.BORDER | SWT.SINGLE);
+		resourcesTV = new TableViewer(area, SWT.BORDER | SWT.SINGLE
+				| SWT.FULL_SELECTION);
 		Table table = resourcesTV.getTable();
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
