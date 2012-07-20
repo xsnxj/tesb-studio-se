@@ -109,7 +109,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 		String displayName = routeNode.getObject().getProperty().getDisplayName();
 		String routerBundlePath = getTempDir() + displayName + "-bundle-" + version + ".jar";
 
-		exportOsgiBundle(routeNode, routerBundlePath, routeNode.getObject().getVersion(), bundleVersion, "Route");
+		exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route");
 		processRoute(routerBundlePath, routeNode, version);
 
 		exportAllReferenceJobs(routeNode);
