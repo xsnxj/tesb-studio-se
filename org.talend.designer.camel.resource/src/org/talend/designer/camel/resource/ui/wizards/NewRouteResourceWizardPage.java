@@ -13,7 +13,7 @@
 package org.talend.designer.camel.resource.ui.wizards;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.regex.Pattern;
 
@@ -143,13 +143,20 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 			if (!file.exists()) {
 				try {
 					url = new URL(text);
-				} catch (MalformedURLException e) {
+					InputStream is = url.openStream();
+					if (is == null) {
+						url = null;
+					}
+					if (is != null) {
+						is.close();
+					}
+				} catch (Exception e) {
 					url = null;
 				}
 			} else {
 				try {
 					url = file.toURI().toURL();
-				} catch (MalformedURLException e) {
+				} catch (Exception e) {
 					url = null;
 				}
 			}
