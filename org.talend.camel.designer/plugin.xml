@@ -151,59 +151,75 @@
          point="org.talend.core.migrationTask">
       <projecttask
             beforeLogon="false"
+            breaks="5.1.1"
             class="org.talend.camel.designer.migration.SwitchCamelCXFLibraryVersionMigrationTask"
             description="SwitchCamelCXFLibraryVersionMigrationTask"
             id="org.talend.camel.designer.switchCamelCXFLibraryVersionMigrationTask"
-            name="SwitchCamelCXFLibraryVersionMigrationTask">
+            name="SwitchCamelCXFLibraryVersionMigrationTask"
+            version="5.1.2">
       </projecttask>
       <projecttask
             beforeLogon="false"
+            breaks="5.1.1"
             class="org.talend.camel.designer.migration.NewJMSComponentMigrationTask"
             description="NewJMSComponentMigrationTask"
             id="org.talend.camel.designer.NewJMSComponentMigrationTask"
-            name="NewJMSComponentMigrationTask">
-      </projecttask>
-       <projecttask
-            beforeLogon="false"
-            class="org.talend.camel.designer.migration.AggregateStrategyMigrationTask"
-            description="AggregateStrategyMigrationTask"
-            id="org.talend.camel.designer.AggregateStrategyMigrationTask"
-            name="AggregateStrategyMigrationTask">
+            name="NewJMSComponentMigrationTask"
+            version="5.1.2">
       </projecttask>
        <projecttask
              beforeLogon="false"
+             breaks="5.1.1"
+             class="org.talend.camel.designer.migration.AggregateStrategyMigrationTask"
+             description="AggregateStrategyMigrationTask"
+             id="org.talend.camel.designer.AggregateStrategyMigrationTask"
+             name="AggregateStrategyMigrationTask"
+             version="5.1.2">
+      </projecttask>
+       <projecttask
+             beforeLogon="false"
+             breaks="5.1.1"
              class="org.talend.camel.designer.migration.UpdateCJMSProjectMigrationTask"
              description="Update cJMS using cJMSConnectionFactory"
              id="org.talend.camel.designer.UpdateCJMSProjectTask"
-             name="UpdateCJMSProjectTask">
+             name="UpdateCJMSProjectTask"
+             version="5.1.2">
        </projecttask>
              <projecttask
-            beforeLogon="false"
-            class="org.talend.camel.designer.migration.Switch292CamelCXFLibraryVersionMigrationTask"
-            description="Switch292CamelCXFLibraryVersionMigrationTask"
-            id="org.talend.camel.designer.switch292CamelCXFLibraryVersionMigrationTask"
-            name="Switch292CamelCXFLibraryVersionMigrationTask">
+                   beforeLogon="false"
+                   breaks="5.1.1"
+                   class="org.talend.camel.designer.migration.Switch292CamelCXFLibraryVersionMigrationTask"
+                   description="Switch292CamelCXFLibraryVersionMigrationTask"
+                   id="org.talend.camel.designer.switch292CamelCXFLibraryVersionMigrationTask"
+                   name="Switch292CamelCXFLibraryVersionMigrationTask"
+                   version="5.1.2">
        </projecttask>
              <projecttask
-            beforeLogon="false"
-            class="org.talend.camel.designer.migration.Switch292ReleaseCamelVersionTask"
-            description="Switch292ReleaseCamelCXFLibraryVersionMigrationTask"
-            id="org.talend.camel.designer.switch292ReleaseCamelVersionTask"
-            name="Switch292ReleaseCamelVersionTask">
+                   beforeLogon="false"
+                   breaks="5.1.1"
+                   class="org.talend.camel.designer.migration.Switch292ReleaseCamelVersionTask"
+                   description="Switch292ReleaseCamelCXFLibraryVersionMigrationTask"
+                   id="org.talend.camel.designer.switch292ReleaseCamelVersionTask"
+                   name="Switch292ReleaseCamelVersionTask"
+                   version="5.1.2">
       </projecttask>
              <projecttask
                    beforeLogon="false"
+                   breaks="5.1.1"
                    class="org.talend.camel.designer.migration.Switch284CamelCXFLibraryVersionMigrationTask"
                    description="Switch284CamelCXFLibraryVersionMigrationTask"
                    id="org.talend.camel.designer.switch284CamelCXFLibraryVersionMigrationTask"
-                   name="Switch284CamelCXFLibraryVersionMigrationTask">
+                   name="Switch284CamelCXFLibraryVersionMigrationTask"
+                   version="5.1.2">
              </projecttask>
              <projecttask
                    beforeLogon="false"
+                   breaks="5.1.1"
                    class="org.talend.camel.designer.migration.UpdatecJMSMigrationTask"
                    description="Update cJMS to use new field"
                    id="org.talend.camel.designer.migration.UpdatecJMSMigrationTask"
-                   name="UpdatecJMSMigrationTask">
+                   name="UpdatecJMSMigrationTask"
+                   version="5.1.2">
              </projecttask>
       </extension>
         <extension
