@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.ui.workbench,
  javax.wsdl;bundle-version="1.6.2",
  org.eclipse.ui.navigator,
  org.talend.repository.view.di,
- org.talend.datatools.xml
+ org.talend.datatools.xml,
+ org.talend.utils
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .

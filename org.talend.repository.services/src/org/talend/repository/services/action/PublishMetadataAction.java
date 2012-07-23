@@ -71,6 +71,7 @@ import org.talend.core.model.metadata.builder.connection.SchemaTarget;
 import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
+import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
@@ -136,7 +137,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
         this.selection = selection;
         @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        List<RepositoryNode> nodes = selection.toList();
         for (RepositoryNode node : nodes) {
             if (node.getType() != ENodeType.REPOSITORY_ELEMENT
                     || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
@@ -152,6 +153,7 @@ public class PublishMetadataAction extends AContextualAction {
         setEnabled(canWork);
     }
 
+    @Override
     public boolean isVisible() {
         return isEnabled();
     }
@@ -160,13 +162,14 @@ public class PublishMetadataAction extends AContextualAction {
         this.nodes = nodes;
     }
 
+    @Override
     protected void doRun() {
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
             public void run(IProgressMonitor monitor) throws CoreException {
                 monitor.beginTask("importing", 100);
                 if (nodes == null) {
-                    nodes = (List<RepositoryNode>) selection.toList();
+                    nodes = selection.toList();
                 }
                 int step = 100;
                 int size = nodes.size();
@@ -358,7 +361,6 @@ public class PublishMetadataAction extends AContextualAction {
         String name = /* componentName + "_"+ */parameter.getName();
         XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
         connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        connection.setXmlFilePath(name + ".xsd");
         XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
         Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
         connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
@@ -371,8 +373,42 @@ public class PublishMetadataAction extends AContextualAction {
         connectionItem.setConnection(connection);
 
         connection.setInputModel(false);
-        // schema
-        connection.setFileContent(parameter.getSchema());
+
+        // don't put any XSD directly inside the xml connection but put zip file
+        Collection<String> fileStringCol = schemaToFileMap.values();
+        File[] files = new File[fileStringCol.size()];
+        Object[] fileStringArray = fileStringCol.toArray();
+        for (int i = 0; i < fileStringCol.size(); i++) {
+            String fileString = (String) fileStringArray[i];
+            File file = new File(fileString);
+            files[i] = file;
+        }
+        Project project = ProjectManager.getInstance().getCurrentProject();
+        IProject fsProject = null;
+        try {
+            fsProject = ResourceModelUtils.getProject(project);
+        } catch (PersistenceException e2) {
+            ExceptionHandler.process(e2);
+        }
+        String Path = schemaToFileMap.get(parameter.getSchema());
+        String zipFile = new Path(Path) + ".zip";
+        try {
+            org.talend.utils.io.FilesUtils.zips(files, zipFile);
+        } catch (Exception e2) {
+            ExceptionHandler.process(e2);
+        }
+        File zip = new File(zipFile);
+        try {
+            if (zip.exists()) {
+                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+                byteArray.setInnerContentFromFile(zip);
+                connection.setFileContent(byteArray.getInnerContent());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // connection.setFileContent(parameter.getSchema());
+
         XSDSchema xsdSchema;
         try {
             String filePath = schemaToFileMap.get(parameter.getSchema()); // name of xsd file needed
@@ -380,6 +416,7 @@ public class PublishMetadataAction extends AContextualAction {
                 // just in case, but should never happen
                 return;
             }
+            connection.setXmlFilePath(new Path(filePath).lastSegment() + ".zip");
 
             xsdSchema = populationUtil.getXSDSchema(filePath);
             List<ATreeNode> rootNodes = populationUtil.getAllRootNodes(xsdSchema);
