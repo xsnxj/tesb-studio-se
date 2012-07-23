@@ -542,7 +542,10 @@ private boolean restTalendJobAlreadyStarted = false;
 @javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class RestServiceProviderImpl4TalendJob {
 
-	@javax.ws.rs.core.Context private javax.ws.rs.core.UriInfo ui;
+	@javax.ws.rs.core.Context 
+        private javax.ws.rs.core.UriInfo ui;
+        @javax.ws.rs.core.Context 
+        private javax.ws.rs.core.HttpHeaders httpHeaders;
 
 	private final <%=process.getName()%> job;
 
@@ -845,12 +848,14 @@ if (null != conns && !conns.isEmpty()) {
 		request.put("URI_BASE", ui.getBaseUri().toString());
 		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
-		//request.put("PARAMS", getPathParameters(uriInfo));
 		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
 			parameters.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
 		<%	} %>
 		request.put("PARAMS", parameters);
+                
+                request.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
+                request.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
 
 		return processRequest(request);
 	}
@@ -902,8 +907,15 @@ public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.
 		response = provider.handleWrongRequest(messageContext, response.getStatus(), error);
 
 		java.util.List<javax.ws.rs.core.MediaType> accepts = messageContext.getHttpHeaders().getAcceptableMediaTypes();
-		String type = accepts.isEmpty() ? "application/xml" : accepts.get(0).toString();
-		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(type).build();
+		javax.ws.rs.core.MediaType responseType = accepts.isEmpty() ? null : accepts.get(0); 
+
+		if (responseType == null || !responseType.getSubtype().equals("xml") &&  !responseType.getSubtype().equals("json")) {
+
+                    responseType = javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
+
+                }
+
+		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(responseType).build();
 	}
 }
 

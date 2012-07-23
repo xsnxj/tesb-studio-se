@@ -16,13 +16,11 @@
 
 	<extension point="org.talend.core.migrationTask">
 		<projecttask
-        beforeLogon="false"
-        breaks="5.1.1"
-        class="org.talend.designer.esb.components.rs.provider.migration.RestRequestWrongCallMigrationTask"
-        description="Add more information to wrong call flow migration task"
-        id="org.talend.designer.esb.webservice.RestRequestWrongCallMigrationTask"
-        name="RestRequestWrongCallMigrationTask"
-        version="5.1.2"/>
+			id="org.talend.designer.esb.webservice.RestRequestWrongCallMigrationTask"
+			class="org.talend.designer.esb.components.rs.provider.migration.RestRequestWrongCallMigrationTask"
+			name="RestRequestWrongCallMigrationTask"
+			description="Add more information to wrong call flow migration task"
+			beforeLogon="false" />
 	</extension>
 
 	<extension point="org.eclipse.ui.preferencePages">
