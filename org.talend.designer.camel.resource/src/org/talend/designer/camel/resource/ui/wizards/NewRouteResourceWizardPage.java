@@ -15,6 +15,7 @@ package org.talend.designer.camel.resource.ui.wizards;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -80,7 +82,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 				File file = new File(filenameText.getText());
 				String fileName = file.getName();
 				if (nameText.getText().isEmpty()) {
-					nameText.setText(fileName);
+					nameText.setText(fileName.replace(".", "_"));
 				}
 				evaluateFields();
 			}
@@ -131,7 +133,9 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		
 		super.evaluateTextField();
 
+		boolean isValid = true;
 		String text = filenameText.getText();
+
 
 		// An empty file, allowed
 		if (text != null && !text.isEmpty()) {
@@ -152,7 +156,17 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 			if (url == null) {
 				nameStatus = createStatus(IStatus.ERROR,
 						"Can not load content from:  " + text + ".");
+				isValid = false;
 			}
+			updatePageStatus();
+		}
+
+		if (isValid
+				&& !Pattern.matches(RepositoryConstants
+						.getPattern(ERepositoryObjectType.PROCESS), nameText
+						.getText()) || nameText.getText().trim().contains(" ")) {
+			nameStatus = createStatus(IStatus.ERROR,
+					"Name contains incorrect characters.");
 			updatePageStatus();
 		}
 
