@@ -20,6 +20,8 @@
 			class="org.talend.designer.esb.components.rs.provider.migration.RestRequestWrongCallMigrationTask"
 			name="RestRequestWrongCallMigrationTask"
 			description="Add more information to wrong call flow migration task"
+                           breaks="5.1.1"
+                           version="5.1.2"
 			beforeLogon="false" />
 	</extension>
 
