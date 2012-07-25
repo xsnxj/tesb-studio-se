@@ -132,6 +132,12 @@ public class RouteResourceSelectionDialog extends Dialog {
 				return getInput();
 			}
 
+			@Override
+			protected int getStyle() {
+				// http://jira.talendforge.org/browse/TESB-6582 Xiaopeng Li
+				return SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL;
+			}
+
 		};
 
 		repositoryTreeViewer = (RepositoryTreeViewer) provider
