@@ -183,11 +183,14 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 			@Override
 			protected CellEditor getCellEditor(Object element) {
+				// http://jira.talendforge.org/browse/TESB-6584 Xiaopeng Li
+				ResourceDependencyModel model = (ResourceDependencyModel) element;
+				String[] array = model.getVersions().toArray(new String[0]);
 				if (comboBoxCellEditor == null) {
-					ResourceDependencyModel model = (ResourceDependencyModel) element;
 					comboBoxCellEditor = new ComboBoxCellEditor(resourcesTV
-							.getTable(), model.getVersions().toArray(
-							new String[0]), SWT.READ_ONLY | SWT.CENTER);
+							.getTable(), array, SWT.READ_ONLY | SWT.CENTER);
+				} else {
+					comboBoxCellEditor.setItems(array);
 				}
 				return comboBoxCellEditor;
 			}
