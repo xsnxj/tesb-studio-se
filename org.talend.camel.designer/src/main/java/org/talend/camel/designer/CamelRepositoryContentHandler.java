@@ -128,28 +128,28 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
     public Resource save(Item item) throws PersistenceException {
         Resource itemResource = null;
         if (item instanceof CamelProcessItem) {
-            itemResource = save((CamelProcessItem) item);
+            itemResource = saveRoute((CamelProcessItem) item);
             return itemResource;
         }
         if (item instanceof BeanItem) {
-            itemResource = save((BeanItem) item);
+            itemResource = saveFile((BeanItem) item);
             return itemResource;
         }
 		if (item instanceof RouteResourceItem) {
-			itemResource = save((RouteResourceItem) item);
+			itemResource = saveFile((RouteResourceItem) item);
 			return itemResource;
 		}
         return null;
     }
 
-    private Resource save(CamelProcessItem item) {
+    private Resource saveRoute(CamelProcessItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
         itemResource.getContents().clear();
         itemResource.getContents().add(item.getProcess());
         return itemResource;
     }
 
-	private Resource save(RouteResourceItem item) {
+	private Resource saveFile(FileItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
 
         ByteArray content = item.getContent();
