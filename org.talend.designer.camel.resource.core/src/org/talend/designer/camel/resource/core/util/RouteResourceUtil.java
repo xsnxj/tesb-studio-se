@@ -164,7 +164,11 @@ public class RouteResourceUtil {
 		}
 		String itemName = item.getProperty().getLabel();
 		String version = item.getProperty().getVersion();
-		String fileName = itemName + "_" + version + ".item";
+		String fileExtension = item.getFileExtension();
+		if (fileExtension == null) {
+			fileExtension = "item";
+		}
+		String fileName = itemName + "_" + version + "." + fileExtension;
 		IFile file = rrfolder.getFile(fileName);
 
 		return file;

@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.camel.resource.ui.wizards;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,7 +37,6 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.expressionbuilder.ExpressionPersistance;
@@ -224,15 +222,14 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 				RepositoryEditorInput fileEditorInput = null;
 
 				if (item instanceof RouteResourceItem) {
-					IFile file = RouteResourceUtil.getSourceFile(item);
-					fileEditorInput = new RouteResourceInput(file, item);
+					fileEditorInput = RouteResourceInput.createInput(item);
 				}
 
 				editorPart = page.findEditor(fileEditorInput);
 				if (editorPart == null) {
 					// fileEditorInput.setView(getViewPart());
 					fileEditorInput.setRepositoryNode(node);
-						page.openEditor(fileEditorInput, RouteResourceEditor.ID);
+					page.openEditor(fileEditorInput, RouteResourceEditor.ID);
 				} else {
 					page.activate(editorPart);
 				}

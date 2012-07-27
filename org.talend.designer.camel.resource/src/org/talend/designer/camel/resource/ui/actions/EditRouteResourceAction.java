@@ -14,14 +14,16 @@ package org.talend.designer.camel.resource.ui.actions;
 
 import java.util.Properties;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
@@ -29,7 +31,7 @@ import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
+import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.i18n.Messages;
@@ -192,24 +194,41 @@ public class EditRouteResourceAction extends AContextualAction {
 	 * @param node
 	 * @param item
 	 */
-	public static void openEditor(IWorkbenchPage page, IRepositoryNode node,
+	public static void openEditor(final IWorkbenchPage page,
+			IRepositoryNode node,
 			RouteResourceItem item) {
 		try {
 
-			IFile file = RouteResourceUtil.getSourceFile(item);
+			RouteResourceInput fileEditorInput = RouteResourceInput
+					.createInput(item);
 
-			RouteResourceInput fileEditorInput = new RouteResourceInput(file,
-					item);
 			fileEditorInput.setRepositoryNode(node);
+
+			IEditorRegistry editorRegistry = PlatformUI.getWorkbench()
+					.getEditorRegistry();
+			String extension = item.getFileExtension();
+			IEditorDescriptor defaultEditor = editorRegistry
+					.getDefaultEditor("*." + extension);
+			String editorId = null;
+			if (defaultEditor != null) {
+				editorId = defaultEditor.getId();
+			} else {
+				editorId = RouteResourceEditor.ID;
+			}
 
 			IEditorPart editorPart = page.findEditor(fileEditorInput);
 
 			if (editorPart == null) {
-				editorPart = page.openEditor(fileEditorInput,
-						RouteResourceEditor.ID, true);
+				editorPart = page.openEditor(fileEditorInput, editorId, true);
+
 			} else {
-				page.openEditor(fileEditorInput, RouteResourceEditor.ID);
+				editorPart = page.openEditor(fileEditorInput, editorId);
 			}
+			page.getWorkbenchWindow()
+					.getPartService()
+					.addPartListener(
+							new ResourceEditorListener(fileEditorInput, page));
+
 		} catch (Exception e) {
 			MessageBoxExceptionHandler.process(e);
 		}

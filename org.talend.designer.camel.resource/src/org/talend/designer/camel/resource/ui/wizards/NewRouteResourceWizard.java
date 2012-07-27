@@ -151,7 +151,8 @@ public class NewRouteResourceWizard extends Wizard {
 		item.setContent(byteArray);
 		Path p = new Path(property.getLabel());
 		item.setName(p.removeFileExtension().lastSegment());
-		item.setExtension(p.getFileExtension());
+		p = new Path(url.getPath());
+		item.setFileExtension(p.getFileExtension());
 
 		RepositoryWorkUnit<Object> workUnit = new RepositoryWorkUnit<Object>(
 				this.getWindowTitle(), this) {
