@@ -1,6 +1,7 @@
 package org.talend.designer.publish.core.models;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -48,8 +49,11 @@ public class MetadataModel extends UploadableModel {
 						.newDocumentBuilder().newDocument();
 				createDocument(groupId, artifactId);
 			} else {
+				//fix, use the content directly, instead of read url again
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(readContent.getBytes());
 				document = DocumentBuilderFactory.newInstance()
-						.newDocumentBuilder().parse(metadataPath);
+						.newDocumentBuilder().parse(inputStream);
+				inputStream.close();
 			}
 		} catch (Exception e) {
 			document = DocumentBuilderFactory.newInstance()
@@ -116,9 +120,26 @@ public class MetadataModel extends UploadableModel {
 		} else {
 			versionsElement = (Element) elements.item(0);
 		}
-		Element versionElement = document.createElement("version");
-		versionElement.setTextContent(version);
-		versionsElement.appendChild(versionElement);
+		
+		// if not exist, then add
+		boolean found = false;
+		NodeList versionChildren = versionsElement.getElementsByTagName("version");
+		if(versionChildren != null ){
+			int length = versionChildren.getLength();
+			for(int i = 0;i<length;i++){
+				Element item = (Element) versionChildren.item(i);
+				String textContent = item.getTextContent();
+				if(version.equals(textContent)){
+					found = true;
+					break;
+				}
+			}
+		}
+		if(!found){
+			Element versionElement = document.createElement("version");
+			versionElement.setTextContent(version);
+			versionsElement.appendChild(versionElement);
+		}
 
 		Element lastUpdatedElement = null;
 		elements = versioningElement.getElementsByTagName("lastUpdated");

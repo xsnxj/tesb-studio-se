@@ -1,20 +1,25 @@
 package org.talend.designer.publish.core.models;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 public abstract class UploadableModel {
 
@@ -73,64 +78,34 @@ public abstract class UploadableModel {
 
 	protected void uploadContent(URL targetURL, String content)
 			throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(
-				new ByteArrayInputStream(content.getBytes()));
-		uploadContent(targetURL, bis);
+		uploadContent(targetURL, new StringEntity(content));
 	}
 
 	protected void uploadContent(URL targetURL, File content) throws IOException {
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
-				content));
-		uploadContent(targetURL, bis);
+		uploadContent(targetURL, new FileEntity(content));
 	}
 
-	private void uploadContent(URL targetURL, InputStream bis)
+	private void uploadContent(URL targetURL, HttpEntity entity)
 			throws IOException {
-		Authenticator.setDefault(new RepositoryAuthentication(userName,
-				password));
-		String host = targetURL.getHost();
-		int port = targetURL.getPort();
-		HttpURLConnection connection = null;
-		OutputStream outputStream = null;
-		// InputStream inputStream = null;
-		BufferedReader bufferedReader = null;
-		try {
-			connection = (HttpURLConnection) targetURL.openConnection();
-			connection.setDoOutput(true);
-
-			connection.setRequestMethod("PUT");
-			connection.setDoInput(true);
-			connection.addRequestProperty("Host", host + ":" + port);
-			connection.addRequestProperty("Accept",
-					"text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2");
-			connection.addRequestProperty("Connection", "keep-alive");
-
-			byte[] contents = new byte[1024];
-			outputStream = connection.getOutputStream();
-			int count = -1;
-			while ((count = bis.read(contents)) != -1) {
-				outputStream.write(contents, 0, count);
-			}
-
-			int responseCode = connection.getResponseCode();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		try{
+			httpClient.getCredentialsProvider().setCredentials(
+	                new AuthScope(targetURL.getHost(), targetURL.getPort()),
+	                new UsernamePasswordCredentials(userName, password));
+			
+			HttpPut httpPut = new HttpPut(targetURL.toString());
+			httpPut.setEntity(entity);
+			HttpResponse response = httpClient.execute(httpPut);
+			StatusLine statusLine = response.getStatusLine();
+			int responseCode = statusLine.getStatusCode();
+			EntityUtils.consume(entity);
 			if (responseCode > 399) {
-				throw new IOException(connection.getHeaderField(0));
+				throw new IOException(responseCode+" "+statusLine.getReasonPhrase());
 			}
-		} catch (IOException e) {
+		}catch (IOException e) {
 			throw e;
 		} finally {
-			if (bis != null) {
-				bis.close();
-			}
-			if (bufferedReader != null) {
-				bufferedReader.close();
-			}
-			if (outputStream != null) {
-				outputStream.close();
-			}
-			if (connection != null) {
-				connection.disconnect();
-			}
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 
@@ -144,29 +119,37 @@ public abstract class UploadableModel {
 	 * @throws IOException
 	 */
 	protected String readContent(URL targetURL) throws IOException {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		try {
-			Authenticator.setDefault(new RepositoryAuthentication(userName,
-					password));
-			HttpURLConnection connection = (HttpURLConnection) targetURL
-					.openConnection();
-			connection.setDoInput(true);
+			httpClient.getCredentialsProvider().setCredentials(
+	                new AuthScope(targetURL.getHost(), targetURL.getPort()),
+	                new UsernamePasswordCredentials(userName, password));
+			
+			HttpGet httpGet = new HttpGet(targetURL.toString());
+			HttpResponse response = httpClient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if(entity != null){
+				InputStream inputStream = entity.getContent();
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(inputStream));
+				StringBuilder sb = new StringBuilder();
 
-			connection.setRequestMethod("GET");
-			InputStream inputStream = connection.getInputStream();
-			BufferedReader bufferedReader = new BufferedReader(
-					new InputStreamReader(inputStream));
-			StringBuilder sb = new StringBuilder();
-
-			String s = bufferedReader.readLine();
-			while (s != null) {
-				sb.append(s);
-				sb.append("\n");
-				s = bufferedReader.readLine();
+				String s = bufferedReader.readLine();
+				while (s != null) {
+					sb.append(s);
+					sb.append("\n");
+					s = bufferedReader.readLine();
+				}
+				bufferedReader.close();
+				inputStream.close();
+				EntityUtils.consume(entity);
+				return sb.toString();
 			}
-			bufferedReader.close();
-			return sb.toString();
-		} catch (FileNotFoundException e) {
 			return null;
+		} catch (FileNotFoundException e) {
+			throw e;
+		}finally{
+			httpClient.getConnectionManager().shutdown();
 		}
 	}
 	
@@ -183,22 +166,6 @@ public abstract class UploadableModel {
 		sb.append(artifactId);
 		sb.append("/");
 		return sb.toString();
-	}
-
-	class RepositoryAuthentication extends Authenticator {
-		private String userName;
-		private String password;
-
-		public RepositoryAuthentication(String userName, String password) {
-			super();
-			this.userName = userName;
-			this.password = password;
-		}
-
-		@Override
-		protected PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(userName, password.toCharArray());
-		}
 	}
 
 }
