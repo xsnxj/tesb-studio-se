@@ -137,17 +137,116 @@ public class CreateNewJobAction extends AbstractCreateAction {
      */
     @Override
     protected void doRun() {
-        RepositoryNode node = null;
-        NewProcessWizard processWizard = null;
+        RepositoryNode node = getSelectedRepositoryNode();
+        if(node == null){
+        	return;
+        }
+        NewProcessWizard processWizard = getNewProcessWizard(node);
+
+        WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), processWizard);
+        if (dlg.open() == Window.OK) {
+            createNewProcess(node, processWizard);
+        }
+    }
+    
+    public NewProcessWizard getNewProcessWizard(){
+    	return getNewProcessWizard(getSelectedRepositoryNode());
+    }
+
+
+    public boolean createNewProcess(NewProcessWizard processWizard){
+    	return createNewProcess(getSelectedRepositoryNode(), processWizard);
+    }
+    
+	private boolean createNewProcess(RepositoryNode node,
+			NewProcessWizard processWizard) {
+		if (processWizard.getProcess() == null) {
+		    return false;
+		}
+
+		ProcessEditorInput fileEditorInput;
+		try {
+		    // Set readonly to false since created job will always be editable.
+		    fileEditorInput = new ProcessEditorInput(processWizard.getProcess(), false, true, false);
+		    IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
+		            .getProperty().getId(), false);
+		    fileEditorInput.setRepositoryNode(repositoryNode);
+
+		    IWorkbenchPage page = getActivePage();
+		    IEditorPart openEditor = page.openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
+		    CommandStack commandStack = (CommandStack) openEditor.getAdapter(CommandStack.class);
+
+		    String jobName = processWizard.getProcess().getProperty().getLabel();
+		    String jobID = processWizard.getProcess().getProperty().getId();
+		    RepositoryNode portNode = node.getParent();
+		    ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
+		    ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+
+		    Node node1 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
+		            (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
+
+		    String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
+		    Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
+		            ((OperationRepositoryObject) node.getObject()).getName(), node.getParent().getObject().getLabel());
+		    setProviderRequestComponentConfiguration(node1, serviceParameters);
+
+		    NodeContainer nc = new NodeContainer(node1);
+		    CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(
+		            (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+		                    3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+		    cNcc.execute();
+		    if (!serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE).equals(WSDLUtils.ONE_WAY)){ 
+		    	Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
+		            (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
+		    	nc = new NodeContainer(node2);
+		    	cNcc = new CreateNodeContainerCommand(
+		            (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
+		                    9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+		    	commandStack.execute(cNcc);
+		    }
+		    // openEditor.doSave(new NullProgressMonitor());
+
+		    EList<ServicePort> listPort = serviceConnection.getServicePort();
+		    String parentPortName = node.getParent().getObject().getLabel();
+		    for (ServicePort port : listPort) {
+		        if (port.getName().equals(parentPortName)) {
+		            List<ServiceOperation> listOperation = port.getServiceOperation();
+		            for (ServiceOperation operation : listOperation) {
+		                if (operation.getLabel().equals(node.getObject().getLabel())) {
+		                    operation.setReferenceJobId(jobID);
+		                    operation.setLabel(operation.getName() + "-" + jobName);
+		                    break;
+		                }
+		            }
+		            break;
+		        }
+		    }
+
+		    repositoryChange((RepositoryNode) node, node1);
+
+		    IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+		    try {
+		        factory.save(serviceItem);
+		    } catch (PersistenceException e) {
+		        e.printStackTrace();
+		    }
+		    RepositoryManager.refreshSavedNode(node);
+		    return true;
+		} catch (PartInitException e) {
+		    ExceptionHandler.process(e);
+		} catch (PersistenceException e) {
+		    MessageBoxExceptionHandler.process(e);
+		} catch (Exception e) {
+		    ExceptionHandler.process(e);
+		}
+		return false;
+	}
+    
+	private NewProcessWizard getNewProcessWizard(RepositoryNode node) {
+		NewProcessWizard processWizard = null;
         if (isToolbar()) {
             processWizard = new NewProcessWizard(null);
         } else {
-            ISelection selection = getSelection();
-            if (selection == null) {
-                return;
-            }
-            Object obj = ((IStructuredSelection) selection).getFirstElement();
-            node = (RepositoryNode) obj;
             ItemCacheManager.clearCache();
 
             String operationName = ((OperationRepositoryObject) node.getObject()).getName();
@@ -162,94 +261,24 @@ public class CreateNewJobAction extends AbstractCreateAction {
             IPath path = new Path(servicesName).append(portName).append(operationName);
             if (RepositoryConstants.isSystemFolder(path.toString())) {
                 // Not allowed to create in system folder.
-                return;
+                return null;
             }
             String label = initLabel((RepositoryNode) node);
             processWizard = new NewProcessWizard(path, label);
         }
+		return processWizard;
+	}
 
-        WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), processWizard);
-        if (dlg.open() == Window.OK) {
-            if (processWizard.getProcess() == null) {
-                return;
-            }
-
-            ProcessEditorInput fileEditorInput;
-            try {
-                // Set readonly to false since created job will always be editable.
-                fileEditorInput = new ProcessEditorInput(processWizard.getProcess(), false, true, false);
-                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
-                        .getProperty().getId(), false);
-                fileEditorInput.setRepositoryNode(repositoryNode);
-
-                IWorkbenchPage page = getActivePage();
-                IEditorPart openEditor = page.openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
-                CommandStack commandStack = (CommandStack) openEditor.getAdapter(CommandStack.class);
-
-                String jobName = processWizard.getProcess().getProperty().getLabel();
-                String jobID = processWizard.getProcess().getProperty().getId();
-                RepositoryNode portNode = node.getParent();
-                ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
-                ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-
-                Node node1 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
-
-                String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
-                Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
-                        ((OperationRepositoryObject) node.getObject()).getName(), node.getParent().getObject().getLabel());
-                setProviderRequestComponentConfiguration(node1, serviceParameters);
-
-                NodeContainer nc = new NodeContainer(node1);
-                CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
-                cNcc.execute();
-                if (!serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE).equals(WSDLUtils.ONE_WAY)){ 
-                	Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
-                	nc = new NodeContainer(node2);
-                	cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
-                	commandStack.execute(cNcc);
-                }
-                // openEditor.doSave(new NullProgressMonitor());
-
-                EList<ServicePort> listPort = serviceConnection.getServicePort();
-                String parentPortName = node.getParent().getObject().getLabel();
-                for (ServicePort port : listPort) {
-                    if (port.getName().equals(parentPortName)) {
-                        List<ServiceOperation> listOperation = port.getServiceOperation();
-                        for (ServiceOperation operation : listOperation) {
-                            if (operation.getLabel().equals(node.getObject().getLabel())) {
-                                operation.setReferenceJobId(jobID);
-                                operation.setLabel(operation.getName() + "-" + jobName);
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-
-                repositoryChange((RepositoryNode) node, node1);
-
-                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-                try {
-                    factory.save(serviceItem);
-                } catch (PersistenceException e) {
-                    e.printStackTrace();
-                }
-                RepositoryManager.refreshSavedNode(node);
-            } catch (PartInitException e) {
-                ExceptionHandler.process(e);
-            } catch (PersistenceException e) {
-                MessageBoxExceptionHandler.process(e);
-            } catch (Exception e) {
-                ExceptionHandler.process(e);
-            }
+	private RepositoryNode getSelectedRepositoryNode() {
+		RepositoryNode node = null;
+        ISelection selection = getSelection();
+        if (selection == null) {
+        	return null;
         }
-    }
+        Object obj = ((IStructuredSelection) selection).getFirstElement();
+        node = (RepositoryNode) obj;
+		return node;
+	}
 
     private String initLabel(RepositoryNode node) {
         RepositoryNode parent = node.getParent();

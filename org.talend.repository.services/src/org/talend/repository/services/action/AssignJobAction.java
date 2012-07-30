@@ -200,9 +200,9 @@ public class AssignJobAction extends AbstractCreateAction {
         }
     }
 
-    public void assign(RepositoryNode jobNode) {
+    public boolean  assign(RepositoryNode jobNode) {
         if (jobNode == null) {
-            return;
+            return false;
         }
         IRepositoryViewObject repositoryObject = jobNode.getObject();
         final Item item = repositoryObject.getProperty().getItem();
@@ -220,7 +220,7 @@ public class AssignJobAction extends AbstractCreateAction {
         if (!hadEsbRequestComponent) {
             MessageDialog.openWarning(Display.getCurrent().getActiveShell(), Messages.AssignJobAction_WarningTitle,
                     Messages.AssignJobAction_WarningMessage);
-            return;
+            return false;
         }
         try {
             String jobID = item.getProperty().getId();
@@ -319,9 +319,11 @@ public class AssignJobAction extends AbstractCreateAction {
                 e.printStackTrace();
             }
             RepositoryManager.refreshSavedNode(repositoryNode);
+            return true;
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
+        return false;
     }
 
     public Class getClassForDoubleClick() {
@@ -342,6 +344,10 @@ public class AssignJobAction extends AbstractCreateAction {
         return getTopParent(repositoryNode);
     }
 
+    public List<String> getAllReferenceJobId(){
+    	return getAllReferenceJobId(getCurrentRepositoryNode());
+    }
+    
     private List<String> getAllReferenceJobId(RepositoryNode repositoryNode) {
         repositoryNode = getTopParent(repositoryNode);
         List<IRepositoryNode> nodeList = repositoryNode.getChildren();

@@ -50,12 +50,12 @@
 		<!-- service operation actions -->
 		<Action
 				id="org.talend.repository.services.action.AssignJobAction"
-				class="org.talend.repository.services.action.AssignJobAction"
+				class="org.talend.repository.services.action.NewAssignJobAction"
 				name="Assign Job" />
-		<Action
+		<!--<Action
 				id="org.talend.repository.services.action.CreateNewJobAction"
 				class="org.talend.repository.services.action.CreateNewJobAction"
-				name="Create New Job" />
+				name="Create New Job" /> -->
 		<Action
 				id="org.talend.repository.services.action.OpenJobAction"
 				class="org.talend.repository.services.action.OpenJobAction"
