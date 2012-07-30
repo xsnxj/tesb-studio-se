@@ -22,7 +22,15 @@ public class Messages extends NLS {
 
     public static String ServiceExportWizard_WarningMessage_WillBeOverwritten;
 
-    public static String AssignWsdlDialog_Title;
+    public static String AssignChoicePage_assignJobLabel;
+
+	public static String AssignChoicePage_message;
+
+	public static String AssignChoicePage_newJobLabel;
+
+	public static String AssignChoicePage_title;
+
+	public static String AssignWsdlDialog_Title;
 
     public static String AssignWsdlDialog_Description;
 
@@ -45,6 +53,8 @@ public class Messages extends NLS {
 	public static String AssignJobAction_WarningTitle;
 
     public static String AssignJobAction_WarningMessage;
+
+	public static String AssignJobWizard_windowTitle;
 
     static {
         // initialize resource bundle
