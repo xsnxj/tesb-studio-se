@@ -8,9 +8,10 @@
   <foreignModel>CamelProperties.ecore</foreignModel>
   <genPackages prefix="CamelProperties" basePackage="org.talend.camel.core.model"
       resource="XML" disposableProviderFactory="true" ecorePackage="CamelProperties.ecore#/">
-    <genClasses ecoreClass="CamelProperties.ecore#//BeanItem">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CamelProperties.ecore#//BeanItem/imports"/>
-    </genClasses>
+    <genClasses ecoreClass="CamelProperties.ecore#//BeanItem"/>
     <genClasses ecoreClass="CamelProperties.ecore#//CamelProcessItem"/>
+    <genClasses ecoreClass="CamelProperties.ecore#//RouteResourceItem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CamelProperties.ecore#//RouteResourceItem/bindingExtension"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>
