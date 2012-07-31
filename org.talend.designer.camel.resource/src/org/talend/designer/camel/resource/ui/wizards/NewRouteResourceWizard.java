@@ -35,7 +35,9 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -125,17 +127,32 @@ public class NewRouteResourceWizard extends Wizard {
 	public boolean performFinish() {
 		property.setId(repositoryFactory.getNextId());
 		property.setLabel(property.getDisplayName());
+		
+		URL url = mainPage.getUrl();
+		Path p = new Path(property.getLabel());
+		String itemName = p.removeFileExtension().lastSegment();
+		String fileExtension = "";
+		if (url != null) {
+			p = new Path(url.getPath());
+			if (p.getFileExtension() != null) {
+				fileExtension = p.getFileExtension();
+			}
+		}
+
+		// In case the source file extension is "item"
+		if (fileExtension.equals(FileConstants.ITEM_EXTENSION)) {
+			fileExtension += "_";
+		}
 
 		ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-		URL url = mainPage.getUrl();
+		StringBuffer sb = new StringBuffer();
 		if (url == null) {
-			byteArray.setInnerContent(new byte[0]);
+			 byteArray.setInnerContent(new byte[0]);
 		} else {
 			try {
 				InputStream inputStream = url.openStream();
 				BufferedReader bufferedReader = new BufferedReader(
 						new InputStreamReader(inputStream, "utf-8"));
-				StringBuffer sb = new StringBuffer();
 				String line = bufferedReader.readLine();
 				while (line != null) {
 					sb.append(line).append(System.getProperty("line.separator"));
@@ -148,11 +165,20 @@ public class NewRouteResourceWizard extends Wizard {
 				return false;
 			}
 		}
+
+		ReferenceFileItem refItem = PropertiesFactory.eINSTANCE
+				.createReferenceFileItem();
+		refItem.setContent(byteArray);
+		refItem.setExtension(fileExtension);
+		refItem.setName(itemName);
+
+		item.setName(itemName);
+
+		item.setBindingExtension(fileExtension);
+		byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+		byteArray.setInnerContent(new byte[0]);
 		item.setContent(byteArray);
-		Path p = new Path(property.getLabel());
-		item.setName(p.removeFileExtension().lastSegment());
-		p = new Path(url.getPath());
-		item.setFileExtension(p.getFileExtension());
+		item.getReferenceResources().add(refItem);
 
 		RepositoryWorkUnit<Object> workUnit = new RepositoryWorkUnit<Object>(
 				this.getWindowTitle(), this) {

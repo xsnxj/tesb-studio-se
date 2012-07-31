@@ -206,7 +206,7 @@ public class EditRouteResourceAction extends AContextualAction {
 
 			IEditorRegistry editorRegistry = PlatformUI.getWorkbench()
 					.getEditorRegistry();
-			String extension = item.getFileExtension();
+			String extension = item.getBindingExtension();
 			IEditorDescriptor defaultEditor = editorRegistry
 					.getDefaultEditor("*." + extension);
 			String editorId = null;
@@ -218,18 +218,24 @@ public class EditRouteResourceAction extends AContextualAction {
 
 			IEditorPart editorPart = page.findEditor(fileEditorInput);
 
+			page.getWorkbenchWindow().getPartService()
+					.addPartListener(
+							new ResourceEditorListener(fileEditorInput, page));
+
 			if (editorPart == null) {
 				editorPart = page.openEditor(fileEditorInput, editorId, true);
 
 			} else {
 				editorPart = page.openEditor(fileEditorInput, editorId);
 			}
-			page.getWorkbenchWindow()
-					.getPartService()
-					.addPartListener(
-							new ResourceEditorListener(fileEditorInput, page));
+
+
 
 		} catch (Exception e) {
+			try {
+				ProxyRepositoryFactory.getInstance().unlock(item);
+			} catch (Exception ie) {
+			}
 			MessageBoxExceptionHandler.process(e);
 		}
 	}

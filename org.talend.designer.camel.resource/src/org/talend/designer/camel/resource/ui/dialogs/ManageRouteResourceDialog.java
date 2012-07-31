@@ -54,6 +54,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
+import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.providers.ResourceContentProvider;
 import org.talend.designer.camel.resource.ui.providers.ResourceLabelProvider;
 import org.talend.repository.model.RepositoryNode;
@@ -125,7 +126,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Manage Route Resources");
+		newShell.setText(Messages.getString("ManageRouteResourceDialog.text")); //$NON-NLS-1$
 	}
 
 	@Override
@@ -137,8 +138,8 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 
 		setHelpAvailable(false);
-		setTitle("Manage Route Resources");
-		setMessage("Manage Route Resources");
+		setTitle(Messages.getString("ManageRouteResourceDialog.title")); //$NON-NLS-1$
+		setMessage(Messages.getString("ManageRouteResourceDialog.message")); //$NON-NLS-1$
 
 		Composite container = (Composite) super.createDialogArea(parent);
 
@@ -154,12 +155,12 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(
 				resourcesTV, SWT.NONE);
-		tableViewerColumn.getColumn().setText("Route Resource");
+		tableViewerColumn.getColumn().setText(Messages.getString("ManageRouteResourceDialog.routeCol")); //$NON-NLS-1$
 		tableViewerColumn.getColumn().setWidth(200);
 		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
 
 		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
-		tableViewerColumn.getColumn().setText("Version");
+		tableViewerColumn.getColumn().setText(Messages.getString("ManageRouteResourceDialog.Version")); //$NON-NLS-1$
 		tableViewerColumn.getColumn().setWidth(100);
 		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
 
@@ -203,12 +204,12 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		});
 
 		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
-		tableViewerColumn.getColumn().setText("Type");
+		tableViewerColumn.getColumn().setText(Messages.getString("ManageRouteResourceDialog.Type")); //$NON-NLS-1$
 		tableViewerColumn.getColumn().setWidth(100);
 		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
 
 		tableViewerColumn = new TableViewerColumn(resourcesTV, SWT.NONE);
-		tableViewerColumn.getColumn().setText("Path");
+		tableViewerColumn.getColumn().setText(Messages.getString("ManageRouteResourceDialog.Path")); //$NON-NLS-1$
 		tableViewerColumn.getColumn().setWidth(200);
 		tableViewerColumn.getColumn().setAlignment(SWT.LEFT);
 
@@ -229,16 +230,16 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 		addBtn = new Button(buttonComp, SWT.PUSH);
 		addBtn.setImage(ImageProvider.getImage(EImage.ADD_ICON));
-		addBtn.setText("Add");
+		addBtn.setText(Messages.getString("ManageRouteResourceDialog.Add")); //$NON-NLS-1$
 		addBtn.setLayoutData(gd);
 
 		delBtn = new Button(buttonComp, SWT.PUSH);
-		delBtn.setText("Remove");
+		delBtn.setText(Messages.getString("ManageRouteResourceDialog.Remove")); //$NON-NLS-1$
 		delBtn.setLayoutData(gd);
 		delBtn.setImage(ImageProvider.getImage(EImage.DELETE_ICON));
 
 		copyBtn = new Button(buttonComp, SWT.PUSH);
-		copyBtn.setText("Copy Path");
+		copyBtn.setText(Messages.getString("ManageRouteResourceDialog.CopyPath")); //$NON-NLS-1$
 		copyBtn.setLayoutData(gd);
 
 		initListeners();
@@ -293,13 +294,13 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		if (item != null) {
 			if (item.isBuiltIn()) {
 				delBtn.setEnabled(false);
-				setMessage(item.getItem().getProperty().getLabel() + "("
-						+ item.getSelectedVersion() + ") is used by "
+				setMessage(item.getItem().getProperty().getLabel() + "(" //$NON-NLS-1$
+						+ item.getSelectedVersion() + Messages.getString("ManageRouteResourceDialog.usedBy") //$NON-NLS-1$
 						+ item.getRefNodes());
 			} else {
 				delBtn.setEnabled(true);
-				setMessage(item.getItem().getProperty().getLabel() + "("
-						+ item.getSelectedVersion() + ")");
+				setMessage(item.getItem().getProperty().getLabel() + "(" //$NON-NLS-1$
+						+ item.getSelectedVersion() + ")"); //$NON-NLS-1$
 			}
 		}
 
@@ -314,9 +315,9 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 			Clipboard clipboard = new Clipboard(copyBtn.getDisplay());
 			clipboard.setContents(new String[] { item.getClassPathUrl() },
 					new Transfer[] { TextTransfer.getInstance() });
-			MessageDialog.openInformation(getShell(), "Copy Successfully",
-					"'" + item.getClassPathUrl()
-							+ "' has been copied to clipboard.");
+			MessageDialog.openInformation(getShell(), Messages.getString("ManageRouteResourceDialog.copyOK"), //$NON-NLS-1$
+					"'" + item.getClassPathUrl() //$NON-NLS-1$
+							+ Messages.getString("ManageRouteResourceDialog.copy1")); //$NON-NLS-1$
 		}
 
 	}
@@ -325,9 +326,9 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		ResourceDependencyModel item = getSelectiedItem();
 		if (item != null) {
 			if (item.isBuiltIn()) {
-				MessageDialog.openWarning(getShell(), "Warning",
-						"This Resource is used by Node '" + item.getRefNodes()
-								+ "', can not be removed!");
+				MessageDialog.openWarning(getShell(), Messages.getString("ManageRouteResourceDialog.warning"), //$NON-NLS-1$
+						Messages.getString("ManageRouteResourceDialog.warningMesage1") + item.getRefNodes() //$NON-NLS-1$
+								+ Messages.getString("ManageRouteResourceDialog.warningMesage2")); //$NON-NLS-1$
 				return;
 			}
 			selectedModels.remove(item);

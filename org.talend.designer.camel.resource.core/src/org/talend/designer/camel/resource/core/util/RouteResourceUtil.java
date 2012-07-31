@@ -72,23 +72,6 @@ public class RouteResourceUtil {
 	private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
 
 	/**
-	 * Clear route resource
-	 * 
-	 * @param item
-	 * @throws CoreException
-	 */
-	public static void clearResources() throws CoreException {
-
-		IFolder folder = getRouteResourceFolder();
-
-		File resFolder = folder.getLocation().toFile();
-		if (resFolder.exists()) {
-			resFolder.delete();
-		}
-		folder.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-	}
-
-	/**
 	 * Copy route resource
 	 * 
 	 * @param item
@@ -149,7 +132,7 @@ public class RouteResourceUtil {
 	 * @param item
 	 * @return
 	 */
-	public static IFile getSourceFile(Item item) {
+	public static IFile getSourceFile(RouteResourceItem item) {
 		Project talendProject = ProjectManager.getInstance()
 				.getCurrentProject();
 		String technicalLabel = talendProject.getTechnicalLabel();
@@ -164,10 +147,8 @@ public class RouteResourceUtil {
 		}
 		String itemName = item.getProperty().getLabel();
 		String version = item.getProperty().getVersion();
-		String fileExtension = item.getFileExtension();
-		if (fileExtension == null) {
-			fileExtension = "item";
-		}
+
+		String fileExtension = item.getBindingExtension();
 		String fileName = itemName + "_" + version + "." + fileExtension;
 		IFile file = rrfolder.getFile(fileName);
 

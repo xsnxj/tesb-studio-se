@@ -39,6 +39,7 @@ import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
+import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.editor.RepositoryEditorInput;
@@ -82,7 +83,7 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 		mainPage = new OpenAnotherVersionPage(alreadyEditedByUser,
 				repoObject);
 		addPage(mainPage);
-		setWindowTitle("windowTitle"); //$NON-NLS-1$
+		setWindowTitle(Messages.getString("OpenAnotherVersionResrouceWizard.Title")); //$NON-NLS-1$
 	}
 
 	/**
@@ -222,7 +223,8 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 				RepositoryEditorInput fileEditorInput = null;
 
 				if (item instanceof RouteResourceItem) {
-					fileEditorInput = RouteResourceInput.createInput(item);
+					fileEditorInput = RouteResourceInput
+							.createInput((RouteResourceItem) item);
 				}
 
 				editorPart = page.findEditor(fileEditorInput);

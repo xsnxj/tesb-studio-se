@@ -13,6 +13,7 @@
 package org.talend.designer.camel.resource.editors.input;
 
 import org.eclipse.core.resources.IFile;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.Item;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.repository.editor.RepositoryEditorInput;
@@ -33,7 +34,7 @@ public class RouteResourceInput extends RepositoryEditorInput {
 	 * @param item
 	 * @return
 	 */
-	public static RouteResourceInput createInput(Item item) {
+	public static RouteResourceInput createInput(RouteResourceItem item) {
 		return new RouteResourceInput(RouteResourceUtil.getSourceFile(item),
 				item);
 	}

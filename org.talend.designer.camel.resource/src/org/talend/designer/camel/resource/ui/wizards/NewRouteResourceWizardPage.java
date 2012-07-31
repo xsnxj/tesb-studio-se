@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
@@ -57,8 +58,8 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 	public NewRouteResourceWizardPage(Property property, IPath destinationPath) {
 		super("WizardPage", property, destinationPath); //$NON-NLS-1$
 
-		setTitle("Create Route Resource"); //$NON-NLS-1$
-		setDescription("Create a new Route Resource");
+		setTitle(Messages.getString("NewRouteResourceWizardPage.title")); //$NON-NLS-1$
+		setDescription(Messages.getString("NewRouteResourceWizardPage.desc")); //$NON-NLS-1$
 
 	}
 
@@ -82,7 +83,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 				File file = new File(filenameText.getText());
 				String fileName = file.getName();
 				if (nameText.getText().isEmpty()) {
-					nameText.setText(fileName.replace(".", "_"));
+					nameText.setText(fileName.replace(".", "_")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				evaluateFields();
 			}
@@ -101,7 +102,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 
 		// Source file
 		Label filenameLab = new Label(container, SWT.NONE);
-		filenameLab.setText("Source File");
+		filenameLab.setText(Messages.getString("NewRouteResourceWizardPage.sourceFile")); //$NON-NLS-1$
 
 		Composite filenameContainer = new Composite(container, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -117,8 +118,8 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		filenameText.setLayoutData(data);
 
 		browseBtn = new Button(filenameContainer, SWT.PUSH);
-		browseBtn.setText("Browse"); //$NON-NLS-1$
-		browseBtn.setToolTipText("Browse a file from file system."); //$NON-NLS-1$
+		browseBtn.setText(Messages.getString("NewRouteResourceWizardPage.browse")); //$NON-NLS-1$
+		browseBtn.setToolTipText(Messages.getString("NewRouteResourceWizardPage.browseTip")); //$NON-NLS-1$
 
 		super.createControl(container);
 
@@ -126,6 +127,8 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		updateContent();
 		addListeners();
 		setPageComplete(false);
+
+		nameText.setFocus();
 	}
 
 	@Override
@@ -162,20 +165,24 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 			}
 			if (url == null) {
 				nameStatus = createStatus(IStatus.ERROR,
-						"Can not load content from:  " + text + ".");
+						Messages.getString("NewRouteResourceWizardPage.errorLoadFile") + text + "."); //$NON-NLS-1$ //$NON-NLS-2$
 				isValid = false;
 			}
-			updatePageStatus();
+		}
+
+		if (isValid && nameText.getText().isEmpty()) {
+			isValid = false;
+			nameStatus = createStatus(IStatus.ERROR, Messages.getString("NewRouteResourceWizardPage.nameEmpty")); //$NON-NLS-1$
 		}
 
 		if (isValid
 				&& !Pattern.matches(RepositoryConstants
 						.getPattern(ERepositoryObjectType.PROCESS), nameText
-						.getText()) || nameText.getText().trim().contains(" ")) {
+						.getText()) || nameText.getText().trim().contains(" ")) { //$NON-NLS-1$
 			nameStatus = createStatus(IStatus.ERROR,
-					"Name contains incorrect characters.");
-			updatePageStatus();
+					Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
 		}
+		updatePageStatus();
 
 	}
 

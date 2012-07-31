@@ -57,12 +57,13 @@ public class ResourceEditorListener implements IPartListener2 {
 						.equals(editorInput.getItem().getProperty().getId())) {
 					try {
 						ProxyRepositoryFactory.getInstance().unlock(item);
+						page.getWorkbenchWindow().getPartService()
+								.removePartListener(this);
 					} catch (Exception e) {
 					}
 				}
 			}
 		}
-		page.removePartListener(this);
 	}
 
 	@Override
@@ -78,12 +79,9 @@ public class ResourceEditorListener implements IPartListener2 {
 			IEditorInput input = ((IEditorPart) part).getEditorInput();
 			if (input instanceof RouteResourceInput) {
 				Item item = ((RouteResourceInput) input).getItem();
-				if (item.getProperty().getId()
-						.equals(editorInput.getItem().getProperty().getId())) {
-					try {
-						ProxyRepositoryFactory.getInstance().lock(item);
-					} catch (Exception e) {
-					}
+				try {
+					ProxyRepositoryFactory.getInstance().lock(item);
+				} catch (Exception e) {
 				}
 			}
 		}

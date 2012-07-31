@@ -85,11 +85,6 @@ public class SynchronizeRouteResourcesAction extends AContextualAction
 		}
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		node = (IRepositoryNode) obj;
-		try {
-			RouteResourceUtil.clearResources();
-		} catch (CoreException e) {
-			ExceptionHandler.process(e);
-		}
 		copyResources(node);
 	}
 
