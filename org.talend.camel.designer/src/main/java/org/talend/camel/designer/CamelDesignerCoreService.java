@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
@@ -40,6 +41,7 @@ import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
@@ -195,8 +197,14 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 		IFolder folder = getRouteResourceFolder();
 
 		RouteResourceItem item = model.getItem();
-
-		ByteArray content = item.getContent();
+		ByteArray content = null;
+		EList referenceResources = item.getReferenceResources();
+		if (referenceResources.isEmpty()) {
+			return null;
+		}
+		ReferenceFileItem refFile = (ReferenceFileItem) referenceResources
+				.get(0);
+		content = refFile.getContent();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(
 				content.getInnerContent());
 
