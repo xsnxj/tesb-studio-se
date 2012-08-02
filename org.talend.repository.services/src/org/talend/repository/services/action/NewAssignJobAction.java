@@ -5,6 +5,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.ui.assign.AssignJobWizard;
 import org.talend.repository.services.ui.assign.AssignJobWizardDialog;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -16,8 +17,8 @@ public class NewAssignJobAction extends AContextualAction {
 
 	public NewAssignJobAction() {
 		super();
-		this.setText("Assign Job");
-		this.setToolTipText("Assign Job");
+		this.setText(Messages.NewAssignJobAction_actionText);
+		this.setToolTipText(Messages.NewAssignJobAction_actionTooltip);
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
 		assignJobAction = new AssignJobAction();
 		newJobAction = new CreateNewJobAction();
@@ -27,6 +28,7 @@ public class NewAssignJobAction extends AContextualAction {
 	public void init(TreeViewer viewer, IStructuredSelection selection) {
 		assignJobAction.init(viewer, selection);
 		newJobAction.init(viewer, selection);
+		setEnabled(assignJobAction.isEnabled());
 	}
 
 	@Override

@@ -51,6 +51,14 @@ public class AssignJobWizard extends Wizard {
 	}
 
 	@Override
+	public boolean canFinish() {
+		if(assignChoicePage == getContainer().getCurrentPage()){
+			return false;
+		}
+		return super.canFinish();
+	}
+	
+	@Override
 	public boolean performFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
 		if (currentPage == assignJobPage) {

@@ -56,6 +56,10 @@ public class Messages extends NLS {
 
 	public static String AssignJobWizard_windowTitle;
 
+	public static String NewAssignJobAction_actionText;
+
+	public static String NewAssignJobAction_actionTooltip;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
