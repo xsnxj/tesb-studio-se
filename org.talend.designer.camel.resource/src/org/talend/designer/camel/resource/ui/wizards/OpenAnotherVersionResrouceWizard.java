@@ -20,9 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.ui.wizards.OpenAnotherVersionPage;
@@ -37,12 +35,10 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.editors.RouteResourceEditor;
-import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.i18n.Messages;
+import org.talend.designer.camel.resource.ui.actions.EditRouteResourceAction;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
-import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
@@ -215,29 +211,14 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 
 	private void openAnotherVersion(final RepositoryNode node,
 			final boolean readonly) {
-		try {
-			if (node.getObject() != null) {
-				Item item = node.getObject().getProperty().getItem();
-				IWorkbenchPage page = getActivePage();
-				IEditorPart editorPart = null;
-				RepositoryEditorInput fileEditorInput = null;
+		if (node.getObject() != null) {
+			Item item = node.getObject().getProperty().getItem();
+			IWorkbenchPage page = getActivePage();
 
-				if (item instanceof RouteResourceItem) {
-					fileEditorInput = RouteResourceInput
-							.createInput((RouteResourceItem) item);
-				}
-
-				editorPart = page.findEditor(fileEditorInput);
-				if (editorPart == null) {
-					// fileEditorInput.setView(getViewPart());
-					fileEditorInput.setRepositoryNode(node);
-					page.openEditor(fileEditorInput, RouteResourceEditor.ID);
-				} else {
-					page.activate(editorPart);
-				}
+			if (item instanceof RouteResourceItem) {
+				EditRouteResourceAction.openEditor(page, node,
+						(RouteResourceItem) item);
 			}
-		} catch (PartInitException e) {
-			MessageBoxExceptionHandler.process(e);
 		}
 	}
 
