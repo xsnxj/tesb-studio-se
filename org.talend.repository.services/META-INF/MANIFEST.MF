@@ -35,8 +35,10 @@ Bundle-ClassPath: .
  ,lib/oro-2.0.8.jar
  ,lib/velocity-1.7.jar
  ,lib/xmlschema-core-2.0.1.jar
-Export-Package: org.talend.repository.services.model.services
- ,org.talend.repository.services.ui.action
- ,org.talend.repository.services.action
+Export-Package: org.talend.repository.services.action,
+ org.talend.repository.services.model.services,
+ org.talend.repository.services.model.services.util,
+ org.talend.repository.services.ui.action,
+ org.talend.repository.services.utils
 Import-Package: org.talend.designer.publish.core
  ,org.talend.designer.publish.core.models
