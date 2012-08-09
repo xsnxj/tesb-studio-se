@@ -52,6 +52,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -114,6 +115,8 @@ public class PublishMetadataAction extends AContextualAction {
     private List<RepositoryNode> nodes;
 
     private XSDPopulationUtil2 populationUtil;
+    
+    private boolean needProgressBar = true;
 
     /*
      * (non-Javadoc)
@@ -126,6 +129,10 @@ public class PublishMetadataAction extends AContextualAction {
         this.setText(Messages.PublishMetadataAction_Name);
         this.setToolTipText(Messages.PublishMetadataAction_Name);
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
+    }
+    
+    public PublishMetadataAction(boolean needProgressBar){
+    	this.needProgressBar = needProgressBar;
     }
 
     public void init(TreeViewer viewer, IStructuredSelection selection) {
@@ -208,7 +215,11 @@ public class PublishMetadataAction extends AContextualAction {
         };
 
         try {
-            new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
+        	if(needProgressBar){
+        		new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
+        	}else{
+        		PlatformUI.getWorkbench().getProgressService().run(true, true, iRunnableWithProgress);
+        	}
         } catch (InvocationTargetException e) {
             ExceptionHandler.process(e);
             nodes = null;
