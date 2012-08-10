@@ -167,5 +167,28 @@ public abstract class UploadableModel {
 		sb.append("/");
 		return sb.toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null){
+			return false;
+		}
+		if(this == obj){
+			return true;
+		}
+		if(!(obj instanceof UploadableModel)){
+			return false;
+		}
+		if(groupId == null || artifactId == null || version == null){
+			return false;
+		}
+		UploadableModel tmp = (UploadableModel) obj;
+		return groupId.equals(tmp.getGroupId()) && artifactId.equals(tmp.getArtifactId()) && version.equals(tmp.getVersion());
+	}
+	
+	@Override
+	public int hashCode() {
+		return (""+groupId+"/"+artifactId+"/"+version).hashCode();
+	}
 
 }
