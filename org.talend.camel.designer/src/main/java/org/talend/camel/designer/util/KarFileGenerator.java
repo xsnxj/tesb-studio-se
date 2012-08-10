@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -27,7 +27,7 @@ import org.talend.repository.model.RepositoryNode;
 public class KarFileGenerator {
 
 	public static boolean generateKarFile(
-			List<ExportKarBundleModel> bundleModels, RepositoryNode routerNode,
+			Set<ExportKarBundleModel> bundleModels, RepositoryNode routerNode,
 			String version, String destination) throws IOException {
 
 		String itemName = routerNode.getObject().getProperty().getDisplayName();
@@ -61,7 +61,7 @@ public class KarFileGenerator {
 
 		for (ExportKarBundleModel p : bundleModels) {
 			if (p == null || p.getBundleFilePath() == null)
-				;
+				continue;
 			File f = new File(p.getBundleFilePath());
 			if (!f.exists()) {
 				continue;

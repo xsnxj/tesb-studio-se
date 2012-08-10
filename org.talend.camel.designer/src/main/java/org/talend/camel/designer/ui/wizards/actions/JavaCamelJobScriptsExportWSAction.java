@@ -3,11 +3,12 @@ package org.talend.camel.designer.ui.wizards.actions;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -41,7 +42,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 	private final String destinationKar;
 	private final JobScriptsManager manager;
 
-	private List<ExportKarBundleModel> models = new ArrayList<ExportKarBundleModel>();
+	protected Set<ExportKarBundleModel> exportedBundleModels = new HashSet<ExportKarBundleModel>();
 
 	public JavaCamelJobScriptsExportWSAction(RepositoryNode routeNode, String version, String destinationKar,
 			boolean addStatisticsCode) {
@@ -88,18 +89,18 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 		}
 	}
 
-	protected void processRoute(String routeBundlePath, RepositoryNode routeNode, String version) throws InvocationTargetException {
-		models.add(new ExportKarBundleModel(routeBundlePath, routeNode, version));
+	protected boolean processRoute(String routeBundlePath, RepositoryNode routeNode, String version) throws InvocationTargetException {
+		return exportedBundleModels.add(new ExportKarBundleModel(routeBundlePath, routeNode, version, ExportKarBundleModel.ROUTE_TYPE));
 	}
 
-	protected void processReferencedJob(String filePath, RepositoryNode referencedJobNode, String jobVersion) throws InvocationTargetException {
-		models.add(new ExportKarBundleModel(filePath, referencedJobNode, jobVersion));
+	protected boolean processReferencedJob(String filePath, RepositoryNode referencedJobNode, String jobVersion) throws InvocationTargetException {
+		return exportedBundleModels.add(new ExportKarBundleModel(filePath, referencedJobNode, jobVersion, ExportKarBundleModel.JOB_TYPE));
 	}
 
 	protected void processResults() throws InvocationTargetException {
 		// create kar file
 		try {
-			KarFileGenerator.generateKarFile(models, routeNode, version, destinationKar);
+			KarFileGenerator.generateKarFile(exportedBundleModels, routeNode, version, destinationKar);
 		} catch (IOException e) {
 			throw new InvocationTargetException(e);
 		}
@@ -109,10 +110,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 		String displayName = routeNode.getObject().getProperty().getDisplayName();
 		String routerBundlePath = getTempDir() + displayName + "-bundle-" + version + ".jar";
 
-		exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route");
-		processRoute(routerBundlePath, routeNode, version);
-
-		exportAllReferenceJobs(routeNode);
+		if(processRoute(routerBundlePath, routeNode, version)){
+			exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route");
+			exportAllReferenceJobs(routeNode);
+		}
 	}
 	
 	private void exportAllReferenceJobs(RepositoryNode n)
@@ -162,9 +163,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 		String displayName = referencedJobNode.getObject().getProperty()
 				.getDisplayName();
 		String filePath = getTempDir() + displayName + '-' + jobVersion + ".jar";
-		exportOsgiBundle(referencedJobNode, filePath, jobVersion, jobVersion, "Job");
+		if(processReferencedJob(filePath, referencedJobNode, jobVersion)){
+			exportOsgiBundle(referencedJobNode, filePath, jobVersion, jobVersion, "Job");
+		}
 
-		processReferencedJob(filePath, referencedJobNode, jobVersion);
 	}
 
     private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
