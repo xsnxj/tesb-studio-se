@@ -127,6 +127,11 @@ public abstract class UploadableModel {
 			
 			HttpGet httpGet = new HttpGet(targetURL.toString());
 			HttpResponse response = httpClient.execute(httpGet);
+			StatusLine statusLine = response.getStatusLine();
+			if(statusLine.getStatusCode()>399){
+//				throw new IOException(statusLine.getStatusCode()+" "+statusLine.getReasonPhrase());
+				return null;
+			}
 			HttpEntity entity = response.getEntity();
 			if(entity != null){
 				InputStream inputStream = entity.getContent();
