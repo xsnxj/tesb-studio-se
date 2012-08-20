@@ -131,7 +131,7 @@ public class NewRouteResourceWizard extends Wizard {
 		URL url = mainPage.getUrl();
 		Path p = new Path(property.getLabel());
 		String itemName = p.removeFileExtension().lastSegment();
-		String fileExtension = "";
+		String fileExtension = "txt";
 		if (url != null) {
 			p = new Path(url.getPath());
 			if (p.getFileExtension() != null) {
