@@ -83,7 +83,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 				File file = new File(filenameText.getText());
 				String fileName = file.getName();
 				if (nameText.getText().isEmpty()) {
-					nameText.setText(fileName.replace(".", "_")); //$NON-NLS-1$ //$NON-NLS-2$
+					nameText.setText(fileName); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				evaluateFields();
 			}
@@ -175,12 +175,22 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 			nameStatus = createStatus(IStatus.ERROR, Messages.getString("NewRouteResourceWizardPage.nameEmpty")); //$NON-NLS-1$
 		}
 
-		if (isValid
-				&& !Pattern.matches(RepositoryConstants
-						.getPattern(ERepositoryObjectType.PROCESS), nameText
-						.getText()) || nameText.getText().trim().contains(" ")) { //$NON-NLS-1$
-			nameStatus = createStatus(IStatus.ERROR,
-					Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
+//		if (isValid
+//				&& !Pattern.matches(RepositoryConstants
+//						.getPattern(ERepositoryObjectType.PROCESS), nameText
+//						.getText()) || nameText.getText().trim().contains(" ")) { //$NON-NLS-1$
+//			nameStatus = createStatus(IStatus.ERROR,
+//					Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
+//		}
+		if(isValid){
+			String namePattern = getRepositoryObjectType().getNamePattern();
+			if(namePattern != null){
+				boolean matches = Pattern.matches(namePattern, nameText.getText());
+				if(!matches){
+					nameStatus = createStatus(IStatus.ERROR,
+							Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
+				}
+			}
 		}
 		updatePageStatus();
 

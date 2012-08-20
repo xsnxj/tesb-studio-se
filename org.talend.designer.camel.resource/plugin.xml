@@ -8,6 +8,7 @@
                   folder="route_resources"
                   isResouce="true"
                   label="Resources"
+                  name_pattern="\w+([\.-]\w+)*"
                   products="CAMEL"
                   type="ROUTE_RESOURCES">
             </repositoryNode>
