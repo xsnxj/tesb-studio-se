@@ -12,11 +12,8 @@
 // ============================================================================
 package org.talend.camel.designer;
 
-import java.util.Collection;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
@@ -29,16 +26,14 @@ import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryContentHandler;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.utils.XmiResourceManager;
-import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
  */
-public class CamelRepositoryContentHandler implements IRepositoryContentHandler {
+public class CamelRepositoryContentHandler extends AbstractRepositoryContentHandler {
 
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
@@ -51,9 +46,8 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
 
     public boolean isRepObjType(ERepositoryObjectType type) {
         boolean isCamelType = false;
-		if (type == CamelRepositoryNodeType.repositoryRoutesType
-				|| type == CamelRepositoryNodeType.repositoryBeansType
-				|| type == CamelRepositoryNodeType.repositoryRouteResourceType) {
+        if (type == CamelRepositoryNodeType.repositoryRoutesType || type == CamelRepositoryNodeType.repositoryBeansType
+                || type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             isCamelType = true;
         }
         return isCamelType;
@@ -89,11 +83,11 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             itemResource = create(project, (FileItem) item, path, type);
             return itemResource;
         }
-		if (item instanceof RouteResourceItem) {
-			type = CamelRepositoryNodeType.repositoryRouteResourceType;
-			itemResource = create(project, (FileItem) item, path, type);
-			return itemResource;
-		}
+        if (item instanceof RouteResourceItem) {
+            type = CamelRepositoryNodeType.repositoryRouteResourceType;
+            itemResource = create(project, (FileItem) item, path, type);
+            return itemResource;
+        }
         return null;
     }
 
@@ -135,10 +129,10 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             itemResource = saveFile((BeanItem) item);
             return itemResource;
         }
-		if (item instanceof RouteResourceItem) {
-			itemResource = saveFile((RouteResourceItem) item);
-			return itemResource;
-		}
+        if (item instanceof RouteResourceItem) {
+            itemResource = saveFile((RouteResourceItem) item);
+            return itemResource;
+        }
         return null;
     }
 
@@ -149,7 +143,7 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         return itemResource;
     }
 
-	private Resource saveFile(FileItem item) {
+    private Resource saveFile(FileItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
 
         ByteArray content = item.getContent();
@@ -171,9 +165,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             return ECamelCoreImage.ROUTES_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             return ECamelCoreImage.BEAN_ICON;
-		} else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
-			return ECamelCoreImage.ROUTE_RESOURCE_ICON;
-		}
+        } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
+            return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+        }
         return null;
     }
 
@@ -189,8 +183,8 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
             item = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             item = CamelPropertiesFactory.eINSTANCE.createBeanItem();
-		} else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
-			item = CamelPropertiesFactory.eINSTANCE.createRouteResourceItem();
+        } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
+            item = CamelPropertiesFactory.eINSTANCE.createRouteResourceItem();
         }
         return item;
     }
@@ -202,43 +196,9 @@ public class CamelRepositoryContentHandler implements IRepositoryContentHandler 
         if (item instanceof BeanItem) {
             return CamelRepositoryNodeType.repositoryBeansType;
         }
-		if (item instanceof RouteResourceItem) {
-			return CamelRepositoryNodeType.repositoryRouteResourceType;
-		}
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.repository.IRepositoryContentHandler#addNode(org.talend.core.model.repository.
-     * ERepositoryObjectType, org.talend.repository.model.RepositoryNode,
-     * org.talend.core.model.repository.IRepositoryViewObject, org.talend.repository.model.RepositoryNode)
-     */
-    public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
-            RepositoryNode node) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.repository.IRepositoryContentHandler#addContents(java.util.Collection,
-     * org.eclipse.emf.ecore.resource.Resource)
-     */
-    public void addContents(Collection<EObject> collection, Resource resource) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.repository.IRepositoryContentHandler#getIcon(org.talend.core.model.properties.Item)
-     */
-    public IImage getIcon(Item item) {
-        // TODO Auto-generated method stub
+        if (item instanceof RouteResourceItem) {
+            return CamelRepositoryNodeType.repositoryRouteResourceType;
+        }
         return null;
     }
 

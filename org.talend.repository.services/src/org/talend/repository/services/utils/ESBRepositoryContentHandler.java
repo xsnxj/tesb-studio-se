@@ -29,12 +29,10 @@ import org.talend.core.model.properties.InformationLevel;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.XmiResourceManager;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -49,11 +47,9 @@ import org.talend.repository.services.model.services.util.EServiceCoreImage;
 /**
  * DOC hwang class global comment. Detailled comment
  */
-public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
+public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandler {
 
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
-
-    private final IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
     public Item createNewItem(ERepositoryObjectType type) {
         Item item = ServicesFactory.eINSTANCE.createServiceItem();
@@ -154,21 +150,6 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         return serviceNode;
     }
 
-    public boolean isProcess(Item item) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public ERepositoryObjectType getProcessType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public ERepositoryObjectType getCodeType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
             RepositoryNode node) {
         if (type == ESBRepositoryNodeType.SERVICES) {
@@ -248,13 +229,4 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
         computePropertyMaxInformationLevel(property);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.repository.IRepositoryContentHandler#getIcon(org.talend.core.model.properties.Item)
-     */
-    public IImage getIcon(Item item) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
