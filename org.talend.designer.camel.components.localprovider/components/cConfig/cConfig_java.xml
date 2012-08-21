@@ -26,7 +26,10 @@ COMPATIBILITY="ALL"
   </CONNECTORS>
 
   <PARAMETERS>    
-	  <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="2" NB_LINES="9">
+  	<PARAMETER NAME="IMPORT" FIELD="MEMO_IMPORT" REQUIRED="false" NUM_ROW="2" NB_LINES="3">
+	    <DEFAULT>//import java.util.List;</DEFAULT>
+	 </PARAMETER>   
+	  <PARAMETER NAME="CODE" FIELD="MEMO_JAVA" REQUIRED="false" NUM_ROW="15" NB_LINES="9">
 	    <DEFAULT>
 /*
 *	Here you can put Java code that will be used within the route.
@@ -57,9 +60,7 @@ COMPATIBILITY="ALL"
    
    
    <ADVANCED_PARAMETERS>
-	  <PARAMETER NAME="IMPORT" FIELD="MEMO_IMPORT" REQUIRED="false" NUM_ROW="1" NB_LINES="3">
-	    <DEFAULT>//import java.util.List;</DEFAULT>
-	  </PARAMETER>   
+
    </ADVANCED_PARAMETERS>
 
    <CODEGENERATION>	
