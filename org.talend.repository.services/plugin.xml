@@ -17,25 +17,29 @@
 
 		<!-- service actions -->
 		<Action
-				id="org.talend.repository.services.action.OpenWSDLEditorAction"
-				class="org.talend.repository.services.action.OpenWSDLEditorAction"
-				level="1"
-				name="Open WSDL Editor" />
+        class="org.talend.repository.services.action.OpenWSDLEditorAction"
+        id="org.talend.repository.services.action.OpenWSDLEditorAction"
+        isEditAction="true"
+        level="1"
+        name="Open WSDL Editor"/>
 		<Action
-				id="org.talend.repository.services.action.OpenWSDLAction"
-				class="org.talend.repository.services.action.OpenWSDLAction"
-				level="2"
-				name="Assign WSDL" />
+        class="org.talend.repository.services.action.OpenWSDLAction"
+        id="org.talend.repository.services.action.OpenWSDLAction"
+        isEditAction="true"
+        level="2"
+        name="Assign WSDL"/>
 		<Action
-				id="org.talend.repository.services.action.PublishMetadataAction"
-				class="org.talend.repository.services.action.PublishMetadataAction"
-				level="3"
-				name="Import WSDL Schemas" />
+        class="org.talend.repository.services.action.PublishMetadataAction"
+        id="org.talend.repository.services.action.PublishMetadataAction"
+        isEditAction="true"
+        level="3"
+        name="Import WSDL Schemas"/>
 		<Action
-				id="org.talend.repository.services.action.ServiceMetadataAction"
-				class="org.talend.repository.services.action.ServiceMetadataAction"
-				level="4"
-				name="ESB Runtime Options" />
+        class="org.talend.repository.services.action.ServiceMetadataAction"
+        id="org.talend.repository.services.action.ServiceMetadataAction"
+        isPropertiesAction="true"
+        level="4"
+        name="ESB Runtime Options"/>
 		<Action
 				id="org.talend.repository.services.action.ExportServiceAction"
 				class="org.talend.repository.services.action.ExportServiceAction"
@@ -43,9 +47,10 @@
 				name="Export Service" />
 
 		<Action
-				id="org.talend.repository.services.action.ServiceEditPropertiesAction"
-				class="org.talend.repository.services.action.ServiceEditPropertiesAction"
-				name="Edit Properties" />
+        class="org.talend.repository.services.action.ServiceEditPropertiesAction"
+        id="org.talend.repository.services.action.ServiceEditPropertiesAction"
+        isPropertiesAction="true"
+        name="Edit Properties"/>
 
 		<!-- service operation actions -->
 		<Action
