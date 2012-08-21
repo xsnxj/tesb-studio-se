@@ -20,12 +20,14 @@
     <Action
           class="org.talend.repository.services.action.OpenWSDLAction"
           id="org.talend.repository.services.action.OpenWSDLAction"
+          isEditAction="true"
           level="1"
           name="open wsdl">
     </Action>
     <Action
           class="org.talend.repository.services.action.ServiceEditPropertiesAction"
           id="org.talend.repository.services.action.ServiceEditPropertiesAction"
+          isPropertiesAction="true"
           name="Edit Properties">
     </Action>
     <Action
@@ -46,6 +48,7 @@
     <Action
           class="org.talend.repository.services.action.OpenWSDLEditorAction"
           id="org.talend.repository.services.action.OpenWSDLEditorAction"
+          isEditAction="true"
           name="Open WSDL Editor">
     </Action>
     <Action
@@ -54,13 +57,15 @@
             level="99"
             name="Export Service"/>
     <Action
-            class="org.talend.repository.services.action.ServiceMetadataAction"
-            id="org.talend.repository.services.action.ServiceMetadataAction"
-            name="Service Metadata"/>
+          class="org.talend.repository.services.action.ServiceMetadataAction"
+          id="org.talend.repository.services.action.ServiceMetadataAction"
+          isPropertiesAction="true"
+          name="Service Metadata"/>
     <Action
-            class="org.talend.repository.services.action.PublishMetadataAction"
-            id="org.talend.repository.services.action.PublishMetadataAction"
-            name="Import WSDL Schemas"/>
+          class="org.talend.repository.services.action.PublishMetadataAction"
+          id="org.talend.repository.services.action.PublishMetadataAction"
+          isEditAction="true"
+          name="Import WSDL Schemas"/>
     
  </extension>
  <extension

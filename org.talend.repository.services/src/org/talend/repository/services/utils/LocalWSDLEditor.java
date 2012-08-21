@@ -57,12 +57,16 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
 
     boolean isServiceUpdateRequired() {
+        if (this.getEditDomain() == null) {
+            return false;
+        }
         CommandStack commandStack = this.getCommandStack();
         return isDirty() || commandStack.canUndo() && commandStack.isDirty();
-        //return isDirty() || commandStack.canUndo();
+        // return isDirty() || commandStack.canUndo();
     }
 
     protected AdapterImpl dirtyListener = new AdapterImpl() {
+
         @Override
         public void notifyChanged(Notification notification) {
             if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
