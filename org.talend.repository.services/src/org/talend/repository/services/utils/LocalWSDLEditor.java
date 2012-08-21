@@ -27,9 +27,11 @@ import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
 import org.talend.core.model.properties.ReferenceFileItem;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -262,12 +264,21 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                     boolean hasAssignedjob = false;
                     ArrayList<String> operationNames = oldPortItemNames.get(portName);
-                    if (operationNames != null) {
-                        for (String name : operationNames) {
-                            if (!name.equals(operation.getName()) && name.startsWith(operation.getName())) {
-                                serviceOperation.setLabel(name);
-                                hasAssignedjob = true;
-                                break;
+                    String referenceJobId = serviceOperation.getReferenceJobId();
+                    if (operationNames != null && referenceJobId != null) {
+                        IRepositoryViewObject repObj = null;
+                        try {
+                            repObj = factory.getLastVersion(referenceJobId);
+                        } catch (PersistenceException e) {
+                            ExceptionHandler.process(e);
+                        }
+                        if (repObj != null) {
+                            for (String name : operationNames) {
+                                if (name.equals(operation.getName() + "-" + repObj.getLabel())) {
+                                    serviceOperation.setLabel(name);
+                                    hasAssignedjob = true;
+                                    break;
+                                }
                             }
                         }
                     }
