@@ -167,32 +167,46 @@ public class PublishMetadataAction extends AContextualAction {
     public void setNodes(List<RepositoryNode> nodes) {
         this.nodes = nodes;
     }
+    
+	/**
+	 * https://jira.talendforge.org/browse/TESB-6845
+	 * 
+	 * Import schema
+	 * 
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void importSchema(IProgressMonitor monitor) throws CoreException {
+        monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
+        if (nodes == null) {
+            nodes = selection.toList();
+        }
+        int step = 100;
+        int size = nodes.size();
+        if (size > 0) {
+            step /= size;
+        }
+        for (RepositoryNode node : nodes) {
+            monitor.worked(step);
+            WSDLUtils.validateWsdl(node);
+            Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
+            process(wsdlDefinition);
+            if (monitor.isCanceled()) {
+                break;
+            }
+        }
+        nodes = null;
+        monitor.done();
+    }
+    	
 
     @Override
     protected void doRun() {
+    	
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
             public void run(IProgressMonitor monitor) throws CoreException {
-                monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
-                if (nodes == null) {
-                    nodes = selection.toList();
-                }
-                int step = 100;
-                int size = nodes.size();
-                if (size > 0) {
-                    step /= size;
-                }
-                for (RepositoryNode node : nodes) {
-                    monitor.worked(step);
-                    WSDLUtils.validateWsdl(node);
-                    Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
-                    process(wsdlDefinition);
-                    if (monitor.isCanceled()) {
-                        break;
-                    }
-                }
-                nodes = null;
-                monitor.done();
+				importSchema(monitor);
             }
 
         };
