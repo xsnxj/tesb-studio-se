@@ -288,7 +288,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.6.0.jar"
+					MODULE="cxf-bundle-2.6.2.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
@@ -300,7 +300,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.2.jar"
+					MODULE="xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -356,16 +356,16 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="woodstox-core-asl"
-					MODULE="woodstox-core-asl-4.1.2.jar"
+					MODULE="woodstox-core-asl-4.1.4.jar"
 					BundleID=""
 					REQUIRED="true" />
 
 			<IMPORT NAME="xmlsec"
-					MODULE="xmlsec-1.5.1.jar"
+					MODULE="xmlsec-1.5.2.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.5.jar"
+					MODULE="wss4j-1.6.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 
