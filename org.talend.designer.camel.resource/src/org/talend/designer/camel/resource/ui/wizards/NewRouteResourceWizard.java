@@ -131,16 +131,28 @@ public class NewRouteResourceWizard extends Wizard {
 		URL url = mainPage.getUrl();
 		Path p = new Path(property.getLabel());
 		String itemName = p.removeFileExtension().lastSegment();
-		String fileExtension = "txt";
+		String fileExtension = null;
 		if (url != null) {
 			p = new Path(url.getPath());
 			if (p.getFileExtension() != null) {
 				fileExtension = p.getFileExtension();
 			}
+		} else {
+			fileExtension = p.getFileExtension();
+		}
+
+		// https://jira.talendforge.org/browse/TESB-6853
+		if (fileExtension == null || fileExtension.isEmpty()) {
+			fileExtension = "txt";
 		}
 
 		// In case the source file extension is "item"
 		if (fileExtension.equals(FileConstants.ITEM_EXTENSION)) {
+			fileExtension += "_";
+		}
+
+		// In case the source file extension is "properties"
+		if (fileExtension.equals(FileConstants.PROPERTIES_EXTENSION)) {
 			fileExtension += "_";
 		}
 
