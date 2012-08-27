@@ -1,5 +1,6 @@
 package org.talend.designer.camel.resource;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -9,7 +10,7 @@ import org.osgi.framework.BundleContext;
 public class RouteResourceActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.talend.designer.camel.resource.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.talend.designer.camel.resource"; //$NON-NLS-1$
 
 	// The shared instance
 	private static RouteResourceActivator plugin;
@@ -53,4 +54,12 @@ public class RouteResourceActivator extends AbstractUIPlugin {
 		super.stop(context);
 	}
 
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static ImageDescriptor createImageDesc(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 }

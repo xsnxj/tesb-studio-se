@@ -24,11 +24,10 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.camel.designer.util.ECamelCoreImage;
-import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.IUIRefresher;
+import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.ui.dialogs.PropertyManagerWizardDialog;
 import org.talend.designer.camel.resource.ui.wizards.OpenAnotherVersionResrouceWizard;
@@ -157,8 +156,8 @@ public class OpenAnotherVersionResourceAction extends EditPropertiesAction {
 
 		this.setText("Open another version");
 		this.setToolTipText("Open another version");
-		this.setImageDescriptor(ImageProvider
-				.getImageDesc(ECamelCoreImage.ROUTE_RESOURCE_ICON));
+		this.setImageDescriptor(RouteResourceActivator
+				.createImageDesc("icons/open-another-version.png"));
 	}
 
 	protected IEditorPart getCorrespondingEditor(RepositoryNode node) {

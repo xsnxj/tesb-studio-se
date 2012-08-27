@@ -17,8 +17,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.camel.designer.util.ECamelCoreImage;
-import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.dialogs.ManageRouteResourceDialog;
 import org.talend.repository.model.BinRepositoryNode;
@@ -38,8 +37,8 @@ public class ManageRouteResourcesAction extends AContextualAction {
 		this.setText(Messages.getString("ManageRouteResourcesAction.Title")); //$NON-NLS-1$
 		this.setToolTipText(Messages
 				.getString("ManageRouteResourcesAction.Tooltip")); //$NON-NLS-1$
-		this.setImageDescriptor(ImageProvider
-				.getImageDesc(ECamelCoreImage.ROUTE_RESOURCE_ICON));
+		this.setImageDescriptor(RouteResourceActivator
+				.createImageDesc("icons/manage-route-resource.png"));
 	}
 
 	protected void doRun() {

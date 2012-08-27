@@ -18,17 +18,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.camel.designer.util.ECamelCoreImage;
-import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.swt.actions.ITreeContextualAction;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.ui.images.OverlayImageProvider;
+import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.wizards.NewRouteResourceWizard;
 import org.talend.designer.core.DesignerPlugin;
@@ -50,13 +47,13 @@ public class CreateRouteResourceAction extends AContextualAction implements
 
 	public CreateRouteResourceAction() {
 		setText(Messages.getString("CreateRouteResourceAction.Title")); //$NON-NLS-1$
-		Image folderImg = ImageProvider
-				.getImage(ECamelCoreImage.ROUTE_RESOURCE_ICON);
-		this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+		this.setImageDescriptor(RouteResourceActivator
+				.createImageDesc("icons/create-route-resource.png"));
 	}
 
 	@Override
 	protected void doRun() {
+
 		IRepositoryNode node = null;
 		NewRouteResourceWizard wizard = null;
 		ISelection selection = getSelection();

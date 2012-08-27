@@ -26,11 +26,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
-import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
@@ -164,8 +163,8 @@ public class EditRouteResourceAction extends AContextualAction {
 		this.setText(Messages.getString("EditRouteResourceAction_Title"));
 		this.setToolTipText(Messages
 				.getString("EditRouteResourceAction_Tooltip"));
-		this.setImageDescriptor(ImageProvider
-				.getImageDesc(ECamelCoreImage.ROUTE_RESOURCE_ICON));
+		this.setImageDescriptor(RouteResourceActivator
+				.createImageDesc("icons/edit-resource.png"));
 	}
 
 	/**
