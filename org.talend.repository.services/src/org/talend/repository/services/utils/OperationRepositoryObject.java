@@ -228,4 +228,13 @@ public class OperationRepositoryObject implements IRepositoryViewObject {
         return viewObject.getProperty();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.repository.IRepositoryViewObject#isModified()
+     */
+    public boolean isModified() {
+        return viewObject.isModified();
+    }
+
 }
