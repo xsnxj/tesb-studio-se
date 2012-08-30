@@ -12,13 +12,20 @@
 // ============================================================================
 package org.talend.designer.camel.resource.editors;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 
@@ -35,10 +42,6 @@ public class RouteResourceEditor extends TextEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		// try {
-		// ProxyRepositoryFactory.getInstance().lock(rrInput.getItem());
-		// } catch (Exception e) {
-		// }
 		Item item = rrInput.getItem();
 		String displayName = item.getProperty().getDisplayName();
 		String version = item.getProperty().getVersion();
@@ -60,11 +63,43 @@ public class RouteResourceEditor extends TextEditor {
 	@Override
 	public void doSave(IProgressMonitor progressMonitor) {
 		super.doSave(progressMonitor);
-		//
-		// try {
-		// RouteResourceUtil.copyResources((FileItem) rrInput.getItem());
-		// } catch (CoreException e) {
-		// }
+
+		saveContentsToItem(rrInput);
+
+	}
+
+	/**
+	 * Save the file content to EMF item.
+	 * 
+	 * @param rrInput
+	 */
+	public static void saveContentsToItem(RouteResourceInput rrInput) {
+
+		try {
+			RouteResourceItem item = (RouteResourceItem) rrInput.getItem();
+
+			ReferenceFileItem refFile = (ReferenceFileItem) item
+					.getReferenceResources().get(0);
+
+			InputStream inputstream = rrInput.getFile().getContents();
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(inputstream, "utf-8"));
+			String line = bufferedReader.readLine();
+			StringBuffer sb = new StringBuffer();
+			String lineSeparator = System.getProperty("line.separator");
+			while (line != null) {
+				sb.append(line).append(lineSeparator);
+				line = bufferedReader.readLine();
+			}
+			bufferedReader.close();
+			inputstream.close();
+
+			ByteArray content = refFile.getContent();
+			content.setInnerContent(sb.toString().getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

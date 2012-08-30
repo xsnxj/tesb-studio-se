@@ -14,6 +14,7 @@ package org.talend.designer.camel.resource.ui.actions;
 
 import java.util.Properties;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,6 +33,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
+import org.talend.designer.camel.resource.editors.RouteResoureChangeListener;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.core.DesignerPlugin;
@@ -221,13 +223,17 @@ public class EditRouteResourceAction extends AContextualAction {
 					.addPartListener(
 							new ResourceEditorListener(fileEditorInput, page));
 
+			if (!RouteResourceEditor.ID.endsWith(editorId)) {
+				ResourcesPlugin.getWorkspace().addResourceChangeListener(
+						new RouteResoureChangeListener(fileEditorInput));
+			}
+
 			if (editorPart == null) {
 				editorPart = page.openEditor(fileEditorInput, editorId, true);
 
 			} else {
 				editorPart = page.openEditor(fileEditorInput, editorId);
 			}
-
 
 
 		} catch (Exception e) {

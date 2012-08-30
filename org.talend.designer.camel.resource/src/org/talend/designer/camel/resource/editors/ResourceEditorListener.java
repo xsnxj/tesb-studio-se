@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.camel.resource.editors;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener2;
@@ -59,6 +60,9 @@ public class ResourceEditorListener implements IPartListener2 {
 						ProxyRepositoryFactory.getInstance().unlock(item);
 						page.getWorkbenchWindow().getPartService()
 								.removePartListener(this);
+						ResourcesPlugin.getWorkspace()
+								.removeResourceChangeListener(
+										editorInput.getListener());
 					} catch (Exception e) {
 					}
 				}

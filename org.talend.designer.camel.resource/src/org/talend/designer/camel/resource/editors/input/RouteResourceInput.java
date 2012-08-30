@@ -13,6 +13,7 @@
 package org.talend.designer.camel.resource.editors.input;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.Item;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
@@ -23,6 +24,8 @@ import org.talend.repository.editor.RepositoryEditorInput;
  * 
  */
 public class RouteResourceInput extends RepositoryEditorInput {
+
+	private IResourceChangeListener listener;
 
 	protected RouteResourceInput(IFile file, Item item) {
 		super(file, item);
@@ -37,6 +40,21 @@ public class RouteResourceInput extends RepositoryEditorInput {
 	public static RouteResourceInput createInput(RouteResourceItem item) {
 		return new RouteResourceInput(RouteResourceUtil.getSourceFile(item),
 				item);
+	}
+
+	/**
+	 * @param listener
+	 *            the listener to set
+	 */
+	public void setListener(IResourceChangeListener listener) {
+		this.listener = listener;
+	}
+
+	/**
+	 * @return the listener
+	 */
+	public IResourceChangeListener getListener() {
+		return listener;
 	}
 
 }
