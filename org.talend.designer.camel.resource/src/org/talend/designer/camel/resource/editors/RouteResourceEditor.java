@@ -83,7 +83,7 @@ public class RouteResourceEditor extends TextEditor {
 
 			InputStream inputstream = rrInput.getFile().getContents();
 			BufferedReader bufferedReader = new BufferedReader(
-					new InputStreamReader(inputstream, "utf-8"));
+					new InputStreamReader(inputstream));
 			String line = bufferedReader.readLine();
 			StringBuffer sb = new StringBuffer();
 			String lineSeparator = System.getProperty("line.separator");
