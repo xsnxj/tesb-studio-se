@@ -56,7 +56,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.talend.designer.camel.resource.editors.RouteResourceEditor"
-            icon="icons/resource.gif"
+            icon="icons/route-resource.png"
             id="org.talend.designer.camel.resource.editors.RouteResourceEditor"
             name="Route Resource Editor">
       </editor>
