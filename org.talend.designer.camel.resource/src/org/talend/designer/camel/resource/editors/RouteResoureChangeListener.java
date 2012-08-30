@@ -12,12 +12,14 @@
 // ============================================================================
 package org.talend.designer.camel.resource.editors;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 
 /**
@@ -27,17 +29,21 @@ import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 public class RouteResoureChangeListener implements IResourceChangeListener {
 
 	private RouteResourceInput editorInput;
+	private IFile editorFile;
+	private String filePath;
 
 	public RouteResoureChangeListener(RouteResourceInput editorInput) {
 		this.editorInput = editorInput;
 		this.editorInput.setListener(this);
+		this.editorFile = editorInput.getFile();
+		this.filePath = this.editorFile.getLocation().toPortableString();
 	}
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		IResourceDelta delta = event.getDelta();
 		try {
-			if (delta == null) {
+			if (delta == null || editorFile == null) {
 				return;
 			}
 			delta.accept(new IResourceDeltaVisitor() {
@@ -49,9 +55,14 @@ public class RouteResoureChangeListener implements IResourceChangeListener {
 						return false;
 					}
 					if (resource.getType() != IResource.FILE) {
+						IPath location = resource.getLocation();
+						if(location == null || !filePath.startsWith(location.toPortableString())){
+							return false;
+						}
 						return true;
 					}
-					if (resource.equals(editorInput.getFile())) {
+					
+					if (resource.equals(editorFile)) {
 						RouteResourceEditor.saveContentsToItem(editorInput);
 						return false;
 					}
