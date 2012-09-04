@@ -57,7 +57,7 @@ public class ServiceMetadataAction extends AContextualAction {
         }
 
         @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        List<RepositoryNode> nodes = selection.toList();
         for (RepositoryNode node : nodes) {
             if ((node.getType() != ENodeType.REPOSITORY_ELEMENT)
                     || (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES)
@@ -68,10 +68,14 @@ public class ServiceMetadataAction extends AContextualAction {
             } else {
                 this.selection = selection;
             }
+            if (canWork) {
+                canWork = isLastVersion(node);
+            }
         }
         setEnabled(canWork);
     }
 
+    @Override
     public boolean isVisible() {
         return isEnabled();
     }
@@ -83,10 +87,11 @@ public class ServiceMetadataAction extends AContextualAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
     }
 
+    @Override
     protected void doRun() {
         IWorkbenchWindow window = getWorkbenchWindow();
         ServiceItem serviceItem = null;
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        List<RepositoryNode> nodes = selection.toList();
         for (RepositoryNode node : nodes) {
             serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
