@@ -149,9 +149,6 @@ public class PublishMetadataAction extends AContextualAction {
                 canWork = false;
                 break;
             }
-            if (canWork) {
-                canWork = isLastVersion(node);
-            }
         }
         setEnabled(canWork);
     }
