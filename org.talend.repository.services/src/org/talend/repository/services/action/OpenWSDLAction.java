@@ -90,7 +90,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         default:
             return;
         }
-        setEnabled(true);
+        setEnabled(isLastVersion(node));
     }
 
     protected void doRun() {

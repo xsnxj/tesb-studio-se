@@ -135,6 +135,9 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         if (node.getObject() == null) {
             flag = false;
         }
+        if (flag) {
+            flag = isLastVersion(node);
+        }
         setEnabled(flag);
     }
 

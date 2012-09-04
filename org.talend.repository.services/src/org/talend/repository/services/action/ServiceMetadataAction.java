@@ -39,7 +39,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ServiceMetadataAction extends AContextualAction {
 
-	protected static final String ACTION_LABEL = "ESB Runtime Options";
+    protected static final String ACTION_LABEL = "ESB Runtime Options";
 
     private IStructuredSelection selection;
 
@@ -59,16 +59,17 @@ public class ServiceMetadataAction extends AContextualAction {
         @SuppressWarnings("unchecked")
         List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
         for (RepositoryNode node : nodes) {
-			if (
-					(node.getType() != ENodeType.REPOSITORY_ELEMENT) ||
-					(node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) ||
-					(node.getObject() == null) ||
-					(ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)
-			) {
+            if ((node.getType() != ENodeType.REPOSITORY_ELEMENT)
+                    || (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES)
+                    || (node.getObject() == null)
+                    || (ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)) {
                 canWork = false;
                 break;
             } else {
                 this.selection = selection;
+            }
+            if (canWork) {
+                canWork = isLastVersion(node);
             }
         }
         setEnabled(canWork);
