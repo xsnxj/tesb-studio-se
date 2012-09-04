@@ -68,6 +68,9 @@ public class ServiceMetadataAction extends AContextualAction {
             } else {
                 this.selection = selection;
             }
+            if (canWork) {
+                canWork = isLastVersion(node);
+            }
         }
         setEnabled(canWork);
     }

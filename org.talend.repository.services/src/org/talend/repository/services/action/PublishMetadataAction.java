@@ -115,7 +115,7 @@ public class PublishMetadataAction extends AContextualAction {
     private List<RepositoryNode> nodes;
 
     private XSDPopulationUtil2 populationUtil;
-    
+
     private boolean needProgressBar = true;
 
     /*
@@ -130,9 +130,9 @@ public class PublishMetadataAction extends AContextualAction {
         this.setToolTipText(Messages.PublishMetadataAction_Name);
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
     }
-    
-    public PublishMetadataAction(boolean needProgressBar){
-    	this.needProgressBar = needProgressBar;
+
+    public PublishMetadataAction(boolean needProgressBar) {
+        this.needProgressBar = needProgressBar;
     }
 
     public void init(TreeViewer viewer, IStructuredSelection selection) {
@@ -155,6 +155,9 @@ public class PublishMetadataAction extends AContextualAction {
                 canWork = false;
                 break;
             }
+            if (canWork) {
+                canWork = isLastVersion(node);
+            }
         }
         setEnabled(canWork);
     }
@@ -167,16 +170,16 @@ public class PublishMetadataAction extends AContextualAction {
     public void setNodes(List<RepositoryNode> nodes) {
         this.nodes = nodes;
     }
-    
-	/**
-	 * https://jira.talendforge.org/browse/TESB-6845
-	 * 
-	 * Import schema
-	 * 
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	public void importSchema(IProgressMonitor monitor) throws CoreException {
+
+    /**
+     * https://jira.talendforge.org/browse/TESB-6845
+     * 
+     * Import schema
+     * 
+     * @param monitor
+     * @throws CoreException
+     */
+    public void importSchema(IProgressMonitor monitor) throws CoreException {
         monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
         if (nodes == null) {
             nodes = selection.toList();
@@ -198,15 +201,14 @@ public class PublishMetadataAction extends AContextualAction {
         nodes = null;
         monitor.done();
     }
-    	
 
     @Override
     protected void doRun() {
-    	
+
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
             public void run(IProgressMonitor monitor) throws CoreException {
-				importSchema(monitor);
+                importSchema(monitor);
             }
 
         };
@@ -229,11 +231,11 @@ public class PublishMetadataAction extends AContextualAction {
         };
 
         try {
-        	if(needProgressBar){
-        		new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
-        	}else{
-        		PlatformUI.getWorkbench().getProgressService().run(true, true, iRunnableWithProgress);
-        	}
+            if (needProgressBar) {
+                new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
+            } else {
+                PlatformUI.getWorkbench().getProgressService().run(true, true, iRunnableWithProgress);
+            }
         } catch (InvocationTargetException e) {
             ExceptionHandler.process(e);
             nodes = null;
