@@ -198,6 +198,15 @@
                    id="org.talend.camel.designer.switch284CamelCXFLibraryVersionMigrationTask"
                    name="Switch284CamelCXFLibraryVersionMigrationTask">
              </projecttask>
+             <projecttask
+                   beforeLogon="false"
+                   breaks="5.1.1"
+                   class="org.talend.camel.designer.migration.Switch293ReleaseCamelVersionTask"
+                   description="Switch293ReleaseCamelCXFLibraryVersionMigrationTask"
+                   id="org.talend.camel.designer.switch293ReleaseCamelVersionTask"
+                   name="Switch292ReleaseCamelVersionTask"
+                   version="5.1.2">
+      		</projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
