@@ -110,7 +110,8 @@
 				<instanceof value="org.talend.repository.model.RepositoryNode" />
 			</possibleChildren>
 			<actionProvider
-					class="org.talend.repository.view.di.viewer.action.DIRepositoryNodeActionProvider">
+         class="org.talend.repository.view.di.viewer.action.DIRepositoryNodeActionProvider"
+         id="org.talend.repository.service.action.provider.id">
 				<enablement>
 					<and>
 						<instanceof value="org.talend.repository.model.RepositoryNode" />

@@ -28,7 +28,8 @@
             </instanceof>
          </possibleChildren>
          <actionProvider
-               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
+               id="org.talend.repository.routes.action.provider.id">
             <enablement>
                <and>
                   <instanceof
@@ -73,7 +74,8 @@
             </instanceof>
          </possibleChildren>
          <actionProvider
-               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
+               id="org.talend.repository.beans.action.provider.id">
             <enablement>
                <and>
                   <instanceof
@@ -113,7 +115,8 @@
             </or>
          </triggerPoints>
          <actionProvider
-               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider">
+               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
+               id="org.talend.repository.route.resources.action.provider.id">
             <enablement>
                <and>
                   <instanceof
