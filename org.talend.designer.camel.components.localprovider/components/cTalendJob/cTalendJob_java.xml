@@ -49,7 +49,7 @@
 	
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-tis" MODULE="camel-tis-2.9.2.jar" REQUIRED="true" />
+			<IMPORT NAME="camel-tis" MODULE="camel-tis-2.9.3.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
