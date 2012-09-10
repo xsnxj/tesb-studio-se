@@ -65,9 +65,9 @@ import org.talend.repository.ui.views.IRepositoryView;
  */
 public class EditCamelProcess extends AbstractProcessAction implements IIntroAction {
 
-    private String EDIT_LABEL = Messages.getString("EditProcess.editJob"); //$NON-NLS-1$
+    private final String EDIT_LABEL = Messages.getString("EditProcess.editJob"); //$NON-NLS-1$
 
-    private String OPEN_LABEL = Messages.getString("EditProcess.openJob"); //$NON-NLS-1$
+    private final String OPEN_LABEL = Messages.getString("EditProcess.openJob"); //$NON-NLS-1$
 
     private static final String DBPROJECT_LABEL = "teneo";
 
@@ -85,6 +85,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     protected void doRun() {
         ISelection selection = getSelectedObject();
         if (selection == null) {
@@ -95,7 +96,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
             return;
         }
         RepositoryNode node = (RepositoryNode) obj;
-        Property property = (Property) node.getObject().getProperty();
+        Property property = node.getObject().getProperty();
         CamelProcessItem processItem = null;
 
         if (property != null) {
@@ -147,10 +148,11 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
                 MessageBoxExceptionHandler.process(e);
             }
         } else {
-            IRepositoryView viewPart = getViewPart();
-            if (viewPart != null) {
-                viewPart.refresh(ERepositoryObjectType.PROCESS);
-            }
+            // TDI-21143 : Studio repository view : remove all refresh call to repo view
+            // IRepositoryView viewPart = getViewPart();
+            // if (viewPart != null) {
+            // viewPart.refresh(ERepositoryObjectType.PROCESS);
+            // }
         }
     }
 
