@@ -5,36 +5,35 @@ imports="
     org.talend.core.model.process.IConnection
     org.talend.designer.codegen.config.CodeGeneratorArgument
     java.util.List
+    java.util.Map
 " 
 %>
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
-	
-	String header = ElementParameterParser.getValue(node, "__HEADER__");
-	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
-	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
-	
-	String useBean = ElementParameterParser.getValue(node, "__USE_BEAN__");
-	String bean = ElementParameterParser.getValue(node, "__BEAN__");
+
+	List<Map<String, String>> tableValues =
+    (List<Map<String,String>>)ElementParameterParser.getObjectValue(
+        node,
+        "__VALUES__"
+    );
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		if("false".equals(useBean)) {
-			if(!("none".equals(language))) {
+		 	for(Map<String, String> headersMap: tableValues){
+		 			String headerName = headersMap.get("NAME");
+		 			String headerLanguage = headersMap.get("LANGUAGE");
+		 			String headerExpression = headersMap.get("EXPRESSION");
+		 			if("bean".equals(headerLanguage)){
 %>
-				.setHeader(<%=header%>).<%=language%>(<%=expression%>)
+						.setHeader(<%=headerName%>).method(<%=headerExpression%>)
 <%
-			} else {
+		 			}else{
 %>
-				.setHeader(<%=header%>).<%=expression%>
+					.setHeader(<%=headerName%>).<%=headerLanguage%>(<%=headerExpression%>)
 <%
-			}
-		} else {
-%>
-			.setHeader(<%=header%>).method(<%=bean%>)
-<%
-		}
+					}
+		 	}
 	}
 %>
