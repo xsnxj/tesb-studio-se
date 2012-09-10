@@ -230,6 +230,15 @@
                    name="Switch292ReleaseCamelVersionTask"
                    version="5.1.2">
       		</projecttask>
+      		<projecttask
+                   beforeLogon="false"
+                   breaks="5.1.2"
+                   class="org.talend.camel.designer.migration.CSetHeaderSupportMultiHeadersTask"
+                   description="CSetHeaderSupportMultiHeadersTask"
+                   id="org.talend.camel.designer.cSetHeaderSupportMultiHeadersTask"
+                   name="cSetHeaderSupportMultiHeadersTask"
+                   version="5.2.0">
+      		</projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
