@@ -29,9 +29,13 @@ imports="
 %>
 						.setHeader(<%=headerName%>).method(<%=headerExpression%>)
 <%
-		 			}else{
+		 			}else if(!"none".equals(headerLanguage)) {
 %>
 					.setHeader(<%=headerName%>).<%=headerLanguage%>(<%=headerExpression%>)
+<%
+					}else{
+%>
+					.setHeader(<%=headerName%>).<%=headerExpression%>
 <%
 					}
 		 	}
