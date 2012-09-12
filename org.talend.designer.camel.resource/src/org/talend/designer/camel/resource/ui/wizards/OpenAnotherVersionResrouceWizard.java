@@ -36,7 +36,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.i18n.Messages;
-import org.talend.designer.camel.resource.ui.actions.EditRouteResourceAction;
+import org.talend.designer.camel.resource.ui.util.FindPreferEditorUtil;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
@@ -216,7 +216,7 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 			IWorkbenchPage page = getActivePage();
 
 			if (item instanceof RouteResourceItem) {
-				EditRouteResourceAction.openEditor(page, node,
+				FindPreferEditorUtil.openEditor(page, node,
 						(RouteResourceItem) item);
 			}
 		}

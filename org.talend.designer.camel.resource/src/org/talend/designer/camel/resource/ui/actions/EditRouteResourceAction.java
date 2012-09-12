@@ -14,33 +14,23 @@ package org.talend.designer.camel.resource.ui.actions;
 
 import java.util.Properties;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.RouteResourceActivator;
-import org.talend.designer.camel.resource.editors.ResourceEditorListener;
-import org.talend.designer.camel.resource.editors.RouteResourceEditor;
-import org.talend.designer.camel.resource.editors.RouteResoureChangeListener;
-import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.i18n.Messages;
+import org.talend.designer.camel.resource.ui.util.FindPreferEditorUtil;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
@@ -183,65 +173,8 @@ public class EditRouteResourceAction extends AContextualAction {
 			Assert.isTrue(property.getItem() instanceof RouteResourceItem);
 			item = (RouteResourceItem) property.getItem();
 			IWorkbenchPage page = getActivePage();
-			openEditor(page, node, item);
+			FindPreferEditorUtil.openEditor(page, node, item);
 		}
 
-	}
-
-	/**
-	 * Open or bind Route resource editor.
-	 * 
-	 * @param page
-	 * @param node
-	 * @param item
-	 */
-	public static void openEditor(final IWorkbenchPage page,
-			IRepositoryNode node,
-			RouteResourceItem item) {
-		try {
-
-			RouteResourceInput fileEditorInput = RouteResourceInput
-					.createInput(item);
-
-			fileEditorInput.setRepositoryNode(node);
-
-			IEditorRegistry editorRegistry = PlatformUI.getWorkbench()
-					.getEditorRegistry();
-			String extension = item.getBindingExtension();
-			IEditorDescriptor defaultEditor = editorRegistry
-					.getDefaultEditor("*." + extension);
-			String editorId = null;
-			if (defaultEditor != null) {
-				editorId = defaultEditor.getId();
-			} else {
-				editorId = RouteResourceEditor.ID;
-			}
-
-			IEditorPart editorPart = page.findEditor(fileEditorInput);
-
-			page.getWorkbenchWindow().getPartService()
-					.addPartListener(
-							new ResourceEditorListener(fileEditorInput, page));
-
-			if (!RouteResourceEditor.ID.endsWith(editorId)) {
-				ResourcesPlugin.getWorkspace().addResourceChangeListener(
-						new RouteResoureChangeListener(fileEditorInput));
-			}
-
-			if (editorPart == null) {
-				editorPart = page.openEditor(fileEditorInput, editorId, true);
-
-			} else {
-				editorPart = page.openEditor(fileEditorInput, editorId);
-			}
-
-
-		} catch (Exception e) {
-			try {
-				ProxyRepositoryFactory.getInstance().unlock(item);
-			} catch (Exception ie) {
-			}
-			MessageBoxExceptionHandler.process(e);
-		}
 	}
 }
