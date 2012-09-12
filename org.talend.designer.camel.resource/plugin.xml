@@ -39,6 +39,13 @@
              name="Edit Route Resource">
        </Action>
        <Action
+             class="org.talend.designer.camel.resource.ui.actions.OpenDefaultEditorAction"
+             id="org.talend.designer.camel.resource.OpenDefaultEditorAction"
+             isEditAction="true"
+             level="4"
+             name="Open Text Editor ">
+       </Action>
+       <Action
              class="org.talend.designer.camel.resource.ui.actions.EditRouteResourcePropertiesAction"
              id="org.talend.designer.camel.resource.EditRouteResourcePropertiesAction"
              isPropertiesAction="true"
