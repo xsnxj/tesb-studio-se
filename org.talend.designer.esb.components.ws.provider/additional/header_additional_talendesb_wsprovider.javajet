@@ -431,8 +431,12 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 		if (error instanceof RuntimeException) {
 			talendJobError = (RuntimeException) error;
 		} else {
+			String msg = "";
+			if(error != null && error.getMessage() != null){
+				msg = error.getMessage();
+			}
 			talendJobError = new RuntimeException(
-					"Talend job execution error", error);
+					"Talend job execution error: "+ msg, error);
 		}
 		esbProviderCallback.sendResponse(talendJobError);
 	}
