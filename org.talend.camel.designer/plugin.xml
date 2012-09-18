@@ -239,6 +239,15 @@
                    name="cSetHeaderSupportMultiHeadersTask"
                    version="5.2.0">
       		</projecttask>
+      		<projecttask
+                   beforeLogon="false"
+                   breaks="5.1.2"
+                   class="org.talend.camel.designer.migration.CBeanCTalendJobMigrationTask"
+                   description="CBeanCTalendJobMigrationTask"
+                   id="org.talend.camel.designer.cBeanCTalendJobMigrationTask"
+                   name="cBeanCTalendJobMigrationTask"
+                   version="5.2.0">
+      		</projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">

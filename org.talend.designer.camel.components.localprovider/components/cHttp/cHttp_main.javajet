@@ -36,18 +36,6 @@ imports="
 	sb.append(method);
 	sb.append("\"))");
 	
-	List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
-	for (Map<String, String> map : arguments) {
-		String argName = map.get("KEY").trim();
-		String argValue = map.get("VALUE").trim();
-		sb.append(".setHeader(");
-		sb.append(argName);
-		sb.append(",");
-		sb.append("constant(");
-		sb.append(argValue);
-		sb.append("))");
-	}
-	
 	String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
 	String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
 	String noContentStyle = ElementParameterParser.getValue(node, "__NO_CONTENT__");
@@ -104,6 +92,19 @@ imports="
 			}
 			sb.append("))");
 		}
+	}
+	
+	
+	List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
+	for (Map<String, String> map : arguments) {
+		String argName = map.get("KEY").trim();
+		String argValue = map.get("VALUE").trim();
+		sb.append(".setHeader(");
+		sb.append(argName);
+		sb.append(",");
+		sb.append("constant(");
+		sb.append(argValue);
+		sb.append("))");
 	}
 	
     String uriRef = "uriMap.get(\"" + cid + "\")";
