@@ -164,7 +164,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // Not allowed to create in system folder.
                 return;
             }
-            String label = initLabel((RepositoryNode) node);
+            String label = initLabel(node);
             processWizard = new NewProcessWizard(path, label);
         }
 
@@ -193,7 +193,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
 
                 Node node1 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST),
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
+                        fileEditorInput.getLoadedProcess());
 
                 String wsdlPath = WSDLUtils.getWsdlFile(node).getLocation().toPortableString();
                 Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
@@ -201,17 +201,15 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 setProviderRequestComponentConfiguration(node1, serviceParameters);
 
                 NodeContainer nc = new NodeContainer(node1);
-                CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
-                cNcc.execute();
+                CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), nc,
+                        new Point(3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                commandStack.execute(cNcc);
 
                 Node node2 = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE),
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess());
+                        fileEditorInput.getLoadedProcess());
                 nc = new NodeContainer(node2);
-                cNcc = new CreateNodeContainerCommand(
-                        (org.talend.designer.core.ui.editor.process.Process) fileEditorInput.getLoadedProcess(), nc, new Point(
-                                9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), nc, new Point(9 * Node.DEFAULT_SIZE,
+                        4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
 
                 // openEditor.doSave(new NullProgressMonitor());
@@ -232,7 +230,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                     }
                 }
 
-                repositoryChange((RepositoryNode) node, node1);
+                repositoryChange(node, node1);
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                 try {
