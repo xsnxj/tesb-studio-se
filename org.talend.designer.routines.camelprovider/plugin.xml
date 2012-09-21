@@ -7,12 +7,14 @@
             class="org.talend.designer.routines.camelprovider.CamelRoutinesProviderCreator">
       </RoutinesProvider>
    </extension>
-   <extension 
-         point="org.talend.core.systemRoutineLibrary"> 
-      <libraryNeeded 
-            language="java" 
-            moduleName="camel-core-2.9.3.jar" 
-            routineName="CamelStat"></libraryNeeded> 
-    </extension> 
+   <extension
+         point="org.talend.core.systemRoutineLibrary">
+      <systemRoutine
+            name="CamelStat">
+         <library
+               name="camel-core-2.9.3.jar">
+         </library>
+      </systemRoutine>
+   </extension>
 
 </plugin>
