@@ -1,7 +1,7 @@
 package routines.system;
 import java.util.EventObject;
 import org.apache.camel.Exchange;
-import org.apache.camel.management.DefaultEventFactory;
+import org.apache.camel.management.event.DefaultEventFactory;
 
 public class EventFactoryForShutDown extends DefaultEventFactory
 {
