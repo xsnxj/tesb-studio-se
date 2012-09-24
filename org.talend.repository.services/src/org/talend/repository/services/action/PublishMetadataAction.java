@@ -23,8 +23,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -52,6 +55,8 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
@@ -65,6 +70,7 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.metadata.MappingTypeRetriever;
 import org.talend.core.model.metadata.MetadataTalendType;
+import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
@@ -73,10 +79,13 @@ import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.properties.ByteArray;
+import org.talend.core.model.properties.ConnectionItem;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.model.ResourceModelUtils;
@@ -86,6 +95,7 @@ import org.talend.cwm.helper.PackageHelper;
 import org.talend.datatools.xml.utils.ATreeNode;
 import org.talend.datatools.xml.utils.OdaException;
 import org.talend.datatools.xml.utils.XSDPopulationUtil2;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -94,6 +104,7 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ParameterInfo;
+import org.talend.repository.services.ui.RewriteSchemaDialog;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
@@ -176,11 +187,11 @@ public class PublishMetadataAction extends AContextualAction {
      * @param monitor
      * @throws CoreException
      */
-    public void importSchema(IProgressMonitor monitor) throws CoreException {
+    public void importSchema(IProgressMonitor monitor, Map<String, IRepositoryViewObject> selectTables) throws CoreException {
         monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
-        if (nodes == null) {
-            nodes = selection.toList();
-        }
+        // if (nodes == null) {
+        nodes = selection.toList();
+        // }
         int step = 100;
         int size = nodes.size();
         if (size > 0) {
@@ -190,7 +201,7 @@ public class PublishMetadataAction extends AContextualAction {
             monitor.worked(step);
             WSDLUtils.validateWsdl(node);
             Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
-            process(wsdlDefinition);
+            process(wsdlDefinition, selectTables);
             if (monitor.isCanceled()) {
                 break;
             }
@@ -201,11 +212,21 @@ public class PublishMetadataAction extends AContextualAction {
 
     @Override
     protected void doRun() {
+        List<IRepositoryViewObject> xmlObjs = initFileConnection();
+        final Map<String, IRepositoryViewObject> selectTables = new HashMap<String, IRepositoryViewObject>();
+        if (xmlObjs.size() > 0) {
+            RewriteSchemaDialog selectContextDialog = new RewriteSchemaDialog(Display.getDefault().getActiveShell(), xmlObjs);
+            if (selectContextDialog.open() == Window.OK) {
+                selectTables.putAll(selectContextDialog.getSelectionTables());
+            } else {
+                return;
+            }
+        }
 
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
             public void run(IProgressMonitor monitor) throws CoreException {
-                importSchema(monitor);
+                importSchema(monitor, selectTables);
             }
 
         };
@@ -241,7 +262,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
-    public void process(Definition wsdlDefinition) {
+    public void process(Definition wsdlDefinition, Map<String, IRepositoryViewObject> selectTables) {
         populationUtil = new XSDPopulationUtil2();
         List<String> alreadyCreated = new ArrayList<String>();
         SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
@@ -279,7 +300,7 @@ public class PublishMetadataAction extends AContextualAction {
                             } else {
                                 alreadyCreated.add(parameterFromMessage.getName());
                             }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
                         }
                     }
 
@@ -293,7 +314,7 @@ public class PublishMetadataAction extends AContextualAction {
                             } else {
                                 alreadyCreated.add(parameterFromMessage.getName());
                             }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
                         }
                     }
                     Collection<Fault> faults = oper.getFaults().values();
@@ -306,7 +327,7 @@ public class PublishMetadataAction extends AContextualAction {
                             } else {
                                 alreadyCreated.add(parameterFromMessage.getName());
                             }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap);
+                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
                         }
                     }
                 }
@@ -380,12 +401,42 @@ public class PublishMetadataAction extends AContextualAction {
      * @param hashMap
      */
     private void populateMessage2(ParameterInfo parameter, QName portTypeQName, Operation oper,
-            Map<byte[], String> schemaToFileMap) {
+            Map<byte[], String> schemaToFileMap, Map<String, IRepositoryViewObject> selectItems) {
         String name = /* componentName + "_"+ */parameter.getName();
-        XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
+        XmlFileConnection connection = null;
+        Property connectionProperty = null;
+        XmlFileConnectionItem connectionItem = null;
+        boolean needRewrite = false;
+        String tableName = null;
+
+        if (selectItems.size() > 0) {
+            Set<Entry<String, IRepositoryViewObject>> tableSet = selectItems.entrySet();
+            Iterator<Entry<String, IRepositoryViewObject>> iterator = tableSet.iterator();
+            while (iterator.hasNext()) {
+                Entry<String, IRepositoryViewObject> entry = iterator.next();
+                tableName = entry.getKey();
+                IRepositoryViewObject repObj = entry.getValue();
+                Item item = repObj.getProperty().getItem();
+                if (item instanceof XmlFileConnectionItem) {
+                    connectionItem = (XmlFileConnectionItem) item;
+                    connection = (XmlFileConnection) connectionItem.getConnection();
+                    connectionProperty = item.getProperty();
+                    if (connectionProperty.getLabel().equals(name)) {
+                        needRewrite = true;
+                        break;
+                    }
+                }
+            }
+            if (!needRewrite && ConnectionHelper.getTables(connection).size() > 0) {
+                return;
+            }
+        }
+
+        // if (!exist) {
+        connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
         connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-        Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
+        connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+        connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
         connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
                 .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
         connectionProperty.setLabel(name);
@@ -396,6 +447,7 @@ public class PublishMetadataAction extends AContextualAction {
         connectionItem.setConnection(connection);
 
         connection.setInputModel(false);
+        // }
 
         // don't put any XSD directly inside the xml connection but put zip file
         Collection<String> fileStringCol = schemaToFileMap.values();
@@ -665,6 +717,166 @@ public class PublishMetadataAction extends AContextualAction {
         };
         columnName = uniqueStringGenerator.getUniqueString();
         return columnName;
+    }
+
+    private List<String> getAllPaths() throws CoreException {
+        List<String> paths = new ArrayList<String>();
+        // if (nodes == null) {
+        nodes = selection.toList();
+        // }
+        if (nodes == null) {
+            return paths;
+        }
+        for (RepositoryNode node : nodes) {
+            Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
+            SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
+            Map<QName, Binding> bindings = wsdlDefinition.getBindings();
+            List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
+            List<String> alreadyCreated = new ArrayList<String>();
+            for (Binding binding : bindings.values()) {
+                PortType portType = binding.getPortType();
+                if (!portTypes.contains(portType)) {
+                    portTypes.add(portType);
+                    List<BindingOperation> operations = binding.getBindingOperations();
+                    for (BindingOperation operation : operations) {
+                        Operation oper = operation.getOperation();
+                        Input inDef = oper.getInput();
+                        if (inDef != null) {
+                            Message inMsg = inDef.getMessage();
+                            if (inMsg != null) {
+                                // fix for TDI-20699
+                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
+                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                    continue;
+                                } else {
+                                    alreadyCreated.add(parameterFromMessage.getName());
+                                }
+                                String folderString = parameterFromMessage.getNameSpace() + '/'
+                                        + portType.getQName().getLocalPart();
+                                try {
+                                    URI uri = new URI(folderString);
+                                    String scheme = uri.getScheme();
+                                    if (scheme != null) {
+                                        folderString = folderString.substring(scheme.length());
+                                    }
+                                } catch (URISyntaxException e) {
+
+                                }
+                                if (folderString.startsWith(":")) { //$NON-NLS-1$
+                                    folderString = folderString.substring(1);
+                                }
+                                folderString = FolderNameUtil.replaceAllLimited(folderString);
+                                IPath path = new Path(folderString + '/' + oper.getName());
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
+                                }
+                            }
+                        }
+
+                        Output outDef = oper.getOutput();
+                        if (outDef != null) {
+                            Message outMsg = outDef.getMessage();
+                            if (outMsg != null) {
+                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
+                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                    continue;
+                                } else {
+                                    alreadyCreated.add(parameterFromMessage.getName());
+                                }
+                                String folderString = parameterFromMessage.getNameSpace() + '/'
+                                        + portType.getQName().getLocalPart();
+                                try {
+                                    URI uri = new URI(folderString);
+                                    String scheme = uri.getScheme();
+                                    if (scheme != null) {
+                                        folderString = folderString.substring(scheme.length());
+                                    }
+                                } catch (URISyntaxException e) {
+
+                                }
+                                if (folderString.startsWith(":")) { //$NON-NLS-1$
+                                    folderString = folderString.substring(1);
+                                }
+                                folderString = FolderNameUtil.replaceAllLimited(folderString);
+                                IPath path = new Path(folderString + '/' + oper.getName());
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
+                                }
+                            }
+                        }
+                        Collection<Fault> faults = oper.getFaults().values();
+                        for (Fault fault : faults) {
+                            Message faultMsg = fault.getMessage();
+                            if (faultMsg != null) {
+                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
+                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                    continue;
+                                } else {
+                                    alreadyCreated.add(parameterFromMessage.getName());
+                                }
+                                String folderString = parameterFromMessage.getNameSpace() + '/'
+                                        + portType.getQName().getLocalPart();
+                                try {
+                                    URI uri = new URI(folderString);
+                                    String scheme = uri.getScheme();
+                                    if (scheme != null) {
+                                        folderString = folderString.substring(scheme.length());
+                                    }
+                                } catch (URISyntaxException e) {
+
+                                }
+                                if (folderString.startsWith(":")) { //$NON-NLS-1$
+                                    folderString = folderString.substring(1);
+                                }
+                                folderString = FolderNameUtil.replaceAllLimited(folderString);
+                                IPath path = new Path(folderString + '/' + oper.getName());
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return paths;
+    }
+
+    private List<IRepositoryViewObject> initFileConnection() {
+        List<String> paths = null;
+        try {
+            paths = getAllPaths();
+        } catch (CoreException e1) {
+            ExceptionHandler.process(e1);
+        }
+        List<IRepositoryViewObject> connItems = new ArrayList<IRepositoryViewObject>();
+        if (paths == null) {
+            return connItems;
+        }
+
+        IProxyRepositoryFactory factory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
+        List<IRepositoryViewObject> repositoryObjects = null;
+        try {
+            repositoryObjects = factory.getAll(ERepositoryObjectType.METADATA);
+            for (IRepositoryViewObject object : repositoryObjects) {
+                Item item = object.getProperty().getItem();
+                if (item instanceof ConnectionItem) {
+                    Connection conn = ((ConnectionItem) item).getConnection();
+                    if (conn instanceof XmlFileConnection) {
+                        String sPath = item.getState().getPath();
+                        if (paths.contains(sPath)) {
+                            Object[] array = ConnectionHelper.getTables(conn).toArray();
+                            if (array.length > 0) {
+                                connItems.add(object);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        }
+        return connItems;
     }
 
 }
