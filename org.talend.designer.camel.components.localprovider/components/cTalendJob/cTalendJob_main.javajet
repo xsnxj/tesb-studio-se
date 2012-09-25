@@ -16,45 +16,39 @@ imports="
 " 
 %>
 <%
-	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-	INode node = (INode)codeGenArgument.getArgument();
-	String cid = node.getUniqueName();
-	
-	String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
-	String typeName = "";
-	String context = "";
-	if("true".equals(useJar)){
-		typeName = ElementParameterParser.getValue(node, "__JOB__");
-		context = ElementParameterParser.getValue(node, "__CONTEXT__");
-	}else{
-		context = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue(); 
-		String version = (String) node.getElementParameter("PROCESS_TYPE_VERSION").getValue();
-		IElementParameter processIdparam = node.getElementParameter("PROCESS_TYPE_PROCESS");
-		String id = (String)processIdparam.getValue();
-		if(id != null){
-			ProcessItem processItem = ItemCacheManager.getProcessItem(id, version);
-			IProcess jobProcess = CorePlugin.getDefault().getDesignerCoreService().getProcessFromItem(processItem);
-			IProcessor jobProcessor = ProcessorUtilities.getProcessor(jobProcess,
-					processItem.getProperty());
-			jobProcessor.setContext(ProcessorUtilities.getContext(jobProcess, context.toString()));
-			try{
-				jobProcessor.initPath();
-				typeName = jobProcessor.getTypeName();
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-	}
-	List< ? extends IConnection> conns = node.getIncomingConnections();
-	if(conns.size()>0) {
-		if("true".equals(useJar)){
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+    List< ? extends IConnection> conns = node.getIncomingConnections();
+    if(conns.size()>0) {
+        String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
+        if("true".equals(useJar)){
+            String typeName = ElementParameterParser.getValue(node, "__JOB__");
+            String context = ElementParameterParser.getValue(node, "__CONTEXT__");
 %>
-			.to("talend:"+<%=typeName%>+"?context="+<%=context%>)
+            .to("talend:"+<%=typeName%>+"?context="+<%=context%>)
 <%
-		}else{
+        }else{
+            String typeName = "";
+            String context = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue();
+            IElementParameter processIdparam = node.getElementParameter("PROCESS_TYPE_PROCESS");
+            String id = (String)processIdparam.getValue();
+            if(id != null){
+                String version = (String) node.getElementParameter("PROCESS_TYPE_VERSION").getValue();
+                ProcessItem processItem = ItemCacheManager.getProcessItem(id, version);
+                IProcess jobProcess = CorePlugin.getDefault().getDesignerCoreService().getProcessFromItem(processItem);
+                IProcessor jobProcessor = ProcessorUtilities.getProcessor(jobProcess,
+                        processItem.getProperty());
+                jobProcessor.setContext(ProcessorUtilities.getContext(jobProcess, context.toString()));
+                try{
+                    jobProcessor.initPath();
+                    typeName = jobProcessor.getTypeName();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
 %>
-		.to("talend:"+"<%=typeName%>"+"?context="+"<%=context%>")
+            .to("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>")
 <%
-		}
-	}
+        }
+    }
 %>
