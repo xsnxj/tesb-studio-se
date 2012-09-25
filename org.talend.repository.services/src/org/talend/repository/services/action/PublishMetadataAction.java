@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -555,18 +554,19 @@ public class PublishMetadataAction extends AContextualAction {
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix
-        	String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNameSpace(), portTypeQName.getLocalPart(), oper.getName());
-        	IPath path = new Path(folderPath);
+            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNameSpace(), portTypeQName.getLocalPart(),
+                    oper.getName());
+            IPath path = new Path(folderPath);
             factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
                                                         // existing in the same path
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         } catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
     }
 
     private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) throws OdaException {
@@ -738,25 +738,19 @@ public class PublishMetadataAction extends AContextualAction {
                                 } else {
                                     alreadyCreated.add(parameterFromMessage.getName());
                                 }
-                                String folderString = parameterFromMessage.getNameSpace() + '/'
-                                        + portType.getQName().getLocalPart();
+
+                                String folderPath = null;
                                 try {
-                                    URI uri = new URI(folderString);
-                                    String scheme = uri.getScheme();
-                                    if (scheme != null) {
-                                        folderString = folderString.substring(scheme.length());
+                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    IPath path = new Path(folderPath);
+                                    if (!paths.contains(path.toString())) {
+                                        paths.add(path.toString());
                                     }
                                 } catch (URISyntaxException e) {
+                                    ExceptionHandler.process(e);
+                                }
 
-                                }
-                                if (folderString.startsWith(":")) { //$NON-NLS-1$
-                                    folderString = folderString.substring(1);
-                                }
-                                folderString = FolderNameUtil.replaceAllLimited(folderString);
-                                IPath path = new Path(folderString + '/' + oper.getName());
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
-                                }
                             }
                         }
 
@@ -770,24 +764,16 @@ public class PublishMetadataAction extends AContextualAction {
                                 } else {
                                     alreadyCreated.add(parameterFromMessage.getName());
                                 }
-                                String folderString = parameterFromMessage.getNameSpace() + '/'
-                                        + portType.getQName().getLocalPart();
+                                String folderPath = null;
                                 try {
-                                    URI uri = new URI(folderString);
-                                    String scheme = uri.getScheme();
-                                    if (scheme != null) {
-                                        folderString = folderString.substring(scheme.length());
+                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    IPath path = new Path(folderPath);
+                                    if (!paths.contains(path.toString())) {
+                                        paths.add(path.toString());
                                     }
                                 } catch (URISyntaxException e) {
-
-                                }
-                                if (folderString.startsWith(":")) { //$NON-NLS-1$
-                                    folderString = folderString.substring(1);
-                                }
-                                folderString = FolderNameUtil.replaceAllLimited(folderString);
-                                IPath path = new Path(folderString + '/' + oper.getName());
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
+                                    ExceptionHandler.process(e);
                                 }
                             }
                         }
@@ -801,24 +787,16 @@ public class PublishMetadataAction extends AContextualAction {
                                 } else {
                                     alreadyCreated.add(parameterFromMessage.getName());
                                 }
-                                String folderString = parameterFromMessage.getNameSpace() + '/'
-                                        + portType.getQName().getLocalPart();
+                                String folderPath = null;
                                 try {
-                                    URI uri = new URI(folderString);
-                                    String scheme = uri.getScheme();
-                                    if (scheme != null) {
-                                        folderString = folderString.substring(scheme.length());
+                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    IPath path = new Path(folderPath);
+                                    if (!paths.contains(path.toString())) {
+                                        paths.add(path.toString());
                                     }
                                 } catch (URISyntaxException e) {
-
-                                }
-                                if (folderString.startsWith(":")) { //$NON-NLS-1$
-                                    folderString = folderString.substring(1);
-                                }
-                                folderString = FolderNameUtil.replaceAllLimited(folderString);
-                                IPath path = new Path(folderString + '/' + oper.getName());
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
+                                    ExceptionHandler.process(e);
                                 }
                             }
                         }
