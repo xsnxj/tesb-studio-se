@@ -189,9 +189,9 @@ public class PublishMetadataAction extends AContextualAction {
      */
     public void importSchema(IProgressMonitor monitor, Map<String, IRepositoryViewObject> selectTables) throws CoreException {
         monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
-        // if (nodes == null) {
-        nodes = selection.toList();
-        // }
+        if (selection != null) {
+            nodes = selection.toList();
+        }
         int step = 100;
         int size = nodes.size();
         if (size > 0) {
@@ -721,9 +721,9 @@ public class PublishMetadataAction extends AContextualAction {
 
     private List<String> getAllPaths() throws CoreException {
         List<String> paths = new ArrayList<String>();
-        // if (nodes == null) {
-        nodes = selection.toList();
-        // }
+        if (selection != null) {
+            nodes = selection.toList();
+        }
         if (nodes == null) {
             return paths;
         }
@@ -857,7 +857,7 @@ public class PublishMetadataAction extends AContextualAction {
         IProxyRepositoryFactory factory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
         List<IRepositoryViewObject> repositoryObjects = null;
         try {
-            repositoryObjects = factory.getAll(ERepositoryObjectType.METADATA);
+            repositoryObjects = factory.getAll(ERepositoryObjectType.METADATA, true);
             for (IRepositoryViewObject object : repositoryObjects) {
                 Item item = object.getProperty().getItem();
                 if (item instanceof ConnectionItem) {
