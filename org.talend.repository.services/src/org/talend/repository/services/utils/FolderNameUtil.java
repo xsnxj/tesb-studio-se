@@ -25,6 +25,35 @@ public class FolderNameUtil {
 		}
 		return sb.toString();
 	}
+	
+	public static String getImportedXmlSchemaPath(String namespace,
+			String portType, String operation) throws URISyntaxException {
+		if (namespace == null || portType == null || operation == null) {
+			throw new URISyntaxException(namespace + " " + portType + " "
+					+ operation, "The arguments can't be empty, please check");
+		}
+		String path = namespace;
+		if (namespace != null && namespace.endsWith("/")) {
+			path += portType;
+		} else {
+			path += '/' + portType;
+		}
+		try {
+			URI uri = new URI(path);
+			path = uri.getRawSchemeSpecificPart();
+		} catch (URISyntaxException e) {
+			throw e;
+		}
+		path = replaceAllLimited(path);
+		while (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		while (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		path += '/' + operation;
+		return path;
+	}
 
 	public static void main(String[] args) throws MalformedURLException,
 			URISyntaxException {

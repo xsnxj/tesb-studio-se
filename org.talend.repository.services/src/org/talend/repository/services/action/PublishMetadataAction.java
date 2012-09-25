@@ -555,31 +555,18 @@ public class PublishMetadataAction extends AContextualAction {
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix
-            String folderString = parameter.getNameSpace() + '/' + portTypeQName.getLocalPart();
-            try {
-                URI uri = new URI(folderString);
-                String scheme = uri.getScheme();
-                if (scheme != null) {
-                    folderString = folderString.substring(scheme.length());
-                }
-            } catch (URISyntaxException e) {
-
-            }
-            if (folderString.startsWith(":")) { //$NON-NLS-1$
-                folderString = folderString.substring(1);
-            }
-            folderString = FolderNameUtil.replaceAllLimited(folderString);
-            IPath path = new Path(folderString + '/' + oper.getName());
-            // if (path.segmentCount() > 0 && path.segment(0).startsWith(":")) {
-            // path = path.removeFirstSegments(1);
-            // }
+        	String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNameSpace(), portTypeQName.getLocalPart(), oper.getName());
+        	IPath path = new Path(folderPath);
             factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
                                                         // existing in the same path
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
             RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
-        }
+        	e.printStackTrace();
+        } catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
     }
 
     private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) throws OdaException {
