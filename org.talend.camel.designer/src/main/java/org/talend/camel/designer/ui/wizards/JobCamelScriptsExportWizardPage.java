@@ -31,8 +31,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 /**
  * Page of the Job Scripts Export Wizard. <br/>
  * 
- * @referto WizardArchiveFileResourceExportPage1 $Id:
- *          JobScriptsExportWizardPage.java 1 2006-12-13 03:09:07 bqian
+ * @referto WizardArchiveFileResourceExportPage1 $Id: JobScriptsExportWizardPage.java 1 2006-12-13 03:09:07 bqian
  * 
  */
 public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWizardPage {
@@ -57,6 +56,7 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
         super("jobscriptsExportPage1", selection); //$NON-NLS-1$
     }
 
+    @Override
     protected List getDefaultFileName() {
         List list = null;
         if (nodes.length >= 1) {
@@ -92,17 +92,17 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
      * @param optionsGroup
      * @param font
      */
+    @Override
     public void createOptions(final Composite optionsGroup, Font font) {
         super.createOptions(optionsGroup, font);
-        systemRoutineButton.setVisible(false);
-        userRoutineButton.setVisible(false);
     }
 
+    @Override
     protected Map<ExportChoice, Object> getExportChoiceMap() {
         Map<ExportChoice, Object> exportChoiceMap = super.getExportChoiceMap();
         exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
         exportChoiceMap.put(ExportChoice.needUserRoutine, true);
-        exportChoiceMap.put(ExportChoice.needDependencies, exportDependencies.getSelection());
+        exportChoiceMap.put(ExportChoice.needDependencies, Boolean.TRUE);
         return exportChoiceMap;
     }
 
@@ -111,13 +111,14 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
      * typically the case) then it must include the leading period character.
      * 
      */
+    @Override
     protected String getOutputSuffix() {
         // TESB-2944 set default suffix to .jar
         return ".jar"; //$NON-NLS-1$
     }
 
-	@Override
-	protected String getProcessType() {
-		return "Route";
-	}
+    @Override
+    protected String getProcessType() {
+        return "Route";
+    }
 }

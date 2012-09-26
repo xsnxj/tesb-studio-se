@@ -92,7 +92,6 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
             settings.put(STORE_SHELL_LAUNCHER_ID, shellLauncherButton.getSelection());
             settings.put(STORE_SYSTEM_ROUTINE_ID, true);
             settings.put(STORE_USER_ROUTINE_ID, true);
-            settings.put(STORE_MODEL_ID, modelButton.getSelection());
             settings.put(STORE_JOB_ID, jobItemButton.getSelection());
             settings.put(STORE_SOURCE_ID, jobScriptButton.getSelection());
             settings.put(STORE_CONTEXT_ID, contextButton.getSelection());
@@ -112,8 +111,8 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
         if (settings != null) {
             String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
             if (directoryNames != null && directoryNames.length > 0) {
-                for (int i = 0; i < directoryNames.length; i++) {
-                    addDestinationItem(directoryNames[i]);
+                for (String directoryName : directoryNames) {
+                    addDestinationItem(directoryName);
                 }
             }
             setDefaultDestination();
@@ -121,7 +120,6 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
             shellLauncherButton.setSelection(settings.getBoolean(STORE_SHELL_LAUNCHER_ID));
             // systemRoutineButton.setSelection(settings.getBoolean(STORE_SYSTEM_ROUTINE_ID));
             // userRoutineButton.setSelection(settings.getBoolean(STORE_USER_ROUTINE_ID));
-            modelButton.setSelection(settings.getBoolean(STORE_MODEL_ID));
             jobItemButton.setSelection(settings.getBoolean(STORE_JOB_ID));
             jobScriptButton.setSelection(settings.getBoolean(STORE_SOURCE_ID));
             contextButton.setSelection(settings.getBoolean(STORE_CONTEXT_ID));
