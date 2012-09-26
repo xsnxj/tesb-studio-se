@@ -22,8 +22,10 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -40,14 +43,19 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
- *
+ * 
  */
 public class ServiceExportWSWizardPage extends WizardPage {
 
     private String serviceName;
+
     private String serviceVersion;
+
     private String destinationValue;
+
     private Text destinationText;
+
+    private static final String OUTPUT_FILE_SUFFIX = ".zip"; //$NON-NLS-1$
 
     public ServiceExportWSWizardPage(IStructuredSelection selection) {
         super(org.talend.repository.services.Messages.ServiceExportWizard_Wizard_Title);
@@ -77,8 +85,9 @@ public class ServiceExportWSWizardPage extends WizardPage {
         if (selectedFileName == null) {
             return;
         }
-        if (!selectedFileName.endsWith(getOutputSuffix()))
+        if (!selectedFileName.endsWith(getOutputSuffix())) {
             selectedFileName += getOutputSuffix();
+        }
         checkDestination(selectedFileName);
         destinationValue = selectedFileName;
     }
@@ -117,7 +126,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         container.setLayout(new GridLayout(1, false));
 
         Group destinationGroup = new Group(container, SWT.NONE);
-        destinationGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        destinationGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
         destinationGroup.setText("Destination");
         destinationGroup.setLayout(new GridLayout(2, false));
 
@@ -125,6 +134,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         destinationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         destinationText.setText(getDestinationValue());
         destinationText.addModifyListener(new ModifyListener() {
+
             public void modifyText(ModifyEvent e) {
                 destinationValue = destinationText.getText();
                 checkDestination(destinationValue);
@@ -133,6 +143,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         Button browseButton = new Button(destinationGroup, SWT.PUSH);
         browseButton.setText("Browse");
         browseButton.addSelectionListener(new SelectionListener() {
+
             public void widgetSelected(SelectionEvent e) {
                 handleDestinationBrowseButtonPressed();
                 destinationText.setText(destinationValue);
@@ -142,13 +153,52 @@ public class ServiceExportWSWizardPage extends WizardPage {
                 ;
             }
         });
+        Group optionsGroup = new Group(container, SWT.NONE);
+        GridData layoutData = new GridData(GridData.FILL_BOTH);
+        optionsGroup.setLayoutData(layoutData);
+        GridLayout layout = new GridLayout();
+        optionsGroup.setLayout(layout);
+
+        optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
+        optionsGroup.setFont(parent.getFont());
+
+        Font font = optionsGroup.getFont();
+        optionsGroup.setLayout(new GridLayout(2, false));
+
+        final Button addBSButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+        addBSButton.setText("Add maven script"); //$NON-NLS-1$
+        addBSButton.setFont(font);
+        addBSButton.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boolean show = addBSButton.getSelection();
+                String destinationValue = getDestinationValue();
+                if (destinationValue.endsWith(getOutputSuffix())) {
+                    if (show) {
+                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
+                                + OUTPUT_FILE_SUFFIX;
+                    }
+                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX)) {
+                    if (!show) {
+                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
+                                + getOutputSuffix();
+                    }
+                }
+                setDestinationValue(destinationValue);
+            }
+        });
+
+    }
+
+    private void setDestinationValue(String destinationValue) {
+        destinationText.setText(destinationValue.trim());
     }
 
     public void finish() {
         String destination = destinationText.getText().trim();
         if (!"".equals(destination)) {
-            getDialogSettings().put(getClass().getName(),
-                    destination.substring(0, destination.lastIndexOf(File.separator)));
+            getDialogSettings().put(getClass().getName(), destination.substring(0, destination.lastIndexOf(File.separator)));
         }
     }
 

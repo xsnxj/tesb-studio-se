@@ -56,7 +56,7 @@ public class ExportServiceAction extends AContextualAction {
         }
 
         @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
+        List<RepositoryNode> nodes = selection.toList();
         for (RepositoryNode node : nodes) {
             if (node.getType() != ENodeType.REPOSITORY_ELEMENT
                     || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
@@ -72,6 +72,7 @@ public class ExportServiceAction extends AContextualAction {
         setEnabled(canWork);
     }
 
+    @Override
     public boolean isVisible() {
         return isEnabled();
     }
@@ -83,6 +84,7 @@ public class ExportServiceAction extends AContextualAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EXPORT_JOB_ICON));
     }
 
+    @Override
     protected void doRun() {
         ServiceExportWizard processWizard = new ServiceExportWizard();
         IWorkbench workbench = getWorkbench();
@@ -92,7 +94,6 @@ public class ExportServiceAction extends AContextualAction {
         Shell activeShell = Display.getCurrent().getActiveShell();
         WizardDialog dialog = new WizardDialog(activeShell, processWizard);
         workbench.saveAllEditors(true);
-        dialog.setPageSize(450, 80);
         dialog.open();
     }
 }
