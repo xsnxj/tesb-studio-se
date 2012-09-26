@@ -277,4 +277,25 @@
                  class="org.talend.camel.designer.check.CheckJMSNodesService">
            </checknodes>
         </extension>
+        <extension
+              point="org.eclipse.core.runtime.preferences">
+           <initializer
+                 class="org.talend.camel.designer.prefs.CamelPreferenceInitializer">
+           </initializer>
+        </extension>
+        <extension
+              point="org.eclipse.ui.preferencePages">
+           <page
+                 category="org.talend.designer.core.ui.preferences.ImportExportPreferencePage"
+                 class="org.talend.camel.designer.prefs.KarafPreferencePage"
+                 id="org.talend.camel.designer.prefs.KarafPreferencePage"
+                 name="%preferencePage.Karaf">
+           </page>
+           <page
+                 category="org.talend.camel.designer.prefs.KarafPreferencePage"
+                 class="org.talend.camel.designer.prefs.KarafMavenScriptPreferencePage"
+                 id="org.talend.camel.designer.prefs.KarafMavenScriptPreferencePage"
+                 name="%preferencePage.Maven">
+           </page>
+        </extension>
 </plugin>
