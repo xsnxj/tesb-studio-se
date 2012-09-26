@@ -18,11 +18,19 @@
                maxVersion="6.0.0"
                minVersion="2.0.0"
                packageName="org.talend.esb.servicelocator.cxf">
+            <predicate
+                  attributeName="ENABLE_SL"
+                  attributeValue="true">
+            </predicate>
          </importPackage>
          <importPackage
                maxVersion="6.0.0"
                minVersion="2.0.0"
                packageName="org.talend.esb.sam.agent.feature">
+            <predicate
+                  attributeName="ENABLE_SAM"
+                  attributeValue="true">
+            </predicate>
          </importPackage>
       </component>
       <component
@@ -215,6 +223,15 @@
             componentName="cTalendJob">
          <predicate
                attributeName="FROM_EXTERNAL_JAR"
+               attributeValue="true">
+         </predicate>
+      </classpath>
+      <classpath
+            attributeName="LIBRARY"
+            checked="false"
+            componentName="cMessagingEndpoint">
+         <predicate
+               attributeName="USE_CUSTOM_COMPONENT"
                attributeValue="true">
          </predicate>
       </classpath>
