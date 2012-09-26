@@ -557,12 +557,15 @@ public static class RestServiceProviderImpl4TalendJob {
 		try {
 			java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 			globalMap.put("restRequest", request);
-			globalMap.put(KEY_DB_DATASOURCES, job.globalMap.get(KEY_DB_DATASOURCES));
-			for(java.util.Map.Entry<String, Object> entry : job.globalMap.entrySet()) {
-				if (entry.getKey().startsWith("conn_")) {
-					globalMap.put(entry.getKey(), entry.getValue());
-				}
-			}
+
+            // pass DataSource
+            java.util.Map<String, routines.system.TalendDataSource> talendDataSources = 
+                (java.util.Map<String, routines.system.TalendDataSource>) job.globalMap.get(KEY_DB_DATASOURCES);
+            java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
+            for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
+                restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
+            }
+			globalMap.put(KEY_DB_DATASOURCES, restDataSources);
 
 			job.tRESTRequest_1_LoopProcess(globalMap);
 
