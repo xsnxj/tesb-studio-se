@@ -1,10 +1,9 @@
 package org.talend.camel.designer.prefs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.camel.designer.CamelDesignerPlugin;
@@ -33,16 +32,13 @@ public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
         if (!templateScriptFile.exists()) {
             return EMPTY_STR;
         }
-
-        SAXReader saxReader = new SAXReader();
-        Document document = null;
+        
         try {
-            document = saxReader.read(templateScriptFile);
-        } catch (DocumentException e) {
-            ExceptionHandler.process(e);
-        }
-
-        return document.asXML();
+			return new Scanner(templateScriptFile).useDelimiter("\\A").next();
+		} catch (FileNotFoundException e) {
+			ExceptionHandler.process(e);
+		}
+        return "";
     }
 
 }
