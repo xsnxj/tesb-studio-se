@@ -519,6 +519,19 @@ public static class RestServiceProviderImpl4TalendJob {
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
+		} finally {
+            // close DB connections
+            try {
+                java.util.Map<String, routines.system.TalendDataSource> restDataSources = 
+                    (java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
+                if (null != restDataSources) {
+                    for (routines.system.TalendDataSource restDataSource : restDataSources.values()) {
+                        restDataSource.close();
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace(System.err);
+            }
 		}
 	}
 
