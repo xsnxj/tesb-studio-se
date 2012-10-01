@@ -30,7 +30,9 @@
 					}
 				}
 			} catch (Throwable e) {
+			    e.printStackTrace(System.err);
 			}
+
 			// Exit from this loop is made by the configuring "Keep listening"
 			// parameter to false. Then we will have a break before.
 			if ("false".equals("<%=keepListening%>")) {
