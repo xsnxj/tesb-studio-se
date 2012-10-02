@@ -445,7 +445,7 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String cid = tRESTRequestNode.getUniqueName();
-	cid = cid.replaceAll("_Loop", "");
+	//cid = cid.replaceAll("_Loop", "");
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -491,7 +491,7 @@ public static class RestServiceProviderImpl4TalendJob {
                 globalMap.put(KEY_DB_DATASOURCES, restDataSources);
             }
 
-			job.tRESTRequest_1_LoopProcess(globalMap);
+			job.<%=cid%>Process(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
 
