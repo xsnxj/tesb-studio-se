@@ -476,8 +476,8 @@ public static class RestServiceProviderImpl4TalendJob {
 	}
 
 	private javax.ws.rs.core.Response processRequest(java.util.Map<String, Object> request) {
+        final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 		try {
-			java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 			globalMap.put("restRequest", request);
 
             // pass DataSource
