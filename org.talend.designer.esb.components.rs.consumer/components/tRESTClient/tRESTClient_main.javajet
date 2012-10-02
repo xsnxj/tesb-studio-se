@@ -105,7 +105,7 @@ try {
 	<% } %>
 
 	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
-	providers_<%=cid%>.add(new ClientDOM4JProvider());
+	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider());
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
