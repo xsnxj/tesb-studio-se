@@ -276,6 +276,9 @@
            <checknodes
                  class="org.talend.camel.designer.check.CheckJMSNodesService">
            </checknodes>
+           <checknodes
+                 class="org.talend.camel.designer.check.CheckRouteBuilderNodeService">
+           </checknodes>
         </extension>
         <extension
               point="org.eclipse.core.runtime.preferences">
