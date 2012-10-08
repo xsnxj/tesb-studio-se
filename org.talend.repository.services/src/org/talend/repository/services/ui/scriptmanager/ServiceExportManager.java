@@ -94,6 +94,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 									// remove forwarding "/services/" context as required by runtime
 									endpointAddress = endpointAddress.substring(
 											"/services/".length() - 1); // leave forwarding slash
+								} else if (endpointAddress.length() == 1) { // empty path
+									endpointAddress += studioServiceName;
 								}
 							} catch (MalformedURLException e) {
 								logger.error("Endpoint URI invalid: " + e);
