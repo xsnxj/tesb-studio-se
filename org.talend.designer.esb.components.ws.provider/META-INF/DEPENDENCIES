@@ -1,6 +1,16 @@
 List of third-party dependencies grouped by their license type.
 
+Apache 2.0 License : 
+  * Apache MINA Core (org.apache.mina:mina-core:2.0.5 - http://mina.apache.org/mina-core/)
+
+Apache License : 
+  * HttpAsyncClient (org.apache.httpcomponents:httpasyncclient:4.0-beta3 - http://hc.apache.org/httpcomponents-asyncclient)
+  * HttpClient (org.apache.httpcomponents:httpclient:4.2.1 - http://hc.apache.org/httpcomponents-client)
+  * HttpCore (org.apache.httpcomponents:httpcore:4.2.2 - http://hc.apache.org/httpcomponents-core-ga)
+  * HttpCore NIO (org.apache.httpcomponents:httpcore-nio:4.2.2 - http://hc.apache.org/httpcomponents-core-ga)
+
 Apache Software License - Version 2.0 : 
+  * Commons Codec (commons-codec:commons-codec:1.7 - http://commons.apache.org/codec/)
   * Commons Collections (commons-collections:commons-collections:3.2.1 - http://commons.apache.org/collections/)
   * Commons Lang (commons-lang:commons-lang:2.6 - http://commons.apache.org/lang/)
   * Commons Logging (commons-logging:commons-logging:1.1.1 - http://commons.apache.org/logging)
@@ -8,13 +18,14 @@ Apache Software License - Version 2.0 :
   * OAuth Core (net.oauth.core:oauth:20100527 - http://oauth.net/code/oauth-core-parent/oauth/)
   * OAuth Core: Provider (net.oauth.core:oauth-provider:20100527 - http://oauth.net/code/oauth-core-parent/oauth-provider/)
   * Ehcache Core (net.sf.ehcache:ehcache-core:2.5.1 - http://ehcache.org)
-  * Apache CXF Bundle Jar (org.apache.cxf:cxf-bundle:2.6.2 - http://cxf.apache.org)
+  * Apache CXF Bundle Jar (org.apache.cxf:cxf-bundle:2.7.0 - http://cxf.apache.org)
   * Activation 1.1 (org.apache.geronimo.specs:geronimo-activation_1.1_spec:1.1 - http://geronimo.apache.org/maven/specs/geronimo-activation_1.1_spec/1.1)
   * Annotation 1.0 (org.apache.geronimo.specs:geronimo-annotation_1.0_spec:1.1.1 - http://geronimo.apache.org/specs/geronimo-annotation_1.0_spec)
   * JavaMail 1.4 (org.apache.geronimo.specs:geronimo-javamail_1.4_spec:1.7.1 - http://geronimo.apache.org/maven/specs/geronimo-javamail_1.4_spec/1.7.1)
   * Apache Geronimo JAX-WS Spec 2.2 (org.apache.geronimo.specs:geronimo-jaxws_2.2_spec:1.1 - http://geronimo.apache.org/maven/specs/geronimo-jaxws_2.2_spec/1.1)
   * JMS 1.1 (org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1 - http://geronimo.apache.org/specs/geronimo-jms_1.1_spec)
   * Servlet 2.5 (org.apache.geronimo.specs:geronimo-servlet_2.5_spec:1.1.2 - http://geronimo.apache.org/specs/geronimo-servlet_2.5_spec)
+  * Servlet 3.0 (org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0 - http://geronimo.apache.org/maven/specs/geronimo-servlet_3.0_spec/1.0)
   * Streaming API for XML (STAX API 1.0) (org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0.1 - http://geronimo.apache.org/specs/geronimo-stax-api_1.0_spec)
   * Web Services Metadata 2.0 (org.apache.geronimo.specs:geronimo-ws-metadata_2.0_spec:1.1.3 - http://geronimo.apache.org/maven/specs/geronimo-ws-metadata_2.0_spec/1.1.3)
   * Apache Neethi (org.apache.neethi:neethi:3.0.2 - http://ws.apache.org/neethi/)
@@ -24,12 +35,12 @@ Apache Software License - Version 2.0 :
   * XmlSchema Core (org.apache.ws.xmlschema:xmlschema-core:2.0.3 - http://ws.apache.org/commons/xmlschema20/xmlschema-core/)
   * XmlBeans (org.apache.xmlbeans:xmlbeans:2.5.0 - http://xmlbeans.apache.org)
   * Woodstox (org.codehaus.woodstox:woodstox-core-asl:4.1.4 - http://woodstox.codehaus.org)
-  * Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-continuation)
-  * Jetty :: Http Utility (org.eclipse.jetty:jetty-http:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-http)
-  * Jetty :: IO Utility (org.eclipse.jetty:jetty-io:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-io)
-  * Jetty :: Security (org.eclipse.jetty:jetty-security:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-security)
-  * Jetty :: Server Core (org.eclipse.jetty:jetty-server:7.5.4.v20111024 - http://www.eclipse.org/jetty)
-  * Jetty :: Utilities (org.eclipse.jetty:jetty-util:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-util)
+  * Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-continuation)
+  * Jetty :: Http Utility (org.eclipse.jetty:jetty-http:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-http)
+  * Jetty :: IO Utility (org.eclipse.jetty:jetty-io:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-io)
+  * Jetty :: Security (org.eclipse.jetty:jetty-security:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-security)
+  * Jetty :: Server Core (org.eclipse.jetty:jetty-server:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-server)
+  * Jetty :: Utilities (org.eclipse.jetty:jetty-util:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-util)
   * OpenSAML-J (org.opensaml:opensaml:2.5.1-1 - http://opensaml.org/)
   * OpenWS (org.opensaml:openws:1.4.2-1 - http://opensaml.org/)
   * XMLTooling-J (org.opensaml:xmltooling:1.3.2-1 - http://opensaml.org/)
@@ -41,8 +52,6 @@ Apache Software License - Version 2.0 :
   * spring-expression (org.springframework:spring-expression:3.0.7.RELEASE - no url defined)
   * spring-jms (org.springframework:spring-jms:3.0.7.RELEASE - no url defined)
   * spring-tx (org.springframework:spring-tx:3.0.7.RELEASE - no url defined)
-  * Xalan Java Serializer (xalan:serializer:2.7.1 - http://xml.apache.org/xalan-j/)
-  * Xalan Java (xalan:xalan:2.7.1 - http://xml.apache.org/xalan-j/)
   * XML Commons External Components XML APIs (xml-apis:xml-apis:1.0.b2 - http://xml.apache.org/commons/#external)
   * XML Commons Resolver Component (xml-resolver:xml-resolver:1.2 - http://xml.apache.org/commons/components/resolver/)
 
@@ -52,33 +61,39 @@ BSD License :
   * dom4j (dom4j:dom4j:1.6.1 - http://dom4j.org)
   * Stax2 API (org.codehaus.woodstox:stax2-api:3.1.1 - http://woodstox.codehaus.org/StAX2)
 
+CDDL 1.0 : 
+  * JAXB RI (com.sun.xml.bind:jaxb-impl:2.1.13 - https://jaxb.dev.java.net/)
+  * JAXB XJC (com.sun.xml.bind:jaxb-xjc:2.1.13 - https://jaxb.dev.java.net/)
+
 CDDL 1.1 : 
-  * JAXB Reference Implementation (com.sun.xml.bind:jaxb-impl:2.2.5 - http://jaxb.java.net/)
-  * JAXB XJC (com.sun.xml.bind:jaxb-xjc:2.2.5 - http://jaxb.java.net/)
+  * javax.ws.rs-api (javax.ws.rs:javax.ws.rs-api:2.0-m10 - http://jax-rs-spec.java.net)
   * Java Architecture for XML Binding (javax.xml.bind:jaxb-api:2.2.6 - http://jaxb.java.net/)
   * MIME streaming extension (org.jvnet.mimepull:mimepull:1.7 - http://mimepull.java.net)
 
 COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0 : 
-  * jsr311-api (javax.ws.rs:jsr311-api:1.1.1 - https://jsr311.dev.java.net)
   * saaj-api (javax.xml.soap:saaj-api:1.3.4 - http://java.net/saaj-api/)
 
 CPL : 
   * WSDL4J (wsdl4j:wsdl4j:1.6.2 - http://sf.net/projects/wsdl4j)
 
+Common Development and Distribution License (CDDL) v1.0 : 
+  * JavaBeans Activation Framework (JAF) (javax.activation:activation:1.1 - http://java.sun.com/products/javabeans/jaf/index.jsp)
+
 Dual license consisting of the CDDL v1.1 and GPL v2 : 
   * saaj-impl (com.sun.xml.messaging.saaj:saaj-impl:1.3.18 - http://java.net/saaj-impl/)
 
 Eclipse Public License - Version 1.0 : 
-  * Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-continuation)
-  * Jetty :: Http Utility (org.eclipse.jetty:jetty-http:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-http)
-  * Jetty :: IO Utility (org.eclipse.jetty:jetty-io:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-io)
-  * Jetty :: Security (org.eclipse.jetty:jetty-security:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-security)
-  * Jetty :: Server Core (org.eclipse.jetty:jetty-server:7.5.4.v20111024 - http://www.eclipse.org/jetty)
-  * Jetty :: Utilities (org.eclipse.jetty:jetty-util:7.5.4.v20111024 - http://www.eclipse.org/jetty/jetty-util)
+  * Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-continuation)
+  * Jetty :: Http Utility (org.eclipse.jetty:jetty-http:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-http)
+  * Jetty :: IO Utility (org.eclipse.jetty:jetty-io:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-io)
+  * Jetty :: Security (org.eclipse.jetty:jetty-security:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-security)
+  * Jetty :: Server Core (org.eclipse.jetty:jetty-server:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-server)
+  * Jetty :: Utilities (org.eclipse.jetty:jetty-util:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-util)
 
 GPL2 w/ CPE : 
-  * JAXB Reference Implementation (com.sun.xml.bind:jaxb-impl:2.2.5 - http://jaxb.java.net/)
-  * JAXB XJC (com.sun.xml.bind:jaxb-xjc:2.2.5 - http://jaxb.java.net/)
+  * JAXB RI (com.sun.xml.bind:jaxb-impl:2.1.13 - https://jaxb.dev.java.net/)
+  * JAXB XJC (com.sun.xml.bind:jaxb-xjc:2.1.13 - https://jaxb.dev.java.net/)
+  * javax.ws.rs-api (javax.ws.rs:javax.ws.rs-api:2.0-m10 - http://jax-rs-spec.java.net)
   * Java Architecture for XML Binding (javax.xml.bind:jaxb-api:2.2.6 - http://jaxb.java.net/)
   * MIME streaming extension (org.jvnet.mimepull:mimepull:1.7 - http://mimepull.java.net)
 
