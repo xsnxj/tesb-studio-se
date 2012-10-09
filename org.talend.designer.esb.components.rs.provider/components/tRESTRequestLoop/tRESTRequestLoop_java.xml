@@ -127,7 +127,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="geronimo-servlet_2.5_spec"
-					MODULE="geronimo-servlet_2.5_spec-1.1.2.jar"
+					MODULE="${tesb-geronimo-servlet_2.5_spec}"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jetty-continuation"
