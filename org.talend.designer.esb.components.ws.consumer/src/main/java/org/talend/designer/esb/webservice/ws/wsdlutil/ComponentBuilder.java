@@ -356,13 +356,14 @@ public class ComponentBuilder {
             }
 
             for (BindingOperation operation : operations) {
-                for (ExtensibilityElement operElem : findExtensibilityElement(operation.getExtensibilityElements(), "operation")) {
-                    if (operElem != null && operElem instanceof SOAPOperation) {
+                // https://jira.talendforge.org/browse/TESB-7234
+//                for (ExtensibilityElement operElem : findExtensibilityElement(operation.getExtensibilityElements(), "operation")) {
+//                    if (operElem != null && operElem instanceof SOAPOperation) {
                         OperationInfo operationInfo = new OperationInfo(style);
                         buildOperation(operationInfo, operation);
                         operationInfos.add(operationInfo);
-                    }
-                }
+//                    }
+//                }
             }
         }
 
