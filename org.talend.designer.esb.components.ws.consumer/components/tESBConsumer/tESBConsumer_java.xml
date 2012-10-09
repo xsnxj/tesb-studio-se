@@ -288,7 +288,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.6.2.jar"
+					MODULE="cxf-bundle-2.7.0.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
@@ -309,11 +309,11 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.2.5.jar"
+					MODULE="jaxb-impl-2.1.13.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-xjc"
-					MODULE="jaxb-xjc-2.2.5.jar"
+					MODULE="jaxb-xjc-2.1.13.jar"
 					BundleID=""
 					REQUIRED="true" />
 
