@@ -119,7 +119,7 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
         wsdlPage = new OpenWSDLPage(node, pathToSave, serviceItem, "Edit WSDL", creation);
         addPage(mainPage);
         addPage(wsdlPage);
-        setWindowTitle(""); //$NON-NLS-1$
+        setWindowTitle("Services"); //$NON-NLS-1$
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
 
@@ -150,13 +150,14 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
         return this.serviceItem;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
-	@Override
-	public boolean canFinish() {
-		return super.canFinish() && wsdlPage.isPageComplete();
-	}
-    
-    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.Wizard#canFinish()
+     */
+    @Override
+    public boolean canFinish() {
+        return super.canFinish() && wsdlPage.isPageComplete();
+    }
+
 }
