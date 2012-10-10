@@ -187,16 +187,16 @@ try {
 			}
 		<% } %>
 
-	} catch (org.apache.cxf.jaxrs.client.ServerWebApplicationException ex_<%=cid%>) {
+	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
 		<% if (null != connFault) {
 			String connFaultName = connFault.getName(); %>
 			if (<%=connFaultName%> == null) {
 				<%=connFaultName%> = new <%=connFaultName%>Struct();
 			}
-			<%=connFaultName%>.errorCode = ex_<%=cid%>.getStatus();
+			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
 			<%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
 		<% } else { %>
-			System.out.println("error response: " + ex_<%=cid%>.getStatus() + ":" + ex_<%=cid%>.getMessage());
+			System.out.println("error response: " + ex_<%=cid%>.getResponse().getStatus() + ":" + ex_<%=cid%>.getMessage());
 		<% } %>
 	}
 
