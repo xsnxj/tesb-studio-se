@@ -28,16 +28,16 @@ public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
             return EMPTY_STR;
         }
 
-        File templateScriptFile = new File(resourceService.getMavenScriptFilePath("pom_kar.xml")); //$NON-NLS-1$
+        File templateScriptFile = new File(resourceService.getMavenScriptFilePath("karaf/pom.xml")); //$NON-NLS-1$
         if (!templateScriptFile.exists()) {
             return EMPTY_STR;
         }
-        
+
         try {
-			return new Scanner(templateScriptFile).useDelimiter("\\A").next();
-		} catch (FileNotFoundException e) {
-			ExceptionHandler.process(e);
-		}
+            return new Scanner(templateScriptFile).useDelimiter("\\A").next();
+        } catch (FileNotFoundException e) {
+            ExceptionHandler.process(e);
+        }
         return "";
     }
 
