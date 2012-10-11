@@ -56,7 +56,10 @@ public class ESBRepositoryContentHandler implements IRepositoryContentHandler {
     private final IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
     public Item createNewItem(ERepositoryObjectType type) {
-        Item item = ServicesFactory.eINSTANCE.createServiceItem();
+        Item item = null;
+        if (type == ESBRepositoryNodeType.SERVICES) {
+            item = ServicesFactory.eINSTANCE.createServiceItem();
+        }
         return item;
     }
 
