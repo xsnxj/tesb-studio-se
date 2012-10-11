@@ -270,6 +270,23 @@
 					MODULE="spring-expression-3.0.7.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true" />
+
+			<IMPORT NAME="httpcore"
+					MODULE="httpcore-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />										
+			<IMPORT NAME="httpcore-nio"
+					MODULE="httpcore-nio-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />															
+			<IMPORT NAME="httpasyncclient"
+					MODULE="httpasyncclient-4.0-beta3.jar"
+					BundleID=""
+					REQUIRED="true" />																				
+			<IMPORT NAME="httpclient"
+					MODULE="httpclient-4.2.1.jar"
+					BundleID=""
+					REQUIRED="true" />					
 		</IMPORTS>
 	</CODEGENERATION>
 
