@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
+import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.general.ModuleNeeded;
@@ -828,6 +829,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         } else {
             exportChoiceMap.put(ExportChoice.needMetaInfo, false);
         }
+
+        if (EXPORTTYPE_KAR.equals(exportType)) {
+            exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
+        }
+
         // fix bug 9150, export items and code source, added by nma
         exportChoiceMap.put(ExportChoice.needJobItem, jobScriptButton.getSelection());
         exportChoiceMap.put(ExportChoice.needSourceCode, jobScriptButton.getSelection());
@@ -1457,8 +1463,22 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                     return false;
                 }
             }
-            JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar,
-                    false);
+            // JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version,
+            // destinationKar,
+            // false);
+
+            // ycbai added //
+            JavaCamelJobScriptsExportWSAction action = null;
+            Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
+            if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
+                    && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
+                action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
+            } else {
+                action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
+            }
+
+            // //////////////
+
             try {
                 getContainer().run(false, true, action);
             } catch (InvocationTargetException e) {
