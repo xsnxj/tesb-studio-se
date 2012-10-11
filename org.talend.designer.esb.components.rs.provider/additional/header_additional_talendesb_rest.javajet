@@ -497,17 +497,17 @@ public static class RestServiceProviderImpl4TalendJob {
 
 			Object responseBody = null;
 			Integer status = null;
+			java.util.Map<String, String> headers = null;
 			if (null != response) {
 				responseBody = response.get("BODY");
 				status = (Integer) response.get("STATUS");
+                headers = (java.util.Map<String, String>) response.get("HEADERS");
 			}
 			if (null == status) {
 				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 404;
 			}
 
 			javax.ws.rs.core.Response.ResponseBuilder responseBuilder = javax.ws.rs.core.Response.status(status).entity(responseBody);
-
-			java.util.Map<String, String> headers = (java.util.Map<String, String>) response.get("HEADERS");
 			if (headers != null) {
 				for (java.util.Map.Entry<String, String> header : headers.entrySet()) {
 					responseBuilder.header(header.getKey(), header.getValue());
