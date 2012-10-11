@@ -491,6 +491,8 @@ public static class RestServiceProviderImpl4TalendJob {
                 globalMap.put(KEY_DB_DATASOURCES, restDataSources);
             }
 
+            globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
+
 			job.<%=cid%>Process(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
