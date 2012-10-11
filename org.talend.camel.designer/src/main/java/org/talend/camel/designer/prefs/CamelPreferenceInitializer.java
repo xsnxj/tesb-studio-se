@@ -18,27 +18,34 @@ public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
     @Override
     public void initializeDefaultPreferences() {
         final IPreferenceStore preferenceStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE, getMavenScriptTemplate());
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE, getMavenScriptTemplate("pom.xml")); //$NON-NLS-1$
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE,
+                getMavenScriptTemplate("pom-bundle.xml")); //$NON-NLS-1$
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE,
+                getMavenScriptTemplate("pom-feature.xml")); //$NON-NLS-1$
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT,
+                getMavenScriptTemplate("pom-parent.xml")); //$NON-NLS-1$
+
     }
 
-    private String getMavenScriptTemplate() {
+    private String getMavenScriptTemplate(String pomName) {
         IResourceService resourceService = (IResourceService) GlobalServiceRegister.getDefault().getService(
                 IResourceService.class);
         if (resourceService == null) {
             return EMPTY_STR;
         }
 
-        File templateScriptFile = new File(resourceService.getMavenScriptFilePath("karaf/pom.xml")); //$NON-NLS-1$
+        File templateScriptFile = new File(resourceService.getMavenScriptFilePath("karaf/" + pomName)); //$NON-NLS-1$
         if (!templateScriptFile.exists()) {
             return EMPTY_STR;
         }
 
         try {
-            return new Scanner(templateScriptFile).useDelimiter("\\A").next();
+            return new Scanner(templateScriptFile).useDelimiter("\\A").next(); //$NON-NLS-1$
         } catch (FileNotFoundException e) {
             ExceptionHandler.process(e);
         }
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
 }

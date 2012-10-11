@@ -19,4 +19,9 @@ public interface ICamelPrefConstants {
 
     public static final String MAVEN_KARAF_SCRIPT_TEMPLATE = "maven_karaf_script_template"; //$NON-NLS-1$
 
+    public static final String MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE = "maven_karaf_script_template_bundle"; //$NON-NLS-1$
+
+    public static final String MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE = "maven_karaf_script_template_feature"; //$NON-NLS-1$
+
+    public static final String MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT = "maven_karaf_script_template_parent"; //$NON-NLS-1$
 }
