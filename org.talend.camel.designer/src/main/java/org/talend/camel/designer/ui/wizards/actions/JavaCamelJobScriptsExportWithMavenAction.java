@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.talend.camel.designer.ui.wizards.exportjob.scriptsmanager.JobJavaScriptKarafForESBWithMavenManager;
+import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.RepositoryNode;
@@ -45,7 +45,7 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
             destinationKar = destinationKar.substring(0, destinationKar.lastIndexOf(".")); //$NON-NLS-1$
             destinationKar = destinationKar + DEFAULT_SUFFIX;
         }
-        scriptsManager = new JobJavaScriptKarafForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
+        scriptsManager = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 

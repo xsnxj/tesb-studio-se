@@ -9,6 +9,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.repository.constants.ExportJobConstants;
 import org.talend.resource.IResourceService;
 
 public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -18,13 +19,18 @@ public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
     @Override
     public void initializeDefaultPreferences() {
         final IPreferenceStore preferenceStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
-        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE, getMavenScriptTemplate("pom.xml")); //$NON-NLS-1$
-        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE,
-                getMavenScriptTemplate("pom-bundle.xml")); //$NON-NLS-1$
-        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE,
-                getMavenScriptTemplate("pom-feature.xml")); //$NON-NLS-1$
+        // main
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE,
+                getMavenScriptTemplate(ExportJobConstants.MAVEN_BUILD_FILE_NAME));
+        // parent
         preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT,
-                getMavenScriptTemplate("pom-parent.xml")); //$NON-NLS-1$
+                getMavenScriptTemplate(ExportJobConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME));
+        // bundle
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE,
+                getMavenScriptTemplate(ExportJobConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME));
+        // feature
+        preferenceStore.setDefault(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE,
+                getMavenScriptTemplate(ExportJobConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME));
 
     }
 
@@ -45,7 +51,7 @@ public class CamelPreferenceInitializer extends AbstractPreferenceInitializer {
         } catch (FileNotFoundException e) {
             ExceptionHandler.process(e);
         }
-        return ""; //$NON-NLS-1$
+        return EMPTY_STR;
     }
 
 }

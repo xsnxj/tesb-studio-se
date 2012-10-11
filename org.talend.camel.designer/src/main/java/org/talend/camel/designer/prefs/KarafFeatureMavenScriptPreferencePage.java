@@ -17,18 +17,21 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.repository.preference.AbstractScriptPreferencePage;
 
 /**
- * DOC ycbai class global comment. Detailled comment
+ * DOC ggu class global comment. Detailled comment <br/>
+ * 
+ * $Id: talend.epf 55206 2011-02-15 17:32:14Z mhirt $
+ * 
  */
-public class KarafMavenScriptPreferencePage extends AbstractScriptPreferencePage {
+public class KarafFeatureMavenScriptPreferencePage extends AbstractScriptPreferencePage {
 
-    public KarafMavenScriptPreferencePage() {
+    public KarafFeatureMavenScriptPreferencePage() {
         super();
         setPreferenceStore(CamelDesignerPlugin.getDefault().getPreferenceStore());
     }
 
     @Override
     protected String getPreferenceKey() {
-        return ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE;
+        return ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE;
     }
 
     /*
@@ -38,6 +41,6 @@ public class KarafMavenScriptPreferencePage extends AbstractScriptPreferencePage
      */
     @Override
     protected String getHeadTitle() {
-        return Messages.getString("KarafMavenScriptPreferencePage.Title"); //$NON-NLS-1$
+        return Messages.getString("KarafFeatureMavenScriptPreferencePage.Title"); //$NON-NLS-1$
     }
 }

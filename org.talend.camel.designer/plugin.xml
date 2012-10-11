@@ -300,14 +300,32 @@
            <page
                  category="org.talend.designer.core.ui.preferences.ImportExportPreferencePage"
                  class="org.talend.camel.designer.prefs.KarafPreferencePage"
-                 id="org.talend.camel.designer.prefs.KarafPreferencePage"
+                 id="org.talend.camel.designer.prefs.karaf"
                  name="%preferencePage.Karaf">
            </page>
            <page
-                 category="org.talend.camel.designer.prefs.KarafPreferencePage"
+                 category="org.talend.camel.designer.prefs.karaf"
                  class="org.talend.camel.designer.prefs.KarafMavenScriptPreferencePage"
-                 id="org.talend.camel.designer.prefs.KarafMavenScriptPreferencePage"
+                 id="org.talend.camel.designer.prefs.karafMavenScript"
                  name="%preferencePage.Maven">
+           </page>
+           <page
+                 category="org.talend.camel.designer.prefs.karafMavenScript"
+                 class="org.talend.camel.designer.prefs.KarafParentMavenScriptPreferencePage"
+                 id="org.talend.camel.designer.prefs.karafParentMavenScript"
+                 name="parent POM">
+           </page>
+           <page
+                 category="org.talend.camel.designer.prefs.karafMavenScript"
+                 class="org.talend.camel.designer.prefs.KarafBundleMavenScriptPreferencePage"
+                 id="org.talend.camel.designer.prefs.karafBundleMavenScript"
+                 name="bundle POM">
+           </page>
+           <page
+                 category="org.talend.camel.designer.prefs.karafMavenScript"
+                 class="org.talend.camel.designer.prefs.KarafFeatureMavenScriptPreferencePage"
+                 id="org.talend.camel.designer.prefs.karafFeatureMavenScript"
+                 name="feature POM">
            </page>
         </extension>
 </plugin>

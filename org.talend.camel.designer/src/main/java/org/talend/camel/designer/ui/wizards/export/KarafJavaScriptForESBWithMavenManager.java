@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.camel.designer.ui.wizards.exportjob.scriptsmanager;
+package org.talend.camel.designer.ui.wizards.export;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +30,8 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.prefs.ICamelPrefConstants;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -49,13 +51,13 @@ import org.talend.resources.util.EMavenBuildScriptProperties;
 /**
  * DOC ycbai class global comment. Detailled comment
  */
-public class JobJavaScriptKarafForESBWithMavenManager extends JobJavaScriptOSGIForESBManager {
+public class KarafJavaScriptForESBWithMavenManager extends JobJavaScriptOSGIForESBManager {
 
     private final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
 
     private String destinationKar;
 
-    public JobJavaScriptKarafForESBWithMavenManager(Map<ExportChoice, Object> exportChoiceMap, String destinationKar,
+    public KarafJavaScriptForESBWithMavenManager(Map<ExportChoice, Object> exportChoiceMap, String destinationKar,
             String contextName, String launcher, int statisticPort, int tracePort) {
         super(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
         this.destinationKar = destinationKar;
@@ -189,32 +191,30 @@ public class JobJavaScriptKarafForESBWithMavenManager extends JobJavaScriptOSGIF
                 + ExportJobConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-            String mavenScript = CamelDesignerPlugin.getDefault().getPreferenceStore()
-                    .getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE);
+
+            IPreferenceStore mavenPreferenceStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
+            String mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFile.toURL());
             }
 
-            mavenScript = CamelDesignerPlugin.getDefault().getPreferenceStore()
-                    .getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE);
+            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
-                updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, neededModules, "${lib.path}/");
+                updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, neededModules, MAVEN_PROP_LIB_PATH);
                 scriptsUrls.add(mavenBuildBundleFile.toURL());
             }
 
-            mavenScript = CamelDesignerPlugin.getDefault().getPreferenceStore()
-                    .getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE);
+            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFeatureFile.toURL());
             }
 
-            mavenScript = CamelDesignerPlugin.getDefault().getPreferenceStore()
-                    .getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT);
+            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
@@ -278,5 +278,23 @@ public class JobJavaScriptKarafForESBWithMavenManager extends JobJavaScriptOSGIF
     @Override
     public String getOutputSuffix() {
         return ".zip"; //$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#addRoutinesSourceCodes(org.talend
+     * .repository.documentation.ExportFileResource[], org.talend.repository.documentation.ExportFileResource,
+     * org.eclipse.core.resources.IProject, boolean)
+     */
+    @Override
+    protected void addRoutinesSourceCodes(ExportFileResource[] process, ExportFileResource resource, IProject javaProject,
+            boolean useBeans) throws Exception {
+        if (useBeans) {
+            super.addRoutinesSourceCodes(process, resource, javaProject, true);
+            // FIXME, need add routines also, else the maven should be error to execute
+            super.addRoutinesSourceCodes(process, resource, javaProject, false);
+        }
     }
 }
