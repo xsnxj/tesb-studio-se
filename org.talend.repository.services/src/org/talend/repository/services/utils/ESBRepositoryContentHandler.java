@@ -52,7 +52,10 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
     public Item createNewItem(ERepositoryObjectType type) {
-        Item item = ServicesFactory.eINSTANCE.createServiceItem();
+        Item item = null;
+        if (type == ESBRepositoryNodeType.SERVICES) {
+            item = ServicesFactory.eINSTANCE.createServiceItem();
+        }
         return item;
     }
 
