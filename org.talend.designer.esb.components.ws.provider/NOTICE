@@ -6,7 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 64 third-party dependencies.
+Lists of 66 third-party dependencies.
      (BSD License) AntLR Parser Generator (antlr:antlr:2.7.7 - http://www.antlr.org/)
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
      (BSD License) ASM Core (asm:asm:3.3.1 - http://asm.objectweb.org/asm/)
@@ -46,6 +46,7 @@ Lists of 64 third-party dependencies.
      (Apache Software License - Version 2.0) WSS4J (org.apache.ws.security:wss4j:1.6.7 - http://ws.apache.org/wss4j/)
      (Apache Software License - Version 2.0) XmlSchema Core (org.apache.ws.xmlschema:xmlschema-core:2.0.3 - http://ws.apache.org/commons/xmlschema20/xmlschema-core/)
      (Apache Software License - Version 2.0) XmlBeans (org.apache.xmlbeans:xmlbeans:2.5.0 - http://xmlbeans.apache.org)
+     (Apache License, Version 2.0) Jettison (org.codehaus.jettison:jettison:1.3.2 - http://codehaus.org/jettison/)
      (BSD License) Stax2 API (org.codehaus.woodstox:stax2-api:3.1.1 - http://woodstox.codehaus.org/StAX2)
      (Apache Software License - Version 2.0) Woodstox (org.codehaus.woodstox:woodstox-core-asl:4.1.4 - http://woodstox.codehaus.org)
      (Apache Software License - Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:8.1.7.v20120910 - http://www.eclipse.org/jetty/jetty-continuation)
@@ -68,6 +69,7 @@ Lists of 64 third-party dependencies.
      (Apache Software License - Version 2.0) spring-jms (org.springframework:spring-jms:3.0.7.RELEASE - no url defined)
      (Apache Software License - Version 2.0) spring-tx (org.springframework:spring-tx:3.0.7.RELEASE - no url defined)
      (Mozilla Public License) Rhino (rhino:js:1.7R2 - http://www.mozilla.org/rhino/)
+     (Apache Software License - Version 2.0) StAX API (stax:stax-api:1.0.1 - http://stax.codehaus.org/)
      (CPL) WSDL4J (wsdl4j:wsdl4j:1.6.2 - http://sf.net/projects/wsdl4j)
      (Apache Software License - Version 2.0) XML Commons External Components XML APIs (xml-apis:xml-apis:1.0.b2 - http://xml.apache.org/commons/#external)
      (Apache Software License - Version 2.0) XML Commons Resolver Component (xml-resolver:xml-resolver:1.2 - http://xml.apache.org/commons/components/resolver/)
