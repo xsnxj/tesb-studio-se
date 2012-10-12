@@ -34,6 +34,8 @@ import org.talend.repository.utils.EmfModelUtils;
 
 public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress {
 
+    protected final static String JAR_SUFFIX = ".jar"; //$NON-NLS-1$
+
     protected IProgressMonitor monitor;
 
     protected final RepositoryNode routeNode;
@@ -112,13 +114,18 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     protected void exportKarOsgiBundles() throws InvocationTargetException, InterruptedException {
-        String displayName = routeNode.getObject().getProperty().getDisplayName();
-        String routerBundlePath = getTempDir() + displayName + "-bundle-" + version + ".jar";
+        String routerBundlePath = getTempDir() + getNodeBundleName(routeNode, version) + JAR_SUFFIX;
 
         if (processRoute(routerBundlePath, routeNode, version)) {
-            exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route");
+            exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route"); //$NON-NLS-1$
             exportAllReferenceJobs(routeNode);
         }
+    }
+
+    protected String getNodeBundleName(RepositoryNode node, String v) {
+        String displayName = node.getObject().getProperty().getDisplayName();
+        return displayName + "-bundle-" + v; //$NON-NLS-1$ 
+
     }
 
     private void exportAllReferenceJobs(RepositoryNode n) throws InvocationTargetException, InterruptedException {

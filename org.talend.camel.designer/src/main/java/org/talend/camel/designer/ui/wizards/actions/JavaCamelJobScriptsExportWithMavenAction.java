@@ -31,7 +31,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  */
 public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScriptsExportWSAction {
 
-    private final static String DEFAULT_SUFFIX = ".kar"; //$NON-NLS-1$
+    private final static String KAR_SUFFIX = ".kar"; //$NON-NLS-1$
 
     private JobScriptsManager scriptsManager;
 
@@ -41,9 +41,8 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
             String version, String destinationPath, boolean addStatisticsCode) {
         super(routeNode, version, destinationPath, addStatisticsCode);
         this.destinationPath = destinationPath;
-        if (!destinationKar.endsWith(DEFAULT_SUFFIX)) {
-            destinationKar = destinationKar.substring(0, destinationKar.lastIndexOf(".")); //$NON-NLS-1$
-            destinationKar = destinationKar + DEFAULT_SUFFIX;
+        if (!destinationKar.endsWith(KAR_SUFFIX)) {
+            destinationKar = getTempDir() + File.separatorChar + getNodeBundleName(routeNode, version) + KAR_SUFFIX;
         }
         scriptsManager = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
@@ -65,7 +64,6 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
         } finally {
             // remove generated files
             FilesUtils.removeFolder(getTempDir(), true);
-            FilesUtils.removeFile(new File(destinationKar));
         }
     }
 
