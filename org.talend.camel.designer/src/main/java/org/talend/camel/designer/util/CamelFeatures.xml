@@ -279,7 +279,7 @@
 		<Feature version="[2,10)">tesb-zookeeper</Feature>
 	</FeatureMap>
 -->
-    <FeatureMap HotLib="activemq-all-5.5.1.jar">
+    <FeatureMap HotLib="activemq-all-5.7.0.jar">
 		<Feature version="[5,10)">activemq</Feature>
 	</FeatureMap>
 </FeatureMaps>

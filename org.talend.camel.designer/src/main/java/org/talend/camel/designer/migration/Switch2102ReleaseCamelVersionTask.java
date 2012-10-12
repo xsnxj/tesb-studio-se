@@ -109,6 +109,9 @@ public class Switch2102ReleaseCamelVersionTask extends
 		if (evtValue.startsWith("cxf-bundle")) {
 			result = evtValue.replace("2.6.2", "2.7.0");
 		}
+		if (evtValue.startsWith("activemq-all") || evtValue.startsWith("activemq-pool")) {
+			result = evtValue.replaceAll("5.5.1", "5.7.0");
+		}
 		return result;
 	}
 
