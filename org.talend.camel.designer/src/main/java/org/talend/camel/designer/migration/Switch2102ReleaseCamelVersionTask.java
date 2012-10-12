@@ -2,12 +2,10 @@
 package org.talend.camel.designer.migration;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
@@ -26,7 +24,8 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 /**
  * DOC GangLiu class global comment. Detailled comment
  */
-public class FinalVersionUpgradeMigrationTask extends AbstractItemMigrationTask {
+public class Switch2102ReleaseCamelVersionTask extends
+		AbstractItemMigrationTask {
 
 	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory
 			.getInstance();
@@ -65,11 +64,6 @@ public class FinalVersionUpgradeMigrationTask extends AbstractItemMigrationTask 
 
 	private void switchVersion(Item item) throws PersistenceException,
 			IOException {
-		InputStream is = getClass()
-				.getResourceAsStream("VersionMap.properties");
-		Properties properties = new Properties();
-		properties.load(is);
-		is.close();
 		ProcessType processType = getProcessType(item);
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
@@ -82,7 +76,7 @@ public class FinalVersionUpgradeMigrationTask extends AbstractItemMigrationTask 
 							for (Object pv : elementValue) {
 								ElementValueType evt = (ElementValueType) pv;
 								String evtValue = evt.getValue();
-								evtValue = switchVersion(evtValue, properties);
+								evtValue = switchVersion(evtValue);
 								evt.setValue(evtValue);
 							}
 						}
@@ -103,20 +97,19 @@ public class FinalVersionUpgradeMigrationTask extends AbstractItemMigrationTask 
 	 * @param properties
 	 * @return
 	 */
-	private String switchVersion(String evtValue, Properties properties) {
+	private String switchVersion(String evtValue) {
 		if (evtValue == null) {
 			return evtValue;
 		}
-		int lastIndexOf = evtValue.lastIndexOf("-");
-		if (lastIndexOf == -1) {
-			return evtValue;
+
+		String result = "";
+		if (evtValue.startsWith("camel-")) {
+			result = evtValue.replace("2.9.3", "2.10.2");
 		}
-		evtValue = evtValue.substring(0, lastIndexOf);
-		Object result = properties.get(evtValue);
-		if (result == null) {
-			return evtValue;
+		if (evtValue.startsWith("cxf-bundle")) {
+			result = evtValue.replace("2.6.2", "2.7.0");
 		}
-		return result.toString();
+		return result;
 	}
 
 }
