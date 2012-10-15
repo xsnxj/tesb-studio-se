@@ -1,0 +1,122 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cWireTap</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio"><link rel="up" href="ch-routing.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cThrottler.html" title="cThrottler"><link rel="next" href="ch-transformation.html" title="Chapter&nbsp;7.&nbsp;Transformation components"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cWireTap</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cThrottler.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;6.&nbsp;Routing
+			components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch-transformation.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cWireTap"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cWireTap"></a>cWireTap</h2></div></div></div><div class="mediaobject"><img src="../images/cwiretap_icon32.png"></div><div class="section" title="cWireTap properties"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e17599"></a>cWireTap properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Routing</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cWireTap</strong></span> allows you to route
+								messages to a separate tap endpoint while it is forwarded to the
+								ultimate destination.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cWireTap</strong></span> is used to route messages
+								to a separate endpoint while forwarded to the ultimate
+								destination.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>URI</em></span>
+							</p>
+						</td><td valign="top">
+							<p>The endpoint URI to send the wire tapped message.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Populate new exchange</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to populate a new exchange of the
+								message.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Populate Type</em></span>
+							</p>
+						</td><td valign="top">
+							<p>This option appears when the <span class="emphasis"><strong>Populate new
+									exchange</strong></span> check box is selected. The <span class="emphasis"><strong>Populate Type</strong></span> is either <span class="emphasis"><strong>Expression</strong></span> or <span class="emphasis"><strong>Processor</strong></span>. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p><span class="emphasis"><strong>Expression</strong></span>: Using expression
+								allows you to set the message body of the new exchange.</p>
+							<p><span class="emphasis"><strong>Language</strong></span>: Select the language of
+								the expression you want to use to set the message body between
+									<span class="emphasis"><strong>Constant</strong></span>, <span class="emphasis"><strong>Header</strong></span>, <span class="emphasis"><strong>None</strong></span>,
+									<span class="emphasis"><strong>Property</strong></span>, <span class="emphasis"><strong>Simple</strong></span>, <span class="emphasis"><strong>XPath</strong></span>.</p>
+							<p><span class="emphasis"><strong>Expression</strong></span>: Enter the expression
+								to set the message body.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><strong>Processor</strong></span>: Using
+							processor gives you full power to specify how the exchange is populated
+							as you can set properties, headers and so on to the message with a piece
+							of Java code in the <span class="emphasis"><strong>Code</strong></span> field.
+						</td></tr><tr><td>&nbsp;</td><td valign="top"><span class="emphasis"><em>Copy the original message</em></span></td><td valign="top">Select this check box to use a copy of the exchange when
+							wire tapping the message. This option appears when the <span class="emphasis"><strong>Populate new exchange</strong></span> check box is selected.
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cWireTap</strong></span> can be a middle
+								component in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Wiretapping a message in a Route"><div class="titlepage"><div><div><h3 class="title"><a name="nwang-20111213-camel_components-cwiretap"></a>Scenario: Wiretapping a message in a Route</h3></div></div></div><p>In this scenario, a <span class="emphasis"><strong>cWireTap</strong></span> component is used to route a
+			message to a separate endpoint while it is routed to the ultimate destination.</p><div class="mediaobject" align="center"><img src="../images/use_case-cwiretap1.png" align="middle"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e17835"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Palette</strong></span>, expand the <span class="emphasis"><strong>Messaging</strong></span> folder, and drop a <span class="emphasis"><strong>cFile</strong></span> and two <span class="emphasis"><strong>cMessagingEndpoint</strong></span> components onto the design
+						workspace.</p></li><li class="step" title="Step 2"><p>Expand the <span class="emphasis"><strong>Routing</strong></span> folder, and drop a
+							<span class="emphasis"><strong>cWireTap</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 3"><p>Expand the <span class="emphasis"><strong>Processor</strong></span> folder, and drop a
+							<span class="emphasis"><strong>cJavaDSLProcessor</strong></span> and two <span class="emphasis"><strong>cProcessor</strong></span> components onto the design
+						workspace.</p></li><li class="step" title="Step 4"><p>Right-click the <span class="emphasis"><strong>cFile</strong></span> component, select
+							<span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> from the contextual menu and click the <span class="emphasis"><strong>cWireTap</strong></span> component.</p></li><li class="step" title="Step 5"><p>Repeat this operation to connect the components as shown above.</p></li><li class="step" title="Step 6"><p>Label the components to better identify their functionality.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e17896"></a>Configuring the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Source</em></span> to display its <span class="emphasis"><strong>Basic
+							settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case-cwiretap2.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Path</strong></span> field, browse to or enter the
+						input file path. In this use case, there is a <span class="emphasis"><em>Hello.txt</em></span>
+						file in the specified file path, which contains the content <span class="emphasis"><em>Hello
+							World!</em></span>. Leave the other parameters as they are.</p></li><li class="step" title="Step 3"><p>Double-click the <span class="emphasis"><strong>cWireTap</strong></span> component to
+						display its <span class="emphasis"><strong>Basic settings</strong></span> view in the
+							<span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/use_case-cwiretap3.png" align="middle" height="360"></td></tr></table></div></li><li class="step" title="Step 4"><p>Enter <code class="code">"direct:a"</code> in the <span class="emphasis"><strong>URI</strong></span> field to route the wiretapped message to this endpoint. </p><p>Select the <span class="emphasis"><strong>Populate new exchange</strong></span> check box, select <span class="emphasis"><strong>Processor</strong></span> as the populate type, and then enter the following code in the <span class="emphasis"><strong>Code</strong></span> box to display the file name of the wiretapped message and its content on the console:</p><p>
+						</p><pre class="programlisting">System.out.println("\nMessage wiretapped: "+
+exchange.getIn().getHeader("CamelFileName"));
+System.out.println("Message content: "+
+exchange.getIn().getBody(String.class)+"\n");</pre><p>
+					</p></li><li class="step" title="Step 5"><p> Double-click the <span class="emphasis"><strong>cJavaDSLProcessor</strong></span>
+						component to display its <span class="emphasis"><strong>Basic settings</strong></span>
+						view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/use_case-cwiretap4.png" align="middle"></div></li><li class="step" title="Step 6"><p>In the <span class="emphasis"><strong>Code</strong></span> field, enter the Java code
+							<code class="code">.to("direct:b")</code> to define the URI of the endpoint to route
+						the original message to.</p></li><li class="step" title="Step 7"><p>Double-click the <span class="emphasis"><strong>cMessagingEndpoint</strong></span> component labeled <span class="emphasis"><em>Endpoint_a</em></span> to display its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. Enter <code class="code">"direct:a"</code> in the <span class="emphasis"><strong>URI</strong></span> field to retrieve the message routed to this endpoint. </p><div class="mediaobject" align="center"><img src="../images/use_case-cwiretap5.png" align="middle"></div><p>Repeat this operation to set the endpoint URI for <span class="emphasis"><em>Endpoint_b</em></span>.</p></li><li class="step" title="Step 8"><p>Double-click the <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Monitor_a</em></span> to display its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. Enter the following code in the <span class="emphasis"><strong>Code</strong></span> box to display the file name of the message routed to <span class="emphasis"><em>Endpoint_a</em></span>. </p><p>
+						</p><pre class="programlisting">System.out.println("Message on endpoint a: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><p>
+					</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/use_case-cwiretap6.png" align="middle" height="360"></td></tr></table></div><p>Then, configure the other <span class="emphasis"><strong>cProcessor</strong></span> component in the same way to display the file name of the message routed to <span class="emphasis"><em>Endpoint_b</em></span>.</p></li><li class="step" title="Step 9"><p> Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e18066"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/use_case-cwiretap8.png" align="middle" height="360"></td></tr></table></div><p>In this partially shown code, any message <code class="code">from</code> the endpoint
+							<code class="code">Source</code> will be wiretapped by <code class="code">.wireTap</code> and
+						routed to <code class="code">"direct:a"</code>. The fine name and content of each
+						wiretapped message will be displayed on the console. The original message
+						will be routed <code class="code">.to</code> an endpoint identified by the URI
+							<code class="code">"direct:b"</code>, which is defined in
+							<code class="code">cJavaDSLProcessor_1</code>.</p></li><li class="step" title="Step 2"><p>Click the <span class="emphasis"><strong>Run</strong></span> view to display it and click the <span class="emphasis"><strong>Run</strong></span> button to launch the execution of your Route.
+						You can also press <span class="emphasis"><strong>F6</strong></span> to execute it. </p><p>RESULT: The source message is wiretapped and routed to endpoint <span class="emphasis"><em>a</em></span> as well as being routed to endpoint <span class="emphasis"><em>b</em></span>.</p><div class="mediaobject" align="center"><img src="../images/use_case-cwiretap9.png" align="middle"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cThrottler.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-routing.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch-transformation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cThrottler&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;7.&nbsp;Transformation components</td></tr></table></div></body></html>

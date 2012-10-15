@@ -1,0 +1,114 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cJMSConnectionFactory</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio"><link rel="up" href="ch-context.html" title="Chapter&nbsp;1.&nbsp;Context components"><link rel="prev" href="cConfig.html" title="cConfig"><link rel="next" href="ch-exception.html" title="Chapter&nbsp;2.&nbsp;Exception components"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cJMSConnectionFactory </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cConfig.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;1.&nbsp;Context components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch-exception.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cJMSConnectionFactory"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cJMSConnectionFactory"></a>cJMSConnectionFactory </h2></div></div></div><div class="mediaobject"><img src="../images/cjmsconnectionfactory_icon32_white.png"></div><div class="section" title="cJMSConnectionFactory properties"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e658"></a>cJMSConnectionFactory properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Context</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cJMSConnectionFactory</strong></span> specifies the connection factory that can be used by multiple <span class="emphasis"><strong>cJMS</strong></span> components in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cJMSConnectionFactory</strong></span> is used to specify the JMS connection factory for message handling.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top"><span class="emphasis"><em>MQ Server</em></span>
+						</td><td valign="top"><p>Select an MQ server from <span class="emphasis"><strong>ActiveMQ</strong></span>, <span class="emphasis"><strong>Customized</strong></span>,
+							or <span class="emphasis"><strong>WebSphere MQ</strong></span>.</p></td></tr><tr><td>&nbsp;</td><td valign="top"><p><span class="emphasis"><em>Use Transaction</em></span></p>
+						</td><td valign="top"><p>Select this check box to enable local transaction in the current Route.</p></td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Broker URI</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">
+							<p>Type in the URI of the message broker. For intra-Route message handling, you can simply use the default URI <span class="emphasis"><em>vm://localhost?broker.persistent=false</em></span>.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Use PooledConnectionFactory</em></span>
+							</p>
+							<p> (for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Select this check box to use PooledConnectionFactory.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Max Connections</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum number of connections of the PooledConnectionFactory. This field is available only when the <span class="emphasis"><strong>Use PooledConnectionFactory</strong></span>  check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Max Active</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum number of sessions per connection. This field is
+							available only when the <span class="emphasis"><strong>Use
+								PooledConnectionFactory</strong></span> check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Idle Timeout (in ms)</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum waiting time (in milliseconds) before the connection
+							breaks. This field is available only when the <span class="emphasis"><strong>Use
+								PooledConnectionFactory</strong></span> check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Expiry Timeout (in ms)</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the time (in milliseconds) before the connection breaks since it
+							is used for the first time. The default value is 60000. The expiry is
+							disabled if 0 is specified. This field is available only when the
+								<span class="emphasis"><strong>Use PooledConnectionFactory</strong></span> check
+							box is selected.</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p><span class="emphasis"><em>Codes</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>Customized</strong></span> only)</p>
+						</td><td valign="top">
+							<p>Write a piece of code to specify the JMS connection factory to be used for message handling. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Dependencies</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>Customized</strong></span> only)</p>
+						</td><td valign="top">Specify the library or libraries required by the JMS connection factory.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Host Name</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the name or IP address of the host on which the
+							IBM WebSphere MQ server is running.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Port</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the port of the IBM WebSphere MQ server, <span class="emphasis"><strong>1414</strong></span> by default.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Transport Type</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Select a type of message transport between the IBM WebSphere MQ server and the WebSphere MQ broker from <span class="emphasis"><strong>Bindings</strong></span>, <span class="emphasis"><strong>Bindings then Client</strong></span>, and <span class="emphasis"><strong>Client</strong></span>.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Queue Manager</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the name of the queue manager, or specify the
+							name of the IBM WebSphere MQ server to find a queue manager.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Authentication</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">On some operating systems, select this check box and
+							provide the username and password for the IBM WebSphere MQ server to
+							validate the access permission. This option is not required on
+							Windows.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="emphasis"><em>Dependencies</em></span>
+							</p>
+							<p>(for <span class="emphasis"><strong>WebSphere MQ</strong></span>)</p>
+						</td><td valign="top">Specify additional libraries required by the IBM
+							WebSphere MQ broker, which are normally provided with the server
+							installer.</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cJMSConnectionFactory</strong></span> cannot be added directly in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Related scenario:"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e1050"></a>Related scenario: </h3></div></div></div><p>For a related scenario, see <a class="xref" href="cJMS.html#nwang-20111014-camel_components-cjms_s1" title="Scenario 1: Sending and receiving a message from a JMS queue">the section called &#8220;Scenario 1: Sending and receiving a message from a JMS queue&#8221;</a>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cConfig.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-context.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch-exception.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cConfig&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;2.&nbsp;Exception components</td></tr></table></div></body></html>

@@ -1,0 +1,160 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMessagingEndpoint</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio"><link rel="up" href="ch-messaging.html" title="Chapter&nbsp;3.&nbsp;Messaging components"><link rel="prev" href="cMail.html" title="cMail"><link rel="next" href="cTimer.html" title="cTimer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cMessagingEndpoint</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cMail.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;3.&nbsp;Messaging components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cTimer.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cMessagingEndpoint"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessagingEndpoint"></a>cMessagingEndpoint</h2></div></div></div><div class="mediaobject"><img src="../images/cMessagingEndpoint_icon32_white.png"></div><div class="section" title="cMessagingEndpoint properties"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e7743"></a>cMessagingEndpoint properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component
+								Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cMessagingEndpoint</strong></span> allows two applications to
+								communicate by either sending or receiving messages, one endpoint
+								can not do both. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cMessagingEndpoint</strong></span> sends or receives messages.
+							</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic
+								settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>URI</em></span>
+							</p>
+						</td><td valign="top">
+							<p>URI of the messages to send or receive. It can be
+								of different format:</p>
+							<p>-File: "file:/",
+								</p>
+							<p>-Database: "jdbc:/", </p>
+							<p>-Protocols: "ftp:/",
+								"http:/"</p>
+							<p>-etc.</p>
+							<p>You can add parameters to the
+								URI using the generic URI syntax, for example:</p>
+							<p>
+								<code class="code">"file:/directoryName?option=value&amp;option=value"</code>
+							</p>
+							<p>For more information on the different components that can be used in cMessagingEndpoint, see
+								Apache Camel&#8217;s Website: <a class="link" href="http://camel.apache.org/components.html" target="_top">http://camel.apache.org/components.html</a>.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Advanced
+								settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Dependencies</em></span>
+							</p>
+						</td><td valign="top">
+							<p>By default, the camel core supports the following
+								components: bean, browse, class, dataset, direct, file, language,
+								log, mock, properties, ref, seda, timer, vm.</p>
+							<p>To use
+								other components, you have to provide the dependencies corresponding
+								to those components in the <span class="emphasis"><strong>cMessagingEndpoint</strong></span> component. To do
+								so:</p>
+							<p>Click the plus button to add new lines in the
+									<span class="emphasis"><strong>Camel component</strong></span> list. In the
+								line added, select the component you want to use in <span class="emphasis"><strong>cMessagingEndpoint</strong></span>. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Use a custom component</em></span>
+							</p>
+						</td><td valign="top">
+							<p>If you want to use a custom component, select this
+								check box and click the three-dot button to upload a jar file with
+								your own component.</p>
+							<p> </p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>All the transitive dependencies of this cus&shy;tom component
+									should be included in the jar file.</p></div>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>This component can be used as sending and/or receiving message endpoint according to its
+								position in the Route. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario&nbsp;1: Moving files from one message endpoint to another"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e7938"></a>Scenario&nbsp;1: Moving files from one message endpoint to another</h3></div></div></div><p>This scenatio uses two <span class="emphasis"><strong>cMessagingEndpoint</strong></span> components
+			to read and move files from one endpoint to another.</p><div class="mediaobject" align="center"><img src="../images/cMessagingEndpoint_scenario1_1.png" align="middle"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e7949"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the <span class="emphasis"><strong>Palette</strong></span>, drag and drop two <span class="emphasis"><strong>cMessagingEndpoint</strong></span> components onto the design workspace, one as the message sender and the other as the message receiver, and label them <span class="emphasis"><em>Sender</em></span> and <span class="emphasis"><em>Receiver</em></span> respectively to better identify their roles in the Route.</p></li><li class="step" title="Step 2"><p>Right-click the component labeled <span class="emphasis"><em>Sender</em></span>, select <span class="emphasis"><strong>Row</strong></span> &gt;
+							<span class="emphasis"><strong>Route</strong></span> in the menu and drag to the <span class="emphasis"><em>Receiver</em></span> to link them together with a route link.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e7986"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the component labeled <span class="emphasis"><em>Sender</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>URI</strong></span> field, type in the URI of the messages you want to route. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:///"</em></span> and the path to the folder containing the files.</p><div class="mediaobject" align="center"><img src="../images/cMessagingEndpoint_scenario1_2.png" align="middle"></div></li><li class="step" title="Step 3"><p>Double-click the component labeled <span class="emphasis"><em>Receiver</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p></li><li class="step" title="Step 4"><p>In the <span class="emphasis"><strong>URI</strong></span> field, type in the URI of the folder where you want to route your message. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:///"</em></span> and the path to the folder to which the files will be sent.</p><div class="mediaobject" align="center"><img src="../images/cMessagingEndpoint_scenario1_3.png" align="middle"></div></li><li class="step" title="Step 5"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8048"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>To have a look at the generated code, click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/cMessagingEndpoint_scenario1_4.png" align="middle" height="360"></td></tr></table></div><p>The code shows the <code class="code">from</code> and <code class="code">.to</code> corresponding to the two endpoints: <code class="code">from</code> for the sending one and <code class="code">.to</code> for the receiving one.</p></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Run</strong></span> view, click the <span class="emphasis"><strong>Run</strong></span> button to launch the execution of your Route. </p><p>You can also press <span class="emphasis"><strong>F6</strong></span> to execute it. </p><p>RESULT: The files are moved from their original folder to the target one. Furthermore, a new <span class="emphasis"><strong>.camel</strong></span> folder is created in the source folder containing the consumed files. This is Camel&#8217;s default behavior. Thus, the files will not be processed endlessly but they are backed up in case of problems.</p></li></ol></div></div></div><div class="section" title="Scenario&nbsp;2: Sending files to another message endpoint"><div class="titlepage"><div><div><h3 class="title"><a name="Raa98448"></a>Scenario&nbsp;2: Sending files to another message endpoint</h3></div></div></div><p>This scenario accesses FTP service and transfers files from one endpoint to
+			another.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_1.png"></div><div class="section" title="Dropping and linking components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8102"></a>Dropping and linking components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the <span class="emphasis"><strong>Palette</strong></span>, drag and drop two <span class="emphasis"><strong>cMessagingEndpoint</strong></span> components onto the design workspace, one as the message sender and the other as the message receiver, and label them <span class="emphasis"><em>Sender</em></span> and <span class="emphasis"><em>Receiver</em></span> respectively to better identify their roles in the Route.</p></li><li class="step" title="Step 2"><p>Right-click the component labeled <span class="emphasis"><em>Sender</em></span>, select <span class="emphasis"><strong>Row</strong></span> &gt;
+							<span class="emphasis"><strong>Route</strong></span> in the menu and drag to the <span class="emphasis"><em>Receiver</em></span> to link them together with a route link.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8139"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the component labeled <span class="emphasis"><em>Sender</em></span> to display its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>URI</strong></span> field, type in the URI of the message you want to route. </p><p>Here, we are using an FTP component: <code class="code">ftp://indus@degas/remy/camel</code> with URI specific parameters authenticating the FTP connection: <code class="code">?username=indus&amp;password=indus</code>.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/cMessagingEndpoint_scenario2_2.png" align="middle" height="360"></td></tr></table></div></li><li class="step" title="Step 3"><p>For the FTP component to work in Camel, click the <span class="emphasis"><strong>Advanced settings</strong></span> tab of <span class="emphasis"><strong>cMessagingEndpoint</strong></span>, click the <span class="emphasis"><strong>[+]</strong></span> button to add a Camel component in the <span class="emphasis"><strong>Dependencies</strong></span> table, and select <span class="emphasis"><em>ftp</em></span> from the <span class="emphasis"><strong>Camel component</strong></span> list to activate the FTP component.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/cMessagingEndpoint_scenario2_3.png" align="middle" height="360"></td></tr></table></div></li><li class="step" title="Step 4"><p>Double-click the component labeled <span class="emphasis"><em>Receiver</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p></li><li class="step" title="Step 5"><p>In the <span class="emphasis"><strong>URI</strong></span> field, type in the URI of the folder to which you want your message to be routed. </p><p>As we are handling files, type in <span class="emphasis"><em>"file:///"</em></span> and the path to the folder to which the files will be sent.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_3.png"></div></li><li class="step" title="Step 6"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8228"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>To have a look at the generated code, click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject" align="center"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td align="center"><img src="../images/cMessagingEndpoint_scenario2_4.png" align="middle" height="360"></td></tr></table></div><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/cMessagingEndpoint_scenario2_5.png" height="360"></td></tr></table></div><p>In this part of code, we can see a route represented by <code class="code">from</code> and <code class="code">.to</code>, corresponding to the sending and receiving endpoints.</p></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Run</strong></span> view, click the <span class="emphasis"><strong>Run</strong></span> button to launch the execution of your Route. </p><p>You can also press <span class="emphasis"><strong>F6</strong></span> to execute it. </p><p>RESULT: The message is sent (copied) to the receiving endpoint.</p></li></ol></div></div></div><div class="section" title="Scenario&nbsp;3: Using an Xquery endpoint to filter messages"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e8268"></a>Scenario&nbsp;3: Using an Xquery endpoint to filter messages</h3></div></div></div><p>In this scenario, we will use a <span class="emphasis"><strong>cMessagingEndpoint</strong></span>
+			component to call a Route Resource as an Xquery parser to extract messages from the
+			local file system.</p><p>The following sample XML file is used in this scenario:</p><p>
+			</p><pre class="programlisting">&lt;people&gt;
+  &lt;person id="8"&gt;
+    &lt;firstName&gt;Ellen&lt;/firstName&gt;
+    &lt;lastName&gt;Ripley&lt;/lastName&gt;
+    &lt;city&gt;Washington&lt;/city&gt;
+  &lt;/person&gt;  
+  &lt;person id="9"&gt;
+    &lt;firstName&gt;Peter&lt;/firstName&gt;
+    &lt;lastName&gt;Green&lt;/lastName&gt;
+    &lt;city&gt;London&lt;/city&gt;
+  &lt;/person&gt;
+&lt;/people&gt;</pre><p>
+		</p><div class="section" title="Creating a Route Resource"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8283"></a>Creating a Route Resource</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the repository tree view, right-click the <span class="emphasis"><strong>Resources</strong></span>
+						node and select <span class="emphasis"><strong>Create Resource</strong></span> from the
+						context menu.</p><div class="mediaobject"><img src="../images/use_case_ccxf12.png"></div></li><li class="step" title="Step 2"><p>The <span class="emphasis"><strong>New Route Resource</strong></span> wizard opens. In the <span class="emphasis"><strong>Name</strong></span> field, type in a name for the Resource, for
+						example, <span class="emphasis"><em>SampleXquery</em></span>. Click <span class="emphasis"><strong>Finish</strong></span> to close the wizard.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_1.png"></div></li><li class="step" title="Step 3"><p>Enter the following code in the editor to extract the <span class="emphasis"><em>firstName</em></span> and
+							<span class="emphasis"><em>lastName</em></span> of all the <span class="emphasis"><em>person</em></span>
+						elements.</p><p>
+						</p><pre class="programlisting">declare namespace ns0="http://com.sap/b";
+&lt;people&gt;
+{
+for $p in /people//person
+return
+            &lt;person&gt;
+            &lt;firstName&gt;{$p/firstName/text()}&lt;/firstName&gt;
+            &lt;lastName&gt;{$p/lastName/text()}&lt;/lastName&gt;
+            &lt;/person&gt;
+}
+&lt;/people&gt;</pre><p>
+					</p></li><li class="step" title="Step 4"><p> Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route
+						Resource.</p></li></ol></div></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8340"></a>Dropping and linking the components</h4></div></div></div><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_2.png"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the <span class="emphasis"><strong>Palette</strong></span>, drag and drop a <span class="emphasis"><strong>cFile</strong></span> and a <span class="emphasis"><strong>cMessagingEndpoint</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 2"><p>From the <span class="emphasis"><strong>Processor</strong></span> folder, drag and drop
+						a <span class="emphasis"><strong>cProcessor</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 3"><p>Link the components with the <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> connection as shown above.</p></li><li class="step" title="Step 4"><p>Label the components for better identification of their
+						functionality.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8383"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="emphasis"><strong>cFile</strong></span> component to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_3.png"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Path</strong></span> field, specify the path where the source
+						file <span class="emphasis"><em>people.xml</em></span> is located.</p></li><li class="step" title="Step 3"><p>Right-click the Route from the repository tree view and select <span class="emphasis"><strong>Manage Route Resources</strong></span> from the context
+						menu.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_4.png"></div><p>The <span class="emphasis"><strong>Manage Route Resources</strong></span> wizard is
+						opened.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_7.png"></div></li><li class="step" title="Step 4"><p>In the <span class="emphasis"><strong>Manage Route Resources</strong></span> wizard, click <span class="emphasis"><strong>Add</strong></span> and select <span class="emphasis"><em>SampleXquery</em></span> from the Resources tree view in the dialog.
+						Click <span class="emphasis"><strong>OK</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_6.png"></div><p>The <span class="emphasis"><em>SampleXquery</em></span> Route Resource is added in the table
+						of the <span class="emphasis"><strong>Manage Route Resources</strong></span>
+						wizard.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_5.png"></div></li><li class="step" title="Step 5"><p>Select the <span class="emphasis"><em>SampleXquery</em></span> from the Route Resources list
+						and click <span class="emphasis"><strong>Copy Path</strong></span>. Click <span class="emphasis"><strong>OK</strong></span> to close the wizard.</p></li><li class="step" title="Step 6"><p>Double click the <span class="emphasis"><strong>cMessagingEndpoint</strong></span>
+						component to display its <span class="emphasis"><strong>Basic settings</strong></span>
+						view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_8.png"></div></li><li class="step" title="Step 7"><p>In the <span class="emphasis"><strong>URI</strong></span> field, enter <span class="emphasis"><em>xquery:</em></span> and paste the path of the Route
+						Resource <span class="emphasis"><em>SampleXquery</em></span> that we just copied
+						in double quotation marks.</p></li><li class="step" title="Step 8"><p>Click the <span class="emphasis"><strong>Advanced settings</strong></span> tab, add the Camel component
+							<span class="emphasis"><strong>saxon</strong></span> in the <span class="emphasis"><strong>Dependencies</strong></span> list. For more information about <span class="emphasis"><strong>Xquery</strong></span>, see Apache Camel&#8217;s Website: <a class="link" href="http://camel.apache.org/xquery-endpoint.html" target="_top">http://camel.apache.org/xquery-endpoint.html</a>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_10.png"></div></li><li class="step" title="Step 9"><p>Double-click the <span class="emphasis"><strong>cProcessor</strong></span> component to open its
+							<span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_9.png"></div></li><li class="step" title="Step 10"><p>In the <span class="emphasis"><strong>Code</strong></span> area, enter the following code to display
+						the messages intercepted on the console:</p><p>
+						</p><pre class="programlisting">System.out.println(exchange.getIn().getBody(String.class));</pre><p>
+					</p></li><li class="step" title="Step 11"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e8549"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>To have a look at the generated code, click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cmessagingendpoint_scenario3_11.png" height="360"></td></tr></table></div><p>As shown in the code above, the message is routed <code class="code">from</code>
+						<code class="code">Message_source_cFile_1</code>
+						<code class="code">.to</code>
+						<code class="code">cMessagingEndpoint_1</code> and then processed by
+							<code class="code">cProcessor_1</code>.</p></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Run</strong></span> view, click the <span class="emphasis"><strong>Run</strong></span> button to launch the execution of your Route. You can
+						also press <span class="emphasis"><strong>F6</strong></span> to execute it. </p><p>RESULT: The <span class="emphasis"><em>firstName</em></span> and <span class="emphasis"><em>lastName</em></span> of all the
+							<span class="emphasis"><em>person</em></span> elements of the source file is printed in
+						the console.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cmessagingendpoint_scenario3_12.png" height="360"></td></tr></table></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cMail.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-messaging.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cTimer.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cMail&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;cTimer</td></tr></table></div></body></html>

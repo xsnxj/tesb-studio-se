@@ -1,0 +1,122 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMulticast</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Talend Open Studio"><link rel="up" href="ch-routing.html" title="Chapitre&nbsp;6.&nbsp;Composants Routing"><link rel="prev" href="cMessageRouter.html" title="cMessageRouter"><link rel="next" href="cPipesAndFilters.html" title="cPipesAndFilters"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cMulticast</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cMessageRouter.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;6.&nbsp;Composants Routing</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cPipesAndFilters.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cMulticast"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMulticast"></a>cMulticast</h2></div></div></div><p><span class="inlinemediaobject"><img src="../images/cMulticast_icon32.png" width="27"></span></p><div class="section" title="Propri&eacute;t&eacute;s du cMulticast"><div class="titlepage"><div><div><h3 class="title"><a name="d0e14531"></a>Propri&eacute;t&eacute;s du cMulticast</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Routing</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cMulticast</strong></span> route un ou plusieurs
+								message(s) vers un certain nombre d'endpoints en une seule
+								fois.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cMulticast</strong></span> est utilis&eacute; pour router un ou plusieurs
+								message(s) vers un certain nombre d'endpoints en une fois et le(s)
+								traiter de diff&eacute;rentes mani&egrave;res.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>URIS</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Ajoutez autant de lignes que n&eacute;cessaire dans la table des URIs pour d&eacute;finir les
+								endpoints vers lesquels router les messages.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Send in parallel</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour diffuser simultan&eacute;ment en multipoint le(s) message(s) vers les
+								endpoints sp&eacute;cifi&eacute;s.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Set timeout</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case et configurez le temps avant suspension dans le champ <span class="emphasis"><strong>Timeout</strong></span>, en millisecondes. Si le
+									<span class="emphasis"><strong>cMulticast</strong></span> ne r&eacute;ussit pas &agrave;
+								envoyer et &agrave; traiter les messages durant le temps imparti, il arr&ecirc;te
+								le traitement courant et continue. </p>
+						<p>Cette case appara&icirc;t uniquement lorsque la case <span class="emphasis"><strong>Send in parallel</strong></span> 
+est coch&eacute;e.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Use Aggregation Strategy</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case et saisissez un Bean Java pr&eacute;d&eacute;fini comme strat&eacute;gie d'agr&eacute;gation pour
+								assembler les messages de la source des messages en un seul message
+								de sortie. Le dernier message se comporte comme le message
+								sortant.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cMulticast</strong></span> peut &ecirc;tre utilis&eacute; comme composant
+								interm&eacute;diaire ou composant de fin dans une Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Diffuser un message en multipoint vers deux endpoints et l'utiliser pour enrichir le contenu re&ccedil;u par le troisi&egrave;me endpoint"><div class="titlepage"><div><div><h3 class="title"><a name="cmulticast-scenario-multicasting_message_to_endpoints"></a>Sc&eacute;nario : Diffuser un message en multipoint vers deux endpoints et l'utiliser pour
+			enrichir le contenu re&ccedil;u par le troisi&egrave;me endpoint</h3></div></div></div><p>Dans ce sc&eacute;nario, un composant <span class="emphasis"><strong>cMulticast</strong></span> est utilis&eacute; pour
+			router un message vers deux endpoints. Ce message est ensuite ajout&eacute; au contenu re&ccedil;u par
+			le troisi&egrave;me endpoint, &agrave; l'aide du composant <span class="emphasis"><strong>cContentEnricher</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_1.png" align="middle"></div><p>Pour construire la Route, proc&eacute;dez comme dans les sections suivantes. </p><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14726"></a>D&eacute;poser et relier les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Glissez-d&eacute;posez les composants suivants de la <span class="emphasis"><strong>Palette</strong></span>
+						dans l'espace de mod&eacute;lisation graphique : un <span class="emphasis"><strong>cFile</strong></span>, trois <span class="emphasis"><strong>cMessagingEndpoint</strong></span>, quatre<span class="emphasis"><strong>cProcessor</strong></span>, <span class="emphasis"><strong>cMulticast</strong></span> et
+						un <span class="emphasis"><strong>cContentEnricher</strong></span>. Pour une meilleure
+						identification de la fonction des composants, renommez les trois <span class="emphasis"><strong>cMessagingEndpoint</strong></span> respectivement en <span class="emphasis"><em>direct_a</em></span>, <span class="emphasis"><em>direct_b</em></span> et <span class="emphasis"><em>direct_c</em></span> et
+						modifiez le nom des quatre <span class="emphasis"><strong>cProcessor</strong></span> en
+							<span class="emphasis"><em>source_print</em></span>, <span class="emphasis"><em>direct_a_print</em></span>, <span class="emphasis"><em>direct_b_print</em></span> et <span class="emphasis"><em>direct_c_print</em></span>. </p></li><li class="step" title="&Eacute;tape 2"><p>Reliez le <span class="emphasis"><strong>cFile</strong></span> au <span class="emphasis"><em>source_print</em></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Reliez le <span class="emphasis"><em>source_print</em></span> au <span class="emphasis"><strong>cMulticast</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Reliez le composant <span class="emphasis"><em>direct_a</em></span> au <span class="emphasis"><strong>cContentEnricher</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Reliez le <span class="emphasis"><strong>cContentEnricher</strong></span> au <span class="emphasis"><em>direct_a_print</em></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 6"><p>Reliez le <span class="emphasis"><em>direct_b</em></span> au <span class="emphasis"><em>direct_b_print</em></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 7"><p>Reliez le composant <span class="emphasis"><em>direct_c</em></span> au <span class="emphasis"><em>direct_c_print</em></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14868"></a>Configurer les composants</h4></div></div></div><div class="procedure" title="Proc&eacute;dure&nbsp;6.1.&nbsp;Configurer la source des donn&eacute;es et les r&eacute;cepteurs multipoints"><a name="d0e14871"></a><p class="title"><b>Proc&eacute;dure&nbsp;6.1.&nbsp;Configurer la source des donn&eacute;es et les r&eacute;cepteurs multipoints</b></p><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cFile</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span> dans l'onglet <span class="emphasis"><strong>Component</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_2.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, saisissez le chemin d'acc&egrave;s au
+						message source, e.g. <span class="emphasis"><em>"E:/data/input/multicast"</em></span>. Laissez les autres param&egrave;tres
+						tels qu'ils sont.</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant <span class="emphasis"><em>source_print</em></span> pour
+						ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_3.png" align="middle"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>Code</strong></span>, saisissez le code ci-dessous pour
+						obtenir le corps du message source et l'afficher.</p><p>
+						</p><pre class="programlisting">String body = exchange.getIn().getBody(String.class);
+System.out.println("Here is the original body:" 
++ exchange.getIn().getBody(String.class));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le <span class="emphasis"><strong>cMulticast</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans la table <span class="emphasis"><strong>URIS</strong></span>, cliquez sur le bouton <span class="emphasis"><strong>[+]</strong></span> pour ajouter une ligne dans laquelle vous
+						devez saisir l'URI des endpoints pour recevoir le message diffus&eacute; en
+						multipoint, par exemple <span class="emphasis"><em>"direct:a","direct:b"</em></span>.</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur <span class="emphasis"><strong>direct_a</strong></span> pour ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_5.png" align="middle"></div></li><li class="step" title="&Eacute;tape 8"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez l'URI de l'endpoint, par
+						exemple <span class="emphasis"><em>"direct:a"</em></span>. </p><p>Effectuez la m&ecirc;me op&eacute;ration pour <span class="emphasis"><em>direct_b</em></span> et <span class="emphasis"><em>direct_c</em></span> puis saisissez les URIs de <span class="emphasis"><em>"direct:b"</em></span> et <span class="emphasis"><em>"direct:c"</em></span> respectivement.</p></li></ol></div><div class="procedure" title="Proc&eacute;dure&nbsp;6.2.&nbsp;Configurer l'enrichissement et l'affichage du contenu"><a name="d0e14980"></a><p class="title"><b>Proc&eacute;dure&nbsp;6.2.&nbsp;Configurer l'enrichissement et l'affichage du contenu</b></p><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le <span class="emphasis"><strong>cContentEnricher</strong></span> pour ouvrir sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_6.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Resource URI</strong></span>, saisissez l'URI de
+						l'endpoint dont le contenu entrant sera enrichi par les messages re&ccedil;us par
+						le <span class="emphasis"><strong>cContentEnricher</strong></span>, par exemple <span class="emphasis"><em>"direct:c"</em></span>.</p><p>Dans la zone <span class="emphasis"><strong>Merge data</strong></span>, s&eacute;lectionnez <span class="emphasis"><strong>using a producer</strong></span> pour que le <span class="emphasis"><strong>cContentEnricher</strong></span> route les messages re&ccedil;us vers
+						"direct:c".</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le <span class="emphasis"><em>direct_a_print</em></span> pour ouvrir sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span> dans l'onglet <span class="emphasis"><strong>Component</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_7.png" align="middle"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>Code</strong></span>, saisissez le code ci-dessous pour
+						afficher le message re&ccedil;u par <span class="emphasis"><em>direct_a</em></span>.</p><p>
+						</p><pre class="programlisting">System.out.println("Direct a just downloaded:"+exchange.getIn().getBody(String.class));</pre><p>
+					</p><p>Effectuez la m&ecirc;me op&eacute;ration pour les composants <span class="emphasis"><em>direct_b_print</em></span> et <span class="emphasis"><em>direct_c_print</em></span> puis saisissez le code ci-dessous dans leur
+						champ code, respectivement : </p><p>
+						</p><pre class="programlisting">System.out.println("Direct b just downloaded:"+exchange.getIn().getBody(String.class));</pre><p>
+					</p><p>
+						</p><pre class="programlisting">System.out.println("Direct c just downloaded:"+exchange.getIn().getBody(String.class));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 5"><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e15071"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique afin de visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_8.png" align="middle"></div><p>Comme affich&eacute; ci-dessus, la route obtient le message original du <code class="code">cFile_1</code>,
+						l'affiche via le <code class="code">cProcessor_1</code> puis le diffuse en multipoint
+							(<code class="code">.multicast()</code>) vers <code class="code">to( "direct:a",
+							"direct:b")</code>. Le message est re&ccedil;u par le <code class="code">direct_a</code> et
+						utilis&eacute; pour enrichir <code class="code">.enrich("direct:c")</code>. </p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="emphasis"><strong>F6</strong></span> pour ex&eacute;cuter la Route.</p><p>Le message original est diffus&eacute; en multipoint vers <span class="emphasis"><em>direct_a</em></span> et <span class="emphasis"><em>direct_b</em></span>. Il
+						est &eacute;galement utilis&eacute; pour enrichir le contenu re&ccedil;u par le <span class="emphasis"><em>direct_c</em></span>.</p><div class="mediaobject" align="center"><img src="../images/use_case_cmulticast_9.png" align="middle"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cMessageRouter.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-routing.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cPipesAndFilters.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">cMessageRouter&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cPipesAndFilters</td></tr></table></div></body></html>

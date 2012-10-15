@@ -1,0 +1,84 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cDataset</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio"><link rel="up" href="ch-messaging.html" title="Chapter&nbsp;3.&nbsp;Messaging components"><link rel="prev" href="cCXF.html" title="cCXF"><link rel="next" href="cFile.html" title="cFile"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cDataset</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cCXF.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;3.&nbsp;Messaging components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cFile.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cDataset"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cDataset"></a>cDataset</h2></div></div></div><div class="mediaobject"><img src="../images/cdataset_icon32_white.png"></div><div class="section" title="cDataset properties"><div class="titlepage"><div><div><h3 class="title"><a name="d2489e3969"></a>cDataset properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>The <span class="emphasis"><strong>cDataset</strong></span> component creates a new dataset or
+								references an existing dataset to send or receive messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>The <span class="emphasis"><strong>cDataset</strong></span> component allows you to create a new
+								dataset or reference an existing dataset to send or receive
+								messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p><span class="emphasis"><em>Id</em></span>
+							</p>
+						</td><td valign="top">
+							<p>The ID of the Dataset bean.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Produce Delay</em></span></td><td valign="top">Specify a delay in milliseconds to cause producers to pause. </td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Consume Delay</em></span></td><td valign="top">Specify a delay in milliseconds to cause consumers to pause. </td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Preload Size</em></span></td><td valign="top">Specify how many messages should be sent before the Route completes its
+							initialization. </td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Initial Delay</em></span></td><td valign="top">Specify the time in milliseconds to wait before starting sending messages. </td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Minimum Rate</em></span></td><td valign="top">Specify the least number of messages that the dataset should contain
+							before starting sending messages.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Register new Bean</em></span></td><td valign="top">Select this check box to register a new bean.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Bean Class</em></span></td><td valign="top">Enter the class of the bean. This field appears when the
+								<span class="emphasis"><strong>Register new Bean</strong></span> check box is
+							selected.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Arguments</em></span></td><td valign="top">Set the optional arguments in the corresponding table.
+							Click <span class="emphasis"><strong>[+]</strong></span> as many times as required to
+							add arguments to the table. This table appears when the <span class="emphasis"><strong>Register new Bean</strong></span> check box is
+							selected.</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cDataset</strong></span> can be a start, middle, or end component of a
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Using cDataset to receive messages"><div class="titlepage"><div><div><h3 class="title"><a name="nwang-20120927-mediation_components-cdataset"></a>Scenario: Using cDataset to receive messages</h3></div></div></div><p>In this scenario, a <span class="emphasis"><strong>cDataset</strong></span> component is used to receive
+			messages triggered by a <span class="emphasis"><strong>cTimer</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cdataset1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e4155"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the <span class="emphasis"><strong>Palette</strong></span>, drag and drop a <span class="emphasis"><strong>cTimer</strong></span> and a <span class="emphasis"><strong>cDataset</strong></span>
+						component onto the design workspace.</p></li><li class="step" title="Step 2"><p>From the <span class="emphasis"><strong>Transformation</strong></span> folder, drag and drop a
+							<span class="emphasis"><strong>cSetBody</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 3"><p>From the <span class="emphasis"><strong>Processor</strong></span> folder, drag and drop one <span class="emphasis"><strong>cProcessor</strong></span> component onto the design
+						workspace.</p></li><li class="step" title="Step 4"><p>Connect the components using <span class="emphasis"><strong>Row</strong></span> &gt;
+							<span class="emphasis"><strong>Route</strong></span> connections.</p></li><li class="step" title="Step 5"><p>Label the components to better identify their roles in the Route, as shown
+						above.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e4204"></a>Configuring the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the first <span class="emphasis"><strong>cTimer</strong></span> component, which is
+						labelled <span class="emphasis"><em>Starter</em></span>, to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cdataset2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Repeat</strong></span> field, enter <code class="code">2</code> to generate
+						the message exchange twice. Keep the default settings of the other options. </p></li><li class="step" title="Step 3"><p>Double-click the <span class="emphasis"><strong>cSetBody</strong></span> component,
+						which is labelled <span class="emphasis"><em>Set_message_body</em></span>, to
+						open its <span class="emphasis"><strong>Basic settings</strong></span> view in the
+							<span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cdataset3.png"></div></li><li class="step" title="Step 4"><p>Select <span class="emphasis"><strong>Constant</strong></span> in the <span class="emphasis"><strong>Language</strong></span> list and enter <code class="code">"Hello!"</code> in
+						the <span class="emphasis"><strong>Expression</strong></span> field as the message
+						body.</p></li><li class="step" title="Step 5"><p>Double-click the <span class="emphasis"><strong>cDataset</strong></span> component, which is labelled
+							<span class="emphasis"><em>Receive_message</em></span>, to open its
+							<span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cdataset4.png"></div></li><li class="step" title="Step 6"><p>In the <span class="emphasis"><strong>Id</strong></span> field, enter <code class="code">"myDataset"</code> as the
+						dataset bean ID. Keep the default settings of the other options.</p><p>In the <span class="emphasis"><strong>Bean Class</strong></span> field, the default implementation that
+						is shipped by Camel
+							<code class="code">org.apache.camel.component.dataset.SimpleDataSet</code> is set. In
+						this use case, a new dataset bean is registered.</p></li><li class="step" title="Step 7"><p>Double-click the first <span class="emphasis"><strong>cProcessor</strong></span> component, which is
+						labelled <span class="emphasis"><em>Monitor</em></span>, to open its <span class="emphasis"><strong>Basics settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cdataset5.png" height="360"></td></tr></table></div></li><li class="step" title="Step 8"><p>In the <span class="emphasis"><strong>Code</strong></span> area, customize the code to show the body of
+						the message exchanges.</p><p>
+						</p><pre class="programlisting">System.out.println("---------BODY--------");
+System.out.println(exchange.getIn().getBody(String.class));
+System.out.println("---------END---------")</pre><p>
+					</p></li><li class="step" title="Step 9"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing the code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2489e4338"></a>Viewing the code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="emphasis"><strong>Code</strong></span> tab at the
+						bottom of the design workspace to have a look at the generated code.</p><div class="mediaobject"><table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="100%"><tr><td><img src="../images/use_case_cdataset6.png" height="360"></td></tr></table></div><p>As shown in the code, the Route is built <code class="code">from</code> the
+							<code class="code">Starter_cTimer_1</code> endpoint, set the message body as
+							<code class="code">"Hello!"</code> by <code class="code">cSetBody_1</code>, routed
+							<code class="code">.to</code>
+						<code class="code">cDataset_1</code>, and then processed by
+						<code class="code">cProcessor_1</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="emphasis"><strong>F6</strong></span> to execute the Route.</p><p>RESULT: The message body is displayed twice in the execution console.</p><div class="mediaobject"><img src="../images/use_case_cdataset7.png"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cCXF.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-messaging.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cFile.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cCXF&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;cFile</td></tr></table></div></body></html>
