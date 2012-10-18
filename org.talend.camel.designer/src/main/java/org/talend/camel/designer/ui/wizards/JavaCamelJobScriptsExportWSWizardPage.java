@@ -51,6 +51,7 @@ import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSA
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
@@ -70,6 +71,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.ContextT
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsExportException;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.PetalsTemporaryOptionsKeeper;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.petals.TalendUtils;
+import org.talend.resource.IExportRouteResourcesService;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
@@ -820,7 +822,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             exportChoiceMap.put(ExportChoice.needContext, true);
             exportChoiceMap.put(ExportChoice.needJobItem, false);
             exportChoiceMap.put(ExportChoice.needSourceCode, false);
-            exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
+            if (addBSButton != null) {
+                exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
+            }
             return exportChoiceMap;
         }
 
@@ -828,10 +832,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             exportChoiceMap.put(ExportChoice.needMetaInfo, true);
         } else {
             exportChoiceMap.put(ExportChoice.needMetaInfo, false);
-        }
-
-        if (EXPORTTYPE_KAR.equals(exportType)) {
-            exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
         }
 
         // fix bug 9150, export items and code source, added by nma
@@ -897,6 +897,15 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     private void createOptionsForKar(Composite optionsGroup, Font font) {
+        IExportRouteResourcesService resourcesService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportRouteResourcesService.class)) {
+            resourcesService = (IExportRouteResourcesService) GlobalServiceRegister.getDefault().getService(
+                    IExportRouteResourcesService.class);
+        }
+        if (resourcesService == null) {
+            return;
+        }
+
         addBSButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
         addBSButton.setText("Add maven script"); //$NON-NLS-1$
         addBSButton.setFont(font);
@@ -1463,11 +1472,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                     return false;
                 }
             }
-            // JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(nodes[0], version,
-            // destinationKar,
-            // false);
 
-            // ycbai added //
             JavaCamelJobScriptsExportWSAction action = null;
             Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
             if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
@@ -1476,8 +1481,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             } else {
                 action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
             }
-
-            // //////////////
 
             try {
                 getContainer().run(false, true, action);

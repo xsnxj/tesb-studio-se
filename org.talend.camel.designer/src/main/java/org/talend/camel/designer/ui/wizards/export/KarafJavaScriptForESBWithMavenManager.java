@@ -23,9 +23,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.talend.camel.designer.CamelDesignerPlugin;
-import org.talend.camel.designer.prefs.ICamelPrefConstants;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -33,10 +30,11 @@ import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.runprocess.LastGenerationInfo;
 import org.talend.designer.runprocess.ProcessorException;
-import org.talend.repository.constants.ExportJobConstants;
+import org.talend.repository.constants.IExportJobConstants;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.preference.constants.IExportRoutePrefConstants;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
-import org.talend.resource.IResourceService;
+import org.talend.resource.IExportRouteResourcesService;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -68,48 +66,53 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     @Override
     protected void addMavenBuildScripts(List<URL> scriptsUrls, ProcessItem processItem, String selectedJobVersion,
             Map<String, String> mavenPropertiesMap) {
-        IResourceService resourceService = (IResourceService) GlobalServiceRegister.getDefault().getService(
-                IResourceService.class);
-        if (resourceService == null) {
+        IExportRouteResourcesService resourcesService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportRouteResourcesService.class)) {
+            resourcesService = (IExportRouteResourcesService) GlobalServiceRegister.getDefault().getService(
+                    IExportRouteResourcesService.class);
+        }
+        if (resourcesService == null) {
             return;
         }
 
         Set<ModuleNeeded> neededModules = LastGenerationInfo.getInstance().getModulesNeededWithSubjobPerJob(
                 processItem.getProperty().getId(), selectedJobVersion);
 
-        File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + ExportJobConstants.MAVEN_BUILD_FILE_NAME);
+        File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + IExportJobConstants.MAVEN_BUILD_FILE_NAME);
         File mavenBuildBundleFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + ExportJobConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME);
+                + IExportJobConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME);
         File mavenBuildFeatureFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + ExportJobConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
+                + IExportJobConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
         File mavenBuildParentFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + ExportJobConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
+                + IExportJobConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-
-            IPreferenceStore mavenPreferenceStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
-            String mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE);
+            String mavenScript = resourcesService
+                    .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFile.toURL());
             }
 
-            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE);
+            mavenScript = resourcesService
+                    .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, neededModules, MAVEN_PROP_LIB_PATH);
                 scriptsUrls.add(mavenBuildBundleFile.toURL());
             }
 
-            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE);
+            mavenScript = resourcesService
+                    .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFeatureFile.toURL());
             }
 
-            mavenScript = mavenPreferenceStore.getString(ICamelPrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT);
+            mavenScript = resourcesService
+                    .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
