@@ -332,8 +332,6 @@ public class ESBProvider_<%=cid%> implements
 	private final javax.xml.namespace.QName operationName =
 			new javax.xml.namespace.QName("<%=operationNS%>", "<%=operationName%>");
 
-	private javax.xml.transform.TransformerFactory factory =
-			javax.xml.transform.TransformerFactory.newInstance();
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
 	@javax.annotation.Resource()
@@ -350,22 +348,10 @@ public class ESBProvider_<%=cid%> implements
 	public javax.xml.transform.Source invoke(javax.xml.transform.Source request) {
 
 		try {
-//			javax.xml.namespace.QName operation = (javax.xml.namespace.QName) context
-//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_OPERATION);
-//			javax.xml.namespace.QName port = (javax.xml.namespace.QName) context
-//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_PORT);
-//			javax.xml.namespace.QName service = (javax.xml.namespace.QName) context
-//					.getMessageContext().get(javax.xml.ws.handler.MessageContext.WSDL_SERVICE);
-//			if (serviceName.equals(service) && portName.equals(port) && operationName.equals(operation)) {
-//				// System.out.println("request to implemented operation");
-//			} else {
-//				throw new RuntimeException("operation not implemented by job");
-//			}
-
-			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-			factory.newTransformer().transform(request, new javax.xml.transform.stream.StreamResult(os));
-			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader().read(
-					new java.io.ByteArrayInputStream(os.toByteArray()));
+            java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+            org.apache.cxf.staxutils.StaxUtils.copy(request, os);
+            org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
+                    .read(new java.io.ByteArrayInputStream(os.toByteArray()));
 
 			// System.out.println("request: " + requestDoc.asXML());
 
