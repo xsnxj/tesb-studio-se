@@ -418,6 +418,10 @@ public class RouterDependenciesEditor extends EditorPart implements
 			property = ((RepositoryNode) processEditor.getEditorInput()
 					.getAdapter(RepositoryNode.class)).getObject()
 					.getProperty().getItem().getProperty();
+		}else{
+			RepositoryNode repositoryNode = (RepositoryNode) getEditorInput()
+					.getAdapter(RepositoryNode.class);
+			property = repositoryNode.getObject().getProperty();
 		}
 	}
 
