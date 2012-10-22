@@ -134,7 +134,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
 
-    private void exportReferencedJob(NodeType cTalendJob) throws InvocationTargetException, InterruptedException {
+    protected void exportReferencedJob(NodeType cTalendJob) throws InvocationTargetException, InterruptedException {
 
         String jobId = null;
         String jobVersion = null;
@@ -176,7 +176,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     }
 
-    private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
+    protected RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
         List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS);
         for (IRepositoryViewObject job : jobs) {
             if (job.getId().equals(jobId)) {
@@ -186,7 +186,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return null;
     }
 
-    private void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType)
+    protected void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType)
             throws InvocationTargetException, InterruptedException {
         manager.setMultiNodes(false);
         manager.setDestinationPath(filePath);
