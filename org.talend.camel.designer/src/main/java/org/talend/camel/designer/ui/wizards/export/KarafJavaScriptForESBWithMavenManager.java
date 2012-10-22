@@ -28,6 +28,7 @@ import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.runprocess.LastGenerationInfo;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.constants.IExportJobConstants;
@@ -138,6 +139,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void addFeatureFileToExport(List<ExportFileResource> list, ExportFileResource[] processes) {
         if (destinationKar != null) {
             File karFile = new File(destinationKar);
@@ -149,7 +151,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 StringBuilder sb = new StringBuilder();
                 sb.append("repository/").append(projectName).append(PATH_SEPERATOR).append(jobName).append(PATH_SEPERATOR); //$NON-NLS-1$
                 String featurePath = sb.append(jobName).append("-feature/").append(jobVersion).append(PATH_SEPERATOR) //$NON-NLS-1$
-                        .append(jobName).append("-feature-").append(jobVersion).append("-feature.xml").toString(); //$NON-NLS-1$
+                        .append(jobName).append("-feature-").append(jobVersion).append("-feature.xml").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                 ExportFileResource featureFileResource = new ExportFileResource(null, ""); //$NON-NLS-1$
                 try {
                     ZipFile zipFile = new ZipFile(karFile);
@@ -160,7 +162,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                             in = zipFile.getInputStream(zipEntry);
                             File featureFile = new File(getTmpFolder() + "feature/feature.xml"); //$NON-NLS-1$
                             FilesUtils.copyFile(in, featureFile);
-                            featureFileResource.addResource("src/main/resources/feature", featureFile.toURL()); //$NON-NLS-1$
+                            featureFileResource.addResource(MAVEN_RESOURCES_PATH + "feature", featureFile.toURL()); //$NON-NLS-1$
                         } finally {
                             zipFile.close();
                         }
@@ -175,7 +177,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     @Override
     public String getOutputSuffix() {
-        return ".zip"; //$NON-NLS-1$
+        return FileConstants.ZIP_FILE_SUFFIX;
     }
 
     /*
