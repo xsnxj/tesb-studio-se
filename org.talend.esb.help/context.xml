@@ -57,7 +57,7 @@
       <topic href="guide/components/en/cMail.html" label="cMail Component Documentation"/>
    </context>
    <context id="cMessagingEndpoint">
-      <description>cMessagingEndpoint sends or receives messages.</description>
+      <description>cMessagingEndpoint sends or receives messages.Uses the Camel Bean Binding to bind message exchanges to beans in the Camel Registry. Is also used for exposing and invoking POJO (Plain Old Java Objects).</description>
       <topic href="guide/components/en/cMessagingEndpoint.html" label="cMessagingEndpoint Component Documentation"/>
    </context>
    <context id="cTimer">

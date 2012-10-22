@@ -1,0 +1,93 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cDelayer</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Talend Open Studio"><link rel="up" href="ch-processor.html" title="Chapitre&nbsp;5.&nbsp;Composants Processor"><link rel="prev" href="cBean.html" title="cBean"><link rel="next" href="cExchangePattern.html" title="cExchangePattern"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cDelayer</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cBean.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;5.&nbsp;Composants Processor</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cExchangePattern.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cDelayer"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cDelayer"></a>cDelayer</h2></div></div></div><div class="mediaobject"><img src="../images/cdelayer_icon32.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cDelayer"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10688"></a>Propri&eacute;t&eacute;s du cDelayer</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Processor</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cDelayer</strong></span> retarde la livraison de
+								messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cDelayer</strong></span> vous permet de configurer un
+								d&eacute;lai dans le routage de message.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Time to wait(in ms)</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Renseignez ce champ &agrave; l'aide d'un entier pour configurer le temps &agrave; attendre avant
+								d'envoyer le message &agrave; l'endpoint suivant.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Ce composant est g&eacute;n&eacute;ralement utilis&eacute; comme composant interm&eacute;diaire dans une
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Utiliser le cDelayer pour retarder le routage de messages"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10795"></a>Sc&eacute;nario : Utiliser le cDelayer pour retarder le routage de messages</h3></div></div></div><p>Dans ce sc&eacute;nario, le composant <span class="emphasis"><strong>cDelayer</strong></span> est utilis&eacute; pour
+			retarder de 20 secondes le routage de chaque message vers l'endpoint de
+			destination.</p><div class="mediaobject"><img src="../images/use_case_cdelayer1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10806"></a>D&eacute;poser et relier les composants</h4></div></div></div><p>Ce sc&eacute;nario utilise un composant <span class="emphasis"><strong>cDelayer</strong></span>, deux
+					<span class="emphasis"><strong>cFile</strong></span> et deux <span class="emphasis"><strong>cProcessor</strong></span>.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Du dossier <span class="emphasis"><strong>Messaging</strong></span> de la <span class="emphasis"><strong>Palette</strong></span>, d&eacute;posez deux composants <span class="emphasis"><strong>cFile</strong></span> dans l'espace de mod&eacute;lisation graphique, l'un pour
+						lire des fichiers d'un dossier local et l'autre pour &eacute;crire les fichiers
+						dans un autre dossier local.</p></li><li class="step" title="&Eacute;tape 2"><p>Du dossier <span class="emphasis"><strong>Processor</strong></span>, d&eacute;posez deux composants <span class="emphasis"><strong>cProcessor</strong></span> dans l'espace de mod&eacute;lisation
+						graphique, un &agrave; c&ocirc;t&eacute; du composant de lecture <span class="emphasis"><em>Read</em></span>, que vous nommez <span class="emphasis"><em>Read_monitor</em></span>, qui monitore les messages lus et l'autre &agrave;
+						c&ocirc;t&eacute; du composant d'&eacute;criture <span class="emphasis"><em>Write</em></span>, que
+						vous nommez <span class="emphasis"><em>Writer_monitor</em></span>, qui monitore
+						les messages &eacute;crits dans le dossier cible. </p></li><li class="step" title="&Eacute;tape 3"><p>Du dossier <span class="emphasis"><strong>Processor</strong></span>, d&eacute;posez un composant <span class="emphasis"><strong>cDelayer</strong></span> dans l'espace de mod&eacute;lisation graphique,
+						entre le composant <span class="emphasis"><em>Read_monitor</em></span> et le
+						composant <span class="emphasis"><em>Write</em></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Reliez les composants &agrave; l'aide de liens <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Nommez les composants comme vous le souhaitez afin de mieux identifier
+						leur r&ocirc;le dans la Route, comme dans la capture d'&eacute;cran ci-dessus.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10881"></a>Configurer les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le premier composant <span class="emphasis"><strong>cFile</strong></span> nomm&eacute;
+							<span class="emphasis"><em>Read</em></span>, pour ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cdelayer2.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, saisissez le chemin
+						d'acc&egrave;s &agrave; vos fichiers source, ou parcourez votre syst&egrave;me jusqu'&agrave; ceux-ci et
+						laissez les autres param&egrave;tres tels qu'ils sont. </p></li><li class="step" title="&Eacute;tape 3"><p>R&eacute;p&eacute;tez ces &eacute;tapes pour d&eacute;finir le dossier de sortie dans les param&egrave;tres du second
+						composant <span class="emphasis"><strong>cFile</strong></span> nomm&eacute; <span class="emphasis"><em>Write</em></span>. </p></li><li class="step" title="&Eacute;tape 4"><p>Double-cliquez sur le premier composant <span class="emphasis"><strong>cProcessor</strong></span> nomm&eacute;
+							<span class="emphasis"><em>Read_monitor</em></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basics settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cdelayer4.png"></div></li><li class="step" title="&Eacute;tape 5"><p>Dans la zone <span class="emphasis"><strong>Code</strong></span>, personnalisez le code pour afficher
+						l'heure &agrave; laquelle chaque message est lu depuis sa source :</p><p>
+						</p><pre class="programlisting">Date date=new Date();
+SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+String s = formatter.format(date);
+System.out.println("\nMessage "+
+exchange.getIn().getHeader("CamelFileName")+
+" read at "+(s));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 6"><p>R&eacute;p&eacute;tez ces &eacute;tapes pour configurer le second <span class="emphasis"><strong>cProcessor</strong></span>
+						nomm&eacute; <span class="emphasis"><em>Write_monitor</em></span> pour afficher l'heure
+						&agrave; laquelle chaque message est &eacute;crit dans sa cible :</p><p>
+						</p><pre class="programlisting">Date date=new Date();
+SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+String s = formatter.format(date);
+System.out.println("Message "+
+exchange.getIn().getHeader("CamelFileName")+ " written at "+(s));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cDelayer</strong></span>
+						nomm&eacute; <span class="emphasis"><em>Delay_timer</em></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cdelayer3.png"></div></li><li class="step" title="&Eacute;tape 8"><p>Dans le champ <span class="emphasis"><strong>Time to wait (in ms)</strong></span>,
+						saisissez le nombre de millisecondes dont vous souhaitez retarder la
+						livraison des messages. Notez que la valeur doit &ecirc;tre un entier
+						positif.</p><p>Dans ce sc&eacute;nario, chaque message doit &ecirc;tre livr&eacute; apr&egrave;s 20 secondes de
+						latence.</p></li><li class="step" title="&Eacute;tape 9"><p>Appuyez sur les touches <span class="emphasis"><strong>Ctrl+S</strong></span> pour
+						sauvegarder votre Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e10984"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de
+						l'espace de mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_cdelayer6.png"></div><p>Comme affich&eacute; dans le code, une latence de 20 secondes est impl&eacute;ment&eacute;e, selon
+							<code class="code">.delay(20000)</code> dans le routage des messages &agrave; partir de l'
+							(<code class="code">from</code>) endpoint <code class="code">Read</code> vers (<code class="code">.to</code>)
+						l'endpoint <code class="code">Write</code>.</p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="emphasis"><strong>F6</strong></span> pour ex&eacute;cuter la Route.</p><p>R&eacute;sultat : Chaque message lu du dossier source et rout&eacute; vers le dossier cible apr&egrave;s une
+						latence de 20 secondes.</p><div class="mediaobject"><img src="../images/use_case_cdelayer7.png"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cBean.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-processor.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cExchangePattern.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">cBean&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cExchangePattern</td></tr></table></div></body></html>
