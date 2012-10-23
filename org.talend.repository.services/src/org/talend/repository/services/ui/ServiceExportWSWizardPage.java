@@ -13,7 +13,9 @@
 package org.talend.repository.services.ui;
 
 import java.io.File;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -34,12 +36,15 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
+import org.talend.resource.IExportJobResourcesService;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
@@ -54,6 +59,8 @@ public class ServiceExportWSWizardPage extends WizardPage {
     private String destinationValue;
 
     private Text destinationText;
+
+    private Button addBSButton;
 
     private static final String OUTPUT_FILE_SUFFIX = ".zip"; //$NON-NLS-1$
 
@@ -162,10 +169,23 @@ public class ServiceExportWSWizardPage extends WizardPage {
         optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
         optionsGroup.setFont(parent.getFont());
 
+        createBSGroup(optionsGroup);
+    }
+
+    private void createBSGroup(Group optionsGroup) {
+        IExportJobResourcesService resourcesService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportJobResourcesService.class)) {
+            resourcesService = (IExportJobResourcesService) GlobalServiceRegister.getDefault().getService(
+                    IExportJobResourcesService.class);
+        }
+        if (resourcesService == null) {
+            return;
+        }
+
         Font font = optionsGroup.getFont();
         optionsGroup.setLayout(new GridLayout(2, false));
 
-        final Button addBSButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+        addBSButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
         addBSButton.setText("Add maven script"); //$NON-NLS-1$
         addBSButton.setFont(font);
         addBSButton.addSelectionListener(new SelectionAdapter() {
@@ -189,6 +209,25 @@ public class ServiceExportWSWizardPage extends WizardPage {
             }
         });
 
+    }
+
+    public Map<ExportChoice, Object> getExportChoiceMap() {
+        Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
+        exportChoiceMap.put(ExportChoice.needLauncher, true);
+        exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
+        exportChoiceMap.put(ExportChoice.needUserRoutine, true);
+        exportChoiceMap.put(ExportChoice.needTalendLibraries, true);
+        exportChoiceMap.put(ExportChoice.needJobItem, true);
+        exportChoiceMap.put(ExportChoice.needJobScript, true);
+        exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.needSourceCode, true);
+        exportChoiceMap.put(ExportChoice.applyToChildren, false);
+        exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
+        if (addBSButton != null) {
+            exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
+        }
+
+        return exportChoiceMap;
     }
 
     private void setDestinationValue(String destinationValue) {
