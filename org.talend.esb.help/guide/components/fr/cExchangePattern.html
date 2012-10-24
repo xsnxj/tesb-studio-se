@@ -1,0 +1,88 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cExchangePattern</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Talend Open Studio"><link rel="up" href="ch-processor.html" title="Chapitre&nbsp;5.&nbsp;Composants Processor"><link rel="prev" href="cDelayer.html" title="cDelayer"><link rel="next" href="cJavaDSLProcessor.html" title="cJavaDSLProcessor"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cExchangePattern</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cDelayer.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;5.&nbsp;Composants Processor</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cJavaDSLProcessor.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cExchangePattern"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cExchangePattern"></a>cExchangePattern</h2></div></div></div><div class="mediaobject"><img src="../images/cexchangepattern_icon32.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cExchangePattern"><div class="titlepage"><div><div><h3 class="title"><a name="d0e11031"></a>Propri&eacute;t&eacute;s du cExchangePattern</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Processor</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cExchangePattern</strong></span>
+								peut &ecirc;tre configur&eacute; pour indiquer le mode d'&eacute;change des
+								messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cExchangePattern</strong></span> vous permet
+								de configurer le mode d'&eacute;change des messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exchange Patterns</em></span>
+							</p>
+						</td><td valign="top">
+							<p>S&eacute;lectionnez le mode d'&eacute;change des messages parmi <span class="emphasis"><strong>InOnly</strong></span>, <span class="emphasis"><strong>InOptionalOut</strong></span>, <span class="emphasis"><strong>InOut</strong></span>, <span class="emphasis"><strong>OutIn</strong></span>,
+									<span class="emphasis"><strong>OutOptionalIn</strong></span>, <span class="emphasis"><strong>RobustInOnly</strong></span>, ou <span class="emphasis"><strong>RobustOutOnly</strong></span>.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Composant interm&eacute;diaire dans une Route, le <span class="emphasis"><strong>cExchangePattern</strong></span> vous permet de configurer le mode
+								d'&eacute;change des messages.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Activer le mod&egrave;le d'&eacute;change InOut pour obtenir des r&eacute;ponses"><div class="titlepage"><div><div><h3 class="title"><a name="d0e11162"></a>Sc&eacute;nario : Activer le mod&egrave;le d'&eacute;change InOut pour obtenir des r&eacute;ponses</h3></div></div></div><p>Dans ce sc&eacute;nario, un composant <span class="emphasis"><strong>cExchangePattern</strong></span> est
+			utilis&eacute; pour activer le mod&egrave;le d'&eacute;change requ&ecirc;te/r&eacute;ponse dans la route, afin qu'un
+			client obtienne une r&eacute;ponse du serveur. </p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_1.png" align="middle"></div><p>Pour envoyer des requ&ecirc;tes au serveur, soapUI est requis. Sa configuration est d&eacute;crite
+			dans les sections suivantes. </p><p>Pour construire votre Route, proc&eacute;dez comme suit. </p><div class="section" title="Glisser-d&eacute;poser des composants et les relier"><div class="titlepage"><div><div><h4 class="title"><a name="d0e11177"></a>Glisser-d&eacute;poser des composants et les relier </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Glissez-d&eacute;posez les composants suivants de la <span class="emphasis"><strong>Palette</strong></span>
+						dans l'espace de mod&eacute;lisation graphique : <span class="emphasis"><strong>cCXF</strong></span>, <span class="emphasis"><strong>cExchangePattern</strong></span> et
+							<span class="emphasis"><strong>cProcessor</strong></span> et renommez-les
+						respectivement <span class="emphasis"><em>WebService_producer</em></span>,
+							<span class="emphasis"><em>Set_exchange_mode</em></span> et <span class="emphasis"><em>Build_reply_message</em></span> afin de mieux identifier
+						leur r&ocirc;le.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez le <span class="emphasis"><strong>cCXF</strong></span> au <span class="emphasis"><strong>cExchangePattern</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Reliez le <span class="emphasis"><strong>cExchangePattern</strong></span> au <span class="emphasis"><strong>cProcessor</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e11235"></a>Configurer les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cCXF</strong></span> pour
+						ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span> dans l'onglet
+							<span class="emphasis"><strong>Component</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_2.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Address</strong></span>, laissez les
+						param&egrave;tres par d&eacute;faut. </p></li><li class="step" title="&Eacute;tape 3"><p>Dans la liste <span class="emphasis"><strong>Type</strong></span>, s&eacute;lectionnez
+							<span class="emphasis"><strong>wsdlURL</strong></span>. </p></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>WSDL File</strong></span>, saisissez l'URL
+						du fichier wsdl. Vous pouvez &eacute;galement cliquer sur le bouton <span class="emphasis"><strong>[...]</strong></span> afin de parcourir votre syst&egrave;me jusqu'&agrave; ce
+						fichier.</p></li><li class="step" title="&Eacute;tape 5"><p>Dans la liste <span class="emphasis"><strong>Dataformat</strong></span>, s&eacute;lectionnez
+							<span class="emphasis"><strong>PAYLOAD</strong></span>. </p></li><li class="step" title="&Eacute;tape 6"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cExchangePattern</strong></span> pour ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span> dans l'onglet <span class="emphasis"><strong>Component</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_3.png" align="middle"></div></li><li class="step" title="&Eacute;tape 7"><p>Dans la liste <span class="emphasis"><strong>Exchange Patterns</strong></span>,
+						s&eacute;lectionnez <span class="emphasis"><strong>InOut</strong></span> pour activer le mode
+						d'&eacute;changes requ&ecirc;te/r&eacute;ponse des messages.</p></li><li class="step" title="&Eacute;tape 8"><p>Double-cliquez sur le <span class="emphasis"><strong>cProcessor</strong></span> pour
+						ouvrir sa vue <span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 9"><p>Dans la zone <span class="emphasis"><strong>Code</strong></span>, saisissez le code
+						ci-dessous.</p><p>
+						</p><pre class="programlisting">StringBuilder sb = new StringBuilder();
+sb.append("&lt;tns:getAirportInformationByISOCountryCodeResponse xmlns:tns=\"http://airportsoap.sopera.de\"&gt;");
+sb.append("&lt;tns:getAirportInformationByISOCountryCodeResult&gt;This is a response&lt;/tns:getAirportInformationByISOCountryCodeResult&gt;");
+sb.append("&lt;/tns:getAirportInformationByISOCountryCodeResponse&gt;");
+exchange.getOut().setBody(sb.toString());</pre><p>
+					</p><p>Comme affich&eacute; ci-dessus, une cha&icirc;ne de caract&egrave;res est construite ici et
+						utilis&eacute;e comme message de r&eacute;ponse de la route. Cela correspond &agrave; la
+						d&eacute;finition du message dans le fichier wsdl ci-dessus.</p></li><li class="step" title="&Eacute;tape 10"><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e11342"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de
+						l'espace de mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_5.png" align="middle"></div><p>Comme affich&eacute; ci-dessus, le mod&egrave;le d'&eacute;change des messages de la route est configur&eacute; comme
+							<code class="code">InOut</code> &agrave; l'aide de la m&eacute;thode
+							<code class="code">.setExchangePattern(org.apache.camel.ExchangePattern.InOut)</code>.
+						Une cha&icirc;ne de caract&egrave;res est cr&eacute;&eacute;e via <code class="code">StringBuilder sb = new
+							StringBuilder()</code> dans le <code class="code">cProcessor_1</code> et est utilis&eacute;e
+						comme message de r&eacute;ponse via la m&eacute;thode <code class="code">exchange.getOut().setBody(
+							sb.toString())</code>.</p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="emphasis"><strong>F6</strong></span> pour ex&eacute;cuter la
+						Route.</p><p>La Route du serveur d&eacute;marre.</p></li></ol></div></div><div class="section" title="Cr&eacute;er et envoyer une requ&ecirc;te &agrave; la Route du serveur et obtenir une r&eacute;ponse"><div class="titlepage"><div><div><h4 class="title"><a name="d0e11380"></a>Cr&eacute;er et envoyer une requ&ecirc;te &agrave; la Route du serveur et obtenir une r&eacute;ponse</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans soapUI, cr&eacute;ez un projet de test et &eacute;ditez une requ&ecirc;te, comme dans la
+						capture d'&eacute;cran ci-dessous :</p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_7.png" align="middle"></div><p>Notez que le fichier wsdl doit &ecirc;tre le m&ecirc;me que celui configur&eacute; dans le
+							<span class="emphasis"><strong>cCXF</strong></span>, afin que la requ&ecirc;te soit en
+						accord avec la d&eacute;finition du service Web.</p></li><li class="step" title="&Eacute;tape 2"><p>Envoyez la requ&ecirc;te &agrave; la Route du serveur. Vous obtenez la r&eacute;ponse, comme illustr&eacute;
+						ci-dessous :</p><div class="mediaobject" align="center"><img src="../images/use_case_cexchangepattern_8.png" align="middle"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cDelayer.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-processor.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cJavaDSLProcessor.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">cDelayer&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cJavaDSLProcessor </td></tr></table></div></body></html>
