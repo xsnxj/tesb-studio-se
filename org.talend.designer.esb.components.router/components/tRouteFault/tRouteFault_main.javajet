@@ -64,13 +64,14 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 	            routerExchange.getOut().setFault(true);
 	            
 	            <%if("Body".equals(type)){ 
+                    // http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html
 	            	if("id_Document".equals(talendType)){
 	            		%>
-		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
+		                routerExchange.getIn().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
 		            	<%
 	            	}else{
 	            		%>
-		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
+		                routerExchange.getIn().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
 		            	<%
 	            	}
 	            }else if("Header".equals(type)){
