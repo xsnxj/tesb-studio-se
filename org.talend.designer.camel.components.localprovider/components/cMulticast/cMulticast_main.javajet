@@ -65,5 +65,9 @@ imports="
 			)
 <%
 		}
+		// end multicast
+%>
+		.end()
+<%
 	}
 %>
