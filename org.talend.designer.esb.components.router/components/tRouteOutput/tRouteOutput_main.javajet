@@ -55,7 +55,7 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
             	String label = tableValue.get("SCHEMA_COLUMN");
 	            String value = tableValue.get("VALUE");
 	            String type = tableValue.get("TYPE");
-	            System.out.println(type);
+	            //System.out.println(type);
 	            IMetadataColumn column = metadata.getColumn(label);
 	            String talendType = column.getTalendType();
 	            JavaType javaType = JavaTypesManager.getJavaTypeFromId(talendType);
@@ -73,7 +73,7 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 	            	}
 	            }else if("Header".equals(type)){
 	            	%>
-	            	routerExchange.getOut().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	routerExchange.getIn().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
 	            	<%
 	            }else if("Property".equals(type)){
 	            	%>
