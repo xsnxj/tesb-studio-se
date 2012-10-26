@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -123,7 +124,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
     }
 
     protected String getOutputSuffix() {
-        return ".kar";
+        return FileConstants.KAR_FILE_SUFFIX;
     }
 
     public void createControl(Composite parent) {

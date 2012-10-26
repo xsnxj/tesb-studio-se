@@ -92,7 +92,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                     .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
-                updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap);
+                updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false);
                 scriptsUrls.add(mavenBuildFile.toURL());
             }
 
@@ -100,7 +100,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                     .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_BUNDLE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
-                updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, neededModules, MAVEN_PROP_LIB_PATH);
+                updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true);
                 scriptsUrls.add(mavenBuildBundleFile.toURL());
             }
 
@@ -108,7 +108,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                     .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_FEATURE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
-                updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
+                updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap, false);
                 scriptsUrls.add(mavenBuildFeatureFile.toURL());
             }
 
@@ -116,7 +116,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                     .getScriptFromPreferenceStore(IExportRoutePrefConstants.MAVEN_KARAF_SCRIPT_TEMPLATE_PARENT);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
-                updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
+                updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap, false);
                 scriptsUrls.add(mavenBuildParentFile.toURL());
             }
         } catch (Exception e) {

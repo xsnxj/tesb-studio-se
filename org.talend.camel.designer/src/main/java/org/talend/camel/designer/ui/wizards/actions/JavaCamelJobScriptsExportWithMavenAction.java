@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
@@ -31,8 +32,6 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  */
 public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScriptsExportWSAction {
 
-    private final static String KAR_SUFFIX = ".kar"; //$NON-NLS-1$
-
     private JobScriptsManager scriptsManager;
 
     private String destinationPath;
@@ -41,8 +40,9 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
             String version, String destinationPath, boolean addStatisticsCode) {
         super(routeNode, version, destinationPath, addStatisticsCode);
         this.destinationPath = destinationPath;
-        if (!destinationKar.endsWith(KAR_SUFFIX)) {
-            destinationKar = getTempDir() + File.separatorChar + getNodeBundleName(routeNode, version) + KAR_SUFFIX;
+        if (!destinationKar.endsWith(FileConstants.KAR_FILE_SUFFIX)) {
+            destinationKar = getTempDir() + File.separatorChar + getNodeBundleName(routeNode, version)
+                    + FileConstants.KAR_FILE_SUFFIX;
         }
         scriptsManager = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);

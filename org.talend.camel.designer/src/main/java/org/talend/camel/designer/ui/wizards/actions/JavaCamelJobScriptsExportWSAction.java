@@ -19,6 +19,7 @@ import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -33,8 +34,6 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScri
 import org.talend.repository.utils.EmfModelUtils;
 
 public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress {
-
-    protected final static String JAR_SUFFIX = ".jar"; //$NON-NLS-1$
 
     protected IProgressMonitor monitor;
 
@@ -114,7 +113,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     protected void exportKarOsgiBundles() throws InvocationTargetException, InterruptedException {
-        String routerBundlePath = getTempDir() + getNodeBundleName(routeNode, version) + JAR_SUFFIX;
+        String routerBundlePath = getTempDir() + getNodeBundleName(routeNode, version) + FileConstants.JAR_FILE_SUFFIX;
 
         if (processRoute(routerBundlePath, routeNode, version)) {
             exportOsgiBundle(routeNode, routerBundlePath, version, bundleVersion, "Route"); //$NON-NLS-1$
@@ -169,7 +168,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
 
         String displayName = referencedJobNode.getObject().getProperty().getDisplayName();
-        String filePath = getTempDir() + displayName + '-' + jobVersion + ".jar";
+        String filePath = getTempDir() + displayName + '-' + jobVersion + FileConstants.JAR_FILE_SUFFIX;
         if (processReferencedJob(filePath, referencedJobNode, jobVersion)) {
             exportOsgiBundle(referencedJobNode, filePath, jobVersion, jobVersion, "Job");
         }

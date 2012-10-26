@@ -56,6 +56,7 @@ import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
@@ -387,15 +388,15 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     @Override
     protected String getOutputSuffix() {
         if (getCurrentExportType().equals(EXPORTTYPE_WSWAR)) {
-            return ".war"; //$NON-NLS-1$
+            return FileConstants.WAR_FILE_SUFFIX;
         } else if (getCurrentExportType().equals(EXPORTTYPE_JBOSSESB)) {
-            return ".esb"; //$NON-NLS-1$ 
+            return FileConstants.ESB_FILE_SUFFIX;
         } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
-            return ".jar"; //$NON-NLS-1$ 
+            return FileConstants.JAR_FILE_SUFFIX;
         } else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-            return ".kar"; //$NON-NLS-1$ 
+            return FileConstants.KAR_FILE_SUFFIX;
         } else {
-            return ".zip"; //$NON-NLS-1$
+            return FileConstants.ZIP_FILE_SUFFIX;
         }
     }
 
