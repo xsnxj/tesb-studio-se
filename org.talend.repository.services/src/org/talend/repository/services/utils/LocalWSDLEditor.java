@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -324,46 +325,122 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         if (isReadOnly) {
             ActionRegistry actionRegistry = getActionRegistry();
 
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddMessageAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddPartAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewMessageAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetMessageInterfaceAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewTypeAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingTypeAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewElementAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingElementAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction(GEFActionConstants.DIRECT_EDIT));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddServiceAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddBindingAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddInterfaceAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddEndPointAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddOperationAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddInputActionn"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddOutputActionn"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddFaultActionn"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDDeleteAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewBindingAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingBindingAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetNewInterfaceAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDSetExistingInterfaceAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDGenerateBindingActionn"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddImportAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddParameterAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDAddSchemaAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDOpenSchemaAction"));
-            actionRegistry.removeAction(actionRegistry.getAction("ASDOpenImportAction"));
-
-            actionRegistry.removeAction(actionRegistry.getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor"));
+            IAction ASDAddMessageAction = actionRegistry.getAction("ASDAddMessageAction");
+            if (ASDAddMessageAction != null) {
+                actionRegistry.removeAction(ASDAddMessageAction);
+            }
+            IAction ASDAddPartAction = actionRegistry.getAction("ASDAddPartAction");
+            if (ASDAddPartAction != null) {
+                actionRegistry.removeAction(ASDAddPartAction);
+            }
+            IAction ASDSetNewMessageAction = actionRegistry.getAction("ASDSetNewMessageAction");
+            if (ASDSetNewMessageAction != null) {
+                actionRegistry.removeAction(ASDSetNewMessageAction);
+            }
+            IAction ASDSetMessageInterfaceAction = actionRegistry.getAction("ASDSetMessageInterfaceAction");
+            if (ASDSetMessageInterfaceAction != null) {
+                actionRegistry.removeAction(ASDSetMessageInterfaceAction);
+            }
+            IAction ASDSetNewTypeAction = actionRegistry.getAction("ASDSetNewTypeAction");
+            if (ASDSetNewTypeAction != null) {
+                actionRegistry.removeAction(ASDSetNewTypeAction);
+            }
+            IAction ASDSetExistingTypeAction = actionRegistry.getAction("ASDSetExistingTypeAction");
+            if (ASDSetExistingTypeAction != null) {
+                actionRegistry.removeAction(ASDSetExistingTypeAction);
+            }
+            IAction ASDSetNewElementAction = actionRegistry.getAction("ASDSetNewElementAction");
+            if (ASDSetNewElementAction != null) {
+                actionRegistry.removeAction(ASDSetNewElementAction);
+            }
+            IAction ASDSetExistingElementAction = actionRegistry.getAction("ASDSetExistingElementAction");
+            if (ASDSetExistingElementAction != null) {
+                actionRegistry.removeAction(ASDSetExistingElementAction);
+            }
+            IAction directEditAction = actionRegistry.getAction(GEFActionConstants.DIRECT_EDIT);
+            if (directEditAction != null) {
+                actionRegistry.removeAction(directEditAction);
+            }
+            IAction ASDAddServiceAction = actionRegistry.getAction("ASDAddServiceAction");
+            if (ASDAddServiceAction != null) {
+                actionRegistry.removeAction(ASDAddServiceAction);
+            }
+            IAction ASDAddBindingAction = actionRegistry.getAction("ASDAddBindingAction");
+            if (ASDAddBindingAction != null) {
+                actionRegistry.removeAction(ASDAddBindingAction);
+            }
+            IAction ASDAddInterfaceAction = actionRegistry.getAction("ASDAddInterfaceAction");
+            if (ASDAddInterfaceAction != null) {
+                actionRegistry.removeAction(ASDAddInterfaceAction);
+            }
+            IAction ASDAddEndPointAction = actionRegistry.getAction("ASDAddEndPointAction");
+            if (ASDAddEndPointAction != null) {
+                actionRegistry.removeAction(ASDAddEndPointAction);
+            }
+            IAction ASDAddOperationAction = actionRegistry.getAction("ASDAddOperationAction");
+            if (ASDAddOperationAction != null) {
+                actionRegistry.removeAction(ASDAddOperationAction);
+            }
+            IAction ASDAddInputActionn = actionRegistry.getAction("ASDAddInputActionn");
+            if (ASDAddInputActionn != null) {
+                actionRegistry.removeAction(ASDAddInputActionn);
+            }
+            IAction ASDAddOutputActionn = actionRegistry.getAction("ASDAddOutputActionn");
+            if (ASDAddInputActionn != null) {
+                actionRegistry.removeAction(ASDAddOutputActionn);
+            }
+            IAction ASDAddFaultActionn = actionRegistry.getAction("ASDAddFaultActionn");
+            if (ASDAddFaultActionn != null) {
+                actionRegistry.removeAction(ASDAddFaultActionn);
+            }
+            IAction ASDDeleteAction = actionRegistry.getAction("ASDDeleteAction");
+            if (ASDDeleteAction != null) {
+                actionRegistry.removeAction(ASDDeleteAction);
+            }
+            IAction ASDSetNewBindingAction = actionRegistry.getAction("ASDSetNewBindingAction");
+            if (ASDSetNewBindingAction != null) {
+                actionRegistry.removeAction(ASDSetNewBindingAction);
+            }
+            IAction ASDSetExistingBindingAction = actionRegistry.getAction("ASDSetExistingBindingAction");
+            if (ASDSetExistingBindingAction != null) {
+                actionRegistry.removeAction(ASDSetExistingBindingAction);
+            }
+            IAction ASDSetNewInterfaceAction = actionRegistry.getAction("ASDSetNewInterfaceAction");
+            if (ASDSetNewInterfaceAction != null) {
+                actionRegistry.removeAction(ASDSetNewInterfaceAction);
+            }
+            IAction ASDSetExistingInterfaceAction = actionRegistry.getAction("ASDSetExistingInterfaceAction");
+            if (ASDSetExistingInterfaceAction != null) {
+                actionRegistry.removeAction(ASDSetExistingInterfaceAction);
+            }
+            IAction ASDGenerateBindingActionn = actionRegistry.getAction("ASDGenerateBindingActionn");
+            if (ASDGenerateBindingActionn != null) {
+                actionRegistry.removeAction(ASDGenerateBindingActionn);
+            }
+            IAction ASDAddImportAction = actionRegistry.getAction("ASDAddImportAction");
+            if (ASDAddImportAction != null) {
+                actionRegistry.removeAction(ASDAddImportAction);
+            }
+            IAction ASDAddParameterAction = actionRegistry.getAction("ASDAddParameterAction");
+            if (ASDAddParameterAction != null) {
+                actionRegistry.removeAction(ASDAddParameterAction);
+            }
+            IAction ASDAddSchemaAction = actionRegistry.getAction("ASDAddSchemaAction");
+            if (ASDAddSchemaAction != null) {
+                actionRegistry.removeAction(ASDAddSchemaAction);
+            }
+            IAction ASDOpenSchemaAction = actionRegistry.getAction("ASDOpenSchemaAction");
+            if (ASDOpenSchemaAction != null) {
+                actionRegistry.removeAction(ASDOpenSchemaAction);
+            }
+            IAction ASDOpenImportAction = actionRegistry.getAction("ASDOpenImportAction");
+            if (ASDOpenImportAction != null) {
+                actionRegistry.removeAction(ASDOpenImportAction);
+            }
+            IAction OpenInNewEditorAction = actionRegistry.getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
+            if (OpenInNewEditorAction != null) {
+                actionRegistry.removeAction(OpenInNewEditorAction);
+            }
         }
     }
 }
