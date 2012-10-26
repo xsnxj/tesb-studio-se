@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -26,10 +25,8 @@ import org.eclipse.core.resources.IProject;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.constants.FileConstants;
-import org.talend.designer.runprocess.LastGenerationInfo;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.constants.IExportJobConstants;
 import org.talend.repository.documentation.ExportFileResource;
@@ -65,8 +62,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     }
 
     @Override
-    protected void addMavenBuildScripts(List<URL> scriptsUrls, ProcessItem processItem, String selectedJobVersion,
-            Map<String, String> mavenPropertiesMap) {
+    protected void addMavenBuildScripts(List<URL> scriptsUrls, Map<String, String> mavenPropertiesMap) {
         IExportRouteResourcesService resourcesService = null;
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportRouteResourcesService.class)) {
             resourcesService = (IExportRouteResourcesService) GlobalServiceRegister.getDefault().getService(
@@ -75,9 +71,6 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         if (resourcesService == null) {
             return;
         }
-
-        Set<ModuleNeeded> neededModules = LastGenerationInfo.getInstance().getModulesNeededWithSubjobPerJob(
-                processItem.getProperty().getId(), selectedJobVersion);
 
         File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + IExportJobConstants.MAVEN_BUILD_FILE_NAME);
         File mavenBuildBundleFile = new File(getTmpFolder() + PATH_SEPARATOR
