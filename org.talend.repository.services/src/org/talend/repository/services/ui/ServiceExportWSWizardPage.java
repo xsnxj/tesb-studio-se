@@ -45,7 +45,7 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
-import org.talend.resource.IExportJobResourcesService;
+import org.talend.resource.IExportServiceScriptResourcesService;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
@@ -84,8 +84,14 @@ public class ServiceExportWSWizardPage extends WizardPage {
     }
 
     protected void handleDestinationBrowseButtonPressed() {
+        String idealSuffix;
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-        dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        if (isAddMavenScript()) {
+            idealSuffix = OUTPUT_FILE_SUFFIX;
+        } else {
+            idealSuffix = getOutputSuffix();
+        }
+        dialog.setFilterExtensions(new String[] { idealSuffix, "*.*" }); //$NON-NLS-1$
         File destination = new File(getDestinationValue());
         dialog.setFileName(destination.getName());
         dialog.setFilterPath(destination.getParent());
@@ -93,8 +99,8 @@ public class ServiceExportWSWizardPage extends WizardPage {
         if (selectedFileName == null) {
             return;
         }
-        if (!selectedFileName.endsWith(getOutputSuffix())) {
-            selectedFileName += getOutputSuffix();
+        if (!selectedFileName.endsWith(idealSuffix)) {
+            selectedFileName += idealSuffix;
         }
         checkDestination(selectedFileName);
         destinationValue = selectedFileName;
@@ -174,10 +180,10 @@ public class ServiceExportWSWizardPage extends WizardPage {
     }
 
     private void createBSGroup(Group optionsGroup) {
-        IExportJobResourcesService resourcesService = null;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportJobResourcesService.class)) {
-            resourcesService = (IExportJobResourcesService) GlobalServiceRegister.getDefault().getService(
-                    IExportJobResourcesService.class);
+        IExportServiceScriptResourcesService resourcesService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportServiceScriptResourcesService.class)) {
+            resourcesService = (IExportServiceScriptResourcesService) GlobalServiceRegister.getDefault().getService(
+                    IExportServiceScriptResourcesService.class);
         }
         if (resourcesService == null) {
             return;
@@ -229,6 +235,14 @@ public class ServiceExportWSWizardPage extends WizardPage {
         }
 
         return exportChoiceMap;
+    }
+
+    public boolean isAddMavenScript() {
+        if (addBSButton != null) {
+            return addBSButton.getSelection();
+        }
+
+        return false;
     }
 
     private void setDestinationValue(String destinationValue) {

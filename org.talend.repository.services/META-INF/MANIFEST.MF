@@ -26,7 +26,9 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.ui.navigator,
  org.talend.repository.view.di,
  org.talend.datatools.xml,
- org.talend.utils
+ org.talend.utils,
+ org.talend.libraries.dom4j-jaxen,
+ org.talend.resources
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .

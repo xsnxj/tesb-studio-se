@@ -13,12 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
@@ -26,9 +28,11 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.SaveAction;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.ResourceModelUtils;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -39,14 +43,21 @@ import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.utils.ZipToFile;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
 public class ExportServiceAction implements IRunnableWithProgress {
 
-    private List<RepositoryNode> nodes = new ArrayList<RepositoryNode>();
+    protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
+
+    protected Map<ExportChoice, Object> exportChoiceMap;
+
+    protected List<RepositoryNode> nodes = new ArrayList<RepositoryNode>();
 
     private String serviceVersion;
 
     protected ServiceExportManager serviceManager;
+
+    protected String tempFolder;
 
     private IFile serviceWsdl;
 
@@ -60,14 +71,19 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private static String JOB_CONTROLLER_VERSION = "[5,6)";
 
+    protected RepositoryNode serviceNode;
+
     private final IRepositoryViewObject serviceViewObject;
 
-    private ServiceConnection serviceConnection;
+    protected ServiceConnection serviceConnection;
 
-    public ExportServiceAction(RepositoryNode node, String targetPath) throws InvocationTargetException {
+    public ExportServiceAction(Map<ExportChoice, Object> exportChoiceMap, RepositoryNode node, String targetPath)
+            throws InvocationTargetException {
         if (node.getType() == ENodeType.REPOSITORY_ELEMENT
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
+            this.serviceNode = node;
             this.serviceViewObject = node.getObject();
+            this.exportChoiceMap = exportChoiceMap;
             init(targetPath);
         } else {
             IllegalArgumentException e = new IllegalArgumentException("provided node is not service node");
@@ -107,12 +123,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
             throw new InvocationTargetException(e);
         }
 
-        final String suffix = FileConstants.KAR_FILE_SUFFIX;
-        if (targetPath.endsWith(suffix)) {
-            targetPath = targetPath.substring(0, targetPath.length() - suffix.length());
-        }
-        this.serviceManager = new ServiceExportManager();
+        this.serviceManager = new ServiceExportManager(exportChoiceMap);
         serviceManager.setDestinationPath(targetPath);
+        tempFolder = getTmpFolderPath();
     }
 
     private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
@@ -126,19 +139,32 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-        final String destinationPath = serviceManager.getDestinationPath();
+        String destinationPath = serviceManager.getDestinationPath();
+        if (!destinationPath.endsWith(".kar")) { //$NON-NLS-1$
+            destinationPath = destinationPath.replace("\\", PATH_SEPERATOR); //$NON-NLS-1$
+            if (destinationPath.indexOf(PATH_SEPERATOR) != -1) {
+                String filePath = destinationPath.substring(0, destinationPath.lastIndexOf(PATH_SEPERATOR) + 1);
+                String fileName = destinationPath.substring(destinationPath.lastIndexOf(PATH_SEPERATOR) + 1);
+                if (fileName.indexOf(".") != -1) { //$NON-NLS-1$
+                    fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
+                }
+                destinationPath = filePath + fileName + ".kar"; //$NON-NLS-1$
+            }
+        }
+
         try {
-            String directoryName = serviceManager.getRootFolderName(destinationPath);
+            String directoryName = serviceManager.getRootFolderName(tempFolder);
             Map<String, String> bundles = new HashMap<String, String>();
             for (RepositoryNode node : nodes) {
-                JobScriptsManager manager = serviceManager.getJobManager(node, getGroupId(), getServiceVersion());
+                JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
+                        getServiceVersion());
                 JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
-                        getBundleVersion(), manager, directoryName, "Service");
+                        getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
                 job.run(monitor);
-                bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
+                bundles.put(serviceManager.getNodeLabel(node), tempFolder);
             }
             try {
-                final String artefactName = getServiceName() + "-control-bundle";
+                final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
                 bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
                 processFeature(generateFeature(bundles));
                 processFinalResult(destinationPath);
@@ -146,12 +172,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 throw new InvocationTargetException(e);
             }
         } finally {
-            FilesUtils.removeFolder(destinationPath, true);
+            clean();
         }
     }
 
     private String generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
-        File temp = new File(serviceManager.getDestinationPath(), "temp");
+        File temp = new File(tempFolder, "temp");
         File metaInf = new File(temp, FileConstants.META_INF_FOLDER_NAME);
         metaInf.mkdirs();
         // manifest
@@ -167,7 +193,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, serviceConnection, wsdl,
                 getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
-        File file = new File(serviceManager.getFilePath(groupId, artefactName, getServiceVersion()), fileName);
+        File file = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), fileName);
         try {
             ZipToFile.zipFile(temp.getAbsolutePath(), file.getAbsolutePath());
             FilesUtils.removeFolder(temp, true);
@@ -195,7 +221,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected void processFeature(FeaturesModel feature) throws IOException {
         String artefactName = getServiceName() + "-feature";
-        File filePath = serviceManager.getFilePath(getGroupId(), artefactName, getServiceVersion());
+        File filePath = serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion());
         String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml";
         String featureFilePath = new File(filePath, fileName).getAbsolutePath();
         SaveAction.saveFeature(featureFilePath, feature);
@@ -203,14 +229,34 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected void processFinalResult(String destinationPath) throws IOException {
         try {
-            File destination = new File(destinationPath);
-            String s = destination.getAbsolutePath() + FileConstants.KAR_FILE_SUFFIX;
-            ZipToFile.zipFile(destinationPath, s);
+            ZipToFile.zipFile(tempFolder, destinationPath);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
+    }
+
+    protected void clean() {
+        FilesUtils.removeFolder(tempFolder, true);
+    }
+
+    protected String getControlBundleFilePath() {
+        String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
+        String fileName = artefactName + "-" + getServiceVersion() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+        String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
+                fileName).getAbsolutePath();
+
+        return filePath;
+    }
+
+    protected String getFeatureFilePath() {
+        String artefactName = getServiceName() + "-feature"; //$NON-NLS-1$
+        String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+        String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
+                fileName).getAbsolutePath();
+
+        return filePath;
     }
 
     public String getServiceVersion() {
@@ -249,6 +295,24 @@ public class ExportServiceAction implements IRunnableWithProgress {
             servNS += "/";
         }
         return (servNS + serviceName).replace('/', '.');
+    }
+
+    public String getTmpFolderPath() {
+        Project project = ProjectManager.getInstance().getCurrentProject();
+        String tmpFolderPath;
+        try {
+            IProject physProject = ResourceModelUtils.getProject(project);
+            tmpFolderPath = physProject.getFolder("temp").getLocation().toPortableString(); //$NON-NLS-1$
+        } catch (Exception e) {
+            tmpFolderPath = System.getProperty("user.dir"); //$NON-NLS-1$
+        }
+        tmpFolderPath = tmpFolderPath + "/serviceExporter"; //$NON-NLS-1$
+        File tmpFolder = new File(tmpFolderPath);
+        if (!tmpFolder.exists()) {
+            tmpFolder.mkdirs();
+        }
+
+        return tmpFolderPath;
     }
 
 }

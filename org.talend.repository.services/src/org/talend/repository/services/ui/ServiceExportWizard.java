@@ -15,9 +15,11 @@ package org.talend.repository.services.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -28,9 +30,13 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.ui.action.ExportServiceAction;
+import org.talend.repository.services.ui.action.ExportServiceWithMavenAction;
+import org.talend.repository.services.ui.scriptmanager.ServiceExportWithMavenManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
 /**
  * Job scripts export wizard. <br/>
@@ -93,10 +99,21 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
     @Override
     public boolean performFinish() {
         try {
+            IRunnableWithProgress action = null;
+            Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
+            String destinationValue = mainPage.getDestinationValue();
             Iterator<?> iterator = selection.iterator();
             while (iterator.hasNext()) {
-                getContainer().run(false, true,
-                    new ExportServiceAction((RepositoryNode)iterator.next(), mainPage.getDestinationValue()));
+                RepositoryNode node = (RepositoryNode) iterator.next();
+                if (mainPage.isAddMavenScript()) {
+                    ServiceExportWithMavenManager mavenManager = new ServiceExportWithMavenManager(exportChoiceMap,
+                            "Default", "all", //$NON-NLS-1$  //$NON-NLS-2$
+                            IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+                    action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, node, destinationValue);
+                } else {
+                    action = new ExportServiceAction(exportChoiceMap, node, destinationValue);
+                }
+                getContainer().run(false, true, action);
             }
             mainPage.finish();
         } catch (InvocationTargetException e) {
