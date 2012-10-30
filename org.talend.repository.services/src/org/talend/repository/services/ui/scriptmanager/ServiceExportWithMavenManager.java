@@ -37,7 +37,6 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
 import org.talend.resource.IExportRouteResourcesService;
-import org.talend.resources.util.EMavenBuildScriptProperties;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -123,16 +122,6 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
     @Override
     public String getOutputSuffix() {
         return FileConstants.ZIP_FILE_SUFFIX;
-    }
-
-    @Override
-    protected Map<String, String> getMainMavenProperties(Item item) {
-        String groupPrefix = "org.talend.service."; //$NON-NLS-1$
-        Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
-        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(),
-                groupPrefix + mavenPropertiesMap.get(EMavenBuildScriptProperties.ItemProjectName.getVarScript()) + "." //$NON-NLS-1$
-                        + mavenPropertiesMap.get(EMavenBuildScriptProperties.ItemName.getVarScript()));
-        return mavenPropertiesMap;
     }
 
     @Override
