@@ -54,13 +54,9 @@ if (connsFault.size() == 1) {
 
 String url = ElementParameterParser.getValue(node,"__URL__");
 
-String connectionTimeoutString = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
-String connectionTimeoutSec = (null != connectionTimeoutString && !connectionTimeoutString.trim().isEmpty()) ? connectionTimeoutString : "30";
-long connectionTimeout = (long) (Double.valueOf(connectionTimeoutSec) * 1000);
+String connectionTimeout = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
 
-String receiveTimeoutString = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
-String receiveTimeoutSec = (null != receiveTimeoutString && !receiveTimeoutString.trim().isEmpty()) ? receiveTimeoutString : "60";
-long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
+String receiveTimeout = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
 
 List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
 List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
@@ -119,8 +115,8 @@ try {
 	// set connection properties
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
 	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout(<%=receiveTimeout%>);
-	conduit_<%=cid%>.getClient().setConnectionTimeout(<%=connectionTimeout%>);
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=connectionTimeout%> * 1000));
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
 		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
 		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
@@ -198,6 +194,16 @@ try {
 		<% } else { %>
 			System.out.println("error response: " + ex_<%=cid%>.getResponse().getStatus() + ":" + ex_<%=cid%>.getMessage());
 		<% } %>
+	} catch (javax.ws.rs.client.ClientException ex_<%=cid%>) {
+        <% if (null != connFault) {
+            String connFaultName = connFault.getName(); %>
+            if (<%=connFaultName%> == null) {
+                <%=connFaultName%> = new <%=connFaultName%>Struct();
+            }
+            <%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
+        <% } else { %>
+            System.out.println("client error: " + ex_<%=cid%>.getMessage());
+        <% } %>
 	}
 
 } catch(Exception e_<%=cid%>) {
