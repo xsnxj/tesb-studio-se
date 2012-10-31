@@ -17,7 +17,7 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.emf.common.util.EList;
 import org.talend.camel.designer.model.ExportKarBundleModel;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.core.model.properties.Property;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -30,7 +30,8 @@ public class KarFileGenerator {
     public static boolean generateKarFile(Set<ExportKarBundleModel> bundleModels, RepositoryNode routerNode, String version,
             String destination) throws IOException {
 
-        String itemName = routerNode.getObject().getProperty().getDisplayName();
+        Property routeProperty = routerNode.getObject().getProperty();
+        String itemName = routeProperty.getDisplayName();
         String projectName = routerNode.getObject().getProjectLabel().toLowerCase();
 
         ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
@@ -49,7 +50,7 @@ public class KarFileGenerator {
         String featurePrefix = sb.append(itemName).append("-feature/").append(version).append("/").append(itemName)
                 .append("-feature-").append(version).append("-feature.xml").toString();
 
-        String groupId = JavaResourcesHelper.getGroupItemName(projectName, itemName);
+        String groupId = CamelFeatureUtil.getMavenGroupId(routeProperty.getItem());
         FeaturesModel featuresModel = new FeaturesModel(groupId, itemName, version);
 
         for (ExportKarBundleModel p : bundleModels) {

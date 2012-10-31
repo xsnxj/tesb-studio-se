@@ -22,9 +22,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
+import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.runprocess.ProcessorException;
@@ -33,6 +35,7 @@ import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.preference.constants.IExportRoutePrefConstants;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
 import org.talend.resource.IExportRouteResourcesService;
+import org.talend.resources.util.EMavenBuildScriptProperties;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -59,6 +62,22 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         addFeatureFileToExport(list, processes);
 
         return list;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#getMainMavenProperties(org.talend
+     * .core.model.properties.Item)
+     */
+    @Override
+    protected Map<String, String> getMainMavenProperties(Item item) {
+        Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
+
+        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), CamelFeatureUtil.getMavenGroupId(item));
+
+        return mavenPropertiesMap;
     }
 
     @Override
