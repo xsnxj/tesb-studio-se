@@ -70,6 +70,10 @@
    </ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.10.2.jar"
+							REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
+		</IMPORTS>
 	</CODEGENERATION>
 
    <RETURNS />
