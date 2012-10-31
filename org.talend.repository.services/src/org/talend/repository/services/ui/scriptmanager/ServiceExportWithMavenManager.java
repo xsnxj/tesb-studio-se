@@ -37,6 +37,7 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
 import org.talend.resource.IExportRouteResourcesService;
+import org.talend.resources.util.EMavenBuildScriptProperties;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -45,9 +46,29 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
 
     public static final String OPERATIONS_PATH = "operations/"; //$NON-NLS-1$
 
+    private String mavenGroupId;
+
     public ServiceExportWithMavenManager(Map<ExportChoice, Object> exportChoiceMap, String contextName, String launcher,
             int statisticPort, int tracePort) {
         super(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
+    }
+
+    /**
+     * Getter for mavenGroupId.
+     * 
+     * @return the mavenGroupId
+     */
+    public String getMavenGroupId() {
+        return this.mavenGroupId;
+    }
+
+    /**
+     * Sets the mavenGroupId.
+     * 
+     * @param mavenGroupId the mavenGroupId to set
+     */
+    public void setMavenGroupId(String mavenGroupId) {
+        this.mavenGroupId = mavenGroupId;
     }
 
     @Override
@@ -151,6 +172,22 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
                 ExceptionHandler.process(e);
             }
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#getMainMavenProperties(org.talend
+     * .core.model.properties.Item)
+     */
+    @Override
+    protected Map<String, String> getMainMavenProperties(Item item) {
+        Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
+        if (getMavenGroupId() != null) {
+            mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), getMavenGroupId());
+        }
+        return mavenPropertiesMap;
     }
 
 }

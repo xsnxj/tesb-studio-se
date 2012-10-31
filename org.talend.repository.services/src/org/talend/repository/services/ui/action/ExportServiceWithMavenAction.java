@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -26,6 +28,7 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.OSGIJavaScriptForESBWithMavenManager;
+import org.talend.resources.util.EMavenBuildScriptProperties;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -46,8 +49,10 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
             RepositoryNode node, String targetPath) throws InvocationTargetException {
         super(exportChoiceMap, node, targetPath);
         this.manager = manager;
+        this.manager.setMavenGroupId(this.getGroupId());
     }
 
+    @Override
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         super.run(monitor);
         try {
@@ -95,14 +100,38 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
         String directoryName = serviceManager.getRootFolderName(tempFolder);
         exportChoiceMap.put(ExportChoice.needJobItem, false);
         for (RepositoryNode node : nodes) {
-            JobScriptsManager manager = new OSGIJavaScriptForESBWithMavenManager(exportChoiceMap, "Default", "all", //$NON-NLS-1$  //$NON-NLS-2$
-                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+            JobScriptsManager osgiManager = new OSGIJavaScriptForESBWithMavenManager(exportChoiceMap, "Default", "all", //$NON-NLS-1$  //$NON-NLS-2$
+                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES) {
+
+                @Override
+                protected Map<String, String> getMainMavenProperties(Item item) {
+                    Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
+                    mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), getGroupId());
+                    return mavenPropertiesMap;
+                }
+
+                @Override
+                protected void setMavenBuildScriptProperties(Document pomDocument, Map<String, String> mavenPropertiesMap) {
+                    super.setMavenBuildScriptProperties(pomDocument, mavenPropertiesMap);
+                    String itemName = mavenPropertiesMap.get(EMavenBuildScriptProperties.ItemName.getVarScript());
+                    if (itemName != null && pomDocument != null) {
+                        Element rootElement = pomDocument.getRootElement();
+                        // Because re-use the osgi bundle for service, but for artifactId, there is no "-bundle"
+                        // suffix. TDI-23491
+                        Element artifactIdEle = rootElement.element("artifactId"); //$NON-NLS-1$
+                        if (artifactIdEle != null) {
+                            artifactIdEle.setText(itemName);
+                        }
+                    }
+                }
+
+            };
             String artefactName = serviceManager.getNodeLabel(node);
             String version = node.getObject().getVersion();
             // String fileName = artefactName + "-" + version;
-            String destinationPath = tempFolder + PATH_SEPERATOR + artefactName + manager.getOutputSuffix();
-            manager.setDestinationPath(destinationPath);
-            JobExportAction job = new JobExportAction(Collections.singletonList(node), version, manager, directoryName);
+            String destinationPath = tempFolder + PATH_SEPERATOR + artefactName + osgiManager.getOutputSuffix();
+            osgiManager.setDestinationPath(destinationPath);
+            JobExportAction job = new JobExportAction(Collections.singletonList(node), version, osgiManager, directoryName);
             job.run(monitor);
             ZipToFile.unZipFile(destinationPath, tempFolder + PATH_SEPERATOR + ServiceExportWithMavenManager.OPERATIONS_PATH
                     + artefactName);
@@ -146,7 +175,7 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
             tempDestination = tempDestination + PATH_SEPERATOR + fileName;
         }
         if (tempDestination.length() != 0 && !tempDestination.endsWith(File.separator)) {
-            int dotIndex = tempDestination.lastIndexOf('.'); //$NON-NLS-1$
+            int dotIndex = tempDestination.lastIndexOf('.');
             if (dotIndex != -1) {
                 int pathSepIndex = tempDestination.lastIndexOf(PATH_SEPERATOR);
                 if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
