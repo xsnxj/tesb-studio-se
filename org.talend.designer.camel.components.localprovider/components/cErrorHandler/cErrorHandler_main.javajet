@@ -58,7 +58,7 @@
 		}
 		
 		String useOriginalMessage = ElementParameterParser.getValue(node, "__USE_ORIGINAL_MESSAGE__");
-		if("true".equals(useOriginalMessage)){
+		if("true".equals(useOriginalMessage) &&  "true".equals(deadLetter)){
 			sb.append(".useOriginalMessage()");
 		}
 		
@@ -98,5 +98,3 @@
 <%
 	}
 %>
-
-
