@@ -101,13 +101,9 @@ if (useSl) {
 } else {
 <%
 
-String connTimeoutStr = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
-String connTimeoutSec = (connTimeoutStr != null && !("").equals(connTimeoutStr)) ? connTimeoutStr : "20";
-long connTimeout = (long) (Double.valueOf(connTimeoutSec) * 1000);
+String connTimeout = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
 
-String receiveTimeoutStr = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT__");
-String receiveTimeoutSec = (receiveTimeoutStr != null && !("").equals(receiveTimeoutStr)) ? receiveTimeoutStr : "20";
-long receiveTimeout = (long) (Double.valueOf(receiveTimeoutSec) * 1000);
+String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT__");
 
 String tempPath = ElementParameterParser.getValue(node, "__TMPPATH__");
 if ("".equals(tempPath)) { tempPath="\"\""; }
@@ -228,8 +224,8 @@ if ("".equals(tempPath)) { tempPath="\"\""; }
 
 	org.talend.ws.helper.conf.ServiceHelperConfiguration config_<%=cid%> = new org.talend.ws.helper.conf.ServiceHelperConfiguration();
 
-	config_<%=cid%>.setConnectionTimeout(Long.valueOf(<%=connTimeout%>));
-	config_<%=cid%>.setReceiveTimeout(Long.valueOf(<%=receiveTimeout%>));
+	config_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000));
+	config_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
 
 	config_<%=cid%>.setKeyStoreFile(System.getProperty("javax.net.ssl.keyStore"));
 	config_<%=cid%>.setKeyStoreType(System.getProperty("javax.net.ssl.keyStoreType"));
