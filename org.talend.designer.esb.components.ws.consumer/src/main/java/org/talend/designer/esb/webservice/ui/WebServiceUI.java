@@ -15,6 +15,7 @@ package org.talend.designer.esb.webservice.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -886,19 +887,18 @@ public class WebServiceUI extends AbstractWebService {
 
     private void populateSchema() {
 		if (currentFunction == null || populateCheckbox == null
-				|| !(populateCheckbox.getSelection())) {
+				|| !populateCheckbox.getSelection()) {
     		return;
-    	}  	
-		if (WebServiceComponentPlugin.hasRepositoryServices()) {
-			try {
-				Class<?> forName = Class
-						.forName("org.talend.repository.services.action.PublishMetadataAction");
-				Object newInstance = forName.newInstance();
-				forName.getMethod("process", Definition.class).invoke(
-						newInstance, def);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+    	}
+		try {
+			Class<?> forName = Class
+					.forName("org.talend.repository.services.action.PublishMetadataAction");
+			Object newInstance = forName.newInstance();
+			forName.getMethod("process", Definition.class, Map.class).invoke(
+					newInstance, def, Collections.emptyMap());
+		} catch (Exception e) {
+			WebServiceComponentPlugin.getDefault().getLog().log(
+					new Status(IStatus.ERROR, WebServiceComponentPlugin.PLUGIN_ID, e.getMessage(), e));
 		}
     }
     
