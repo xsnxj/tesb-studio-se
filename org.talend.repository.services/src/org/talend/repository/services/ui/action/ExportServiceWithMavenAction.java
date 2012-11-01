@@ -129,13 +129,14 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
             String artefactName = serviceManager.getNodeLabel(node);
             String version = node.getObject().getVersion();
             // String fileName = artefactName + "-" + version;
-            String destinationPath = tempFolder + PATH_SEPERATOR + artefactName + osgiManager.getOutputSuffix();
+            File destFile = new File(tempFolder + PATH_SEPERATOR + artefactName + osgiManager.getOutputSuffix());
+            String destinationPath = destFile.getAbsolutePath();
             osgiManager.setDestinationPath(destinationPath);
             JobExportAction job = new JobExportAction(Collections.singletonList(node), version, osgiManager, directoryName);
             job.run(monitor);
             ZipToFile.unZipFile(destinationPath, tempFolder + PATH_SEPERATOR + ServiceExportWithMavenManager.OPERATIONS_PATH
                     + artefactName);
-            FilesUtils.removeFile(new File(destinationPath));
+            FilesUtils.removeFile(destFile);
         }
     }
 
