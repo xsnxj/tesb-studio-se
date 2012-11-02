@@ -274,7 +274,16 @@
 	            id="org.talend.camel.designer.UpdateCXFDataFormatMigrationTask"
 	            name="UpdateCXFDataFormatMigrationTask"
 	            version="5.1.2">
-	      </projecttask>
+	         </projecttask>
+	         <projecttask
+	            beforeLogon="false"
+	            breaks="5.2.0"
+	            class="org.talend.camel.designer.migration.FinalVersionUpgradeMigrationTask"
+	            description="FinalVersionUpgradeMigrationTask"
+	            id="org.talend.camel.designer.FinalVersionUpgradeMigrationTask"
+	            name="FinalVersionUpgradeMigrationTask"
+	            version="5.2.1">
+	      	</projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
