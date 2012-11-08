@@ -30,12 +30,14 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.core.model.process.IContext;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.services.ui.action.ExportServiceWithMavenAction;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportWithMavenManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
 /**
@@ -107,8 +109,7 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
                 RepositoryNode node = (RepositoryNode) iterator.next();
                 if (mainPage.isAddMavenScript()) {
                     ServiceExportWithMavenManager mavenManager = new ServiceExportWithMavenManager(exportChoiceMap,
-                            "Default", "all", //$NON-NLS-1$  //$NON-NLS-2$
-                            IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+                            IContext.DEFAULT, JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
                     action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, node, destinationValue);
                 } else {
                     action = new ExportServiceAction(exportChoiceMap, node, destinationValue);

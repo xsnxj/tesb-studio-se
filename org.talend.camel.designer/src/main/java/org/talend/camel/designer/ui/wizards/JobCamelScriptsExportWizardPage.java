@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -114,7 +115,7 @@ public abstract class JobCamelScriptsExportWizardPage extends JobScriptsExportWi
     @Override
     protected String getOutputSuffix() {
         // TESB-2944 set default suffix to .jar
-        return ".jar"; //$NON-NLS-1$
+        return FileConstants.JAR_FILE_SUFFIX;
     }
 
     @Override

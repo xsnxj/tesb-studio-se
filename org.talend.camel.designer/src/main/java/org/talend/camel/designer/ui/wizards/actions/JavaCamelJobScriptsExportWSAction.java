@@ -17,6 +17,7 @@ import org.talend.camel.designer.util.KarFileGenerator;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
@@ -26,7 +27,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -163,7 +163,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         } catch (PersistenceException e) {
             throw new InvocationTargetException(e);
         }
-        if (JobScriptsExportWizardPage.ALL_VERSIONS.equals(jobVersion)) {
+        if (RelationshipItemBuilder.LATEST_VERSION.equals(jobVersion)) {
             jobVersion = referencedJobNode.getObject().getVersion();
         }
 

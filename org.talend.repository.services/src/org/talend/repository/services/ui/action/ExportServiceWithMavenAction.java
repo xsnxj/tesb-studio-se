@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.model.process.IContext;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.runprocess.IProcessor;
@@ -100,8 +101,8 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
         String directoryName = serviceManager.getRootFolderName(tempFolder);
         exportChoiceMap.put(ExportChoice.needJobItem, false);
         for (RepositoryNode node : nodes) {
-            JobScriptsManager osgiManager = new OSGIJavaScriptForESBWithMavenManager(exportChoiceMap, "Default", "all", //$NON-NLS-1$  //$NON-NLS-2$
-                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES) {
+            JobScriptsManager osgiManager = new OSGIJavaScriptForESBWithMavenManager(exportChoiceMap, IContext.DEFAULT,
+                    JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES) {
 
                 @Override
                 protected Map<String, String> getMainMavenProperties(Item item) {

@@ -140,7 +140,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         String destinationPath = serviceManager.getDestinationPath();
-        if (!destinationPath.endsWith(".kar")) { //$NON-NLS-1$
+        if (!destinationPath.endsWith(FileConstants.KAR_FILE_SUFFIX)) {
             destinationPath = destinationPath.replace("\\", PATH_SEPERATOR); //$NON-NLS-1$
             if (destinationPath.indexOf(PATH_SEPERATOR) != -1) {
                 String filePath = destinationPath.substring(0, destinationPath.lastIndexOf(PATH_SEPERATOR) + 1);
@@ -148,7 +148,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 if (fileName.indexOf(".") != -1) { //$NON-NLS-1$
                     fileName = fileName.substring(0, fileName.lastIndexOf(".")); //$NON-NLS-1$
                 }
-                destinationPath = filePath + fileName + ".kar"; //$NON-NLS-1$
+                destinationPath = filePath + fileName + FileConstants.KAR_FILE_SUFFIX;
             }
         }
 
@@ -243,7 +243,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected String getControlBundleFilePath() {
         String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-        String fileName = artefactName + "-" + getServiceVersion() + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+        String fileName = artefactName + "-" + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX; //$NON-NLS-1$ 
         String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
                 fileName).getAbsolutePath();
 
