@@ -26,7 +26,7 @@ imports="
 	
 	String uriRef = "uriMap.get(\"" + cid + "\")";
 	
-	String endpointVar = "endpoint" + cid;
+	String endpointVar = "endpoint_" + node.getUniqueName();
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		IConnection iConnection = conns.get(0);
