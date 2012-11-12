@@ -13,6 +13,9 @@
             name="CamelStat">
          <library
                name="camel-core-2.10.2.jar">
+            <bundleId
+                  bundleId="org.apache.camel.camel-core">
+            </bundleId>
          </library>
       </systemRoutine>
    </extension>
