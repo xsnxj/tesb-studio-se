@@ -90,4 +90,8 @@ public class EsbSeBrandingService extends AbstractTalendBrandingService {
         // TODO Auto-generated method stub
         return EsbStartingBrowser.ID;
     }
+
+    public String getUserManuals() {
+        return "ESB";
+    }
 }
