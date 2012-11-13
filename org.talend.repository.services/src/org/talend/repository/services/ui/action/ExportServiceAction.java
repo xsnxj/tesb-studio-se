@@ -298,6 +298,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public String getTmpFolderPath() {
+        if (tempFolder != null) {
+            return tempFolder;
+        }
         Project project = ProjectManager.getInstance().getCurrentProject();
         String tmpFolderPath;
         try {
@@ -312,7 +315,24 @@ public class ExportServiceAction implements IRunnableWithProgress {
             tmpFolder.mkdirs();
         }
 
-        return tmpFolderPath;
+        File tmpExportFolder = null;
+        try {
+            tmpExportFolder = File.createTempFile("service", null, tmpFolder); //$NON-NLS-1$
+            if (tmpExportFolder.exists() && tmpExportFolder.isFile()) {
+                tmpExportFolder.delete();
+                tmpExportFolder.mkdirs();
+            }
+        } catch (IOException e) {
+        } finally {
+            if (tmpExportFolder != null) {
+                tmpExportFolder.deleteOnExit();
+            }
+        }
+        if (tmpExportFolder != null) {
+            tmpFolder = tmpExportFolder;
+        }
+
+        return tmpFolder.getAbsolutePath();
     }
 
 }
