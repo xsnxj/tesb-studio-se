@@ -161,7 +161,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
                         getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
                 job.run(monitor);
-                bundles.put(serviceManager.getNodeLabel(node), tempFolder);
+                bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
             }
             try {
                 final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
