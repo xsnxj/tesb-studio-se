@@ -15,4 +15,5 @@ Import-Package: org.eclipse.emf.common.util,
  org.eclipse.emf.ecore,
  org.talend.core.model.properties,
  org.talend.core.repository.model,
+ org.talend.designer.core.model.components,
  org.talend.designer.core.model.utils.emf.talendfile

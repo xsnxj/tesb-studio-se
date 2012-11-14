@@ -36,6 +36,9 @@ public class ExtensionPointsReader {
 	private Map<String, Set<ExRequireBundle>> componentRequireBundles = new HashMap<String, Set<ExRequireBundle>>();
 	private Set<ExRequireBundle> requireBundlesForAll = new HashSet<ExRequireBundle>();
 	private Set<ExImportPackage> importPackagesForAll = new HashSet<ExImportPackage>();
+	
+	//this one is special case for ROUTE_WHEN Connection Type
+	private Map<String, Set<ExImportPackage>> languageImportPackages = new HashMap<String, Set<ExImportPackage>>();
 
 	private ExtensionPointsReader() {
 		initialization();
@@ -45,6 +48,40 @@ public class ExtensionPointsReader {
 		readRegisteredBundleClasspaths();
 		readRegisteredImportPackages();
 		readRegisteredRequireBundles();
+		initLanguageDependenciesMap();
+	}
+	
+
+	private void initLanguageDependenciesMap() {
+		/*
+		 * for languages, please check init(INode, INode, EConnectionType, String, String, String, boolean)
+		 * of org.talend.designer.core.ui.editor.connections.Connection, and see the EConnectionType.ROUTE_WHEN case
+		 */
+//        String[] languages = { "constant", "el", "groovy", "header", "javaScript", "jxpath", "mvel", "ognl", "php", "property",
+//                "python", "ruby", "simple", "spel", "sql", "xpath", "xquery" };
+//        
+        Set<ExImportPackage> groovySet = new HashSet<ExImportPackage>();
+        ExImportPackage importPackage = new ExImportPackage();
+        importPackage.setPackageName("groovy.lang");
+        groovySet.add(importPackage);
+        
+        importPackage = new ExImportPackage();
+        importPackage.setPackageName("org.codehaus.groovy.runtime");
+        groovySet.add(importPackage);
+        
+        importPackage = new ExImportPackage();
+        importPackage.setPackageName("org.codehaus.groovy.runtime.callsite");
+        groovySet.add(importPackage);
+        
+        importPackage = new ExImportPackage();
+        importPackage.setPackageName("org.codehaus.groovy.runtime.typehandling");
+        groovySet.add(importPackage);
+        
+        importPackage = new ExImportPackage();
+        importPackage.setPackageName("org.codehaus.groovy.reflection");
+        groovySet.add(importPackage);
+       
+        languageImportPackages.put("groovy", groovySet);
 	}
 
 	private void readRegisteredBundleClasspaths() {
@@ -243,5 +280,9 @@ public class ExtensionPointsReader {
 
 	public Map<String, Set<ExRequireBundle>> getComponentRequireBundles() {
 		return componentRequireBundles;
+	}
+	
+	public Map<String, Set<ExImportPackage>> getLanguageImportPackages() {
+		return languageImportPackages;
 	}
 }

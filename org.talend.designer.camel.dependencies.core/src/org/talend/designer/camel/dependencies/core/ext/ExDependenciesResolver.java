@@ -1,10 +1,12 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
+import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -13,6 +15,8 @@ import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
+import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
@@ -34,6 +38,15 @@ public class ExDependenciesResolver {
 	}
 
 	private void initialize() {
+		handleAllNodes();
+		handleAllConnections();
+	}
+
+	/**
+	 * most of the datas of a node are coming from extension point
+	 * except the cTalendJob
+	 */
+	private void handleAllNodes() {
 		Map<String, Set<ExBundleClasspath>> exClasspaths = ExtensionPointsReader.INSTANCE
 				.getBundleClasspaths();
 		Map<String, Set<ExImportPackage>> exImportPackages = ExtensionPointsReader.INSTANCE
@@ -212,9 +225,62 @@ public class ExDependenciesResolver {
 		exImportPackages = null;
 
 		exRequireBundles = null;
-
 	}
 
+	/**
+	 * special for ROUTE_WHEN connection case
+	 * we need to handle it specially according the selected language
+	 */
+	private void handleAllConnections() {
+		EList connections = item.getProcess().getConnection();
+		Iterator iterator = connections.iterator();
+		Map<String, Set<ExImportPackage>> languageImportPackages = ExtensionPointsReader.INSTANCE.getLanguageImportPackages();
+		while(iterator.hasNext()){
+			Object next = iterator.next();
+			if(next == null || !(next instanceof ConnectionType)){
+				continue;
+			}
+			ConnectionType connection = (ConnectionType) next;
+			String connectorName = connection.getConnectorName();
+			if(!EConnectionType.ROUTE_WHEN.getName().equals(connectorName)){
+				continue;
+			}
+			String languageName = handleROUTEWHENconnection(connection);
+			if(languageName == null){
+				continue;
+			}
+			Set<ExImportPackage> languageImportSet = languageImportPackages.get(languageName);
+			if(languageImportSet == null){
+				continue;
+			}
+			for(ExImportPackage eip: languageImportSet){
+				importPackages.add(eip.toTargetIgnorePredicates());
+			}
+		}
+		
+        
+	}
+
+	private String handleROUTEWHENconnection(ConnectionType connection) {
+		EList elementParameter = connection.getElementParameter();
+		Iterator iterator = elementParameter.iterator();
+		while(iterator.hasNext()){
+			Object next = iterator.next();
+			if(next == null || !(next instanceof ElementParameterType)){
+				continue;
+			}
+			ElementParameterType ept = (ElementParameterType) next;
+			if(!EParameterName.ROUTETYPE.getName().equals(ept.getName())){
+				continue;
+			}
+			String value = ept.getValue();
+			if(value==null){
+				continue;
+			}
+			return value;
+		}
+		return null;
+	}
 
 	public BundleClasspath[] getBundleClasspaths() {
 		return classpaths.toArray(new BundleClasspath[0]);
