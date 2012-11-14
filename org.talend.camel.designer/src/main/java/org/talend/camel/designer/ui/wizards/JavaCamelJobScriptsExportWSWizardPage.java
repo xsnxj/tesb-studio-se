@@ -417,7 +417,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         } else if (getCurrentExportType().equals(EXPORTTYPE_OSGI)) {
             dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (getCurrentExportType().equals(EXPORTTYPE_KAR)) {
-            dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            if (isAddMavenScript()) {
+                dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         } else if (getCurrentExportType().equals(EXPORTTYPE_PETALSESB)) {
             dialog.setFilterExtensions(new String[] { "*.zip", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
@@ -450,11 +454,17 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         if (selectedFileName == null) {
             return;
         }
-        if (!selectedFileName.endsWith(this.getOutputSuffix())) {
-            selectedFileName += this.getOutputSuffix();
+        String idealSuffix;
+        if (isAddMavenScript()) {
+            idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
+        } else {
+            idealSuffix = getOutputSuffix();
+        }
+        if (!selectedFileName.endsWith(idealSuffix)) {
+            selectedFileName += idealSuffix;
         }
         // when user change the name of job,will add the version auto
-        if (selectedFileName != null && !selectedFileName.endsWith(this.getSelectedJobVersion() + this.getOutputSuffix())) {
+        if (selectedFileName != null && !selectedFileName.endsWith(this.getSelectedJobVersion() + idealSuffix)) {
             String b = selectedFileName.substring(0, (selectedFileName.length() - 4));
             File file = new File(b);
 
@@ -463,9 +473,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             String s = (String) this.getDefaultFileName().get(0);
 
             if (str.equals(s)) {
-                selectedFileName = b + "_" + this.getDefaultFileName().get(1) + this.getOutputSuffix(); //$NON-NLS-1$
+                selectedFileName = b + "_" + this.getDefaultFileName().get(1) + idealSuffix; //$NON-NLS-1$
             } else {
-                selectedFileName = b + this.getOutputSuffix();
+                selectedFileName = b + idealSuffix;
             }
 
         }
@@ -499,6 +509,14 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 section.put(DESTINATION_FILE, destination);
             }
         }
+    }
+
+    public boolean isAddMavenScript() {
+        if (addBSButton != null) {
+            return addBSButton.getSelection();
+        }
+
+        return false;
     }
 
     protected void restoreWidgetValuesForPetalsESB() {
