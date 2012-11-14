@@ -32,6 +32,29 @@
 	<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
   </CONNECTORS>
 	<PARAMETERS>
+	   	<PARAMETER NAME="ROUTE_WHEN_LANGUAGES" FIELD="CLOSED_LIST" NUM_ROW="4"
+			SHOW="false">                  
+			<ITEMS DEFAULT="constant">
+				<ITEM NAME="none" VALUE="none" />
+				<ITEM NAME="constant" VALUE="constant" />
+				<ITEM NAME="el" VALUE="el" />
+				<ITEM NAME="groovy" VALUE="groovy" />
+				<ITEM NAME="header" VALUE="header" />
+				<ITEM NAME="javaScript" VALUE="javaScript" />
+				<ITEM NAME="jxpath" VALUE="jxpath" />
+				<ITEM NAME="mvel" VALUE="mvel" />
+				<ITEM NAME="ognl" VALUE="ognl" />
+				<ITEM NAME="php" VALUE="php" />
+				<ITEM NAME="property" VALUE="property" />
+				<ITEM NAME="python" VALUE="python" />
+				<ITEM NAME="ruby" VALUE="ruby" />
+				<ITEM NAME="simple" VALUE="simple" />
+				<ITEM NAME="spel" VALUE="spel" />
+				<ITEM NAME="sql" VALUE="sql" />
+				<ITEM NAME="xpath" VALUE="xpath" />
+				<ITEM NAME="xquery" VALUE="xquery" />
+			</ITEMS>
+		</PARAMETER>
 	</PARAMETERS>
    <ADVANCED_PARAMETERS>
    </ADVANCED_PARAMETERS>

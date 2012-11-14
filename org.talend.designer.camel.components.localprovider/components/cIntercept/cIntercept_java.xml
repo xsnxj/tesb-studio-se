@@ -28,6 +28,17 @@
   </CONNECTORS>
 
    <PARAMETERS>
+   		<PARAMETER NAME="ROUTE_WHEN_LANGUAGES" FIELD="CLOSED_LIST" NUM_ROW="4"
+			SHOW="false">                  
+			<ITEMS DEFAULT="constant">
+				<ITEM NAME="none" VALUE="none" />
+				<ITEM NAME="constant" VALUE="constant" />
+				<ITEM NAME="header" VALUE="header" />
+				<ITEM NAME="property" VALUE="property" />
+				<ITEM NAME="simple" VALUE="simple" />
+				<ITEM NAME="xpath" VALUE="xpath" />
+			</ITEMS>
+		</PARAMETER>
    </PARAMETERS>
    
    <ADVANCED_PARAMETERS>
