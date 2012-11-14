@@ -30,9 +30,12 @@ import javax.xml.xpath.XPathFactory;
 import org.eclipse.emf.common.util.EList;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -60,6 +63,8 @@ public final class CamelFeatureUtil {
 	private static final String VERSION_SCOPE = "[2,5)";
 
 	private static final String CAMEL_SCRIPT_JAVASCRIPT = "camel-script-javascript";
+	private static final String CAMEL_SCRIPT = "camel-script";
+	private static final String CAMEL_GROOVY = "camel-groovy";
 
 	private static final String LANGUAGES = "LANGUAGES";
 
@@ -370,12 +375,18 @@ public final class CamelFeatureUtil {
 		features.add(new XMLFeatureModel("spring-tx", SPRING_VERSION_RANGE));
 		features.add(new XMLFeatureModel("talend-job-controller", "[5,6)"));
 
-		addNodeSpecailFeature(features, processType);
+		addProcessSpecialFeatures(features, processType);
 
 		return features;
 	}
 
-	private static void addNodeSpecailFeature(Set<XMLFeatureModel> features,
+	private static void addProcessSpecialFeatures(Set<XMLFeatureModel> features,
+			ProcessType processType) {
+		addNodesSpecialFeatures(features, processType);
+		addConnectionsSpecialFeatures(features, processType);
+	}
+
+	private static void addNodesSpecialFeatures(Set<XMLFeatureModel> features,
 			ProcessType processType) {
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
@@ -398,6 +409,45 @@ public final class CamelFeatureUtil {
 		}
 	}
 
+	private static void addConnectionsSpecialFeatures(
+			Set<XMLFeatureModel> features, ProcessType processType) {
+		EList connections = processType.getConnection();
+		Iterator iterator = connections.iterator();
+		while(iterator.hasNext()){
+			Object next = iterator.next();
+			if(!(next instanceof ConnectionType)){
+				continue;
+			}
+			ConnectionType con = (ConnectionType) next;
+			if(!EConnectionType.ROUTE_WHEN.getName().equals(con.getConnectorName())){
+				continue;
+			}
+			EList elementParameters = con.getElementParameter();
+			Iterator paraIter = elementParameters.iterator();
+			while(paraIter.hasNext()){
+				Object paraNext = paraIter.next();
+				if(!(paraNext instanceof ElementParameterType)){
+					continue;
+				}
+				ElementParameterType ept = (ElementParameterType) paraNext;
+				if(!EParameterName.ROUTETYPE.getName().equals(ept.getName())){
+					continue;
+				}
+//	            String[] strList = { "constant", "el", "groovy", "header", "javaScript", "jxpath", "mvel", "ognl", "php", "property",
+//	                    "python", "ruby", "simple", "spel", "sql", "xpath", "xquery" };
+				if("groovy".equals(ept.getValue())){
+					features.add(new XMLFeatureModel(CAMEL_GROOVY,
+							VERSION_SCOPE));
+				}else if("javaScript".equals(ept.getValue())){
+					features.add(new XMLFeatureModel(CAMEL_SCRIPT,
+							VERSION_SCOPE));
+					features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
+							VERSION_SCOPE));
+				}
+			}
+		}
+	}
+	
 	protected static void headleSetHeaderCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		ElementParameterType element = findElementParameterByName("VALUES", currentNode.getElementParameter());
