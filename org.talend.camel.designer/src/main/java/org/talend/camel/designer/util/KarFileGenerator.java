@@ -34,7 +34,13 @@ public class KarFileGenerator {
         String itemName = routeProperty.getDisplayName();
         String projectName = routerNode.getObject().getProjectLabel().toLowerCase();
 
-        ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
+        // Create the parent file if not exist
+        File destFile = new File(destination);
+        File parentDestFile = destFile.getParentFile();
+        if (!parentDestFile.exists()) {
+            parentDestFile.mkdirs();
+        }
+        ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
 
         StringBuilder sb = new StringBuilder();
         sb.append("repository/").append(projectName).append("/").append(itemName).append("/");

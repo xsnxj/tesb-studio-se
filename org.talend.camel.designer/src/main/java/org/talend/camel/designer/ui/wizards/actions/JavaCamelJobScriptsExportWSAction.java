@@ -65,6 +65,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         exportChoiceMap.put(ExportChoice.needSourceCode, false);
         exportChoiceMap.put(ExportChoice.addStatistics, addStatisticsCode);
         manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        manager.setBundleVersion(version);
     }
 
     public JavaCamelJobScriptsExportWSAction(RepositoryNode routeNode, String version, String bundleVersion) {
