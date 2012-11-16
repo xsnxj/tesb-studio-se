@@ -12,8 +12,10 @@
 // ============================================================================
 package org.talend.camel.designer.check;
 
+import java.text.MessageFormat;
 import java.util.List;
 
+import org.talend.camel.designer.i18n.CamelDesignerMessages;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IElementParameter;
@@ -44,7 +46,7 @@ public class CheckJMSNodesService implements ICheckNodesService {
 	 * .core.ui.editor.nodes.Node)
 	 */
 	public void checkNode(Node node) {
-		if (!node.getComponent().getName().equals("cJMS")) {
+		if (!node.getComponent().getName().equals("cJMS")) { //$NON-NLS-1$
 			return;
 		}
 		List<? extends IElementParameter> parameters = node
@@ -55,9 +57,8 @@ public class CheckJMSNodesService implements ICheckNodesService {
 						EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
 				if (idParam == null || idParam.getValue() == null
 						|| idParam.getValue().toString().isEmpty()) {
-					String errorMessage = "Parameter ("
-							+ param.getDisplayName()
-							+ ") is empty but is required.";
+					String errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckJMSNodesService_emptyParaError") //$NON-NLS-1$
+							, param.getDisplayName());
 					Problems.add(ProblemStatus.ERROR, (Element) node,
 							errorMessage);
 				} else {
@@ -71,8 +72,9 @@ public class CheckJMSNodesService implements ICheckNodesService {
 						}
 					}
 					if (!has) {
-						String errorMessage = "Parameter ("
-								+ param.getDisplayName() + ") doesn't exist.";
+						String errorMessage = MessageFormat
+								.format(CamelDesignerMessages
+										.getString("CheckJMSNodesService_nonExistError"), param.getDisplayName()); //$NON-NLS-1$
 						Problems.add(ProblemStatus.ERROR, (Element) node,
 								errorMessage);
 					}

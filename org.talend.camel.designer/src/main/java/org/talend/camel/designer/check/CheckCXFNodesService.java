@@ -12,6 +12,9 @@
 // ============================================================================
 package org.talend.camel.designer.check;
 
+import java.text.MessageFormat;
+
+import org.talend.camel.designer.i18n.CamelDesignerMessages;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IElementParameter;
@@ -43,44 +46,42 @@ public class CheckCXFNodesService implements ICheckNodesService {
 	 * .core.ui.editor.nodes.Node)
 	 */
 	public void checkNode(Node node) {
-		if (!node.getComponent().getName().equals("cCXF")) {
+		if (!node.getComponent().getName().equals("cCXF")) { //$NON-NLS-1$
 			return;
 		}
 		IElementParameter resourceParam = node
 				.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
 						.getName());
-		IElementParameter wsdlFileParam = node.getElementParameter("WSDL_FILE");
+		IElementParameter wsdlFileParam = node.getElementParameter("WSDL_FILE"); //$NON-NLS-1$
 		IElementParameter serviceParam = node
-				.getElementParameter("SERVICE_TYPE");
-		IElementParameter wsdlTypeParam = node.getElementParameter("WSDL_TYPE");
+				.getElementParameter("SERVICE_TYPE"); //$NON-NLS-1$
+		IElementParameter wsdlTypeParam = node.getElementParameter("WSDL_TYPE"); //$NON-NLS-1$
 		IElementParameter clazzParam = node
-				.getElementParameter("SERVICE_CLASS");
+				.getElementParameter("SERVICE_CLASS"); //$NON-NLS-1$
 
 		// Select WSDL
-		if (serviceParam != null && "wsdlURL".equals(serviceParam.getValue())) {
+		if (serviceParam != null && "wsdlURL".equals(serviceParam.getValue())) { //$NON-NLS-1$
 			// Select File
 			if (wsdlTypeParam != null
-					&& "file".equals(wsdlTypeParam.getValue())) {
+					&& "file".equals(wsdlTypeParam.getValue())) { //$NON-NLS-1$
 				// WSDL file is empty
 				if (wsdlFileParam == null || wsdlFileParam.getValue() == null
 						|| wsdlFileParam.getValue().toString().isEmpty()
-						|| wsdlFileParam.getValue().toString().equals("\"\"")) {
-					String errorMessage = "Parameter ("
-							+ wsdlFileParam.getDisplayName()
-							+ ") is empty but is required.";
+						|| wsdlFileParam.getValue().toString().equals("\"\"")) { //$NON-NLS-1$
+					String errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
+							, wsdlFileParam.getDisplayName());
 					Problems.add(ProblemStatus.ERROR, (Element) node,
 							errorMessage);
 				}
 			} // Select Repository
 			else if (wsdlTypeParam != null
-					&& "repo".equals(wsdlTypeParam.getValue())) {
+					&& "repo".equals(wsdlTypeParam.getValue())) { //$NON-NLS-1$
 				// WSDL file is empty
-				String errorMessage = "";
+				String errorMessage = ""; //$NON-NLS-1$
 				if (resourceParam == null || resourceParam.getValue() == null
 						|| resourceParam.getValue().toString().isEmpty()) {
-					errorMessage = "Parameter ("
-							+ wsdlFileParam.getDisplayName()
-							+ ") is empty but is required.";
+					errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
+							, wsdlFileParam.getDisplayName());
 					Problems.add(ProblemStatus.ERROR, (Element) node,
 							errorMessage);
 				} else {
@@ -89,22 +90,19 @@ public class CheckCXFNodesService implements ICheckNodesService {
 						IRepositoryViewObject lastVersion = ProxyRepositoryFactory
 								.getInstance().getLastVersion(id);
 						if (lastVersion == null) {
-							errorMessage = "Parameter ("
-									+ wsdlFileParam.getDisplayName()
-									+ ") doesn't exist.";
+							errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_nonexistError") //$NON-NLS-1$
+									, wsdlFileParam.getDisplayName());
 							Problems.add(ProblemStatus.ERROR, (Element) node,
 									errorMessage);
 						} else if (lastVersion.isDeleted()) {
-							errorMessage = "Resource used by "
-									+ resourceParam.getDisplayName()
-									+ " has been deleted.";
+							errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_removedError") //$NON-NLS-1$
+									, resourceParam.getDisplayName());
 							Problems.add(ProblemStatus.ERROR, (Element) node,
 									errorMessage);
 						}
 					} catch (PersistenceException e) {
-						errorMessage = "Parameter ("
-								+ wsdlFileParam.getDisplayName()
-								+ ") is empty but is required.";
+						errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
+								, wsdlFileParam.getDisplayName());
 						Problems.add(ProblemStatus.ERROR, (Element) node,
 								errorMessage);
 					}
@@ -113,13 +111,12 @@ public class CheckCXFNodesService implements ICheckNodesService {
 		}
 		// Select Service class
 		else if (serviceParam != null
-				&& "serviceClass".equals(serviceParam.getValue())) {
+				&& "serviceClass".equals(serviceParam.getValue())) { //$NON-NLS-1$
 			// Service class is empty
 			if (clazzParam == null || clazzParam.getValue() == null
 					|| clazzParam.getValue().toString().isEmpty()) {
-				String errorMessage = "Parameter ("
-						+ wsdlFileParam.getDisplayName()
-						+ ") is empty but is required.";
+				String errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
+						, wsdlFileParam.getDisplayName());
 				Problems.add(ProblemStatus.ERROR, (Element) node, errorMessage);
 			}
 		}
