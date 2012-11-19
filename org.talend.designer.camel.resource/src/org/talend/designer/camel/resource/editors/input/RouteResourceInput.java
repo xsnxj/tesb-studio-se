@@ -17,7 +17,9 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.Item;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
+import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
 import org.talend.repository.editor.RepositoryEditorInput;
+import org.talend.repository.model.IRepositoryNode;
 
 /**
  * @author xpli
@@ -37,9 +39,12 @@ public class RouteResourceInput extends RepositoryEditorInput {
 	 * @param item
 	 * @return
 	 */
-	public static RouteResourceInput createInput(RouteResourceItem item) {
-		return new RouteResourceInput(RouteResourceUtil.getSourceFile(item),
-				item);
+	public static RouteResourceInput createInput(IRepositoryNode node, RouteResourceItem item) {
+		RouteResourceInput routeResourceInput = new RouteResourceInput(
+				RouteResourceUtil.getSourceFile(item), item);
+		routeResourceInput.setRepositoryNode(node);
+		routeResourceInput.setReadOnly(RouteResourceEditorUtil.isReadOnly(node));
+		return routeResourceInput;
 	}
 
 	/**

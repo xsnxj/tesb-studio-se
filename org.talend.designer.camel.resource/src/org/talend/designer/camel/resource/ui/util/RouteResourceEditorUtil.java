@@ -14,13 +14,16 @@ import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.RouteResoureChangeListener;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
+import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryService;
 
-public class FindPreferEditorUtil {
+public class RouteResourceEditorUtil {
 
-	private static FindPreferEditorUtil INSTANCE = new FindPreferEditorUtil();
+	private static RouteResourceEditorUtil INSTANCE = new RouteResourceEditorUtil();
 
-	private FindPreferEditorUtil() {
+	private RouteResourceEditorUtil() {
 	}
 
 	/**
@@ -64,8 +67,7 @@ public class FindPreferEditorUtil {
 	public static void openDefaultEditor(final IWorkbenchPage page,
 			IRepositoryNode node, RouteResourceItem item) {
 		RouteResourceInput fileEditorInput = RouteResourceInput
-				.createInput(item);
-		fileEditorInput.setRepositoryNode(node);
+				.createInput(node, item);
 
 		openEditor(page, fileEditorInput, item, RouteResourceEditor.ID);
 	}
@@ -80,11 +82,13 @@ public class FindPreferEditorUtil {
 	public static void openEditor(final IWorkbenchPage page,
 			IRepositoryNode node, RouteResourceItem item) {
 		RouteResourceInput fileEditorInput = RouteResourceInput
-				.createInput(item);
-		fileEditorInput.setRepositoryNode(node);
-
-		openEditor(page, fileEditorInput, item,
-				FindPreferEditorUtil.INSTANCE.findPreferEditor(fileEditorInput));
+				.createInput(node, item);
+		if(fileEditorInput.isReadOnly()){
+			openDefaultEditor(page, node, item);
+		}else{
+			openEditor(page, fileEditorInput, item,
+					RouteResourceEditorUtil.INSTANCE.findPreferEditor(fileEditorInput));
+		}
 	}
 
 	/**
@@ -125,6 +129,15 @@ public class FindPreferEditorUtil {
 			}
 			MessageBoxExceptionHandler.process(e);
 		}
+	}
+	
+	public static boolean isReadOnly(IRepositoryNode node){
+		IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
+		IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
+		if (repFactory.isPotentiallyEditable(node.getObject())) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -19,9 +19,12 @@ import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialo
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditor;
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditorInput;
 import org.talend.repository.model.ERepositoryStatus;
+import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
+import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.AContextualAction;
+import org.talend.designer.core.DesignerPlugin;
 
 public class EditDependenciesContextualAction extends AContextualAction {
 
@@ -47,6 +50,15 @@ public class EditDependenciesContextualAction extends AContextualAction {
 		// should be simple element
 		RepositoryNode node = (RepositoryNode) firstElement;
 		if (ENodeType.REPOSITORY_ELEMENT != node.getType()) {
+			return;
+		}
+		/*
+		 * if the route is in a ref project
+		 * then it can't edit
+		 */
+		IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
+		IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
+		if (!repFactory.isPotentiallyEditable(node.getObject())) {
 			return;
 		}
 		// should be route process

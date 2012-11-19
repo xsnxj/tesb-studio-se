@@ -14,9 +14,8 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.i18n.Messages;
-import org.talend.designer.camel.resource.ui.util.FindPreferEditorUtil;
+import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
@@ -88,10 +87,6 @@ public class OpenDefaultEditorAction extends AContextualAction {
 	 */
 	public void init(TreeViewer viewer, IStructuredSelection selection) {
 		boolean canWork = !selection.isEmpty() && selection.size() == 1;
-		IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-		if (factory.isUserReadOnlyOnCurrentProject()) {
-			canWork = false;
-		}
 		if (canWork) {
 			Object o = selection.getFirstElement();
 			RepositoryNode node = (RepositoryNode) o;
@@ -104,10 +99,11 @@ public class OpenDefaultEditorAction extends AContextualAction {
 							.getRepositoryService();
 					IProxyRepositoryFactory repFactory = service
 							.getProxyRepositoryFactory();
-					if (repFactory.isPotentiallyEditable(node.getObject())) {
-						this.setText(""); //$NON-NLS-1$
+					IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+					if (!factory.isUserReadOnlyOnCurrentProject() && repFactory.isPotentiallyEditable(node.getObject())) {
+						this.setText(Messages.getString("OpenDefaultEditorAction_title")); //$NON-NLS-1$
 					} else {
-						this.setText(""); //$NON-NLS-1$
+						this.setText(Messages.getString("OpenDefaultEditorAction_title_read")); //$NON-NLS-1$
 					}
 				}
 				break;
@@ -117,11 +113,6 @@ public class OpenDefaultEditorAction extends AContextualAction {
 			RepositoryNode parent = node.getParent();
 			if (canWork && parent != null
 					&& parent instanceof BinRepositoryNode) {
-				canWork = false;
-			}
-			if (canWork
-					&& !ProjectManager.getInstance().isInCurrentMainProject(
-							node)) {
 				canWork = false;
 			}
 
@@ -134,7 +125,6 @@ public class OpenDefaultEditorAction extends AContextualAction {
 		}
 		setEnabled(canWork);
 
-		this.setText(Messages.getString("OpenDefaultEditorAction_title")); //$NON-NLS-1$
 		this.setToolTipText(Messages.getString("OpenDefaultEditorAction_tooltip")); //$NON-NLS-1$
 		this.setImageDescriptor(RouteResourceActivator
 				.createImageDesc("icons/edit-resource.png")); //$NON-NLS-1$
@@ -154,7 +144,7 @@ public class OpenDefaultEditorAction extends AContextualAction {
 			Assert.isTrue(property.getItem() instanceof RouteResourceItem);
 			item = (RouteResourceItem) property.getItem();
 			IWorkbenchPage page = getActivePage();
-			FindPreferEditorUtil.openDefaultEditor(page, node, item);
+			RouteResourceEditorUtil.openDefaultEditor(page, node, item);
 		}
 
 	}

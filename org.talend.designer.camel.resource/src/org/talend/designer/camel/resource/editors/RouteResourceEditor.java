@@ -48,6 +48,12 @@ public class RouteResourceEditor extends TextEditor {
 		String partName = "Resource " + displayName + " " + version;
 		setPartName(partName);
 		setTitleToolTip(partName);
+		getSourceViewer().setEditable(!rrInput.isReadOnly());
+	}
+	
+	@Override
+	public boolean isEditable() {
+		return !rrInput.isReadOnly();
 	}
 
 	@Override

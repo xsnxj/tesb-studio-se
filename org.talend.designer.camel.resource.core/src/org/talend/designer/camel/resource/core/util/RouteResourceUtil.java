@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -35,6 +36,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
@@ -132,15 +135,30 @@ public class RouteResourceUtil {
      * @return
      */
     public static IFile getSourceFile(RouteResourceItem item) {
-        Project talendProject = ProjectManager.getInstance().getCurrentProject();
-        String technicalLabel = talendProject.getTechnicalLabel();
+    	//the file may come from a reference project
+    	IFolder rrfolder = null;
+    	Resource eResource = item.eResource();
+    	if(eResource!=null){
+    		URI uri = eResource.getURI();
+    		if(uri != null && uri.isPlatformResource()){
+    			String platformString = uri.toPlatformString(true);
+    			IContainer parentContainer = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString)).getParent();
+    			if(parentContainer instanceof IFolder){
+    				rrfolder = (IFolder) parentContainer;
+    			}
+    		}
+    	}
+    	if(rrfolder == null){
+    		Project talendProject = ProjectManager.getInstance().getCurrentProject();
+    		String technicalLabel = talendProject.getTechnicalLabel();
 
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
-        String folderPath = item.getState().getPath();
-        IFolder rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
-        if (folderPath != null && !folderPath.isEmpty()) {
-            rrfolder = rrfolder.getFolder(folderPath);
-        }
+    		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
+    		String folderPath = item.getState().getPath();
+    		rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
+    		if (folderPath != null && !folderPath.isEmpty()) {
+    			rrfolder = rrfolder.getFolder(folderPath);
+    		}
+    	}
         String itemName = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
 

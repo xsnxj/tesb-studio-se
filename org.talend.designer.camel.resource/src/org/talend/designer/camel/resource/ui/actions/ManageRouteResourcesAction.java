@@ -20,7 +20,10 @@ import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.dialogs.ManageRouteResourceDialog;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.BinRepositoryNode;
+import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -66,6 +69,15 @@ public class ManageRouteResourcesAction extends AContextualAction {
 		for (RepositoryNode node : nodes) {
 			if (node.getType() != ENodeType.REPOSITORY_ELEMENT
 					|| node.getProperties(EProperties.CONTENT_TYPE) != CamelRepositoryNodeType.repositoryRoutesType) {
+				canWork = false;
+				break;
+			}
+			/*
+			 * it's not editable is a ref project route
+			 */
+			IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
+			IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
+			if (!repFactory.isPotentiallyEditable(node.getObject())) {
 				canWork = false;
 				break;
 			}

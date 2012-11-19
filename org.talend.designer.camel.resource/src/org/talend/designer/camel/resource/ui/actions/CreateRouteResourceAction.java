@@ -27,7 +27,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.i18n.Messages;
-import org.talend.designer.camel.resource.ui.util.FindPreferEditorUtil;
+import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
 import org.talend.designer.camel.resource.ui.wizards.NewRouteResourceWizard;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.ProjectManager;
@@ -80,7 +80,7 @@ public class CreateRouteResourceAction extends AContextualAction implements
 		if (open == Window.OK) {
 			RouteResourceItem item = wizard.getItem();
 			IWorkbenchPage page = getActivePage();
-			FindPreferEditorUtil.openEditor(page, node, item);
+			RouteResourceEditorUtil.openEditor(page, node, item);
 		}
 	}
 
