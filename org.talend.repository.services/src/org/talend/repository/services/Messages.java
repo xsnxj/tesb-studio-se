@@ -59,6 +59,10 @@ public class Messages extends NLS {
 	public static String NewAssignJobAction_actionText;
 
 	public static String NewAssignJobAction_actionTooltip;
+	
+	public static String ServiceExportWizard_destinationExistMessage;
+	
+	public static String ServiceExportWizard_destinationExistTitle;
 
     static {
         // initialize resource bundle

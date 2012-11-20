@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -34,6 +36,7 @@ import org.talend.core.model.process.IContext;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.services.ui.action.ExportServiceWithMavenAction;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportWithMavenManager;
@@ -104,6 +107,16 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
             IRunnableWithProgress action = null;
             Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
             String destinationValue = mainPage.getDestinationValue();
+            
+            //TESB-7319: add confirm dialog
+            if(new File(destinationValue).exists()){
+            	boolean openQuestion = MessageDialog.openQuestion(getShell(), Messages.ServiceExportWizard_destinationExistTitle, Messages.ServiceExportWizard_destinationExistMessage);
+            	if(!openQuestion){
+            		return false;
+            	}
+            }
+            //END TESB-7319
+            
             Iterator<?> iterator = selection.iterator();
             while (iterator.hasNext()) {
                 RepositoryNode node = (RepositoryNode) iterator.next();
