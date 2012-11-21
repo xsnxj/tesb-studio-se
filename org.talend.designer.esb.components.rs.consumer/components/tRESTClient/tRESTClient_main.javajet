@@ -101,7 +101,22 @@ try {
 	<% } %>
 
 	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
-	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider());
+	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
+	    // workaround for https://jira.talendforge.org/browse/TESB-7276
+        public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+                                           java.lang.reflect.Type type,
+                                           java.lang.annotation.Annotation[] anns, 
+                                           javax.ws.rs.core.MediaType mt,
+                                           javax.ws.rs.core.MultivaluedMap<String, String> headers, 
+                                           java.io.InputStream is) throws IOException, javax.ws.rs.WebApplicationException {
+            String contentLength = headers.getFirst("Content-Length"); 
+            if (org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+                || Integer.valueOf(contentLength) <= 0) {
+                return null;
+            }
+            return super.readFrom(cls, type, anns, mt, headers, is);
+        }
+    });
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
@@ -196,16 +211,6 @@ try {
 		<% } else { %>
 			System.out.println("error response: " + ex_<%=cid%>.getResponse().getStatus() + ":" + ex_<%=cid%>.getMessage());
 		<% } %>
-	} catch (javax.ws.rs.client.ClientException ex_<%=cid%>) {
-        <% if (null != connFault) {
-            String connFaultName = connFault.getName(); %>
-            if (<%=connFaultName%> == null) {
-                <%=connFaultName%> = new <%=connFaultName%>Struct();
-            }
-            <%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
-        <% } else { %>
-            System.out.println("client error: " + ex_<%=cid%>.getMessage());
-        <% } %>
 	}
 
 } catch(Exception e_<%=cid%>) {
