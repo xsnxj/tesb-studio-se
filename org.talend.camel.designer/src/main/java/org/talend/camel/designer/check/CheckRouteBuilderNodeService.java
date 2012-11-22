@@ -4,8 +4,10 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.talend.camel.designer.i18n.CamelDesignerMessages;
+import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IConnection;
+import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.designer.core.ICheckNodesService;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -24,6 +26,13 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 	 * .core.ui.editor.nodes.Node)
 	 */
 	public void checkNode(Node node) {
+		//TESB-7698
+		IProcess process = node.getProcess();
+		if(process == null || !(process instanceof RouteProcess)){
+			return;
+		}
+		//End TESB-7698
+		
 		checkIncomingConnections(node);
 		checkErroHandler(node);
 		checkIntercept(node);
