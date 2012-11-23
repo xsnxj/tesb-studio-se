@@ -28,7 +28,7 @@
 	<extension point="org.eclipse.ui.preferencePages">
 		<page
 			id="org.talend.designer.esb"
-			category="org.talend.core.prefs"
+			category="org.talend.repository.services.esb.preference"
 			class="org.talend.designer.esb.components.rs.provider.EsbPreferencePage"
 			name="%preferencesPage.main" />
 	</extension>
