@@ -38,7 +38,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
+import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
@@ -77,6 +79,8 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 	// source
 	private Property property;
+
+	private boolean isReadOnly;
 	
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -87,6 +91,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		RepositoryNode repositoryNode = (RepositoryNode) input
 				.getAdapter(RepositoryNode.class);
 		property = repositoryNode.getObject().getProperty();
+		isReadOnly = isReadOnly();
 	}
 
 	@Override
@@ -133,6 +138,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		refreshBtn.setImage(UIActivator.getImage(UIActivator.REFRESH_ICON));
 		refreshBtn
 				.setToolTipText(Messages.RouterDependenciesEditor_refreshDependenciesTooltip);
+		refreshBtn.setEnabled(!isReadOnly);
 
 		// create data tables
 		SashForm sashForm = new SashForm(composite, SWT.NONE);
@@ -175,6 +181,9 @@ public class RouterDependenciesEditor extends EditorPart implements
 		
 		statusLabel = toolkit.createLabel(statusComposite, ""); //$NON-NLS-1$
 		statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		if(isReadOnly){
+			statusLabel.setText(Messages.RouterDependenciesEditor_itemIsLockedByOther);
+		}
 		
 		toolkit.createLabel(statusComposite, "|"); //$NON-NLS-1$
 		
@@ -232,8 +241,11 @@ public class RouterDependenciesEditor extends EditorPart implements
 	}
 	
 	public void setStatus(String message){
+		if(isReadOnly){
+			return;
+		}
 		if(message == null){
-			message = "";
+			message = ""; //$NON-NLS-1$
 		}
 		statusLabel.setText(message);
 		statusLabel.setToolTipText(message);
@@ -325,7 +337,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		section.setText(title);
 		section.setLayout(new GridLayout(1, false));
 		RouterDependenciesPanel c = new RouterDependenciesPanel(section,
-				style, type, toolkit);
+				style, type, toolkit, isReadOnly);
 		section.setClient(c);
 		toolkit.adapt(c);
 		c.addDependenciesChangedListener(this);
@@ -336,7 +348,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				int size = selection.size();
 				if(size == 0){
-					setStatus("");
+					setStatus(""); //$NON-NLS-1$
 				}else if(selection.size()==1){
 					setStatus(((IDependencyItem)selection.getFirstElement()).getDescription());
 				}else{
@@ -347,6 +359,13 @@ public class RouterDependenciesEditor extends EditorPart implements
 		return c.getTableViewer();
 	}
 
+	/*
+	 * if it's readonly, then nothing can be changed
+	 */
+	private boolean isReadOnly(){
+		return ((RouterDependenciesEditorInput)getEditorInput()).isReadOnly();
+	}
+	
 	@Override
 	public void dependencesChanged() {
 		setDirty(true);
@@ -450,5 +469,28 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 	@Override
 	public void setFocus() {
+	}
+	
+	/**
+	 * unlock if it's the latest opened editor,
+	 * else keep locked
+	 */
+	@Override
+	public void dispose() {
+		IEditorInput input = getEditorInput();
+		RepositoryNode repositoryNode = (RepositoryNode) input
+				.getAdapter(RepositoryNode.class);
+		boolean hasMoreEditorOpenedExcept = CamelEditorUtil.hasMoreEditorOpenedExcept(repositoryNode, input);
+		if(!hasMoreEditorOpenedExcept){
+			ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+			try {
+				factory.unlock(property.getItem());
+			} catch (PersistenceException e) {
+				e.printStackTrace();
+			} catch (LoginException e) {
+				e.printStackTrace();
+			}
+		}
+		super.dispose();
 	}
 }

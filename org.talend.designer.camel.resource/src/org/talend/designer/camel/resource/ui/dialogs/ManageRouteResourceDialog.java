@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -51,7 +50,6 @@ import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.Property;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.camel.resource.i18n.Messages;
@@ -71,16 +69,16 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	private TableViewer resourcesTV;
 
-	private ISelection selection;
-
-	private RepositoryNode node;
+	private Item item;
 
 	private Button copyBtn;
 
-	public ManageRouteResourceDialog(Shell parentShell, ISelection iSelection) {
-		super(parentShell);
-		this.selection = iSelection;
+	private boolean isReadOnly;
 
+	public ManageRouteResourceDialog(Shell parentShell, Item item, boolean readOnly) {
+		super(parentShell);
+		this.item = item;
+		this.isReadOnly = readOnly;
 		init();
 	}
 
@@ -113,9 +111,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected void buttonPressed(int buttonId) {
-
 		if (buttonId == IDialogConstants.OK_ID) {
-			Item item = getSelectedRouteItem();
 			Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
 			models.addAll(selectedModels);
 			RouteResourceUtil.saveResourceDependency(item, models);
@@ -139,7 +135,11 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 		setHelpAvailable(false);
 		setTitle(Messages.getString("ManageRouteResourceDialog.title")); //$NON-NLS-1$
-		setMessage(Messages.getString("ManageRouteResourceDialog.message")); //$NON-NLS-1$
+		if(isReadOnly){
+			setMessage(Messages.getString("ManageRouteResourceDialog.itemLockedByOther"));
+		}else{
+			setMessage(Messages.getString("ManageRouteResourceDialog.message")); //$NON-NLS-1$
+		}
 
 		Composite container = (Composite) super.createDialogArea(parent);
 
@@ -150,6 +150,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		resourcesTV = new TableViewer(area, SWT.BORDER | SWT.SINGLE
 				| SWT.FULL_SELECTION);
 		Table table = resourcesTV.getTable();
+		resourcesTV.getTable().setEnabled(!isReadOnly);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
@@ -242,6 +243,10 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 		copyBtn.setText(Messages.getString("ManageRouteResourceDialog.CopyPath")); //$NON-NLS-1$
 		copyBtn.setLayoutData(gd);
 
+		addBtn.setEnabled(!isReadOnly);
+		delBtn.setEnabled(!isReadOnly);
+		copyBtn.setEnabled(!isReadOnly);
+		
 		initListeners();
 
 		return container;
@@ -290,6 +295,9 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 	}
 
 	protected void refreshButtonState() {
+		if(isReadOnly){
+			return;
+		}
 		ResourceDependencyModel item = getSelectiedItem();
 		if (item != null) {
 			if (item.isBuiltIn()) {
@@ -349,17 +357,7 @@ public class ManageRouteResourceDialog extends TitleAreaDialog {
 
 	private void init() {
 		selectedModels = new ArrayList<ResourceDependencyModel>();
-		Item item = getSelectedRouteItem();
 		selectedModels.addAll(RouteResourceUtil.getResourceDependencies(item));
-	}
-
-	private Item getSelectedRouteItem() {
-		IStructuredSelection sselection = (IStructuredSelection) selection;
-		Object element = sselection.getFirstElement();
-		node = (RepositoryNode) element;
-		Property property = (Property) node.getObject().getProperty();
-		Item item = property.getItem();
-		return item;
 	}
 
 }

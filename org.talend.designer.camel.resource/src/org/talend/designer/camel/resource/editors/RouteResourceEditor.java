@@ -17,6 +17,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -115,4 +118,15 @@ public class RouteResourceEditor extends TextEditor {
 		this.rrInput = (RouteResourceInput) input;
 	}
 
+	/*
+	 * Change the background if readonly
+	 */
+	@Override
+	protected void initializeViewerColors(ISourceViewer viewer) {
+		super.initializeViewerColors(viewer);
+		if(!isEditable()){
+			StyledText textWidget = viewer.getTextWidget();
+			textWidget.setBackground(textWidget.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		}
+	}
 }

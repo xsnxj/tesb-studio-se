@@ -15,6 +15,8 @@ import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.RouteResoureChangeListener;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.ProjectManager;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryService;
@@ -134,10 +136,25 @@ public class RouteResourceEditorUtil {
 	public static boolean isReadOnly(IRepositoryNode node){
 		IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
 		IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
-		if (repFactory.isPotentiallyEditable(node.getObject())) {
-			return false;
+		
+		/*
+		 * if user is readonly , then set enable as false
+		 */
+		if(repFactory.isUserReadOnlyOnCurrentProject()){
+			return true;
 		}
-		return true;
+		
+		// if it's not in current project, then it's disable
+		if(!ProjectManager.getInstance().isInCurrentMainProject(node)){
+			return true;
+		}
+		
+		// if it's locked by others, then it's disable
+		if(ERepositoryStatus.LOCK_BY_OTHER.equals(repFactory.getStatus(node.getObject().getProperty().getItem()))){
+			return true;
+		}
+		
+		return false;
 	}
 
 }

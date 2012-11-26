@@ -30,6 +30,9 @@ import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.dialog.NewExportPackageDialog;
 import org.talend.designer.camel.dependencies.ui.dialog.NewOrEditDependencyDialog;
 
+/**
+ * uneditable if readonly
+ */
 public class RouterDependenciesPanel extends Composite implements
 		SelectionListener, ISelectionChangedListener {
 
@@ -45,11 +48,13 @@ public class RouterDependenciesPanel extends Composite implements
 	private List<IRouterDependenciesChangedListener> listeners = new ArrayList<IRouterDependenciesChangedListener>();
 	private Button selectAll;
 	private Button deselectAll;
+	private boolean isReadOnly;
 
 	public RouterDependenciesPanel(Composite parent, int style, int type,
-			FormToolkit toolkit) {
+			FormToolkit toolkit, boolean isReadOnly) {
 		super(parent, SWT.NONE);
 		this.type = type;
+		this.isReadOnly = isReadOnly;
 		initialize(toolkit, style);
 	}
 
@@ -86,6 +91,9 @@ public class RouterDependenciesPanel extends Composite implements
 				}
 			}
 		});
+		if(isReadOnly){
+			table.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+		}
 
 		tableViewer = new RouterDependenciesTableViewer(table);
 		tableViewer.addSelectionChangedListener(this);
@@ -100,6 +108,7 @@ public class RouterDependenciesPanel extends Composite implements
 			addBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_addBtn, SWT.NONE);
 			addBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			addBtn.addSelectionListener(this);
+			addBtn.setEnabled(!isReadOnly);
 
 			remBtn = toolkit.createButton(bc, Messages.RouterDependenciesPanel_removeBtn, SWT.NONE);
 			remBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -128,10 +137,12 @@ public class RouterDependenciesPanel extends Composite implements
 			selectAll = toolkit.createButton(bc, Messages.RouterDependenciesPanel_selectAll, SWT.NONE);
 			selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			selectAll.addSelectionListener(this);
+			selectAll.setEnabled(!isReadOnly);
 	
 			deselectAll = toolkit.createButton(bc, Messages.RouterDependenciesPanel_deselectAll, SWT.NONE);
 			deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			deselectAll.addSelectionListener(this);
+			deselectAll.setEnabled(!isReadOnly);
 		}
 		
 	}

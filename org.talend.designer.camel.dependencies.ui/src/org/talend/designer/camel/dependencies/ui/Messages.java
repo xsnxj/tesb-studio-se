@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	public static String RouterDependenciesEditor_filterLabel;
 	public static String RouterDependenciesEditor_hideBuiltInItems;
 	public static String RouterDependenciesEditor_importPackageSec;
+	public static String RouterDependenciesEditor_itemIsLockedByOther;
 	public static String RouterDependenciesEditor_KeyBindingw;
 	public static String RouterDependenciesEditor_multiItemsSelectedStatusMsg;
 	public static String RouterDependenciesEditor_refreshDependenciesTooltip;

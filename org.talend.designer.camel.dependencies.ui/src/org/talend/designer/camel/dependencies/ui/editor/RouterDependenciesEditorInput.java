@@ -9,9 +9,11 @@ import org.talend.repository.model.RepositoryNode;
 public class RouterDependenciesEditorInput implements IEditorInput {
 
 	private RepositoryNode node;
+	private boolean isReadOnly;
 
-	public RouterDependenciesEditorInput(RepositoryNode node) {
+	public RouterDependenciesEditorInput(RepositoryNode node, boolean readOnly) {
 		this.node = node;
+		this.isReadOnly = readOnly;
 	}
 
 	@Override
@@ -65,5 +67,9 @@ public class RouterDependenciesEditorInput implements IEditorInput {
 	@Override
 	public int hashCode() {
 		return node.hashCode();
+	}
+	
+	public boolean isReadOnly() {
+		return isReadOnly;
 	}
 }

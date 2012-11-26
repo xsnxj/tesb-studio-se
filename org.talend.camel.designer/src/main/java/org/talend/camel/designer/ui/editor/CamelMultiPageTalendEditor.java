@@ -40,6 +40,7 @@ import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
+import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -209,5 +210,14 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
             designerEditor.getProcess().getProperty().eAdapters().add(dirtyListener);
 
         this.setName();
+    }
+    
+    /**
+     * Keep lock if there's any other editor still openning
+     */
+    @Override
+    public boolean isKeepPropertyLocked() {
+    	IEditorInput input = getEditorInput();
+    	return super.isKeepPropertyLocked() || CamelEditorUtil.hasMoreEditorOpenedExcept((RepositoryNode) input.getAdapter(RepositoryNode.class), input);
     }
 }
