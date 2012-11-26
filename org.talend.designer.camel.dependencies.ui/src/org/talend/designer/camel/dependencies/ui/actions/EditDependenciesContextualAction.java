@@ -65,7 +65,7 @@ public class EditDependenciesContextualAction extends AContextualAction {
 		// should be route process
 		ERepositoryObjectType objectType = node.getObjectType();
 		if (objectType != ERepositoryObjectType.valueOf(
-				ERepositoryObjectType.class, Messages.EditDependenciesContextualAction_1)) {
+				ERepositoryObjectType.class, "ROUTES")) {
 			return;
 		}
 		
