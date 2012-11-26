@@ -91,7 +91,9 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Activator;
 import org.talend.repository.services.model.services.ParameterInfo;
+import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
@@ -176,9 +178,13 @@ public class PublishMetadataAction extends AContextualAction {
                 if (size > 0) {
                     step /= size;
                 }
+                boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
+                
                 for (RepositoryNode node : nodes) {
                     monitor.worked(step);
-                    WSDLUtils.validateWsdl(node);
+                    if(validateWsdl){
+                    	WSDLUtils.validateWsdl(node);
+                    }
                     Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
                     process(wsdlDefinition);
                     if (monitor.isCanceled()) {

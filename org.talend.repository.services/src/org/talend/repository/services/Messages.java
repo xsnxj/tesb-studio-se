@@ -5,6 +5,12 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "org.talend.repository.services.messages"; //$NON-NLS-1$
+    
+    public static String ESBPreferencePage_description;
+
+	public static String EsbSoapServicePreferencePage_description;
+
+	public static String EsbSoapServicePreferencePage_enableWsdlValidation;
 
     public static String ExportServiceAction_Action_Label;
 

@@ -153,4 +153,20 @@
           type="org.talend.repository.model.RepositoryNode">
     </propertyTester>
  </extension>
+  <extension
+       point="org.eclipse.ui.preferencePages">
+    <page
+          category="org.talend.core.prefs"
+          class="org.talend.repository.services.ui.preferences.ESBPreferencePage"
+          id="org.talend.repository.services.esb.preference"
+          name="%preference.esb">
+    </page>
+    <page
+          category="org.talend.repository.services.esb.preference"
+          class="org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePage"
+          id="org.talend.repository.services.esb.soap.preference"
+          name="%preference.esb.soapService">
+    </page>
+ </extension>
+ 
 </plugin>
