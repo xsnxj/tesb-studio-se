@@ -49,13 +49,22 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected Set<ExportKarBundleModel> exportedBundleModels = new HashSet<ExportKarBundleModel>();
 
+    private final boolean addStatisticsCode;
+
     public JavaCamelJobScriptsExportWSAction(RepositoryNode routeNode, String version, String destinationKar,
             boolean addStatisticsCode) {
         this.routeNode = routeNode;
         this.version = version;
-        bundleVersion = version;
+        this.bundleVersion = version;
         this.destinationKar = destinationKar;
+        this.addStatisticsCode = addStatisticsCode;
 
+        manager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null, IProcessor.NO_STATISTICS,
+                IProcessor.NO_TRACES);
+        manager.setBundleVersion(version);
+    }
+
+    private Map<ExportChoice, Object> getExportChoice() {
         Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
         exportChoiceMap.put(ExportChoice.needJobItem, false);
         exportChoiceMap.put(ExportChoice.needSourceCode, false);
@@ -64,8 +73,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         exportChoiceMap.put(ExportChoice.needJobItem, false);
         exportChoiceMap.put(ExportChoice.needSourceCode, false);
         exportChoiceMap.put(ExportChoice.addStatistics, addStatisticsCode);
-        manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-        manager.setBundleVersion(version);
+        return exportChoiceMap;
     }
 
     public JavaCamelJobScriptsExportWSAction(RepositoryNode routeNode, String version, String bundleVersion) {
@@ -188,9 +196,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType)
             throws InvocationTargetException, InterruptedException {
-        manager.setMultiNodes(false);
-        manager.setDestinationPath(filePath);
-        JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, manager,
+        JobJavaScriptOSGIForESBManager talendJobManager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        talendJobManager.setBundleVersion(bundleVersion);
+        talendJobManager.setMultiNodes(false);
+        talendJobManager.setDestinationPath(filePath);
+        JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
                 getTempDir(), itemType);
         action.run(monitor);
     }
