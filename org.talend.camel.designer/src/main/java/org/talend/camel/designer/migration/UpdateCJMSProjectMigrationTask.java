@@ -76,7 +76,7 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
 
         // Don't forget set the Connection for cJMS
         addParamTtpe(currentNode, "TEXT", "CONNECTION_FACOTRY_LABEL", label, null);
-        addParamTtpe(currentNode, "TEXT", "CONNECTION_FACOTRY", label.replace("_", ""), null);
+        addParamTtpe(currentNode, "TEXT", "CONNECTION_FACOTRY", label, null);
 
         for (Object e : currentNode.getElementParameter()) {
             ElementParameterType p = (ElementParameterType) e;
