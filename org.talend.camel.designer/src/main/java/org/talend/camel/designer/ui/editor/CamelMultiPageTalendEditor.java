@@ -59,6 +59,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      * 
      * @return the designerEditor
      */
+    @Override
     public AbstractTalendEditor getDesignerEditor() {
         return this.designerEditor;
     }
@@ -78,6 +79,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      * 
      * @see org.talend.designer.core.ui.AbstractMultiPageTalendEditor#updateTitleImage()
      */
+    @Override
     public void updateTitleImage() {
         Display.getDefault().syncExec(new Runnable() {
 
@@ -116,6 +118,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      * 
      * @param label
      */
+    @Override
     public void setName() {
         if (getEditorInput() == null) {
             return;
@@ -124,8 +127,9 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
         String label = getEditorInput().getName();
         IProcess2 process2 = this.getProcess();
         String jobVersion = "0.1";
-        if (process2 != null)
+        if (process2 != null) {
             jobVersion = process2.getVersion();
+        }
         // if (getActivePage() == 1) {
         ISVNProviderService service = null;
         if (PluginChecker.isSVNProviderPluginLoaded()) {
@@ -143,7 +147,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
         if (revisionNumStr != null) {
             setPartName(Messages.getString(title, label, jobVersion) + revisionNumStr);
         } else {
-            setPartName(Messages.getString(title, label, jobVersion)); //$NON-NLS-1$
+            setPartName(Messages.getString(title, label, jobVersion));
         }
     }
 
@@ -174,7 +178,6 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
         designerEditor.getProcess().getProperty().eAdapters().remove(dirtyListener);
         IRepositoryService service = CorePlugin.getDefault().getRepositoryService();
         IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
-        display = getSite().getShell().getDisplay();
         repFactory.addRepositoryWorkUnitListener(repositoryWorkListener);
 
         if (getActivePage() == 0) {
@@ -206,8 +209,9 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
                 }
             }
         }
-        if (designerEditor != null && dirtyListener != null)
+        if (designerEditor != null && dirtyListener != null) {
             designerEditor.getProcess().getProperty().eAdapters().add(dirtyListener);
+        }
 
         this.setName();
     }
