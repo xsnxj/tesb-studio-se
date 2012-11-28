@@ -59,7 +59,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-tis" MODULE="camel-tis-2.10.2.jar" REQUIRED="true" />
+			<IMPORT NAME="camel-talendjob" MODULE="camel-talendjob-5.2.1.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 

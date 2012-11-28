@@ -272,13 +272,9 @@
 	<FeatureMap HotLib="camel-xstream-alldep-$version$.jar">
 		<Feature version="[2,5)">camel-xstream</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-tis-$version$.jar">
+	<FeatureMap HotLib="camel-talendjob-5.2.1.jar">
 		<Feature version="[2,10)">camel-talendjob</Feature>
-	</FeatureMap><!--
-	<FeatureMap HotLib="locator-5.1.0.jar">
-		<Feature version="[2,10)">tesb-zookeeper</Feature>
 	</FeatureMap>
--->
     <FeatureMap HotLib="activemq-all-5.7.0.jar">
 		<Feature version="[5,10)">activemq</Feature>
 	</FeatureMap>
