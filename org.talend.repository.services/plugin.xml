@@ -168,5 +168,13 @@
           name="%preference.esb.soapService">
     </page>
  </extension>
- 
+ <extension
+       point="org.eclipse.emf.ecore.generated_package">
+    <package
+          class="org.talend.repository.services.model.services.ServicesPackage"
+          genModel="model/Services.genmodel"
+          uri="http://www.talend.org/Services">
+    </package>
+ </extension>
+
 </plugin>
