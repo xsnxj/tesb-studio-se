@@ -9,6 +9,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
@@ -150,7 +153,20 @@ public class RouteResourceEditorUtil {
 		}
 		
 		// if it's locked by others, then it's disable
-		if(ERepositoryStatus.LOCK_BY_OTHER.equals(repFactory.getStatus(node.getObject().getProperty().getItem()))){
+		IRepositoryViewObject object = node.getObject();
+		if(object == null){
+			return false;
+		}
+		Property property = object.getProperty();
+		if(property == null){
+			return false;
+		}
+		
+		Item item = property.getItem();
+		if(item == null){
+			return false;
+		}
+		if(ERepositoryStatus.LOCK_BY_OTHER.equals(repFactory.getStatus(item))){
 			return true;
 		}
 		
