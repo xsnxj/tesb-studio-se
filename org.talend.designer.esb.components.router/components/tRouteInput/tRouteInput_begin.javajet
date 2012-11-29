@@ -82,10 +82,10 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 		            		headersNotNullSb.append(".class);\n");
 		            	}
 		            	headersIsNullSb.append(conn.getName());
-		            	headersIsNullSb.append(".");
-		            	headersIsNullSb.append(label);
-		            	headersIsNullSb.append(" = ");
-		            	headersIsNullSb.append(JavaTypesManager.getDefaultValueFromJavaType(typeToGenerate, column.getDefault()));
+		            	headersIsNullSb.append(" = null");
+		            	//headersIsNullSb.append(".");
+		            	//headersIsNullSb.append(label);
+		            	//headersIsNullSb.append(JavaTypesManager.getDefaultValueFromJavaType(typeToGenerate, column.getDefault()));
 		            	headersIsNullSb.append(";\n");
 		            }
 	            }
