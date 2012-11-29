@@ -1,0 +1,98 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cThrottler</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Composants Mediation Talend Open Studio for ESB"><link rel="up" href="ch-routing.html" title="Chapitre&nbsp;6.&nbsp;Composants Routing"><link rel="prev" href="cSplitter.html" title="cSplitter"><link rel="next" href="cWireTap.html" title="cWireTap"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cThrottler</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cSplitter.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;6.&nbsp;Composants Routing</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cWireTap.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cThrottler"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cThrottler"></a>cThrottler</h2></div></div></div><p><span class="inlinemediaobject"><img src="../images/cThrottler_icon32.png"></span></p><div class="section" title="Propri&eacute;t&eacute;s du cThrottler"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e18098"></a>Propri&eacute;t&eacute;s du cThrottler</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Routing</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cThrottler</strong></span> est con&ccedil;u pour limiter le
+								nombre de messages vers un endpoint sp&eacute;cifique.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cThrottler</strong></span> vous permet de limiter le nombre de
+								messages vers un endpoint sp&eacute;cifique afin d'emp&ecirc;cher cet endpoint
+								d'&ecirc;tre surcharg&eacute;.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Request per period</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Nombre de messages pouvant &ecirc;tre pass&eacute;s au <span class="emphasis"><strong>cThrottler</strong></span>
+								durant une p&eacute;riode de temps d&eacute;finie.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Set time period</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour d&eacute;finir la valeur de la p&eacute;riode de temps (en millisecondes) et
+								activer la limite.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Use asynchronous delaying</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Si cette case est coch&eacute;e, les messages retard&eacute;s seront rout&eacute;s de mani&egrave;re asynchrone &agrave;
+								l'aide d'un pool de threads planifi&eacute;s.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cThrottler</strong></span> vous permet de limiter le nombre de
+								messages vers un endpoint sp&eacute;cifique afin qu'il ne soit pas
+								surcharg&eacute;.</p>
+						</td></tr><tr><td rowspan="2" valign="top"><span class="emphasis"><strong>Connections</strong></span></td><td valign="top"><span class="emphasis"><em>throttler</em></span></td><td valign="top">S&eacute;lectionnez ce lien pour router les messages ayant &eacute;t&eacute; limit&eacute;s vers
+							l'endpoint suivant.</td></tr><tr><td valign="top"><span class="emphasis"><em>Route</em></span></td><td valign="top">S&eacute;lectionnez ce lien pour router tous les messages de
+							l'&eacute;metteur vers l'endpoint suivant.</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Limiter le flux de messages"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e18264"></a>Sc&eacute;nario : Limiter le flux de messages </h3></div></div></div><p>Dans ce sc&eacute;nario, un composant <span class="emphasis"><strong>cThrottler</strong></span> est utilis&eacute; pour
+		r&eacute;duire le nombre de messages dans un flux durant une p&eacute;riode de temps d&eacute;finie. </p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_1.png" align="middle"></div><p>Pour construire la Route, proc&eacute;dez comme dans les sections suivantes. </p><div class="section" title="D&eacute;poser les composants et les relier"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e18277"></a>D&eacute;poser les composants et les relier</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>D&eacute;posez les composants suivants de la <span class="emphasis"><strong>Palette</strong></span> dans
+					l'espace de mod&eacute;lisation graphique : un <span class="emphasis"><strong>cThrottler</strong></span>, un <span class="emphasis"><strong>cFile</strong></span> et deux
+						<span class="emphasis"><strong>cProcessor</strong></span>. Renommez le composant <span class="emphasis"><strong>cFile</strong></span> en <span class="emphasis"><em>Read_Output</em></span>. Changez le nom des deux <span class="emphasis"><strong>cProcessor</strong></span> en <span class="emphasis"><em>Print_File_Name</em></span>
+					et <span class="emphasis"><em>Print_File_Content</em></span>, respectivement.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez le <span class="emphasis"><strong>Read_Output</strong></span> au <span class="emphasis"><strong>cThrottler</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Reliez le <span class="emphasis"><strong>cThrottler</strong></span> au <span class="emphasis"><strong>Print_File_Name</strong></span> &agrave; l'aide d'un lien <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Throttler</strong></span> et au
+							<span class="emphasis"><strong>Print_File_Content</strong></span> &agrave; l'aide d'un lien
+							<span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span>.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e18350"></a>Configurer les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le <span class="emphasis"><strong>Read_Output</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_2.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, saisissez le chemin d'acc&egrave;s au
+					message source, par exemple <span class="emphasis"><em>"E:/data/output"</em></span>.
+					Laissez les autres param&egrave;tres tels qu'ils sont. </p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le <span class="emphasis"><strong>cThrottler</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_5.png" align="middle"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>Request per period</strong></span>, saisissez le nombre de
+						messages autoris&eacute;s par p&eacute;riode, par exemple <span class="emphasis"><em>1</em></span>.</p><p>Dans le champ <span class="emphasis"><strong>Set time period</strong></span>, saisissez
+						la valeur de la p&eacute;riode, par exemple <span class="emphasis"><em>8000</em></span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le <span class="emphasis"><strong>Print_File_Name</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_3.png" align="middle"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans le champ <span class="emphasis"><strong>Code</strong></span>, saisissez le code ci-dessous pour
+						obtenir le nom des messages passant le throttler.</p><p>
+						</p><pre class="programlisting">System.out.println("The file that passes throttler is: "+exchange.getIn().getHeader("CamelFileName"));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le <span class="emphasis"><strong>Print_File_Content</strong></span> pour ouvrir sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 8"><p>Dans le champ <span class="emphasis"><strong>Code</strong></span>, saisissez le code ci-dessous pour
+						obtenir le contenu du message passant le throttler.</p><p>
+						</p><pre class="programlisting">System.out.println("The content of " +exchange.getIn().getHeader("CamelFileName")+ " is: "
++exchange.getIn().getBody(String.class));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 9"><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></li></ol></div></div></div><div class="section" title="Visualiser du code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e18456"></a>Visualiser du code et ex&eacute;cuter la Route</h3></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_6.png" align="middle"></div><p>Comme affich&eacute; ci-dessus, les messages de <code class="code">Read_Output</code> passent le
+						<code class="code">cThrottler_1</code>, avec seulement <code class="code">(1)</code> message autoris&eacute;
+					&agrave; quitter le throttler durant chaque p&eacute;riode de temps
+						(<code class="code">timePeriodMillis(8000)</code>). Pendant ce temps, le nom du fichier
+					et le contenu du message pass&eacute;s dans le throttler sont affich&eacute;s via les deux
+						<span class="emphasis"><strong>cProcessor</strong></span>. </p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="emphasis"><strong>F6</strong></span> pour ex&eacute;cuter la Route.</p><p>Comme ci-dessous, un fichier <span class="emphasis"><em>File_A.txt</em></span> est livr&eacute;
+						durant la premi&egrave;re p&eacute;riode de temps. Durant la deuxi&egrave;me, un fichier
+							<span class="emphasis"><em>File_B.txt</em></span> est livr&eacute;.</p><div class="mediaobject" align="center"><img src="../images/use_case_cthrottler_7.png" align="middle"></div></li></ol></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cSplitter.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-routing.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cWireTap.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">cSplitter&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cWireTap</td></tr></table></div></body></html>

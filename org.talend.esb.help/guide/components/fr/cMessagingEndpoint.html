@@ -1,0 +1,588 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMessagingEndpoint</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Composants Mediation Talend Open Studio for ESB"><link rel="up" href="ch-messaging.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"><link rel="prev" href="cMail.html" title="cMail"><link rel="next" href="cTimer.html" title="cTimer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cMessagingEndpoint</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cMail.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;3.&nbsp;Composants Messaging</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cTimer.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cMessagingEndpoint"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessagingEndpoint"></a>cMessagingEndpoint</h2></div></div></div><div class="mediaobject"><img src="../images/cMessagingEndpoint_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cMessagingEndpoint"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e7798"></a>Propri&eacute;t&eacute;s du cMessagingEndpoint</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top"><p><span class="emphasis"><strong>Famille de composant</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Messaging</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Fonction</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Le composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span> permet &agrave; deux applications de
+								communiquer en envoyant ou en recevant des messages, un endpoint ne
+								pouvant pas faire les deux. </p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Objectif</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Le <span class="emphasis"><strong>cMessagingEndpoint</strong></span> envoie ou re&ccedil;oit des messages. </p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>URI</em></span></p>
+						</td><td valign="top"><p>URI des messages &agrave; envoyer ou &agrave; recevoir. Ils peuvent &ecirc;tre de diff&eacute;rents formats :</p><p>- Fichier : "file:/", </p><p>- Base de donn&eacute;es : "jdbc:/", </p><p>- Protocoles : "ftp:/", "http:/"</p><p>- etc.</p><p>Vous pouvez ajouter des param&egrave;tres &agrave; l'URI &agrave; l'aide  de la syntaxe g&eacute;n&eacute;rique des URIs, par
+								exemple :</p><p>
+								<code class="code">"file:/directoryName?option=value&amp;option=value"</code>
+							</p><p>Pour plus d'informations concernant les diff&eacute;rents composants pouvant &ecirc;tre utilis&eacute;s dans le
+									<span class="emphasis"><strong>cMessagingEndpoint</strong></span>, consultez
+								le site Web de Apache Camel : <a class="link" href="http://camel.apache.org/components.html" target="_top">http://camel.apache.org/components.html</a> (en
+								anglais).</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Advanced
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Dependencies</em></span></p>
+						</td><td valign="top"><p>Par d&eacute;faut, le noyau de Camel supporte les composants suivants : bean, browse, class, dataset,
+								direct, file, language, log, mock, properties, ref, seda, timer,
+								vm.</p><p>Pour utiliser d'autres composants, vous devez fournit les d&eacute;pendances correspondant &agrave; ces
+								composants dans le composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span>. Pour ce faire :</p><p>Cliquez sur le bouton <span class="emphasis"><strong>[+]</strong></span> pour ajouter une nouvelle ligne
+								dans la liste <span class="emphasis"><strong>Camel component</strong></span>. Dans
+								la ligne ajout&eacute;e, s&eacute;lectionnez le composant que vous souhaitez
+								utiliser dans le <span class="emphasis"><strong>cMessagingEndpoint</strong></span>.  Pour plus d'informations concernant
+								les composants Camel les plus utilis&eacute;s, consultez <a class="xref" href="cMessagingEndpoint.html#nwang-20121017-messaging-cmessagingendpoint_camel_components" title="Composants Camel les plus utilis&eacute;s">la section intitul&eacute;e &laquo;&nbsp;Composants Camel les plus utilis&eacute;s&nbsp;&raquo;</a>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Use a custom component</em></span></p>
+						</td><td valign="top"><p>Si vous souhaitez utiliser un composant personnalis&eacute;, cochez cette case et cliquez sur le
+								bouton <span class="emphasis"><strong>[...]</strong></span> pour charger un
+								fichier .jar avec votre propre composant.</p><p> </p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Toutes les d&eacute;pendances transitives de ce composant personnalis&eacute; doivent &ecirc;tre incluses
+									dans le fichier jar.</p></div>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Utilisation</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Ce composant peut &ecirc;tre utilis&eacute; pour envoyer et/ou recevoir des endpoints de messages selon sa
+								position dans la Route. </p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Composants Camel les plus utilis&eacute;s"><div class="titlepage"><div><div><h3 class="title"><a name="nwang-20121017-messaging-cmessagingendpoint_camel_components"></a>Composants Camel les plus utilis&eacute;s</h3></div></div></div><p>Le tableau suivant liste les composants Camel les plus fr&eacute;quemment utilis&eacute;s pouvant &ecirc;tre
+			appel&eacute;s par le composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span>.</p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>
+							<p>Composant / ID de l'artefact / URI</p>
+						</th><th>
+							<p>Description</p>
+						</th></tr></thead><tbody><tr><td>
+							<p> ActiveMQ / activemq-camel </p>
+							<p>
+								<code class="code">activemq:[topic:]destinationName</code>
+							</p>
+						</td><td>
+							<p>Composant pour JMS Messaging avec <a class="link" href="http://activemq.apache.org/" target="_top">Apache
+									ActiveMQ</a>.</p>
+						</td></tr><tr><td>
+							<p> Atom / camel-atom </p>
+							<p>
+								<code class="code">atom:uri</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec <a class="link" href="http://incubator.apache.org/abdera/" target="_top">Apache
+									Abdera</a> pour une int&eacute;gration d'Atom, comme la consommation
+								d'un flux Atom. </p>
+						</td></tr><tr><td>
+							<p> Bean / camel-core </p>
+							<p>
+								<code class="code">bean:beanName[?method=someMethod]</code>
+							</p>
+						</td><td>
+							<p>Utilise Camel Bean Binding pour lier des &eacute;changes de messages aux beans dans le
+								Registry Camel. Egalement utilis&eacute; pour exposer et invoquer des POJOs
+								(Plain Old Java Objects). </p>
+						</td></tr><tr><td>
+							<p> Cache / camel-cache </p>
+							<p>
+								<code class="code">cache://cachename[?options]</code>
+							</p>
+						</td><td>
+							<p>Le composant Cache simplifie la cr&eacute;ation d'endpoints et de processeurs de mise en cache
+								&agrave; l'aide de <a class="link" href="http://ehcache.org/" target="_top">EHCache</a>
+								comme impl&eacute;mentation de cache. </p>
+						</td></tr><tr><td>
+							<p> Class / camel-core </p>
+							<p>
+								<code class="code">class:className[?method=someMethod]</code>
+							</p>
+						</td><td>
+							<p>Utilise Camel Bean Binding pour lier des &eacute;changes de messages aux beans dans le
+								Registry Camel. Egalement utilis&eacute; pour exposer et invoquer des POJOs
+								(Plain Old Java Objects). </p>
+						</td></tr><tr><td>
+							<p> Context / camel-context </p>
+							<p>
+								<code class="code">context:camelContextI localEndpointName</code>
+							</p>
+						</td><td>
+							<p>Utilis&eacute; pour faire r&eacute;f&eacute;rence aux endpoints dans un CamelContext s&eacute;par&eacute; afin de fournir
+								une approche simple de composition pr&eacute;d&eacute;finie (<a class="link" href="http://camel.apache.org/context.html" target="_top">black box
+									composition</a>) afin que les Routes puissent &ecirc;tre combin&eacute;es
+								dans un CamelContext puis utilis&eacute;es en tant que composant "black
+								box" dans d'autres Routes, dans d'autres CamelContexts. </p>
+						</td></tr><tr><td>
+							<p> Crypto (Signatures num&eacute;riques)</p>
+							<p>
+								<code class="code">crypto:sign:name[?options],
+									crypto:verify:name[?options]</code>
+							</p>
+						</td><td>
+							<p>Utilis&eacute; pour signer et v&eacute;rifier des &eacute;changes &agrave; l'aide du service de signature de Java
+								Cryptographic Extension.</p>
+						</td></tr><tr><td>
+							<p> CXF / camel-cxf </p>
+							<p>
+								<code class="code">cxf:address[?serviceClass=...]</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec <a class="link" href="http://apache.org/cxf/" target="_top">Apache CXF</a> pour
+								l'int&eacute;gration de services Web. </p>
+						</td></tr><tr><td>
+							<p> CXF Bean / camel-cxf </p>
+							<p>
+								<code class="code">cxf:bean name</code>
+							</p>
+						</td><td>
+							<p>Traite les &eacute;changes &agrave; l'aide d'un bean annot&eacute; JAX WS ou JAX RS du Registry. N&eacute;cessite
+								moins de configuration que le composant CXF ci-dessus.</p>
+						</td></tr><tr><td>
+							<p> CXFRS / camel-cxf </p>
+							<p>
+								<code class="code">cxfrs:address[?resourcesClasses=...]</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec <a class="link" href="http://apache.org/cxf/" target="_top">Apache CXF</a> pour
+								l'int&eacute;gration de services REST. </p>
+						</td></tr><tr><td>
+							<p> Direct / camel-core </p>
+							<p>
+								<code class="code">direct:name</code>
+							</p>
+						</td><td>
+							<p>Appel synchrone d'un autre endpoint &agrave; partir du m&ecirc;me Contexte Camel
+								(CamelContext).</p>
+						</td></tr><tr><td>
+							<p> Event / camel-spring </p>
+							<p>
+								<code class="code">event://default, spring-event://default</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec Spring ApplicationEvents.</p>
+						</td></tr><tr><td>
+							<p> Exec / camel-exec </p>
+							<p>
+								<code class="code">exec://executable[?options]</code>
+							</p>
+						</td><td>
+							<p>Permet d'ex&eacute;cuter des commandes syst&egrave;me.</p>
+						</td></tr><tr><td>
+							<p> File / camel-core </p>
+							<p>
+								<code class="code">file://nameOfFileOrDirectory</code>
+							</p>
+						</td><td>
+							<p>Envoie des messages dans un fichier ou interroge un fichier ou un r&eacute;pertoire. </p>
+						</td></tr><tr><td>
+							<p> Flatpack / camel-flatpack </p>
+							<p>
+								<code class="code">flatpack:[fixed|delim]:configFile</code>
+							</p>
+						</td><td>
+							<p>Traite des fichiers &agrave; taille fixe ou d&eacute;limit&eacute;s &agrave; l'aide de la biblioth&egrave;que <a class="link" href="http://flatpack.sourceforge.net" target="_top">FlatPack
+									library</a>.</p>
+						</td></tr><tr><td>
+							<p> Freemarker / camel-freemarker </p>
+							<p>
+								<code class="code">freemarker:someTemplateResource</code>
+							</p>
+						</td><td>
+							<p>G&eacute;n&egrave;re une r&eacute;ponse &agrave; l'aide d'un mod&egrave;le <a class="link" href="http://freemarker.org/" target="_top">Freemarker</a>. </p>
+						</td></tr><tr><td>
+							<p> FTP / camel-ftp </p>
+							<p>
+								<code class="code">ftp://host[:port]/fileName</code>
+							</p>
+						</td><td>
+							<p>Envoie et re&ccedil;oit des fichiers via FTP. </p>
+						</td></tr><tr><td>
+							<p> FTP / camel-ftp (FTPS) </p>
+							<p>
+								<code class="code">ftps://host[:port]/fileName</code>
+							</p>
+						</td><td>
+							<p>Envoie et re&ccedil;oit des fichiers via FTP Secure (TLS et SSL).</p>
+						</td></tr><tr><td>
+							<p> Hl7 </p>
+							<p>
+								<code class="code">mina:tcp://hostname[:port]</code>
+							</p>
+						</td><td>
+							<p>Permet de travailler avec le protocole HL7 MLLP et le mod&egrave;le HL7 &agrave; l'aide de la
+								biblioth&egrave;que HAPI.</p>
+						</td></tr><tr><td>
+							<p> HTTP4 / camel-http4 </p>
+							<p>
+								<code class="code">http4://hostname[:port]</code>
+							</p>
+						</td><td>
+							<p>Permet d'appeler des sereveurs HTTP externes &agrave; l'aide d'Apache HTTP Client 4.x.</p>
+						</td></tr><tr><td>
+							<p> Mail / camel-mail </p>
+							<p>
+								<code class="code">imap://hostname[:port]</code>
+							</p>
+						</td><td>
+							<p>Re&ccedil;oit des e-mails &agrave; l'aide d'IMap.</p>
+						</td></tr><tr><td>
+							<p> Jasypt / camel-jasypt </p>
+							<p>
+								<code class="code">jasypt: uri</code>
+							</p>
+						</td><td>
+							<p>Simplifie &agrave; la vol&eacute;e la biblioth&egrave;que de cryptage, int&eacute;gr&eacute;e dans Camel. </p>
+						</td></tr><tr><td>
+							<p> JCR / camel-jcr </p>
+							<p>
+								<code class="code">jcr://user:password@repository/path/to/node</code>
+							</p>
+						</td><td>
+							<p>Stocke un message dans un r&eacute;f&eacute;rentiel de type JCR (JSR-170), tel que <a class="link" href="http://jackrabbit.apache.org" target="_top">Apache
+									Jackrabbit</a>
+							</p>
+						</td></tr><tr><td>
+							<p> JDBC / camel-jdbc </p>
+							<p>
+								<code class="code">jdbc:dataSourceName?options</code>
+							</p>
+						</td><td>
+							<p>Permet d'effecter des requ&ecirc;tes et des op&eacute;rations JDBC.</p>
+						</td></tr><tr><td>
+							<p> Jetty / camel-jetty </p>
+							<p>
+								<code class="code">jetty:url</code>
+							</p>
+						</td><td>
+							<p>Permet d'exposer des services sur HTTP.</p>
+						</td></tr><tr><td>
+							<p> JMS / camel-jms </p>
+							<p>
+								<code class="code">jms:[topic:]destinationName</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec des fournisseurs JMS.</p>
+						</td></tr><tr><td>
+							<p> JMX / camel-jmx </p>
+							<p>
+								<code class="code">jmx://platform?options</code>
+							</p>
+						</td><td>
+							<p>Permet de travailler avec des v&eacute;rificateurs (listeners) de notifications JMX.</p>
+						</td></tr><tr><td>
+							<p> JPA / camel-jpa </p>
+							<p>
+								<code class="code">jpa://entityName</code>
+							</p>
+						</td><td>
+							<p>Permet d'utiliser une base de donn&eacute;es comme file d'attente via la sp&eacute;cification JPA,
+								afin de fonctionner avec <a class="link" href="http://openjpa.apache.org/" target="_top">OpenJPA</a>, <a class="link" href="http://www.hibernate.org/" target="_top">Hibernate</a> oo
+								TopLink.</p>
+						</td></tr><tr><td>
+							<p> Jsch / camel-jsch </p>
+							<p>
+								<code class="code">scp://localhost/destination</code>
+							</p>
+						</td><td>
+							<p>Support du protocole SCP. </p>
+						</td></tr><tr><td>
+							<p> Log / camel-core </p>
+							<p>
+								<code class="code">log:loggingCategory[?level=ERROR]</code>
+							</p>
+						</td><td>
+							<p>Utilise Jakarta Commons Logging afin d'enregistrer l'&eacute;change de messages dans un
+								syst&egrave;me de log sous-jacent, tel que log4j.</p>
+						</td></tr><tr><td>
+							<p> Lucene / camel-lucene </p>
+							<p>
+								<code class="code">lucene:searcherName:insert [?analyzer=&lt;analyzer&gt;]</code>
+							</p>
+						</td><td>
+							<p>Utilise Apache Lucene pour effectuer une indexation et des recherches plein texte
+								bas&eacute;es Java &agrave; l'aide de fonctionnalit&eacute;s d'analyse avanc&eacute;e et de
+								segmentation.</p>
+						</td></tr><tr><td>
+							<p> Mail / camel-mail </p>
+							<p>
+								<code class="code">mail://user-info@host:port</code>
+							</p>
+						</td><td>
+							<p>Envoie et re&ccedil;oit des e-mails.</p>
+						</td></tr><tr><td>
+							<p> Mock / camel-core </p>
+							<p>
+								<code class="code">mock:name</code>
+							</p>
+						</td><td>
+							<p>Teste des Routes et des r&egrave;gles de m&eacute;diation &agrave; l'aide de mocks.</p>
+						</td></tr><tr><td>
+							<p> Mail / camel-mail </p>
+							<p>
+								<code class="code">pop3://user-info@host:port</code>
+							</p>
+						</td><td>
+							<p>Re&ccedil;oit des e-mails via POP3 et JavaMail.</p>
+						</td></tr><tr><td>
+							<p> MyBatis / camel-mybatis </p>
+							<p>
+								<code class="code">mybatis://statementName</code>
+							</p>
+						</td><td>
+							<p>Ex&eacute;cute une requ&ecirc;te, interroge, ins&egrave;re, met &agrave; jour ou supprime dans une base de donn&eacute;es
+								relationnelle, &agrave; l'aide de <a class="link" href="http://mybatis.org/" target="_top">MyBatis</a>.</p>
+						</td></tr><tr><td>
+							<p> Properties / camel-core </p>
+							<p>
+								<code class="code">properties://key[?options]</code>
+							</p>
+						</td><td>
+							<p>Le composant "Properties" simplifie l'utilisation de param&egrave;tres factices directement
+								dans la d&eacute;finition des URIs des endpoints.</p>
+						</td></tr><tr><td>
+							<p> Quartz / camel-quartz </p>
+							<p>
+								<code class="code">quartz://groupName/timerName</code>
+							</p>
+						</td><td>
+							<p>Livre des messages de mani&egrave;re planifi&eacute;e, &agrave; l'aide de <a class="link" href="http://www.opensymphony.com/quartz/" target="_top">Quartz
+									scheduler</a>.</p>
+						</td></tr><tr><td>
+							<p> Ref / camel-core </p>
+							<p>
+								<code class="code">ref:name</code>
+							</p>
+						</td><td>
+							<p>Composant permettant de r&eacute;f&eacute;rencer des endpoints existants li&eacute;s dans le Registry Camel. </p>
+						</td></tr><tr><td>
+							<p> RMI / camel-rmi </p>
+							<p>
+								<code class="code">rmi://host[:port]</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec RMI.</p>
+						</td></tr><tr><td>
+							<p> RSS / camel-rss </p>
+							<p>
+								<code class="code">rss:uri</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec <a class="link" href="http://rometools.org/" target="_top">ROME</a> pour l'int&eacute;gration
+								RSS, notamment la consommation d'un flux RSS. </p>
+						</td></tr><tr><td>
+							<p> SEDA / camel-core </p>
+							<p>
+								<code class="code">seda:name</code>
+							</p>
+						</td><td>
+							<p>Appel asynchrone d'un autre endpoint dans le m&ecirc;me Contexte Camel.</p>
+						</td></tr><tr><td>
+							<p> Servlet / camel-servlet </p>
+							<p>
+								<code class="code">servlet:uri</code>
+							</p>
+						</td><td>
+							<p>Expose des services sur HTTP via la servlet d&eacute;ploy&eacute;e dans le conteneur Web.</p>
+						</td></tr><tr><td>
+							<p> FTP / camel-ftp (SFTP) </p>
+							<p>
+								<code class="code">sftp://host[:port]/fileName</code>
+							</p>
+						</td><td>
+							<p>Envoie et re&ccedil;oit des fichiers via SFTP (FTP sur SSH). </p>
+						</td></tr><tr><td>
+							<p> Mail / camel-mail </p>
+							<p>
+								<code class="code">smtp://user-info@host[:port]</code>
+							</p>
+						</td><td>
+							<p>Envoie des e-mails &agrave; l'aide de SMTP et JavaMail.</p>
+						</td></tr><tr><td>
+							<p> SMPP / camel-smpp </p>
+							<p>
+								<code class="code">smpp://user-info@host[:port]?options</code>
+							</p>
+						</td><td>
+							<p>Envoie et re&ccedil;oit des SMS &agrave; l'aide du Centre de messages courts (Short Messaging Service
+								Center) via la biblioth&egrave;que <a class="link" href="http://code.google.com/p/jsmpp/" target="_top">JSMPP
+									library</a>.</p>
+						</td></tr><tr><td>
+							<p> SNMP / camel-snmp </p>
+							<p>
+								<code class="code">snmp://host[:port]?options</code>
+							</p>
+						</td><td>
+							<p>Interroge des valeurs OID et re&ccedil;oit des traps &agrave; l'aide de SNMP via la biblioth&egrave;que
+									<a class="link" href="http://snmp4j.com" target="_top">SNMP4J</a>. </p>
+						</td></tr><tr><td>
+							<p> Spring Integration / camel-spring-integration </p>
+							<p>
+								<code class="code">spring-integration: defaultChannelName</code>
+							</p>
+						</td><td>
+							<p>Composant passerelle entre Camel et <a class="link" href="http://www.springframework.org/spring-integration" target="_top">Spring Integration</a>.</p>
+						</td></tr><tr><td>
+							<p> SQL / camel-sql </p>
+							<p>
+								<code class="code">sql:select * from table where id=#</code>
+							</p>
+						</td><td>
+							<p>Effectue des requ&ecirc;tes SQL &agrave; l'aide de JDBC.</p>
+						</td></tr><tr><td>
+							<p> SSH / camel-ssh </p>
+							<p>
+								<code class="code">ssh:[username[:password]@]host [:port][?options]</code>
+							</p>
+						</td><td>
+							<p>Permet d'envoyer des commandes &agrave; un serveur SSH.</p>
+						</td></tr><tr><td>
+							<p> Stub </p>
+							<p>
+								<code class="code">stub:someOtherCamelUri</code>
+							</p>
+						</td><td>
+							<p>Permet de simuler un endpoint middleware physique pour simplifier les tests et
+								d&eacute;bogages.</p>
+						</td></tr><tr><td>
+							<p> Test / camel-spring </p>
+							<p>
+								<code class="code">test:expectedMessagesEndpointUri</code>
+							</p>
+						</td><td>
+							<p>Cr&eacute;e un endpoint Mock attendant de recevoir tous les corps des messages pouvant &ecirc;tre
+								consult&eacute;s &agrave; partir de l'endpoint sous-jacent. </p>
+						</td></tr><tr><td>
+							<p> Timer / camel-core </p>
+							<p>
+								<code class="code">timer://name</code>
+							</p>
+						</td><td>
+							<p>Endpoint du minuteur.</p>
+						</td></tr><tr><td>
+							<p> Velocity / camel-velocity </p>
+							<p>
+								<code class="code">velocity:someTemplateResource</code>
+							</p>
+						</td><td>
+							<p>G&eacute;n&egrave;re une r&eacute;ponse &agrave; l'aide d'un mod&egrave;le <a class="link" href="http://velocity.apache.org/" target="_top">Apache Velocity</a>. </p>
+						</td></tr><tr><td>
+							<p> VM / camel-core </p>
+							<p>
+								<code class="code">vm:name</code>
+							</p>
+						</td><td>
+							<p>Appel asynchrone d'un autre endpoint dans la m&ecirc;me JVM.</p>
+						</td></tr><tr><td>
+							<p> XQuery Endpoint/ camel-saxon </p>
+							<p>
+								<code class="code">xquery:someXQueryResource</code>
+							</p>
+						</td><td>
+							<p>G&eacute;n&egrave;re une r&eacute;ponse &agrave; l'aide d'un mod&egrave;le XQuery. </p>
+						</td></tr><tr><td>
+							<p> XSLT / camel-spring </p>
+							<p>
+								<code class="code">xslt:someTemplateResource</code>
+							</p>
+						</td><td>
+							<p>G&eacute;n&egrave;re une r&eacute;ponse &agrave; l'aide d'un mod&egrave;le <a class="link" href="http://www.w3.org/TR/xslt" target="_top">XSLT</a>. </p>
+						</td></tr><tr><td>
+							<p> Zookeeper </p>
+							<p>
+								<code class="code">zookeeper://host:port/path</code>
+							</p>
+						</td><td>
+							<p>Fonctionne avec le(s) cluster(s) <a class="link" href="http://camel.apache.org/zookeeper.html" target="_top">ZooKeeper</a>.</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario&nbsp;1 : D&eacute;placer des fichiers d'un endpoint de message &agrave; un autre"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e9011"></a>Sc&eacute;nario&nbsp;1 : D&eacute;placer des fichiers d'un endpoint de message &agrave; un autre</h3></div></div></div><p>Ce sc&eacute;nario utilise deux composants <span class="emphasis"><strong>cMessagingEndpoint</strong></span> afin
+			de lire et de d&eacute;placer des fichiers d'un endpoint &agrave; un autre.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9022"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="emphasis"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="emphasis"><strong>Messaging</strong></span> et d&eacute;posez deux composants <span class="emphasis"><strong>cMessagingEndpoint</strong></span> dans l'espace de mod&eacute;lisation
+						graphique. L'un sera l'&eacute;metteur, l'autre le destinataire. Nommez-les
+						respectivement <span class="emphasis"><em>Sender</em></span> et <span class="emphasis"><em>Receiver</em></span> pour mieux percevoir leur r&ocirc;le dans la
+						Route.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez-droit sur le premier composant, s&eacute;lectionnez <span class="emphasis"><strong>Row</strong></span>
+					&gt; <span class="emphasis"><strong>Route</strong></span> dans le menu et glissez vers le
+					second composant afin de les relier avec un lien <span class="emphasis"><strong>Route</strong></span>.</p></li></ol></div></div><div class="section" title="Configurer les composants et les connexions"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9056"></a>Configurer les composants et les connexions</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le premier composant d'endpoint pour afficher sa vue <span class="emphasis"><strong>Component</strong></span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez l'URI des messages que vous
+					souhaitez router. </p><p>Comme vous g&eacute;rez des fichiers, saisissez <span class="emphasis"><em>"file:///"</em></span> ainsi que le
+						chemin d'acc&egrave;s au dossier contenant les fichiers.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_2.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le second composant d'endpoint pour afficher sa vue <span class="emphasis"><strong>Component</strong></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez l'URI du dossier vers lequel
+					vous souhaitez router votre message. </p><p>Comme vous g&eacute;rez des fichiers, saisissez <span class="emphasis"><em>"file:/"</em></span> ainsi que le chemin
+					d'acc&egrave;s au dossier dans lequel les fichiers seront envoy&eacute;s.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_3.png"></div></li><li class="step" title="&Eacute;tape 5"><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></li></ol></div></div><div class="section" title="Voir le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9106"></a>Voir le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Pour visualiser le code g&eacute;n&eacute;r&eacute;, cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span>
+				au bas de l'espace de mod&eacute;lisation graphique.</p><div class="mediaobject" align="center"><img src="../images/cMessagingEndpoint_scenario1_4.png" align="middle"></div><p>Le code affiche le <code class="code">from</code> et le <code class="code">.to</code> correspondants aux deux
+					endpoints ; <code class="code">from</code> pour l'endpoint &eacute;metteur et <code class="code">.to</code> pour
+					l'endpoint r&eacute;cepteur.</p></li><li class="step" title="&Eacute;tape 2"><p>Dans la vue <span class="emphasis"><strong>Run</strong></span>, cliquez sur le bouton <span class="emphasis"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre Route. </p><p>Vous pouvez &eacute;galement appuyer sur <span class="emphasis"><strong>F6</strong></span> pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Les fichiers sont d&eacute;plac&eacute;s de leur dossier original vers le dossier cible. De
+			plus, un nouveau dossier <span class="emphasis"><strong>.camel</strong></span> est cr&eacute;&eacute; dans le
+			dossier source contenant les fichiers consomm&eacute;s. C'est le comportement de Camel par
+			d&eacute;faut. Ainsi, les fichiers ne seront pas trait&eacute;s ind&eacute;finiment mais seront sauvegard&eacute;s
+			en cas de probl&egrave;me.</p></li></ol></div></div></div><div class="section" title="Sc&eacute;nario&nbsp;2 : Envoyer des fichiers vers un autre endpoint de message"><div class="titlepage"><div><div><h3 class="title"><a name="Raa98448"></a>Sc&eacute;nario&nbsp;2 : Envoyer des fichiers vers un autre endpoint de message</h3></div></div></div><p>Ce sc&eacute;nario permet d'acc&eacute;der &agrave; un service FTP et de transf&eacute;rer des fichiers d'un endpoint &agrave;
+			un autre.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9160"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="emphasis"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="emphasis"><strong>Messaging</strong></span> et s&eacute;lectionnez le composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span> puis glissez-en deux dans
+						l'espace de mod&eacute;lisation graphique. Nommez-les respectivement <span class="emphasis"><em>Sender</em></span> et <span class="emphasis"><em>Receiver</em></span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez-droit sur le premier composant, s&eacute;lectionnez <span class="emphasis"><strong>Row</strong></span>
+					&gt; <span class="emphasis"><strong>Route</strong></span> dans le menu et glissez vers le
+					second composant afin de les relier par un lien <span class="emphasis"><strong>Route</strong></span>. </p></li></ol></div></div><div class="section" title="Configurer les composants et les connexions"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9194"></a>Configurer les composants et les connexions</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant nomm&eacute; <span class="emphasis"><em>Sender</em></span> pour
+						afficher sa vue <span class="emphasis"><strong>Component</strong></span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez l'URI du message que vous
+				souhaitez router. </p><p>Ici, utilisez un composant FTP : <code class="code">ftp://indus@degas/remy/camel</code> avec des
+					param&egrave;tres d'URI sp&eacute;cifiques permettant l'authentification de la connexion FTP :
+						<code class="code">?username=indus&amp;password=indus</code>.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_2.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Pour que le composant FTP fonctionne dans Camel, cliquez sur l'onglet <span class="emphasis"><strong>Advanced settings</strong></span> du composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span>, cliquez sur le bouton <span class="emphasis"><strong>[+]</strong></span> pour ajouter un composant Camel dans la table <span class="emphasis"><strong>Dependencies</strong></span> et s&eacute;lectionnez <span class="emphasis"><em>ftp</em></span>
+					dans la liste <span class="emphasis"><strong>Camel component</strong></span> pour activer le
+					composant FTP.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_3.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Double-cliquez sur le composant nomm&eacute; <span class="emphasis"><em>Receiver</em></span> pour
+						afficher sa vue <span class="emphasis"><strong>Component</strong></span>. </p></li><li class="step" title="&Eacute;tape 5"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez l'URI du dossier vers lequel
+					vous souhaitez que votre message soit rout&eacute;. </p><p>Comme vous g&eacute;rez des fichiers, saisissez <span class="emphasis"><em>"file:/"</em></span> ainsi que le chemin
+					d'acc&egrave;s au dossier dans lequel les fichier seront envoy&eacute;s.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario1_3.png"></div></li><li class="step" title="&Eacute;tape 6"><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9277"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Pour visualiser le code g&eacute;n&eacute;r&eacute;, cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span>
+					au bas de l'espace de mod&eacute;lisation graphique.</p><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_4.png"></div><div class="mediaobject"><img src="../images/cMessagingEndpoint_scenario2_5.png"></div><p>Dans cette partie du code, vous pouvez voir une route repr&eacute;sent&eacute;e par le <code class="code">from</code>
+					et le <code class="code">.to</code>, correspondants aux endpoints &eacute;metteur et
+					r&eacute;cepteur.</p></li><li class="step" title="&Eacute;tape 2"><p>Dans la vue <span class="emphasis"><strong>Run</strong></span>, cliquez sur le bouton <span class="emphasis"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre Route. </p><p>Vous pouvez &eacute;galement appuyer sur <span class="emphasis"><strong>F6</strong></span> pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Le message est envoy&eacute; (copi&eacute;) &agrave; l'endpoint r&eacute;cepteur.</p></li></ol></div></div></div><div class="section" title="Sc&eacute;nario&nbsp;3 : Utiliser un endpoint Xquery pour filtrer des messages"><div class="titlepage"><div><div><h3 class="title"><a name="d2665e9317"></a>Sc&eacute;nario&nbsp;3 : Utiliser un endpoint Xquery pour filtrer des messages</h3></div></div></div><p>Dans ce sc&eacute;nario, utilisez un composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span>
+			pour appeler une ressource de Route comme un analyseur Xquery pour extraire des messages
+			d'un syst&egrave;me de fichiers local.</p><p>Voici un extrait du fichier XML utilis&eacute; dans ce sc&eacute;nario :</p><p>
+			</p><pre class="programlisting">&lt;people&gt;
+  &lt;person id="8"&gt;
+    &lt;firstName&gt;Ellen&lt;/firstName&gt;
+    &lt;lastName&gt;Ripley&lt;/lastName&gt;
+    &lt;city&gt;Washington&lt;/city&gt;
+  &lt;/person&gt;  
+  &lt;person id="9"&gt;
+    &lt;firstName&gt;Peter&lt;/firstName&gt;
+    &lt;lastName&gt;Green&lt;/lastName&gt;
+    &lt;city&gt;London&lt;/city&gt;
+  &lt;/person&gt;
+&lt;/people&gt;</pre><p>
+		</p><div class="section" title="Cr&eacute;er une ressource de Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9332"></a>Cr&eacute;er une ressource de Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la vue <span class="emphasis"><strong>Repository</strong></span>, cliquez-droit sur le n&#339;ud
+							<span class="emphasis"><strong>Resources</strong></span> et s&eacute;lectionnez <span class="emphasis"><strong>Create Resource</strong></span> dans le menu contextuel.</p><div class="mediaobject"><img src="../images/use_case_ccxf12.png"></div></li><li class="step" title="&Eacute;tape 2"><p>L'assistant <span class="emphasis"><strong>New Route Resource</strong></span> s'ouvre. Dans le champ
+							<span class="emphasis"><strong>Name</strong></span>, saisissez un nom pour la
+						ressource, par exemple, <span class="emphasis"><em>SampleXquery</em></span>. Cliquez sur
+							<span class="emphasis"><strong>Finish</strong></span> pour fermer l'assistant.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_1.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Saisissez le code suivant dans l'&eacute;diteur afin d'extraire le pr&eacute;nom
+							(<span class="emphasis"><em>firstName</em></span>) et le nom de famille
+							(<span class="emphasis"><em>lastName</em></span>) de tous les &eacute;l&eacute;ments
+							<span class="emphasis"><em>person</em></span>.</p><p>
+						</p><pre class="programlisting">declare namespace ns0="http://com.sap/b";
+&lt;people&gt;
+{
+for $p in /people//person
+return
+            &lt;person&gt;
+            &lt;firstName&gt;{$p/firstName/text()}&lt;/firstName&gt;
+            &lt;lastName&gt;{$p/lastName/text()}&lt;/lastName&gt;
+            &lt;/person&gt;
+}
+&lt;/people&gt;</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 4"><p> Appuyez sur les touches <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						ressource de Route.</p></li></ol></div></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9392"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_2.png"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Depuis le dossier <span class="emphasis"><strong>Messaging</strong></span> de la <span class="emphasis"><strong>Palette</strong></span>, glissez-d&eacute;posez un composant <span class="emphasis"><strong>cFile</strong></span> et un <span class="emphasis"><strong>cMessagingEndpoint</strong></span> dans l'espace de mod&eacute;lisation
+						graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>Du dossier <span class="emphasis"><strong>Processor</strong></span>, glissez-d&eacute;posez un <span class="emphasis"><strong>cProcessor</strong></span> dans l'espace de mod&eacute;lisation
+						graphique.</p></li><li class="step" title="&Eacute;tape 3"><p>Reliez les composants &agrave; l'aide de liens <span class="emphasis"><strong>Row</strong></span> &gt;
+							<span class="emphasis"><strong>Route</strong></span> comme dans la capture
+						d'&eacute;cran.</p></li><li class="step" title="&Eacute;tape 4"><p>Renommez les composants afin de mieux identifier leur r&ocirc;le dans la Route.</p></li></ol></div></div><div class="section" title="Configurer les composants et les connexions"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9435"></a>Configurer les composants et les connexions</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cFile</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_3.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, sp&eacute;cifiez le chemin d'acc&egrave;s au
+						fichier source <span class="emphasis"><em>people.xml</em></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Cliquez-droit sur la Route dans la vue <span class="emphasis"><strong>Repository</strong></span> et
+						s&eacute;lectionnez <span class="emphasis"><strong>Manage Route Resources</strong></span> dans le
+						menu contextuel.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_4.png"></div><p>L'assistant <span class="emphasis"><strong>Manage Route Resources</strong></span> s'ouvre.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_7.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans l'assistant <span class="emphasis"><strong>Manage Route Resources</strong></span>, cliquez sur
+							<span class="emphasis"><strong>Add</strong></span> et s&eacute;lectionnez <span class="emphasis"><em>SampleXquery</em></span> dans la vue des ressources.
+						Cliquez sur <span class="emphasis"><strong>OK</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_6.png"></div><p>La ressource de Route <span class="emphasis"><em>SampleXquery</em></span> est ajout&eacute;e &agrave; la
+						table, dans l'assistant <span class="emphasis"><strong>Manage Route
+							Resources</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_5.png"></div></li><li class="step" title="&Eacute;tape 5"><p>S&eacute;lectionnez <span class="emphasis"><em>SampleXquery</em></span> dans la liste des ressources
+						de Route puis cliquez sur <span class="emphasis"><strong>Copy Path</strong></span>.
+						Cliquez sur <span class="emphasis"><strong>OK</strong></span> pour fermer
+						l'assistant.</p></li><li class="step" title="&Eacute;tape 6"><p>Double-cliquez sur le composant <span class="emphasis"><strong>cMessagingEndpoint</strong></span> pour
+						afficher sa vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_8.png"></div></li><li class="step" title="&Eacute;tape 7"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez <span class="emphasis"><em>xquery:</em></span> et collez entre guillemets doubles le chemin de la
+						ressource de Route <span class="emphasis"><em>SampleXquery</em></span> copi&eacute;
+						pr&eacute;c&eacute;demment.</p></li><li class="step" title="&Eacute;tape 8"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Advanced settings</strong></span>, ajoutez le
+						composant Camel <span class="emphasis"><strong>saxon</strong></span> dans la liste
+							<span class="emphasis"><strong>Dependencies</strong></span>. Pour plus d'informations
+						concernant <span class="emphasis"><strong>Xquery</strong></span>, consultez le site Web
+						d'Apache Camel (en anglais) : <a class="link" href="http://camel.apache.org/xquery-endpoint.html" target="_top">http://camel.apache.org/xquery-endpoint.html</a>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_10.png"></div></li><li class="step" title="&Eacute;tape 9"><p>Double-cliquez sur le <span class="emphasis"><strong>cProcessor</strong></span> pour ouvrir sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_9.png"></div></li><li class="step" title="&Eacute;tape 10"><p>Dans la zone <span class="emphasis"><strong>Code</strong></span>, saisissez le code suivant pour
+						afficher les messages intercept&eacute;s dans la console :</p><p>
+						</p><pre class="programlisting">System.out.println(exchange.getIn().getBody(String.class));</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 11"><p>Appuyez sur les touches <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2665e9595"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Pour visualiser le code g&eacute;n&eacute;r&eacute;, cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de l'espace de mod&eacute;lisation graphique.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_11.png"></div><p>Comme affich&eacute; dans le code ci-dessus, le message est rout&eacute; depuis (<code class="code">from</code>) le
+						composant <code class="code">Message_source_cFile_1</code> vers (<code class="code">.to</code>) le
+							<code class="code">cMessagingEndpoint_1</code> et est trait&eacute; par le composant
+							<code class="code">cProcessor_1</code>.</p></li><li class="step" title="&Eacute;tape 2"><p>Dans la vue <span class="emphasis"><strong>Run</strong></span>, cliquez sur le bouton <span class="emphasis"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre Route. Vous
+						pouvez &eacute;galement appuyer sur <span class="emphasis"><strong>F6</strong></span> pour
+						l'ex&eacute;cuter. </p><p>R&eacute;sultat : Le pr&eacute;nom (<span class="emphasis"><em>firstName</em></span>) et le nom de famille
+							(<span class="emphasis"><em>lastName</em></span>) de tous les &eacute;l&eacute;ments
+							<span class="emphasis"><em>person</em></span> du fichier source sont affich&eacute;s dans la
+						console.</p><div class="mediaobject"><img src="../images/use_case_cmessagingendpoint_scenario3_12.png"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cMail.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-messaging.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cTimer.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">cMail&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cTimer</td></tr></table></div></body></html>

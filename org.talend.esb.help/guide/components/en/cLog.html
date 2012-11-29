@@ -1,0 +1,76 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cLog</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio for ESB Mediation Components"><link rel="up" href="ch-miscellaneous.html" title="Chapter&nbsp;4.&nbsp;Miscellaneous components"><link rel="prev" href="ch-miscellaneous.html" title="Chapter&nbsp;4.&nbsp;Miscellaneous components"><link rel="next" href="cLoop.html" title="cLoop"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cLog </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch-miscellaneous.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;4.&nbsp;Miscellaneous components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cLoop.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cLog"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cLog"></a>cLog </h2></div></div></div><div class="mediaobject"><img src="../images/clog_icon32_white.png"></div><div class="section" title="cLog properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10015"></a>cLog properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Miscellaneous</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cLog</strong></span> logs message exchanges to the underlying logging mechanism. Apache Camel provides the regular logger and the throughput logger. The default logger logs every exchange. The throughput logger logs exchanges on a group basis. By default regular logging is used. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cLog</strong></span> is used to log message exchanges.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Level</em></span>
+						</td><td valign="top">Select a logging level from <span class="emphasis"><strong>DEBUG</strong></span>, <span class="emphasis"><strong>ERROR</strong></span>, <span class="emphasis"><strong>INFO</strong></span>, <span class="emphasis"><strong>OFF</strong></span>, <span class="emphasis"><strong>TRACE</strong></span>, or <span class="emphasis"><strong>WARN</strong></span>.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Use default output log message</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this option to use the default output log message provided by the underlying logging mechanism.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options / None</em></span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">Select this option to take no action on the log message.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options / Specifies a group size for throughput logging</em></span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">
+							<p>Select this option to use throughput logging and specify a group size for the throughput logging.</p>
+							<p><span class="emphasis"><strong>Size</strong></span>: Enter an integer that specifies a group size for throughput logging. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options / Group message stats by time interval (in millis)</em></span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">
+							<p>Select this option to use throughput logging and group message statistics.</p>
+							<p><span class="emphasis"><strong>Interval</strong></span>: Specify the time interval (in milliseconds) by which the message statistics will be grouped. </p>
+							<p><span class="emphasis"><strong>Delay</strong></span>:  Set the initial delay (in milliseconds) for message statistics. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options / Format the log output</em></span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">Select this option to format the log output. Click <span class="emphasis"><strong>[+]</strong></span> as many times as required to add arguments to the table. Then click the corresponding <span class="emphasis"><strong>value</strong></span> field and enter a value. See the site <a class="link" href="http://camel.apache.org/log.html" target="_top">http://camel.apache.org/log.html</a> for available options.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Specify output log message</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this option to specify the output log message.</p>
+							<p><span class="emphasis"><strong>Message</strong></span>: Use Simple language to construct a dynamic message which gets logged.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cLog</strong></span> is used as a middle or end component in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Related scenario:"><div class="titlepage"><div><div><h3 class="title"><a name="d0e10253"></a>Related scenario:</h3></div></div></div><p>For a related scenario, see <a class="xref" href="cMessageRouter.html#nwang-20120327-camel_components-cmessagerouter" title="Scenario: Routing messages according to a criterion">the section called &#8220;Scenario: Routing messages according to a criterion&#8221;</a>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-miscellaneous.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-miscellaneous.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cLoop.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter&nbsp;4.&nbsp;Miscellaneous components&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;cLoop</td></tr></table></div></body></html>
