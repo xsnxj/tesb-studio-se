@@ -64,7 +64,19 @@ public class ExportPackage extends AbstractDependencyItem {
 		if(!equals(obj)){
 			return false;
 		}
-		return version == ((ExportPackage)obj).getVersion();
+		return isEquals(version , ((ExportPackage)obj).getVersion());
+	}
+	
+	protected boolean isEquals(String a, String b){
+		if(a == null){
+			if( b == null){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		return a.equals(b);
 	}
 	
 	/**

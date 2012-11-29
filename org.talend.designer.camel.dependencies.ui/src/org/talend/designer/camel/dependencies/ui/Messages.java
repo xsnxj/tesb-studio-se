@@ -31,6 +31,7 @@ public class Messages extends NLS {
 	public static String NewExportPackageDialog_editMsg;
 	public static String NewExportPackageDialog_editTitle;
 	public static String NewExportPackageDialog_name;
+	public static String NewExportPackageDialog_nameAlreadyExist;
 	public static String NewExportPackageDialog_nameNullError;
 	public static String NewExportPackageDialog_version;
 	public static String NewExportPackageDialog_versionInvalidError;

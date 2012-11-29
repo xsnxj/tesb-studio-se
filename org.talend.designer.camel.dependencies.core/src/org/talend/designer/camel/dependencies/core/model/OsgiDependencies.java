@@ -77,10 +77,22 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends Ab
 			return false;
 		}
 		OsgiDependencies<?> o = (OsgiDependencies<?>) obj;
-		if(minVersion == o.getMinVersion() && maxVersion == o.getMaxVersion()){
+		if(isEquals( minVersion, o.getMinVersion()) && isEquals(maxVersion , o.getMaxVersion())&& isOptional == o.isOptional()){
 			return true;
 		}
 		return false;
+	}
+	
+	protected boolean isEquals(String a, String b){
+		if(a == null){
+			if( b == null){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		return a.equals(b);
 	}
 
 	/**

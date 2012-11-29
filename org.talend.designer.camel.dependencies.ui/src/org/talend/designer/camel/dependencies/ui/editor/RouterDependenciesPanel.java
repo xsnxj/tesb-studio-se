@@ -250,7 +250,7 @@ public class RouterDependenciesPanel extends Composite implements
 
 	private void editExportPackage() {
 		ExportPackage selected = (ExportPackage)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
-		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), selected);
+		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), selected, (List<?>) tableViewer.getInput());
 		if(Dialog.OK == dialog.open()){
 			ExportPackage exportPackage = dialog.getExportPackage();
 			selected.setName(exportPackage.getName());
@@ -262,20 +262,18 @@ public class RouterDependenciesPanel extends Composite implements
 
 	private void editRequiredItem() {
 		OsgiDependencies<?> selected = (OsgiDependencies<?>)((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
-		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
+		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog((List<?>) tableViewer.getInput(),
 				selected, getShell(), type);
 		int open = dialog.open();
 		if (open == Dialog.OK) {
-			if(dialog.isChanged()){
-				OsgiDependencies<?> item = dialog.getDependencyItem();
-				selected.setName(item.getName());
-				selected.setMaxVersion(item.getMaxVersion());
-				selected.setMinVersion(item.getMinVersion());
-				selected.setOptional(item.isOptional());
-				
-				tableViewer.update(selected, null);
-				fireDependenciesChangedListener();
-			}
+			OsgiDependencies<?> item = dialog.getDependencyItem();
+			selected.setName(item.getName());
+			selected.setMaxVersion(item.getMaxVersion());
+			selected.setMinVersion(item.getMinVersion());
+			selected.setOptional(item.isOptional());
+
+			tableViewer.update(selected, null);
+			fireDependenciesChangedListener();
 		}
 	}
 
@@ -372,10 +370,10 @@ public class RouterDependenciesPanel extends Composite implements
 	}
 
 	private void addNewExportPackage() {
-		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell());
+		List input = (List) tableViewer.getInput();
+		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), input);
 		if(Dialog.OK == dialog.open()){
 			ExportPackage exportPackage = dialog.getExportPackage();
-			List input = (List) tableViewer.getInput();
 			input.add(exportPackage);
 			tableViewer.refresh();
 			tableViewer.setSelection(new StructuredSelection(exportPackage));

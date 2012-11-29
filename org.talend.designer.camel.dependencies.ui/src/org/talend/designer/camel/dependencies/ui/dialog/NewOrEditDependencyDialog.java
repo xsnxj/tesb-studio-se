@@ -8,6 +8,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -30,7 +31,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 
 	private boolean isNew = false;
 	
-	private boolean isChanged = false;
+	private OsgiDependencies<?> origin;
 
 	public NewOrEditDependencyDialog(List<?> input, Shell parentShell, int type) {
 		super(parentShell);
@@ -49,10 +50,11 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		}
 	}
 
-	public NewOrEditDependencyDialog(OsgiDependencies<?> sourceItem, Shell parentShell,
+	public NewOrEditDependencyDialog(List<?> input, OsgiDependencies<?> sourceItem, Shell parentShell,
 			int type) {
 		super(parentShell);
-		this.item = sourceItem;
+		this.input = input;
+		this.origin = sourceItem;
 		this.type = type;
 		this.isNew = false;
 		switch (type) {
@@ -135,12 +137,12 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			maxVersionT.setText(item.getMaxVersion()==null?"":item.getMaxVersion()); //$NON-NLS-1$
 			optionalBtn.setSelection(item.isOptional());
 		}
+		nameT.selectAll();
 		nameT.addModifyListener(new ModifyListener() {
 			
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setName(((Text) e.getSource()).getText());
-				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
@@ -149,7 +151,6 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setMinVersion(((Text) e.getSource()).getText());
-				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
@@ -158,14 +159,12 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				item.setMaxVersion(((Text) e.getSource()).getText());
-				isChanged = true;
 				getButton(OK).setEnabled(validate());
 			}
 		});
 		optionalBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				isChanged = true;
 				item.setOptional(((Button) e.getSource()).getSelection());
 				getButton(OK).setEnabled(validate());
 			}
@@ -175,7 +174,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 
 
 	private boolean validate() {
-		if (isNew && input.contains(item)) {
+		if(!isNew){
+			if(item.strictEqual(origin)){
+				setErrorMessage(null);
+				return false;
+			}
+		}
+		if (nameExist()) {
 			setErrorMessage(Messages.NewDependencyItemDialog_existCheckMessage);
 			return false;
 		}
@@ -205,6 +210,40 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		return true;
 	}
 
+	
+	private boolean nameExist(){
+		String name = item.getName();
+		/*
+		 * if it's editing, then ignore itself
+		 * else compare with all items.
+		 */
+		if(!isNew){
+			for(Object o: input){
+				if(origin == o){
+					continue;
+				}
+				if(!(o instanceof OsgiDependencies<?>)){
+					continue;
+				}
+				OsgiDependencies<?> e = (OsgiDependencies<?>) o;
+				if(name.equals(e.getName())){
+					return true;
+				}
+			}
+		}else{
+			for(Object o: input){
+				if(!(o instanceof OsgiDependencies<?>)){
+					continue;
+				}
+				OsgiDependencies<?> e = (OsgiDependencies<?>) o;
+				if(name.equals(e.getName())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
@@ -215,7 +254,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		return item;
 	}
 	
-	public boolean isChanged() {
-		return isChanged;
+	protected Point getInitialSize() {
+		Point computeSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		computeSize.x += 100;
+		return computeSize;
 	}
 }
