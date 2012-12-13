@@ -3,29 +3,19 @@ package org.talend.repository.services.utils;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 public class FolderNameUtil {
+
+	private static final Pattern PATTERN_PUNCT_EXCEPT_SLASH = Pattern.compile("(?![/])\\p{Punct}");
 
 	public static String replaceAllLimited(String input) {
 		if (input == null) {
 			return input;
 		}
-		String[] split = input.split("/");
-		if (split.length <= 1) {
-			// return input;
-			split = new String[] { input };
-		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < split.length; i++) {
-			String replaceAll = split[i].replaceAll("\\p{Punct}", "-");
-			sb.append(replaceAll);
-			if (i < split.length - 1) {
-				sb.append("/");
-			}
-		}
-		return sb.toString();
+		return PATTERN_PUNCT_EXCEPT_SLASH.matcher(input).replaceAll("-");
 	}
-	
+
 	public static String getImportedXmlSchemaPath(String namespace,
 			String portType, String operation) throws URISyntaxException {
 		if (namespace == null || portType == null || operation == null) {
