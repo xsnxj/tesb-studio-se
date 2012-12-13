@@ -244,16 +244,14 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                 statisticPort, tracePort);
         String artefactName = getNodeLabel(node);
         File path = getFilePath(parentPath, groupId, artefactName, serviceVersion);
-        File file = new File(path, artefactName + "-" + serviceVersion + manager.getOutputSuffix());
+        File file = new File(path, artefactName + '-' + serviceVersion + manager.getOutputSuffix());
         manager.setDestinationPath(file.getAbsolutePath());
         return manager;
     }
 
     public File getFilePath(String parentPath, String groupId, String artefactName, String serviceVersion) {
         File folder = new File(parentPath, "repository");
-        folder.mkdirs();
-        String path = groupId.replace('.', File.separatorChar);
-        File group = new File(folder, path);
+        File group = new File(folder, groupId.replace('.', File.separatorChar));
         File artefact = new File(group, artefactName);
         File version = new File(artefact, serviceVersion);
         version.mkdirs();
