@@ -15,6 +15,7 @@ package org.talend.camel.designer.ui.editor;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -24,6 +25,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.ECamelCoreImage;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
@@ -38,6 +40,7 @@ import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
@@ -171,13 +174,31 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        Item curItem = getProcess().getProperty().getItem();
+        IRepositoryService service = CorePlugin.getDefault().getRepositoryService();
+        IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
+        try {
+            repFactory.updateLockStatus();
+            // For TDI-23825, if not lock by user try to lock again.
+            boolean locked = repFactory.getStatus(curItem) == ERepositoryStatus.LOCK_BY_USER;
+            if (!locked && !getProcess().isReadOnly()) {
+                repFactory.lock(curItem);
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+        ERepositoryStatus status = repFactory.getStatus(curItem);
+        if (!status.equals(ERepositoryStatus.LOCK_BY_USER) && !repFactory.getRepositoryContext().isEditableAsReadOnly()) {
+            MessageDialog.openWarning(getEditor(0).getEditorSite().getShell(),
+                    Messages.getString("MultiPageTalendEditor.canNotSaveTitle"),
+                    Messages.getString("MultiPageTalendEditor.canNotSaveMessage"));
+            return;
+        }
         if (!isDirty()) {
             return;
         }
         updateRunJobContext();
         designerEditor.getProcess().getProperty().eAdapters().remove(dirtyListener);
-        IRepositoryService service = CorePlugin.getDefault().getRepositoryService();
-        IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
         repFactory.addRepositoryWorkUnitListener(repositoryWorkListener);
 
         if (getActivePage() == 0) {
@@ -215,13 +236,14 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
 
         this.setName();
     }
-    
+
     /**
      * Keep lock if there's any other editor still openning
      */
     @Override
     public boolean isKeepPropertyLocked() {
-    	IEditorInput input = getEditorInput();
-    	return super.isKeepPropertyLocked() || CamelEditorUtil.hasMoreEditorOpenedExcept((RepositoryNode) input.getAdapter(RepositoryNode.class), input);
+        IEditorInput input = getEditorInput();
+        return super.isKeepPropertyLocked()
+                || CamelEditorUtil.hasMoreEditorOpenedExcept((RepositoryNode) input.getAdapter(RepositoryNode.class), input);
     }
 }
