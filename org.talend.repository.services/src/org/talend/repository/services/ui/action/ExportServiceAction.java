@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -283,16 +282,11 @@ public class ExportServiceAction implements IRunnableWithProgress {
         return serviceVersion;
     }
 
-    private final String getGroupId(String serviceNS, String serviceName) {
-        String schemeId;
-        try {
-            schemeId = new URI(serviceNS).getScheme() + "://";
-        } catch (URISyntaxException e1) {
-            schemeId = "http://";
-        }
-        String servNS = serviceNS.replace(schemeId, "");
+    private final static String getGroupId(String serviceNS, String serviceName) {
+        // TESB-7782: Can't Export service if the targetNamespace of it contains a illegal character
+        String servNS = URI.create(serviceNS).getSchemeSpecificPart().substring(2).replace(':', '.');
         if (!servNS.endsWith("/")) {
-            servNS += "/";
+            servNS += '/';
         }
         return (servNS + serviceName).replace('/', '.');
     }
