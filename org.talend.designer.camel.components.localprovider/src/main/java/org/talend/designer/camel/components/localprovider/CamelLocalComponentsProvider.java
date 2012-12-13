@@ -15,7 +15,6 @@ package org.talend.designer.camel.components.localprovider;
 import java.io.File;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.talend.core.GlobalServiceRegister;
@@ -28,18 +27,11 @@ import org.talend.core.ui.branding.IBrandingService;
  */
 public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
 
-    private static Logger logger = Logger.getLogger(CamelLocalComponentsProvider.class);
-
-    public CamelLocalComponentsProvider() {
-
-    }
-
     /*
      * (non-Jsdoc)
      * 
      * @see org.talend.core.model.components.AbstractComponentsProvider#getExternalComponentsLocation()
      */
-
     protected File getExternalComponentsLocation() {
         URL url = FileLocator.find(CamelComponentPlugin.getDefault().getBundle(), new Path("components"), null); //$NON-NLS-1$
         URL fileUrl;
