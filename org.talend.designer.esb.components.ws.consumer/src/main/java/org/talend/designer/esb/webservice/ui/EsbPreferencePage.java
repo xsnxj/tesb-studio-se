@@ -9,6 +9,8 @@ import org.talend.designer.esb.webservice.i18n.Messages;
 
 public class EsbPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+    public static final String WS_HTTP_PORT_PREFERENCE = "wsHttpPort";
+
     public EsbPreferencePage() {
         super(GRID);
     }
@@ -21,7 +23,7 @@ public class EsbPreferencePage extends FieldEditorPreferencePage implements IWor
     @Override
     protected void createFieldEditors() {
 
-        IntegerFieldEditor localWebServiceHttpPort = new IntegerFieldEditor(WebServiceComponentPlugin.WS_HTTP_PORT_PREFERENCE,
+        IntegerFieldEditor localWebServiceHttpPort = new IntegerFieldEditor(WS_HTTP_PORT_PREFERENCE,
                 Messages.getString("esb.preferences.webservice.port.default"), getFieldEditorParent());
         // localWebServiceHttpPort.setValidRange(0, 65535);
         localWebServiceHttpPort.setValidRange(1024, 65535);

@@ -16,9 +16,6 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
-String projectName = codeGenArgument.getCurrentProjectName();
-String processName = node.getProcess().getName();
-
 //String endpoint = ElementParameterParser.getValue(node, "__ENDPOINT__");
 String wsdlLocation = ElementParameterParser.getValue(node, "__WSDL_LOCATION__");
 
@@ -27,78 +24,18 @@ String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
 String portNS = ElementParameterParser.getValue(node, "__PORT_NS__");
 String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
 
-String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
-String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
-
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
 %>
-javax.xml.namespace.QName serviceName_<%=cid%> = null;
-javax.xml.namespace.QName portName_<%=cid%> = null;
+final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
+final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
+
 org.talend.ws.helper.ServiceInvokerHelper serviceInvokerHelper_<%=cid%> = null ;
 
 ESBConsumer consumer_<%=cid%> = null;
-if (this.registry != null) {
-
-	final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
-<%
-Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
-if (useSl) {
-	List<Map<String, String>> customProperties = (List<Map<String,String>>)
-			ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
-	for (int k = 0; k < customProperties.size(); k++) { %>
-		slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-	<% }
-} %>
-
-	consumer_<%=cid%> = this.registry.createConsumer(
-		new ESBEndpointInfo() {
-
-			@SuppressWarnings("serial")
-			private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
-				// put("wsdlURL", <%=wsdlLocation%>);
-				put("dataFormat", "PAYLOAD");
-				put("portName", "{<%=portNS%>}<%=portName%>");
-				put("serviceName", "{<%=serviceNS%>}<%=serviceName%>");
-				put("defaultOperationName", "<%=method%>");
-				put("defaultOperationNameSpace", "");
-				put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-				put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-				put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
-
-				// use Service Locator
-				put("useServiceLocator", <%=useSl%>);
-				<% if (useSl) { %>
-					put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
-					put("SL-PROPS", slCustomProps_<%=cid%>);
-				<% } %>
- 				// use Service Activity Monitor
-				put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
-
-				<% if (useAuth) { %>
-					put("esbSecurity", "<%=authType%>");
-					put("username", <%=username%>);
-					put("password", <%=password%>);
-				<% } %>
-			}};
-
-			public String getEndpointUri() {
-				// projectName + "_" + processName + "_" + componentName
-				return "<%=projectName%>_<%=processName%>_<%=cid%>";
-			}
-
-			public java.util.Map<String, Object> getEndpointProperties() {
-				return props;
-			}
-
-			public String getEndpointKey() {
-				return "cxf";
-			}
-		}
-	);
-} else {
+if (null == this.registry) {
 <%
 
 String connTimeout = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
@@ -255,15 +192,12 @@ if ("true".equals(ElementParameterParser.getValue(node, "__USE_PROXY__"))) { %>
 	config_<%=cid%>.setProxyPassword(<%=ElementParameterParser.getValue(node, "__PROXY_PASSWORD__")%>);
 <% } %>
 
-	java.net.URI uri_<%=cid%> = new java.net.URI(<%=wsdlLocation%>);
-	if ("http".equals(uri_<%=cid%>.getScheme()) || "https".equals(uri_<%=cid%>.getScheme())) {
-		serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(<%=wsdlLocation%>, config_<%=cid%>, <%=tempPath%>);
-	} else {
-		org.talend.ws.helper.ServiceDiscoveryHelper serviceDiscoveryHelper_<%=cid%> =
-				new org.talend.ws.helper.ServiceDiscoveryHelper(<%=wsdlLocation%>, <%=tempPath%>);
-		serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(serviceDiscoveryHelper_<%=cid%>, config_<%=cid%>);
-	}
-
-	serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
-	portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
+    java.net.URI uri_<%=cid%> = new java.net.URI(<%=wsdlLocation%>);
+    if ("http".equals(uri_<%=cid%>.getScheme()) || "https".equals(uri_<%=cid%>.getScheme())) {
+        serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(<%=wsdlLocation%>, config_<%=cid%>, <%=tempPath%>);
+    } else {
+        org.talend.ws.helper.ServiceDiscoveryHelper serviceDiscoveryHelper_<%=cid%> =
+                new org.talend.ws.helper.ServiceDiscoveryHelper(<%=wsdlLocation%>, <%=tempPath%>);
+        serviceInvokerHelper_<%=cid%> = new org.talend.ws.helper.ServiceInvokerHelper(serviceDiscoveryHelper_<%=cid%>, config_<%=cid%>);
+    }
 }

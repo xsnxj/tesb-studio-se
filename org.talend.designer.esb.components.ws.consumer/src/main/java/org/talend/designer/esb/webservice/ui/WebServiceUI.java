@@ -25,7 +25,6 @@ import javax.wsdl.Definition;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.EList;
@@ -237,19 +236,8 @@ public class WebServiceUI extends AbstractWebService {
         }
     }
 
-    private static IStatus[] getStatus(final Throwable e, final String pluginId) {
-        List<IStatus> alStatus = new ArrayList<IStatus>();
-        alStatus.add(new Status(IStatus.ERROR, pluginId, 0, e.getClass().getName(), e));
-        for (int i = 0; i < e.getStackTrace().length; i++) {
-            alStatus.add(new Status(IStatus.ERROR, pluginId, 0, e.getStackTrace()[i].toString(), null));
-        }
-        return alStatus.toArray(new IStatus[alStatus.size()]);
-    }
-
     public final void openErrorDialog(String message, Throwable e) {
-        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName()); //$NON-NLS-1$
-        String pluginId = WebServiceComponentPlugin.PLUGIN_ID;
-        final IStatus status = new MultiStatus(pluginId, 0, getStatus(e, pluginId), msg, null);
+        final IStatus status = WebServiceComponentPlugin.getStatus(message, e);
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
                 ErrorDialog.openError(uiParent.getShell(), Messages.getString("Error"), null, status);
@@ -898,10 +886,10 @@ public class WebServiceUI extends AbstractWebService {
 					newInstance, def, Collections.emptyMap());
 		} catch (Exception e) {
 			WebServiceComponentPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, WebServiceComponentPlugin.PLUGIN_ID, e.getMessage(), e));
+					WebServiceComponentPlugin.getStatus(null, e));
 		}
     }
-    
+
 	private boolean updateConnection() {
         if (currentPortName != null) {
             connection.setPortName(currentPortName);

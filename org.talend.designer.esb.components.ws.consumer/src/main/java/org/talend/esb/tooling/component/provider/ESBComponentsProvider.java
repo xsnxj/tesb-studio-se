@@ -1,32 +1,32 @@
 package org.talend.esb.tooling.component.provider;
 
 import java.io.File;
-import java.net.URL;
-import org.apache.log4j.Logger;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.osgi.framework.Bundle;
 import org.talend.core.model.components.AbstractComponentsProvider;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 
 public class ESBComponentsProvider extends AbstractComponentsProvider {
 
-	private static Logger logger = Logger.getLogger(ESBComponentsProvider.class);
+	private File components;
 
+	@Override
 	protected File getExternalComponentsLocation() {
-		Bundle bundle = WebServiceComponentPlugin.getDefault().getBundle();
-		try	{
-			URL localURL = FileLocator.toFileURL(
-					FileLocator.find(bundle, new Path("components"), null));
-			return new File(localURL.getPath());
-		} catch (Exception localException) {
-			logger.error(localException);
-			localException.printStackTrace();
+		if (null == components) {
+			try {
+				components = new File(
+					FileLocator.toFileURL(
+						FileLocator.find(
+							WebServiceComponentPlugin.getDefault().getBundle(),
+							new Path("components"),
+							null)).toURI());
+			} catch (Exception e) {
+				WebServiceComponentPlugin.getDefault().getLog().log(
+					WebServiceComponentPlugin.getStatus(null, e));
+			}
 		}
-		return null;
+		return components;
 	}
 
-	public String getFamilyTranslation(String paramString) {
-		return null;
-	}
 }

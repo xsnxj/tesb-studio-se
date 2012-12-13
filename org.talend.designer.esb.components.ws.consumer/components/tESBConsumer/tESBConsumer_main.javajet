@@ -15,8 +15,16 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
+String projectName = codeGenArgument.getCurrentProjectName();
+String processName = node.getProcess().getName();
+
 String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
+
+Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
+String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
+String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
+String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
 
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
@@ -58,11 +66,70 @@ if (inputConn != null) {
 		try {
 			org.dom4j.Document responseDoc_<%=cid%> = null;
 
-			if (consumer_<%=cid%> == null) {
+			if (null == this.registry) {
 				responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
 						serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
 						requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 			} else {
+			    if (null == consumer_<%=cid%>) {
+                    <%
+                    Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
+                    if (useSl) {
+                        %>
+                        final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+                        <%
+                        List<Map<String, String>> customProperties = (List<Map<String,String>>)
+                                ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+                        for (int k = 0; k < customProperties.size(); k++) { %>
+                            slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+                        <% }
+                    } %>
+
+                    consumer_<%=cid%> = this.registry.createConsumer(
+                        new ESBEndpointInfo() {
+
+                            @SuppressWarnings("serial")
+                            private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
+                                put("dataFormat", "PAYLOAD");
+                                put("portName", portName_<%=cid%>.toString());
+                                put("serviceName", serviceName_<%=cid%>.toString());
+                                put("defaultOperationName", "<%=method%>");
+                                put("defaultOperationNameSpace", "");
+                                put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                                put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+                                put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
+
+                                // use Service Locator
+                                put("useServiceLocator", <%=useSl%>);
+                                <% if (useSl) { %>
+                                    put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
+                                    put("SL-PROPS", slCustomProps_<%=cid%>);
+                                <% } %>
+                                // use Service Activity Monitor
+                                put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
+
+                                <% if (useAuth) { %>
+                                    put("esbSecurity", "<%=authType%>");
+                                    put("username", <%=username%>);
+                                    put("password", <%=password%>);
+                                <% } %>
+                            }};
+
+                            public String getEndpointUri() {
+                                // projectName + "_" + processName + "_" + componentName
+                                return "<%=projectName%>_<%=processName%>_<%=cid%>";
+                            }
+
+                            public java.util.Map<String, Object> getEndpointProperties() {
+                                return props;
+                            }
+
+                            public String getEndpointKey() {
+                                return "cxf";
+                            }
+                        }
+                    );
+			    }
 				java.util.Map<String, String> customProps_<%=cid%> = null;
 				<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
 					List<Map<String, String>> customProperties = (List<Map<String,String>>)

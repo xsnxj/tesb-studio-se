@@ -1,6 +1,12 @@
 package org.talend.designer.esb.webservice;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -12,19 +18,8 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
 	public boolean hasRepositoryServices = false;
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.talend.designer.esb.components.ws.consumer";
-
-	public static final String WS_HTTP_PORT_PREFERENCE = "wsHttpPort";
-
 	// The shared instance
 	private static WebServiceComponentPlugin plugin;
-
-	/**
-	 * The constructor
-	 */
-	public WebServiceComponentPlugin() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -82,4 +77,18 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 	public static boolean hasRepositoryServices() {
 		return getDefault().hasRepositoryServices;
 	}
+
+    public static IStatus getStatus(final String message, final Throwable e) {
+        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
+        final String pluginId = getDefault().getBundle().getSymbolicName();
+
+        List<IStatus> exStatus = new ArrayList<IStatus>();
+
+        exStatus.add(new Status(IStatus.ERROR, pluginId, e.getClass().getName(), e));
+        for (StackTraceElement el : e.getStackTrace()) {
+            exStatus.add(new Status(IStatus.ERROR, pluginId, el.toString(), null));
+        }
+        return new MultiStatus(pluginId, 0, exStatus.toArray(new IStatus[exStatus.size()]), msg, null);
+    }
+
 }
