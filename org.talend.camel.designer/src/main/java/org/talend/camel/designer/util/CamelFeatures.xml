@@ -247,7 +247,7 @@
 		<Feature version="[2,5)">camel-stream</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-stringtemplate-alldep-2.9.3.jar">
-		<Feature version="[2,5)">camel-stringtemplate</Feature>
+		<Feature version="[2,5)">camel-string-template</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-syslog-alldep-2.9.3.jar">
 		<Feature version="[2,5)">camel-syslog</Feature>
