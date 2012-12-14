@@ -7,6 +7,7 @@ import org.talend.camel.designer.i18n.CamelDesignerMessages;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IConnection;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.designer.core.ICheckNodesService;
@@ -36,7 +37,24 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 		checkIncomingConnections(node);
 		checkErroHandler(node);
 		checkIntercept(node);
+		checkHttp(node);
 		return;
+	}
+
+	private void checkHttp(Node node) {
+		/*
+		 * for cHttp, only SERVER case can be worked as a start node
+		 */
+		String componentName = node.getComponent().getName();
+		if(!"cHttp".equals(componentName)){
+			return;
+		}
+		List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+		IElementParameter elementParameter = node.getElementParameter("CLIENT");
+		if("true".equals(elementParameter.getValue().toString())&& incomingConnections.size()<= 0){
+			Problems.add(ProblemStatus.ERROR, (Element) node,
+					CamelDesignerMessages.getString("CheckRouteBuilderNodeService_htttIncomingError")); //$NON-NLS-1$
+		}
 	}
 
 	private void checkIntercept(Node node) {
