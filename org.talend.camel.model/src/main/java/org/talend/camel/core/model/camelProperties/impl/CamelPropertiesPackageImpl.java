@@ -121,6 +121,15 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 	}
 
     /**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCamelProcessItem_SpringContent() {
+		return (EAttribute)camelProcessItemEClass.getEStructuralFeatures().get(0);
+	}
+
+				/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -148,6 +157,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		beanItemEClass = createEClass(BEAN_ITEM);
 
 		camelProcessItemEClass = createEClass(CAMEL_PROCESS_ITEM);
+		createEAttribute(camelProcessItemEClass, CAMEL_PROCESS_ITEM__SPRING_CONTENT);
 
 		routeResourceItemEClass = createEClass(ROUTE_RESOURCE_ITEM);
 		createEAttribute(routeResourceItemEClass, ROUTE_RESOURCE_ITEM__BINDING_EXTENSION);
@@ -191,6 +201,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		initEClass(beanItemEClass, BeanItem.class, "BeanItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(camelProcessItemEClass, CamelProcessItem.class, "CamelProcessItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCamelProcessItem_SpringContent(), theXMLTypePackage.getString(), "springContent", "", 0, 1, CamelProcessItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(routeResourceItemEClass, RouteResourceItem.class, "RouteResourceItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRouteResourceItem_BindingExtension(), theXMLTypePackage.getString(), "bindingExtension", null, 0, 1, RouteResourceItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

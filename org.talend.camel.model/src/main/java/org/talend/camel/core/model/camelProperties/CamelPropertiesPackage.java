@@ -241,13 +241,22 @@ public interface CamelPropertiesPackage extends EPackage {
     int CAMEL_PROCESS_ITEM__PROCESS = PropertiesPackage.PROCESS_ITEM__PROCESS;
 
     /**
+	 * The feature id for the '<em><b>Spring Content</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CAMEL_PROCESS_ITEM__SPRING_CONTENT = PropertiesPackage.PROCESS_ITEM_FEATURE_COUNT + 0;
+
+				/**
 	 * The number of structural features of the '<em>Camel Process Item</em>' class.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-    int CAMEL_PROCESS_ITEM_FEATURE_COUNT = PropertiesPackage.PROCESS_ITEM_FEATURE_COUNT + 0;
+    int CAMEL_PROCESS_ITEM_FEATURE_COUNT = PropertiesPackage.PROCESS_ITEM_FEATURE_COUNT + 1;
 
     /**
 	 * The meta object id for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteResourceItemImpl <em>Route Resource Item</em>}' class.
@@ -371,6 +380,17 @@ public interface CamelPropertiesPackage extends EPackage {
     EClass getCamelProcessItem();
 
     /**
+	 * Returns the meta object for the attribute '{@link org.talend.camel.core.model.camelProperties.CamelProcessItem#getSpringContent <em>Spring Content</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Spring Content</em>'.
+	 * @see org.talend.camel.core.model.camelProperties.CamelProcessItem#getSpringContent()
+	 * @see #getCamelProcessItem()
+	 * @generated
+	 */
+	EAttribute getCamelProcessItem_SpringContent();
+
+				/**
 	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.RouteResourceItem <em>Route Resource Item</em>}'.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -434,6 +454,14 @@ public interface CamelPropertiesPackage extends EPackage {
         EClass CAMEL_PROCESS_ITEM = eINSTANCE.getCamelProcessItem();
 
         /**
+		 * The meta object literal for the '<em><b>Spring Content</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CAMEL_PROCESS_ITEM__SPRING_CONTENT = eINSTANCE.getCamelProcessItem_SpringContent();
+
+								/**
 		 * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteResourceItemImpl <em>Route Resource Item</em>}' class.
 		 * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
