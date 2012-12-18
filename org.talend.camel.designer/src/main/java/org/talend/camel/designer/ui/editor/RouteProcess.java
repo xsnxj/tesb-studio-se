@@ -28,6 +28,7 @@ public class RouteProcess extends Process {
 	
     public RouteProcess(Property property) {
         super(property);
+        loadSpringContent();
     }
 
     @Override
@@ -61,16 +62,10 @@ public class RouteProcess extends Process {
     /*
      * used to load spring content when opening Editor
      */
-    protected void loadSpringContent() {
+    private final void loadSpringContent() {
 		springContent =  ((CamelProcessItem)getProperty().getItem()).getSpringContent();
 	}
 
-    @Override
-    public void loadXmlFile(boolean loadScreenshots) {
-    	super.loadXmlFile(loadScreenshots);
-    	loadSpringContent();
-    }
-    
 	@Override
     public ProcessType saveXmlFile() throws IOException {
     	((CamelProcessItem)getProperty().getItem()).setSpringContent(springContent);

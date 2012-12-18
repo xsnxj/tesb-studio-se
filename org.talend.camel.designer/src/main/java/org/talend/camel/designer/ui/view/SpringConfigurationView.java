@@ -12,6 +12,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.talend.camel.designer.i18n.CamelDesignerMessages;
 
 public class SpringConfigurationView extends PageBookView {
 
@@ -20,7 +21,7 @@ public class SpringConfigurationView extends PageBookView {
 		MessagePage page = new MessagePage();
 		initPage(page);
 		page.createControl(book);
-		page.setMessage("No Spring available");
+		page.setMessage(CamelDesignerMessages.getString("SpringConfigurationView_defaultMessage")); //$NON-NLS-1$
 		return page;
 	}
 
