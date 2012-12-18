@@ -43,7 +43,7 @@ public class SpringConfigurationPageImpl extends Page implements
 
 		springText = new StyledText(composite, SWT.BORDER | SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL);
-		springText.setEditable(process.isReadOnly());
+		springText.setEditable(!process.isReadOnly());
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.horizontalSpan = 2;
 		springText.setLayoutData(layoutData);
@@ -60,7 +60,7 @@ public class SpringConfigurationPageImpl extends Page implements
 		gridData.horizontalAlignment = SWT.END;
 		restoreDefaultBtn.setLayoutData(gridData);
 		restoreDefaultBtn.setToolTipText(CamelDesignerMessages.getString("SpringConfigurationPageImpl_restoreDefaultBtnTooltip")); //$NON-NLS-1$
-		restoreDefaultBtn.setEnabled(process.isReadOnly());
+		restoreDefaultBtn.setEnabled(!process.isReadOnly());
 		
 		restoreDefaultBtn.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
