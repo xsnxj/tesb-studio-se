@@ -12,7 +12,11 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
+import java.io.IOException;
+
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.core.model.properties.Property;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.editor.process.Process;
 
 /**
@@ -20,6 +24,8 @@ import org.talend.designer.core.ui.editor.process.Process;
  */
 public class RouteProcess extends Process {
 
+	private String springContent = null;
+	
     public RouteProcess(Property property) {
         super(property);
     }
@@ -34,4 +40,41 @@ public class RouteProcess extends Process {
         return "org.talend.esb.help.";
     }
 
+    //ADDED for TESB-7887 By GangLiu
+    /*
+     * only routeBuilder needs spring
+     */
+    @Override
+    public boolean needsSpring() {
+    	return true;
+    }
+    
+    @Override
+    public String getSpringContent() {
+    	return springContent;
+    }
+    
+    public void setSpringContent(String springContent) {
+		this.springContent = springContent;
+	}
+   
+    /*
+     * used to load spring content when opening Editor
+     */
+    protected void loadSpringContent() {
+		springContent =  ((CamelProcessItem)getProperty().getItem()).getSpringContent();
+	}
+
+    @Override
+    public void loadXmlFile(boolean loadScreenshots) {
+    	super.loadXmlFile(loadScreenshots);
+    	loadSpringContent();
+    }
+    
+	@Override
+    public ProcessType saveXmlFile() throws IOException {
+    	((CamelProcessItem)getProperty().getItem()).setSpringContent(springContent);
+		return super.saveXmlFile();
+    }
+	//END ADDED for TESB-7887
 }

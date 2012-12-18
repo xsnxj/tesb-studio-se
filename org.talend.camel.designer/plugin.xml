@@ -284,6 +284,15 @@
 	            name="FinalVersionUpgradeMigrationTask"
 	            version="5.2.1">
 	      	</projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.2.2"
+                class="org.talend.camel.designer.migration.AddSpringConfigurationMigrationTask"
+                description="AddSpringConfigurationMigrationTask"
+                id="org.talend.camel.designer.AddSpringConfigurationMigrationTask"
+                name="AddSpringConfigurationMigrationTask"
+                version="5.3.0">
+          </projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
@@ -315,5 +324,27 @@
            <checknodes
                  class="org.talend.camel.designer.check.CheckRouteBuilderNodeService">
            </checknodes>
+        </extension>
+        <extension
+              point="org.eclipse.ui.views">
+           <view
+                 allowMultiple="false"
+                 category="org.talend.core.root"
+                 class="org.talend.camel.designer.ui.view.SpringConfigurationView"
+                 icon="icons/route-resource.png"
+                 id="org.talend.camel.designer.spring.view"
+                 name="Spring View"
+                 restorable="true">
+           </view>
+        </extension>
+        <extension
+              point="org.eclipse.core.runtime.adapters">
+           <factory
+                 adaptableType="org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor"
+                 class="org.talend.camel.designer.ui.view.SpringViewAdapterFactory">
+              <adapter
+                    type="org.talend.camel.designer.ui.view.ISpringConfigurationPage">
+              </adapter>
+           </factory>
         </extension>
 </plugin>
