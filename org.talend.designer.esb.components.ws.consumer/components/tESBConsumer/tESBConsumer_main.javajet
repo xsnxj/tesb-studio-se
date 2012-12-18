@@ -18,6 +18,11 @@ String cid = node.getUniqueName();
 String projectName = codeGenArgument.getCurrentProjectName();
 String processName = node.getProcess().getName();
 
+String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
+String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
+String portNS = ElementParameterParser.getValue(node, "__PORT_NS__");
+String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
+
 String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
@@ -25,6 +30,9 @@ Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
+
+String connTimeout = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
+String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT__");
 
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
@@ -60,6 +68,9 @@ if (inputConn != null) {
 		connFault = connsFault.get(0);
 	}
 %>
+    final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
+    final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
+
 	try {
 		Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
@@ -67,11 +78,48 @@ if (inputConn != null) {
 			org.dom4j.Document responseDoc_<%=cid%> = null;
 
 			if (null == this.registry) {
-				responseDoc_<%=cid%> = serviceInvokerHelper_<%=cid%>.invoke(
-						serviceName_<%=cid%>, portName_<%=cid%>, "<%=method%>",
-						requestTalendDoc_<%=cid%>.getDocument(), <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+			    GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
+			    genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
+			    genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
+			    // TODO: extract operation namespace
+			    genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=method%>"));
+			    genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+			    genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+
+                <% if (useAuth) { %>
+                    genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
+                    genericConsumer_<%=cid%>.setUsername(<%=username%>);
+                    genericConsumer_<%=cid%>.setPassword(<%=password%>);
+                <% } %>
+                <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_PROXY__"))) { %>
+                    genericConsumer_<%=cid%>.setProxyServer(<%=ElementParameterParser.getValue(node, "__PROXY_HOST__")%>);
+                    genericConsumer_<%=cid%>.setProxyPort(<%=ElementParameterParser.getValue(node, "__PROXY_PORT__")%>);
+                    genericConsumer_<%=cid%>.setProxyUsername(<%=ElementParameterParser.getValue(node, "__PROXY_USERNAME__")%>);
+                    genericConsumer_<%=cid%>.setProxyPassword(<%=ElementParameterParser.getValue(node, "__PROXY_PASSWORD__")%>);
+                <% } %>
+                genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000));
+                genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
+
+                <% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_SSL_TO_TRUSTSERVER__"))) { %>
+                    System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
+                    System.setProperty("javax.net.ssl.trustStore", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
+                    System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
+                <% } %>
+
+                try {
+                    responseDoc_<%=cid%> = (org.dom4j.Document) genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
+                } catch (GenericFaultInfoException e) {
+                    if (e.getCause() instanceof org.apache.cxf.binding.soap.SoapFault) {
+                        throw (org.apache.cxf.binding.soap.SoapFault) e.getCause();
+                    } else {
+                        if (null != e.getCause()) {
+                            throw (Exception) e.getCause();
+                        } else {
+                            System.out.println(e.getFaultInfo());
+                        }
+                    }
+                }
 			} else {
-			    if (null == consumer_<%=cid%>) {
                     <%
                     Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
                     if (useSl) {
@@ -85,7 +133,7 @@ if (inputConn != null) {
                         <% }
                     } %>
 
-                    consumer_<%=cid%> = this.registry.createConsumer(
+                    ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
                         new ESBEndpointInfo() {
 
                             @SuppressWarnings("serial")
@@ -129,7 +177,7 @@ if (inputConn != null) {
                             }
                         }
                     );
-			    }
+
 				java.util.Map<String, String> customProps_<%=cid%> = null;
 				<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
 					List<Map<String, String>> customProperties = (List<Map<String,String>>)
@@ -156,6 +204,40 @@ if (inputConn != null) {
 				}
 				<%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
 			<% } %>
+		} catch (org.apache.cxf.binding.soap.SoapFault e) {
+            <% if (null != connFault) {
+                String connFaultName = connFault.getName(); %>
+                org.dom4j.Document faultDoc_<%=cid%> = null;
+                if (null != e.getDetail() && null != e.getDetail().getFirstChild()) {
+                    try {
+                        javax.xml.transform.Source faultSource_<%=cid%> =
+                            new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
+
+                        org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
+                        javax.xml.transform.TransformerFactory.newInstance()
+                            .newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
+                        faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                if (<%=connFaultName%> == null) {
+                    <%=connFaultName%> = new <%=connFaultName%>Struct();
+                }
+                <%=connFaultName%>.faultCode = e.getFaultCode().toString();
+                <%=connFaultName%>.faultString = e.getReason();
+                <%=connFaultName%>.faultActor = e.getRole();
+
+                Document faultTalendDoc_<%=cid%> = null;
+                if (null != faultDoc_<%=cid%>) {
+                    faultTalendDoc_<%=cid%> = new Document();
+                    faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+                }
+                <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
+            <% } else { %>
+                e.printStackTrace();
+            <% } %>
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
 			<% if (null != connFault) {
 				String connFaultName = connFault.getName(); %>

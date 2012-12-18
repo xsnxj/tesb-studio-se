@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.exolab.castor.xml.schema.Schema;
-import org.talend.designer.esb.webservice.ws.wsdlutil.ServiceHelperConfiguration;
-
 /**
  * 
  * @author gcui
@@ -27,30 +24,15 @@ public class ServiceInfo {
 
     private String targetnamespace;
 
-    private Schema wsdlType;
-
-    private ServiceHelperConfiguration authConfig;
-
     /** The list of operations that this service defines. */
-    List<OperationInfo> operations = new ArrayList<OperationInfo>();
+    private final List<OperationInfo> operations = new ArrayList<OperationInfo>();
 
     public ServiceInfo(ServiceInfo clone) {
         this.wsdluri = clone.wsdluri;
-        this.authConfig = clone.authConfig;
-
     }
 
-    public ServiceInfo(String wsdlURI, ServiceHelperConfiguration authConfig) {
+    public ServiceInfo(String wsdlURI) {
         this.wsdluri = wsdlURI;
-        this.authConfig = authConfig;
-    }
-
-    public Schema getWsdlType() {
-        return wsdlType;
-    }
-
-    public void setWsdlTypes(Schema wsdlType) {
-        this.wsdlType = wsdlType;
     }
 
     public Collection<OperationInfo> getOperations() {
@@ -111,14 +93,6 @@ public class ServiceInfo {
 
     public void setPortNames(List<String> portNames) {
         this.portNames = portNames;
-    }
-
-    public ServiceHelperConfiguration getAuthConfig() {
-        return this.authConfig;
-    }
-
-    public void setAuthConfig(ServiceHelperConfiguration authConfig) {
-        this.authConfig = authConfig;
     }
 
 }

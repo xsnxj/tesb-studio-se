@@ -13,7 +13,6 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
-import org.talend.designer.esb.webservice.ws.wsdlutil.ServiceHelperConfiguration;
 
 /**
  * 
@@ -38,13 +37,13 @@ public class WSDLDiscoveryHelper {
      * @return
      * @throws Exception 
      */
-    public List<Function> getFunctionsAvailable(String wsdlURI, ServiceHelperConfiguration config) throws Exception {
+    public List<Function> getFunctionsAvailable(String wsdlURI) throws Exception {
         functionsAvailable = new ArrayList<Function>();
         wsdlURI = TalendTextUtils.removeQuotes(wsdlURI);
 
         try {
             ComponentBuilder builder = new ComponentBuilder();
-            ServiceInfo serviceInput = new ServiceInfo(wsdlURI, config);
+            ServiceInfo serviceInput = new ServiceInfo(wsdlURI);
             ServiceInfo[] services = builder.buildserviceinformation(serviceInput);
             def = builder.getDefinition();
 //            types = builder.
@@ -67,10 +66,6 @@ public class WSDLDiscoveryHelper {
             MessageBoxExceptionHandler.process(e);
         }
         return functionsAvailable;
-    }
-
-    public List<Function> getFunctionsAvailable(String wsdlURI) throws Exception {
-        return getFunctionsAvailable(wsdlURI, null);
     }
 
 	public Definition getDefinition() {

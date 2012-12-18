@@ -43,19 +43,11 @@
 
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
 
-		<PARAMETER NAME="MAPPING_DISPLAY" FIELD="CLOSED_LIST" NUM_ROW="70" >
-			<ITEMS DEFAULT="AUTO">
-				<ITEM NAME="AUTO" VALUE="AUTO" />
-				<ITEM NAME="BEZIER_CURVE" VALUE="BEZIER_CURVE" />
-				<ITEM NAME="LINE" VALUE="LINE" />
-			</ITEMS>
-		</PARAMETER>
-
 		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
-			<DEFAULT>20</DEFAULT>
+			<DEFAULT>30</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
-			<DEFAULT>20</DEFAULT>
+			<DEFAULT>60</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
@@ -105,6 +97,7 @@
 				GROUP="ESB" SHOW_IF="NEED_AUTH == 'true'">
 			<ITEMS DEFAULT="SECURITY_SAML">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
+                <ITEM NAME="SECURITY_DIGEST" VALUE="DIGEST" />
 				<ITEM NAME="SECURITY_TOKEN" VALUE="TOKEN" />
 				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
 			</ITEMS>
@@ -248,168 +241,111 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="talend-esb-ws"
-					MODULE="org.talend.ws.jar"
-					REQUIRED="true" />
+            <IMPORT NAME="dom4j"
+                    MODULE="dom4j-1.6.1.jar"
+                    BundleID="org.apache.servicemix.bundles.dom4j"
+                    REQUIRED="true" />
 
-			<IMPORT NAME="jcifs"
-					MODULE="jcifs-1.2.19.jar"
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-api"
+                    MODULE="cxf-api-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="stax2-api"
+                    MODULE="stax2-api-3.1.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="woodstox-core-asl"
+                    MODULE="woodstox-core-asl-4.1.4.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="xmlschema-core"
+                    MODULE="xmlschema-core-2.0.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="geronimo-javamail_1.4_spec"
+                    MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="wsdl4j"
+                    MODULE="wsdl4j-1.6.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
-					BundleID="org.apache.servicemix.bundles.dom4j"
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-core"
+                    MODULE="cxf-rt-core-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.1.13.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="commons-beanutils"
-					MODULE="commons-beanutils-1.7.0.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="commons-codec"
-					MODULE="commons-codec-1.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="commons-httpclient"
-					MODULE="commons-httpclient-3.1.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-bindings-soap"
+                    MODULE="cxf-rt-bindings-soap-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-databinding-jaxb"
+                    MODULE="cxf-rt-databinding-jaxb-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="commons-collections"
-					MODULE="commons-collections-3.2.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="commons-lang"
-					MODULE="commons-lang-2.6.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-bindings-xml"
+                    MODULE="cxf-rt-bindings-xml-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.7.0.jar"
-					BundleID="org.apache.cxf.bundle"
-					REQUIRED="true" />
-			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.3.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-frontend-simple"
+                    MODULE="cxf-rt-frontend-simple-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="jaxb-api"
-					MODULE="jaxb-api-2.2.6.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.1.13.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-xjc"
-					MODULE="jaxb-xjc-2.1.13.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-ws-addr"
+                    MODULE="cxf-rt-ws-addr-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-ws-policy"
+                    MODULE="cxf-rt-ws-policy-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="neethi"
+                    MODULE="neethi-3.0.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="geronimo-activation_1.1_spec"
-					MODULE="geronimo-activation_1.1_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-annotation_1.0_spec"
-					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-javamail_1.4_spec"
-					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-ws-metadata_2.0_spec"
-					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-frontend-jaxws"
+                    MODULE="cxf-rt-frontend-jaxws-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="xml-resolver"
+                    MODULE="xml-resolver-1.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="asm"
+                    MODULE="asm-3.3.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="saaj-api"
-					MODULE="saaj-api-1.3.4.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="saaj-impl"
-					MODULE="saaj-impl-1.3.18.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-transports-http"
+                    MODULE="cxf-rt-transports-http-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="stax2-api"
-					MODULE="stax2-api-3.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="woodstox-core-asl"
-					MODULE="woodstox-core-asl-4.1.4.jar"
-					BundleID=""
-					REQUIRED="true" />
-
-			<IMPORT NAME="xmlsec"
-					MODULE="xmlsec-1.5.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.7.jar"
-					BundleID=""
-					REQUIRED="true" />
-
-			<IMPORT NAME="spring-aop"
-					MODULE="spring-aop-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-asm"
-					MODULE="spring-asm-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-beans"
-					MODULE="spring-beans-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-context"
-					MODULE="spring-context-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-core"
-					MODULE="spring-core-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-expression"
-					MODULE="spring-expression-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-					
-			<IMPORT NAME="httpcore"
-					MODULE="httpcore-4.2.2.jar"
-					BundleID=""
-					REQUIRED="true" />										
-			<IMPORT NAME="httpcore-nio"
-					MODULE="httpcore-nio-4.2.2.jar"
-					BundleID=""
-					REQUIRED="true" />															
-			<IMPORT NAME="httpasyncclient"
-					MODULE="httpasyncclient-4.0-beta3.jar"
-					BundleID=""
-					REQUIRED="true" />																				
-			<IMPORT NAME="httpclient"
-					MODULE="httpclient-4.2.1.jar"
-					BundleID=""
-					REQUIRED="true" />																									
+            <IMPORT NAME="cxf-rt-ws-security"
+                    MODULE="cxf-rt-ws-security-2.7.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="wss4j"
+                    MODULE="wss4j-1.6.7.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="xmlsec"
+                    MODULE="xmlsec-1.5.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
