@@ -179,10 +179,6 @@
 				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
 			<DEFAULT>WeatherSoap</DEFAULT>
 		</PARAMETER>
-        <PARAMETER NAME="METHOD_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
-                SHOW="false" REPOSITORY_VALUE="METHOD_NS">
-            <DEFAULT>http://litwinconsulting.com/webservices/</DEFAULT>
-        </PARAMETER>
 		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
 				SHOW="false" REPOSITORY_VALUE="METHOD">
 			<DEFAULT>GetWeather(GetWeather):string</DEFAULT>
