@@ -90,6 +90,14 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
+				
+			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-asm" MODULE="spring-asm-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			
 			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
