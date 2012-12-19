@@ -83,6 +83,7 @@ if (inputConn != null) {
 			    genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
 			    // TODO: extract operation namespace
 			    genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=method%>"));
+			    genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
 			    genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
 			    genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 

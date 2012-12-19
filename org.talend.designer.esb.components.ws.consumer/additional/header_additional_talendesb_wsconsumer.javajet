@@ -60,6 +60,7 @@ if (actAsConsumer) { %>
         private javax.xml.namespace.QName serviceQName;
         private javax.xml.namespace.QName portQName;
         private javax.xml.namespace.QName operationQName;
+        private boolean isRequestResponse;
         private String soapAction;
         private String address;
 
@@ -75,9 +76,6 @@ if (actAsConsumer) { %>
         private long connectionTimeout;
         private long receiveTimeout;
 
-        private String trustStoreFile;
-        private String trustStorePwd;
-
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
         }
@@ -88,6 +86,10 @@ if (actAsConsumer) { %>
 
         public void setOperationQName(javax.xml.namespace.QName operationQName) {
             this.operationQName = operationQName;
+        }
+
+        public void setIsRequestResponse(boolean isRequestResponse) {
+            this.isRequestResponse = isRequestResponse;
         }
 
         public void setSoapAction(String soapAction) {
@@ -144,6 +146,10 @@ if (actAsConsumer) { %>
                 @Override
                 public javax.xml.namespace.QName getOperationName(org.apache.cxf.service.model.InterfaceInfo service, java.lang.reflect.Method method) {
                     return operationQName;
+                }
+                @Override
+                public Boolean hasOutMessage(java.lang.reflect.Method m) {
+                    return isRequestResponse;
                 }
                 @Override
                 public String getAction(org.apache.cxf.service.model.OperationInfo op,
