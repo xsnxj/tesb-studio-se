@@ -159,6 +159,11 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 		RouteResourceUtil.addRouteResourcesDesc(models);
 
 		forceBuildProject();
+		
+		//https://jira.talendforge.org/browse/TESB-7893
+		//add spring file
+		IPath springFilePath = getRouteResourceFolder().getLocation().append("/META-INF/spring/"+item.getProperty().getLabel().toLowerCase()+".xml");
+		paths.add(springFilePath);
 
 		return paths;
 	}
