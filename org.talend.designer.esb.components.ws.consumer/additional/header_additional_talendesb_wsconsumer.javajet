@@ -75,6 +75,8 @@ if (actAsConsumer) { %>
 
         private long connectionTimeout;
         private long receiveTimeout;
+        
+        private boolean useWsa;
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
@@ -135,6 +137,10 @@ if (actAsConsumer) { %>
         public void setReceiveTimeout(long receiveTimeout) {
             this.receiveTimeout = receiveTimeout;
         }
+        
+        public void setUseWsa(boolean useWsa) {
+            this.useWsa = useWsa;
+        }
 
         public Object invoke(Object param) throws GenericFaultInfoException {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
@@ -179,6 +185,10 @@ if (actAsConsumer) { %>
 
             clientFactory.setAddress(address);
             clientFactory.getProperties(true).put("soap.no.validate.parts", Boolean.TRUE);
+            
+            if (useWsa) {
+            	clientFactory.getFeatures().add(new org.apache.cxf.ws.addressing.WSAddressingFeature());
+            }
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();
             final org.apache.cxf.service.Service service = client.getEndpoint().getService();
