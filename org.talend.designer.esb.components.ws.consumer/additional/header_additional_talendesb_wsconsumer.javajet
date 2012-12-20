@@ -75,8 +75,10 @@ if (actAsConsumer) { %>
 
         private long connectionTimeout;
         private long receiveTimeout;
-        
+
         private boolean useWsa;
+
+        private org.dom4j.Document soapHeaders;
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
@@ -137,9 +139,13 @@ if (actAsConsumer) { %>
         public void setReceiveTimeout(long receiveTimeout) {
             this.receiveTimeout = receiveTimeout;
         }
-        
+
         public void setUseWsa(boolean useWsa) {
             this.useWsa = useWsa;
+        }
+
+        public void setSoapHeaders(org.dom4j.Document soapHeaders) {
+            this.soapHeaders = soapHeaders;
         }
 
         public Object invoke(Object param) throws GenericFaultInfoException {
@@ -185,14 +191,13 @@ if (actAsConsumer) { %>
 
             clientFactory.setAddress(address);
             clientFactory.getProperties(true).put("soap.no.validate.parts", Boolean.TRUE);
-            
+
             if (useWsa) {
-            	clientFactory.getFeatures().add(new org.apache.cxf.ws.addressing.WSAddressingFeature());
+                clientFactory.getFeatures().add(new org.apache.cxf.ws.addressing.WSAddressingFeature());
             }
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();
-            final org.apache.cxf.service.Service service = client.getEndpoint().getService();
-            service.setDataBinding(new org.apache.cxf.databinding.source.SourceDataBinding());
+            client.getEndpoint().getService().setDataBinding(new org.apache.cxf.databinding.source.SourceDataBinding());
 
             org.apache.cxf.transport.http.HTTPConduit conduit = (org.apache.cxf.transport.http.HTTPConduit) client.getConduit();
             if ("BASIC".equals(authType)) {
@@ -240,6 +245,20 @@ if (actAsConsumer) { %>
             httpClientPolicy.setReceiveTimeout(receiveTimeout);
 
             try {
+                if (soapHeaders != null) {
+                    java.util.List<org.apache.cxf.headers.Header> headers = new java.util.ArrayList<org.apache.cxf.headers.Header>();
+                    javax.xml.transform.dom.DOMResult result = new javax.xml.transform.dom.DOMResult();
+                    FACTORY.newTransformer().transform(new org.dom4j.io.DocumentSource(soapHeaders), result);
+                    for (org.w3c.dom.Node node = ((org.w3c.dom.Document) result.getNode()).getDocumentElement().getFirstChild();
+                            node != null;
+                            node = node.getNextSibling()) {
+                        if (Node.ELEMENT_NODE == node.getNodeType()) {
+                            headers.add(new org.apache.cxf.headers.Header(new javax.xml.namespace.QName(node.getNamespaceURI(), node.getLocalName()), node));
+                        }
+                    }
+                    client.getRequestContext().put(org.apache.cxf.headers.Header.HEADER_LIST, headers);
+                }
+
                 Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource((org.dom4j.Document) param));
                 if (results != null && results.length > 0) {
                     java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();

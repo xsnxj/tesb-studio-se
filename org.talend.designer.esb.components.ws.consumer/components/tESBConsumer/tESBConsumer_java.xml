@@ -54,6 +54,9 @@
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
 			</TABLE>
+            <!--TABLE READONLY="true">
+                <COLUMN NAME="headers" TYPE="id_Document" READONLY="true" />
+            </TABLE-->
 		</PARAMETER>
 		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
 			<TABLE READONLY="true">
@@ -238,9 +241,6 @@
 				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
 				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
 			</ITEMS>
-		</PARAMETER>
-		<PARAMETER NAME="TMPPATH" FIELD="DIRECTORY" REQUIRED="false" NUM_ROW="10">
-			<DEFAULT></DEFAULT>
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
 
