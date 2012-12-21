@@ -41,7 +41,7 @@ public class SpringConfigurationPageImpl extends Page implements
 
 		composite.setLayout(new GridLayout(2, false));
 
-		springText = new StyledText(composite, SWT.BORDER | SWT.MULTI
+		springText = new SpringConfigurationStyledText(composite, SWT.BORDER | SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL);
 		springText.setEditable(!process.isReadOnly());
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
