@@ -32,10 +32,10 @@ String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
 
-Boolean useWsa = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_WSA__"));
-
 String connTimeout = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
 String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT__");
+
+Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
 
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
@@ -89,8 +89,6 @@ if (inputConn != null) {
 			    genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
 			    genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
 
-                genericConsumer_<%=cid%>.setUseWsa(<%=useWsa%>);
-
                 <% if (useAuth) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
@@ -104,6 +102,8 @@ if (inputConn != null) {
                 <% } %>
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
+
+                genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
                 <% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_SSL_TO_TRUSTSERVER__"))) { %>
                     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
@@ -164,7 +164,7 @@ if (inputConn != null) {
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
-								put("useWsa", <%=useWsa%>);
+								put("logMessages", <%=logMessages%>);
 								
                                 // use Service Locator
                                 put("useServiceLocator", <%=useSl%>);

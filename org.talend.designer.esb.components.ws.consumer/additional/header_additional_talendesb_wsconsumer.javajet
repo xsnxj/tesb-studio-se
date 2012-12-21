@@ -76,7 +76,7 @@ if (actAsConsumer) { %>
         private long connectionTimeout;
         private long receiveTimeout;
 
-        private boolean useWsa;
+        private boolean logMessages;
 
         private org.dom4j.Document soapHeaders;
 
@@ -140,8 +140,8 @@ if (actAsConsumer) { %>
             this.receiveTimeout = receiveTimeout;
         }
 
-        public void setUseWsa(boolean useWsa) {
-            this.useWsa = useWsa;
+        public void setLogMessages(boolean logMessages) {
+            this.logMessages = logMessages;
         }
 
         public void setSoapHeaders(org.dom4j.Document soapHeaders) {
@@ -192,8 +192,8 @@ if (actAsConsumer) { %>
             clientFactory.setAddress(address);
             clientFactory.getProperties(true).put("soap.no.validate.parts", Boolean.TRUE);
 
-            if (useWsa) {
-                clientFactory.getFeatures().add(new org.apache.cxf.ws.addressing.WSAddressingFeature());
+            if (logMessages) {
+                clientFactory.getFeatures().add(new org.apache.cxf.feature.LoggingFeature());
             }
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();
