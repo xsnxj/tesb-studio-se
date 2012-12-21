@@ -252,7 +252,7 @@ if (actAsConsumer) { %>
                     for (org.w3c.dom.Node node = ((org.w3c.dom.Document) result.getNode()).getDocumentElement().getFirstChild();
                             node != null;
                             node = node.getNextSibling()) {
-                        if (Node.ELEMENT_NODE == node.getNodeType()) {
+                        if (org.w3c.dom.Node.ELEMENT_NODE == node.getNodeType()) {
                             headers.add(new org.apache.cxf.headers.Header(new javax.xml.namespace.QName(node.getNamespaceURI(), node.getLocalName()), node));
                         }
                     }
