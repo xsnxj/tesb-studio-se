@@ -161,6 +161,7 @@ if (inputConn != null) {
                                 put("defaultOperationName", "<%=method%>");
                                 put("defaultOperationNameSpace", "");
                                 put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                                put("wsdlURL", "classpath:/<%=cid%>.wsdl");
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
