@@ -63,6 +63,7 @@ if (actAsConsumer) { %>
         private boolean isRequestResponse;
         private String soapAction;
         private String address;
+        private String wsdlURL;
 
         private String authType;
         private String username;
@@ -102,6 +103,10 @@ if (actAsConsumer) { %>
 
         public void setAddress(String address) {
             this.address = address;
+        }
+
+        public void setWsdlURL(String wsdlURL) {
+            this.wsdlURL = wsdlURL;
         }
 
         public void setAuthType(String authType) {
@@ -183,7 +188,9 @@ if (actAsConsumer) { %>
                     return null;
                 }
             });
-            //clientFactory.setWsdlURL(wsdlLocation);
+            if (null != wsdlURL) {
+                clientFactory.setWsdlURL(wsdlURL);
+            }
             clientFactory.setServiceClass(getClass());
 
             clientFactory.setServiceName(serviceQName);
