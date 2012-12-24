@@ -12,6 +12,9 @@
 // ============================================================================
 package org.talend.designer.esb.webservice.ui;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,8 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -98,6 +106,8 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * gcui class global comment. Detailled comment
@@ -270,6 +280,74 @@ public class WebServiceUI extends AbstractWebService {
         System.setProperty("javax.net.ssl.trustStore", trustStoreFile);
         System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
     }
+    
+    /**
+     * Gets WSDL as commpressed encoded String.
+     * To use it you need to uncompress and decode it.
+     * Example how to:
+     * 
+     *  <blockquote><pre> 
+     *  byte[] decoded = Base64.decodeBase64(encodedWsdl.getBytes());
+	 *	ByteArrayInputStream is = new ByteArrayInputStream(decoded);
+	 *	InflaterInputStream in = new InflaterInputStream(is);
+	 *	  ByteArrayOutputStream bout =
+	 *	    new ByteArrayOutputStream(512);
+	 *	  int b;
+	 *	  try {
+	 *		  while ((b = in.read()) != -1) {
+	 *			    bout.write(b);
+	 *			  }
+	 *			  in.close();
+	 *			  bout.close();			  
+	 *	  } catch (Exception e) {
+	 *		  
+	 *	  }
+	 *	  String decodedWsdl = new String(bout.toByteArray());
+	 *
+     *  </pre></blockquote>
+     * 
+     * @return WSDL as String object. Or null in case errors/not possible to create object.  
+     */
+    public String getWSDL() {
+    	ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
+    	ByteArrayOutputStream compresedWsdlOs = new ByteArrayOutputStream();
+    	String encodedWsdl = null;
+    	DeflaterOutputStream dout = null;
+    	try {
+			WSDLFactory.newInstance().newWSDLWriter().writeWSDL(def, wsdlOs);
+			Deflater d = new Deflater();
+			dout = new DeflaterOutputStream(compresedWsdlOs, d);
+			dout.write(wsdlOs.toByteArray());
+			dout.close();
+			encodedWsdl = new String(Base64.encodeBase64(compresedWsdlOs.toByteArray()));
+		} catch (Exception e) {
+			WebServiceComponentPlugin.getDefault().getLog().log(
+					WebServiceComponentPlugin.getStatus("Unable to create wsdl content...", e));
+		} finally {
+			if (null != dout) {
+				try {
+					dout.close();
+				} catch (IOException e) {
+					// ignore
+				}				
+			}
+			if (null != compresedWsdlOs) {
+				try {
+					compresedWsdlOs.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+			if (null != wsdlOs) {
+				try {
+					wsdlOs.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+    	return encodedWsdl;
+    }    
 
     public void init() {
         uiParent.setLayout(new GridLayout());
