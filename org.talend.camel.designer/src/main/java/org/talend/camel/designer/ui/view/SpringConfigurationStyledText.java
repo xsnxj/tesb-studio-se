@@ -147,6 +147,7 @@ public class SpringConfigurationStyledText extends StyledText implements
 			replaceTextRange(startReplaceIndex, length, oldContent);
 			redoStack.add(0, lastEdit);
 			fromUndoRedo = false;
+			setSelectionRange(startReplaceIndex, oldContent.length());
 		}
 	}
 
@@ -160,13 +161,9 @@ public class SpringConfigurationStyledText extends StyledText implements
 					lastEdit.getContent());
 			undoStack.add(0, lastEdit);
 
-			moveCursorToEnd();
 			fromUndoRedo = false;
+			setSelectionRange(startReplaceIndex, lastEdit.getContent().length());
 		}
-	}
-
-	private void moveCursorToEnd() {
-		setCaretOffset(getText().length());
 	}
 
 	public void keyPressed(KeyEvent e) {
