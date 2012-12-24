@@ -354,7 +354,7 @@ public class SpringConfigurationStyledText extends StyledText implements
 		}
 
 		public String getContent() {
-			return content;
+			return content==null?"":content;
 		}
 
 		public int getOffset() {
@@ -362,7 +362,7 @@ public class SpringConfigurationStyledText extends StyledText implements
 		}
 
 		public String getOldContent() {
-			return oldContent;
+			return oldContent==null?"":oldContent;
 		}
 
 		public int getLength() {
