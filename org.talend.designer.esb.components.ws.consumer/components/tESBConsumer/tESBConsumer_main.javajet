@@ -1,10 +1,12 @@
 <%@ jet
 	imports="
         org.talend.core.model.metadata.IMetadataColumn
+        org.talend.core.model.process.IProcess
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.ElementParameterParser
 		org.talend.core.model.process.IConnectionCategory
+        org.talend.core.model.utils.JavaResourcesHelper
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
 		java.util.List
@@ -17,7 +19,10 @@ INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
 String projectName = codeGenArgument.getCurrentProjectName();
-String processName = node.getProcess().getName();
+IProcess process = node.getProcess();
+String processName = process.getName();
+
+String resourcePackageName = projectName.toLowerCase() + '/' + JavaResourcesHelper.getJobFolderName(processName, process.getVersion()) + '/';
 
 String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
 String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
@@ -161,7 +166,7 @@ if (inputConn != null) {
                                 put("defaultOperationName", "<%=method%>");
                                 put("defaultOperationNameSpace", "");
                                 put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-                                put("wsdlURL", "classpath:/<%=cid%>.wsdl");
+                                put("wsdlURL", "classpath:/<%=resourcePackageName%><%=cid%>.wsdl");
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
