@@ -45,19 +45,19 @@ public class SpringConfigurationStyledText extends StyledText implements
 	public static final int EOF = -1;
 
 	//comment color
-	public static final RGB commentRGB = new RGB(128, 128, 255);
+	public static final RGB commentRGB = new RGB(63, 95, 191);
 	
 	//key color
 	public static final RGB keyRGB = new RGB(128, 0, 0);
 	
 	//string color
-	public static final RGB stringRGB = new RGB(0, 0, 255);
+	public static final RGB stringRGB = new RGB(42, 0, 255);
 	
 	//element name color
-	public static final RGB elementRGB = new RGB(64, 128, 128);
+	public static final RGB elementRGB = new RGB(63, 127, 127);
 	
 	//attribute name color
-	public static final RGB attributeRGB = new RGB(127, 0, 85);
+	public static final RGB attributeRGB = new RGB(127, 0, 127);
 	
 	//other color
 	public static final RGB otherRGB = new RGB(0, 0, 0);
@@ -396,111 +396,124 @@ public class SpringConfigurationStyledText extends StyledText implements
 		public int nextToken() {
 			int c;
 			startToken = currentPosition;
-			while (true) {
+			c = read();
+			while (Character.isWhitespace(c)) {
 				c = read();
-				while (Character.isWhitespace(c)) {
-					c = read();
+			}
+			unread(c);
+			switch (c = read()) {
+			case EOF:
+				return EOF;	//end of file
+			case '<': // element start
+				c = read();
+				if (c == EOF) {
+					return EOF;
 				}
-				unread(c);
-				switch (c = read()) {
-				case EOF:
-					return EOF;	//end of file
-				case '<': // element start
+				if ('?' == c) { // xml start
+					return KEY;
+				}
+				if ('!' == c) { //potential a comment
 					c = read();
-					if (c == EOF) {
-						unread(c);
-					}
-					if ('?' == c) { // xml start
-						return KEY;
-					}
-					if ('!' == c) { //potential a comment
+					if ('-' == c) {
 						c = read();
-						if ('-' == c) {
-							c = read();
-							if ('-' == c) { //comment
+						if ('-' == c) { //comment
 
-								while (true) {
-									c = read();
-									if (c == EOF) {
-										return COMMENT;
-									}
-									if (c != '-') { 
-										continue;
-									}
-									c = read();  //potential end of comment
-									if (c == EOF) {
-										return COMMENT;
-									}
-									if (c != '-') {
-										continue;
-									}
-									c = read();
-									if (c == EOF) {
-										return COMMENT;
-									}
-									if (c != '>') {	//end of comment
-										continue;
-									}
+							while (true) {
+								c = read();
+								if (c == EOF) {
 									return COMMENT;
 								}
-							} else {
-								unread(c);
+								if (c != '-') { 
+									continue;
+								}
+								c = read();  //potential end of comment
+								if (c == EOF) {
+									return COMMENT;
+								}
+								if (c != '-') {
+									continue;
+								}
+								c = read();
+								if (c == EOF) {
+									return COMMENT;
+								}
+								if (c != '>') {	//end of comment
+									continue;
+								}
+								return COMMENT;
 							}
 						} else {
 							unread(c);
+							unread(c);
 						}
-					}
-
-					if ('/' == c) {	//potential end of element
-						c = read();
-						while (c != EOF && '>' != c) {
-							c = read();
-						}
-						return ELEMENT;
 					} else {
 						unread(c);
 					}
-					while (c != EOF && Character.isWhitespace((char) c)) {
-						c = read();
-					}
-					while (c != EOF && !Character.isWhitespace((char) c)) {
-						c = read();
-					}
-					return ELEMENT;
-				case '/':	//potential end of element
+				}
+
+				while(Character.isWhitespace((char)c)){
 					c = read();
-					while (c != EOF && '>' != c) {
-						c = read();
+					if(c == EOF){
+						return EOF;
 					}
+				}
+				if(c == '>'){
 					return ELEMENT;
-				case '"':	// attribute value start
-					for (;;) {
-						c = read();
-						switch (c) {
-						case '"':
-							return STRING;	//attribute value end
-						case EOF:
-							unread(c);
-							return STRING;
-						}
+				}
+				if ('/' == c) {	//potential end of element
+					c = read();
+					if(c == EOF){
+						return EOF;
 					}
-				case '>':	//end of element
-					return ELEMENT;
-				case '=':	//attribute equal
-					return OTHER;
-				default:
-					while (c != EOF && Character.isWhitespace((char) c)) {
-						c = read();
-					}
-					while (c != EOF && '=' != (char) c
-							&& !Character.isWhitespace((char) c)) {
-						c = read();
-					}
-					if ('=' == (char) c) {
+					if( c == '>'){
+						return ELEMENT;
+					}else{
+						unread(c);
 						unread(c);
 					}
-					return ATTRIBUTE;	//all others seems an attribute
+				} else {
+					unread(c);
 				}
+				while (c != EOF && Character.isWhitespace((char) c)) {
+					c = read();
+				}
+				while (c != EOF && !Character.isWhitespace((char) c)) {
+					if(c == '>'){
+						return ELEMENT;
+					}
+					c = read();
+				}
+				return ELEMENT;
+			case '/':	//potential end of element
+				c = read();
+				while (c != EOF && '>' != c) {
+					c = read();
+				}
+				return ELEMENT;
+			case '"':	// attribute value start
+				for (;;) {
+					c = read();
+					switch (c) {
+					case '"':
+						return STRING;	//attribute value end
+					case EOF:
+						unread(c);
+						return STRING;
+					}
+				}
+			case '>':	//end of element
+				return ELEMENT;
+			case '=':	//attribute equal
+				return OTHER;
+			default:
+				while (c != EOF && '=' != (char) c
+						&&'<' != (char)c) {
+					c = read();
+				}
+				if ('=' == (char) c || '<' == (char)c) {
+					unread(c);
+				}
+				return ATTRIBUTE;	//all others seems an attribute
 			}
 		}
 
@@ -525,5 +538,4 @@ public class SpringConfigurationStyledText extends StyledText implements
 				currentPosition--;
 		}
 	}
-
 }
