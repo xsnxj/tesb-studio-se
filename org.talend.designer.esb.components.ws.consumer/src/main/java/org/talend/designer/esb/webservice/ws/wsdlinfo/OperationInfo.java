@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 /**
  * 
  * @author gcui
@@ -41,7 +39,7 @@ public class OperationInfo {
     private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
     private String serviceid;
-	private QName portTypeName;
+	private String portName;
 
     public OperationInfo() {
         super();
@@ -153,12 +151,11 @@ public class OperationInfo {
         return getTargetMethodName();
     }
 
-	public QName getPortTypeName() {
-		return portTypeName;
+	public String getPortName() {
+		return portName;
 	}
 
-    public void setPortTypeName(QName qName) {
-    	portTypeName = qName;
-    }
-
+	public void setPortName(String portName) {
+		this.portName = portName;
+	}
 }

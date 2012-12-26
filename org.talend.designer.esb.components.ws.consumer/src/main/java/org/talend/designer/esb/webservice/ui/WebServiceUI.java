@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -81,8 +80,6 @@ import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
-import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
-import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
@@ -104,7 +101,6 @@ import org.talend.designer.esb.webservice.i18n.Messages;
 import org.talend.designer.esb.webservice.managers.WebServiceManager;
 import org.talend.designer.esb.webservice.ws.WSDLDiscoveryHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
@@ -214,36 +210,15 @@ public class WebServiceUI extends AbstractWebService {
             return;
         }
         if (obj != null && obj instanceof String && !"".equals(obj)) {
-            String currentURL = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
+            String currentPort = (String) connector.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
 
             allPortNames.clear();
-            allPortNames.add(currentURL);
+            allPortNames.add(currentPort);
 
-            Function fun = new Function(obj.toString());
-            fun.setPortNames(Arrays.asList(new String[]{currentURL}));
+            currentFunction = new Function(obj.toString(), currentPort);
             functionList.clear();
-            functionList.add(fun);
-            allFunctions.add(fun);
-            if (fun != null) {
-                currentFunction = fun;
-            }
-            initwebServiceMappingData(currentURL);
-        }
-    }
-
-    private void initwebServiceMappingData(String currentURL) {
-        if (currentURL != null && !currentURL.equals("")) {
-            String str = currentURL;
-            IElementParameter METHODPara = this.connector.getElementParameter(METHOD);
-            Object obj = METHODPara.getValue();
-            if (obj == null) {
-                return;
-            }
-            if (obj instanceof String) {
-                str = (String) obj;
-            }
-            Function fun = new Function(str);
-            currentFunction = fun;
+            functionList.add(currentFunction);
+            allFunctions.add(currentFunction);
         }
     }
 
@@ -703,8 +678,7 @@ public class WebServiceUI extends AbstractWebService {
                 }
                 List<Function> portFunctions = new ArrayList<Function>();
                 for (Function function : allFunctions) {
-                    List<String> portNames = function.getPortNames();
-                    if ((portNames != null) && (portNames.contains(currentPortName))) {
+                    if (currentPortName.equals(function.getPortName())) {
                         portFunctions.add(function);
                     }
                 }
@@ -741,8 +715,8 @@ public class WebServiceUI extends AbstractWebService {
         allFunctions = getFunctionsList(URLValue);
         gotNewData = true;
         for (Function function : allFunctions) {
-            if ((function != null) && (function.getPortNames() != null)) {
-                portNameList.addAll(function.getPortNames());
+            if ((function != null) && (function.getPortName() != null)) {
+                portNameList.add(function.getPortName());
             }
         }
         Display.getDefault().syncExec(new Runnable() {
@@ -890,53 +864,6 @@ public class WebServiceUI extends AbstractWebService {
             updateConnection();
 
         }
-        EList<WSDLParameter> inputValue = connection.getParameterValue();
-
-        IElementParameter INPUT_PARAMSPara = connector.getElementParameter("INPUT_PARAMS");
-        List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-        if (inputparaValue != null) {
-            inputValue.clear();
-            if (currentFunction != null) {
-                ParameterInfo inputParameter = currentFunction.getInput().getParameterRoot();
-                if (inputParameter != null) {
-                    boolean mark = true;
-                    List<ParameterInfo> ls = new ArrayList<ParameterInfo>();
-                    if (inputParameter != null) {
-                        WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                        parameter.setParameterInfo(inputParameter.getName());
-                        if (inputParameter.getParent() == null) {
-                            parameter.setParameterInfoParent("");
-                        } else {
-                            parameter.setParameterInfoParent(inputParameter.getParent().getName());
-                        }
-                        inputValue.add(parameter);
-                        mark = false;
-                        if (!inputParameter.getParameterInfos().isEmpty()) {
-                            ls.addAll(new ParameterInfoUtil().getAllChildren(inputParameter));
-                        }
-                    }
-                    if (!mark) {
-                        for (ParameterInfo para : ls) {
-                            WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                            parameter.setParameterInfo(para.getName());
-                            parameter.setParameterInfoParent(para.getParent().getName());
-                            inputValue.add(parameter);
-                        }
-                    }
-
-                }
-            }
-            String[] src = new String[]{"payload"};
-            for (String insource : src) {
-                WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                if (insource == null || "".equals(insource)) {
-                    continue;
-                }
-                // Map<String, String> sourceMap = new HashMap<String, String>(1);
-                parameter.setSource(insource);
-                inputValue.add(parameter);
-            }
-        }
     }
 
     private void populateSchema() {
@@ -967,47 +894,6 @@ public class WebServiceUI extends AbstractWebService {
         }
         return true;
     }
-
-    public void saveOutPutValue() {
-        // save output
-        EList<WSDLParameter> outPutValue = connection.getOutputParameter();
-
-        List<ParameterInfo> ls = new ArrayList<ParameterInfo>();
-        IElementParameter OUTPUT_PARAMSPara = connector.getElementParameter("OUTPUT_PARAMS");
-        List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-        if (outputMap != null) {
-            outPutValue.clear();
-            if (currentFunction != null) {
-                ParameterInfo outputParameter = currentFunction.getOutput().getParameterRoot();
-                if (outputParameter != null) {
-                    // for (int i = 0; i < inputParameter.size(); i++) {
-                    boolean mark = true;
-                    WSDLParameter parameter = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                    parameter.setParameterInfo(outputParameter.getName());
-                    if (outputParameter.getParent() == null) {
-                        parameter.setParameterInfoParent("");
-                    } else {
-                        parameter.setParameterInfoParent(outputParameter.getParent().getName());
-                    }
-                    outPutValue.add(parameter);
-                    // System.out.println(element.getParent() + " ppp");
-                    mark = false;
-                    if (!outputParameter.getParameterInfos().isEmpty()) {
-                        ls.addAll(new ParameterInfoUtil().getAllChildren(outputParameter));
-                    }
-                    if (!mark) {
-                        for (ParameterInfo para : ls) {
-                            WSDLParameter parameter1 = ConnectionFactory.eINSTANCE.createWSDLParameter();
-                            parameter1.setParameterInfo(para.getName());
-                            parameter1.setParameterInfoParent(para.getParent().getName());
-                            outPutValue.add(parameter1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 
     /**
      * @param okButton the wizardOkButton to set

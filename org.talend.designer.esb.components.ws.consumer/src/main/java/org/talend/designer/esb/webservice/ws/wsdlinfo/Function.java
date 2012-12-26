@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 /**
  * 
  * @author gcui
@@ -24,37 +22,29 @@ public class Function {
 
     private String serverName;
 
-    private QName portTypeName;
-
     private String serverNameSpace;
 
-    private List<String> portNames;
-    
+    private String portName;
+
     private FlowInfo input;
     private FlowInfo output;
     private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
-
-    
-    public Function(String name) {
+    public Function(String name, String portName) {
         this.name = name;
+        this.portName = portName;
     }
 
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {
         String operationName = oper.getTargetMethodName() + "(";
         this.serverName = serviceInfo.getServerName();
         this.serverNameSpace = serviceInfo.getServerNameSpace();
-        this.portNames = new ArrayList<String>();
-        if (serviceInfo.getPortNames() != null) {
-            this.portNames.addAll(serviceInfo.getPortNames());
-        }
+        this.portName = oper.getPortName();
         this.soapAction = (oper.getSoapActionURI());
         this.nameSpaceURI = oper.getNamespaceURI();
         this.encodingStyle = oper.getEncodingStyle();
         this.addressLocation = oper.getTargetURL();
-        this.portTypeName = oper.getPortTypeName();
-        
-        
+
         // input parameters
         input = oper.getInput();
         if (input == null) {
@@ -170,20 +160,8 @@ public class Function {
         this.serverNameSpace = serverNameSpace;
     }
 
-    public List<String> getPortNames() {
-        return this.portNames;
+    public String getPortName() {
+        return this.portName;
     }
-
-    public void setPortNames(List<String> portNames) {
-        this.portNames = portNames;
-    }
-
-	public void setPortTypeName(QName portTypeName) {
-		this.portTypeName = portTypeName;
-	}
-
-	public QName getPortTypeName() {
-		return portTypeName;
-	}
 
 }

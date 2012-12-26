@@ -28,6 +28,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
@@ -51,6 +52,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.FlowInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
@@ -66,8 +68,6 @@ public class ComponentBuilder {
 
     private Map<XmlSchema, byte[]> wsdlSchemas = new HashMap<XmlSchema, byte[]>();
 
-    private int inOrOut;
-
     private List<String> parametersName = new ArrayList<String>();
 
     private List<String> schemaNames = new ArrayList<String>();
@@ -77,8 +77,6 @@ public class ComponentBuilder {
     private List<XmlSchemaElement> allXmlSchemaElement = new ArrayList<XmlSchemaElement>();
 
     private List<XmlSchemaType> allXmlSchemaType = new ArrayList<XmlSchemaType>();
-
-    private XmlSchemaCollection schemaCollection;
 
     public String exceptionMessage = "";
 
@@ -127,8 +125,8 @@ public class ComponentBuilder {
             allXmlSchemaElement.addAll(schema.getElements().values());
         	allXmlSchemaType.addAll(schema.getSchemaTypes().values());
     	} catch (IOException e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
+            WebServiceComponentPlugin.getDefault().getLog().log(
+                    WebServiceComponentPlugin.getStatus(null, e));
     	}
     }
     
@@ -327,12 +325,15 @@ public class ComponentBuilder {
                 value.getPortNames().add(port.getName());
             }
             for (OperationInfo operation : buildOperations(binding)) {
+                operation.setPortName(port.getName());
                 Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
                 for (ExtensibilityElement element : addrElems) {
-                    if (element != null && element instanceof SOAPAddress) {
+                    if (element instanceof SOAPAddress) {
                         SOAPAddress soapAddr = (SOAPAddress) element;
                         operation.setTargetURL(soapAddr.getLocationURI());
-                        operation.setPortTypeName(port.getBinding().getPortType().getQName());
+                    } else if (element != null && element instanceof SOAP12Address) {
+                        SOAP12Address soapAddr = (SOAP12Address) element;
+                        operation.setTargetURL(soapAddr.getLocationURI());
                     }
                 }
                 value.addOperation(operation);

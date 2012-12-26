@@ -13,11 +13,8 @@
 package org.talend.designer.esb.webservice.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -25,7 +22,6 @@ import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.components.IComponent;
 import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MetadataTable;
-import org.talend.core.model.metadata.builder.connection.WSDLParameter;
 import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.ConnectionItem;
@@ -104,68 +100,6 @@ public class WebServiceHelper implements IWebService {
             if (portNameSpace != null) {
                 IElementParameter Port_NS = wenCom.getElementParameter("PORT_NS");
                 Port_NS.setValue(portNameSpace);
-            }
-            if (connection.getParameterValue() != null) {
-                IElementParameter INPUT_PARAMSPara = wenCom.getElementParameter("INPUT_PARAMS");
-                List<Map<String, String>> inputparaValue = (List<Map<String, String>>) INPUT_PARAMSPara.getValue();
-                EList<WSDLParameter> inputList = connection.getParameterValue();
-                for (int i = 0; i < inputList.size(); i++) {
-                    Map<String, String> inputMap = new HashMap<String, String>(2);
-                    WSDLParameter parameter = inputList.get(i);
-                    if (parameter.getElement() != null) {
-                        if (parameter.getExpression() != null) {
-                            inputMap.put("EXPRESSION", parameter.getExpression());
-                        }
-                        inputMap.put("ELEMENT", parameter.getElement());
-                        inputparaValue.add(inputMap);
-                    }
-                    if (parameter.getSource() != null) {
-                        inputMap.put("SOURCE", parameter.getSource());
-                        inputparaValue.add(inputMap);
-                    }
-                    if (parameter.getColumn() != null) {
-                        inputMap.put("COLUMN", parameter.getColumn());
-                        inputparaValue.add(inputMap);
-                    }
-                    if (parameter.getParameterInfo() != null) {
-                        inputMap.put("PARAMETERINFO", parameter.getParameterInfo());
-                        inputMap.put("PARAPARENT", parameter.getParameterInfoParent());
-                        inputparaValue.add(inputMap);
-                    }
-                }
-
-            }
-            if (connection.getOutputParameter() != null) {
-                IElementParameter OUTPUT_PARAMSPara = wenCom.getElementParameter("OUTPUT_PARAMS");
-                List<Map<String, String>> outputMap = (List<Map<String, String>>) OUTPUT_PARAMSPara.getValue();
-                EList<WSDLParameter> inputList = connection.getOutputParameter();
-                for (int i = 0; i < inputList.size(); i++) {
-                    Map<String, String> eleMap = new HashMap<String, String>(3);
-                    WSDLParameter parameter = (WSDLParameter) inputList.get(i);
-                    if (parameter.getExpression() != null || parameter.getColumn() != null) {
-                        if (parameter.getExpression() != null) {
-                            eleMap.put("EXPRESSION", parameter.getExpression());
-                        }
-                        // if (parameter.getColumn() != null) {
-                        eleMap.put("COLUMN", parameter.getColumn());
-                        // }
-                        outputMap.add(eleMap);
-                    }
-                    if (parameter.getElement() != null) {
-                        eleMap.put("ELEMENT", parameter.getElement());
-                        outputMap.add(eleMap);
-                    }
-
-                    if (parameter.getSource() != null) {
-                        eleMap.put("SOURCE", parameter.getSource());
-                        outputMap.add(eleMap);
-                    }
-                    if (parameter.getParameterInfo() != null) {
-                        eleMap.put("PARAMETERINFO", parameter.getParameterInfo());
-                        eleMap.put("PARAPARENT", parameter.getParameterInfoParent());
-                        outputMap.add(eleMap);
-                    }
-                }
             }
         }
         MetadataTable inputMetadata = new MetadataTable();
@@ -278,7 +212,6 @@ public class WebServiceHelper implements IWebService {
      */
     public void saveValue() {
         webServiceUI.saveInputValue();
-        webServiceUI.saveOutPutValue();
         connectionItem.getConnection().getResourceConnection();
     }
 
