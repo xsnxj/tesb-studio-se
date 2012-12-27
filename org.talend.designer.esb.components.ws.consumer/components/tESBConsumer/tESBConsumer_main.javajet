@@ -1,16 +1,16 @@
 <%@ jet
-	imports="
+    imports="
         org.talend.core.model.metadata.IMetadataColumn
         org.talend.core.model.process.IProcess
-		org.talend.core.model.process.INode
-		org.talend.core.model.process.IConnection
-		org.talend.core.model.process.ElementParameterParser
-		org.talend.core.model.process.IConnectionCategory
+        org.talend.core.model.process.INode
+        org.talend.core.model.process.IConnection
+        org.talend.core.model.process.ElementParameterParser
+        org.talend.core.model.process.IConnectionCategory
         org.talend.core.model.utils.JavaResourcesHelper
-		org.talend.designer.codegen.config.CodeGeneratorArgument
+        org.talend.designer.codegen.config.CodeGeneratorArgument
 
-		java.util.List
-		java.util.Map
+        java.util.List
+        java.util.Map
 "
 %>
 <%
@@ -21,8 +21,6 @@ String cid = node.getUniqueName();
 String projectName = codeGenArgument.getCurrentProjectName();
 IProcess process = node.getProcess();
 String processName = process.getName();
-
-String resourcePackageName = '/' + projectName.toLowerCase() + '/' + JavaResourcesHelper.getJobFolderName(processName, process.getVersion()) + "/wsdl/";
 
 String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
 String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
@@ -45,56 +43,56 @@ Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__L
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
 if (incomingConnections != null && !incomingConnections.isEmpty()) {
-	for (IConnection conn : incomingConnections) {
-		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-			inputConn = conn;
-			break;
-		}
-	}
+    for (IConnection conn : incomingConnections) {
+        if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+            inputConn = conn;
+            break;
+        }
+    }
 }
 if (inputConn != null) {
-	List<? extends IConnection> conns = node.getOutgoingSortedConnections();
-	if (conns != null && conns.size() > 0) {
-		for (int i = 0; i < conns.size(); i++) {
-			IConnection conn = conns.get(i);
-			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-	%>
-		<%=conn.getName()%> = null;
-	<%
-			}
-		}
-	}
+    List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+    if (conns != null && conns.size() > 0) {
+        for (int i = 0; i < conns.size(); i++) {
+            IConnection conn = conns.get(i);
+            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+    %>
+        <%=conn.getName()%> = null;
+    <%
+            }
+        }
+    }
 
-	List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
-	List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-	IConnection connResponse = null;
-	IConnection connFault = null;
-	if (connsResponse.size() == 1) {
-		connResponse = connsResponse.get(0);
-	}
-	if (connsFault.size() == 1) {
-		connFault = connsFault.get(0);
-	}
+    List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+    List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+    IConnection connResponse = null;
+    IConnection connFault = null;
+    if (connsResponse.size() == 1) {
+        connResponse = connsResponse.get(0);
+    }
+    if (connsFault.size() == 1) {
+        connFault = connsFault.get(0);
+    }
 %>
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
-	try {
-		Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
+    try {
+        Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
-		try {
-			org.dom4j.Document responseDoc_<%=cid%> = null;
+        try {
+            org.dom4j.Document responseDoc_<%=cid%> = null;
 
-			if (null == this.registry) {
-			    GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
-			    genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
-			    genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
-			    genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=method%>"));
-			    genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
-			    genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-			    genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-                if (null != getClass().getResourceAsStream("<%=resourcePackageName%><%=cid%>.wsdl")) {
-                    genericConsumer_<%=cid%>.setWsdlURL("classpath:<%=resourcePackageName%><%=cid%>.wsdl");
+            if (null == this.registry) {
+                GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
+                genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
+                genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
+                genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=method%>"));
+                genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
+                genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+                if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
+                    genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
 
                 <% if (useAuth) { %>
@@ -144,7 +142,7 @@ if (inputConn != null) {
                         }
                     }
                 }
-			} else {
+            } else {
                     <%
                     Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
                     if (useSl) {
@@ -169,14 +167,14 @@ if (inputConn != null) {
                                 put("defaultOperationName", "<%=method%>");
                                 put("defaultOperationNameSpace", "");
                                 put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-                                if (null != getClass().getResourceAsStream("<%=resourcePackageName%><%=cid%>.wsdl")) {
-                                    put("wsdlURL", "classpath:<%=resourcePackageName%><%=cid%>.wsdl");
+                                if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
+                                    genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                                 }
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
-								put("logMessages", <%=logMessages%>);
-								
+                                put("logMessages", <%=logMessages%>);
+
                                 // use Service Locator
                                 put("useServiceLocator", <%=useSl%>);
                                 <% if (useSl) { %>
@@ -208,33 +206,33 @@ if (inputConn != null) {
                         }
                     );
 
-				java.util.Map<String, String> customProps_<%=cid%> = null;
-				<% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
-					List<Map<String, String>> customProperties = (List<Map<String,String>>)
-							ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
-					if (!customProperties.isEmpty()) { %>
-						customProps_<%=cid%> = new java.util.HashMap<String, String>();
-						<% for (int k = 0; k < customProperties.size(); k++) { %>
-						customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-						<% } %>
-					<% } %>
-				<% } %>
-				Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
-				responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
-			}
-			<% if (null != connResponse) {
-				String connResponseName = connResponse.getName(); %>
-				if (<%=connResponseName%> == null) {
-					<%=connResponseName%> = new <%=connResponseName%>Struct();
-				}
-				Document responseTalendDoc_<%=cid%> = null;
-				if (null != responseDoc_<%=cid%>) {
-					responseTalendDoc_<%=cid%> = new Document();
-					responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
-				}
-				<%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
-			<% } %>
-		} catch (org.apache.cxf.binding.soap.SoapFault e) {
+                java.util.Map<String, String> customProps_<%=cid%> = null;
+                <% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+                    List<Map<String, String>> customProperties = (List<Map<String,String>>)
+                            ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+                    if (!customProperties.isEmpty()) { %>
+                        customProps_<%=cid%> = new java.util.HashMap<String, String>();
+                        <% for (int k = 0; k < customProperties.size(); k++) { %>
+                        customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+                        <% } %>
+                    <% } %>
+                <% } %>
+                Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
+                responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
+            }
+            <% if (null != connResponse) {
+                String connResponseName = connResponse.getName(); %>
+                if (<%=connResponseName%> == null) {
+                    <%=connResponseName%> = new <%=connResponseName%>Struct();
+                }
+                Document responseTalendDoc_<%=cid%> = null;
+                if (null != responseDoc_<%=cid%>) {
+                    responseTalendDoc_<%=cid%> = new Document();
+                    responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
+                }
+                <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
+            <% } %>
+        } catch (org.apache.cxf.binding.soap.SoapFault e) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 org.dom4j.Document faultDoc_<%=cid%> = null;
@@ -268,58 +266,58 @@ if (inputConn != null) {
             <% } else { %>
                 e.printStackTrace();
             <% } %>
-		} catch (javax.xml.ws.soap.SOAPFaultException e) {
-			<% if (null != connFault) {
-				String connFaultName = connFault.getName(); %>
-				javax.xml.soap.SOAPFault soapFault_<%=cid%> = e.getFault();
-				org.dom4j.Document faultDoc_<%=cid%> = null;
-				if (null != soapFault_<%=cid%>.getDetail() && null != soapFault_<%=cid%>.getDetail().getFirstChild()) {
-					try {
-						javax.xml.transform.Source faultSource_<%=cid%> =
-							new javax.xml.transform.dom.DOMSource(soapFault_<%=cid%>.getDetail().getFirstChild());
+        } catch (javax.xml.ws.soap.SOAPFaultException e) {
+            <% if (null != connFault) {
+                String connFaultName = connFault.getName(); %>
+                javax.xml.soap.SOAPFault soapFault_<%=cid%> = e.getFault();
+                org.dom4j.Document faultDoc_<%=cid%> = null;
+                if (null != soapFault_<%=cid%>.getDetail() && null != soapFault_<%=cid%>.getDetail().getFirstChild()) {
+                    try {
+                        javax.xml.transform.Source faultSource_<%=cid%> =
+                            new javax.xml.transform.dom.DOMSource(soapFault_<%=cid%>.getDetail().getFirstChild());
 
-						org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
-						javax.xml.transform.TransformerFactory.newInstance()
-							.newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
-						faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
+                        org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
+                        javax.xml.transform.TransformerFactory.newInstance()
+                            .newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
+                        faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
 
-				if (<%=connFaultName%> == null) {
-					<%=connFaultName%> = new <%=connFaultName%>Struct();
-				}
-				<%=connFaultName%>.faultCode = soapFault_<%=cid%>.getFaultCodeAsQName().toString();
-				<%=connFaultName%>.faultString = soapFault_<%=cid%>.getFaultString();
-				<%=connFaultName%>.faultActor = soapFault_<%=cid%>.getFaultActor();
+                if (<%=connFaultName%> == null) {
+                    <%=connFaultName%> = new <%=connFaultName%>Struct();
+                }
+                <%=connFaultName%>.faultCode = soapFault_<%=cid%>.getFaultCodeAsQName().toString();
+                <%=connFaultName%>.faultString = soapFault_<%=cid%>.getFaultString();
+                <%=connFaultName%>.faultActor = soapFault_<%=cid%>.getFaultActor();
 
-				<%=connFaultName%>.faultNode = null;
-				<%=connFaultName%>.faultRole = null;
-				if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault_<%=cid%>.getNamespaceURI())) {
-					// SOAP 1.2
-					try {
-						<%=connFaultName%>.faultNode = soapFault_<%=cid%>.getFaultNode();
-						<%=connFaultName%>.faultRole = soapFault_<%=cid%>.getFaultRole();
-					} catch (java.lang.UnsupportedOperationException uoe) { }
-				}
+                <%=connFaultName%>.faultNode = null;
+                <%=connFaultName%>.faultRole = null;
+                if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault_<%=cid%>.getNamespaceURI())) {
+                    // SOAP 1.2
+                    try {
+                        <%=connFaultName%>.faultNode = soapFault_<%=cid%>.getFaultNode();
+                        <%=connFaultName%>.faultRole = soapFault_<%=cid%>.getFaultRole();
+                    } catch (java.lang.UnsupportedOperationException uoe) { }
+                }
 
-				Document faultTalendDoc_<%=cid%> = null;
-				if (null != faultDoc_<%=cid%>) {
-					faultTalendDoc_<%=cid%> = new Document();
-					faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
-				}
-				<%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
-			<% } else { %>
-				e.printStackTrace();
-			<% } %>
-		}
-	} catch(Exception e){
-		<% if (("true").equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
-			throw(e);
-		<% } else { %>
-			System.err.print(e.getMessage());
-		<% } %>
-	}
+                Document faultTalendDoc_<%=cid%> = null;
+                if (null != faultDoc_<%=cid%>) {
+                    faultTalendDoc_<%=cid%> = new Document();
+                    faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+                }
+                <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
+            <% } else { %>
+                e.printStackTrace();
+            <% } %>
+        }
+    } catch(Exception e){
+        <% if (("true").equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+            throw(e);
+        <% } else { %>
+            System.err.print(e.getMessage());
+        <% } %>
+    }
 
 <% } %>
