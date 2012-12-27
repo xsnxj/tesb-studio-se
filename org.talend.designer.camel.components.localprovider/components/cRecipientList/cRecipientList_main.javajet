@@ -21,18 +21,34 @@ imports="
 	String stopOnException = ElementParameterParser.getValue(node, "__STOP_ON_EXCEPTION__");
 	String ignoreInvalid = ElementParameterParser.getValue(node, "__IGNORE_INVALID__");
 	String parallelProcess = ElementParameterParser.getValue(node, "__PARELLEL_PROCESS__");
-	
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		
+			boolean hasNamespace = false;
+			if("xpath".equals(language) && "true".equals(useNamespaces)){
+				hasNamespace = true;
+			}
 			if(!("none".equals(language))) {
 				if("true".equals(useDelimiter)){
+					if(hasNamespace){
 %>
-				.recipientList().<%=language%>(<%=expression%>)
-<%				}else{
+						.recipientList().<%=language%>(<%=expression%>, <%=cid%>NSMap)
+<%
+					}else{
 %>
-				.recipientList().<%=language%>(<%=expression%>)
-<%              }
+						.recipientList().<%=language%>(<%=expression%>)
+<%				
+					}
+				}else{
+					if(hasNamespace){
+%>
+						.recipientList().<%=language%>(<%=expression%>, <%=cid%>NSMap)
+<%
+					}else{
+%>
+						.recipientList().<%=language%>(<%=expression%>)
+<%              	}
+				}
 %>
 <%
 			} else {

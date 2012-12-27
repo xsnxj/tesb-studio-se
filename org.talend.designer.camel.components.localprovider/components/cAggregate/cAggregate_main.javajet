@@ -15,6 +15,8 @@ imports="
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	
 	boolean useAggregationStrategy = true;
 //	boolean useAggregationStrategy = "true".equals(ElementParameterParser.getValue(node, "__USE_AGGREGATION_STRATEGY__"));
 	String aggregationStrategy = ElementParameterParser.getValue(node, "__AGGREGATION_STRATEGY__");
@@ -44,23 +46,31 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if(!useAggregationStrategy) {
-			if(!("none".equals(language))) {
+			if("xpath".equals(language) && "true".equals(useNamespaces)){
 %>
-				.aggregate(<%=language%>(<%=expression%>))
+				.aggregate().<%=language%>(<%=expression%>, <%=cid%>NSMap)
+<%
+			}else if(!("none".equals(language))) {
+%>
+				.aggregate().<%=language%>(<%=expression%>)
 <%
 			} else {
 %>
-				.aggregate(<%=expression%>)
+				.aggregate().<%=expression%>
 <%
 			}
-		} else {
-			if(!("none".equals(language))) {
+		} else {			
+			if("xpath".equals(language) && "true".equals(useNamespaces)){
 %>
-				.aggregate(<%=language%>(<%=expression%>), new <%=aggregationStrategy%>())
+			.aggregate(new <%=aggregationStrategy%>()).<%=language%>(<%=expression%>, <%=cid%>NSMap)
+<%
+		}else if(!("none".equals(language))) {
+%>
+				.aggregate(new <%=aggregationStrategy%>()).<%=language%>(<%=expression%>)
 <%
 			} else {
 %>
-				.aggregate(<%=expression%>, new <%=aggregationStrategy%>())
+				.aggregate(new <%=aggregationStrategy%>()).<%=expression%>
 <%
 			}
 		}

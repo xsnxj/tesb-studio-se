@@ -28,32 +28,33 @@
 
 	<PARAMETERS>
 		<PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="false" NUM_ROW="3">
-		<ITEMS DEFAULT="XPATH">
-			<ITEM NAME="NONE"       VALUE="none" />
-			<ITEM NAME="CONSTANT"   VALUE="constant" /><!--
-			<ITEM NAME="EL"         VALUE="el" />
-			<ITEM NAME="GROOVY"     VALUE="groovy" />
-			--><ITEM NAME="HEADER"     VALUE="header" />
-			<!--<ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
-			<ITEM NAME="JOSQL" 		VALUE="sql" />
-			<ITEM NAME="JXPATH"     VALUE="jxpath" />
-			<ITEM NAME="MVEL"       VALUE="mvel" />
-			<ITEM NAME="OGNL"       VALUE="ognl" />
-			<ITEM NAME="PHP"        VALUE="php" />
-			--><ITEM NAME="PROPERTY"   VALUE="property" />
-			<!--<ITEM NAME="PYTHON"     VALUE="python" />
-			<ITEM NAME="RUBY"       VALUE="ruby" />
-			--><ITEM NAME="SIMPLE"     VALUE="simple" />
-			<!--<ITEM NAME="SPEL"       VALUE="spel" />
-			<ITEM NAME="SQL"        VALUE="sql" />			
-			--><ITEM NAME="XPATH"      VALUE="xpath" />
-			<!--<ITEM NAME="XQUERY"     VALUE="xquery" />
-		--></ITEMS>
+			<ITEMS DEFAULT="XPATH">
+				<ITEM NAME="NONE"       VALUE="none" />
+				<ITEM NAME="CONSTANT"   VALUE="constant" />
+				<ITEM NAME="HEADER"     VALUE="header" />
+				<ITEM NAME="PROPERTY"   VALUE="property" />
+				<ITEM NAME="SIMPLE"     VALUE="simple" />
+				<ITEM NAME="XPATH"      VALUE="xpath" />
+			</ITEMS>
 	</PARAMETER>
 
 		<PARAMETER NAME="EXPRESSION" FIELD="TEXT" NUM_ROW="6"
 			REQUIRED="true" GROUP="CORRELATION">
 			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
+		
+		<PARAMETER NAME="USE_NAMESPACES" FIELD="CHECK"
+			REQUIRED="true" NUM_ROW="7" GROUP="CORRELATION" SHOW_IF="LANGUAGES=='XPATH'" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="NAMESPACES" FIELD="TABLE" NUM_ROW="8"
+			REQUIRED="true" GROUP="CORRELATION" SHOW_IF="(LANGUAGES=='XPATH') AND (USE_NAMESPACES == 'true')" >
+			<ITEMS>
+				<ITEM NAME="PREFIX" VALUE="" />	
+				<ITEM NAME="URI" VALUE="" />	
+			</ITEMS>
 		</PARAMETER>
 <!-- 
 		<PARAMETER NAME="USE_AGGREGATION_STRATEGY" FIELD="CHECK"

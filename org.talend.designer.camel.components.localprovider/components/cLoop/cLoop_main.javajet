@@ -17,6 +17,7 @@ imports="
 	String header = ElementParameterParser.getValue(node, "__HEADER__");
 	String exp = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if("VALUE_TYPE".equals(type)) {
@@ -28,7 +29,11 @@ imports="
 			.loop().header(<%=header%>)
 <%	
 		} else if("EXPRESSION_TYPE".equals(type)) {
-			if(!("none".equals(language))) {
+			if("xpath".equals(language) && "true".equals(useNamespaces)){
+%>
+				.loop().<%=language%>(<%=exp%>, <%=cid%>NSMap)
+<%
+			}else if(!("none".equals(language))) {
 %>
 				.loop().<%=language%>(<%=exp%>)
 <%
