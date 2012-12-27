@@ -29,19 +29,8 @@
 			class="org.talend.designer.esb.webservice.migration.ConsumerFaultResponseMigrationTask"
 			name="ConsumerFaultResponseMigrationTask"
 			description="Add more fault response message migration task"
-                           breaks="5.1.1"
-                           version="5.1.2"
-			beforeLogon="false" />
-	</extension>
-	
-	<extension point="org.talend.core.migrationTask">				
-		<projecttask
-			id="org.talend.designer.esb.webservice.EmptyWSDLLocationMigrationTask"
-			class="org.talend.designer.esb.webservice.migration.EmptyWSDLLocationMigrationTask"
-			name="EmptyWSDLLocationMigrationTask"
-			description="If WSDL_LOCATION parameter is empty set it from ENDPOINT parameter"
-                           breaks="5.1.2"
-                           version="5.2.0"
+			breaks="5.1.1"
+			version="5.1.2"
 			beforeLogon="false" />
 	</extension>
 

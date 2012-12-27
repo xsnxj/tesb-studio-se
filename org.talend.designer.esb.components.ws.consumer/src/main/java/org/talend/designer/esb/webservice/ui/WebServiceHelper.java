@@ -55,7 +55,6 @@ public class WebServiceHelper implements IWebService {
      * org.talend.repository.ui.wizards.metadata.connection.wsdl.IWebService#getWebServiceUI(org.eclipse.swt.widgets
      * .Composite, org.talend.core.model.components.IComponent)
      */
-    @SuppressWarnings("unchecked")
     public AbstractWebService getWebServiceUI(Composite uiParent, ConnectionItem connectionItem) {
         this.connectionItem = connectionItem;
         WebServiceComponent wenCom = new WebServiceComponent();
@@ -66,7 +65,6 @@ public class WebServiceHelper implements IWebService {
         if (connectionItem.getState() != null) {
             WSDLSchemaConnection connection = (WSDLSchemaConnection) connectionItem.getConnection();
             wenCom.getElementParameter("ENDPOINT").setValue(connection.getEndpointURI());
-            wenCom.getElementParameter("WSDL_LOCATION").setValue(connection.getEndpointURI());
             String currentURL = connection.getWSDL();
             String method = connection.getMethodName();
             String currePortName = connection.getPortName();
@@ -76,8 +74,6 @@ public class WebServiceHelper implements IWebService {
             if (!"".equals(currentURL) && currentURL != null) {
                 IElementParameter ENDPOINTPara = wenCom.getElementParameter("ENDPOINT");
                 ENDPOINTPara.setValue(currentURL);
-                IElementParameter wsdlLocationPara = wenCom.getElementParameter("WSDL_LOCATION");
-                wsdlLocationPara.setValue(currentURL);
             }
 
             if (currePortName != null) {

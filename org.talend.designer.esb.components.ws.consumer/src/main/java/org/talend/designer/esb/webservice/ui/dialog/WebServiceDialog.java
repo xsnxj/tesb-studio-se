@@ -143,10 +143,8 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
         if (!"".equals(currentURL) && currentURL != null) {
             IElementParameter ENDPOINTPara = wenCom.getElementParameter("ENDPOINT");
             ENDPOINTPara.setValue(currentURL);
-            IElementParameter wsdlLocationPara = wenCom.getElementParameter("WSDL_LOCATION");
-            wsdlLocationPara.setValue(currentURL);
         }
-        
+
         if (null != wsdlString) {
         	IElementParameter wsdlContentPara = wenCom.getElementParameter("WSDL_CONTENT");
             wsdlContentPara.setValue(wsdlString);
