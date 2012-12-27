@@ -138,7 +138,7 @@ if (inputConn != null) {
                         if (null != e.getCause()) {
                             throw (Exception) e.getCause();
                         } else {
-                            System.out.println(e.getFaultInfo());
+                            throw e;
                         }
                     }
                 }
@@ -168,7 +168,7 @@ if (inputConn != null) {
                                 put("defaultOperationNameSpace", "");
                                 put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
                                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
-                                    genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
+                                    put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                                 }
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
@@ -265,6 +265,21 @@ if (inputConn != null) {
                 <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
             <% } else { %>
                 e.printStackTrace();
+            <% } %>
+        } catch (GenericFaultInfoException e) {
+            <% if (null != connFault) {
+                String connFaultName = connFault.getName(); %>
+                if (<%=connFaultName%> == null) {
+                    <%=connFaultName%> = new <%=connFaultName%>Struct();
+                }
+                <%=connFaultName%>.faultString = e.getMessage();
+
+                Document faultTalendDoc_<%=cid%> = new Document();
+                faultTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) e.getFaultInfo());
+                <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
+            <% } else { %>
+                System.out.println(e.getMessage());
+                System.out.println(((org.dom4j.Document) e.getFaultInfo()).asXML());
             <% } %>
         } catch (javax.xml.ws.soap.SOAPFaultException e) {
             <% if (null != connFault) {

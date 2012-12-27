@@ -37,11 +37,15 @@ if (actAsConsumer) { %>
     @SuppressWarnings("serial")
     static class GenericFaultInfoException extends org.apache.cxf.frontend.FaultInfoException {
 
-        private org.w3c.dom.Element faultInfo;
+        private org.dom4j.Document faultInfo;
 
-        public GenericFaultInfoException(String arg0, org.w3c.dom.Element el) {
+        public GenericFaultInfoException(String arg0, javax.xml.transform.Source source) {
             super(arg0);
-            faultInfo = el;
+            try {
+                faultInfo = GenericConsumer.sourceToDocument(source);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public GenericFaultInfoException(Throwable arg0) {
@@ -268,11 +272,7 @@ if (actAsConsumer) { %>
 
                 Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource((org.dom4j.Document) param));
                 if (results != null && results.length > 0) {
-                    java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-                    FACTORY.newTransformer().transform((javax.xml.transform.Source) results[0],
-                            new javax.xml.transform.stream.StreamResult(os));
-                    return new org.dom4j.io.SAXReader()
-                            .read(new java.io.ByteArrayInputStream(os.toByteArray()));
+                    return sourceToDocument((javax.xml.transform.Source) results[0]);
                 }
             } catch (GenericFaultInfoException e) {
                 throw e;
@@ -280,6 +280,12 @@ if (actAsConsumer) { %>
                 throw new GenericFaultInfoException(e);
             }
             return null;
+        }
+
+        public static org.dom4j.Document sourceToDocument(javax.xml.transform.Source source) throws Exception{
+            java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+            FACTORY.newTransformer().transform(source, new javax.xml.transform.stream.StreamResult(os));
+            return new org.dom4j.io.SAXReader().read(new java.io.ByteArrayInputStream(os.toByteArray()));
         }
 
     }
