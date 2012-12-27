@@ -93,6 +93,9 @@ if (inputConn != null) {
 			    genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
 			    genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
 			    genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+                <% if (null != getClass().getResourceAsStream("classpath:/" + resourcePackageName + cid + ".wsdl")) { %>
+                    genericConsumer_<%=cid%>.setWsdlURL("classpath:/<%=resourcePackageName%><%=cid%>.wsdl");
+                <% } %>
 
                 <% if (useAuth) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
@@ -166,7 +169,9 @@ if (inputConn != null) {
                                 put("defaultOperationName", "<%=method%>");
                                 put("defaultOperationNameSpace", "");
                                 put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-                                put("wsdlURL", "classpath:/<%=resourcePackageName%><%=cid%>.wsdl");
+                                <% if (null != getClass().getResourceAsStream("classpath:/" + resourcePackageName + cid + ".wsdl")) { %>
+                                    put("wsdlURL", "classpath:/<%=resourcePackageName%><%=cid%>.wsdl");
+                                <% } %>
                                 put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                                 put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
