@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -22,14 +21,12 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
@@ -51,7 +48,6 @@ import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.utils.XmlSchemaObjectBase;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.FlowInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
@@ -63,10 +59,6 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
  * DOC gcui class global comment. Detailled comment
  */
 public class ComponentBuilder {
-
-    WSDLFactory wsdlFactory = null;
-
-    private Map<XmlSchema, byte[]> wsdlSchemas = new HashMap<XmlSchema, byte[]>();
 
     private List<String> parametersName = new ArrayList<String>();
 
@@ -80,37 +72,22 @@ public class ComponentBuilder {
 
     public String exceptionMessage = "";
 
-    public final static String DEFAULT_SOAP_ENCODING_STYLE = "http://schemas.xmlsoap.org/soap/encoding/";
-
 	private Definition def;
 
     // SimpleTypesFactory simpleTypesFactory = null;
 
-    public ComponentBuilder() {
-        try {
-            wsdlFactory = WSDLFactory.newInstance();
-            // simpleTypesFactory = new SimpleTypesFactory();
-        } catch (Exception e) {
-            exceptionMessage = exceptionMessage + e.getMessage();
-            ExceptionHandler.process(e);
-        }
-    }
+    public ServiceInfo[] buildserviceinformation(final String wsdlURI) throws WSDLException {
+        def = ServiceDiscoveryHelper.getDefinition(wsdlURI);
 
-    public ServiceInfo[] buildserviceinformation(ServiceInfo serviceinfo) throws Exception {
-        ServiceDiscoveryHelper sdh;
-        String wsdlUri = serviceinfo.getWsdlUri();
-        sdh = new ServiceDiscoveryHelper(wsdlUri);
-        def = sdh.getDefinition();
+        createSchemaFromTypes(def);
 
-        wsdlSchemas = createSchemaFromTypes(def);
-        
         Collection<Service> services = def.getServices().values();
         if (services == null) return new ServiceInfo[]{}; 
         ServiceInfo[] value = new ServiceInfo[services.size()];
 
         int i = 0;
         for (Service service : services) {
-            value[i] = populateComponent(serviceinfo, service); 
+            value[i] = populateComponent(wsdlURI, service); 
             i++;
         }
         return value;
@@ -130,7 +107,7 @@ public class ComponentBuilder {
     	}
     }
     
-    protected Map<XmlSchema, byte[]> createSchemaFromTypes(Definition wsdlDefinition) {
+    private Map<XmlSchema, byte[]> createSchemaFromTypes(Definition wsdlDefinition) {
         allXmlSchemaElement.clear();
     	allXmlSchemaType.clear();
         Map<XmlSchema, byte[]> schemas = new HashMap<XmlSchema, byte[]>();
@@ -308,22 +285,14 @@ public class ComponentBuilder {
     }
 
     @SuppressWarnings("unchecked")
-	private ServiceInfo populateComponent(ServiceInfo component, Service service) {
-        ServiceInfo value = new ServiceInfo(component);
-        QName qName = service.getQName();
-        String namespace = qName.getNamespaceURI();
-        String name = qName.getLocalPart();
-        value.setServerName(name);
-        value.setServerNameSpace(namespace);
+	private ServiceInfo populateComponent(final String wsdlURI, Service service) {
+        ServiceInfo serviceInfo = new ServiceInfo(wsdlURI);
+        final QName qName = service.getQName();
+        serviceInfo.setServerName(qName.getLocalPart());
+        serviceInfo.setServerNameSpace(qName.getNamespaceURI());
         Collection<Port> ports = service.getPorts().values();
         for (Port port : ports) {
-        	Binding binding = port.getBinding();
-            if (port.getName() != null) {
-                if (value.getPortNames() == null) {
-                    value.setPortNames(new ArrayList<String>());
-                }
-                value.getPortNames().add(port.getName());
-            }
+            Binding binding = port.getBinding();
             for (OperationInfo operation : buildOperations(binding)) {
                 operation.setPortName(port.getName());
                 Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(), "address");
@@ -336,10 +305,10 @@ public class ComponentBuilder {
                         operation.setTargetURL(soapAddr.getLocationURI());
                     }
                 }
-                value.addOperation(operation);
+                serviceInfo.addOperation(operation);
             }
         }
-        return value;
+        return serviceInfo;
     }
 
     private List<OperationInfo> buildOperations(Binding binding) {
@@ -348,23 +317,10 @@ public class ComponentBuilder {
         List<BindingOperation> operations = binding.getBindingOperations();
 
         if (operations != null && !operations.isEmpty()) {
-            String style = "document"; // default
-            for (ExtensibilityElement soapBindingElem : findExtensibilityElement(binding.getExtensibilityElements(), "binding")) {
-                if (soapBindingElem != null && soapBindingElem instanceof SOAPBinding) {
-                    SOAPBinding soapBinding = (SOAPBinding) soapBindingElem;
-                    style = soapBinding.getStyle();
-                }
-            }
-
             for (BindingOperation operation : operations) {
-                // https://jira.talendforge.org/browse/TESB-7234
-//                for (ExtensibilityElement operElem : findExtensibilityElement(operation.getExtensibilityElements(), "operation")) {
-//                    if (operElem != null && operElem instanceof SOAPOperation) {
-                        OperationInfo operationInfo = new OperationInfo(style);
-                        buildOperation(operationInfo, operation);
-                        operationInfos.add(operationInfo);
-//                    }
-//                }
+                OperationInfo operationInfo = new OperationInfo();
+                buildOperation(operationInfo, operation);
+                operationInfos.add(operationInfo);
             }
         }
 
@@ -380,28 +336,12 @@ public class ComponentBuilder {
                 operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
             }
         }
-        BindingInput bindingInput = bindingOper.getBindingInput();
-        for (ExtensibilityElement bodyElem : findExtensibilityElement(bindingInput.getExtensibilityElements(), "body")) {
-            if (bodyElem != null && bodyElem instanceof SOAPBody) {
-                SOAPBody soapBody = (SOAPBody) bodyElem;
-                List styles = soapBody.getEncodingStyles();
-                String encodingStyle = null;
-                if (styles != null) {
-                    encodingStyle = styles.get(0).toString();
-                }
-                if (encodingStyle == null) {
-                    encodingStyle = DEFAULT_SOAP_ENCODING_STYLE;
-                }
-                operationInfo.setEncodingStyle(encodingStyle.toString());
-                operationInfo.setTargetObjectURI(soapBody.getNamespaceURI());
-            }
-        }
 
         Input inDef = oper.getInput();
         if (inDef != null) {
             Message inMsg = inDef.getMessage();
             if (inMsg != null) {
-                operationInfo.setInput(new FlowInfo(inMsg, getSchema(inMsg), getParameterFromMessage(inMsg)));
+                operationInfo.setInput(new FlowInfo(getParameterFromMessage(inMsg)));
             }
         }
 
@@ -409,33 +349,19 @@ public class ComponentBuilder {
         if (outDef != null) {
             Message outMsg = outDef.getMessage();
             if (outMsg != null) {
-                operationInfo.setOutput(new FlowInfo(outMsg, getSchema(outMsg), getParameterFromMessage(outMsg)));
+                operationInfo.setOutput(new FlowInfo(getParameterFromMessage(outMsg)));
             }
         }
         Collection<Fault> faults = oper.getFaults().values();
         for (Fault fault : faults) {
         	Message faultMsg = fault.getMessage();
         	if (faultMsg != null) {
-                operationInfo.addFault(new FlowInfo(faultMsg, getSchema(faultMsg), getParameterFromMessage(faultMsg)));
+                operationInfo.addFault(new FlowInfo(getParameterFromMessage(faultMsg)));
         	}
         }
 
         return operationInfo;
     }
-
-    private byte[] getSchema(Message message) {
-    	for (Part part : (Collection<Part>)message.getParts().values()) {
-    		QName elementQname = part.getElementName();
-    		for (XmlSchema schema : wsdlSchemas.keySet()) {
-    			for (XmlSchemaElement element : schema.getElements().values()) {
-    				if (element.getName().equals(elementQname.getLocalPart())) {//TODO: check namespaces too
-    					return wsdlSchemas.get(schema);
-    				}
-    			}
-    		}
-    	}
-		return null;
-	}
 
 	private ParameterInfo getParameterFromMessage(Message msg) {
         parametersName.clear();
@@ -445,7 +371,6 @@ public class ComponentBuilder {
 		}
         ParameterInfo parameterRoot = new ParameterInfo();
         for (Part part : msgParts) {
-            String partName = part.getName();
             String partElement = null;
             if (part.getElementName() != null) {
                 partElement = part.getElementName().getLocalPart();
@@ -603,7 +528,6 @@ public class ComponentBuilder {
             } else if (xmlSchemaObject instanceof XmlSchemaAny) {
                 ParameterInfo parameterSon = new ParameterInfo();
                 parameterSon.setName("_content_");
-                parameterSon.setParent(parameter);
                 parameter.getParameterInfos().add(parameterSon);
 
             } else if (xmlSchemaObject instanceof XmlSchemaElement) {
@@ -611,13 +535,6 @@ public class ComponentBuilder {
                 String elementName = xmlSchemaElement.getName();
                 ParameterInfo parameterSon = new ParameterInfo();
                 parameterSon.setName(elementName);
-                parameterSon.setParent(parameter);
-                Long min = xmlSchemaElement.getMinOccurs();
-                Long max = xmlSchemaElement.getMaxOccurs();
-                if (max - min > 1) {
-                    parameterSon.setArraySize(-1);
-                    parameterSon.setIndex("*");
-                }
                 parameter.getParameterInfos().add(parameterSon);
 
                 Boolean isHave = false;
@@ -671,7 +588,6 @@ public class ComponentBuilder {
                 String elementName = xmlSchemaAttribute.getName();
                 ParameterInfo parameterSon = new ParameterInfo();
                 parameterSon.setName(elementName);
-                parameterSon.setParent(parameter);
 
                 parameter.getParameterInfos().add(parameterSon);
                 Boolean isHave = false;

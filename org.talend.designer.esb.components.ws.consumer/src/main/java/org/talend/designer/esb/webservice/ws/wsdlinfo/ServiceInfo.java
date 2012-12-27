@@ -15,8 +15,6 @@ public class ServiceInfo {
 
     private String serverNameSpace;
 
-    private List<String> portNames;
-
     /** WSDL URI */
     private String wsdluri;//
 
@@ -26,10 +24,6 @@ public class ServiceInfo {
 
     /** The list of operations that this service defines. */
     private final List<OperationInfo> operations = new ArrayList<OperationInfo>();
-
-    public ServiceInfo(ServiceInfo clone) {
-        this.wsdluri = clone.wsdluri;
-    }
 
     public ServiceInfo(String wsdlURI) {
         this.wsdluri = wsdlURI;
@@ -80,19 +74,11 @@ public class ServiceInfo {
     }
 
     public String getServerNameSpace() {
-        return this.serverNameSpace;
+        return serverNameSpace;
     }
 
     public void setServerNameSpace(String serverNameSpace) {
         this.serverNameSpace = serverNameSpace;
-    }
-
-    public List<String> getPortNames() {
-        return this.portNames;
-    }
-
-    public void setPortNames(List<String> portNames) {
-        this.portNames = portNames;
     }
 
 }

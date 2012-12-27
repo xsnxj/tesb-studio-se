@@ -769,7 +769,6 @@ public class WebServiceUI extends AbstractWebService {
 
             public void run() {
                 String url = "";
-                Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                 IContextManager contextManager = null;
                 if (connector.getProcess() == null) {
                     // contextManager = contextModeManager.getSelectedContextType().getContextParameter(); //
@@ -782,6 +781,7 @@ public class WebServiceUI extends AbstractWebService {
                     String currentDefaultName = contextManager.getDefaultContext().getName();
                     List<IContext> contextList = contextManager.getListContext();
                     if ((contextList != null) && (contextList.size() > 1)) {
+                        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                         currentDefaultName = ConnectionContextHelper.getContextTypeForJob(shell, contextManager, false);
                     }
                     // ContextSetsSelectionDialog cssd=new ContextSetsSelectionDialog(shell,,false);
@@ -851,14 +851,14 @@ public class WebServiceUI extends AbstractWebService {
                 if (currentFunction.getName() != null) {
                     connection.setMethodName(currentFunction.getName());
                 }
-                if (currentFunction.getServerNameSpace() != null) {
-                    connection.setServerNameSpace(currentFunction.getServerNameSpace());
+                if (currentFunction.getServiceNameSpace() != null) {
+                    connection.setServerNameSpace(currentFunction.getServiceNameSpace());
                 }
-                if (currentFunction.getServerName() != null) {
-                    connection.setServerName(currentFunction.getServerName());
+                if (currentFunction.getServiceName() != null) {
+                    connection.setServerName(currentFunction.getServiceName());
                 }
-                if (currentFunction.getServerNameSpace() != null) {
-                    connection.setPortNameSpace(currentFunction.getServerNameSpace());
+                if (currentFunction.getServiceNameSpace() != null) {
+                    connection.setPortNameSpace(currentFunction.getServiceNameSpace());
                 }
             }
             updateConnection();

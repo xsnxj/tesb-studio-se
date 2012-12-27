@@ -1,8 +1,5 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 
@@ -10,25 +7,24 @@ import java.util.List;
  */
 public class Function {
 
+    private static final String ONE_WAY = "one-way";
+    private static final String REQUEST_RESPONSE = "request-response";
+
     private String name;
 
     private String soapAction;
 
     private String nameSpaceURI;
 
-    private String encodingStyle;
-
     private String addressLocation;
 
-    private String serverName;
+    private String serviceName;
 
-    private String serverNameSpace;
+    private String serviceNameSpace;
 
     private String portName;
 
-    private FlowInfo input;
-    private FlowInfo output;
-    private List<FlowInfo> faults = new ArrayList<FlowInfo>();
+    private String communicationStyle;
 
     public Function(String name, String portName) {
         this.name = name;
@@ -37,20 +33,18 @@ public class Function {
 
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {
         String operationName = oper.getTargetMethodName() + "(";
-        this.serverName = serviceInfo.getServerName();
-        this.serverNameSpace = serviceInfo.getServerNameSpace();
+        this.serviceName = serviceInfo.getServerName();
+        this.serviceNameSpace = serviceInfo.getServerNameSpace();
         this.portName = oper.getPortName();
         this.soapAction = (oper.getSoapActionURI());
         this.nameSpaceURI = oper.getNamespaceURI();
-        this.encodingStyle = oper.getEncodingStyle();
         this.addressLocation = oper.getTargetURL();
 
         // input parameters
-        input = oper.getInput();
+        FlowInfo input = oper.getInput();
         if (input == null) {
             operationName = operationName + "):";
         } else {
-        	input.getSchema();
             ParameterInfo element = input.getParameterRoot();
             if (element.getType() != null) {
                 operationName = operationName + element.getType() + ",";
@@ -67,8 +61,9 @@ public class Function {
             operationName = operationName.substring(0, operationNamelen - 1) + "):";
         }
         // output parameters 
-        output = oper.getOutput();
+        FlowInfo output = oper.getOutput();
         if (output != null) {
+            communicationStyle = REQUEST_RESPONSE;
             ParameterInfo element = output.getParameterRoot();
             if (element.getType() != null) {
                 operationName = operationName + element.getType() + ",";
@@ -82,31 +77,11 @@ public class Function {
                 }
             }
             operationName = operationName.substring(0, operationName.length() - 1);
+        } else {
+        	communicationStyle = ONE_WAY;
         }
         this.name = operationName;
-        this.faults = oper.getFaults();
     }
-
-    /**
-	 * @return the input
-	 */
-	public FlowInfo getInput() {
-		return input;
-	}
-
-	/**
-	 * @return the output
-	 */
-	public FlowInfo getOutput() {
-		return output;
-	}
-
-	/**
-	 * @return the faults
-	 */
-	public List<FlowInfo> getFaults() {
-		return Collections.unmodifiableList(faults);
-	}
 
 	public String getName() {
         return name;
@@ -116,52 +91,28 @@ public class Function {
         return soapAction;
     }
 
-    public void setSoapAction(String soapAction) {
-        this.soapAction = soapAction;
-    }
-
     public String getNameSpaceURI() {
         return nameSpaceURI;
-    }
-
-    public void setNameSpaceURI(String nameSpaceURI) {
-        this.nameSpaceURI = nameSpaceURI;
-    }
-
-    public String getEncodingStyle() {
-        return this.encodingStyle;
-    }
-
-    public void setEncodingStyle(String encodingStyle) {
-        this.encodingStyle = encodingStyle;
     }
 
     public String getAddressLocation() {
         return this.addressLocation;
     }
 
-    public void setAddressLocation(String addressLocation) {
-        this.addressLocation = addressLocation;
+    public String getServiceName() {
+        return this.serviceName;
     }
 
-    public String getServerName() {
-        return this.serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public String getServerNameSpace() {
-        return this.serverNameSpace;
-    }
-
-    public void setServerNameSpace(String serverNameSpace) {
-        this.serverNameSpace = serverNameSpace;
+    public String getServiceNameSpace() {
+        return this.serviceNameSpace;
     }
 
     public String getPortName() {
         return this.portName;
+    }
+
+    public String getCommunicationStyle() {
+        return communicationStyle;
     }
 
 }

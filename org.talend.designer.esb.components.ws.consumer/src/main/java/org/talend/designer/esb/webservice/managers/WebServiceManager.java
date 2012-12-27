@@ -27,7 +27,7 @@ public class WebServiceManager {
 
     private WebServiceComponent connector;
 
-    private UIManager uiManager;
+    private final UIManager uiManager = new UIManager();
 
     private DelimitedFileConnection recordConnection;
 
@@ -42,9 +42,6 @@ public class WebServiceManager {
     }
 
     public UIManager getUIManager() {
-        if (this.uiManager == null) {
-            uiManager = new UIManager(this);
-        }
         return this.uiManager;
     }
 

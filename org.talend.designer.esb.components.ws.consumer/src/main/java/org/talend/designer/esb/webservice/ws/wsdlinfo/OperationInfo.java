@@ -10,20 +10,11 @@ import java.util.List;
  */
 public class OperationInfo {
 
-    /** SOAP operation type */
-    private String operationType = "";
-
-    /** The SOAP encoding style to use. */
-    private String encodingStyle = "";
-
     /** The URL where the target object is located. */
     private String targetURL = "";
 
     /** The namespace URI used for this SOAP operation. */
     private String namespaceURI = "";
-
-    /** The URI of the target object to invoke for this SOAP operation. */
-    private String targetObjectURI = "";
 
     /** The name used to when making an invocation. */
     private String targetMethodName = "";
@@ -31,32 +22,12 @@ public class OperationInfo {
     /** The action URI value to use when making a invocation. */
     private String soapActionURI = "";
 
-    /** The encoding type "document" vs. "rpc" */
-    private String style = "document";
-
     private FlowInfo input;
     private FlowInfo output;
     private List<FlowInfo> faults = new ArrayList<FlowInfo>();
 
-    private String serviceid;
 	private String portName;
 
-    public OperationInfo() {
-        super();
-    }
-
-    public OperationInfo(String style) {
-        super();
-        setStyle(style);
-    }
-
-    public String getServiceid() {
-        return serviceid;
-    }
-
-    public void setServiceid(String serviceid) {
-        this.serviceid = serviceid;
-    }
 
     public FlowInfo getInput() {
         return input;
@@ -83,22 +54,6 @@ public class OperationInfo {
 		this.faults.add(fault);		
 	}
 
-    public String getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(String operationType) {
-        this.operationType = operationType;
-    }
-
-    public void setEncodingStyle(String value) {
-        encodingStyle = value;
-    }
-
-    public String getEncodingStyle() {
-        return encodingStyle;
-    }
-
     public void setTargetURL(String value) {
         targetURL = value;
     }
@@ -115,14 +70,6 @@ public class OperationInfo {
         return namespaceURI;
     }
 
-    public void setTargetObjectURI(String value) {
-        targetObjectURI = value;
-    }
-
-    public String getTargetObjectURI() {
-        return targetObjectURI;
-    }
-
     public void setTargetMethodName(String value) {
         targetMethodName = value;
     }
@@ -137,14 +84,6 @@ public class OperationInfo {
 
     public String getSoapActionURI() {
         return soapActionURI;
-    }
-
-    public void setStyle(String value) {
-        style = value;
-    }
-
-    public String getStyle() {
-        return style;
     }
 
     public String toString() {

@@ -166,17 +166,17 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
                 IElementParameter METHODPara = wenCom.getElementParameter("METHOD");
                 METHODPara.setValue(function.getName());
             }
-            if (function.getServerNameSpace() != null) {
+            if (function.getServiceNameSpace() != null) {
                 IElementParameter Service_NS = wenCom.getElementParameter("SERVICE_NS");
-                Service_NS.setValue(function.getServerNameSpace());
+                Service_NS.setValue(function.getServiceNameSpace());
             }
-            if (function.getServerName() != null) {
+            if (function.getServiceName() != null) {
                 IElementParameter Service_Name = wenCom.getElementParameter("SERVICE_NAME");
-                Service_Name.setValue(function.getServerName());
+                Service_Name.setValue(function.getServiceName());
             }
-            if (function.getServerNameSpace() != null) {
+            if (function.getServiceNameSpace() != null) {
                 IElementParameter Port_NS = wenCom.getElementParameter("PORT_NS");
-                Port_NS.setValue(function.getServerNameSpace());
+                Port_NS.setValue(function.getServiceNameSpace());
             }
 
             IElementParameter Soap_Action = wenCom.getElementParameter("SOAP_ACTION");
@@ -188,7 +188,7 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
             }
             IElementParameter commStyle = wenCom.getElementParameter("COMMUNICATION_STYLE");
             if (commStyle != null) {
-                commStyle.setValue(function.getOutput() == null ? "one-way":"request-response");
+                commStyle.setValue(function.getCommunicationStyle());
             }
 
         }

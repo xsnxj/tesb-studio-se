@@ -10,7 +10,6 @@ import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
-import org.talend.designer.esb.webservice.ws.wsdlinfo.ParameterInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
 
@@ -22,13 +21,7 @@ public class WSDLDiscoveryHelper {
 
     public List<Function> functionsAvailable;
 
-    public List<ParameterInfo> inputParameters;
-
-    public List<ParameterInfo> outputParameters;
-
-    private String exceptionMessage;
-
-	private Definition def;
+    private Definition def;
 
     /**
      * DOC gcui Comment method "getFunctionsAvailable".
@@ -38,15 +31,14 @@ public class WSDLDiscoveryHelper {
      * @throws Exception 
      */
     public List<Function> getFunctionsAvailable(String wsdlURI) throws Exception {
+        String exceptionMessage = "";
+
         functionsAvailable = new ArrayList<Function>();
-        wsdlURI = TalendTextUtils.removeQuotes(wsdlURI);
 
         try {
             ComponentBuilder builder = new ComponentBuilder();
-            ServiceInfo serviceInput = new ServiceInfo(wsdlURI);
-            ServiceInfo[] services = builder.buildserviceinformation(serviceInput);
+            ServiceInfo[] services = builder.buildserviceinformation(TalendTextUtils.removeQuotes(wsdlURI));
             def = builder.getDefinition();
-//            types = builder.
 
             exceptionMessage = builder.getExceptionMessage();
             for (ServiceInfo serviceInfo : services) {
