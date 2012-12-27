@@ -22,7 +22,7 @@ String projectName = codeGenArgument.getCurrentProjectName();
 IProcess process = node.getProcess();
 String processName = process.getName();
 
-String resourcePackageName = projectName.toLowerCase() + '/' + JavaResourcesHelper.getJobFolderName(processName, process.getVersion()) + '/';
+String resourcePackageName = projectName.toLowerCase() + '/' + JavaResourcesHelper.getJobFolderName(processName, process.getVersion()) + "/wsdl/";
 
 String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
 String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
