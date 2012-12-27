@@ -82,12 +82,12 @@ public class ComponentBuilder {
         createSchemaFromTypes(def);
 
         Collection<Service> services = def.getServices().values();
-        if (services == null) return new ServiceInfo[]{}; 
+        if (services == null) return new ServiceInfo[]{};
         ServiceInfo[] value = new ServiceInfo[services.size()];
 
         int i = 0;
         for (Service service : services) {
-            value[i] = populateComponent(wsdlURI, service); 
+            value[i] = populateComponent(wsdlURI, service);
             i++;
         }
         return value;
@@ -106,7 +106,7 @@ public class ComponentBuilder {
                     WebServiceComponentPlugin.getStatus(null, e));
     	}
     }
-    
+
     private Map<XmlSchema, byte[]> createSchemaFromTypes(Definition wsdlDefinition) {
         allXmlSchemaElement.clear();
     	allXmlSchemaType.clear();

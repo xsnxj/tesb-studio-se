@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Display;
 import org.talend.core.model.components.IODataComponent;
 import org.talend.core.model.components.IODataComponentContainer;
 import org.talend.core.model.metadata.IMetadataTable;
-import org.talend.core.model.metadata.MetadataTable;
 import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IConnection;
@@ -46,7 +45,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.AbstractExternalNode#renameMetadataColumnName(java.lang.String,
      * java.lang.String, java.lang.String)
      */
@@ -57,7 +56,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#getComponentDocumentation(java.lang.String, java.lang.String)
      */
     public IComponentDocumentation getComponentDocumentation(String componentName, String tempFolderPath) {
@@ -66,7 +65,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#initialize()
      */
     public void initialize() {
@@ -76,7 +75,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#open(org.eclipse.swt.widgets.Display)
      */
     public int open(Display display) { // button event
@@ -88,7 +87,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#open(org.eclipse.swt.widgets.Composite)
      */
     public int open(Composite parent) {// double click in job
@@ -100,7 +99,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#renameInputConnection(java.lang.String, java.lang.String)
      */
     public void renameInputConnection(String oldName, String newName) {
@@ -109,7 +108,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#renameOutputConnection(java.lang.String, java.lang.String)
      */
     public void renameOutputConnection(String oldName, String newName) {
@@ -118,7 +117,7 @@ public class WebServiceComponent extends AbstractExternalNode {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.core.model.process.IExternalNode#setExternalData(org.talend.core.model.process.IExternalData)
      */
     public void setExternalData(IExternalData persistentData) {
