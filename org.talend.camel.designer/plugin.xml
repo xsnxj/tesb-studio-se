@@ -347,4 +347,17 @@
               </adapter>
            </factory>
         </extension>
+        <extension
+              point="org.talend.core.repository.repoViewLinker">
+           <linker
+                 class="org.talend.camel.designer.ui.view.link.CamelProcessRepoViewLinker"
+                 name="CamelProcess"
+                 priority="normal">
+           </linker>
+           <linker
+                 class="org.talend.camel.designer.ui.view.link.BeanRepoViewLinker"
+                 name="Bean"
+                 priority="normal">
+           </linker>
+        </extension>
 </plugin>
