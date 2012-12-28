@@ -360,4 +360,10 @@
                  priority="normal">
            </linker>
         </extension>
+        <extension
+              point="org.talend.designer.core.process_convert">
+           <processconvert
+                 class="org.talend.camel.designer.RouteProcessConvertServiceImpl">
+           </processconvert>
+        </extension>
 </plugin>
