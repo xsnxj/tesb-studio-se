@@ -221,21 +221,6 @@ if (inputConn != null) {
         } catch (org.apache.cxf.interceptor.Fault e) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
-                org.dom4j.Document faultDoc_<%=cid%> = null;
-                if (null != e.getDetail() && null != e.getDetail().getFirstChild()) {
-                    try {
-                        javax.xml.transform.Source faultSource_<%=cid%> =
-                            new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
-
-                        org.dom4j.io.DocumentResult result_<%=cid%> = new org.dom4j.io.DocumentResult();
-                        javax.xml.transform.TransformerFactory.newInstance()
-                            .newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
-                        faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
@@ -247,13 +232,12 @@ if (inputConn != null) {
                 } else {
                     <%=connFaultName%>.faultString = e.getMessage();
                 }
-
-                Document faultTalendDoc_<%=cid%> = null;
-                if (null != faultDoc_<%=cid%>) {
-                    faultTalendDoc_<%=cid%> = new Document();
-                    faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
+                if (null != e.getDetail() && null != e.getDetail().getFirstChild()) {
+                    javax.xml.transform.Source faultSource_<%=cid%> =
+                        new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
+                    <%=connFaultName%>.faultDetail = new Document();
+                    <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_tESBConsumer_1));
                 }
-                <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
             <% } else { %>
                 e.printStackTrace();
             <% } %>
@@ -268,8 +252,7 @@ if (inputConn != null) {
                 <%=connFaultName%>.faultDetail = new Document();
                 <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e.getFaultInfo());
             <% } else { %>
-                System.out.println(e.getMessage());
-                System.out.println(((org.dom4j.Document) e.getFaultInfo()).asXML());
+                System.err.println(e.getMessage() + ": " + ((org.dom4j.Document) e.getFaultInfo()).asXML());
             <% } %>
         } catch (javax.xml.ws.soap.SOAPFaultException e) {
             <% if (null != connFault) {
