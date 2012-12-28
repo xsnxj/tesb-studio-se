@@ -1,12 +1,10 @@
 <%@ jet
     imports="
         org.talend.core.model.metadata.IMetadataColumn
-        org.talend.core.model.process.IProcess
         org.talend.core.model.process.INode
         org.talend.core.model.process.IConnection
         org.talend.core.model.process.ElementParameterParser
         org.talend.core.model.process.IConnectionCategory
-        org.talend.core.model.utils.JavaResourcesHelper
         org.talend.designer.codegen.config.CodeGeneratorArgument
 
         java.util.List
@@ -19,8 +17,7 @@ INode node = (INode) codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
 String projectName = codeGenArgument.getCurrentProjectName();
-IProcess process = node.getProcess();
-String processName = process.getName();
+String processName = node.getProcess().getName();
 
 String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
 String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
@@ -129,19 +126,8 @@ if (inputConn != null) {
                         }
                 } %>
 
-                try {
-                    responseDoc_<%=cid%> = (org.dom4j.Document) genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-                } catch (GenericFaultInfoException e) {
-                    if (e.getCause() instanceof org.apache.cxf.binding.soap.SoapFault) {
-                        throw (org.apache.cxf.binding.soap.SoapFault) e.getCause();
-                    } else {
-                        if (null != e.getCause()) {
-                            throw (Exception) e.getCause();
-                        } else {
-                            throw e;
-                        }
-                    }
-                }
+                responseDoc_<%=cid%> = (org.dom4j.Document) genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
+
             } else {
                     <%
                     Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
@@ -232,7 +218,7 @@ if (inputConn != null) {
                 }
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
-        } catch (org.apache.cxf.binding.soap.SoapFault e) {
+        } catch (org.apache.cxf.interceptor.Fault e) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 org.dom4j.Document faultDoc_<%=cid%> = null;
@@ -254,8 +240,13 @@ if (inputConn != null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
                 <%=connFaultName%>.faultCode = e.getFaultCode().toString();
-                <%=connFaultName%>.faultString = e.getReason();
-                <%=connFaultName%>.faultActor = e.getRole();
+                if (e instanceof org.apache.cxf.binding.soap.SoapFault) {
+                    <%=connFaultName%>.faultString = ((org.apache.cxf.binding.soap.SoapFault) e).getReason();
+                    <%=connFaultName%>.faultActor = ((org.apache.cxf.binding.soap.SoapFault) e).getRole();
+                    <%=connFaultName%>.faultNode = ((org.apache.cxf.binding.soap.SoapFault) e).getNode();
+                } else {
+                    <%=connFaultName%>.faultString = e.getMessage();
+                }
 
                 Document faultTalendDoc_<%=cid%> = null;
                 if (null != faultDoc_<%=cid%>) {
@@ -274,9 +265,8 @@ if (inputConn != null) {
                 }
                 <%=connFaultName%>.faultString = e.getMessage();
 
-                Document faultTalendDoc_<%=cid%> = new Document();
-                faultTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) e.getFaultInfo());
-                <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
+                <%=connFaultName%>.faultDetail = new Document();
+                <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e.getFaultInfo());
             <% } else { %>
                 System.out.println(e.getMessage());
                 System.out.println(((org.dom4j.Document) e.getFaultInfo()).asXML());

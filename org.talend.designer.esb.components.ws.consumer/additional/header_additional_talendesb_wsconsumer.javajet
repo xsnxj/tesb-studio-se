@@ -35,7 +35,7 @@ if (actAsConsumer) { %>
 	}
 
     @SuppressWarnings("serial")
-    static class GenericFaultInfoException extends org.apache.cxf.frontend.FaultInfoException {
+    public static class GenericFaultInfoException extends org.apache.cxf.frontend.FaultInfoException {
 
         private org.dom4j.Document faultInfo;
 
@@ -48,13 +48,17 @@ if (actAsConsumer) { %>
             }
         }
 
-        public GenericFaultInfoException(Throwable arg0) {
-            super(arg0);
-        }
-
         public Object getFaultInfo() {
             return faultInfo;
         }
+    }
+
+    static class GenericServiceClass {
+
+        public Object invoke(Object param) throws GenericFaultInfoException {
+            return null;
+        }
+
     }
 
     static class GenericConsumer {
@@ -157,7 +161,7 @@ if (actAsConsumer) { %>
             this.soapHeaders = soapHeaders;
         }
 
-        public Object invoke(Object param) throws GenericFaultInfoException {
+        public Object invoke(Object param) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
             clientFactory.getServiceFactory().getServiceConfigurations().add(0, new org.apache.cxf.service.factory.AbstractServiceConfiguration() {
                 @Override
@@ -195,7 +199,7 @@ if (actAsConsumer) { %>
             if (null != wsdlURL) {
                 clientFactory.setWsdlURL(wsdlURL);
             }
-            clientFactory.setServiceClass(getClass());
+            clientFactory.setServiceClass(GenericServiceClass.class);
 
             clientFactory.setServiceName(serviceQName);
             clientFactory.setEndpointName(portQName);
@@ -276,8 +280,10 @@ if (actAsConsumer) { %>
                 }
             } catch (GenericFaultInfoException e) {
                 throw e;
+            } catch (org.apache.cxf.interceptor.Fault e) {
+                throw e;
             } catch (Exception e) {
-                throw new GenericFaultInfoException(e);
+                throw new org.apache.cxf.interceptor.Fault(e);
             }
             return null;
         }
