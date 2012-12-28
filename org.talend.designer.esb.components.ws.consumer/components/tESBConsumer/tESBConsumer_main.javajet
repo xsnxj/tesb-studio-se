@@ -126,7 +126,7 @@ if (inputConn != null) {
                         }
                 } %>
 
-                responseDoc_<%=cid%> = (org.dom4j.Document) genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
+                responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
 
             } else {
                     <%

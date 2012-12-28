@@ -161,7 +161,7 @@ if (actAsConsumer) { %>
             this.soapHeaders = soapHeaders;
         }
 
-        public Object invoke(Object param) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
+        public org.dom4j.Document invoke(org.dom4j.Document doc) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
             clientFactory.getServiceFactory().getServiceConfigurations().add(0, new org.apache.cxf.service.factory.AbstractServiceConfiguration() {
                 @Override
@@ -274,7 +274,7 @@ if (actAsConsumer) { %>
                     client.getRequestContext().put(org.apache.cxf.headers.Header.HEADER_LIST, headers);
                 }
 
-                Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource((org.dom4j.Document) param));
+                Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource(doc));
                 if (results != null && results.length > 0) {
                     return sourceToDocument((javax.xml.transform.Source) results[0]);
                 }
