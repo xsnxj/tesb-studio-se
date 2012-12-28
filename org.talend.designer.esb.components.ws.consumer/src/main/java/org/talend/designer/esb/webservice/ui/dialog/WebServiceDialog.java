@@ -160,6 +160,10 @@ public class WebServiceDialog extends Dialog implements WebServiceEventListener 
         }
 
         if (function != null) {
+            if (function.getNameSpaceURI() != null) {
+                IElementParameter METHODPara = wenCom.getElementParameter("METHOD_NS");
+                METHODPara.setValue(function.getNameSpaceURI());
+            }
             if (function.getName() != null) {
                 IElementParameter METHODPara = wenCom.getElementParameter("METHOD");
                 METHODPara.setValue(function.getName());

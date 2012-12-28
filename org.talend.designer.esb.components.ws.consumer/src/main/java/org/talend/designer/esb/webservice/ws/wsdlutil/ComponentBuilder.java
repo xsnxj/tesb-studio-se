@@ -315,11 +315,11 @@ public class ComponentBuilder {
         List<OperationInfo> operationInfos = new ArrayList<OperationInfo>();
 
         List<BindingOperation> operations = binding.getBindingOperations();
-
         if (operations != null && !operations.isEmpty()) {
             for (BindingOperation operation : operations) {
                 OperationInfo operationInfo = new OperationInfo();
                 buildOperation(operationInfo, operation);
+                operationInfo.setNamespaceURI(binding.getPortType().getQName().getNamespaceURI());
                 operationInfos.add(operationInfo);
             }
         }

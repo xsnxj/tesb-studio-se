@@ -24,6 +24,10 @@ String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
 String portNS = ElementParameterParser.getValue(node, "__PORT_NS__");
 String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
 
+String methodNS = ElementParameterParser.getValue(node, "__METHOD_NS__");
+if (methodNS == null || "".equals(methodNS)) {
+    methodNS = serviceNS;
+}
 String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
@@ -84,7 +88,7 @@ if (inputConn != null) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
                 genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
-                genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=method%>"));
+                genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=methodNS%>", "<%=method%>"));
                 genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
                 genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
                 genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);

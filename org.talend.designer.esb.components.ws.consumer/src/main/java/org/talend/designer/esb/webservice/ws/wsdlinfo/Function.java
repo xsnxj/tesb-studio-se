@@ -36,7 +36,7 @@ public class Function {
         this.serviceName = serviceInfo.getServerName();
         this.serviceNameSpace = serviceInfo.getServerNameSpace();
         this.portName = oper.getPortName();
-        this.soapAction = (oper.getSoapActionURI());
+        this.soapAction = oper.getSoapActionURI();
         this.nameSpaceURI = oper.getNamespaceURI();
         this.addressLocation = oper.getTargetURL();
 
