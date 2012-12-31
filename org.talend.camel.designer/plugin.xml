@@ -316,4 +316,10 @@
                  class="org.talend.camel.designer.check.CheckRouteBuilderNodeService">
            </checknodes>
         </extension>
+        <extension
+              point="org.talend.designer.core.process_convert">
+           <processconvert
+                 class="org.talend.camel.designer.RouteProcessConvertServiceImpl">
+           </processconvert>
+        </extension>
 </plugin>
