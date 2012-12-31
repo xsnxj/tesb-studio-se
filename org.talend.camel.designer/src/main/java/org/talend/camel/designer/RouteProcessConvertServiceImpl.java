@@ -1,6 +1,7 @@
 package org.talend.camel.designer;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.impl.CamelProcessItemImpl;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
@@ -14,7 +15,7 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
     }
 
     public IProcess getProcessFromItem(Item item, boolean loadScreenshots) {
-        if ("CamelProcessItem".equals(item.eClass().getName())) {
+        if (CamelProcessItemImpl.class == item.getClass()) {
             RouteProcess process = null;
             process = new RouteProcess(item.getProperty());
             return process;
