@@ -14,7 +14,7 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
     }
 
     public IProcess getProcessFromItem(Item item, boolean loadScreenshots) {
-        if (CamelProcessItem.class.equals(item.getClass())) {
+        if ("CamelProcessItem".equals(item.eClass().getName())) {
             RouteProcess process = null;
             process = new RouteProcess(item.getProperty());
             return process;
