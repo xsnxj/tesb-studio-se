@@ -163,5 +163,13 @@
           uri="http://www.talend.org/Services">
     </package>
  </extension>
+ <extension
+       point="org.talend.core.repository.repoViewLinker">
+    <linker
+          class="org.talend.repository.services.ui.viewer.link.ServicesRepoViewLinker"
+          name="Services"
+          priority="normal">
+    </linker>
+ </extension>
 
 </plugin>
