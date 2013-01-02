@@ -53,10 +53,8 @@
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
-			</TABLE>
-            <!--TABLE READONLY="true">
                 <COLUMN NAME="headers" TYPE="id_Document" READONLY="true" />
-            </TABLE-->
+			</TABLE>
 		</PARAMETER>
 		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
 			<TABLE READONLY="true">
