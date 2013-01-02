@@ -17,12 +17,13 @@
 		<ExternalComponent
 			class="org.talend.designer.esb.webservice.WebServiceComponent" />
 	</extension>
+	<!--
 	<extension point="org.talend.core.runtime.service">
 		<Service
 			serviceId="IWebService"
 			class="org.talend.designer.esb.webservice.ui.WebServiceHelper" />
 	</extension>
-
+	-->
 	<extension point="org.talend.core.migrationTask">
 		<projecttask
 			id="org.talend.designer.esb.webservice.ConsumerFaultResponseMigrationTask"
