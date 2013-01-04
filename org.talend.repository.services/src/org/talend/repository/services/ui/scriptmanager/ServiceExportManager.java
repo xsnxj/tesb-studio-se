@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -49,7 +50,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
     private static final String TEMPLATE_SPRING_BEANS = "/resources/beans-template.xml"; //$NON-NLS-1$
 
-    private static Logger logger = Logger.getLogger(ServiceExportManager.class);
+    private static final Logger LOG = Logger.getLogger(ServiceExportManager.class);
 
     public ServiceExportManager(Map<ExportChoice, Object> exportChoiceMap) {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
@@ -85,7 +86,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             // http://jira.talendforge.org/browse/TESB-3638
                             endpointAddress = ((SOAPAddress) element).getLocationURI();
                             try {
-                                URI uri = URI.create(endpointAddress);
+                                URI uri = new URI(endpointAddress);
                                 endpointAddress = uri.getPath();
 
                                 if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
@@ -98,8 +99,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                                 } else if (endpointAddress.length() == 1) { // empty path
                                     endpointAddress += studioServiceName;
                                 }
-                            } catch (IllegalArgumentException e) {
-                                logger.warn("Endpoint URI invalid: " + e.getCause());
+                            } catch (URISyntaxException e) {
+                                LOG.warn("Endpoint URI invalid: " + e);
                             }
                         }
                     }
@@ -150,16 +151,16 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
             TemplateProcessor.processTemplate(TEMPLATE_SPRING_BEANS, contextParams, fileWriter);
         } catch (SystemException e) {
             // something wrong with template processing
-            logger.error(e.getLocalizedMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
         } catch (IOException e) {
             // something wrong with output file
-            logger.error(e.getLocalizedMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
         } finally {
             if (null != fileWriter) {
                 try {
                     fileWriter.close();
                 } catch (IOException e) {
-                    logger.warn(e.getLocalizedMessage(), e);
+                    LOG.warn(e.getLocalizedMessage(), e);
                 }
             }
         }
