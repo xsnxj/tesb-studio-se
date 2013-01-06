@@ -17,12 +17,13 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.link.AbstractFileEditorInputLinker;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.utils.LocalWSDLEditor;
 
 /**
  * DOC ggu class global comment. Detailled comment <br/>
@@ -51,34 +52,41 @@ public class ServicesRepoViewLinker extends AbstractFileEditorInputLinker {
      * org.eclipse.ui.IEditorInput)
      */
     @Override
-    protected IEditorPart getEditor(IWorkbenchPage activePage, IEditorInput editorInput) {
-        if (activePage != null && editorInput != null) {
-            IEditorPart wsdlEditor = null;
-            /*
-             * There is a warning
-             * 
-             * !MESSAGE Warning: Detected recursive attempt by part org.talend.repository.services.utils.LocalWSDLEditor
-             * to create itself (this is probably, but not necessarily, a bug)
-             */
-            // wsdlEditor = activePage.findEditor(editorInput);
+    protected IEditorPart getEditor(IEditorInput editorInput) {
+        if (editorInput != null) {
+            IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (activeWorkbenchWindow != null) {
+                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+                if (activePage != null) {
+                    IEditorPart wsdlEditor = null;
+                    /*
+                     * There is a warning
+                     * 
+                     * !MESSAGE Warning: Detected recursive attempt by part
+                     * org.talend.repository.services.utils.LocalWSDLEditor to create itself (this is probably, but not
+                     * necessarily, a bug)
+                     */
+                    // wsdlEditor = activePage.findEditor(editorInput);
 
-            // iterator
-            IEditorReference[] editorReferences = activePage.getEditorReferences();
-            if (editorReferences != null) {
-                for (IEditorReference er : editorReferences) {
-                    try {
-                        if (editorInput.equals(er.getEditorInput())) {
-                            wsdlEditor = er.getEditor(false);
-                            break;
+                    // iterator
+                    IEditorReference[] editorReferences = activePage.getEditorReferences();
+                    if (editorReferences != null) {
+                        for (IEditorReference er : editorReferences) {
+                            try {
+                                if (editorInput.equals(er.getEditorInput())) {
+                                    wsdlEditor = er.getEditor(false);
+                                    break;
+                                }
+                            } catch (PartInitException e) {
+                                ExceptionHandler.process(e);
+                            }
                         }
-                    } catch (PartInitException e) {
-                        ExceptionHandler.process(e);
+                    }
+
+                    if (wsdlEditor != null && wsdlEditor instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
+                        return wsdlEditor;
                     }
                 }
-            }
-
-            if (wsdlEditor != null && wsdlEditor instanceof LocalWSDLEditor) {
-                return wsdlEditor;
             }
         }
         return null;
@@ -92,8 +100,8 @@ public class ServicesRepoViewLinker extends AbstractFileEditorInputLinker {
      */
     @Override
     protected RepositoryNode getRepoNodeFromEditor(IEditorPart editorPart) {
-        if (editorPart != null && editorPart instanceof LocalWSDLEditor) {
-            return ((LocalWSDLEditor) editorPart).getRepositoryNode();
+        if (editorPart != null && editorPart instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
+            return ((org.talend.repository.services.utils.LocalWSDLEditor) editorPart).getRepositoryNode();
         }
         return null;
     }
