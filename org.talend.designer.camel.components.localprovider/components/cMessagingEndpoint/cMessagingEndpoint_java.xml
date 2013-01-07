@@ -184,7 +184,7 @@
 			<IMPORT MODULE="cxf-bundle-2.7.0.jar" NAME="cxf-bundle"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF_BUNDLE']" />
 			<IMPORT MODULE="camel-spring-2.10.2.jar" NAME="camel-spring"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING']" />
+				REQUIRED="true" />
 			<IMPORT MODULE="camel-amqp-alldep-2.10.2.jar" NAME="talend-camel-amqp"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
 			<IMPORT MODULE="camel-atom-alldep-2.10.2.jar" NAME="talend-camel-atom"
