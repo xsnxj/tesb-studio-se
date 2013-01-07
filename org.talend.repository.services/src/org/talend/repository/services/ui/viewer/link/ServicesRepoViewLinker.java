@@ -15,12 +15,6 @@ package org.talend.repository.services.ui.viewer.link;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.link.AbstractFileEditorInputLinker;
 import org.talend.repository.model.RepositoryNode;
@@ -53,42 +47,11 @@ public class ServicesRepoViewLinker extends AbstractFileEditorInputLinker {
      */
     @Override
     protected IEditorPart getEditor(IEditorInput editorInput) {
-        if (editorInput != null) {
-            IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            if (activeWorkbenchWindow != null) {
-                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-                if (activePage != null) {
-                    IEditorPart wsdlEditor = null;
-                    /*
-                     * There is a warning
-                     * 
-                     * !MESSAGE Warning: Detected recursive attempt by part
-                     * org.talend.repository.services.utils.LocalWSDLEditor to create itself (this is probably, but not
-                     * necessarily, a bug)
-                     */
-                    // wsdlEditor = activePage.findEditor(editorInput);
-
-                    // iterator
-                    IEditorReference[] editorReferences = activePage.getEditorReferences();
-                    if (editorReferences != null) {
-                        for (IEditorReference er : editorReferences) {
-                            try {
-                                if (editorInput.equals(er.getEditorInput())) {
-                                    wsdlEditor = er.getEditor(false);
-                                    break;
-                                }
-                            } catch (PartInitException e) {
-                                ExceptionHandler.process(e);
-                            }
-                        }
-                    }
-
-                    if (wsdlEditor != null && wsdlEditor instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
-                        return wsdlEditor;
-                    }
-                }
-            }
+        IEditorPart wsdlEditor = super.getEditor(editorInput);
+        if (wsdlEditor != null && wsdlEditor instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
+            return wsdlEditor;
         }
+
         return null;
     }
 
