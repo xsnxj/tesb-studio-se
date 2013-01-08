@@ -14,10 +14,10 @@ imports="
 	
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
-
 	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	
+	boolean useStrategy = "true".equals(ElementParameterParser.getValue(node,"__USE_STRATEGY__"));
 	String aggregationStrategy = ElementParameterParser.getValue(node,"__AGGREGATION_STRATEGY__");
-	boolean useStrategy = (aggregationStrategy!=null && (!aggregationStrategy.equals("")));
 	
 	boolean arallelProcessing="true".equals(ElementParameterParser.getValue(node, "__PARALLET_PROCESSING__"));
 	boolean stopOnException="true".equals(ElementParameterParser.getValue(node, "__STOP_ON_EXCEPTION__"));
