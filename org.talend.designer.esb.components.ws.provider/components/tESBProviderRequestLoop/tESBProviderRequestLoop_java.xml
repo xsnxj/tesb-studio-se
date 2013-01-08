@@ -100,7 +100,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.2.jar"
+					MODULE="xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -126,11 +126,11 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="jaxb-api"
-					MODULE="jaxb-api-2.2.6.jar"
+					MODULE="jaxb-api-2.2.5.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.2.5.jar"
+					MODULE="jaxb-impl-2.2.5.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -139,7 +139,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="saaj-impl"
-					MODULE="saaj-impl-1.3.18.jar"
+					MODULE="saaj-impl-1.3.19.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -148,7 +148,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="woodstox-core-asl"
-					MODULE="woodstox-core-asl-4.1.2.jar"
+					MODULE="woodstox-core-asl-4.1.4.jar"
 					BundleID=""
 					REQUIRED="true" />
 

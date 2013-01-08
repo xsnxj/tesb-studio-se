@@ -40,4 +40,4 @@ Bundle-ClassPath: .
  ,lib/xercesImpl-2.9.1.jar
  ,components/tESBConsumer/commons-beanutils-1.7.0.jar
  ,components/tESBConsumer/cxf-bundle-2.6.5.jar
- ,components/tESBConsumer/xmlschema-core-2.0.2.jar
+ ,components/tESBConsumer/xmlschema-core-2.0.3.jar
