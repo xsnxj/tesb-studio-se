@@ -52,7 +52,7 @@
 						<ITEM NAME="CRYPTO" VALUE="camel-crypto-alldep-2.9.3.jar" />
 						<ITEM NAME="CSV" VALUE="camel-csv-alldep-2.9.3.jar" />
 						<ITEM NAME="CXF" VALUE="camel-cxf-alldep-2.9.3.jar" />
-						<ITEM NAME="CXF_BUNDLE" VALUE="cxf-bundle-2.6.2.jar" />
+						<ITEM NAME="CXF_BUNDLE" VALUE="cxf-bundle-2.6.5.jar" />
 						<ITEM NAME="DNS" VALUE="camel-dns-alldep-2.9.3.jar" />
 						<ITEM NAME="DOZER" VALUE="camel-dozer-alldep-2.9.3.jar" />
 						<ITEM NAME="ECLIPSE" VALUE="camel-eclipse-2.9.3.jar" />

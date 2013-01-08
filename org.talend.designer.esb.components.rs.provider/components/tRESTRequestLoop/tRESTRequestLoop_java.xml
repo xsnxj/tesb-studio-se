@@ -74,7 +74,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.6.0.jar"
+					MODULE="cxf-bundle-2.6.5.jar"
 					BundleID="org.apache.cxf.bundle,org.apache.cxf.cxf-rt-frontend-jaxrs,org.apache.cxf.cxf-rt-rs-extension-providers"
 					REQUIRED="true" />
 

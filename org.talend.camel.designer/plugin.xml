@@ -207,6 +207,15 @@
                    name="Switch292ReleaseCamelVersionTask"
                    version="5.1.2">
       		</projecttask>
+             <projecttask
+                   beforeLogon="false"
+                   breaks="5.1.1"
+                   class="org.talend.camel.designer.migration.Switch265ReleaseCXFVersionTask"
+                   description="Switch265ReleaseCXFVersionTaskMigrationTask"
+                   id="org.talend.camel.designer.switch265ReleaseCXFVersionTask"
+                   name="Switch265ReleaseCXFVersionTask"
+                   version="5.1.2">
+             </projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
