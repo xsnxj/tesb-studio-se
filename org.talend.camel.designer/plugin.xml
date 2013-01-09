@@ -147,7 +147,19 @@
             talendPerspectiveId="org.talend.camel.CamelPerspective">
       </TalendPerspective>
    </extension>
+
  <extension
+       point="org.talend.core.repository.repositorySeeker">
+    <seeker
+          class="org.talend.camel.designer.ui.view.seeker.RoutesRepositorySeeker"
+          description="Camel Process"
+          name="Routes">
+    </seeker>
+    <seeker
+          class="org.talend.camel.designer.RepositorySeeker15"
+          name="org.talend.camel.designer.seeker15">
+    </seeker>
+ </extension> <extension
          point="org.talend.core.migrationTask">
       <projecttask
             beforeLogon="false"
@@ -351,6 +363,7 @@
               point="org.talend.core.repository.repoViewLinker">
            <linker
                  class="org.talend.camel.designer.ui.view.link.CamelProcessRepoViewLinker"
+                 description="Route"
                  name="CamelProcess"
                  priority="normal">
            </linker>
@@ -365,5 +378,17 @@
            <processconvert
                  class="org.talend.camel.designer.RouteProcessConvertServiceImpl">
            </processconvert>
+        </extension>
+        <extension
+              point="org.talend.core.repository.repositorySeeker">
+           <seeker
+                 class="org.talend.camel.designer.ui.view.seeker.RoutesRepositorySeeker"
+                 description="Camel Process"
+                 name="Routes">
+           </seeker>
+           <seeker
+                 class="org.talend.camel.designer.ui.view.seeker.BeanRepositorySeeker"
+                 name="Bean">
+           </seeker>
         </extension>
 </plugin>

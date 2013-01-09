@@ -64,7 +64,10 @@ public class ServicesRepoViewLinker extends AbstractFileEditorInputLinker {
     @Override
     protected RepositoryNode getRepoNodeFromEditor(IEditorPart editorPart) {
         if (editorPart != null && editorPart instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
-            return ((org.talend.repository.services.utils.LocalWSDLEditor) editorPart).getRepositoryNode();
+            RepositoryNode repositoryNode = ((org.talend.repository.services.utils.LocalWSDLEditor) editorPart)
+                    .getRepositoryNode();
+            expandToRepoViewNode(repositoryNode);
+            return repositoryNode;
         }
         return null;
     }

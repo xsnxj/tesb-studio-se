@@ -171,5 +171,12 @@
           priority="normal">
     </linker>
  </extension>
+ <extension
+       point="org.talend.core.repository.repositorySeeker">
+    <seeker
+          class="org.talend.repository.services.ui.viewer.seeker.ServicesRepositorySeeker"
+          name="Services">
+    </seeker>
+ </extension>
 
 </plugin>
