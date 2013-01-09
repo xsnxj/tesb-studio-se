@@ -86,8 +86,6 @@
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.10.2.jar"
-				REQUIRED="true" />
 			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.7.RELEASE.jar"
@@ -105,10 +103,6 @@
 			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="activemq" MODULE="activemq-all-5.7.0.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.10.2.jar"
 				REQUIRED="true" />
 			<!-- http://jira.talendforge.org/browse/TESB-3828 -->
 			<!--<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar" REQUIRED="true" /> <IMPORT 

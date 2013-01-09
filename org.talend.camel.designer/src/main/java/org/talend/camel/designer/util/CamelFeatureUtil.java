@@ -395,17 +395,32 @@ public final class CamelFeatureUtil {
 				if ("cCXF".equals(componentName)) {
 					handleCXFcase(features, currentNode);
 				}else if("cLoop".equals(componentName)){
-					headleLoopCase(features, currentNode);
+					handleLoopCase(features, currentNode);
 				}else if("cMessageFilter".equals(componentName)){
-					headleMessageFilterCase(features, currentNode);
+					handleMessageFilterCase(features, currentNode);
 				}else if("cRecipientList".equals(componentName)){
-					headleRecipientListCase(features, currentNode);
+					handleRecipientListCase(features, currentNode);
 				}else if("cSetBody".equals(componentName)){
-					headleSetBodyCase(features, currentNode);
+					handleSetBodyCase(features, currentNode);
 				}else if("cSetHeader".equals(componentName)){
-					headleSetHeaderCase(features, currentNode);
+					handleSetHeaderCase(features, currentNode);
+				}else if("cJMSConnectionFactory".equals(componentName)){
+					handleJmsConnectionFactory(features, currentNode);
 				}
 			}
+		}
+	}
+
+	private static void handleJmsConnectionFactory(
+			Set<XMLFeatureModel> features, NodeType currentNode) {
+		List<String> names = new ArrayList<String>();
+		names.add("MQ_TYPE");
+		names.add("IS_AMQ_HTTP_BROKER");
+		Map<String, ElementParameterType> paras = findElementParameterByNames(names, currentNode.getElementParameter());
+		ElementParameterType mqType = paras.get("MQ_TYPE");
+		ElementParameterType useHttpBroker = paras.get("IS_AMQ_HTTP_BROKER");
+		if("ActiveMQ".equals(mqType.getValue()) && "true".equals(useHttpBroker.getValue())){
+			features.add(new XMLFeatureModel("activemq-optional", "[5,10)"));
 		}
 	}
 
@@ -448,7 +463,7 @@ public final class CamelFeatureUtil {
 		}
 	}
 	
-	protected static void headleSetHeaderCase(Set<XMLFeatureModel> features,
+	protected static void handleSetHeaderCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		ElementParameterType element = findElementParameterByName("VALUES", currentNode.getElementParameter());
 		EList elementValue = element.getElementValue();
@@ -469,7 +484,7 @@ public final class CamelFeatureUtil {
 		
 	}
 
-	protected static void headleSetBodyCase(Set<XMLFeatureModel> features,
+	protected static void handleSetBodyCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -482,7 +497,7 @@ public final class CamelFeatureUtil {
 		
 	}
 
-	private static void headleRecipientListCase(Set<XMLFeatureModel> features,
+	private static void handleRecipientListCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -495,7 +510,7 @@ public final class CamelFeatureUtil {
 		
 	}
 
-	protected static void headleMessageFilterCase(Set<XMLFeatureModel> features,
+	protected static void handleMessageFilterCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -508,7 +523,7 @@ public final class CamelFeatureUtil {
 		
 	}
 
-	protected static void headleLoopCase(Set<XMLFeatureModel> features,
+	protected static void handleLoopCase(Set<XMLFeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 		List<String> paraNames = new ArrayList<String>();

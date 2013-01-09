@@ -20,7 +20,7 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-		<PARAMETER NAME="MQ_TYPE" FIELD="CLOSED_LIST" NUM_ROW="5"
+		<PARAMETER NAME="MQ_TYPE" FIELD="CLOSED_LIST" NUM_ROW="2"
 			REQUIRED="true" READONLY="false">
 			<ITEMS DEFAULT="ACTIVEMQ">
 				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
@@ -30,16 +30,21 @@
 		</PARAMETER>
 		
 		<PARAMETER NAME="USE_TRANSACTION" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="5">
+			NUM_ROW="2">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
 		<!-- ActiveMQ -->
-		<PARAMETER NAME="AMQ_BROKER_URI" FIELD="TEXT" NUM_ROW="7"
+		<PARAMETER NAME="AMQ_BROKER_URI" FIELD="TEXT" NUM_ROW="4"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
 			<DEFAULT>"vm://localhost?broker.persistent=false"</DEFAULT>
 		</PARAMETER>
 
+		<PARAMETER NAME="IS_AMQ_HTTP_BROKER" FIELD="CHECK" NUM_ROW="6"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
 		<PARAMETER NAME="AMQ_POOL" FIELD="CHECK" NUM_ROW="8"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
 			<DEFAULT>false</DEFAULT>
@@ -109,8 +114,7 @@
 
 		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
-			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar,
-				com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar,com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="WMQ_DRIVER_JAR" FIELD="TABLE" NUM_ROW="30"
@@ -136,6 +140,7 @@
 				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
 			</ITEMS>
 		</PARAMETER>
+		
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
@@ -143,6 +148,15 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
+			<IMPORT NAME="httpclient" MODULE="httpclient-4.2.1.jar"
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="httpcore" MODULE="httpcore-4.2.1.jar"
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="xpp3" MODULE="xpp3-1.1.4c.jar"
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="xstream" MODULE="xstream-1.4.3.jar"
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+	
 			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
@@ -152,8 +166,6 @@
 			<IMPORT NAME="apache-camel" MODULE="camel-core-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="talend-camel-ftp" MODULE="camel-ftp-alldep-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
@@ -174,12 +186,18 @@
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="activemq" MODULE="activemq-all-5.7.0.jar"
-				REQUIRED="true" />
+				REQUIRED_IF="MQ_TYPE == 'ACTIVEMQ'" />
 			<IMPORT NAME="activemq-pool" MODULE="activemq-pool-5.7.0.jar"
-				REQUIRED="true" />
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="jms" MODULE="camel-jms-alldep-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="common-pool" MODULE="commons-pool-1.5.4.jar"
+				REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
+			<IMPORT NAME="jms_jar" MODULE="jms.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="jta" MODULE="jta.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="jndi" MODULE="jndi.jar"
 				REQUIRED="true" />
 			<!-- http://jira.talendforge.org/browse/TESB-3828 -->
 			<!--<IMPORT NAME="wmq" MODULE="com.ibm.mq.jar" REQUIRED="true" /> <IMPORT 
