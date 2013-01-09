@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet skeleton="cRecipientList_main.skeleton"
 imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
@@ -7,75 +7,79 @@ imports="
     java.util.List
 " 
 %>
-<%
+
+
+<% 
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
+	setNode(node);
 	String cid = node.getUniqueName();
 	
+	String language = getSetting("__LANGUAGES__");
+	String expression = getSetting("__EXPRESSION__");
+	boolean useNamespaces = getBoolSetting( "__USE_NAMESPACES__");
+
+	boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
+	String delimiter = getSetting( "__DELIMITER__");
 	
-	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
-	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
-	String useDelimiter = "false";
-//	String useDelimiter = ElementParameterParser.getValue(node, "__USE_DELIMITER__");
-	String delimiter = ElementParameterParser.getValue(node, "__DELIMITER__");
-	String stopOnException = ElementParameterParser.getValue(node, "__STOP_ON_EXCEPTION__");
-	String ignoreInvalid = ElementParameterParser.getValue(node, "__IGNORE_INVALID__");
-	String parallelProcess = ElementParameterParser.getValue(node, "__PARELLEL_PROCESS__");
-	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	boolean useStrategy = getBoolSetting( "__USE_STRATEGY__");
+	String strategyRef = getSetting( "__STRATEGY_REF__");
+	
+	
+	boolean parallelProcessing = getBoolSetting( "__PARELLEL_PROCESS__");
+	boolean useExecutorService = parallelProcessing && getBoolSetting( "__USE_EXECUTOR_SERVICE__");
+	String executorService = getSetting( "__EXECUTOR_SERVICE__");
+	
+	
+	boolean stopOnException = getBoolSetting( "__STOP_ON_EXCEPTION__");
+	boolean  ignoreInvalid = getBoolSetting( "__IGNORE_INVALID__");
+	boolean streaming = getBoolSetting( "__STREAMING__");
+	String timeout = getSetting( "__TIMEOUT__");
+	boolean useTimeout = ((timeout!=null)&&(timeout.equals("\\s*\\d+\\s*")));
+	
+	boolean useOnPrepareProcessor = getBoolSetting("__USE_ON_PREPARE_PROCESSOR__");
+	String onPrepareProcessor = getSetting("__ON_PREPARE_PROCESSOR__");
+	
+	boolean shareUnitOfWork = getBoolSetting( "__SHARE_UNIT_OF_WORK__");
+	
+	
+	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-			boolean hasNamespace = false;
-			if("xpath".equals(language) && "true".equals(useNamespaces)){
-				hasNamespace = true;
+%>
+						.recipientList(
+<%	
+			//then wait for fill language and expression
+			if(!"none".equals(language)){
+				%><%=language%>(<%
 			}
-			if(!("none".equals(language))) {
-				if("true".equals(useDelimiter)){
-					if(hasNamespace){
-%>
-						.recipientList().<%=language%>(<%=expression%>, <%=cid%>NSMap)
-<%
-					}else{
-%>
-						.recipientList().<%=language%>(<%=expression%>)
-<%				
-					}
-				}else{
-					if(hasNamespace){
-%>
-						.recipientList().<%=language%>(<%=expression%>, <%=cid%>NSMap)
-<%
-					}else{
-%>
-						.recipientList().<%=language%>(<%=expression%>)
-<%              	}
-				}
-%>
-<%
-			} else {
-			    if("true".equals(useDelimiter)){
-%>
-				.recipientList().<%=expression%>
-<%              } else{
-%>
-				.recipientList().<%=expression%>
-<%				}
+			//then wait for fill expression
+				%><%=expression%><%
+			if("xpath".equals(language) && useNamespaces){
+				%>,<%=cid%>NSMap<%
+			}
+			if(!"none".equals(language)){
+				%>)<%//close expression bracket
 			}
 			
-			if("true".equals(stopOnException)){
-%>
-			.stopOnException()
-<%
+			if(useSpecifyDelimiter){
+				//will append a "," and follow a delimiter
+				%>,<%=delimiter%><%			
 			}
-			if("true".equals(ignoreInvalid)){
-%>
-			.ignoreInvalidEndpoints()
-<%		
-			}
-			if("true".equals(parallelProcess)){
-%>
-			.parallelProcessing()
-<%	
-			}
+			%>
+					)
+<%			//close bracket for .recipientList(..,.
+			//then append suffix settings.
+			if(useStrategy){%>.setAggregationStrategy(new <%=strategyRef%>())		<%}
+			if(parallelProcessing){%>.parallelProcessing()							<%}
+			if(useExecutorService){%>.executorService(<%=executorService%>)			<%}
+			if(stopOnException){%>.stopOnException()								<%}
+			if(ignoreInvalid){%>.ignoreInvalidEndpoints()							<%}
+			if(streaming){%>.streaming()											<%}
+			if(useTimeout){%>.timeout( <%=timeout%> )								<%}
+			if(useOnPrepareProcessor){%>.onPrepare(new  <%=onPrepareProcessor%>())	<%}
+			if(shareUnitOfWork){%>.shareUnitOfWork()								<%}
+			
 		
-	}
+	}//finish all suffix settings.
 %>
