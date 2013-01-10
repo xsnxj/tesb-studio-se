@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.wsdl.BindingOutput;
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -26,7 +26,6 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,7 +37,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
-import org.eclipse.wst.wsdl.validation.internal.eclipse.URIResolverWrapper;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.properties.ByteArray;
@@ -81,6 +79,8 @@ public class WSDLUtils {
 
     public static final String COMMUNICATION_STYLE = "COMMUNICATION_STYLE"; //$NON-NLS-1$        
 
+    public static final String FAULTS = "FAULTS"; //$NON-NLS-1$
+
     public static final String ONE_WAY = "one-way"; //$NON-NLS-1$
 
     public static final String REQUEST_RESPONSE = "request-response"; //$NON-NLS-1$
@@ -94,31 +94,35 @@ public class WSDLUtils {
         }
 
         Definition wsdl = getDefinition(wsdlURI);
-        String targetNs = wsdl.getTargetNamespace();
-        QName portTypeQName = new QName(targetNs, portTypeName);
-        if (null == wsdl.getPortType(portTypeQName)) { // portType not found
-            return map;
-        }
-        boolean isOneWay = false;
-        String serviceName = null;
-        String portName = null;
-        String endpointUri = null;
+
         for (Object serviceObject : wsdl.getServices().values()) {
             Service service = (Service) serviceObject;
             for (Object portObject : service.getPorts().values()) {
                 Port port = (Port) portObject;
-                if (portTypeQName.equals(port.getBinding().getPortType().getQName())) {
-                    portName = port.getName();
-                    BindingOutput out = port.getBinding().getBindingOperation(operationName, null, null).getBindingOutput();
-                    if (null == out) {
-                        // it is oneway
-                        isOneWay = true;
-                    } else {
-                        // it is request response
-                        isOneWay = false;
+                if (portTypeName.equals(port.getBinding().getPortType().getQName().getLocalPart())) {
+                    final String targetNs = wsdl.getTargetNamespace();
+                    map.put(SERVICE_NAME, service.getQName().getLocalPart());
+                    map.put(SERVICE_NS, targetNs);
+                    map.put(PORT_NAME, port.getName());
+                    map.put(PORT_NS, targetNs);
+                    map.put(OPERATION_NAME, operationName);
+                    map.put(WSDL_LOCATION, wsdlURI);
+
+                    BindingOperation bindingOperation = port.getBinding().getBindingOperation(operationName, null, null);
+                    map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput()) ? ONE_WAY : REQUEST_RESPONSE);
+
+                    String faults = null;
+                    for (Object fault : bindingOperation.getBindingFaults().keySet()) {
+                        if (faults == null) {
+                            faults = (String) fault;
+                        } else {
+                            faults += ',' + (String) fault;
+                        }
                     }
-                    @SuppressWarnings("rawtypes")
-                    List extElements = port.getExtensibilityElements();
+                    map.put(FAULTS, faults);
+
+                    String endpointUri = null;
+                    List<?> extElements = port.getExtensibilityElements();
                     if (null != extElements) {
                         for (Object extElement : extElements) {
                             if (extElement instanceof SOAPAddress) {
@@ -130,29 +134,14 @@ public class WSDLUtils {
                             }
                         }
                     }
+                    // map.put(OPERATION_NS, targetNs);
+                    map.put(ENDPOINT_URI, endpointUri);
+
                     break;
                 }
             }
-            if (null != portName) {
-                serviceName = service.getQName().getLocalPart();
-            }
         }
 
-        if (null != serviceName) {
-            map.put(SERVICE_NAME, serviceName);
-            map.put(SERVICE_NS, targetNs);
-            map.put(PORT_NAME, portName);
-            map.put(PORT_NS, targetNs);
-            map.put(OPERATION_NAME, operationName);
-            // map.put(OPERATION_NS, targetNs);
-            map.put(ENDPOINT_URI, endpointUri);
-            map.put(WSDL_LOCATION, wsdlURI);
-            if (isOneWay) {
-                map.put(COMMUNICATION_STYLE, ONE_WAY);
-            } else {
-                map.put(COMMUNICATION_STYLE, REQUEST_RESPONSE);
-            }
-        }
         return map;
     }
 
