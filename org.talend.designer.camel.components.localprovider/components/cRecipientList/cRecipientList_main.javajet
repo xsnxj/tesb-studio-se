@@ -47,9 +47,9 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-						.recipientList(
+						.recipientList().
 <%	
-			//then wait for fill language and expression
+			//will return ExpressionClause instance, then wait for fill  expression
 			if(!"none".equals(language)){
 				%><%=language%>(<%
 			}
@@ -61,14 +61,6 @@ imports="
 			if(!"none".equals(language)){
 				%>)<%//close expression bracket
 			}
-			
-			if(useSpecifyDelimiter){
-				//will append a "," and follow a delimiter
-				%>,<%=delimiter%><%			
-			}
-			%>
-					)
-<%			//close bracket for .recipientList(..,.
 			//then append suffix settings.
 			if(useStrategy){%>.setAggregationStrategy(new <%=strategyRef%>())		<%}
 			if(parallelProcessing){%>.parallelProcessing()							<%}
