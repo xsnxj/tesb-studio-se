@@ -32,41 +32,24 @@ imports="
 %>
 		.split(
 <%
-			if("xpath".equals(language) && "true".equals(useNamespaces)){
-%>			
-		xpath(<%=expression%>,<%=cid%>NSMap)
-<%
-			}else if("none".equals(language)){
-%>
-		<%=expression%>
-<%
+			if("none".equals(language)){
+				//inorder expression for former migrate
+				%><%=expression%>)<%
 			}else{
-%>
-		<%=language%>(<%=expression%>)
-<%			}
-			if(useStrategy){
-				
-%>
-		,new <%=aggregationStrategy%>()
-<%
+				//fill postorder expression
+				%>).<%=language%>(<%=expression%><%
+				if("xpath".equals(language) && "true".equals(useNamespaces)){
+					%>,<%=cid%>NSMap<%
+				}
+				//close expression
+				%>)<%
 			}
-%>
-		)
-<%
-		if(arallelProcessing){
-			%>.parallelProcessing()<%
-		}
-		if(stopOnException){
-			%>.stopOnException()<%
-		}
-		if(streaming){
-			%>.streaming()<%
-		}
-		if(shareUnitOfWork){
-			%>.shareUnitOfWork()<%
-		}
-		if(hasTimeout){
-			%>.timeout(<%=timeout%>)<%
-		}
+			//then wait other postorder options.
+		if(useStrategy){			%>.aggregationStrategy(new <%=aggregationStrategy%>())<%}
+		if(arallelProcessing){		%>.parallelProcessing()<%								}
+		if(stopOnException){		%>.stopOnException()<%									}
+		if(streaming){				%>.streaming()<%										}
+		if(shareUnitOfWork){		%>.shareUnitOfWork()<%									}
+		if(hasTimeout){				%>.timeout(<%=timeout%>)<%								}
 	}
 %>
