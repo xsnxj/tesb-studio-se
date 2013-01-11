@@ -19,8 +19,8 @@ imports="
 	String expression = getSetting("__EXPRESSION__");
 	boolean useNamespaces = getBoolSetting( "__USE_NAMESPACES__");
 
-	boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
-	String delimiter = getSetting( "__DELIMITER__");
+	//boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
+	//String delimiter = getSetting( "__DELIMITER__");
 	
 	boolean useStrategy = getBoolSetting( "__USE_STRATEGY__");
 	String strategyRef = getSetting( "__STRATEGY_REF__");
