@@ -13,6 +13,7 @@
 package org.talend.camel.designer.ui.editor;
 
 import org.talend.camel.designer.ui.SaveAsRoutesAction;
+import org.talend.core.model.components.TComponentsHandler;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.designer.core.ui.editor.ITalendJobEditor;
 import org.talend.designer.core.ui.editor.process.Process;
@@ -31,6 +32,7 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
         super(readOnly);
     }
 
+    @Override
     public Process getProcess() {
         return (Process) super.getProcess();
     }
@@ -44,6 +46,7 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
         super.setParent(multiPageTalendEditor);
     }
 
+    @Override
     public CamelMultiPageTalendEditor getParent() {
         return (CamelMultiPageTalendEditor) super.getParent();
     }
@@ -52,5 +55,15 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
     public void doSaveAs() {
         SaveAsRoutesAction saveAsAction = new SaveAsRoutesAction(this);
         saveAsAction.run();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.core.ui.editor.AbstractTalendEditor#fetchComponentsHandler()
+     */
+    @Override
+    protected TComponentsHandler fetchComponentsHandler() {
+        return null;
     }
 }
