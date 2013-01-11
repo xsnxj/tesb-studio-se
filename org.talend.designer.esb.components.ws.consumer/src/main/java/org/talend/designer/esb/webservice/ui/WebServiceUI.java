@@ -109,7 +109,7 @@ import org.xml.sax.InputSource;
  * gcui class global comment. Detailled comment
  */
 @SuppressWarnings("unchecked")
-public class WebServiceUI extends AbstractWebService {
+public class WebServiceUI implements AbstractWebService {
 
     private static final String METHOD = "METHOD";
     private static final String TRUE = "true";
