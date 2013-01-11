@@ -14,7 +14,10 @@ imports="
 	
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
+	boolean useResultClassType ="true".equals(ElementParameterParser.getValue(node,"__USE_RESULT_CLASS_TYPE__"));
+	String resultClassType = ElementParameterParser.getValue(node,"__RESULT_CLASS_TYPE__");
 	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	
 	
 	boolean useStrategy = "true".equals(ElementParameterParser.getValue(node,"__USE_STRATEGY__"));
 	String aggregationStrategy = ElementParameterParser.getValue(node,"__AGGREGATION_STRATEGY__");
@@ -38,8 +41,9 @@ imports="
 			}else{
 				//fill postorder expression
 				%>).<%=language%>(<%=expression%><%
-				if("xpath".equals(language) && "true".equals(useNamespaces)){
-					%>,<%=cid%>NSMap<%
+				if("xpath".equals(language)){
+					if(useResultClassType){%>,<%=resultClassType%>.class<%	}
+					if("true".equals(useNamespaces)){%>,<%=cid%>NSMap<%		}
 				}
 				//close expression
 				%>)<%

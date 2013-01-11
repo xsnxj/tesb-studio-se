@@ -17,6 +17,8 @@ imports="
 	
 	String language = getSetting("__LANGUAGES__");
 	String expression = getSetting("__EXPRESSION__");
+	boolean useResultClassType = getBoolSetting("__USE_RESULT_CLASS_TYPE__");
+	String resultClassType = getSetting("__RESULT_CLASS_TYPE__");
 	boolean useNamespaces = getBoolSetting( "__USE_NAMESPACES__");
 
 	//boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
@@ -55,8 +57,9 @@ imports="
 			}
 			//then wait for fill expression
 				%><%=expression%><%
-			if("xpath".equals(language) && useNamespaces){
-				%>,<%=cid%>NSMap<%
+			if("xpath".equals(language)){
+				if(useResultClassType){%>,<%=resultClassType%>.class<%	}
+				if(useNamespaces){%>,<%=cid%>NSMap<%					}
 			}
 			if(!"none".equals(language)){
 				%>)<%//close expression bracket
