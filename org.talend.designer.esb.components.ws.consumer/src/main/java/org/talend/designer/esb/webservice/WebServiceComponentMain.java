@@ -52,8 +52,8 @@ public class WebServiceComponentMain {
         IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
                 IBrandingService.class);
         String productName = brandingService.getFullProductName();
-        dialog.setTitle(productName + 
-        		" - " + connector.getComponent().getName() + 
+        dialog.setTitle(productName +
+        		" - " + connector.getComponent().getName() +
         		" - " + connector.getUniqueName());
 
         Rectangle boundsMapper = ExternalWebServiceUIProperties.getBoundsMapper();
