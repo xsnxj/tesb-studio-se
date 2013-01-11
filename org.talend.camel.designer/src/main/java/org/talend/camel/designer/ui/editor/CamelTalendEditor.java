@@ -60,10 +60,10 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.designer.core.ui.editor.AbstractTalendEditor#fetchComponentsHandler()
+     * @see org.talend.designer.core.ui.editor.AbstractTalendEditor#initComponentsHandler()
      */
     @Override
-    protected TComponentsHandler fetchComponentsHandler() {
+    protected TComponentsHandler initComponentsHandler() {
         return null;
     }
 }
