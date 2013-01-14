@@ -276,7 +276,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
 
         ExtendedTableModel<Function> funModel = new ExtendedTableModel<Function>("FUNCTIONLIST", allFunctions); //$NON-NLS-1$
         listTableView = new DataTableEditorView<Function>(
-        		wsdlComposite,
+                wsdlComposite,
                 SWT.NONE, funModel, false, true, false,
                 new IBeanPropertyAccessors<Function, String>() {
                     public String get(Function bean) {
@@ -348,8 +348,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             }
             is = wsdlURL.openStream(); 
             StreamCopier.copy(is, os);
-            os.flush();
-            return new String(wsdlOs.toByteArray());
         } finally {
             if (null != is) {
                 try {
@@ -366,6 +364,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                 }
             }
         }
+        return new String(wsdlOs.toByteArray());
     }
 
 //    public Definition getWSDL(String compressedAndEncodedWsdl) {
@@ -568,10 +567,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         ComponentBuilder builder = new ComponentBuilder();
         ServiceInfo[] services = builder.buildserviceinformation(getRealWsdlLocation());
 
-        String exceptionMessage = builder.getExceptionMessage();
-        if (exceptionMessage != null && exceptionMessage.length() > 0) {
-            throw new RuntimeException(exceptionMessage);
-        }
         List<Function> functionsAvailable = new ArrayList<Function>();
         for (ServiceInfo serviceInfo : services) {
             for (OperationInfo oper : serviceInfo.getOperations()) {
@@ -695,8 +690,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             wsdlString = getWSDL();
         } catch (IOException e) {
             setErrorMessage("Unable to create wsdl content: " + e.getMessage());
-            WebServiceComponentPlugin.getDefault().getLog().log(
-                    WebServiceComponentPlugin.getStatus("Unable to create wsdl content...", e));
             return false;
         }
         IElementParameter wsdlContentPara = webServiceComponent.getElementParameter("WSDL_CONTENT");

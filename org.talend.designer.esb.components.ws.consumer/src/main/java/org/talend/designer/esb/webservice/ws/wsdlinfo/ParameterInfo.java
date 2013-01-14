@@ -1,7 +1,6 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  * 
@@ -9,30 +8,19 @@ import java.util.List;
  */
 public class ParameterInfo {
 
-    private String name;
+    public static final QName MULTIPART = new QName("*multipart*");
 
-    private String type;
+    private QName name;
 
-    /* list of parameters, only filled if complex type */
-    private final List<ParameterInfo> parameterInfos = new ArrayList<ParameterInfo>();
-
-    public List<ParameterInfo> getParameterInfos() {
-        return parameterInfos;
+    public String getDisplayName() {
+        if (null != name) {
+            //return (name.getPrefix() != null) ? name.getPrefix() + ':' + name.getLocalPart() : name.getLocalPart();
+            return name.getLocalPart();
+        }
+        return ""; //$NON-NLS-1$
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public void setName(QName name) {
         this.name = name;
     }
 

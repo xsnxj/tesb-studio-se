@@ -20,5 +20,3 @@ Require-Bundle: org.eclipse.osgi,
  org.talend.repository.services;resolution:=optional,
  org.talend.designer.codegen,
  org.talend.libraries.apache
-Bundle-ClassPath: .
- ,components/tESBConsumer/xmlschema-core-2.0.3.jar

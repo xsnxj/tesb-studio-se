@@ -22,35 +22,35 @@ public class OperationInfo {
     /** The action URI value to use when making a invocation. */
     private String soapActionURI = "";
 
-    private FlowInfo input;
-    private FlowInfo output;
-    private List<FlowInfo> faults = new ArrayList<FlowInfo>();
+    private ParameterInfo input;
+    private ParameterInfo output;
+    private List<ParameterInfo> faults = new ArrayList<ParameterInfo>();
 
 	private String portName;
 
 
-    public FlowInfo getInput() {
+    public ParameterInfo getInput() {
         return input;
     }
 
-    public FlowInfo getOutput() {
+    public ParameterInfo getOutput() {
         return output;
     }
     
-    public List<FlowInfo> getFaults() {
+    public List<ParameterInfo> getFaults() {
     	return Collections.unmodifiableList(faults);
     }
 
-    public void setInput(FlowInfo input) {
+    public void setInput(ParameterInfo input) {
         this.input = input;
     }
 
-    public void setOutput(FlowInfo output) {
+    public void setOutput(ParameterInfo output) {
         this.output = output;
     }
 
 
-	public void addFault(FlowInfo fault) {
+	public void addFault(ParameterInfo fault) {
 		this.faults.add(fault);		
 	}
 

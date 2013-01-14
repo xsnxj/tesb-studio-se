@@ -7,8 +7,8 @@ package org.talend.designer.esb.webservice.ws.wsdlinfo;
  */
 public class Function {
 
-    private static final String ONE_WAY = "one-way";
-    private static final String REQUEST_RESPONSE = "request-response";
+    private static final String ONE_WAY = "one-way"; //$NON-NLS-1$
+    private static final String REQUEST_RESPONSE = "request-response"; //$NON-NLS-1$
 
     private String name;
 
@@ -32,7 +32,7 @@ public class Function {
     }
 
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {
-        String operationName = oper.getTargetMethodName() + "(";
+        String operationName = oper.getTargetMethodName() + '(';
         this.serviceName = serviceInfo.getServerName();
         this.serviceNameSpace = serviceInfo.getServerNameSpace();
         this.portName = oper.getPortName();
@@ -41,44 +41,30 @@ public class Function {
         this.addressLocation = oper.getTargetURL();
 
         // input parameters
-        FlowInfo input = oper.getInput();
-        if (input == null) {
-            operationName = operationName + "):";
-        } else {
-            ParameterInfo element = input.getParameterRoot();
-            if (element.getType() != null) {
-                operationName = operationName + element.getType() + ",";
-            } else if (element.getType() == null && element.getName() != null) {
-                operationName = operationName + element.getName() + ",";
-            } else if (element.getType() == null) {
-                operationName = operationName + "noType" + ",";
-            }
-            if (element.getType() == null
-                    && (element.getParameterInfos() == null || element.getParameterInfos().isEmpty())) {
-                element.setName(element.getName());
-            }
-            int operationNamelen = operationName.length();
-            operationName = operationName.substring(0, operationNamelen - 1) + "):";
+        ParameterInfo input = oper.getInput();
+        if (input != null) {
+            operationName += input.getDisplayName();
         }
+        operationName += "):"; //$NON-NLS-1$
+
         // output parameters 
-        FlowInfo output = oper.getOutput();
+        ParameterInfo output = oper.getOutput();
         if (output != null) {
             communicationStyle = REQUEST_RESPONSE;
-            ParameterInfo element = output.getParameterRoot();
-            if (element.getType() != null) {
-                operationName = operationName + element.getType() + ",";
-            } else if (element.getParameterInfos() != null && !element.getParameterInfos().isEmpty()) {
-                for (ParameterInfo elementBranch : element.getParameterInfos()) {
-                    if (elementBranch.getType() != null) {
-                        operationName = operationName + elementBranch.getType() + ",";
-                    } else {
-                        operationName = operationName + "noType" + ",";
-                    }
-                }
-            }
-            operationName = operationName.substring(0, operationName.length() - 1);
+            operationName += output.getDisplayName();
         } else {
-        	communicationStyle = ONE_WAY;
+            communicationStyle = ONE_WAY;
+        }
+
+        Character sep = null;
+        for (ParameterInfo fault : oper.getFaults()) {
+            if (sep == null) {
+                sep = ',';
+                operationName += " throws "; //$NON-NLS-1$
+            } else {
+                operationName += sep;
+            }
+            operationName += fault.getDisplayName();
         }
         this.name = operationName;
     }
