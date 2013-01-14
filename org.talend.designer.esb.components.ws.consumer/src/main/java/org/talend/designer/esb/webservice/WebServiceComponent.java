@@ -14,6 +14,7 @@ package org.talend.designer.esb.webservice;
 
 import java.util.List;
 
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.talend.core.model.components.IODataComponent;
@@ -25,23 +26,14 @@ import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.IConnectionCategory;
 import org.talend.core.model.process.IExternalData;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.esb.webservice.ui.dialog.WebServiceDialog;
 
 /**
  * gcui class global comment. Detailled comment
  */
 public class WebServiceComponent extends AbstractExternalNode {
 
-    private WebServiceComponentMain webServiceComponentMain;
-
     private IMetadataTable inputMetadata;
-
-    private void initWebServiceComponentMain() {
-        webServiceComponentMain = new WebServiceComponentMain(this);
-    }
-
-    public WebServiceComponentMain getMultiSchemaMain() {
-        return this.webServiceComponentMain;
-    }
 
     /*
      * (non-Javadoc)
@@ -69,8 +61,6 @@ public class WebServiceComponent extends AbstractExternalNode {
      * @see org.talend.core.model.process.IExternalNode#initialize()
      */
     public void initialize() {
-        initWebServiceComponentMain();
-        webServiceComponentMain.loadInitialParamters();
     }
 
     /*
@@ -79,10 +69,8 @@ public class WebServiceComponent extends AbstractExternalNode {
      * @see org.talend.core.model.process.IExternalNode#open(org.eclipse.swt.widgets.Display)
      */
     public int open(Display display) { // button event
-        initWebServiceComponentMain();
         this.getElementParameter(EParameterName.UPDATE_COMPONENTS.getName()).setValue(Boolean.TRUE);
-        webServiceComponentMain.createUI(display);
-        return webServiceComponentMain.getDialogResponse();
+        return open(display.getActiveShell());
     }
 
     /*
@@ -91,10 +79,9 @@ public class WebServiceComponent extends AbstractExternalNode {
      * @see org.talend.core.model.process.IExternalNode#open(org.eclipse.swt.widgets.Composite)
      */
     public int open(Composite parent) {// double click in job
-        initWebServiceComponentMain();
         this.getElementParameter(EParameterName.UPDATE_COMPONENTS.getName()).setValue(Boolean.TRUE);
-        webServiceComponentMain.createDialog(parent.getShell());
-        return webServiceComponentMain.getDialogResponse();
+        WizardDialog wizardDialog = new WizardDialog(parent.getShell(), new WebServiceDialog(this));
+        return wizardDialog.open();
     }
 
     /*
@@ -122,10 +109,6 @@ public class WebServiceComponent extends AbstractExternalNode {
      */
     public void setExternalData(IExternalData persistentData) {
 
-    }
-
-    public IExternalData getExternalData() {
-        return null;
     }
 
     public IMetadataTable getInputMetadata() {

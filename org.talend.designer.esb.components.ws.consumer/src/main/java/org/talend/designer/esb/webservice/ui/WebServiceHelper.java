@@ -29,7 +29,6 @@ import org.talend.core.service.IWebService;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.webService.WebServiceSaveManager;
 import org.talend.designer.esb.webservice.WebServiceComponent;
-import org.talend.designer.esb.webservice.WebServiceComponentMain;
 import org.talend.repository.model.ComponentsFactoryProvider;
 
 /**
@@ -41,12 +40,9 @@ public class WebServiceHelper implements IWebService {
 
     private WebServiceUI webServiceUI;
 
-    WebServiceSaveManager manager = WebServiceSaveManager.getInstance();
+    private final WebServiceSaveManager manager = WebServiceSaveManager.getInstance();
 
     private ConnectionItem connectionItem;
-
-    public WebServiceHelper() {
-    }
 
     /*
      * (non-Javadoc)
@@ -162,10 +158,8 @@ public class WebServiceHelper implements IWebService {
         }
 
         wenCom.setMetadataList(metadataTableList);
-        WebServiceComponentMain b = new WebServiceComponentMain(wenCom);
-        wenCom.setComponent(b.getWebServiceComponent().getComponent());
-        webServiceUI = new WebServiceUI(uiParent, b, connectionItem);
-        webServiceUI.init();
+        webServiceUI = new WebServiceUI(wenCom, connectionItem);
+        webServiceUI.createControl(uiParent);
         manager.addWebServiceSaveListener(this);
         return webServiceUI;
     }

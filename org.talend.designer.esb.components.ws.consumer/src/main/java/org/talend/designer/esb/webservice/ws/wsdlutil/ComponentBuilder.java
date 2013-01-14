@@ -27,6 +27,8 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
@@ -74,10 +76,13 @@ public class ComponentBuilder {
 
 	private Definition def;
 
-    // SimpleTypesFactory simpleTypesFactory = null;
-
     public ServiceInfo[] buildserviceinformation(final String wsdlURI) throws WSDLException {
-        def = ServiceDiscoveryHelper.getDefinition(wsdlURI);
+        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+        WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+
+        newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+        newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+        def = newWSDLReader.readWSDL(wsdlURI);
 
         createSchemaFromTypes(def);
 
@@ -621,7 +626,7 @@ public class ComponentBuilder {
         return this.exceptionMessage;
     }
 
-	public Definition getDefinition() {
-		return def;
-	}
+//	public Definition getDefinition() {
+//		return def;
+//	}
 }

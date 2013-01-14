@@ -1,10 +1,6 @@
 package org.talend.designer.esb.webservice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -80,15 +76,7 @@ public class WebServiceComponentPlugin extends AbstractUIPlugin {
 
     public static IStatus getStatus(final String message, final Throwable e) {
         String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
-        final String pluginId = getDefault().getBundle().getSymbolicName();
-
-        List<IStatus> exStatus = new ArrayList<IStatus>();
-
-        exStatus.add(new Status(IStatus.ERROR, pluginId, e.getClass().getName(), e));
-        for (StackTraceElement el : e.getStackTrace()) {
-            exStatus.add(new Status(IStatus.ERROR, pluginId, el.toString(), null));
-        }
-        return new MultiStatus(pluginId, 0, exStatus.toArray(new IStatus[exStatus.size()]), msg, null);
+        return new Status(IStatus.ERROR, getDefault().getBundle().getSymbolicName(), msg, e);
     }
 
 }
