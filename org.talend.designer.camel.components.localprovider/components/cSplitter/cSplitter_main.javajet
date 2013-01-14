@@ -49,7 +49,7 @@ imports="
 				%>)<%
 			}
 			//then wait other postorder options.
-		if(useStrategy){			%>.aggregationStrategy(new <%=aggregationStrategy%>())<%}
+		if(useStrategy){			%>.aggregationStrategyRef(<%=aggregationStrategy%>)<%	}
 		if(arallelProcessing){		%>.parallelProcessing()<%								}
 		if(stopOnException){		%>.stopOnException()<%									}
 		if(streaming){				%>.streaming()<%										}
