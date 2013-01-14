@@ -122,20 +122,14 @@ import orgomg.cwm.resource.record.RecordFile;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-    private IStructuredSelection selection;
+    private final Collection<String> wsdlLocations = new ArrayList<String>();
 
-    private List<RepositoryNode> nodes;
+    private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
 
     private XSDPopulationUtil2 populationUtil;
 
     private boolean needProgressBar = true;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
     public PublishMetadataAction() {
         super();
         this.setText(Messages.PublishMetadataAction_Name);
@@ -143,76 +137,32 @@ public class PublishMetadataAction extends AContextualAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.HIERARCHY_ICON));
     }
 
-    public PublishMetadataAction(boolean needProgressBar) {
-        this.needProgressBar = needProgressBar;
-    }
-
-    public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = true;
-        if (selection.isEmpty() || (selection.size() > 1)) {
-            setEnabled(false);
-            return;
-        }
-        this.selection = selection;
-        @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = selection.toList();
-        for (RepositoryNode node : nodes) {
-            if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-                    || node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES) {
-                canWork = false;
-                break;
-            }
-            if (canWork && node.getObject() != null
-                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
-                canWork = false;
-                break;
-            }
-        }
-        setEnabled(canWork);
-    }
-
-    @Override
-    public boolean isVisible() {
-        return isEnabled();
-    }
-
-    public void setNodes(List<RepositoryNode> nodes) {
-        this.nodes = nodes;
-    }
-
-    /**
-     * https://jira.talendforge.org/browse/TESB-6845
+    /*
+     * (non-Javadoc)
      * 
-     * Import schema
-     * 
-     * @param monitor
-     * @throws CoreException
+     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
+     * org.eclipse.jface.viewers.IStructuredSelection)
      */
-    public void importSchema(IProgressMonitor monitor, Map<String, IRepositoryViewObject> selectTables) throws CoreException {
-        monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
-        if (selection != null) {
-            nodes = selection.toList();
-        }
-        int step = 100;
-        int size = nodes.size();
-        if (size > 0) {
-            step /= size;
-        }
-        boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
-        
-        for (RepositoryNode node : nodes) {
-            monitor.worked(step);
-            if(validateWsdl){
-            	WSDLUtils.validateWsdl(node);
-            }
-            Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
-            process(wsdlDefinition, selectTables);
-            if (monitor.isCanceled()) {
-                break;
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        for (Object nodeObject : selection.toList()) {
+            RepositoryNode node = (RepositoryNode) nodeObject;
+            if (node.getType() == ENodeType.REPOSITORY_ELEMENT
+                    && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
+                    && node.getObject() != null
+                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
+                wsdlLocations.add(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
             }
         }
-        nodes = null;
-        monitor.done();
+        setEnabled(!wsdlLocations.isEmpty());
+    }
+
+    public void run(RepositoryNode node) {
+        run(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
+    }
+
+    public void run(String wsdlLocation) {
+        wsdlLocations.add(wsdlLocation);
+        doRun();
     }
 
     @Override
@@ -246,7 +196,6 @@ public class PublishMetadataAction extends AContextualAction {
                     // of changes before the end of the modifications.
                     workspace.run(op, schedulingRule, IWorkspace.AVOID_UPDATE, monitor);
                 } catch (CoreException e) {
-                    nodes = null;
                     throw new InvocationTargetException(e);
                 }
 
@@ -261,13 +210,43 @@ public class PublishMetadataAction extends AContextualAction {
             }
         } catch (InvocationTargetException e) {
             ExceptionHandler.process(e);
-            nodes = null;
         } catch (InterruptedException e) {
             //
         }
     }
 
-    public void process(Definition wsdlDefinition, Map<String, IRepositoryViewObject> selectTables) {
+    /**
+     * https://jira.talendforge.org/browse/TESB-6845
+     * 
+     * Import schema
+     * 
+     * @param monitor
+     * @throws CoreException
+     */
+    private void importSchema(IProgressMonitor monitor, Map<String, IRepositoryViewObject> selectTables) throws CoreException {
+        monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
+        int step = 100;
+        int size = wsdlLocations.size();
+        if (size > 0) {
+            step /= size;
+        }
+
+        boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
+        for (String wsdlLocation : wsdlLocations) {
+            monitor.worked(step);
+            if(validateWsdl){
+                WSDLUtils.validateWsdl(wsdlLocation);
+            }
+            Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
+            process(wsdlDefinition, selectTables);
+            if (monitor.isCanceled()) {
+                break;
+            }
+        }
+        monitor.done();
+    }
+
+    private void process(Definition wsdlDefinition, Map<String, IRepositoryViewObject> selectTables) {
         populationUtil = new XSDPopulationUtil2();
         List<String> alreadyCreated = new ArrayList<String>();
         SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
@@ -714,14 +693,9 @@ public class PublishMetadataAction extends AContextualAction {
 
     private List<String> getAllPaths() throws CoreException {
         List<String> paths = new ArrayList<String>();
-        if (selection != null) {
-            nodes = selection.toList();
-        }
-        if (nodes == null) {
-            return paths;
-        }
-        for (RepositoryNode node : nodes) {
-            Definition wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
+        for (String wsdlLocation : wsdlLocations) {
+            Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
+            wsdlDefinitions.add(wsdlDefinition);
             SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
             Map<QName, Binding> bindings = wsdlDefinition.getBindings();
             List<PortType> portTypes = new ArrayList<PortType>(bindings.size());

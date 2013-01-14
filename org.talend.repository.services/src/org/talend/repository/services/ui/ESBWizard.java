@@ -24,7 +24,6 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.runtime.CoreRuntimePlugin;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -48,8 +47,6 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
     private ServiceItem serviceItem;
 
     private Property property;
-
-    private IProxyRepositoryFactory repositoryFactory;
 
     private RepositoryNode node = null;
 

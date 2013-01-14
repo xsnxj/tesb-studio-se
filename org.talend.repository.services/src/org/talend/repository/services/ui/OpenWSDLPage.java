@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -297,7 +296,7 @@ public class OpenWSDLPage extends WizardPage {
                     } catch (SystemException e) {
                         throwCoreException(e);
                     } catch (CoreException e) {
-                        throwCoreException(e);
+                        throw e;
                     } catch (IOException e) {
                         throwCoreException(e);
                     }
@@ -335,8 +334,7 @@ public class OpenWSDLPage extends WizardPage {
 
             if (checkImport.isVisible() && checkImport.getSelection()) {
                 PublishMetadataAction publishAction = new PublishMetadataAction();
-                publishAction.setNodes(Collections.singletonList(repositoryNode));
-                publishAction.run();
+                publishAction.run(repositoryNode);
             }
             return true;
         } catch (CoreException e) {
