@@ -65,14 +65,14 @@ imports="
 				%>)<%//close expression bracket
 			}
 			//then append suffix settings.
-			if(useStrategy){%>.setAggregationStrategy(new <%=strategyRef%>())		<%}
+			if(useStrategy){%>.aggregationStrategyRef(<%=strategyRef%>)				<%}
 			if(parallelProcessing){%>.parallelProcessing()							<%}
 			if(useExecutorService){%>.executorService(<%=executorService%>)			<%}
 			if(stopOnException){%>.stopOnException()								<%}
 			if(ignoreInvalid){%>.ignoreInvalidEndpoints()							<%}
 			if(streaming){%>.streaming()											<%}
 			if(useTimeout){%>.timeout( <%=timeout%> )								<%}
-			if(useOnPrepareProcessor){%>.onPrepare(new  <%=onPrepareProcessor%>())	<%}
+			if(useOnPrepareProcessor){%>.onPrepareRef(<%=onPrepareProcessor%>)		<%}
 			if(shareUnitOfWork){%>.shareUnitOfWork()								<%}
 			
 		
