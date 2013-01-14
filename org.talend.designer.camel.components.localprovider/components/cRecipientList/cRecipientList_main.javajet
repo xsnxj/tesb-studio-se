@@ -58,7 +58,7 @@ imports="
 			//then wait for fill expression
 				%><%=expression%><%
 			if("xpath".equals(language)){
-				if(useResultClassType){%>,<%=resultClassType%>.class<%	}
+				if(useResultClassType){%>,<%=resultClassType%><%	}
 				if(useNamespaces){%>,<%=cid%>NSMap<%					}
 			}
 			if(!"none".equals(language)){

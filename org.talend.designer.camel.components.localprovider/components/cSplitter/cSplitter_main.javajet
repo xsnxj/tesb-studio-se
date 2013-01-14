@@ -42,7 +42,7 @@ imports="
 				//fill postorder expression
 				%>).<%=language%>(<%=expression%><%
 				if("xpath".equals(language)){
-					if(useResultClassType){%>,<%=resultClassType%>.class<%	}
+					if(useResultClassType){%>,<%=resultClassType%><%	}
 					if("true".equals(useNamespaces)){%>,<%=cid%>NSMap<%		}
 				}
 				//close expression
