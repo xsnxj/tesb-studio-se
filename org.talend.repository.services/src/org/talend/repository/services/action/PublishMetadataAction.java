@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +123,7 @@ import orgomg.cwm.resource.record.RecordFile;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-    private final Collection<String> wsdlLocations = new ArrayList<String>();
+    private final Collection<String> wsdlLocations = new HashSet<String>();
 
     //private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
 
@@ -142,8 +143,9 @@ public class PublishMetadataAction extends AContextualAction {
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void init(TreeViewer viewer, IStructuredSelection selection) {
-        for (Object nodeObject : selection.toList()) {
-            RepositoryNode node = (RepositoryNode) nodeObject;
+        wsdlLocations.clear();
+        for (Iterator<?> iter = selection.iterator(); iter.hasNext(); ) {
+            RepositoryNode node = (RepositoryNode) iter.next();
             if (node.getType() == ENodeType.REPOSITORY_ELEMENT
                     && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
                     && node.getObject() != null
