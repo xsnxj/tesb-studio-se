@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +57,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -124,11 +124,9 @@ public class PublishMetadataAction extends AContextualAction {
 
     private final Collection<String> wsdlLocations = new ArrayList<String>();
 
-    private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
+    //private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
 
     private XSDPopulationUtil2 populationUtil;
-
-    private boolean needProgressBar = true;
 
     public PublishMetadataAction() {
         super();
@@ -156,13 +154,28 @@ public class PublishMetadataAction extends AContextualAction {
         setEnabled(!wsdlLocations.isEmpty());
     }
 
+    /*
+     * used from org.talend.repository.services.ui.OpenWSDLPage
+     */
     public void run(RepositoryNode node) {
         run(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
     }
 
+    /*
+     * used from org.talend.designer.esb.webservice.ui.WebServiceUI
+     */
     public void run(String wsdlLocation) {
         wsdlLocations.add(wsdlLocation);
         doRun();
+    }
+
+    /*
+     * used from org.talend.designer.esb.bpm.ui.wizard.ImportFromBPMProcessWizard
+     */
+    public void run(RepositoryNode node, IProgressMonitor monitor) throws CoreException {
+        wsdlLocations.add(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
+        Map<String, IRepositoryViewObject> selectTables = Collections.emptyMap();
+        importSchema(monitor, selectTables);
     }
 
     @Override
@@ -203,11 +216,7 @@ public class PublishMetadataAction extends AContextualAction {
         };
 
         try {
-            if (needProgressBar) {
-                new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
-            } else {
-                PlatformUI.getWorkbench().getProgressService().run(true, true, iRunnableWithProgress);
-            }
+            new ProgressMonitorDialog(null).run(true, true, iRunnableWithProgress);
         } catch (InvocationTargetException e) {
             ExceptionHandler.process(e);
         } catch (InterruptedException e) {
@@ -695,7 +704,7 @@ public class PublishMetadataAction extends AContextualAction {
         List<String> paths = new ArrayList<String>();
         for (String wsdlLocation : wsdlLocations) {
             Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
-            wsdlDefinitions.add(wsdlDefinition);
+            //wsdlDefinitions.add(wsdlDefinition);
             SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
             Map<QName, Binding> bindings = wsdlDefinition.getBindings();
             List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
