@@ -74,9 +74,19 @@ if (inputConn != null) {
     if (connsFault.size() == 1) {
         connFault = connsFault.get(0);
     }
+
+    boolean hasHeaders = false;
+    for (IMetadataColumn connColumn : inputConn.getMetadataTable().getListColumns()) {
+        if ("headers".equals(connColumn.getLabel())) {
+            hasHeaders = true;
+            break;
+        }
+    }
 %>
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
+
+    final Document headersTalendDoc_<%=cid%> = <% if(hasHeaders) { %> <%=inputConn.getName()%>.headers; <% } else { %> null;<% } %>
 
     try {
         Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
@@ -118,17 +128,9 @@ if (inputConn != null) {
                     System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
-                <% for (IMetadataColumn connColumn : inputConn.getMetadataTable().getListColumns()) {
-                        if ("headers".equals(connColumn.getLabel())) {
-                %>
-                            Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
-                            if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
-                                genericConsumer_<%=cid%>.setSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
-                            }
-                <%
-                            break;
-                        }
-                } %>
+                if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
+                    genericConsumer_<%=cid%>.setSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
+                }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
 
@@ -179,6 +181,9 @@ if (inputConn != null) {
                                     put("username", <%=username%>);
                                     put("password", <%=password%>);
                                 <% } %>
+                                if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
+                                    put("soapHeaders", headersTalendDoc_<%=cid%>.getDocument());
+                                }
                             }};
 
                             public String getEndpointUri() {

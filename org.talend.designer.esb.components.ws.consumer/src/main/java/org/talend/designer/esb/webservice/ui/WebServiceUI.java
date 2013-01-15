@@ -49,10 +49,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.swt.advanced.dataeditor.AbstractDataTableEditorView;
@@ -255,7 +253,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
 
         ExtendedTableModel<String> portModel = new ExtendedTableModel<String>("PORTNAMELIST", allPortNames); //$NON-NLS-1$
         portListTableView = new DataTableEditorView<String>(
-        		wsdlComposite,
+                wsdlComposite,
                 SWT.NONE, portModel, false, true, false,
                 new IBeanPropertyAccessors<String, String>() {
                     public String get(String bean) {
@@ -599,8 +597,8 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             String currentDefaultName = contextManager.getDefaultContext().getName();
             List<IContext> contextList = contextManager.getListContext();
             if ((contextList != null) && (contextList.size() > 1)) {
-                Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                currentDefaultName = ConnectionContextHelper.getContextTypeForJob(shell, contextManager, false);
+                currentDefaultName =
+                    ConnectionContextHelper.getContextTypeForJob(getControl().getShell(), contextManager, false);
             }
             // ContextSetsSelectionDialog cssd=new ContextSetsSelectionDialog(shell,,false);
             // ContextType contextType=ConnectionContextHelper.getContextTypeForContextMode(connector);
