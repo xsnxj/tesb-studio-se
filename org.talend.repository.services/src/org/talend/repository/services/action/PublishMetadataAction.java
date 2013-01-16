@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +57,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.xsd.XSDSchema;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -123,7 +123,9 @@ import orgomg.cwm.resource.record.RecordFile;
  */
 public class PublishMetadataAction extends AContextualAction {
 
-    private final Collection<String> wsdlLocations = new HashSet<String>();
+    private Shell shell;
+
+    private String wsdlLocation;
 
     //private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
 
@@ -143,17 +145,19 @@ public class PublishMetadataAction extends AContextualAction {
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void init(TreeViewer viewer, IStructuredSelection selection) {
-        wsdlLocations.clear();
-        for (Iterator<?> iter = selection.iterator(); iter.hasNext(); ) {
-            RepositoryNode node = (RepositoryNode) iter.next();
-            if (node.getType() == ENodeType.REPOSITORY_ELEMENT
-                    && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
-                    && node.getObject() != null
-                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
-                wsdlLocations.add(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
-            }
+        setEnabled(false);
+        if (selection.size() != 1) {
+            return;
         }
-        setEnabled(!wsdlLocations.isEmpty());
+        RepositoryNode node = (RepositoryNode) selection.iterator().next();
+        if (node.getType() == ENodeType.REPOSITORY_ELEMENT
+                && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
+                && node.getObject() != null
+                && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
+            wsdlLocation = WSDLUtils.getWsdlFile(node).getLocationURI().toString();
+            shell = viewer.getTree().getShell();
+            setEnabled(true);
+        }
     }
 
     /*
@@ -167,7 +171,7 @@ public class PublishMetadataAction extends AContextualAction {
      * used from org.talend.designer.esb.webservice.ui.WebServiceUI
      */
     public void run(String wsdlLocation) {
-        wsdlLocations.add(wsdlLocation);
+        this.wsdlLocation = wsdlLocation;
         doRun();
     }
 
@@ -175,7 +179,7 @@ public class PublishMetadataAction extends AContextualAction {
      * used from org.talend.designer.esb.bpm.ui.wizard.ImportFromBPMProcessWizard
      */
     public void run(RepositoryNode node, IProgressMonitor monitor) throws CoreException {
-        wsdlLocations.add(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
+        wsdlLocation = WSDLUtils.getWsdlFile(node).getLocationURI().toString();
         Map<String, IRepositoryViewObject> selectTables = Collections.emptyMap();
         importSchema(monitor, selectTables);
     }
@@ -185,7 +189,10 @@ public class PublishMetadataAction extends AContextualAction {
         List<IRepositoryViewObject> xmlObjs = initFileConnection();
         final Map<String, IRepositoryViewObject> selectTables = new HashMap<String, IRepositoryViewObject>();
         if (xmlObjs.size() > 0) {
-            RewriteSchemaDialog selectContextDialog = new RewriteSchemaDialog(Display.getDefault().getActiveShell(), xmlObjs);
+            if (null == shell) {
+                shell = Display.getDefault().getActiveShell();
+            }
+            RewriteSchemaDialog selectContextDialog = new RewriteSchemaDialog(shell, xmlObjs);
             if (selectContextDialog.open() == Window.OK) {
                 selectTables.putAll(selectContextDialog.getSelectionTables());
             } else {
@@ -235,25 +242,17 @@ public class PublishMetadataAction extends AContextualAction {
      * @throws CoreException
      */
     private void importSchema(IProgressMonitor monitor, Map<String, IRepositoryViewObject> selectTables) throws CoreException {
-        monitor.beginTask(Messages.PublishMetadataAction_Importing, 100);
-        int step = 100;
-        int size = wsdlLocations.size();
-        if (size > 0) {
-            step /= size;
-        }
-
+        monitor.beginTask(Messages.PublishMetadataAction_Importing, 2);
         boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
-        for (String wsdlLocation : wsdlLocations) {
-            monitor.worked(step);
-            if(validateWsdl){
-                WSDLUtils.validateWsdl(wsdlLocation);
-            }
-            Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
-            process(wsdlDefinition, selectTables);
-            if (monitor.isCanceled()) {
-                break;
-            }
+        if(validateWsdl){
+            WSDLUtils.validateWsdl(wsdlLocation);
         }
+        monitor.worked(1);
+        if (monitor.isCanceled()) {
+            return;
+        }
+        Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
+        process(wsdlDefinition, selectTables);
         monitor.done();
     }
 
@@ -704,91 +703,88 @@ public class PublishMetadataAction extends AContextualAction {
 
     private List<String> getAllPaths() throws CoreException {
         List<String> paths = new ArrayList<String>();
-        for (String wsdlLocation : wsdlLocations) {
-            Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
-            //wsdlDefinitions.add(wsdlDefinition);
-            SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
-            Map<QName, Binding> bindings = wsdlDefinition.getBindings();
-            List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
-            List<String> alreadyCreated = new ArrayList<String>();
-            for (Binding binding : bindings.values()) {
-                PortType portType = binding.getPortType();
-                if (!portTypes.contains(portType)) {
-                    portTypes.add(portType);
-                    List<BindingOperation> operations = binding.getBindingOperations();
-                    for (BindingOperation operation : operations) {
-                        Operation oper = operation.getOperation();
-                        Input inDef = oper.getInput();
-                        if (inDef != null) {
-                            Message inMsg = inDef.getMessage();
-                            if (inMsg != null) {
-                                // fix for TDI-20699
-                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
-                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                    continue;
-                                } else {
-                                    alreadyCreated.add(parameterFromMessage.getName());
-                                }
+        Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
+        SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
+        Map<QName, Binding> bindings = wsdlDefinition.getBindings();
+        List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
+        List<String> alreadyCreated = new ArrayList<String>();
+        for (Binding binding : bindings.values()) {
+            PortType portType = binding.getPortType();
+            if (!portTypes.contains(portType)) {
+                portTypes.add(portType);
+                List<BindingOperation> operations = binding.getBindingOperations();
+                for (BindingOperation operation : operations) {
+                    Operation oper = operation.getOperation();
+                    Input inDef = oper.getInput();
+                    if (inDef != null) {
+                        Message inMsg = inDef.getMessage();
+                        if (inMsg != null) {
+                            // fix for TDI-20699
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
+                            }
 
-                                String folderPath = null;
-                                try {
-                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                            portType.getQName().getLocalPart(), oper.getName());
-                                    IPath path = new Path(folderPath);
-                                    if (!paths.contains(path.toString())) {
-                                        paths.add(path.toString());
-                                    }
-                                } catch (URISyntaxException e) {
-                                    ExceptionHandler.process(e);
+                            String folderPath = null;
+                            try {
+                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                        portType.getQName().getLocalPart(), oper.getName());
+                                IPath path = new Path(folderPath);
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
                                 }
+                            } catch (URISyntaxException e) {
+                                ExceptionHandler.process(e);
+                            }
 
+                        }
+                    }
+
+                    Output outDef = oper.getOutput();
+                    if (outDef != null) {
+                        Message outMsg = outDef.getMessage();
+                        if (outMsg != null) {
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
+                            }
+                            String folderPath = null;
+                            try {
+                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                        portType.getQName().getLocalPart(), oper.getName());
+                                IPath path = new Path(folderPath);
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
+                                }
+                            } catch (URISyntaxException e) {
+                                ExceptionHandler.process(e);
                             }
                         }
-
-                        Output outDef = oper.getOutput();
-                        if (outDef != null) {
-                            Message outMsg = outDef.getMessage();
-                            if (outMsg != null) {
-                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
-                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                    continue;
-                                } else {
-                                    alreadyCreated.add(parameterFromMessage.getName());
-                                }
-                                String folderPath = null;
-                                try {
-                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                            portType.getQName().getLocalPart(), oper.getName());
-                                    IPath path = new Path(folderPath);
-                                    if (!paths.contains(path.toString())) {
-                                        paths.add(path.toString());
-                                    }
-                                } catch (URISyntaxException e) {
-                                    ExceptionHandler.process(e);
-                                }
+                    }
+                    Collection<Fault> faults = oper.getFaults().values();
+                    for (Fault fault : faults) {
+                        Message faultMsg = fault.getMessage();
+                        if (faultMsg != null) {
+                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
+                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
+                                continue;
+                            } else {
+                                alreadyCreated.add(parameterFromMessage.getName());
                             }
-                        }
-                        Collection<Fault> faults = oper.getFaults().values();
-                        for (Fault fault : faults) {
-                            Message faultMsg = fault.getMessage();
-                            if (faultMsg != null) {
-                                ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
-                                if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                    continue;
-                                } else {
-                                    alreadyCreated.add(parameterFromMessage.getName());
+                            String folderPath = null;
+                            try {
+                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
+                                        portType.getQName().getLocalPart(), oper.getName());
+                                IPath path = new Path(folderPath);
+                                if (!paths.contains(path.toString())) {
+                                    paths.add(path.toString());
                                 }
-                                String folderPath = null;
-                                try {
-                                    folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                            portType.getQName().getLocalPart(), oper.getName());
-                                    IPath path = new Path(folderPath);
-                                    if (!paths.contains(path.toString())) {
-                                        paths.add(path.toString());
-                                    }
-                                } catch (URISyntaxException e) {
-                                    ExceptionHandler.process(e);
-                                }
+                            } catch (URISyntaxException e) {
+                                ExceptionHandler.process(e);
                             }
                         }
                     }

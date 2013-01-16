@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -52,14 +51,8 @@ public class RewriteSchemaDialog extends Dialog {
      */
     @Override
     protected Control createDialogArea(Composite parent) {
-
-        GridLayout layout = new GridLayout(1, false);
-
         Composite container = (Composite) super.createDialogArea(parent);
-        container.setLayout(layout);
-        container.setLayoutData(new GridData(GridData.FILL_BOTH));
         createTable(container);
-
         return container;
     }
 
@@ -67,25 +60,16 @@ public class RewriteSchemaDialog extends Dialog {
      * DOC hwang Comment method "createTable".
      */
     private void createTable(Composite container) {
-        int lines = 7;
-        lines = 9;
-        container.setLayout(new GridLayout(lines, true));
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan = 2;
-
-        data = new GridData(GridData.FILL_BOTH);
-        data.horizontalSpan = 7;
         tableForm = new XmlTableForm(container, xmlObjs);
-
-        tableForm.setLayoutData(data);
+        tableForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         AbstractForm.ICheckListener listener = new AbstractForm.ICheckListener() {
 
             public void checkPerformed(final AbstractForm source) {
                 if (getSelectionTables().size() <= 0) {
-                    RewriteSchemaDialog.this.getOKButton().setEnabled(false);
+                    getButton(IDialogConstants.OK_ID).setEnabled(false);
                 } else {
-                    RewriteSchemaDialog.this.getOKButton().setEnabled(true);
+                    getButton(IDialogConstants.OK_ID).setEnabled(true);
                 }
             }
         };
@@ -113,14 +97,13 @@ public class RewriteSchemaDialog extends Dialog {
     protected void createButtonsForButtonBar(Composite parent) {
 
         createButton(parent, IDialogConstants.OK_ID, "OK", true); //$NON-NLS-1$
-        this.getOKButton().setEnabled(false);
+        getButton(IDialogConstants.OK_ID).setEnabled(false);
 
         createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false); //$NON-NLS-1$
     }
 
     public Map<String, IRepositoryViewObject> getSelectionTables() {
-        Map<String, IRepositoryViewObject> itemObjs = tableForm.getSelectionItems();
-        return itemObjs;
+        return tableForm.getSelectionItems();
     }
 
 }
