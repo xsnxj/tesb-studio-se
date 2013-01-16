@@ -12,13 +12,11 @@
 // ============================================================================
 package org.talend.repository.services.action;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,17 +30,11 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.commons.utils.VersionUtils;
-import org.talend.core.CorePlugin;
-import org.talend.core.context.Context;
-import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.properties.PropertiesFactory;
-import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -79,35 +71,12 @@ public class CreateNewJobAction extends AbstractCreateAction {
 
     static final String T_ESB_PROVIDER_FAULT = "tESBProviderFault"; //$NON-NLS-1$
 
-    private String createLabel = "Create New Job";
-
-    private ERepositoryObjectType currentNodeType;
-
-    /** Created project. */
-    private ProcessItem processItem;
-
-    private Property property;
-
     public CreateNewJobAction() {
         super();
 
-        this.setText(createLabel);
-        this.setToolTipText(createLabel);
-
+        this.setText("Create New Job");
+        this.setToolTipText("Create New Job");
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
-
-        currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
-
-        this.property = PropertiesFactory.eINSTANCE.createProperty();
-        this.property.setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
-                .getUser());
-        this.property.setVersion(VersionUtils.DEFAULT_VERSION);
-        this.property.setStatusCode(""); //$NON-NLS-1$
-
-        processItem = PropertiesFactory.eINSTANCE.createProcessItem();
-
-        processItem.setProperty(property);
-
     }
 
     /*
@@ -120,18 +89,14 @@ public class CreateNewJobAction extends AbstractCreateAction {
     @Override
     protected void init(RepositoryNode node) {
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
-        if (!currentNodeType.equals(nodeType)) {
+        if (!ERepositoryObjectType.SERVICESOPERATION.equals(nodeType)) {
             return;
         }
-        this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
-        EList<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-        for (ServicePort port : listPort) {
-            List<ServiceOperation> listOperation = port.getServiceOperation();
-            for (ServiceOperation operation : listOperation) {
+        for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
+            for (ServiceOperation operation : port.getServiceOperation()) {
                 if (operation.getLabel().equals(node.getLabel())) {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
                         flag = false;
@@ -270,8 +235,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 // Not allowed to create in system folder.
                 return null;
             }
-            String label = initLabel((RepositoryNode) node);
-            processWizard = new NewProcessWizard(path, label);
+            processWizard = new NewProcessWizard(path, initLabel(node));
         }
         return processWizard;
     }
@@ -286,8 +250,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
     }
 
     private String initLabel(RepositoryNode node) {
-        RepositoryNode parent = node.getParent();
-        return parent.getObject().getLabel() + "_" + ((OperationRepositoryObject) node.getObject()).getName();
+        return node.getParent().getObject().getLabel() + '_' + ((OperationRepositoryObject) node.getObject()).getName();
     }
 
     public static void setProviderRequestComponentConfiguration(INode providerRequestComponent,
@@ -301,18 +264,18 @@ public class CreateNewJobAction extends AbstractCreateAction {
         }
     }
 
-    private void repositoryChange(RepositoryNode repNode, Node node) {
-        IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
+    private void repositoryChange(RepositoryNode nodeOperation, Node nodeProviderRequest) {
+        IElementParameter param = nodeProviderRequest.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
         if (param != null) {
             param.getChildParameters().get(EParameterName.PROPERTY_TYPE.getName()).setValue(EmfComponent.REPOSITORY);
-            ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
+            ConnectionItem connectionItem = (ConnectionItem) nodeOperation.getObject().getProperty().getItem();
             String serviceId = connectionItem.getProperty().getId();
-            String portId = ((PortRepositoryObject) repNode.getParent().getObject()).getId();
-            String operationId = ((OperationRepositoryObject) repNode.getObject()).getId();
+            String portId = ((PortRepositoryObject) nodeOperation.getParent().getObject()).getId();
+            String operationId = ((OperationRepositoryObject) nodeOperation.getObject()).getId();
             ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(
-                    node,
+                    nodeProviderRequest,
                     connectionItem.getConnection(),
-                    param.getName() + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+                    param.getName() + ':' + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
             command2.execute();
         }
     }
