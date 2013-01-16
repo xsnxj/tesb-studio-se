@@ -13,7 +13,7 @@
 package org.talend.camel.designer.ui.editor;
 
 import org.talend.camel.designer.ui.SaveAsRoutesAction;
-import org.talend.core.model.components.TComponentsHandler;
+import org.talend.core.model.components.IComponentsHandler;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.designer.core.ui.editor.ITalendJobEditor;
 import org.talend.designer.core.ui.editor.process.Process;
@@ -63,7 +63,7 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
      * @see org.talend.designer.core.ui.editor.AbstractTalendEditor#initComponentsHandler()
      */
     @Override
-    protected TComponentsHandler initComponentsHandler() {
-        return null;
+    protected IComponentsHandler initComponentsHandler() {
+        return new CamelComponentsHandler();
     }
 }
