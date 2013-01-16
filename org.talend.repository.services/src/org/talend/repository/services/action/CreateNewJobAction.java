@@ -203,15 +203,17 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 commandStack.execute(cNcc);
             }
             String faults = serviceParameters.get(WSDLUtils.FAULTS);
-            int horMultiplier = 15;
-            for (String fault : faults.split(",")) {
-                Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT), fileEditorInput.getLoadedProcess());
-                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
-                        new Point(horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
-                commandStack.execute(cNcc);
-                node.getElementParameter("ESB_FAULT_TITLE").setValue('\"' + fault+ '\"'); //$NON-NLS-1$
+            if (null != faults) {
+                int horMultiplier = 15;
+                for (String fault : faults.split(",")) {
+                    Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT), fileEditorInput.getLoadedProcess());
+                    cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
+                            new Point(horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                    commandStack.execute(cNcc);
+                    node.getElementParameter("ESB_FAULT_TITLE").setValue('\"' + fault+ '\"'); //$NON-NLS-1$
 
-                horMultiplier += 6;
+                    horMultiplier += 6;
+                }
             }
 
             ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
