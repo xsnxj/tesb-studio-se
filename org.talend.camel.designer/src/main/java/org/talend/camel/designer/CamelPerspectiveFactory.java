@@ -22,7 +22,9 @@ import org.talend.repository.ui.views.IRepositoryView;
  */
 public class CamelPerspectiveFactory implements IPerspectiveFactory {
 
-    /*
+    public static final String ID = "org.talend.camel.perspective";
+
+	/*
      * (non-Jsdoc)
      * 
      * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
