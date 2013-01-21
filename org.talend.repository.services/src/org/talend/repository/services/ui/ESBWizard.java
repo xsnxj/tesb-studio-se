@@ -59,6 +59,9 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
      */
     public ESBWizard(IWorkbench workbench, boolean creation, ISelection selection) {
         super(workbench, creation);
+        setWindowTitle("Services");
+        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
+
         this.selection = selection;
         setNeedsProgressMonitor(true);
         Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -107,23 +110,14 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
 
     }
 
-    /**
-     * @see org.eclipse.jface.wizard.Wizard#addPages()
-     */
     @Override
     public void addPages() {
         mainPage = new Step0WizardPage(property, pathToSave, ESBRepositoryNodeType.SERVICES, false, true);
-        wsdlPage = new OpenWSDLPage(node, pathToSave, serviceItem, "Edit WSDL", creation);
         addPage(mainPage);
+        wsdlPage = new OpenWSDLPage(node, pathToSave, serviceItem, creation);
         addPage(wsdlPage);
-        setWindowTitle("Services"); //$NON-NLS-1$
-        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EImage.DEFAULT_IMAGE));
     }
 
-    /**
-     * @see org.eclipse.jface.wizard.Wizard#performFinish()
-     */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean performFinish() {
         // IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();
@@ -136,25 +130,6 @@ public class ESBWizard extends CheckLastVersionRepositoryWizard {
         // ExceptionHandler.process(e);
         // }
         return wsdlPage.finish();
-    }
-
-    /**
-     * Getter for project.
-     * 
-     * @return the project
-     */
-    public ServiceItem getBean() {
-        return this.serviceItem;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.Wizard#canFinish()
-     */
-    @Override
-    public boolean canFinish() {
-        return super.canFinish() && wsdlPage.isPageComplete();
     }
 
 }

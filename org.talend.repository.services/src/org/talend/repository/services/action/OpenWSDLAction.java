@@ -14,13 +14,10 @@ package org.talend.repository.services.action;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
@@ -47,7 +44,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
 
         this.setText(createLabel);
         this.setToolTipText(createLabel);
-
         this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
 
         currentNodeType = ESBRepositoryNodeType.SERVICES;
@@ -56,11 +52,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
     public OpenWSDLAction(boolean isToolbar) {
         this();
         setToolbar(isToolbar);
-
-        this.setText(createLabel);
-        this.setToolTipText(createLabel);
-
-        this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
     }
 
     /*
@@ -76,8 +67,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        //IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         switch (node.getType()) {
         case REPOSITORY_ELEMENT:
             // if (factory.isPotentiallyEditable(node.getObject())) {
@@ -107,16 +97,11 @@ public class OpenWSDLAction extends AbstractCreateAction {
             }
         }
 
-        WizardDialog wizardDialog;
         if (isToolbar()) {
             init(repositoryNode);
-            OpenWSDLWizard openWizard = new OpenWSDLWizard(PlatformUI.getWorkbench(), repositoryNode);
-            wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), openWizard);
-        } else {
-            // selection = getSelection();
-            wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), new OpenWSDLWizard(PlatformUI.getWorkbench(),
-                    repositoryNode));
         }
+        WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(),
+            new OpenWSDLWizard(repositoryNode));
 
         if (!creation) {
             RepositoryManager.refreshSavedNode(repositoryNode);

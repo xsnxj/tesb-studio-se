@@ -15,7 +15,6 @@ package org.talend.repository.services.ui;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IWorkbench;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -25,38 +24,39 @@ import org.talend.repository.services.model.services.ServiceItem;
  */
 public class OpenWSDLWizard extends Wizard {
 
-    private OpenWSDLPage wsdlPage = null;
+    private OpenWSDLPage wsdlPage;
 
     private RepositoryNode repositoryNode;
 
-    private IPath pathToSave;
-
-    public OpenWSDLWizard(IWorkbench bench, RepositoryNode repositoryNode) {
+    public OpenWSDLWizard(RepositoryNode repositoryNode) {
         this.repositoryNode = repositoryNode;
-        this.setWindowTitle(" Edit WSDL");
+        this.setWindowTitle("Edit WSDL");
+    }
+
+    @Override
+    public void addPages() {
+        super.addPages();
+
+        IPath pathToSave;
         switch (repositoryNode.getType()) {
         case SIMPLE_FOLDER:
         case REPOSITORY_ELEMENT:
             pathToSave = RepositoryNodeUtilities.getPath(repositoryNode);
             break;
-        case SYSTEM_FOLDER:
+        //case SYSTEM_FOLDER:
+        default:
             pathToSave = new Path(""); //$NON-NLS-1$
             break;
         }
+
+        wsdlPage = new OpenWSDLPage(repositoryNode, pathToSave, (ServiceItem) repositoryNode.getObject().getProperty().getItem(),
+                false);
+        addPage(wsdlPage);
     }
 
     @Override
     public boolean performFinish() {
-
         return wsdlPage.finish();
-    }
-
-    @Override
-    public void addPages() {
-        wsdlPage = new OpenWSDLPage(repositoryNode, pathToSave, (ServiceItem) repositoryNode.getObject().getProperty().getItem(),
-                "Edit WSDL", false);
-        addPage(wsdlPage);
-        super.addPages();
     }
 
 }
