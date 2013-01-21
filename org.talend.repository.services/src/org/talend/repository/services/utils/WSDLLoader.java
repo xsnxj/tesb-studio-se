@@ -148,9 +148,10 @@ public class WSDLLoader {
 						// The URI = [" + schemaNS + "] is already present (skipped)
 						}
 					} else {
-						final String errMsg = "The schema import is incorrect: schemaLocation = [" +
-							schemaLocation + "], namespace = [" + schemaNS + "]";
-						throw new InvocationTargetException(new Exception(errMsg));
+						// just ignore
+//						final String errMsg = "The schema import is incorrect: schemaLocation = [" +
+//							schemaLocation + "], namespace = [" + schemaNS + "]";
+//						throw new InvocationTargetException(new Exception(errMsg));
 					}
 
 					// remove import node
