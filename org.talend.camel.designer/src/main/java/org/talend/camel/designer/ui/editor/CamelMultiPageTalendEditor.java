@@ -23,7 +23,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.talend.camel.designer.CamelPerspectiveFactory;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -247,9 +246,4 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
         return super.isKeepPropertyLocked()
                 || CamelEditorUtil.hasMoreEditorOpenedExcept((RepositoryNode) input.getAdapter(RepositoryNode.class), input);
     }
-    
-	@Override
-	protected String getContextPerspectiveID() {
-		return CamelPerspectiveFactory.ID;
-	}
 }
