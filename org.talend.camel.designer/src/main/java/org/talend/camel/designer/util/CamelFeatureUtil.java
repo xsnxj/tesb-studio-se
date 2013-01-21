@@ -29,6 +29,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.properties.Item;
@@ -40,7 +41,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.RepositoryNode;
@@ -654,8 +654,10 @@ public final class CamelFeatureUtil {
 		}
 
 		Property property = node.getObject().getProperty();
-		Process process = new org.talend.designer.core.ui.editor.process.Process(
-				property);
+		//changed for TDI-24563
+//		Process process = new org.talend.designer.core.ui.editor.process.Process(
+//				property);
+		RouteProcess process = new RouteProcess(property);
 		process.loadXmlFile();
 		Set<String> neededLibraries = process.getNeededLibraries(true);
 		Set<XMLFeatureModel> features = getFeaturesOfRoute(neededLibraries,

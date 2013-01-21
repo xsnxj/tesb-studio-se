@@ -41,8 +41,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.process.INode;
+import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
@@ -52,6 +54,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.core.extension.ResourceCheckExtensionPointManager;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.repository.ProjectManager;
 
@@ -259,7 +262,12 @@ public class RouteResourceUtil {
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
 
         Property property = routeItem.getProperty();
-        Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        //Changed for TDI-24563
+//      Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        Process process = getProcessFromItem(property.getItem());
+        if(process == null){
+        	return new HashSet<ResourceDependencyModel>();
+        }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
         Set<ResourceDependencyModel> models = getBuiltInResourceDependencies(nodes);
@@ -274,12 +282,30 @@ public class RouteResourceUtil {
      */
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(IRepositoryViewObject node) {
         Property property = node.getProperty();
-        Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        //Changed for TDI-24563
+//        Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        Item item = property.getItem();
+        Process process = getProcessFromItem(item);
+        if(process == null){
+        	return new HashSet<ResourceDependencyModel>();
+        }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
         return getBuiltInResourceDependencies(nodes);
     }
 
+    private static Process getProcessFromItem(Item item){
+    	IProcess process = null;
+    	IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
+                  .getService(IDesignerCoreService.class);
+    	if(designerCoreService != null){
+    		process = designerCoreService.getProcessFromItem(item);
+    	}
+    	if(process != null && process instanceof Process){
+    		return (Process) process;
+    	}
+    	return null;
+    }
     /**
      * @param nodes
      * 
