@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.exception.PersistenceException;
@@ -60,18 +59,12 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
     }
 
     public Resource create(IProject project, Item item, int classifierID, IPath path) throws PersistenceException {
-        Resource itemResource = null;
-        ERepositoryObjectType type;
-        switch (classifierID) {
-        case ServicesPackage.SERVICE_ITEM:
-            if (item != null && item instanceof ServiceItem) {
-                type = ESBRepositoryNodeType.SERVICES;
-                itemResource = create(project, (ServiceItem) item, path, type);
-                return itemResource;
-            }
-        default:
-            return null;
+        if (item.eClass() == ServicesPackage.Literals.SERVICE_ITEM) {
+            ERepositoryObjectType type = ESBRepositoryNodeType.SERVICES;
+            Resource itemResource = create(project, (ServiceItem) item, path, type);
+            return itemResource;
         }
+        return null;
     }
 
     private Resource create(IProject project, ServiceItem item, IPath path, ERepositoryObjectType type)
@@ -83,17 +76,10 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
     }
 
     public Resource save(Item item) throws PersistenceException {
-        Resource itemResource = null;
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == ServicesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case ServicesPackage.SERVICE_ITEM:
-                itemResource = save((ServiceItem) item);
-                checkService((ServiceItem) item);
-                return itemResource;
-            default:
-                return null;
-            }
+        if (item.eClass() == ServicesPackage.Literals.SERVICE_ITEM) {
+            Resource itemResource = save((ServiceItem) item);
+            checkService((ServiceItem) item);
+            return itemResource;
         }
         return null;
     }
@@ -111,6 +97,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return itemResource;
     }
 
+    @Override
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == ESBRepositoryNodeType.SERVICES) {
             return EServiceCoreImage.SERVICE_ICON;
@@ -134,14 +121,8 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         if (item == null) {
             return ESBRepositoryNodeType.SERVICES;
         }
-        EClass eClass = item.eClass();
-        if (eClass.eContainer() == ServicesPackage.eINSTANCE) {
-            switch (eClass.getClassifierID()) {
-            case ServicesPackage.SERVICE_ITEM:
-                return ESBRepositoryNodeType.SERVICES;
-            default:
-                return null;
-            }
+        if (item.eClass() == ServicesPackage.Literals.SERVICE_ITEM) {
+            return ESBRepositoryNodeType.SERVICES;
         }
         return null;
     }
@@ -153,6 +134,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return serviceNode;
     }
 
+    @Override
     public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
             RepositoryNode node) {
         if (type == ESBRepositoryNodeType.SERVICES) {
@@ -161,7 +143,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
             List<ServicePort> listPort = serviceConnection.getServicePort();
             for (ServicePort port : listPort) {
                 PortRepositoryObject portRepositoryObject = new PortRepositoryObject(repositoryObject, port);
-                RepositoryNode portNode = new RepositoryNode(portRepositoryObject, node, ENodeType.REPOSITORY_ELEMENT); //$NON-NLS-1$
+                RepositoryNode portNode = new RepositoryNode(portRepositoryObject, node, ENodeType.REPOSITORY_ELEMENT);
                 portNode.setProperties(EProperties.LABEL, port.getName());
                 portNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESPORT);
                 node.getChildren().add(portNode);
@@ -171,7 +153,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
                     OperationRepositoryObject operationRepositoryObject = new OperationRepositoryObject(repositoryObject,
                             operation);
                     RepositoryNode operationNode = new RepositoryNode(operationRepositoryObject, portNode,
-                            ENodeType.REPOSITORY_ELEMENT); //$NON-NLS-1$
+                            ENodeType.REPOSITORY_ELEMENT);
                     operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
                     portNode.getChildren().add(operationNode);
@@ -180,6 +162,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         }
     }
 
+    @Override
     public void addContents(Collection<EObject> collection, Resource resource) {
         if (collection != null && collection.size() > 0) {
             for (EObject object : collection) {
@@ -211,8 +194,9 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
     }
 
     private void checkService(ServiceItem serviceItem) {
-        if (serviceItem == null || serviceItem.getProperty() == null)
+        if (serviceItem == null || serviceItem.getProperty() == null) {
             return;
+        }
         Property property = serviceItem.getProperty();
         EList<Information> informations = property.getInformations();
         if (!WSDLUtils.isValidService(serviceItem)) {
