@@ -17,54 +17,6 @@ imports="
 <%
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode)codeGenArgument.getArgument();
-
-        String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
-        if("true".equals(useJar)){
-            String typeName = ElementParameterParser.getValue(node, "__JOB__");
-            String context = ElementParameterParser.getValue(node, "__CONTEXT__");
-            List<Map<String, String>> contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
-		for (int i=0; i<contextParams.size(); i++) {
-			Map<String, String> contextParam = contextParams.get(i);
-			String name = contextParam.get("EXTERNAL_JAR_PARAM_NAME_COLUMN");
-			String value = contextParam.get("EXTERNAL_JAR_PARAM_VALUE_COLUMN");
+   	String cid = node.getUniqueName();
 %>
-		.setHeader(<%=name%>).constant(<%=value%>)
-<%
-		}
-%>
-            .to("talend:"+<%=typeName%>+"?context="+<%=context%>)
-<%
-        }else{
-            String typeName = "";
-            String context = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue();
-            List<Map<String, String>> contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__CONTEXTPARAMS__");
-
-            IElementParameter processIdparam = node.getElementParameter("PROCESS_TYPE_PROCESS");
-            String id = (String)processIdparam.getValue();
-            if(id != null){
-                String version = (String) node.getElementParameter("PROCESS_TYPE_VERSION").getValue();
-                ProcessItem processItem = ItemCacheManager.getProcessItem(id, version);
-                IProcess jobProcess = CorePlugin.getDefault().getDesignerCoreService().getProcessFromItem(processItem);
-                IProcessor jobProcessor = ProcessorUtilities.getProcessor(jobProcess,
-                        processItem.getProperty());
-                jobProcessor.setContext(ProcessorUtilities.getContext(jobProcess, context.toString()));
-                try{
-                    jobProcessor.initPath();
-                    typeName = jobProcessor.getTypeName();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-			for (int i=0; i<contextParams.size(); i++) {
-				Map<String, String> contextParam = contextParams.get(i);
-				String name = contextParam.get("PARAM_NAME_COLUMN");
-				String value = contextParam.get("PARAM_VALUE_COLUMN");
-%>
-				.setHeader("<%=name%>").constant(<%=value%>)
-<%
-			}
-%>
-            .to("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>")
-<%
-        }
-%>
+   .to(endpoint_<%=cid%>)

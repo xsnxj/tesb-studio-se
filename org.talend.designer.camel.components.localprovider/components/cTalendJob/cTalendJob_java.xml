@@ -75,7 +75,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-talendjob" MODULE="camel-talendjob-5.2.1.jar" REQUIRED="true" />
+			<IMPORT NAME="camel-talendjob" MODULE="camel-talendjob-5.3.0.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
