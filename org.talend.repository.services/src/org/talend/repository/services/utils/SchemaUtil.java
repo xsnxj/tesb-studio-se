@@ -241,19 +241,27 @@ public class SchemaUtil {
     private byte[] getSchema(Message message) {
         for (Part part : (Collection<Part>) message.getParts().values()) {
             QName elementQname = part.getElementName();
-            // if element is missing - try to get type attribute
-            if (null == elementQname) {
-                elementQname = part.getTypeName();
-            }
-            // it's possible if type also will be null. in this case just return null
-            if (null == elementQname) {
-                return null;
-            }
-            for (XmlSchema schema : schemas.keySet()) {
-                for (XmlSchemaElement element : schema.getElements().values()) {
-                    if (element.getName().equals(elementQname.getLocalPart())) {// TODO: check namespaces too
-                        return schemas.get(schema);
+            if (null != elementQname) {
+                for (XmlSchema schema : schemas.keySet()) {
+                    for (XmlSchemaElement element : schema.getElements().values()) {
+                        if (element.getName().equals(elementQname.getLocalPart())) {// TODO: check namespaces too
+                            return schemas.get(schema);
+                        }
                     }
+                }
+            } else {
+                // if element is missing - try to get type attribute
+                elementQname = part.getTypeName();
+                if (null != elementQname) {
+                    for (XmlSchema schema : schemas.keySet()) {
+                        for (XmlSchemaType element : schema.getSchemaTypes().values()) {
+                            if (element.getName().equals(elementQname.getLocalPart())) {// TODO: check namespaces too
+                                return schemas.get(schema);
+                            }
+                        }
+                    }
+                } else {
+                    // it's possible if type also will be null. in this case just return null
                 }
             }
         }
