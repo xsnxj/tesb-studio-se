@@ -100,34 +100,64 @@ try {
 		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
 	<% } %>
 
+	final java.util.List<org.apache.cxf.feature.AbstractFeature> features_<%=cid%> =
+		new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
+		factoryBean_<%=cid%>.setAddress("locator://rest");
+		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
+			<%=ElementParameterParser.getValue(node,"__SERVICE_NAMESPACE__")%>,
+			<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>));
+
+		factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
+			new org.talend.esb.servicelocator.cxf.LocatorFeature();
+
+		<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
+				ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+			if (!customProperties.isEmpty()) { %>
+				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (int k = 0; k < customProperties.size(); k++) { %>
+				slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+			feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+		<% } %>
+
+		features_<%=cid%>.add(feature_<%=cid%>);
+	<% } %>
+
+	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
+
+
 	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
 	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
-	    // workaround for https://jira.talendforge.org/browse/TESB-7276
-        public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
-                                           java.lang.reflect.Type type,
-                                           java.lang.annotation.Annotation[] anns, 
-                                           javax.ws.rs.core.MediaType mt,
-                                           javax.ws.rs.core.MultivaluedMap<String, String> headers, 
-                                           java.io.InputStream is) throws IOException, javax.ws.rs.WebApplicationException {
-            String contentLength = headers.getFirst("Content-Length"); 
-            if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
-                && Integer.valueOf(contentLength) <= 0) {
-                try {
-                    return org.dom4j.DocumentHelper.parseText("<root/>");
-                } catch (org.dom4j.DocumentException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-            return super.readFrom(cls, type, anns, mt, headers, is);
-        }
-    });
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+	});
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
-    jsonProvider_<%=cid%>.setAttributesToElements(true); 
-    jsonProvider_<%=cid%>.setSupportUnwrapped(true);
-    jsonProvider_<%=cid%>.setWrapperName("root");
+	jsonProvider_<%=cid%>.setAttributesToElements(true);
+	jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+	jsonProvider_<%=cid%>.setWrapperName("root");
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");

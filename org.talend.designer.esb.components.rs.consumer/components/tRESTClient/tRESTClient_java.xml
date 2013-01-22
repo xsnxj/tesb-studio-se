@@ -110,6 +110,19 @@
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 
+		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="50"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAMESPACE" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
+				SHOW_IF="SERVICE_LOCATOR == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
+				SHOW_IF="SERVICE_LOCATOR == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
 
 		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="99">
 			<DEFAULT>true</DEFAULT>
@@ -144,6 +157,15 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
+		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="5"
+				REQUIRED="false" NB_LINES="5"
+				SHOW_IF="SERVICE_LOCATOR == 'true'">
+			<ITEMS>
+				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
+				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
+			</ITEMS>
+		</PARAMETER>
+
 		<!--PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -167,6 +189,11 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
+			<IMPORT NAME="locator"
+					MODULE="locator-5.2.1.jar"
+					BundleID="locator"
+					REQUIRED="true" />
+
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
@@ -274,19 +301,19 @@
 			<IMPORT NAME="httpcore"
 					MODULE="httpcore-4.2.2.jar"
 					BundleID=""
-					REQUIRED="true" />										
+					REQUIRED="true" />
 			<IMPORT NAME="httpcore-nio"
 					MODULE="httpcore-nio-4.2.2.jar"
 					BundleID=""
-					REQUIRED="true" />															
+					REQUIRED="true" />
 			<IMPORT NAME="httpasyncclient"
 					MODULE="httpasyncclient-4.0-beta3.jar"
 					BundleID=""
-					REQUIRED="true" />																				
+					REQUIRED="true" />
 			<IMPORT NAME="httpclient"
 					MODULE="httpclient-4.2.1.jar"
 					BundleID=""
-					REQUIRED="true" />					
+					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
