@@ -333,7 +333,7 @@
                  class="org.talend.camel.designer.ui.view.SpringConfigurationView"
                  icon="icons/route-resource.png"
                  id="org.talend.camel.designer.spring.view"
-                 name="Spring View"
+                 name="%spring.view.name"
                  restorable="true">
            </view>
         </extension>
