@@ -12,9 +12,9 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -75,7 +75,7 @@ public class XmlTableForm extends AbstractForm {
     /**
      * Anothers Fields.
      */
-    private final List<IRepositoryViewObject> fileRepObjList;
+    private final Collection<IRepositoryViewObject> fileRepObjList;
 
     protected Table table;
 
@@ -97,7 +97,7 @@ public class XmlTableForm extends AbstractForm {
      * @param parent
      * @param style
      */
-    public XmlTableForm(Composite parent, List<IRepositoryViewObject> fileRepObjList) {
+    public XmlTableForm(Composite parent, Collection<IRepositoryViewObject> fileRepObjList) {
         super(parent, SWT.NONE);
         this.fileRepObjList = fileRepObjList;
         setupForm();
@@ -242,7 +242,7 @@ public class XmlTableForm extends AbstractForm {
                 }
             }
         } else {
-            for (IRepositoryViewObject obj : getRepositoryViewObjects()) {
+            for (IRepositoryViewObject obj : fileRepObjList) {
                 Connection conn = ((ConnectionItem) obj.getProperty().getItem()).getConnection();
                 if (ConnectionHelper.getTables(conn).size() > 0) {
                     Object[] array = ConnectionHelper.getTables(conn).toArray();
@@ -393,10 +393,6 @@ public class XmlTableForm extends AbstractForm {
     // }
     // return connectionItems;
     // }
-
-    public List<IRepositoryViewObject> getRepositoryViewObjects() {
-        return this.fileRepObjList;
-    }
 
     public void setSelectionItems() {
         Map<String, IRepositoryViewObject> itemMap = new HashMap<String, IRepositoryViewObject>();

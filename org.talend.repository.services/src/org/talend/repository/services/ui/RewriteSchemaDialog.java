@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.ui;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -30,7 +30,7 @@ import org.talend.repository.ui.swt.utils.AbstractForm;
  */
 public class RewriteSchemaDialog extends Dialog {
 
-    private final List<IRepositoryViewObject> xmlObjs;
+    private final Collection<IRepositoryViewObject> xmlObjs;
 
     private XmlTableForm tableForm;
 
@@ -39,7 +39,7 @@ public class RewriteSchemaDialog extends Dialog {
      * 
      * @param parentShell
      */
-    public RewriteSchemaDialog(Shell parentShell, List<IRepositoryViewObject> xmlObjs) {
+    public RewriteSchemaDialog(Shell parentShell, Collection<IRepositoryViewObject> xmlObjs) {
         super(parentShell);
         this.xmlObjs = xmlObjs;
     }
