@@ -164,10 +164,10 @@ public class WSDLUtils {
     public static IFile getWsdlFile(IRepositoryViewObject serviceViewObject) {
         ServiceItem serviceItem = (ServiceItem) serviceViewObject.getProperty().getItem();
         IProject currentProject = ProjectManager.getInstance().getResourceProject(serviceItem);
-        List<ReferenceFileItem> list = serviceItem.getReferenceResources();
-        for (ReferenceFileItem item : list) {
-            IPath path = Path.fromOSString(item.eResource().getURI().path());
-        }
+//        List<ReferenceFileItem> list = serviceItem.getReferenceResources();
+//        for (ReferenceFileItem item : list) {
+//            IPath path = Path.fromOSString(item.eResource().getURI().path());
+//        }
         String foldPath = serviceItem.getState().getPath();
         String folder = "";
         if (!foldPath.equals("")) {
