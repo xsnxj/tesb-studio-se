@@ -379,4 +379,12 @@
                  name="Bean">
            </seeker>
         </extension>
+        <extension
+              point="org.talend.core.component_custom_action">
+           <CustomAction
+                 class="org.talend.camel.designer.ui.OpenTalendJobRefAction"
+                 id="org.talend.designer.core.ui.editor.nodes.OpenTalendJobRefAction"
+                 label="%openRefJob">
+           </CustomAction>
+        </extension>
 </plugin>
