@@ -191,7 +191,7 @@
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
-		<IMPORTS>
+		 <IMPORTS>
 			<IMPORT NAME="locator"
 					MODULE="locator-5.2.1.jar"
 					BundleID="locator"
