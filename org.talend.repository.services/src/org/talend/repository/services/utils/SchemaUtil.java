@@ -21,7 +21,9 @@ import org.w3c.dom.Element;
 
 public class SchemaUtil {
 
-    private final Collection<XmlSchema> schemas = new ArrayList<XmlSchema>();
+    private static final String SCHEMA_SYSTEM_ID = "custom"; //$NON-NLS-1$
+
+    private final XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
     public SchemaUtil(Definition wsdlDefinition) {
         if (null != wsdlDefinition.getTypes()) {
@@ -43,10 +45,7 @@ public class SchemaUtil {
         @SuppressWarnings("unchecked")
         Collection<Schema> schemas = findExtensibilityElement(types.getExtensibilityElements(), Schema.class);
         for (Schema schema : schemas) {
-            XmlSchema xmlSchema = createXmlSchema(schema.getElement(), schema.getDocumentBaseURI());
-            if (xmlSchema != null) {
-                this.schemas.add(xmlSchema);
-            }
+            createXmlSchema(schema.getElement(), schema.getDocumentBaseURI());
 
             Map importElement = schema.getImports();
             if (importElement != null && importElement.size() > 0) {
@@ -68,12 +67,10 @@ public class SchemaUtil {
         return elements;
     }
 
-    private static XmlSchema createXmlSchema(Element schemaElement, String documentBase) {
-        XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
+    private void createXmlSchema(Element schemaElement, String documentBase) {
         xmlSchemaCollection.setBaseUri(documentBase);
-        return xmlSchemaCollection.read(schemaElement);
+        xmlSchemaCollection.read(schemaElement, SCHEMA_SYSTEM_ID);
     }
-
 
     private void findImportSchema(Map importElement) {
         findImportSchema(importElement, new ArrayList<String>());
@@ -104,10 +101,7 @@ public class SchemaUtil {
                         }
                     }
 
-                    XmlSchema importedSchema = createXmlSchema(refSchema, documentBase);
-                    if (importedSchema != null) {
-                        this.schemas.add(importedSchema);
-                    }
+                    createXmlSchema(refSchema, documentBase);
                 }
 
                 if (isHaveImport) {
@@ -133,15 +127,12 @@ public class SchemaUtil {
         for (SchemaReference schemaReference : includeElements) {
             Element schemaElement = schemaReference.getReferencedSchema().getElement();
             String documentBase = schemaReference.getReferencedSchema().getDocumentBaseURI();
-            XmlSchema schemaInclude = createXmlSchema(schemaElement, documentBase);
-            if (schemaInclude != null) {
-                this.schemas.add(schemaInclude);
-            }
+            createXmlSchema(schemaElement, documentBase);
         }
     }
 
-    public Collection<XmlSchema> getSchemas() {
-        return schemas;
+    public XmlSchema[] getSchemas() {
+        return xmlSchemaCollection.getXmlSchema(SCHEMA_SYSTEM_ID);
     }
 
 }

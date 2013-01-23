@@ -140,6 +140,7 @@ public class PublishMetadataAction extends AContextualAction {
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void init(TreeViewer viewer, IStructuredSelection selection) {
+        // cleanup previous definition
         wsdlDefinition = null;
         setEnabled(false);
         if (selection.size() != 1) {
@@ -150,6 +151,7 @@ public class PublishMetadataAction extends AContextualAction {
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
                 && node.getObject() != null
                 && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
+            // load definition later
             wsdlLocation = WSDLUtils.getWsdlFile(node).getLocationURI().toString();
             shell = viewer.getTree().getShell();
             setEnabled(true);
@@ -384,7 +386,10 @@ public class PublishMetadataAction extends AContextualAction {
 	                            // fix for TDI-20699
 	                            QName parameterFromMessage = getParameterFromMessage(inMsg);
 	                            if (alreadyCreated.add(parameterFromMessage)) {
-		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+	                                if (null != schemaFile) {
+			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+	                                }
 	                            }
 	                        }
 	                    }
@@ -395,7 +400,10 @@ public class PublishMetadataAction extends AContextualAction {
 	                        if (outMsg != null) {
 	                            QName parameterFromMessage = getParameterFromMessage(outMsg);
 	                            if (alreadyCreated.add(parameterFromMessage)) {
-		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+	                                if (null != schemaFile) {
+			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+	                                }
 	                            }
 	                        }
 	                    }
@@ -405,7 +413,10 @@ public class PublishMetadataAction extends AContextualAction {
 	                        if (faultMsg != null) {
 	                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
 	                            if (alreadyCreated.add(parameterFromMessage)) {
-		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+	                                if (null != schemaFile) {
+			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+	                                }
 	                            }
 	                        }
 	                    }
@@ -440,14 +451,14 @@ public class PublishMetadataAction extends AContextualAction {
      * @throws IOException 
      */
     private void populateMessage2(QName parameter, String portTypeName, String operationName,
-            Map<String, File> schemaToFileMap, Map<String, IRepositoryViewObject> selectItems, File zip) throws IOException {
+            File schemaFile, Map<String, IRepositoryViewObject> selectItems, File zip) throws IOException {
         String name = /* componentName + "_"+ */parameter.getLocalPart();
         XmlFileConnection connection = null;
         Property connectionProperty = null;
         XmlFileConnectionItem connectionItem = null;
-        boolean needRewrite = false;
 
         if (selectItems.size() > 0) {
+            boolean needRewrite = false;
             Set<Entry<String, IRepositoryViewObject>> tableSet = selectItems.entrySet();
             Iterator<Entry<String, IRepositoryViewObject>> iterator = tableSet.iterator();
             while (iterator.hasNext()) {
@@ -490,13 +501,12 @@ public class PublishMetadataAction extends AContextualAction {
         byteArray.setInnerContentFromFile(zip);
         connection.setFileContent(byteArray.getInnerContent());
 
-        XSDSchema xsdSchema;
-        try {
-            // don't put any XSD directly inside the xml connection but put zip file
-            String filePath = schemaToFileMap.get(parameter.getNamespaceURI()).getPath(); // name of xsd file needed
-            connection.setXmlFilePath(zip.getName());
+        // don't put any XSD directly inside the xml connection but put zip file
+        connection.setXmlFilePath(zip.getName());
 
-            xsdSchema = populationUtil.getXSDSchema(filePath);
+        try {
+            String filePath = schemaFile.getPath(); // name of xsd file needed
+            XSDSchema xsdSchema = populationUtil.getXSDSchema(filePath);
             List<ATreeNode> rootNodes = populationUtil.getAllRootNodes(xsdSchema);
 
             ATreeNode node = null;
