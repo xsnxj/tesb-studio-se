@@ -125,6 +125,9 @@ try {
 
 		features_<%=cid%>.add(feature_<%=cid%>);
 	<% } %>
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"))) { %>
+		features_<%=cid%>.add(samEventFeature);
+	<% } %>
 
 	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
 
