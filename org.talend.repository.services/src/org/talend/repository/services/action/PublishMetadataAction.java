@@ -13,16 +13,15 @@
 package org.talend.repository.services.action;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,20 +36,21 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
+import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -67,17 +67,14 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.data.list.UniqueStringGenerator;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
-import org.talend.core.model.general.Project;
 import org.talend.core.model.metadata.MappingTypeRetriever;
 import org.talend.core.model.metadata.MetadataTalendType;
 import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
-import org.talend.core.model.metadata.builder.connection.SchemaTarget;
 import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
-import org.talend.core.model.metadata.builder.connection.XmlXPathLoopDescriptor;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
@@ -88,7 +85,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.cwm.helper.PackageHelper;
@@ -104,7 +100,6 @@ import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
-import org.talend.repository.services.model.services.ParameterInfo;
 import org.talend.repository.services.ui.RewriteSchemaDialog;
 import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
@@ -127,7 +122,7 @@ public class PublishMetadataAction extends AContextualAction {
 
     private String wsdlLocation;
 
-    //private final Collection<Definition> wsdlDefinitions = new ArrayList<Definition>();
+    private Definition wsdlDefinition;
 
     private XSDPopulationUtil2 populationUtil;
 
@@ -145,6 +140,7 @@ public class PublishMetadataAction extends AContextualAction {
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void init(TreeViewer viewer, IStructuredSelection selection) {
+        wsdlDefinition = null;
         setEnabled(false);
         if (selection.size() != 1) {
             return;
@@ -161,17 +157,10 @@ public class PublishMetadataAction extends AContextualAction {
     }
 
     /*
-     * used from org.talend.repository.services.ui.OpenWSDLPage
-     */
-    public void run(RepositoryNode node) {
-        run(WSDLUtils.getWsdlFile(node).getLocationURI().toString());
-    }
-
-    /*
      * used from org.talend.designer.esb.webservice.ui.WebServiceUI
      */
-    public void run(String wsdlLocation) {
-        this.wsdlLocation = wsdlLocation;
+    public void run(Definition wsdlDefinition) {
+        this.wsdlDefinition = wsdlDefinition;
         doRun();
     }
 
@@ -179,14 +168,22 @@ public class PublishMetadataAction extends AContextualAction {
      * used from org.talend.designer.esb.bpm.ui.wizard.ImportFromBPMProcessWizard
      */
     public void run(RepositoryNode node, IProgressMonitor monitor) throws CoreException {
-        wsdlLocation = WSDLUtils.getWsdlFile(node).getLocationURI().toString();
+        wsdlDefinition = WSDLUtils.getWsdlDefinition(node);
         Map<String, IRepositoryViewObject> selectTables = Collections.emptyMap();
         importSchema(monitor, selectTables);
     }
 
     @Override
     protected void doRun() {
-        List<IRepositoryViewObject> xmlObjs = initFileConnection();
+        if (null == wsdlDefinition) {
+            try {
+                wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
+            } catch (CoreException e) {
+                return;
+            }
+        }
+
+        Collection<IRepositoryViewObject> xmlObjs = initFileConnection();
         final Map<String, IRepositoryViewObject> selectTables = new HashMap<String, IRepositoryViewObject>();
         if (xmlObjs.size() > 0) {
             if (null == shell) {
@@ -233,6 +230,100 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
+    private Collection<IRepositoryViewObject> initFileConnection() {
+        Collection<String> paths = getAllPaths();
+        List<IRepositoryViewObject> connItems = new ArrayList<IRepositoryViewObject>();
+
+        IProxyRepositoryFactory factory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
+        try {
+            for (IRepositoryViewObject object : factory.getAll(ERepositoryObjectType.METADATA, true)) {
+                Item item = object.getProperty().getItem();
+                if (item instanceof ConnectionItem) {
+                    Connection conn = ((ConnectionItem) item).getConnection();
+                    if (conn instanceof XmlFileConnection) {
+                        String sPath = item.getState().getPath();
+                        if (paths.contains(sPath)) {
+                            Object[] array = ConnectionHelper.getTables(conn).toArray();
+                            if (array.length > 0) {
+                                connItems.add(object);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        }
+        return connItems;
+    }
+
+    private Collection<String> getAllPaths() {
+        final Set<String> paths = new HashSet<String>();
+        Collection<Binding> bindings = wsdlDefinition.getBindings().values();
+        Set<PortType> portTypes = new HashSet<PortType>(bindings.size());
+        final Set<QName> alreadyCreated = new HashSet<QName>();
+        for (Binding binding : bindings) {
+            PortType portType = binding.getPortType();
+            if (portTypes.add(portType)) {
+                List<BindingOperation> operations = binding.getBindingOperations();
+                for (BindingOperation operation : operations) {
+                    Operation oper = operation.getOperation();
+                    Input inDef = oper.getInput();
+                    if (inDef != null) {
+                        Message inMsg = inDef.getMessage();
+                        if (inMsg != null) {
+                            // fix for TDI-20699
+                            QName parameterFromMessage = getParameterFromMessage(inMsg);
+                            if (alreadyCreated.add(parameterFromMessage)) {
+                                try {
+                                    String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    paths.add(new Path(folderPath).toString());
+                                } catch (URISyntaxException e) {
+                                    ExceptionHandler.process(e);
+                                }
+                            }
+                        }
+                    }
+
+                    Output outDef = oper.getOutput();
+                    if (outDef != null) {
+                        Message outMsg = outDef.getMessage();
+                        if (outMsg != null) {
+                            QName parameterFromMessage = getParameterFromMessage(outMsg);
+                            if (alreadyCreated.add(parameterFromMessage)) {
+                                try {
+                                    String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    paths.add(new Path(folderPath).toString());
+                                } catch (URISyntaxException e) {
+                                    ExceptionHandler.process(e);
+                                }
+                            }
+                        }
+                    }
+                    Collection<Fault> faults = oper.getFaults().values();
+                    for (Fault fault : faults) {
+                        Message faultMsg = fault.getMessage();
+                        if (faultMsg != null) {
+                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
+                            if (alreadyCreated.add(parameterFromMessage)) {
+                                try {
+                                    String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
+                                            portType.getQName().getLocalPart(), oper.getName());
+                                    paths.add(new Path(folderPath).toString());
+                                } catch (URISyntaxException e) {
+                                    ExceptionHandler.process(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return paths;
+    }
+
     /**
      * https://jira.talendforge.org/browse/TESB-6845
      * 
@@ -245,143 +336,96 @@ public class PublishMetadataAction extends AContextualAction {
         monitor.beginTask(Messages.PublishMetadataAction_Importing, 2);
         boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
         if(validateWsdl){
-            WSDLUtils.validateWsdl(wsdlLocation);
+            WSDLUtils.validateWsdl(wsdlDefinition.getDocumentBaseURI());
         }
         monitor.worked(1);
         if (monitor.isCanceled()) {
             return;
         }
-        Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
-        process(wsdlDefinition, selectTables);
+        try {
+            process(selectTables);
+        } catch (IOException e) {
+            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+                    "Error during scema processing", e));
+        }
         monitor.done();
     }
 
-    private void process(Definition wsdlDefinition, Map<String, IRepositoryViewObject> selectTables) {
-        populationUtil = new XSDPopulationUtil2();
-        List<String> alreadyCreated = new ArrayList<String>();
-        SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
-        int index = 0;
-        // to modify later, have a map done on the byte[] is really not good.
-        Map<byte[], String> fileToSchemaMap = new HashMap<byte[], String>();
-        for (XmlSchema schema : schemaUtil.getSchemas().keySet()) {
-            String file = initFileContent(schemaUtil.getSchemas().get(schema), index);
-            fileToSchemaMap.put(schemaUtil.getSchemas().get(schema), file);
-            try {
-                populationUtil.addSchema(file);
-            } catch (IOException e) {
-                ExceptionHandler.process(e);
-            }
-            index++;
-        }
+    private void process(Map<String, IRepositoryViewObject> selectTables) throws IOException {
+        Map<String, File> fileToSchemaMap = new HashMap<String, File>();
+        File zip = null;
+        final SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
 
-        Map<QName, Binding> bindings = wsdlDefinition.getBindings();
-        List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
-        for (Binding binding : bindings.values()) {
-            PortType portType = binding.getPortType();
-            if (!portTypes.contains(portType)) {
-                portTypes.add(portType);
-                List<BindingOperation> operations = binding.getBindingOperations();
-                for (BindingOperation operation : operations) {
-                    Operation oper = operation.getOperation();
-                    Input inDef = oper.getInput();
-                    if (inDef != null) {
-                        Message inMsg = inDef.getMessage();
-                        if (inMsg != null) {
-                            // fix for TDI-20699
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
-                        }
-                    }
-
-                    Output outDef = oper.getOutput();
-                    if (outDef != null) {
-                        Message outMsg = outDef.getMessage();
-                        if (outMsg != null) {
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
-                        }
-                    }
-                    Collection<Fault> faults = oper.getFaults().values();
-                    for (Fault fault : faults) {
-                        Message faultMsg = fault.getMessage();
-                        if (faultMsg != null) {
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-                            populateMessage2(parameterFromMessage, portType.getQName(), oper, fileToSchemaMap, selectTables);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * old system, shouldn't be used anymore.
-     */
-    @Deprecated
-    private void populateMessage(ParameterInfo parameter, QName portTypeQName) {
-        String name = /* componentName + "_"+ */parameter.getName();
-        XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
-        connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        connection.setXmlFilePath(name + ".xsd"); //$NON-NLS-1$
-        XmlFileConnectionItem connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-        Property connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
-        connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
-                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
-        connectionProperty.setLabel(name);
-        connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
-        connectionProperty.setStatusCode(""); //$NON-NLS-1$
-
-        connectionItem.setProperty(connectionProperty);
-        connectionItem.setConnection(connection);
-
-        connection.setInputModel(true);
-        // schema
-        connection.setFileContent(parameter.getSchema());
-        XmlXPathLoopDescriptor xmlXPathLoopDescriptor = ConnectionFactory.eINSTANCE.createXmlXPathLoopDescriptor();
-        connection.getSchema().add(xmlXPathLoopDescriptor);
-        xmlXPathLoopDescriptor.setAbsoluteXPathQuery('/' + parameter.getName());
-        xmlXPathLoopDescriptor.setLimitBoucle(50);
-        xmlXPathLoopDescriptor.setConnection(connection);
-        for (String[] leaf : parameter.getLeafList()) {
-            SchemaTarget target = ConnectionFactory.eINSTANCE.createSchemaTarget();
-            xmlXPathLoopDescriptor.getSchemaTargets().add(target);
-            target.setRelativeXPathQuery(leaf[0]);
-            target.setTagName(leaf[1]);
-        }
-
-        // TODO: temporary make a fake root for the connection
-        EList root = connection.getRoot();
-        XMLFileNode xmlFileNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
-        String currentPath = '/' + name;
-        xmlFileNode.setXMLPath(currentPath);
-        root.add(xmlFileNode);
-
-        // save
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        String nextId = factory.getNextId();
-        connectionProperty.setId(nextId);
         try {
-            factory.create(connectionItem, new Path(parameter.getNameSpace() + '/' + portTypeQName.getLocalPart()));
-            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-            RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
-        } catch (PersistenceException e) {
+	        populationUtil = new XSDPopulationUtil2();
+	        for (XmlSchema schema : schemaUtil.getSchemas()) {
+	            File file = initFileContent(schema);
+	            fileToSchemaMap.put(schema.getTargetNamespace(), file);
+	            populationUtil.addSchema(file.getPath());
+	        }
+	
+	        zip = File.createTempFile("tempXSDFile", ".zip");
+	        Collection<File> files = fileToSchemaMap.values();
+	        org.talend.utils.io.FilesUtils.zips(files.toArray(new File[files.size()]), zip.getPath());
+	
+	        final Set<QName> alreadyCreated = new HashSet<QName>();
+	        Collection<Binding> bindings = wsdlDefinition.getBindings().values();
+	        Set<PortType> portTypes = new HashSet<PortType>(bindings.size());
+	        for (Binding binding : bindings) {
+	            PortType portType = binding.getPortType();
+	            if (portTypes.add(portType)) {
+	                Collection<BindingOperation> operations = binding.getBindingOperations();
+	                for (BindingOperation operation : operations) {
+	                    Operation oper = operation.getOperation();
+	                    Input inDef = oper.getInput();
+	                    if (inDef != null) {
+	                        Message inMsg = inDef.getMessage();
+	                        if (inMsg != null) {
+	                            // fix for TDI-20699
+	                            QName parameterFromMessage = getParameterFromMessage(inMsg);
+	                            if (alreadyCreated.add(parameterFromMessage)) {
+		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                            }
+	                        }
+	                    }
+	
+	                    Output outDef = oper.getOutput();
+	                    if (outDef != null) {
+	                        Message outMsg = outDef.getMessage();
+	                        if (outMsg != null) {
+	                            QName parameterFromMessage = getParameterFromMessage(outMsg);
+	                            if (alreadyCreated.add(parameterFromMessage)) {
+		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                            }
+	                        }
+	                    }
+	                    Collection<Fault> faults = oper.getFaults().values();
+	                    for (Fault fault : faults) {
+	                        Message faultMsg = fault.getMessage();
+	                        if (faultMsg != null) {
+	                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
+	                            if (alreadyCreated.add(parameterFromMessage)) {
+		                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), fileToSchemaMap, selectTables, zip);
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            for (File file : fileToSchemaMap.values()) {
+                file.delete();
+            }
+            if (null != zip) {
+                zip.delete();
+            }
         }
     }
+
 
     private int orderId;
 
@@ -391,24 +435,23 @@ public class PublishMetadataAction extends AContextualAction {
      * To optimize, right now it will write the xsd file many times. Since there is no clues if the parameters comes
      * from the same xsd, generate it everytime right now.
      * 
-     * @param oper
+     * @param operationName
      * @param hashMap
+     * @throws IOException 
      */
-    private void populateMessage2(ParameterInfo parameter, QName portTypeQName, Operation oper,
-            Map<byte[], String> schemaToFileMap, Map<String, IRepositoryViewObject> selectItems) {
-        String name = /* componentName + "_"+ */parameter.getName();
+    private void populateMessage2(QName parameter, String portTypeName, String operationName,
+            Map<String, File> schemaToFileMap, Map<String, IRepositoryViewObject> selectItems, File zip) throws IOException {
+        String name = /* componentName + "_"+ */parameter.getLocalPart();
         XmlFileConnection connection = null;
         Property connectionProperty = null;
         XmlFileConnectionItem connectionItem = null;
         boolean needRewrite = false;
-        String tableName = null;
 
         if (selectItems.size() > 0) {
             Set<Entry<String, IRepositoryViewObject>> tableSet = selectItems.entrySet();
             Iterator<Entry<String, IRepositoryViewObject>> iterator = tableSet.iterator();
             while (iterator.hasNext()) {
                 Entry<String, IRepositoryViewObject> entry = iterator.next();
-                tableName = entry.getKey();
                 IRepositoryViewObject repObj = entry.getValue();
                 Item item = repObj.getProperty().getItem();
                 if (item instanceof XmlFileConnectionItem) {
@@ -443,49 +486,15 @@ public class PublishMetadataAction extends AContextualAction {
         connection.setInputModel(false);
         // }
 
-        // don't put any XSD directly inside the xml connection but put zip file
-        Collection<String> fileStringCol = schemaToFileMap.values();
-        File[] files = new File[fileStringCol.size()];
-        Object[] fileStringArray = fileStringCol.toArray();
-        for (int i = 0; i < fileStringCol.size(); i++) {
-            String fileString = (String) fileStringArray[i];
-            File file = new File(fileString);
-            files[i] = file;
-        }
-        Project project = ProjectManager.getInstance().getCurrentProject();
-        IProject fsProject = null;
-        try {
-            fsProject = ResourceModelUtils.getProject(project);
-        } catch (PersistenceException e2) {
-            ExceptionHandler.process(e2);
-        }
-        String Path = schemaToFileMap.get(parameter.getSchema());
-        String zipFile = new Path(Path) + ".zip";
-        try {
-            org.talend.utils.io.FilesUtils.zips(files, zipFile);
-        } catch (Exception e2) {
-            ExceptionHandler.process(e2);
-        }
-        File zip = new File(zipFile);
-        try {
-            if (zip.exists()) {
-                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-                byteArray.setInnerContentFromFile(zip);
-                connection.setFileContent(byteArray.getInnerContent());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // connection.setFileContent(parameter.getSchema());
+        ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+        byteArray.setInnerContentFromFile(zip);
+        connection.setFileContent(byteArray.getInnerContent());
 
         XSDSchema xsdSchema;
         try {
-            String filePath = schemaToFileMap.get(parameter.getSchema()); // name of xsd file needed
-            if (filePath == null) {
-                // just in case, but should never happen
-                return;
-            }
-            connection.setXmlFilePath(new Path(filePath).lastSegment() + ".zip"); //$NON-NLS-1$
+            // don't put any XSD directly inside the xml connection but put zip file
+            String filePath = schemaToFileMap.get(parameter.getNamespaceURI()).getPath(); // name of xsd file needed
+            connection.setXmlFilePath(zip.getName());
 
             xsdSchema = populationUtil.getXSDSchema(filePath);
             List<ATreeNode> rootNodes = populationUtil.getAllRootNodes(xsdSchema);
@@ -534,8 +543,8 @@ public class PublishMetadataAction extends AContextualAction {
                 }
             }
             fillRootInfo(connection, node, "", !haveElement); //$NON-NLS-1$
-        } catch (MalformedURLException e1) {
-            ExceptionHandler.process(e1);
+        } catch (IOException e) {
+            throw e;
         } catch (URISyntaxException e1) {
             ExceptionHandler.process(e1);
         } catch (OdaException e) {
@@ -549,8 +558,8 @@ public class PublishMetadataAction extends AContextualAction {
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix
-            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNameSpace(), portTypeQName.getLocalPart(),
-                    oper.getName());
+            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName,
+                    operationName);
             IPath path = new Path(folderPath);
             factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
                                                         // existing in the same path
@@ -564,7 +573,7 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
-    private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) throws OdaException {
+    private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) {
         XMLFileNode xmlNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
         xmlNode.setXMLPath(path + '/' + node.getValue());
         xmlNode.setOrder(orderId);
@@ -642,40 +651,16 @@ public class PublishMetadataAction extends AContextualAction {
         }
     }
 
-    private String initFileContent(byte[] fileContent, int index) {
-        byte[] bytes = fileContent;
-        Project project = ProjectManager.getInstance().getCurrentProject();
-        IProject fsProject = null;
+    private static File initFileContent(final XmlSchema schema) throws IOException {
+        FileOutputStream outStream = null;
         try {
-            fsProject = ResourceModelUtils.getProject(project);
-        } catch (PersistenceException e2) {
-            ExceptionHandler.process(e2);
-        }
-        if (fsProject == null) {
-            return null;
-        }
-        String temPath = fsProject.getLocationURI().getPath() + File.separator + "temp"; //$NON-NLS-1$
-        String fileName = "tempXSDFile" + index + ".XSD"; //$NON-NLS-1$ //$NON-NLS-2$
-        File temfile = new File(temPath + File.separator + fileName);
-
-        if (!temfile.exists()) {
-            try {
-                temfile.createNewFile();
-            } catch (IOException e) {
-                ExceptionHandler.process(e);
-            }
-        }
-        FileOutputStream outStream;
-        try {
+            File temfile = File.createTempFile("tempXSDFile", ".xsd"); //$NON-NLS-1$ //$NON-NLS-2$
             outStream = new FileOutputStream(temfile);
-            outStream.write(bytes);
+            schema.write(outStream); // this method hangs when using invalid wsdl.
+            return temfile;
+        } finally {
             outStream.close();
-        } catch (FileNotFoundException e1) {
-            ExceptionHandler.process(e1);
-        } catch (IOException e) {
-            ExceptionHandler.process(e);
         }
-        return temfile.getPath();
     }
 
     private String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
@@ -701,134 +686,15 @@ public class PublishMetadataAction extends AContextualAction {
         return columnName;
     }
 
-    private List<String> getAllPaths() throws CoreException {
-        List<String> paths = new ArrayList<String>();
-        Definition wsdlDefinition = WSDLUtils.getDefinition(wsdlLocation);
-        SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
-        Map<QName, Binding> bindings = wsdlDefinition.getBindings();
-        List<PortType> portTypes = new ArrayList<PortType>(bindings.size());
-        List<String> alreadyCreated = new ArrayList<String>();
-        for (Binding binding : bindings.values()) {
-            PortType portType = binding.getPortType();
-            if (!portTypes.contains(portType)) {
-                portTypes.add(portType);
-                List<BindingOperation> operations = binding.getBindingOperations();
-                for (BindingOperation operation : operations) {
-                    Operation oper = operation.getOperation();
-                    Input inDef = oper.getInput();
-                    if (inDef != null) {
-                        Message inMsg = inDef.getMessage();
-                        if (inMsg != null) {
-                            // fix for TDI-20699
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(inMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-
-                            String folderPath = null;
-                            try {
-                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                IPath path = new Path(folderPath);
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
-                                }
-                            } catch (URISyntaxException e) {
-                                ExceptionHandler.process(e);
-                            }
-
-                        }
-                    }
-
-                    Output outDef = oper.getOutput();
-                    if (outDef != null) {
-                        Message outMsg = outDef.getMessage();
-                        if (outMsg != null) {
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(outMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-                            String folderPath = null;
-                            try {
-                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                IPath path = new Path(folderPath);
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
-                                }
-                            } catch (URISyntaxException e) {
-                                ExceptionHandler.process(e);
-                            }
-                        }
-                    }
-                    Collection<Fault> faults = oper.getFaults().values();
-                    for (Fault fault : faults) {
-                        Message faultMsg = fault.getMessage();
-                        if (faultMsg != null) {
-                            ParameterInfo parameterFromMessage = schemaUtil.getParameterFromMessage(faultMsg);
-                            if (alreadyCreated.contains(parameterFromMessage.getName())) {
-                                continue;
-                            } else {
-                                alreadyCreated.add(parameterFromMessage.getName());
-                            }
-                            String folderPath = null;
-                            try {
-                                folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNameSpace(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                IPath path = new Path(folderPath);
-                                if (!paths.contains(path.toString())) {
-                                    paths.add(path.toString());
-                                }
-                            } catch (URISyntaxException e) {
-                                ExceptionHandler.process(e);
-                            }
-                        }
-                    }
-                }
-            }
+    private static QName getParameterFromMessage(Message msg) {
+        // add first parameter from message.
+        @SuppressWarnings("unchecked")
+        Part part = ((Collection<Part>)msg.getParts().values()).iterator().next();
+        if (part.getElementName() != null) {
+            return part.getElementName();
+        } else if (part.getTypeName() != null) {
+            return part.getTypeName();
         }
-        return paths;
+        return null;
     }
-
-    private List<IRepositoryViewObject> initFileConnection() {
-        List<String> paths = null;
-        try {
-            paths = getAllPaths();
-        } catch (CoreException e1) {
-            ExceptionHandler.process(e1);
-        }
-        List<IRepositoryViewObject> connItems = new ArrayList<IRepositoryViewObject>();
-        if (paths == null) {
-            return connItems;
-        }
-
-        IProxyRepositoryFactory factory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
-        List<IRepositoryViewObject> repositoryObjects = null;
-        try {
-            repositoryObjects = factory.getAll(ERepositoryObjectType.METADATA, true);
-            for (IRepositoryViewObject object : repositoryObjects) {
-                Item item = object.getProperty().getItem();
-                if (item instanceof ConnectionItem) {
-                    Connection conn = ((ConnectionItem) item).getConnection();
-                    if (conn instanceof XmlFileConnection) {
-                        String sPath = item.getState().getPath();
-                        if (paths.contains(sPath)) {
-                            Object[] array = ConnectionHelper.getTables(conn).toArray();
-                            if (array.length > 0) {
-                                connItems.add(object);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        }
-        return connItems;
-    }
-
 }
