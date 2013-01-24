@@ -3,8 +3,8 @@ package org.talend.repository.services.ui.scriptmanager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -86,8 +86,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             // http://jira.talendforge.org/browse/TESB-3638
                             endpointAddress = ((SOAPAddress) element).getLocationURI();
                             try {
-                                URL url = new URL(endpointAddress);
-                                endpointAddress = url.getPath();
+                                URI uri = new URI(endpointAddress);
+                                endpointAddress = uri.getPath();
 
                                 if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
                                     // pass as is
@@ -99,8 +99,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                                 } else if (endpointAddress.length() == 1) { // empty path
                                     endpointAddress += studioServiceName;
                                 }
-                            } catch (MalformedURLException e) {
-                                logger.error("Endpoint URI invalid: " + e);
+                            } catch (URISyntaxException e) {
+                                logger.warn("Endpoint URI invalid: " + e);
                             }
                         }
                     }
