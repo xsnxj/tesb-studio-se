@@ -1,5 +1,7 @@
 package org.talend.designer.esb.webservice.ws.wsdlinfo;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * 
@@ -18,9 +20,7 @@ public class Function {
 
     private String addressLocation;
 
-    private String serviceName;
-
-    private String serviceNameSpace;
+    private QName serviceName;
 
     private String portName;
 
@@ -34,7 +34,6 @@ public class Function {
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {
         String operationName = oper.getTargetMethodName() + '(';
         this.serviceName = serviceInfo.getServerName();
-        this.serviceNameSpace = serviceInfo.getServerNameSpace();
         this.portName = oper.getPortName();
         this.soapAction = oper.getSoapActionURI();
         this.nameSpaceURI = oper.getNamespaceURI();
@@ -86,11 +85,11 @@ public class Function {
     }
 
     public String getServiceName() {
-        return this.serviceName;
+        return serviceName.getLocalPart();
     }
 
     public String getServiceNameSpace() {
-        return this.serviceNameSpace;
+        return serviceName.getNamespaceURI();
     }
 
     public String getPortName() {

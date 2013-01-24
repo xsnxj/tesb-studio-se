@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.DeflaterOutputStream;
 
+import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -134,6 +137,8 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
     private String currentPortName;
 
     private WSDLSchemaConnection connection = null;
+
+    private Definition definition;
 
     public WebServiceUI(WebServiceComponent webServiceComponent) {
         super("WebServiceUI"); //$NON-NLS-1$
@@ -407,7 +412,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
                     try {
-                        allFunctions = getFunctionsList(URLValue);
+                        allFunctions = getFunctionsList();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
                     } finally {
@@ -556,17 +561,21 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         }
     }
 
-    private List<Function> getFunctionsList(String wsdlUrl) throws WSDLException {
+    private List<Function> getFunctionsList() throws WSDLException {
         IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
         if ((parameter != null) && Boolean.parseBoolean(parameter.getValue().toString())) {
             useSSL();
         }
 
-        ComponentBuilder builder = new ComponentBuilder();
-        ServiceInfo[] services = builder.buildserviceinformation(getRealWsdlLocation());
+        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+        WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+
+        newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+        newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+        definition = newWSDLReader.readWSDL(getRealWsdlLocation());
 
         List<Function> functionsAvailable = new ArrayList<Function>();
-        for (ServiceInfo serviceInfo : services) {
+        for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
             for (OperationInfo oper : serviceInfo.getOperations()) {
                 Function f = new Function(serviceInfo, oper);
                 functionsAvailable.add(f);
@@ -652,8 +661,8 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
     }
 
     private boolean populateSchema() {
-        if (currentFunction == null || populateCheckbox == null
-                || !populateCheckbox.getSelection()) {
+        if (populateCheckbox == null || !populateCheckbox.getSelection()
+                || null == definition) {
             return true;
         }
         try {
@@ -662,7 +671,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                     try {
                         Class<?> forName = Class.forName("org.talend.repository.services.action.PublishMetadataAction");
                         Object newInstance = forName.newInstance();
-                        forName.getMethod("run", String.class).invoke(newInstance, getRealWsdlLocation());
+                        forName.getMethod("run", Definition.class).invoke(newInstance, definition);
                     } catch (InvocationTargetException e) {
                         throw e;
                     } catch (Exception e) {
