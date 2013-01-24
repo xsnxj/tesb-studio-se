@@ -196,6 +196,10 @@
 					MODULE="locator-5.2.1.jar"
 					BundleID="locator"
 					REQUIRED="true" />
+			<IMPORT NAME="zookeeper"
+					MODULE="zookeeper-3.3.6.jar"
+					BundleID="org.apache.hadoop.zookeeper"
+					REQUIRED="true" />
 
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
