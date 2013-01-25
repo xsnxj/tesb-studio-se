@@ -20,14 +20,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.properties.XmlFileConnectionItem;
 
 /**
  * DOC hwang class global comment. Detailled comment
  */
 public class RewriteSchemaDialog extends Dialog {
 
-    private Collection<IRepositoryViewObject> xmlObjs;
+    private Collection<XmlFileConnectionItem> xmlObjs;
 
     private XmlTableForm tableForm;
 
@@ -36,7 +36,7 @@ public class RewriteSchemaDialog extends Dialog {
      * 
      * @param parentShell
      */
-    public RewriteSchemaDialog(Shell parentShell, Collection<IRepositoryViewObject> xmlObjs) {
+    public RewriteSchemaDialog(Shell parentShell, Collection<XmlFileConnectionItem> xmlObjs) {
         super(parentShell);
         this.xmlObjs = xmlObjs;
     }
@@ -77,7 +77,7 @@ public class RewriteSchemaDialog extends Dialog {
         super.okPressed();
     }
 
-    public Collection<IRepositoryViewObject> getSelectionTables() {
+    public Collection<XmlFileConnectionItem> getSelectionTables() {
         return xmlObjs;
     }
 

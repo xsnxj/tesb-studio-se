@@ -62,7 +62,6 @@ import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.metadata.MappingTypeRetriever;
 import org.talend.core.model.metadata.MetadataTalendType;
-import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
@@ -70,12 +69,10 @@ import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.ConnectionItem;
-import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
@@ -115,7 +112,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             public void run(IProgressMonitor monitor) throws CoreException {
                 monitor.beginTask(Messages.PublishMetadataAction_Importing, 3);
 
-                final Collection<IRepositoryViewObject> xmlObjs;
+                final Collection<XmlFileConnectionItem> xmlObjs;
                 try {
                     xmlObjs = initFileConnection();
                 } catch (Exception e) {
@@ -123,7 +120,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
                             "Can't retrieve schemas from metadata: " + message, e));
                 }
-                Collection<IRepositoryViewObject> selectTables;;
+                Collection<XmlFileConnectionItem> selectTables;
                 if (xmlObjs.size() > 0) {
                     RewriteSchemaDialogRunnable runnable = new RewriteSchemaDialogRunnable(shell, xmlObjs);
                     Display.getDefault().syncExec(runnable);
@@ -176,11 +173,11 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     private static class RewriteSchemaDialogRunnable implements Runnable {
 
         private final Shell shell;
-        private final Collection<IRepositoryViewObject> xmlObjs;
+        private final Collection<XmlFileConnectionItem> xmlObjs;
 
-        private Collection<IRepositoryViewObject> selectTables;
+        private Collection<XmlFileConnectionItem> selectTables;
 
-        public RewriteSchemaDialogRunnable(Shell shell, Collection<IRepositoryViewObject> xmlObjs) {
+        public RewriteSchemaDialogRunnable(Shell shell, Collection<XmlFileConnectionItem> xmlObjs) {
             this.shell = shell;
             this.xmlObjs = xmlObjs;
         }
@@ -194,30 +191,22 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             }
         }
 
-        public Collection<IRepositoryViewObject> getSelectTables() {
+        public Collection<XmlFileConnectionItem> getSelectTables() {
             return selectTables;
         }
 
     }
 
 
-    private Collection<IRepositoryViewObject> initFileConnection() throws URISyntaxException, PersistenceException {
+    private Collection<XmlFileConnectionItem> initFileConnection() throws URISyntaxException, PersistenceException {
         Collection<String> paths = getAllPaths();
-        List<IRepositoryViewObject> connItems = new ArrayList<IRepositoryViewObject>();
+        List<XmlFileConnectionItem> connItems = new ArrayList<XmlFileConnectionItem>();
 
-        IProxyRepositoryFactory factory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
-        for (IRepositoryViewObject object : factory.getAll(ERepositoryObjectType.METADATA, true)) {
-            Item item = object.getProperty().getItem();
-            if (item instanceof ConnectionItem) {
-                Connection conn = ((ConnectionItem) item).getConnection();
-                if (conn instanceof XmlFileConnection) {
-                    String sPath = item.getState().getPath();
-                    if (paths.contains(sPath)) {
-                        if (!ConnectionHelper.getTables(conn).isEmpty()) {
-                            connItems.add(object);
-                        }
-                    }
-                }
+        for (ConnectionItem item : DesignerPlugin.getDefault().getProxyRepositoryFactory().getMetadataConnectionsItem()) {
+            if (item instanceof XmlFileConnectionItem
+                    && paths.contains(item.getState().getPath())
+                    && !ConnectionHelper.getTables(item.getConnection()).isEmpty()) {
+                connItems.add((XmlFileConnectionItem) item);
             }
         }
         return connItems;
@@ -290,7 +279,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return null;
     }
 
-    private void process(Definition wsdlDefinition, Collection<IRepositoryViewObject> selectTables) throws IOException {
+    private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
         Map<String, File> fileToSchemaMap = new HashMap<String, File>();
         File zip = null;
         final SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
@@ -388,7 +377,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
      * @throws IOException 
      */
     private void populateMessage2(QName parameter, String portTypeName, String operationName,
-            File schemaFile, Collection<IRepositoryViewObject> selectItems, File zip) throws IOException {
+            File schemaFile, Collection<XmlFileConnectionItem> selectItems, File zip) throws IOException {
         String name = /* componentName + "_"+ */parameter.getLocalPart();
         XmlFileConnection connection = null;
         Property connectionProperty = null;
@@ -396,19 +385,16 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
         if (selectItems.size() > 0) {
             boolean needRewrite = false;
-            for (IRepositoryViewObject repObj : selectItems) {
-                Item item = repObj.getProperty().getItem();
-                if (item instanceof XmlFileConnectionItem) {
-                    connectionItem = (XmlFileConnectionItem) item;
+            for (XmlFileConnectionItem item : selectItems) {
+                connectionProperty = item.getProperty();
+                if (connectionProperty.getLabel().equals(name)) {
+                    connectionItem = item;
                     connection = (XmlFileConnection) connectionItem.getConnection();
-                    connectionProperty = item.getProperty();
-                    if (connectionProperty.getLabel().equals(name)) {
-                        needRewrite = true;
-                        break;
-                    }
+                    needRewrite = true;
+                    break;
                 }
             }
-            if (!needRewrite && ConnectionHelper.getTables(connection).size() > 0) {
+            if (!needRewrite) {
                 return;
             }
         }
@@ -496,8 +482,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
         // save
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        String nextId = factory.getNextId();
-        connectionProperty.setId(nextId);
+        connectionProperty.setId(factory.getNextId());
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix

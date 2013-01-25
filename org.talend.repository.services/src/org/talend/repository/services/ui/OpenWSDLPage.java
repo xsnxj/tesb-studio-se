@@ -17,15 +17,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -339,22 +336,17 @@ public class OpenWSDLPage extends WizardPage {
 //        }
 //    }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     private void populateModelFromWsdl(IProxyRepositoryFactory factory, String wsdlPath, ServiceItem serviceItem,
             RepositoryNode serviceRepositoryNode) throws CoreException {
         definition = WSDLUtils.getDefinition(wsdlPath);
-        Map portTypes = definition.getAllPortTypes();
-        Iterator it = portTypes.keySet().iterator();
         serviceRepositoryNode.getChildren().clear();
         ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
-        while (it.hasNext()) {
-            QName key = (QName) it.next();
-            PortType portType = (PortType) portTypes.get(key);
+        for (PortType portType : (Collection<PortType>) definition.getAllPortTypes().values()) {
             ServicePort port = ServicesFactory.eINSTANCE.createServicePort();
             port.setId(factory.getNextId());
             port.setName(portType.getQName().getLocalPart());
-            List<Operation> list = portType.getOperations();
-            for (Operation operation : list) {
+            for (Operation operation : (Collection<Operation>) portType.getOperations()) {
                 ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                 serviceOperation.setId(factory.getNextId());
                 RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(serviceItem.getProperty()),

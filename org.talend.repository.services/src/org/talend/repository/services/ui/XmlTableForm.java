@@ -24,7 +24,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,11 +39,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SearchPattern;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
-import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
-import org.talend.core.model.properties.ConnectionItem;
-import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.repository.i18n.Messages;
 
@@ -64,25 +60,23 @@ public class XmlTableForm extends Composite {
     private Button selectNoneTablesButton;
 
     private static class Item {
-        private final IRepositoryViewObject obj;
+        private final XmlFileConnectionItem obj;
         private String label;
         private boolean check;
-        private Image image;
 
-        public Item(IRepositoryViewObject obj) {
+        public Item(XmlFileConnectionItem obj) {
             this.obj = obj;
         }
 
-        public IRepositoryViewObject getObj() {
+        public XmlFileConnectionItem getObj() {
             return obj;
         }
 
         public String getLabel() {
             if (null == label) {
-                Connection conn = ((ConnectionItem) obj.getProperty().getItem()).getConnection();
-                Set<MetadataTable> tables = ConnectionHelper.getTables(conn);
+                Set<MetadataTable> tables = ConnectionHelper.getTables(obj.getConnection());
                 if (!tables.isEmpty()) {
-                    label = obj.getLabel() + '-' + tables.iterator().next().getLabel();
+                    label = obj.getProperty().getLabel() + '-' + tables.iterator().next().getLabel();
                 }
             }
             return label;
@@ -96,15 +90,6 @@ public class XmlTableForm extends Composite {
             this.check = check;
         }
 
-        public Image getImage() {
-            if (null == image) {
-                if (((ConnectionItem) obj.getProperty().getItem()).getConnection() instanceof XmlFileConnection) {
-                    image = ImageProvider.getImage(ECoreImage.METADATA_FILE_XML_ICON);
-                }
-            }
-            return image;
-        }
-
     }
 
     private final List<Item> items;
@@ -116,10 +101,10 @@ public class XmlTableForm extends Composite {
      * @param parent
      * @param style
      */
-    public XmlTableForm(Composite parent, Collection<IRepositoryViewObject> fileRepObjList) {
+    public XmlTableForm(Composite parent, Collection<XmlFileConnectionItem> fileRepObjList) {
         super(parent, SWT.NONE);
         items = new ArrayList<Item>(fileRepObjList.size());
-        for (IRepositoryViewObject obj : fileRepObjList) {
+        for (XmlFileConnectionItem obj : fileRepObjList) {
             items.add(new Item(obj));
         }
 
@@ -145,7 +130,7 @@ public class XmlTableForm extends Composite {
                 List<Item> items = (List<Item>) table.getData();
                 Item item = items.get(event.index);
                 tableItem.setText(item.getLabel());
-                tableItem.setImage(item.getImage());
+                tableItem.setImage(ImageProvider.getImage(ECoreImage.METADATA_FILE_XML_ICON));
                 tableItem.setChecked(item.isCheck());
                 tableItem.setData(item);
             } 
@@ -248,8 +233,8 @@ public class XmlTableForm extends Composite {
         });
     }
 
-    public Collection<IRepositoryViewObject> getSelectionItems() {
-        final Collection<IRepositoryViewObject> itemMap = new ArrayList<IRepositoryViewObject>();
+    public Collection<XmlFileConnectionItem> getSelectionItems() {
+        final Collection<XmlFileConnectionItem> itemMap = new ArrayList<XmlFileConnectionItem>();
         for (TableItem tableItem : table.getItems()) {
             if (tableItem.getChecked()) {
                 itemMap.add(((Item) tableItem.getData()).getObj());
