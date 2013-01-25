@@ -15,7 +15,6 @@ package org.talend.designer.esb.webservice.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
@@ -42,17 +41,7 @@ public class WebServiceHelper implements IWebService {
 
     private final WebServiceSaveManager manager = WebServiceSaveManager.getInstance();
 
-    private ConnectionItem connectionItem;
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.talend.repository.ui.wizards.metadata.connection.wsdl.IWebService#getWebServiceUI(org.eclipse.swt.widgets
-     * .Composite, org.talend.core.model.components.IComponent)
-     */
     public AbstractWebService getWebServiceUI(Composite uiParent, ConnectionItem connectionItem) {
-        this.connectionItem = connectionItem;
         WebServiceComponent wenCom = new WebServiceComponent();
         wenCom.initialize();
         IComponent iComponent = ComponentsFactoryProvider.getInstance().get(COMPONENT_NAME);
@@ -164,11 +153,6 @@ public class WebServiceHelper implements IWebService {
         return webServiceUI;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.core.ui.IWebService#getCurrentFunction()
-     */
     public Boolean getCurrentFunction() {
         boolean flag = true;
         if (webServiceUI.getCurrentFunction() == null) {
@@ -177,32 +161,12 @@ public class WebServiceHelper implements IWebService {
         return flag;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.core.ui.IWebService#getTabFolder()
-     */
-    public CTabFolder getTabFolder() {
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.core.ui.IWebService#getTable()
-     */
     public Table getTable() {
         return webServiceUI.getTable();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.repository.ui.wizards.metadata.connection.wsdl.webService.tree.WebServiceSaveListener#saveValue()
-     */
     public void saveValue() {
         webServiceUI.saveInputValue();
-        connectionItem.getConnection().getResourceConnection();
     }
 
     public LabelledFileField getWSDLLabel(Boolean b) {
