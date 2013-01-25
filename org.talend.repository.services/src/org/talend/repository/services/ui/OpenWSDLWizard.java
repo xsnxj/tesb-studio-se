@@ -30,7 +30,8 @@ public class OpenWSDLWizard extends Wizard {
 
     public OpenWSDLWizard(RepositoryNode repositoryNode) {
         this.repositoryNode = repositoryNode;
-        this.setWindowTitle("Edit WSDL");
+        setWindowTitle("Edit WSDL");
+        setNeedsProgressMonitor(true);
     }
 
     @Override
