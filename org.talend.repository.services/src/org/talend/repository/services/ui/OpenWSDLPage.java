@@ -68,7 +68,7 @@ import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.OpenWSDLEditorAction;
-import org.talend.repository.services.action.PublishMetadataAction;
+import org.talend.repository.services.action.PublishMetadataRunnable;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -302,16 +302,23 @@ public class OpenWSDLPage extends WizardPage {
             OpenWSDLEditorAction action = new OpenWSDLEditorAction();
             action.setRepositoryNode(repositoryNode);
             action.run();
-
-            if (checkImport.isVisible() && checkImport.getSelection() && null != definition) {
-                PublishMetadataAction publishAction = new PublishMetadataAction();
-                publishAction.run(definition);
-            }
-            return true;
         } catch (CoreException e) {
             MessageBoxExceptionHandler.process(e);
+            return false;
         }
-        return false;
+        if (checkImport.isVisible() && checkImport.getSelection() && null != definition) {
+            PublishMetadataRunnable publishMetadataRunnable = new PublishMetadataRunnable(definition, getShell());
+            try {
+                getContainer().run(true, true, publishMetadataRunnable);
+            } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                String message = (null != cause.getMessage()) ? cause.getMessage() : cause.getClass().getName();
+                setErrorMessage("Populate schema to repository: " + message);
+                return false;
+            } catch (InterruptedException e) {
+            }
+        }
+        return true;
     }
 
 //    private void readWsdlFile(InputStream is, OutputStream os) throws IOException {

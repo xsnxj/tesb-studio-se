@@ -13,24 +13,21 @@
 package org.talend.repository.services.ui;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.repository.ui.swt.utils.AbstractForm;
 
 /**
  * DOC hwang class global comment. Detailled comment
  */
 public class RewriteSchemaDialog extends Dialog {
 
-    private final Collection<IRepositoryViewObject> xmlObjs;
+    private Collection<IRepositoryViewObject> xmlObjs;
 
     private XmlTableForm tableForm;
 
@@ -44,66 +41,44 @@ public class RewriteSchemaDialog extends Dialog {
         this.xmlObjs = xmlObjs;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite) super.createDialogArea(parent);
-        createTable(container);
+        tableForm = new XmlTableForm(container, xmlObjs);
+        tableForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+        tableForm.setListener(new XmlTableForm.ICompleteListener() {
+            public void setComplete(boolean complete) {
+                getButton(IDialogConstants.OK_ID).setEnabled(complete);
+            }
+        });
         return container;
     }
 
-    /**
-     * DOC hwang Comment method "createTable".
-     */
-    private void createTable(Composite container) {
-        tableForm = new XmlTableForm(container, xmlObjs);
-        tableForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        AbstractForm.ICheckListener listener = new AbstractForm.ICheckListener() {
-
-            public void checkPerformed(final AbstractForm source) {
-                if (getSelectionTables().size() <= 0) {
-                    getButton(IDialogConstants.OK_ID).setEnabled(false);
-                } else {
-                    getButton(IDialogConstants.OK_ID).setEnabled(true);
-                }
-            }
-        };
-        tableForm.setListener(listener);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText("Import WSDL Schemas");
-        newShell.setSize(new Point(400, 500));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-     */
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-
-        createButton(parent, IDialogConstants.OK_ID, "OK", true); //$NON-NLS-1$
+        super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setEnabled(false);
-
-        createButton(parent, IDialogConstants.CANCEL_ID, "Cancel", false); //$NON-NLS-1$
     }
 
-    public Map<String, IRepositoryViewObject> getSelectionTables() {
-        return tableForm.getSelectionItems();
+    @Override
+    protected void okPressed() {
+        xmlObjs = tableForm.getSelectionItems();
+        super.okPressed();
+    }
+
+    public Collection<IRepositoryViewObject> getSelectionTables() {
+        return xmlObjs;
     }
 
 }

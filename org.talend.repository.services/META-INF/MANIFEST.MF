@@ -37,7 +37,7 @@ Bundle-ClassPath: .
  ,lib/commons-lang-2.6.jar
  ,lib/oro-2.0.8.jar
  ,lib/velocity-1.7.jar
- ,lib/xmlschema-core-2.0.1.jar
+ ,lib/xmlschema-core-2.0.3.jar
 Export-Package: org.talend.repository.services.action,
  org.talend.repository.services.model.services,
  org.talend.repository.services.model.services.util,
