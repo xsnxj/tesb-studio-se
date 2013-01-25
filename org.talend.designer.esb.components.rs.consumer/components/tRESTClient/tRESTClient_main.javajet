@@ -41,25 +41,10 @@ if (conns != null && conns.size() > 0) {
 
 List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
 List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-IConnection connResponse = null;
-IConnection connFault = null;
-if (connsResponse.size() == 1) {
-	connResponse = connsResponse.get(0);
-}
-if (connsFault.size() == 1) {
-	connFault = connsFault.get(0);
-}
+IConnection connResponse = (connsResponse.size() == 1) ? connsResponse.get(0) : null;
+IConnection connFault = (connsFault.size() == 1) ? connsFault.get(0) : null;
 
 
-
-String url = ElementParameterParser.getValue(node,"__URL__");
-
-String connectionTimeout = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
-
-String receiveTimeout = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
-
-List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
-List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
 
 String method = ElementParameterParser.getValue(node,"__METHOD__");
 
@@ -94,7 +79,7 @@ try {
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
 		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
-	factoryBean_<%=cid%>.setAddress(<%=url%>);
+	factoryBean_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node,"__URL__")%>);
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"))) { %>
 		factoryBean_<%=cid%>.setUsername(<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>);
 		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
@@ -104,23 +89,47 @@ try {
 		new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
 
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
+
 		factoryBean_<%=cid%>.setAddress("locator://rest");
 		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
 			<%=ElementParameterParser.getValue(node,"__SERVICE_NAMESPACE__")%>,
 			<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>));
 
-		factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		boolean inOSGi = false;
+		try {
+			inOSGi = (null != factoryBean_tRESTClient_1.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+		} catch (ClassNotFoundException e) {
+			; // ignore
+		}
+
+		if (!inOSGi) {
+			String studioHome = "<%= System.getProperties().get("eclipse.home.location") %>";
+			if (!studioHome.trim().isEmpty()) {
+				ClassLoader currentThreadClassLoader = Thread.currentThread().getContextClassLoader();
+
+				// Add the conf dir to the classpath
+				// Chain the current thread classloader
+				java.net.URLClassLoader urlClassLoader = new java.net.URLClassLoader(
+						new java.net.URL[]{ new java.net.URL(studioHome + "esb/") },
+						 currentThreadClassLoader);
+
+				// Replace the thread classloader - assumes you have permissions to do so
+				Thread.currentThread().setContextClassLoader(urlClassLoader);
+			}
+			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		}
+
 		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
 			new org.talend.esb.servicelocator.cxf.LocatorFeature();
 
 		<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
-				ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
-			if (!customProperties.isEmpty()) { %>
+				ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
+		<% if (!customProperties.isEmpty()) { %>
 				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
 			<% for (int k = 0; k < customProperties.size(); k++) { %>
 				slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 			<% } %>
-			feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+				feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
 		<% } %>
 
 		features_<%=cid%>.add(feature_<%=cid%>);
@@ -159,10 +168,10 @@ try {
 	});
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
-	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
-	jsonProvider_<%=cid%>.setAttributesToElements(true);
-	jsonProvider_<%=cid%>.setSupportUnwrapped(true);
-	jsonProvider_<%=cid%>.setWrapperName("root");
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
@@ -172,8 +181,8 @@ try {
 	// set connection properties
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
 	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
-	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=connectionTimeout%> * 1000));
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
 		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
 		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
@@ -191,12 +200,15 @@ try {
 	<% } %>
 
 	// set optional query and header properties if any
-	<% for (Map<String, String> header : headers) { %>
+
+	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
+		for (Map<String, String> header : headers) { %>
 		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
 	<% } %>
 
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
-	<% if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+	<% List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
+		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
 		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
 		<% for (Map<String, String> query : queries) { %>
 			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
