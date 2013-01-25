@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -665,22 +667,23 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                 || null == definition) {
             return true;
         }
+        IRunnableWithProgress runnable;
         try {
-            getContainer().run(false, false, new IRunnableWithProgress() {
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    try {
-                        Class<?> forName = Class.forName("org.talend.repository.services.action.PublishMetadataAction");
-                        Object newInstance = forName.newInstance();
-                        forName.getMethod("run", Definition.class).invoke(newInstance, definition);
-                    } catch (InvocationTargetException e) {
-                        throw e;
-                    } catch (Exception e) {
-                        throw new InvocationTargetException(e);
-                    }
-                }
-            });
+            Class<? extends IRunnableWithProgress> forName =
+                Class.forName("org.talend.repository.services.action.PublishMetadataRunnable").asSubclass(IRunnableWithProgress.class);
+            Constructor<? extends IRunnableWithProgress> constructor = forName.getConstructor(Definition.class, Shell.class);
+            runnable = constructor.newInstance(definition, getShell());
+        } catch (Exception e) {
+            String message = (null != e.getMessage()) ? e.getMessage() : e.getClass().getName();
+            setErrorMessage("Can't create populate action: " + message);
+            return false;
+        }
+        try {
+            getContainer().run(true, true, runnable);
         } catch (InvocationTargetException e) {
-            setErrorMessage("Populate schema to repository:" + e.getCause().getMessage());
+            Throwable cause = e.getCause();
+            String message = (null != cause.getMessage()) ? cause.getMessage() : cause.getClass().getName();
+            setErrorMessage("Populate schema to repository: " + message);
             return false;
         } catch (InterruptedException e) {
             return false;
