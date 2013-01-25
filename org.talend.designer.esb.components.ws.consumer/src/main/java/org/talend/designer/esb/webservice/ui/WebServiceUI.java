@@ -13,14 +13,11 @@
 package org.talend.designer.esb.webservice.ui;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +62,6 @@ import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreatorColumn;
 import org.talend.commons.ui.utils.PathUtils;
 import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
-import org.talend.commons.utils.io.StreamCopier;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
@@ -89,6 +85,7 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
+import org.talend.designer.esb.webservice.ws.wsdlutil.WSDLLoader;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
@@ -338,21 +335,12 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
      *
      * @return WSDL as String object. Or null in case errors/not possible to create object.
      */
-    private String getWSDL() throws IOException {
+    private String getWSDL() throws WSDLException {
         InputStream is = null;
         ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
         OutputStream os = compressAndEncode(wsdlOs);
         try {
-            //WSDLFactory.newInstance().newWSDLWriter().writeWSDL(def, os);
-            String wsdlLocation = getRealWsdlLocation();
-            URL wsdlURL;
-            try {
-                wsdlURL = new URL(wsdlLocation);
-            } catch (MalformedURLException e) {
-                wsdlURL = new File(wsdlLocation).toURI().toURL();
-            }
-            is = wsdlURL.openStream(); 
-            StreamCopier.copy(is, os);
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(definition, os);
         } finally {
             if (null != is) {
                 try {
@@ -415,6 +403,8 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                     monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
                     try {
                         allFunctions = getFunctionsList();
+                    } catch (InvocationTargetException e) {
+                        throw e;
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
                     } finally {
@@ -563,7 +553,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         }
     }
 
-    private List<Function> getFunctionsList() throws WSDLException {
+    private List<Function> getFunctionsList() throws WSDLException, InvocationTargetException {
         IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
         if ((parameter != null) && Boolean.parseBoolean(parameter.getValue().toString())) {
             useSSL();
@@ -574,7 +564,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
 
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
         newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        definition = newWSDLReader.readWSDL(getRealWsdlLocation());
+        definition = newWSDLReader.readWSDL(null, new WSDLLoader().load(getRealWsdlLocation()));
 
         List<Function> functionsAvailable = new ArrayList<Function>();
         for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
@@ -698,7 +688,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         String wsdlString;
         try {
             wsdlString = getWSDL();
-        } catch (IOException e) {
+        } catch (WSDLException e) {
             setErrorMessage("Unable to create wsdl content: " + e.getMessage());
             return false;
         }
