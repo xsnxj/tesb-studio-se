@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.talend.camel.core_feature"
-      label="Core-feature"
+      label="Core_feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -86,7 +86,7 @@
       <import plugin="org.eclipse.ui.navigator" version="3.3.200" match="compatible"/>
       <import plugin="org.eclipse.ui.navigator.resources" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.jdt.core.manipulation" version="1.3.0" match="compatible"/>
-      <import plugin="com.ibm.icu" version="3.4.4" match="greaterOrEqual"/>
+      <import plugin="com.ibm.icu" version="4.2.1.v20100412" match="equivalent"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.6.0" match="compatible"/>
       <import plugin="org.eclipse.core.filebuffers" version="3.5.0" match="compatible"/>
       <import plugin="org.eclipse.compare.core" version="3.5.0" match="compatible"/>
@@ -257,12 +257,14 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
   <plugin
          id="org.talend.librariesmanager.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
          id="org.talend.librariesmanager.nl"
          download-size="0"
@@ -521,7 +523,7 @@
          id="com.ibm.icu"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="4.2.1.v20100412"
          unpack="false"/>
 
    <plugin
@@ -1150,7 +1152,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   
 
 </feature>
