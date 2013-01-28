@@ -6,30 +6,24 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.talend.repository.services.Activator
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui.workbench,
- org.eclipse.gef,
- org.talend.core,
- org.talend.core.repository,
+Require-Bundle: org.talend.core,
  org.talend.designer.core,
- org.talend.model,
  org.talend.repository,
  org.talend.metadata.managment.ui,
- org.eclipse.emf.ecore.xmi,
- org.eclipse.ui.intro,
- org.eclipse.ui.views.properties.tabbed,
- org.eclipse.ui.ide,
- org.eclipse.wst.wsdl.ui,
- org.eclipse.wst.xsd.ui,
- org.eclipse.jface.text,
- org.eclipse.xsd,
- org.eclipse.wst.wsdl.validation,
- javax.wsdl;bundle-version="1.6.2",
- org.eclipse.ui.navigator,
  org.talend.repository.view.di,
  org.talend.datatools.xml,
  org.talend.utils,
  org.talend.libraries.dom4j-jaxen,
- org.talend.resources
+ org.talend.resources,
+ org.eclipse.jface.text,
+ org.eclipse.ui.intro,
+ org.eclipse.ui.ide,
+ org.eclipse.gef,
+ org.eclipse.wst.wsdl.ui,
+ org.eclipse.xsd,
+ org.eclipse.wst.xsd.ui,
+ org.eclipse.wst.wsdl.validation,
+ javax.wsdl;bundle-version="1.6.2"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .
