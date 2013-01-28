@@ -49,6 +49,7 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 
+@SuppressWarnings("restriction")
 public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private ServiceItem serviceItem;
