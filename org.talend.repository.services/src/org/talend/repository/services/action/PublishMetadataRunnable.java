@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -35,7 +36,6 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
-import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.apache.ws.commons.schema.XmlSchema;
@@ -200,7 +200,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
     private Collection<XmlFileConnectionItem> initFileConnection() throws URISyntaxException, PersistenceException {
         Collection<String> paths = getAllPaths();
-        List<XmlFileConnectionItem> connItems = new ArrayList<XmlFileConnectionItem>();
+        Collection<XmlFileConnectionItem> connItems = new ArrayList<XmlFileConnectionItem>();
 
         for (ConnectionItem item : DesignerPlugin.getDefault().getProxyRepositoryFactory().getMetadataConnectionsItem()) {
             if (item instanceof XmlFileConnectionItem
@@ -212,16 +212,15 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return connItems;
     }
 
+    @SuppressWarnings("unchecked")
     private Collection<String> getAllPaths() throws URISyntaxException {
         final Set<String> paths = new HashSet<String>();
-        Collection<Binding> bindings = wsdlDefinition.getBindings().values();
-        Set<PortType> portTypes = new HashSet<PortType>(bindings.size());
+        final Set<QName> portTypes = new HashSet<QName>();
         final Set<QName> alreadyCreated = new HashSet<QName>();
-        for (Binding binding : bindings) {
-            PortType portType = binding.getPortType();
+        for (Binding binding : (Collection<Binding>) wsdlDefinition.getBindings().values()) {
+            final QName portType = binding.getPortType().getQName();
             if (portTypes.add(portType)) {
-                List<BindingOperation> operations = binding.getBindingOperations();
-                for (BindingOperation operation : operations) {
+                for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
                     Operation oper = operation.getOperation();
                     Input inDef = oper.getInput();
                     if (inDef != null) {
@@ -230,9 +229,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                             // fix for TDI-20699
                             QName parameterFromMessage = getParameterFromMessage(inMsg);
                             if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                paths.add(new Path(folderPath).toString());
+                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
+                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
+                                paths.add(folderPath);
                             }
                         }
                     }
@@ -243,21 +242,20 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                         if (outMsg != null) {
                             QName parameterFromMessage = getParameterFromMessage(outMsg);
                             if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                paths.add(new Path(folderPath).toString());
+                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
+                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
+                                paths.add(folderPath);
                             }
                         }
                     }
-                    Collection<Fault> faults = oper.getFaults().values();
-                    for (Fault fault : faults) {
+                    for (Fault fault : (Collection<Fault>) oper.getFaults().values()) {
                         Message faultMsg = fault.getMessage();
                         if (faultMsg != null) {
                             QName parameterFromMessage = getParameterFromMessage(faultMsg);
                             if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
-                                        portType.getQName().getLocalPart(), oper.getName());
-                                paths.add(new Path(folderPath).toString());
+                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
+                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
+                                paths.add(folderPath);
                             }
                         }
                     }
@@ -279,7 +277,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return null;
     }
 
-    private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
+    @SuppressWarnings("unchecked")
+	private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
         Map<String, File> fileToSchemaMap = new HashMap<String, File>();
         File zip = null;
         final SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
@@ -291,19 +290,17 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	            fileToSchemaMap.put(schema.getTargetNamespace(), file);
 	            populationUtil.addSchema(file.getPath());
 	        }
-	
-	        zip = File.createTempFile("tempXSDFile", ".zip");
-	        Collection<File> files = fileToSchemaMap.values();
-	        org.talend.utils.io.FilesUtils.zips(files.toArray(new File[files.size()]), zip.getPath());
-	
-	        final Set<QName> alreadyCreated = new HashSet<QName>();
-	        Collection<Binding> bindings = wsdlDefinition.getBindings().values();
-	        Set<PortType> portTypes = new HashSet<PortType>(bindings.size());
-	        for (Binding binding : bindings) {
-	            PortType portType = binding.getPortType();
-	            if (portTypes.add(portType)) {
-	                Collection<BindingOperation> operations = binding.getBindingOperations();
-	                for (BindingOperation operation : operations) {
+
+            zip = File.createTempFile("tempXSDFile", ".zip");
+            Collection<File> files = fileToSchemaMap.values();
+            org.talend.utils.io.FilesUtils.zips(files.toArray(new File[files.size()]), zip.getPath());
+
+            final Set<QName> portTypes = new HashSet<QName>();
+            final Set<QName> alreadyCreated = new HashSet<QName>();
+            for (Binding binding : (Collection<Binding>) wsdlDefinition.getBindings().values()) {
+                final QName portType = binding.getPortType().getQName();
+                if (portTypes.add(portType)) {
+                    for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
 	                    Operation oper = operation.getOperation();
 	                    Input inDef = oper.getInput();
 	                    if (inDef != null) {
@@ -314,7 +311,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
 	                                }
 	                            }
 	                        }
@@ -328,20 +325,19 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
 	                                }
 	                            }
 	                        }
 	                    }
-	                    Collection<Fault> faults = oper.getFaults().values();
-	                    for (Fault fault : faults) {
+                        for (Fault fault : (Collection<Fault>) oper.getFaults().values()) {
 	                        Message faultMsg = fault.getMessage();
 	                        if (faultMsg != null) {
 	                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getQName().getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
+			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
 	                                }
 	                            }
 	                        }
@@ -591,24 +587,19 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         }
     }
 
-    private String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
+    private static final Pattern PATTERN_TOREPLACE = Pattern.compile("[^a-zA-Z0-9]"); //$NON-NLS-1$
+
+    private static String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
 
         String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr; //$NON-NLS-1$
-        columnName = columnName.replaceAll("[^a-zA-Z0-9]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        columnName = PATTERN_TOREPLACE.matcher(columnName).replaceAll("_"); //$NON-NLS-1$
 
-        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(columnName,
-                fullSchemaTargetList) {
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.talend.commons.utils.data.list.UniqueStringGenerator#getBeanString(java.lang.Object)
-             */
+        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(
+                columnName, fullSchemaTargetList) {
             @Override
             protected String getBeanString(MetadataColumn bean) {
                 return bean.getLabel();
             }
-
         };
         columnName = uniqueStringGenerator.getUniqueString();
         return columnName;
