@@ -198,39 +198,41 @@ public class XmlTableForm extends Composite {
             }
         });
         table.addControlListener(new ControlAdapter() {
+            @Override
             public void controlResized(ControlEvent e) {
                 table.getColumns()[0].setWidth(table.getClientArea().width - 2*table.getBorderWidth());
             }
         });
 
         selectAllTablesButton.addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                for (TableItem tableItem : table.getItems()) {
-                    tableItem.setChecked(true);
-                    ((Item) tableItem.getData()).setCheck(true);
-                }
-                if (null != completeListener) {
-                    completeListener.setComplete(true);
-                }
+                setChecked(true);
             }
         });
 
         selectNoneTablesButton.addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                for (TableItem tableItem : table.getItems()) {
-                    tableItem.setChecked(false);
-                    ((Item) tableItem.getData()).setCheck(false);
-                }
-                if (null != completeListener) {
-                    completeListener.setComplete(false);
-                }
+                setChecked(false);
             }
-
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setChecked(boolean checked) {
+        for (TableItem tableItem : table.getItems()) {
+            // update only rendered items
+            if (null != tableItem.getData()) {
+                tableItem.setChecked(checked);
+            }
+        }
+        for (Item item : (List<Item>) table.getData()) {
+            item.setCheck(checked);
+        }
+        if (null != completeListener) {
+            completeListener.setComplete(checked);
+        }
     }
 
     public Collection<XmlFileConnectionItem> getSelectionItems() {
