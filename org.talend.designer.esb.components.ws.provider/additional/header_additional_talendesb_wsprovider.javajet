@@ -20,33 +20,6 @@ boolean actAsProvider = !process.getNodesOfType("tESBProviderRequestLoop").isEmp
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 %>
 
-<% if (!actAsConsumer) { %>
-	private ESBEndpointRegistry registry = null;
-
-	public void setEndpointRegistry(ESBEndpointRegistry registry) {
-	}
-
-	private Object wrapPayload(Object payload, Object customProperties) {
-		java.util.Map<String, Object> outputWrapped = new java.util.HashMap<String, Object>();
-		outputWrapped.put("PAYLOAD", payload);
-		if (null != customProperties) {
-			outputWrapped.put("SAM-PROPS", customProperties);
-		}
-		return outputWrapped;
-	}
-<% } %>
-
-<%
-if (actAsProvider
-	|| !process.getNodesOfType("tESBProviderResponse").isEmpty()
-	|| !process.getNodesOfType("tESBProviderFault").isEmpty()) { %>
-	interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
-		void setCustomProperties(java.util.Map<String, String> props);
-		void sendFault(Throwable e);
-		void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
-	}
-<% } %>
-
 <% if (actAsProvider) { %>
 	private ESBProviderCallback callback = null;
 
@@ -388,6 +361,12 @@ public class ESBProvider_<%=cid%> implements
 	}
 }
 
+interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
+	void setCustomProperties(java.util.Map<String, String> props);
+	void sendFault(Throwable e);
+	void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
+}
+
 public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbackTalendJobInner {
 
 	private final String TNS = ESBProvider_<%=cid%>.class.getAnnotation(
@@ -537,5 +516,21 @@ class HandlerThread_<%=cid%> extends Thread {
 		}
 	}
 }
+
+<% if (!actAsConsumer) { %>
+	private ESBEndpointRegistry registry = null;
+
+	public void setEndpointRegistry(ESBEndpointRegistry registry) {
+	}
+
+	private Object wrapPayload(Object payload, Object customProperties) {
+		java.util.Map<String, Object> outputWrapped = new java.util.HashMap<String, Object>();
+		outputWrapped.put("PAYLOAD", payload);
+		if (null != customProperties) {
+			outputWrapped.put("SAM-PROPS", customProperties);
+		}
+		return outputWrapped;
+	}
+<% } %>
 
 <% } // end if (actAsProvider) %>
