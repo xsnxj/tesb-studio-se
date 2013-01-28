@@ -204,16 +204,8 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
 
     public void createControl(Composite parent) {
         Composite wsdlComposite = new Composite(parent, SWT.NONE);
-//        wsdlComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // WSDL URL
-        int wsdlUrlcompositeColumn = 4;
-        if (WebServiceComponentPlugin.hasRepositoryServices()) {
-            wsdlUrlcompositeColumn = 5;
-        }
-        GridLayout layout = new GridLayout(wsdlUrlcompositeColumn, false);
-        wsdlComposite.setLayout(layout);
-
         // 3 columns
         wsdlField = new LabelledFileField(wsdlComposite, "WSDL:",
             new String[] { "*.wsdl", "*.*" }, //$NON-NLS-1$  //$NON-NLS-2$
@@ -241,14 +233,20 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             wsdlField.setText(wsdlUrl);
         }
 
+        int wsdlUrlcompositeColumn = 4;
         // TESB-3590，gliu
         if (WebServiceComponentPlugin.hasRepositoryServices()) {
+            wsdlUrlcompositeColumn = 5;
+
             servicebut = new Button(wsdlComposite, SWT.PUSH | SWT.CENTER);
             servicebut.setText(Messages.getString("WebServiceUI.Services"));
         }
 
         refreshbut = new Button(wsdlComposite, SWT.PUSH | SWT.CENTER);
         refreshbut.setImage(ImageProvider.getImage(EImage.REFRESH_ICON));
+
+        GridLayout layout = new GridLayout(wsdlUrlcompositeColumn, false);
+        wsdlComposite.setLayout(layout);
 
         // add port name UI
         portNameLabel = new Label(wsdlComposite, SWT.NONE);
@@ -479,19 +477,16 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                     if (open == Dialog.OK) {
                         RepositoryNode result = dialog.getResult();
                         Item item = result.getObject().getProperty().getItem();
-                        if (GlobalServiceRegister.getDefault()
-                                .isServiceRegistered(IESBService.class)) {
-                            IESBService service = (IESBService) GlobalServiceRegister
-                                    .getDefault().getService(IESBService.class);
-                            String wsdlFilePath = service.getWsdlFilePath(item);
-                            if (wsdlFilePath != null) {
-                                wsdlField
-                                        .getTextControl()
-                                        .setText(
-                                                TalendTextUtils.addQuotes(PathUtils
-                                                        .getPortablePath(wsdlFilePath)));
-                                refresh();
-                            }
+                        IESBService service = (IESBService) GlobalServiceRegister
+                                .getDefault().getService(IESBService.class);
+                        String wsdlFilePath = service.getWsdlFilePath(item);
+                        if (wsdlFilePath != null) {
+                            wsdlField
+                                    .getTextControl()
+                                    .setText(
+                                            TalendTextUtils.addQuotes(PathUtils
+                                                    .getPortablePath(wsdlFilePath)));
+                            refresh();
                         }
                     }
                 }
