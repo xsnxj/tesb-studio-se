@@ -160,9 +160,17 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="5"
+		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="30"
 				REQUIRED="false" NB_LINES="5"
-				SHOW_IF="SERVICE_LOCATOR == 'true'">
+				SHOW_IF="SERVICE_LOCATOR == 'true'" GROUP="CUSTOM_PROPERTIES">
+			<ITEMS>
+				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
+				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="40"
+				REQUIRED="false" NB_LINES="5"
+				SHOW_IF="SERVICE_ACTIVITY_MONITOR == 'true'" GROUP="CUSTOM_PROPERTIES">
 			<ITEMS>
 				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
 				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
@@ -192,6 +200,14 @@
 
 	<CODEGENERATION>
 		 <IMPORTS>
+		 	<IMPORT NAME="sam-agent"
+					MODULE="sam-agent-5.2.1.jar"
+					BundleID="sam-agent"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true' " />
+			<IMPORT NAME="sam-common"
+					MODULE="sam-common-5.2.1.jar"
+					BundleID="sam-common"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true' " />
 			<IMPORT NAME="locator"
 					MODULE="locator-5.2.1.jar"
 					BundleID="locator"

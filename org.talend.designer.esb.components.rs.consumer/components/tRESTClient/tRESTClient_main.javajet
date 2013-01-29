@@ -87,20 +87,27 @@ try {
 
 	final java.util.List<org.apache.cxf.feature.AbstractFeature> features_<%=cid%> =
 		new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+	
+	<%
+		boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
+		boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
+		if(isSLEnable || isSAMEnable){
+	%>
+			boolean inOSGi = false;
+			try {
+				inOSGi = (null != factoryBean_tRESTClient_1.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+			} catch (ClassNotFoundException e) {
+				; // ignore
+			}
+	<%
+		}
+	%>
 
-	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
-
+	<% if (isSLEnable) { %>
 		factoryBean_<%=cid%>.setAddress("locator://rest");
 		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
 			<%=ElementParameterParser.getValue(node,"__SERVICE_NAMESPACE__")%>,
 			<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>));
-
-		boolean inOSGi = false;
-		try {
-			inOSGi = (null != factoryBean_tRESTClient_1.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
-		} catch (ClassNotFoundException e) {
-			; // ignore
-		}
 
 		if (!inOSGi) {
 			String studioHome = "<%= System.getProperties().get("eclipse.home.location") %>";
@@ -134,10 +141,28 @@ try {
 
 		features_<%=cid%>.add(feature_<%=cid%>);
 	<% } %>
-	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"))) { %>
-		if(null != samEventFeature){
-			features_<%=cid%>.add(samEventFeature);
+	<% if (isSAMEnable) { %>
+	//add SAM feature for <%=cid%>
+	{
+		org.springframework.context.support.ClassPathXmlApplicationContext context = null;
+		if (inOSGi) {
+			context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-osgi.xml");
+		} else {
+			context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
 		}
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature  = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
+		<% if (!samCustomProperties.isEmpty()) { %>
+			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (int k = 0; k < samCustomProperties.size(); k++) { %>
+				samCustomProps_<%=cid%>.put(<%=samCustomProperties.get(k).get("PROP_NAME")%>, <%=samCustomProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
+			samEventFeature.setHandler(ciHandler);
+		<% } %>
+		features_<%=cid%>.add(samEventFeature);
+	}
 	<% } %>
 
 	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
