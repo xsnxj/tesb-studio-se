@@ -191,8 +191,26 @@ public class WSDLLoader {
 									String attrValueOld = schemaNode.getAttribute(attrName);
 									if(attrName.startsWith("xmlns") && !attrValueNew.equals(attrValueOld)) {
 										String prefixOld = attrName.substring(attrName.indexOf(':') + 1);
-										String prefixNew = generatePrefix(schemaIncluded, prefixOld);
-										schemaNode.setAttribute("xmlns:" + prefixNew, attrValueNew);
+										String prefixNew = null;
+										// looking for existing prefix
+										NamedNodeMap nnmSchema = schemaNode.getAttributes();
+										for(int j = 0; j < nnmSchema.getLength(); ++j) {
+											Node attrSchema = nnmSchema.item(j);
+											String attrNameSchema = attrSchema.getNodeName();
+											if(attrNameSchema.startsWith("xmlns") && attrValueNew.equals(attrSchema.getNodeValue())) {
+												int index = attrNameSchema.indexOf(':');
+												if (-1 != index) {
+													prefixNew = attrNameSchema.substring(attrNameSchema.indexOf(':') + 1);
+												} else {
+													prefixNew = "";
+												}
+												break;
+											}
+										}
+										if (null == prefixNew) {
+											prefixNew = generatePrefix(schemaIncluded, prefixOld);
+											schemaNode.setAttribute("xmlns:" + prefixNew, attrValueNew);
+										}
 										prefixMapping.put(prefixOld, prefixNew);
 									}
 								} else {
@@ -266,16 +284,28 @@ public class WSDLLoader {
 
 	private static final void fixPrefixes(final Element element, Map<String, String> prefixMapping) {
 		NamedNodeMap nnm = element.getAttributes();
+		// update element name
+		String prefix = element.getPrefix();
+		String prefixNew = prefixMapping.get(prefix);
+		if(prefixNew != null) {
+			element.setPrefix(prefixNew);
+		}
+		// update values
 		for(int i = 0; i < nnm.getLength(); ++i) {
 			Node attr = nnm.item(i);
 			String value = attr.getNodeValue(); 
 			if(value != null) {
+				// TODO: support for default namespace?
 				int index = value.indexOf(':');
 				if(index != -1) {
 					String prefixOld = value.substring(0, index);
-					String prefixNew = prefixMapping.get(prefixOld);
+					/*String*/ prefixNew = prefixMapping.get(prefixOld);
 					if(prefixNew != null) {
-						attr.setNodeValue(prefixNew + ':' + value.substring(index + 1));
+						if ("".equals(prefixNew)) {
+							attr.setNodeValue(value.substring(index + 1));
+						} else {
+							attr.setNodeValue(prefixNew + ':' + value.substring(index + 1));
+						}
 					}
 				}
 			}
