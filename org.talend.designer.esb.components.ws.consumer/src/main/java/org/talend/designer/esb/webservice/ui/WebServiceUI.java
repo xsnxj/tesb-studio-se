@@ -48,7 +48,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -65,11 +64,9 @@ import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
-import org.talend.core.model.metadata.builder.connection.WSDLSchemaConnection;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
 import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.ContextParameterUtils;
@@ -77,7 +74,6 @@ import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.prefs.ITalendCorePrefConstants;
 import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
-import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.i18n.Messages;
@@ -135,8 +131,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
 
     private String currentPortName;
 
-    private WSDLSchemaConnection connection = null;
-
     private Definition definition;
 
     public WebServiceUI(WebServiceComponent webServiceComponent) {
@@ -144,11 +138,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         setTitle("Configure component with Web Service operation");
         this.webServiceComponent = webServiceComponent;
         initWebserviceUI();
-    }
-
-    public WebServiceUI(WebServiceComponent webServiceComponent, ConnectionItem connectionItem) {
-        this(webServiceComponent);
-        this.connection = (WSDLSchemaConnection) connectionItem.getConnection();
     }
 
     private void initWebserviceUI() {
@@ -222,8 +211,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
         wsdlField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 URLValue = wsdlField.getText();
-                if (connection != null)
-                    connection.setWSDL(URLValue);
             }
         });
         // add a listener for ctrl+space.
@@ -459,7 +446,7 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
                 public void widgetSelected(SelectionEvent e) {
                     // TODO
                     RepositoryReviewDialog dialog = new RepositoryReviewDialog(
-                            Display.getCurrent().getActiveShell(),
+                            getShell(),
                             ERepositoryObjectType.METADATA,
                             "SERVICES:OPERATION") {
                         @Override
@@ -519,11 +506,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             public void widgetSelected(SelectionEvent e) {
                 TableItem[] item = portListTable.getSelection();
                 currentPortName = (String) item[0].getData();
-                if (connection != null) {
-                    if (!updateConnection()) {
-                        connection.setPortName("");
-                    }
-                }
                 List<Function> portFunctions = new ArrayList<Function>();
                 for (Function function : allFunctions) {
                     if (currentPortName.equals(function.getPortName())) {
@@ -580,34 +562,17 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
     }
 
     private String parseContextParameter(final String contextValue) {
-        String url = "";
-        IContextManager contextManager = null;
-        if (webServiceComponent.getProcess() == null) {
-            // contextManager = contextModeManager.getSelectedContextType().getContextParameter(); //
-            // connection.get
-            // IContextManager contextManager
-            ContextType contextType = ConnectionContextHelper.getContextTypeForContextMode(connection);
-            url = ConnectionContextHelper.getOriginalValue(contextType, contextValue);
-        } else {
-            contextManager = webServiceComponent.getProcess().getContextManager();
-            String currentDefaultName = contextManager.getDefaultContext().getName();
-            List<IContext> contextList = contextManager.getListContext();
-            if ((contextList != null) && (contextList.size() > 1)) {
-                currentDefaultName =
-                    ConnectionContextHelper.getContextTypeForJob(getControl().getShell(), contextManager, false);
-            }
-            // ContextSetsSelectionDialog cssd=new ContextSetsSelectionDialog(shell,,false);
-            // ContextType contextType=ConnectionContextHelper.getContextTypeForContextMode(connector);
-            IContext context = contextManager.getContext(currentDefaultName);
-            url = ContextParameterUtils.parseScriptContextCode(contextValue, context);
-
+        IContextManager contextManager = webServiceComponent.getProcess().getContextManager();
+        String currentDefaultName = contextManager.getDefaultContext().getName();
+        List<IContext> contextList = contextManager.getListContext();
+        if ((contextList != null) && (contextList.size() > 1)) {
+            currentDefaultName =
+                ConnectionContextHelper.getContextTypeForJob(getShell(), contextManager, false);
         }
-
-        return url;
-    }
-
-    public Function getCurrentFunction() {
-        return currentFunction;
+        // ContextSetsSelectionDialog cssd=new ContextSetsSelectionDialog(shell,,false);
+        // ContextType contextType=ConnectionContextHelper.getContextTypeForContextMode(connector);
+        IContext context = contextManager.getContext(currentDefaultName);
+        return ContextParameterUtils.parseScriptContextCode(contextValue, context);
     }
 
     public boolean performFinish() {
@@ -615,36 +580,6 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             return false;
         }
         return populateSchema();
-    }
-
-    public Table getTable() {
-        return listTable;
-    }
-
-    public LabelledFileField getWSDLLabel(Boolean b) {
-        refreshbut.setEnabled(!b);
-        return wsdlField;
-    }
-
-    public void saveInputValue() {
-        if (connection != null) {
-            if (currentFunction != null) {
-                if (currentFunction.getName() != null) {
-                    connection.setMethodName(currentFunction.getName());
-                }
-                if (currentFunction.getServiceNameSpace() != null) {
-                    connection.setServerNameSpace(currentFunction.getServiceNameSpace());
-                }
-                if (currentFunction.getServiceName() != null) {
-                    connection.setServerName(currentFunction.getServiceName());
-                }
-                if (currentFunction.getServiceNameSpace() != null) {
-                    connection.setPortNameSpace(currentFunction.getServiceNameSpace());
-                }
-            }
-            updateConnection();
-
-        }
     }
 
     private boolean populateSchema() {
@@ -699,53 +634,40 @@ public class WebServiceUI extends WizardPage implements AbstractWebService {
             Port_Name.setValue(currentPortName);
         }
 
-        Function function = getCurrentFunction();
-        if (function != null) {
-            if (function.getNameSpaceURI() != null) {
+        if (currentFunction != null) {
+            if (currentFunction.getNameSpaceURI() != null) {
                 IElementParameter METHODPara = webServiceComponent.getElementParameter("METHOD_NS");
-                METHODPara.setValue(function.getNameSpaceURI());
+                METHODPara.setValue(currentFunction.getNameSpaceURI());
             }
-            if (function.getName() != null) {
+            if (currentFunction.getName() != null) {
                 IElementParameter METHODPara = webServiceComponent.getElementParameter("METHOD");
-                METHODPara.setValue(function.getName());
+                METHODPara.setValue(currentFunction.getName());
             }
-            if (function.getServiceNameSpace() != null) {
+            if (currentFunction.getServiceNameSpace() != null) {
                 IElementParameter Service_NS = webServiceComponent.getElementParameter("SERVICE_NS");
-                Service_NS.setValue(function.getServiceNameSpace());
+                Service_NS.setValue(currentFunction.getServiceNameSpace());
             }
-            if (function.getServiceName() != null) {
+            if (currentFunction.getServiceName() != null) {
                 IElementParameter Service_Name = webServiceComponent.getElementParameter("SERVICE_NAME");
-                Service_Name.setValue(function.getServiceName());
+                Service_Name.setValue(currentFunction.getServiceName());
             }
-            if (function.getServiceNameSpace() != null) {
+            if (currentFunction.getServiceNameSpace() != null) {
                 IElementParameter Port_NS = webServiceComponent.getElementParameter("PORT_NS");
-                Port_NS.setValue(function.getServiceNameSpace());
+                Port_NS.setValue(currentFunction.getServiceNameSpace());
             }
 
             IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
-            Soap_Action.setValue(function.getSoapAction());
+            Soap_Action.setValue(currentFunction.getSoapAction());
 
             IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
             if (esbEndpoint != null) {
-                esbEndpoint.setValue(TalendTextUtils.addQuotes(function.getAddressLocation()));
+                esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
             }
             IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
             if (commStyle != null) {
-                commStyle.setValue(function.getCommunicationStyle());
+                commStyle.setValue(currentFunction.getCommunicationStyle());
             }
 
-        }
-        return true;
-    }
-
-    private boolean updateConnection() {
-        if (currentPortName != null) {
-            connection.setPortName(currentPortName);
-        } else if (currentPortName == null && !allPortNames.isEmpty()) {
-            currentPortName = allPortNames.get(0);
-            connection.setPortName(currentPortName);
-        } else {
-            return false;
         }
         return true;
     }
