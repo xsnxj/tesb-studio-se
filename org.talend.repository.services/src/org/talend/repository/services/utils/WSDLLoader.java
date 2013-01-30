@@ -127,7 +127,7 @@ public class WSDLLoader {
 						if (!importedSchemas.containsKey(schemaNS)) {
 							try {
 								URL schemaURL = getURL(ownerFile, schemaLocation);
-								Element schemaElement = loadSchema(schemaURL);
+								Element schemaElement = loadSchema(schemaURL, false);
 								Element schemaImported =
 									(Element)ownerSchemaNode.getOwnerDocument().importNode(
 											schemaElement, true);
@@ -154,10 +154,25 @@ public class WSDLLoader {
 //						throw new InvocationTargetException(new Exception(errMsg));
 					}
 
-					// remove import node
-					//importElement.getParentNode().removeChild(importElement);
+					// update import node
 					importElement.removeAttribute("schemaLocation");
-				} else if("include".equals(childNode.getLocalName())) {
+					// move up
+					Node refChild;
+					for (refChild = importElement.getPreviousSibling(); refChild != null; refChild = refChild.getPreviousSibling()) {
+						if (refChild.getNodeType() == Node.ELEMENT_NODE
+							&& XSD_NS.equals(refChild.getNamespaceURI())
+							&& "import".equals(refChild.getLocalName())) {
+							refChild = refChild.getNextSibling();
+							break;
+						}
+					}
+					if (null == refChild) {
+						for (refChild = importElement.getParentNode().getFirstChild();
+								refChild.getNodeType() != Node.ELEMENT_NODE; refChild = refChild.getNextSibling()) {
+						}
+					}
+					importElement.getParentNode().insertBefore(importElement, refChild);
+				} else if ("include".equals(childNode.getLocalName())) {
 					Element includeElement = (Element)childNode;
 
 					String schemaLocation = includeElement.getAttribute("schemaLocation"); //$NON-NLS-1$
@@ -169,10 +184,8 @@ public class WSDLLoader {
 						URL schemaURL = getURL(ownerFile, schemaLocation);
 						final String schemaNamespace = ownerSchemaNode.getAttribute("targetNamespace");
 						Collection<URL> includedSchemas = importedSchemas.get(schemaNamespace);
-						if(!includedSchemas.contains(schemaURL)) {
-							includedSchemas.add(schemaURL);
-
-							Element schemaIncluded = loadSchema(schemaURL);
+						if(includedSchemas.add(schemaURL)) {
+							Element schemaIncluded = loadSchema(schemaURL, true);
 							String includeNamespace = schemaIncluded.getAttribute("targetNamespace");
 							if((includeNamespace != null && includeNamespace.length() != 0) // skip chameleon schema check
 								&& !schemaNamespace.equals(includeNamespace)) {
@@ -191,30 +204,28 @@ public class WSDLLoader {
 									String attrValueOld = schemaNode.getAttribute(attrName);
 									if(attrName.startsWith("xmlns") && !attrValueNew.equals(attrValueOld)) {
 										String prefixOld = attrName.substring(attrName.indexOf(':') + 1);
-										String prefixNew = null;
 										// looking for existing prefix
-										NamedNodeMap nnmSchema = schemaNode.getAttributes();
-										for(int j = 0; j < nnmSchema.getLength(); ++j) {
-											Node attrSchema = nnmSchema.item(j);
-											String attrNameSchema = attrSchema.getNodeName();
-											if(attrNameSchema.startsWith("xmlns") && attrValueNew.equals(attrSchema.getNodeValue())) {
-												int index = attrNameSchema.indexOf(':');
-												if (-1 != index) {
-													prefixNew = attrNameSchema.substring(attrNameSchema.indexOf(':') + 1);
-												} else {
-													prefixNew = "";
-												}
-												break;
-											}
-										}
+										String prefixNew = getPrefix(schemaNode, attrValueNew);
 										if (null == prefixNew) {
 											prefixNew = generatePrefix(schemaIncluded, prefixOld);
-											schemaNode.setAttribute("xmlns:" + prefixNew, attrValueNew);
+											schemaNode.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:" + prefixNew, attrValueNew);
 										}
 										prefixMapping.put(prefixOld, prefixNew);
 									}
 								} else {
-									schemaNode.setAttribute(attrName, attrValueNew);
+									// namespace declaration
+									if(attrName.startsWith("xmlns")) {
+										// looking for existing prefix
+										String prefixNew = getPrefix(schemaNode, attrValueNew);
+										if (null != prefixNew) {
+											String prefixOld = attrName.substring(attrName.indexOf(':') + 1);
+											prefixMapping.put(prefixOld, prefixNew);
+										} else {
+											schemaNode.setAttributeNS("http://www.w3.org/2000/xmlns/", attrName, attrValueNew);
+										}
+									} else {
+										schemaNode.setAttribute(attrName, attrValueNew);
+									}
 								}
 							}
 
@@ -278,6 +289,23 @@ public class WSDLLoader {
 		return prefix;
 	}
 
+	private final static String getPrefix(final Element element, final String namespace) {
+		NamedNodeMap nnm = element.getAttributes();
+		for(int i = 0; i < nnm.getLength(); ++i) {
+			Node attr = nnm.item(i);
+			String attrNameSchema = attr.getNodeName();
+			if(attrNameSchema.startsWith("xmlns") && namespace.equals(attr.getNodeValue())) {
+				int index = attrNameSchema.indexOf(':');
+				if (-1 != index) {
+					return attrNameSchema.substring(attrNameSchema.indexOf(':') + 1);
+				} else {
+					return "";
+				}
+			}
+		}
+		return null;
+	}
+
 	private final static boolean isAttributePresent(Element element, String attribute) {
 		return (element.getAttributeNode(attribute) != null);
 	}
@@ -317,12 +345,15 @@ public class WSDLLoader {
 		}
 	}
 
-	private static final Element loadSchema(URL schemaFile) throws IOException, SAXException, ParserConfigurationException {
+	private static final Element loadSchema(URL schemaFile, boolean cleanup) throws IOException, SAXException, ParserConfigurationException {
 		InputStream is = null;
 		try {
 			is = schemaFile.openStream();
-			return getDocumentBuilder().parse(is).getDocumentElement();
-//			cleanupSchemaElement(schemaElement);
+			Element schemaElement = getDocumentBuilder().parse(is).getDocumentElement();
+			if (cleanup) {
+				cleanupSchemaElement(schemaElement);
+			}
+			return schemaElement;
 		} finally {
 			if (null != is) {
 				is.close();
@@ -330,24 +361,24 @@ public class WSDLLoader {
 		}
 	}
 
-//	private static final void cleanupSchemaElement(final Element element) {
-//		Node node = element.getFirstChild();
-//		while(node != null) {
-//			Node next = node.getNextSibling();
-//			if(Node.COMMENT_NODE == node.getNodeType()) {
-//				element.removeChild(node);
-//			} else if(Node.ELEMENT_NODE == node.getNodeType()) {
-//				Element child = (Element)node;
-//				if(XSD_NS.equals(child.getNamespaceURI())
-//						&& "annotation".equals(child.getLocalName())) {
-//					element.removeChild(child);
-//				} else {
-//					cleanupSchemaElement(child);
-//				}
-//			}
-//			node = next;
-//		}
-//	}
+	private static final void cleanupSchemaElement(final Element element) {
+		Node node = element.getFirstChild();
+		while(node != null) {
+			Node next = node.getNextSibling();
+			if(Node.COMMENT_NODE == node.getNodeType()) {
+				element.removeChild(node);
+			} else if(Node.ELEMENT_NODE == node.getNodeType()) {
+				Element child = (Element)node;
+				if(XSD_NS.equals(child.getNamespaceURI())
+						&& "annotation".equals(child.getLocalName())) {
+					element.removeChild(child);
+				} else {
+					cleanupSchemaElement(child);
+				}
+			}
+			node = next;
+		}
+	}
 
 	private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
 		if (documentBuilder == null) {
