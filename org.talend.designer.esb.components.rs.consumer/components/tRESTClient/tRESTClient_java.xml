@@ -55,7 +55,11 @@
 		</PARAMETER>
 
 
-		<PARAMETER NAME="URL" FIELD="TEXT" REQUIRED="true" NUM_ROW="10">
+		<PARAMETER NAME="URL" FIELD="TEXT" REQUIRED_IF="SERVICE_LOCATOR == 'false'" NUM_ROW="10"
+				SHOW_IF="SERVICE_LOCATOR == 'false'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PATH" FIELD="TEXT" REQUIRED="false" NUM_ROW="15">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="METHOD" FIELD="CLOSED_LIST" NUM_ROW="20">
@@ -199,23 +203,23 @@
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
-		 <IMPORTS>
-		 	<IMPORT NAME="sam-agent"
+		<IMPORTS>
+			<IMPORT NAME="sam-agent"
 					MODULE="sam-agent-5.2.1.jar"
 					BundleID="sam-agent"
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true' " />
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="sam-common"
 					MODULE="sam-common-5.2.1.jar"
 					BundleID="sam-common"
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true' " />
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="locator"
 					MODULE="locator-5.2.1.jar"
 					BundleID="locator"
-					REQUIRED="true" />
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
 					MODULE="zookeeper-3.3.6.jar"
 					BundleID="org.apache.hadoop.zookeeper"
-					REQUIRED="true" />
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
