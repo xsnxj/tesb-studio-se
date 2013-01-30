@@ -52,6 +52,9 @@ String acceptType = ElementParameterParser.getValue(node,"__ACCEPT_TYPE__");
 if (acceptType == null) {
 	acceptType = "application/xml";
 }
+String convertToDomProperty = ElementParameterParser.getValue(node,"__CONVERT_TO_DOM__");
+boolean convertToDom = convertToDomProperty == null ? true : Boolean.valueOf(convertToDomProperty);
+
 
 String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
 if (contentType == null) {
@@ -77,7 +80,7 @@ try {
 
 	// expected response body
 	Object responseDoc_<%=cid%> = null;
-	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType)) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
 
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
