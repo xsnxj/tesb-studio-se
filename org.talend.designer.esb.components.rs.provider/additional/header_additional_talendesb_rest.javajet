@@ -37,7 +37,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequestLoop");
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
 if (!httpRequestComponentsList.isEmpty()) {
 
 	final class URITemplateUtils {
@@ -445,7 +445,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String cid = tRESTRequestNode.getUniqueName();
-	//cid = cid.replaceAll("_Loop", "");
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -494,7 +493,7 @@ public static class RestServiceProviderImpl4TalendJob {
 
 			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
-			job.<%=cid%>Process(globalMap);
+			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
 
@@ -913,6 +912,55 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			sf.setResourceProvider(RestServiceProviderImpl4TalendJob.class,
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
+
+			<% boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_LOCATOR__")); %>
+			<% if (isSLEnable) { %>
+				boolean inOSGi = false;
+				try {
+					inOSGi = (null != sf.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+				} catch (ClassNotFoundException e) {
+					; // ignore
+				}
+				if (!inOSGi) {
+					String studioHome = "<%= System.getProperties().get("eclipse.home.location") %>";
+					if (!studioHome.trim().isEmpty()) {
+						ClassLoader currentThreadClassLoader = Thread.currentThread().getContextClassLoader();
+
+						// Add the conf dir to the classpath
+						// Chain the current thread classloader
+						java.net.URLClassLoader urlClassLoader = new java.net.URLClassLoader(
+								new java.net.URL[]{ new java.net.URL(studioHome + "esb/") },
+								 currentThreadClassLoader);
+
+						// Replace the thread classloader - assumes you have permissions to do so
+						Thread.currentThread().setContextClassLoader(urlClassLoader);
+					}
+					sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+				}
+				sf.setServiceName(new javax.xml.namespace.QName(
+						"<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAMESPACE__")%>",
+						"<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAME__")%>"));
+
+				org.talend.esb.servicelocator.cxf.LocatorFeature slFeature =
+					new org.talend.esb.servicelocator.cxf.LocatorFeature();
+
+				<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
+						ElementParameterParser.getObjectValue(tRESTRequestNode, "__SL_META_DATA__"); %>
+				<% if (!customProperties.isEmpty()) { %>
+						final java.util.Map<String, String> slCustomProps = new java.util.HashMap<String, String>();
+					<% for (int k = 0; k < customProperties.size(); k++) { %>
+						slCustomProps.put(<%=customProperties.get(k).get("NAME")%>, <%=customProperties.get(k).get("VALUE")%>);
+					<% } %>
+						slFeature.setAvailableEndpointProperties(slCustomProps);
+				<% } %>
+
+				final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
+					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+				features.add(slFeature);
+
+				sf.setFeatures(features);
+			<% } %>
+
 			server = sf.create();
 
 			// System.out.println("REST service [endpoint: " + endpointUrl + "] published");
