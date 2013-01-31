@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <COMPONENT>
+
 	<HEADER AUTHOR="Talend" COMPATIBILITY="ALL" PLATEFORM="ALL"
 		RELEASE_DATE="20100401A" SERIAL="" STARTABLE="true" STATUS="ALPHA"
 		VERSION="0.102">
 		<SIGNATURE />
 	</HEADER>
+
 	<FAMILIES>
 		<FAMILY>Messaging</FAMILY>
 	</FAMILIES>
+
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
+
 	<CONNECTORS>
 		<CONNECTOR CTYPE="ROUTE" MAX_INPUT="1" MAX_OUTPUT="1"
 			MIN_INPUT="0" MIN_OUTPUT="0" />
@@ -21,11 +25,14 @@
 		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
 		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
 	</CONNECTORS>
+
 	<PARAMETERS>
+
 		<PARAMETER FIELD="TEXT" NAME="URI" NUM_ROW="10">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
+
 	<ADVANCED_PARAMETERS>
 		<PARAMETER FIELD="TABLE" NAME="HOTLIBS" NB_LINES="8"
 			NUM_ROW="10">
@@ -128,23 +135,28 @@
 				</ITEM>
 			</ITEMS>
 		</PARAMETER>
+
 		<PARAMETER FIELD="CHECK" NAME="USE_CUSTOM_COMPONENT"
 			NUM_ROW="45">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER FIELD="MODULE_LIST" NAME="LIBRARY" NUM_ROW="50"
 			REQUIRED="true" SHOW_IF="USE_CUSTOM_COMPONENT=='true'">
 			<DEFAULT />
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
+
 	<CODEGENERATION>
 		<IMPORTS>
+
 			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-asm" MODULE="spring-asm-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
+
 			<IMPORT MODULE="org.osgi.core-4.2.0.jar" NAME="org.osgi.core"
 				REQUIRED="true" />
 			<IMPORT MODULE="camel-osgi-2.3.0.jar" NAME="camel-osgi"
@@ -163,11 +175,11 @@
 				NAME="spring-context-support" REQUIRED="true" />
 			<IMPORT MODULE="commons-management-1.0.jar" NAME="commons-management"
 				REQUIRED="true" />
-			<IMPORT MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
+			<IMPORT MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar" NAME="commons-logging"
 				REQUIRED="true" />
-			<IMPORT MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" />
-			<IMPORT MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" />
-			<IMPORT MODULE="slf4j-log4j12-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
+			<IMPORT MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" NAME="log4j" REQUIRED="true" />
+			<IMPORT MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" NAME="slf4j" REQUIRED="true" />
+			<IMPORT MODULE="slf4j-log4j12-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar" NAME="slf4j-log4j"
 				REQUIRED="true" />
 			<IMPORT MODULE="cxf-bundle-2.7.0.jar" NAME="cxf-bundle"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF_BUNDLE']" />
@@ -355,5 +367,6 @@
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
 		</IMPORTS>
 	</CODEGENERATION>
+
 	<RETURNS />
 </COMPONENT>

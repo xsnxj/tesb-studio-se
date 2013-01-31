@@ -1,15 +1,20 @@
 <COMPONENT>
+
 	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
 		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
 		STARTABLE="true">
 		<SIGNATURE />
 	</HEADER>
+
 	<FAMILIES>
 		<FAMILY>Messaging</FAMILY>
 	</FAMILIES>
+
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
+
 	<CONNECTORS>
 		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
 			MAX_OUTPUT="1" MIN_OUTPUT="0" />
@@ -20,16 +25,20 @@
 		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
 		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
 	</CONNECTORS>
+
 	<PARAMETERS>
 		<PARAMETER NAME="URI" FIELD="TEXT" NUM_ROW="1">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="CLIENT" FIELD="RADIO" NUM_ROW="3" REQUIRED="true">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVER" FIELD="RADIO" NUM_ROW="3" REQUIRED="true">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
+
 		<PARAMETER NAME="DISABLE_STREAM" FIELD="CHECK" NUM_ROW="5" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -51,6 +60,8 @@
 		<PARAMETER NAME="TRACE_ENABLE" FIELD="CHECK" NUM_ROW="17" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
+
 		<PARAMETER NAME="METHOD" FIELD="CLOSED_LIST" NUM_ROW="5" SHOW_IF="CLIENT == 'true'" GROUP="CLIENT_GROUP">
 			<ITEMS DEFAULT="GET">
 				<ITEM NAME="GET" VALUE="GET" />
@@ -62,15 +73,19 @@
 				<ITEM NAME="TRACE" VALUE="TRACE" />
 			</ITEMS>
 		</PARAMETER>
+
 		<PARAMETER NAME="PLAIN_TEXT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="FORM_CONTENT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="NO_CONTENT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="CONTENT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="7" SHOW_IF="((CLIENT == 'true') AND ((((NO_CONTENT=='true') OR (PLAIN_TEXT=='true')) AND ((METHOD=='POST') OR (METHOD=='PUT')))))"
 						GROUP="CLIENT_GROUP">
 			<ITEMS DEFAULT="PLAIN">
@@ -83,10 +98,12 @@
 				<ITEM NAME="OTHER" VALUE="other" />
 			</ITEMS>
 		</PARAMETER>
+
 		<PARAMETER NAME="MANUAL_CONTENT_TYPE" FIELD="TEXT" NUM_ROW="7" SHOW_IF="((CLIENT == 'true') AND ((((METHOD=='POST') OR (METHOD=='PUT')) AND ((NO_CONTENT=='true') OR (PLAIN_TEXT =='true')) AND (CONTENT_TYPE.ITEM == 'OTHER'))))"
 						GROUP="CLIENT_GROUP">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="PARAMETERS" FIELD="TABLE" NUM_ROW="8"
 			NB_LINES="8"  SHOW_IF="((CLIENT == 'true') AND ((METHOD=='DELETE') OR (METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))))"
 			GROUP="CLIENT_GROUP">
@@ -95,17 +112,22 @@
 				<ITEM NAME="VALUE" FIELD="TEXT" />
 			</ITEMS>
 		</PARAMETER>
+
 <!-- 		<PARAMETER NAME="USE_URL_ENCODER" FIELD="CHECK" NUM_ROW="8"  SHOW_IF="(METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER> -->
+
 		<PARAMETER NAME="ENCODER_CHARSET" FIELD="TEXT" NUM_ROW="9" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='DELETE') OR (METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))))"
 				GROUP="CLIENT_GROUP">
 			<DEFAULT>UTF-8</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="PLAIN_TEXT_CONTENT" FIELD="MEMO" NUM_ROW="10"  SHOW_IF="((CLIENT == 'true') AND (((METHOD=='POST') OR (METHOD=='PUT')) AND (PLAIN_TEXT=='true')))) " GROUP="CLIENT_GROUP">
 			<DEFAULT></DEFAULT>
 		</PARAMETER>
+
 	</PARAMETERS>
+
 	<ADVANCED_PARAMETERS>
 		<PARAMETER NAME="HEADERS" FIELD="TABLE" NUM_ROW="10"
 			NB_LINES="8">
@@ -115,14 +137,17 @@
 			</ITEMS>
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
+
 	<CODEGENERATION>
 		<IMPORTS>
+
 			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-asm" MODULE="spring-asm-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
+
 			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
@@ -147,8 +172,8 @@
 				REQUIRED="true" />
 			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" />
-			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="jsch" MODULE="jsch.jar" REQUIRED="true" />
@@ -156,5 +181,6 @@
 				REQUIRED_IF="SERVER=='true'" />
 		</IMPORTS>
 	</CODEGENERATION>
+
 	<RETURNS />
 </COMPONENT>

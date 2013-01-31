@@ -1,15 +1,19 @@
 <COMPONENT>
+
 	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
 		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
 		STARTABLE="true">
 		<SIGNATURE />
 	</HEADER>
+
 	<FAMILIES>
 		<FAMILY>Messaging</FAMILY>
 	</FAMILIES>
+
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
+
 	<CONNECTORS>
 		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
 			MAX_OUTPUT="1" MIN_OUTPUT="0" />
@@ -20,6 +24,7 @@
 		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
 		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
 	</CONNECTORS>
+
 	<PARAMETERS>
 		<PARAMETER NAME="ADDRESS" FIELD="TEXT" NUM_ROW="2" REQUIRED="true"
 			GROUP="SERVICE">
@@ -53,6 +58,7 @@
 			REQUIRED="false" GROUP="SERVICE" SHOW_IF="SERVICE_TYPE == 'SERVICECLASS'">
 			<DEFAULT>"beans.ServiceClass"</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="DATAFORMAT" FIELD="CLOSED_LIST" NUM_ROW="19"
 			GROUP="SERVICE">
 			<ITEMS DEFAULT="PAYLOAD">
@@ -70,6 +76,7 @@
 			NUM_ROW="19" SHOW_IF=" DATAFORMAT == 'CXF_MESSAGE' " GROUP="SERVICE">
 			<DEFAULT> (MESSAGE dataFormat plus SAM Support)</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="SPECIFY_SERVICE" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="20">
 			<DEFAULT>false</DEFAULT>
@@ -82,15 +89,18 @@
 			REQUIRED="true" SHOW_IF="SPECIFY_SERVICE == 'true'">
 			<DEFAULT>"{http://www.talend.com}PortName"</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="ENABLE_SAM" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="26" GROUP="ESB_FEATURE" READONLY="false"
 			SHOW_IF="(DATAFORMAT == 'POJO') OR (DATAFORMAT == 'PAYLOAD') OR (DATAFORMAT == 'CXF_MESSAGE')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="ENABLE_SAM_MESSAGE" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="26" GROUP="ESB_FEATURE" READONLY="true" SHOW_IF="DATAFORMAT == 'RAW'">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="ENABLE_SL" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="27" GROUP="ESB_FEATURE">
 			<DEFAULT>false</DEFAULT>
@@ -102,7 +112,9 @@
 				<ITEM NAME="VALUE" />
 			</ITEMS>
 		</PARAMETER>
+
 	</PARAMETERS>
+
 	<ADVANCED_PARAMETERS>
 		<PARAMETER NAME="ADVARGUMENTS" FIELD="TABLE" NUM_ROW="10"
 			NB_LINES="5">
@@ -113,14 +125,17 @@
 			</ITEMS>
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
+
 	<CODEGENERATION>
 		<IMPORTS>
+
 			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-asm" MODULE="spring-asm-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
+
 			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
@@ -141,8 +156,8 @@
 				REQUIRED="true" />
 			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" />
-			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" REQUIRED="true" />
 			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="talend-camel-cxf" MODULE="camel-cxf-alldep-2.10.2.jar"
