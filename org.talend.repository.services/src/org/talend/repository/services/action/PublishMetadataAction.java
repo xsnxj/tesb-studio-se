@@ -28,6 +28,7 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -42,7 +43,7 @@ public class PublishMetadataAction extends AContextualAction {
 
     private Shell shell;
 
-    private String wsdlLocation;
+    private ServiceItem serviceItem;
 
     public PublishMetadataAction() {
         super();
@@ -67,8 +68,7 @@ public class PublishMetadataAction extends AContextualAction {
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES
                 && node.getObject() != null
                 && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
-            // load definition later
-            wsdlLocation = WSDLUtils.getWsdlFile(node).getLocationURI().toString();
+            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             shell = viewer.getTree().getShell();
             setEnabled(true);
         }
@@ -77,7 +77,8 @@ public class PublishMetadataAction extends AContextualAction {
     @Override
     protected void doRun() {
         try {
-            new ProgressMonitorDialog(null).run(true, true, new PublishMetadataRunnable(WSDLUtils.getDefinition(wsdlLocation), shell));
+            new ProgressMonitorDialog(null).run(true, true,
+                new PublishMetadataRunnable(WSDLUtils.getDefinition(serviceItem), shell));
         } catch (CoreException e) {
             ExceptionHandler.process(e);
         } catch (InvocationTargetException e) {

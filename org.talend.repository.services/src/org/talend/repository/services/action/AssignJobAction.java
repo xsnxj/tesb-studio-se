@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -249,7 +250,7 @@ public class AssignJobAction extends AbstractCreateAction {
                 }
             }
 
-            String wsdlPath = WSDLUtils.getWsdlFile(repositoryNode).getLocation().toPortableString();
+            IFile wsdlPath = WSDLUtils.getWsdlFile(serviceItem);
             Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                     ((OperationRepositoryObject) repositoryNode.getObject()).getName(), portName);
 

@@ -23,6 +23,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
@@ -57,13 +58,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports,
-            ServiceConnection serviceConnection, File wsdl, String studioServiceName) throws IOException, CoreException {
+            ServiceConnection serviceConnection, IFile wsdl, String studioServiceName) throws IOException, CoreException {
 
         // TODO: support multiport!!!
         Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
         // TODO: do this in looooooooop!!!
 
-        Definition def = WSDLUtils.getDefinition(wsdl.getAbsolutePath());
+        Definition def = WSDLUtils.getDefinition(wsdl);
         String serviceName = null;
         String serviceNS = null;
         String endpointAddress = null;

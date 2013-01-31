@@ -38,6 +38,8 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
 
     private ServiceExportWithMavenManager manager;
 
+    private final RepositoryNode serviceNode;
+
     /**
      * DOC ycbai ExportServiceWithMavenAction constructor comment.
      * 
@@ -51,6 +53,7 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
         super(exportChoiceMap, node, targetPath);
         this.manager = manager;
         this.manager.setMavenGroupId(this.getGroupId());
+        serviceNode = node;
     }
 
     @Override

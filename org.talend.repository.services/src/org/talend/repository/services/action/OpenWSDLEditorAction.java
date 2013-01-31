@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.ui.part.FileEditorInput;
@@ -83,14 +82,15 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
                     }
                     String editorName = editor.getEditorInput().getName();
                     IProxyRepositoryFactory repFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
-                    Iterator it = scriptList.iterator();
+                    Iterator<ServiceItem> it = scriptList.iterator();
                     try {
                         while (it.hasNext()) {
-                            ServiceItem serviceItem = (ServiceItem) it.next();
+                            ServiceItem serviceItem = it.next();
                             String name = editorName.substring(0, editorName.lastIndexOf("_"));
                             if (name.equals(serviceItem.getProperty().getLabel())) {
                                 repFactory.unlock(serviceItem);
                                 it.remove();
+                                break;
                             }
                         }
                     } catch (Exception e) {
@@ -170,25 +170,24 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
             return;
         }
         ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
-        LocalWSDLEditor wsdlEditor = null;
-        IFile file = WSDLUtils.getWsdlFile(repositoryNode);
+        IFile file = WSDLUtils.getWsdlFile(serviceItem);
         IEditorInput editorInput = new FileEditorInput(file);
-        WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         try {
             IEditorPart editor = page.openEditor(editorInput, ID, true);
             if (editor instanceof LocalWSDLEditor) {
-                wsdlEditor = (LocalWSDLEditor) editor;
+                LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
                 wsdlEditor.setServiceItem(serviceItem);
                 wsdlEditor.setRepositoryNode(repositoryNode);
                 wsdlEditor.addListener();
-            }
-            // lock
-            if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
-                // TO BE REMOVED and Checked but the above line does the lock already so no need to do it twice.
-                DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
-                scriptList.add(serviceItem);
-            } else {
-                wsdlEditor.setReadOnly(true);
+                // lock
+                if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
+                    // TO BE REMOVED and Checked but the above line does the lock already so no need to do it twice.
+                    DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
+                    scriptList.add(serviceItem);
+                } else {
+                    wsdlEditor.setReadOnly(true);
+                }
             }
         } catch (CoreException e) {
             ExceptionHandler.process(e);

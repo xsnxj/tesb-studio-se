@@ -14,6 +14,7 @@ package org.talend.repository.services.action;
 
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.geometry.Point;
@@ -152,7 +153,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
             final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST), fileEditorInput.getLoadedProcess());
 
             final RepositoryNode portNode = nodeOperation.getParent();
-            String wsdlPath = WSDLUtils.getWsdlFile(nodeOperation).getLocation().toPortableString();
+            ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
+            IFile wsdlPath = WSDLUtils.getWsdlFile(serviceItem);
             Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                     ((OperationRepositoryObject) nodeOperation.getObject()).getName(), portNode.getObject().getLabel());
             setProviderRequestComponentConfiguration(nodeProviderRequest, serviceParameters);
@@ -181,7 +183,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 }
             }
 
-            ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
             ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
             final String parentPortName = portNode.getObject().getLabel();
             for (ServicePort port : serviceConnection.getServicePort()) {

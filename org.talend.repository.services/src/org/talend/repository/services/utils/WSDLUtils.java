@@ -12,7 +12,8 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,31 +31,21 @@ import javax.wsdl.xml.WSDLReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.properties.ByteArray;
-import org.talend.core.model.properties.PropertiesFactory;
-import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.repository.model.ResourceModelUtils;
 import org.talend.repository.ProjectManager;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.xml.sax.InputSource;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -85,7 +76,7 @@ public class WSDLUtils {
 
     public static final String REQUEST_RESPONSE = "request-response"; //$NON-NLS-1$
 
-    public static Map<String, String> getServiceOperationParameters(String wsdlURI, String operationName, String portTypeName)
+    public static Map<String, String> getServiceOperationParameters(IFile wsdlURI, String operationName, String portTypeName)
             throws CoreException {
         // NOTE: all below in assuming standalone (no another WSDL's imports) WS-I complaint WSDL !
         Map<String, String> map = new HashMap<String, String>();
@@ -106,7 +97,7 @@ public class WSDLUtils {
                     map.put(PORT_NAME, port.getName());
                     map.put(PORT_NS, targetNs);
                     map.put(OPERATION_NAME, operationName);
-                    map.put(WSDL_LOCATION, wsdlURI);
+                    map.put(WSDL_LOCATION, wsdlURI.getLocation().toPortableString());
 
                     BindingOperation bindingOperation = port.getBinding().getBindingOperation(operationName, null, null);
                     map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput()) ? ONE_WAY : REQUEST_RESPONSE);
@@ -161,152 +152,114 @@ public class WSDLUtils {
         return isValid;
     }
 
-    public static IFile getWsdlFile(IRepositoryViewObject serviceViewObject) {
-        ServiceItem serviceItem = (ServiceItem) serviceViewObject.getProperty().getItem();
+    public static IFile getWsdlFile(IRepositoryNode repositoryNode) {
+        return getWsdlFile(repositoryNode.getObject());
+    }
+
+    private static IFile getWsdlFile(IRepositoryViewObject serviceViewObject) {
+        return getWsdlFile((ServiceItem) serviceViewObject.getProperty().getItem());
+    }
+
+    public static IFile getWsdlFile(ServiceItem serviceItem) {
         IProject currentProject = ProjectManager.getInstance().getResourceProject(serviceItem);
-//        List<ReferenceFileItem> list = serviceItem.getReferenceResources();
-//        for (ReferenceFileItem item : list) {
-//            IPath path = Path.fromOSString(item.eResource().getURI().path());
-//        }
         String foldPath = serviceItem.getState().getPath();
         String folder = "";
         if (!foldPath.equals("")) {
             folder = "/" + foldPath;
         }
         IFile file = currentProject.getFolder("services" + folder).getFile(
-                serviceViewObject.getProperty().getLabel() + "_" + serviceViewObject.getProperty().getVersion() + ".wsdl");
-        if (!file.exists()) {
-            // copy file to item
-            IFile fileTemp = null;
-            try {
-                folder = "";
-                if (!foldPath.equals("")) {
-                    folder = "/" + foldPath;
-                }
-                fileTemp = currentProject.getFolder("services" + folder)
-                        .getFile(
-                                serviceViewObject.getProperty().getLabel() + "_" + serviceViewObject.getProperty().getVersion()
-                                        + ".wsdl");
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-                if (!fileTemp.exists()) {
-                    fileTemp.create(byteArrayInputStream, true, null);
-                } else {
-                    fileTemp.delete(true, null);
-                    fileTemp.create(byteArrayInputStream, true, null);
-                }
-            } catch (CoreException e) {
-                ExceptionHandler.process(e);
-            }
-            //
-            ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-            createReferenceFileItem.setContent(byteArray);
-            createReferenceFileItem.setExtension("wsdl");
-            serviceItem.getReferenceResources().add(createReferenceFileItem);
-            createReferenceFileItem.getContent().setInnerContent(new byte[0]);
-            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-            try {
-                factory.save(serviceItem);
-            } catch (PersistenceException e) {
-                ExceptionHandler.process(e);
-            }
-        }
+                serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+//        if (!file.exists()) {
+//            // copy file to item
+//            IFile fileTemp = null;
+//            try {
+//                folder = "";
+//                if (!foldPath.equals("")) {
+//                    folder = "/" + foldPath;
+//                }
+//                fileTemp = currentProject.getFolder("services" + folder).getFile(
+//                        serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+//                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+//                if (!fileTemp.exists()) {
+//                    fileTemp.create(byteArrayInputStream, true, null);
+//                } else {
+//                    fileTemp.delete(true, null);
+//                    fileTemp.create(byteArrayInputStream, true, null);
+//                }
+//            } catch (CoreException e) {
+//                ExceptionHandler.process(e);
+//            }
+//            //
+//            ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+//            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+//            referenceFileItem.setContent(byteArray);
+//            referenceFileItem.setExtension("wsdl");
+//            serviceItem.getReferenceResources().add(referenceFileItem);
+//            referenceFileItem.getContent().setInnerContent(new byte[0]);
+//            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+//            try {
+//                factory.save(serviceItem);
+//            } catch (PersistenceException e) {
+//                ExceptionHandler.process(e);
+//            }
+//        }
         return file;
     }
 
-    public static IFile getWsdlFile(IRepositoryNode repositoryNode) {
-        return getWsdlFile(repositoryNode.getObject());
+    public static Definition getDefinition(ServiceItem serviceItem) throws CoreException {
+        return getDefinition(getWsdlFile(serviceItem));
     }
 
-    public static IFile getWsdlFile(ServiceItem serviceItem) {
-        try {
-            IProject currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-            List<ReferenceFileItem> list = serviceItem.getReferenceResources();
-            for (ReferenceFileItem item : list) {
-                IPath path = Path.fromOSString(item.eResource().getURI().path());
-            }
-            String foldPath = serviceItem.getState().getPath();
-            String folder = "";
-            if (!foldPath.equals("")) {
-                folder = "/" + foldPath;
-            }
-            IFile file = currentProject.getFolder("services" + folder).getFile(
-                    serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
-            if (!file.exists()) {
-                // copy file to item
-                IFile fileTemp = null;
-                try {
-                    folder = "";
-                    if (!foldPath.equals("")) {
-                        folder = "/" + foldPath;
-                    }
-                    fileTemp = currentProject.getFolder("services" + folder).getFile(
-                            serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
-                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-                    if (!fileTemp.exists()) {
-                        fileTemp.create(byteArrayInputStream, true, null);
-                    } else {
-                        fileTemp.delete(true, null);
-                        fileTemp.create(byteArrayInputStream, true, null);
-                    }
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
-                }
-                //
-                ReferenceFileItem createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-                ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-                createReferenceFileItem.setContent(byteArray);
-                createReferenceFileItem.setExtension("wsdl");
-                serviceItem.getReferenceResources().add(createReferenceFileItem);
-                createReferenceFileItem.getContent().setInnerContent(new byte[0]);
-                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-                try {
-                    factory.save(serviceItem);
-                } catch (PersistenceException e) {
-                    ExceptionHandler.process(e);
-                }
-            }
-            return file;
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        }
-        return null;
-    }
+//    public static Definition getDefinition(String pathToWsdl) throws CoreException {
+//        try {
+//            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+//            WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+//
+//            newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+//            newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+//            return newWSDLReader.readWSDL(pathToWsdl);
+//        } catch (WSDLException e) {
+//            throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+//        }
+//    }
 
-    public static Definition getDefinition(String pathToWsdl) throws CoreException {
-        Definition definition = null;
+    public static Definition getDefinition(IFile pathToWsdl) throws CoreException {
+        InputStream is = pathToWsdl.getContents();
         try {
             WSDLFactory wsdlFactory = WSDLFactory.newInstance();
             WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
 
             newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
             newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-            definition = newWSDLReader.readWSDL(pathToWsdl);
+            return newWSDLReader.readWSDL(null, new InputSource(is));
         } catch (WSDLException e) {
             throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+            }
         }
-        return definition;
     }
+//    public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
+//        return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
+//    }
 
-    public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
-        return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
-    }
-
-    /**
-     * Validate WSDL file.
-     * 
-     * @param node
-     * @throws CoreException
-     */
-    public static void validateWsdl(RepositoryNode node) throws CoreException {
-        IFile wsdlFile = getWsdlFile(node);
-        if (null == wsdlFile) {
-            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                    Messages.PublishMetadata_Exception_wsdl_not_found));
-        }
-        String wsdlPath = wsdlFile.getLocationURI().toString();
-        validateWsdl(wsdlPath);
-    }
+//    /**
+//     * Validate WSDL file.
+//     * 
+//     * @param node
+//     * @throws CoreException
+//     */
+//    public static void validateWsdl(RepositoryNode node) throws CoreException {
+//        IFile wsdlFile = getWsdlFile(node);
+//        if (null == wsdlFile) {
+//            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+//                    Messages.PublishMetadata_Exception_wsdl_not_found));
+//        }
+//        String wsdlPath = wsdlFile.getLocationURI().toString();
+//        validateWsdl(wsdlPath);
+//    }
 
     /**
      * Validate WSDL file.

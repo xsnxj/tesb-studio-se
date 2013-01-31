@@ -70,9 +70,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private static String JOB_CONTROLLER_VERSION = "[5,6)";
 
-    protected RepositoryNode serviceNode;
-
-    private final IRepositoryViewObject serviceViewObject;
+    private final ServiceItem serviceItem;
 
     protected ServiceConnection serviceConnection;
 
@@ -80,8 +78,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
             throws InvocationTargetException {
         if (node.getType() == ENodeType.REPOSITORY_ELEMENT
                 && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
-            this.serviceNode = node;
-            this.serviceViewObject = node.getObject();
+            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             this.exportChoiceMap = exportChoiceMap;
             init(targetPath);
         } else {
@@ -91,16 +88,15 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public ExportServiceAction(IRepositoryViewObject viewObject, String targetPath) throws InvocationTargetException {
-        this.serviceViewObject = viewObject;
+        serviceItem = (ServiceItem) viewObject.getProperty().getItem();
         init(targetPath);
     }
 
     private void init(String targetPath) throws InvocationTargetException {
-        serviceName = serviceViewObject.getLabel();
-        serviceVersion = serviceViewObject.getVersion();
-        serviceWsdl = WSDLUtils.getWsdlFile(serviceViewObject);
+        serviceName = serviceItem.getProperty().getLabel();
+        serviceVersion = serviceItem.getProperty().getVersion();
 
-        ServiceItem serviceItem = (ServiceItem) serviceViewObject.getProperty().getItem();
+        serviceWsdl = WSDLUtils.getWsdlFile(serviceItem);
         serviceConnection = (ServiceConnection) serviceItem.getConnection();
         EList<ServicePort> listPort = serviceConnection.getServicePort();
         try {
@@ -189,7 +185,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, serviceConnection, wsdl,
+        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, serviceConnection, serviceWsdl,
                 getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File file = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), fileName);
@@ -213,8 +209,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
         }
         // <feature version='[5,6)'>talend-job-controller</feature>
         feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
-        feature.setConfigName(serviceViewObject.getLabel());
-        feature.setContexts(ContextNodeRetriever.getContextsMap((ServiceItem) serviceViewObject.getProperty().getItem()));
+        feature.setConfigName(getServiceName());
+        feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
         return feature;
     }
 
@@ -269,7 +265,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
     public String getGroupId() {
         if (null == groupId) {
             try {
-                groupId = getGroupId(WSDLUtils.getDefinition(serviceWsdl.getLocation().toOSString()).getTargetNamespace(),
+                groupId = getGroupId(WSDLUtils.getDefinition(serviceWsdl).getTargetNamespace(),
                         getServiceName());
             } catch (CoreException e) {
                 throw new RuntimeException(e);

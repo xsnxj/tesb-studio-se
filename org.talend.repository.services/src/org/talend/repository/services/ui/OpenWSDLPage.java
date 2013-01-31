@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
-import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -252,21 +251,21 @@ public class OpenWSDLPage extends WizardPage {
                         fileTemp.setContents(byteArrayInputStream, 0, null);
                     }
 
-                    // ??
-                    ReferenceFileItem createReferenceFileItem = null;
+                    // create reference to wsdl
                     if (item.getReferenceResources().isEmpty()) {
-                        createReferenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-                        ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-                        createReferenceFileItem.setContent(byteArray);
-                        createReferenceFileItem.setExtension("wsdl");
-                        item.getReferenceResources().add(createReferenceFileItem);
-                    } else {
-                        createReferenceFileItem = (ReferenceFileItem) item.getReferenceResources().get(0);
+                        ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+                        //ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+                        //createReferenceFileItem.setContent(byteArray);
+                        referenceFileItem.setExtension("wsdl");
+                        item.getReferenceResources().add(referenceFileItem);
+                    //} else {
+                    //    createReferenceFileItem = (ReferenceFileItem) item.getReferenceResources().get(0);
                     }
-                    createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
+                    //createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
 
                     //
-                    populateModelFromWsdl(factory, fileTemp.getLocation().toPortableString()/*path*/, item, repositoryNode);
+                    definition = WSDLUtils.getDefinition(fileTemp); // path
+                    populateModelFromWsdl(factory, definition, item, repositoryNode);
 
                     factory.save(item);
                     ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
@@ -337,9 +336,8 @@ public class OpenWSDLPage extends WizardPage {
 //    }
 
     @SuppressWarnings({ "unchecked" })
-    private void populateModelFromWsdl(IProxyRepositoryFactory factory, String wsdlPath, ServiceItem serviceItem,
+    private static void populateModelFromWsdl(IProxyRepositoryFactory factory, Definition definition, ServiceItem serviceItem,
             RepositoryNode serviceRepositoryNode) throws CoreException {
-        definition = WSDLUtils.getDefinition(wsdlPath);
         serviceRepositoryNode.getChildren().clear();
         ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
         for (PortType portType : (Collection<PortType>) definition.getAllPortTypes().values()) {

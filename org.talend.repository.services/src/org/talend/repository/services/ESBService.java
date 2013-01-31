@@ -390,9 +390,9 @@ public class ESBService implements IESBService {
                     String jobName = jobItem.getProperty().getLabel();
 
                     operation.setReferenceJobId(jobID);
-                    operation.setLabel(operation.getName() + "-" + jobName);
+                    operation.setLabel(operation.getName() + '-' + jobName);
 
-                    String wsdlPath = WSDLUtils.getWsdlFile(selectNode).getLocation().toPortableString();
+                    IFile wsdlPath = WSDLUtils.getWsdlFile(selectNode);
                     Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                             operation.getName(), portName);
                     CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
@@ -469,13 +469,13 @@ public class ESBService implements IESBService {
                     return wsdlOperationName;
                 }
 
-                String wsdlURI = WSDLUtils.getWsdlFile(serviceItem).getLocation().toPortableString();
+                IFile wsdl = WSDLUtils.getWsdlFile(serviceItem);
                 if (WSDLUtils.WSDL_LOCATION.equals(value)) {
-                    return wsdlURI;
+                    return wsdl.getLocation().toPortableString();
                 }
 
                 try {
-                    return WSDLUtils.getServiceOperationParameters(wsdlURI, wsdlOperationName, wsdlPortTypeName).get(value);
+                    return WSDLUtils.getServiceOperationParameters(wsdl, wsdlOperationName, wsdlPortTypeName).get(value);
                 } catch (CoreException e) {
                     ExceptionHandler.process(e);
                 }
