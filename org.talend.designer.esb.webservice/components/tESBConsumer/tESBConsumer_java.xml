@@ -13,15 +13,12 @@
 			EXTENSION="org.talend.designer.esb.webservice" >
 		<SIGNATURE />
 	</HEADER>
-
 	<FAMILIES>
 		<FAMILY>ESB/Web Services</FAMILY>
 	</FAMILIES>
-
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
-
 	<CONNECTORS>
 		<CONNECTOR CTYPE="FLOW" MIN_INPUT="1" MAX_INPUT="1" MAX_OUTPUT="0" />
 		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1" />
@@ -33,16 +30,12 @@
 		<CONNECTOR CTYPE="COMPONENT_ERROR" />
 		<CONNECTOR CTYPE="RUN_IF" />
 	</CONNECTORS>
-
 	<PARAMETERS>
 		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1"
 				REPOSITORY_VALUE="WEBSERVICE" />
-
 		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true"
    				NUM_ROW="1" />
-
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
-
 		<PARAMETER NAME="MAPPING_DISPLAY" FIELD="CLOSED_LIST" NUM_ROW="70" >
 			<ITEMS DEFAULT="AUTO">
 				<ITEM NAME="AUTO" VALUE="AUTO" />
@@ -50,14 +43,12 @@
 				<ITEM NAME="LINE" VALUE="LINE" />
 			</ITEMS>
 		</PARAMETER>
-
 		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
 			<DEFAULT>20</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
 			<DEFAULT>20</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
@@ -78,7 +69,6 @@
 				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
-
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="40"
 				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true" >
 			<DEFAULT>false</DEFAULT>
@@ -91,12 +81,10 @@
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_RANDOM" VALUE="Random" />
 			</ITEMS>
 		</PARAMETER>
-
 		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="41"
 				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="45"
 				GROUP="ESB" SHOW="true">
 			<DEFAULT>false</DEFAULT>
@@ -117,7 +105,6 @@
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD" SHOW_IF="NEED_AUTH == 'true'">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="56"
 				REPOSITORY_VALUE="USE_PROXY">
 			<DEFAULT>false</DEFAULT>
@@ -138,7 +125,6 @@
 				REPOSITORY_VALUE="PROXY_PASSWORD" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -150,7 +136,6 @@
 				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="100">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
@@ -161,7 +146,6 @@
 			<ITEM NAME="DOCUMENT_LITERAL_WRAPPED" VALUE="DOCUMENT_LITERAL_WRAPPED" />
 		</ITEMS>
 		</PARAMETER>-->
-
 		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="10"
 				SHOW="true">
 			<DEFAULT>"http://127.0.0.1:8088/esb/provider"</DEFAULT>
@@ -198,7 +182,6 @@
 				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
 			<DEFAULT>request-response</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="INPUT_PARAMS" FIELD="TABLE" NUM_ROW="70" NB_LINES="6"
 				SHOW="false" REPOSITORY_VALUE="INPUT_PARAMS">
 			<ITEMS>
@@ -220,7 +203,6 @@
 			</ITEMS>
 		</PARAMETER>
 	</PARAMETERS>
-
 	<ADVANCED_PARAMETERS>
 		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="5"
 				REQUIRED="false" NB_LINES="5"
@@ -242,24 +224,20 @@
 			<DEFAULT></DEFAULT>
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
-
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="talend-esb-ws"
 					MODULE="org.talend.esb.ws.jar"
 					REQUIRED="true" />
-
 			<IMPORT NAME="jcifs"
 					MODULE="jcifs-1.2.19.jar"
 					REQUIRED="true" />
-
 			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
+					MODULE="dom4j-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true" />
-
 			<IMPORT NAME="commons-beanutils"
-					MODULE="commons-beanutils-1.7.0.jar"
+					MODULE="commons-beanutils-1.7.0.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-beanutils-1.7.0.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-codec"
@@ -267,40 +245,37 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-httpclient"
-					MODULE="commons-httpclient-3.1.jar"
+					MODULE="commons-httpclient-3.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-httpclient-3.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="commons-collections"
-					MODULE="commons-collections-3.2.1.jar"
+					MODULE="commons-collections-3.2.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-lang"
-					MODULE="commons-lang-2.6.jar"
+					MODULE="commons-lang-2.6.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-lang-2.6.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-bundle"
 					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.1.jar"
+					MODULE="neethi-3.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/neethi-3.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.2.jar"
+					MODULE="wsdl4j-1.6.2.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/wsdl4j-1.6.2.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.1.jar"
+					MODULE="xmlschema-core-2.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/xmlschema-core-2.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="jaxb-api"
 					MODULE="jaxb-api-2.2.6.jar"
 					BundleID=""
@@ -313,13 +288,12 @@
 					MODULE="jaxb-xjc-2.2.5.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="geronimo-activation_1.1_spec"
 					MODULE="geronimo-activation_1.1_spec-1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-annotation_1.0_spec"
-					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
+					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-annotation_1.0_spec-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-javamail_1.4_spec"
@@ -327,18 +301,17 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
+					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-stax-api_1.0_spec-1.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-ws-metadata_2.0_spec"
-					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
+					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-ws-metadata_2.0_spec-1.1.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="saaj-api"
 					MODULE="saaj-api-1.3.4.jar"
 					BundleID=""
@@ -347,7 +320,6 @@
 					MODULE="saaj-impl-1.3.18.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="stax2-api"
 					MODULE="stax2-api-3.1.1.jar"
 					BundleID=""
@@ -356,7 +328,6 @@
 					MODULE="woodstox-core-asl-4.1.2.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="xmlsec"
 					MODULE="xmlsec-1.5.1.jar"
 					BundleID=""
@@ -365,7 +336,6 @@
 					MODULE="wss4j-1.6.5.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.7.RELEASE.jar"
 					BundleID=""
@@ -392,7 +362,6 @@
 					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
-
 	<RETURNS>
 		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
 	</RETURNS>

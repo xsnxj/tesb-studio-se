@@ -12,15 +12,12 @@
 			HAS_CONDITIONAL_OUTPUTS="true" >
 		<SIGNATURE />
 	</HEADER>
-
 	<FAMILIES>
 		<FAMILY>ESB/Route</FAMILY>
 	</FAMILIES>
-
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
-
 	<CONNECTORS>
 		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MAX_OUTPUT="1"/>
 <!-- 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="1" MAX_INPUT="1" />
@@ -30,7 +27,6 @@
 		<CONNECTOR CTYPE="COMPONENT_ERROR" />
 		<CONNECTOR CTYPE="RUN_IF" /> -->
 	</CONNECTORS>
-
 	<PARAMETERS>
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
 			<TABLE>
@@ -41,7 +37,7 @@
 	 	<PARAMETER NAME="VALUES" FIELD="TABLE" REQUIRED="true"
 			NUM_ROW="2" NB_LINES="5">
 			<ITEMS BASED_ON_SCHEMA="true">
-				<ITEM NAME="VALUE" VALUE="&quot;${in.body}&quot;" />	
+				<ITEM NAME="VALUE" VALUE="&quot;${in.body}&quot;" />
 			</ITEMS>
 		</PARAMETER>
 	<!--	<PARAMETER NAME="NOTICE" FIELD="LABEL" REQUIRED="true"
@@ -49,22 +45,19 @@
 			<DEFAULT>Please DO NOT set the "Key" of "__BODY__", it will be ignored</DEFAULT>
 		</PARAMETER> -->
 	</PARAMETERS>
-
 	<ADVANCED_PARAMETERS>
 	</ADVANCED_PARAMETERS>
-
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="apache-camel" 
+			<IMPORT NAME="apache-camel"
 					MODULE="camel-core-2.10.2.jar"
-					REQUIRED="true" 
+					REQUIRED="true"
 					BundleID="org.apache.camel.camel-core"/>
-			<IMPORT NAME="dom4j" 
-					MODULE="dom4j-1.6.1.jar" 
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
 					REQUIRED="true"/>
 		</IMPORTS>
 	</CODEGENERATION>
-
 	<RETURNS>
 		<!-- <RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" /> -->
 	</RETURNS>

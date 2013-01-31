@@ -13,15 +13,12 @@
 			EXTENSION="org.talend.designer.esb.components.ws.consumer" >
 		<SIGNATURE />
 	</HEADER>
-
 	<FAMILIES>
 		<FAMILY>ESB/Web Services</FAMILY>
 	</FAMILIES>
-
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
-
 	<CONNECTORS>
 		<CONNECTOR CTYPE="FLOW" MIN_INPUT="1" MAX_INPUT="1" MAX_OUTPUT="0" />
 		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1" />
@@ -33,23 +30,18 @@
 		<CONNECTOR CTYPE="COMPONENT_ERROR" />
 		<CONNECTOR CTYPE="RUN_IF" />
 	</CONNECTORS>
-
 	<PARAMETERS>
 		<!--
 		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1" REPOSITORY_VALUE="WEBSERVICE" />
-
 		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true" NUM_ROW="1" />
 		-->
-
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
-
 		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
 			<DEFAULT>30</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
 			<DEFAULT>60</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
@@ -71,7 +63,6 @@
 				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
-
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="40"
 				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true" >
 			<DEFAULT>false</DEFAULT>
@@ -84,12 +75,10 @@
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_RANDOM" VALUE="Random" />
 			</ITEMS>
 		</PARAMETER>
-
 		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="41"
 				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="45"
 				GROUP="ESB" SHOW="true">
 			<DEFAULT>false</DEFAULT>
@@ -111,7 +100,6 @@
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD" SHOW_IF="NEED_AUTH == 'true'">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="56"
 				REPOSITORY_VALUE="USE_PROXY">
 			<DEFAULT>false</DEFAULT>
@@ -132,7 +120,6 @@
 				REPOSITORY_VALUE="PROXY_PASSWORD" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -144,11 +131,9 @@
 				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="100">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="10"
 				SHOW="true">
 			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx"</DEFAULT>
@@ -190,7 +175,6 @@
 			<DEFAULT>request-response</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
-
 	<ADVANCED_PARAMETERS>
 		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="5"
 				REQUIRED="false" NB_LINES="5"
@@ -214,14 +198,12 @@
 		<PARAMETER NAME="WSDL_CONTENT" FIELD="TEXT" REQUIRED="false" NUM_ROW="15" SHOW="false">
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
-
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
+					MODULE="dom4j-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-api"
 					MODULE="cxf-api-2.7.0.jar"
 					BundleID=""
@@ -243,10 +225,9 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.2.jar"
+					MODULE="wsdl4j-1.6.2.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/wsdl4j-1.6.2.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-core"
 					MODULE="cxf-rt-core-2.7.0.jar"
 					BundleID=""
@@ -255,7 +236,6 @@
 					MODULE="jaxb-impl-2.1.13.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-bindings-soap"
 					MODULE="cxf-rt-bindings-soap-2.7.0.jar"
 					BundleID=""
@@ -264,17 +244,14 @@
 					MODULE="cxf-rt-databinding-jaxb-2.7.0.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-bindings-xml"
 					MODULE="cxf-rt-bindings-xml-2.7.0.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-frontend-simple"
 					MODULE="cxf-rt-frontend-simple-2.7.0.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-ws-addr"
 					MODULE="cxf-rt-ws-addr-2.7.0.jar"
 					BundleID=""
@@ -284,10 +261,9 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.2.jar"
+					MODULE="neethi-3.0.2.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-frontend-jaxws"
 					MODULE="cxf-rt-frontend-jaxws-2.7.0.jar"
 					BundleID=""
@@ -300,12 +276,10 @@
 					MODULE="asm-3.3.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-transports-http"
 					MODULE="cxf-rt-transports-http-2.7.0.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-rt-ws-security"
 					MODULE="cxf-rt-ws-security-2.7.0.jar"
 					BundleID=""
@@ -319,12 +293,11 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
-
 	<RETURNS>
 		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
 	</RETURNS>

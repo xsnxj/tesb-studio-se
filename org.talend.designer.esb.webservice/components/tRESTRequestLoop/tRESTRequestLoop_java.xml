@@ -12,11 +12,9 @@
 	<FAMILIES>
 		<FAMILY>Technical</FAMILY>
 	</FAMILIES>
-
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
-
 	<CONNECTORS>
 		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MIN_OUTPUT="0" />
 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="1" MAX_INPUT="0" />
@@ -26,13 +24,11 @@
 		<CONNECTOR CTYPE="COMPONENT_ERROR" COLOR="FF0000" />
 		<CONNECTOR CTYPE="RUN_IF" />
 	</CONNECTORS>
-
 	<PARAMETERS>
 		<!-- rest service endpoint -->
 		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
 			<DEFAULT>"http://localhost:8088/"</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="SCHEMAS" FIELD="TABLE" NUM_ROW="10" REQUIRED="true" NB_LINES="5">
 			<ITEMS>
 				<ITEM NAME="SCHEMA" FIELD="SCHEMA_TYPE" />
@@ -47,16 +43,13 @@
 				<ITEM NAME="URI_PATTERN" FIELD="TEXT" VALUE='"/"'/>
 			</ITEMS>
 		</PARAMETER>
-
 		<PARAMETER NAME="KEEPLISTENING" FIELD="CHECK" NUM_ROW="250"
 				DYNAMIC_SETTINGS="true" SHOW="true" >
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
-
 	<ADVANCED_PARAMETERS>
 	</ADVANCED_PARAMETERS>
-
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="jsr311-api"
@@ -70,52 +63,46 @@
 			<!--IMPORT NAME="jra"
 					MODULE="${tesb-jra}"
 					REQUIRED="true" /-->
-
 			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
+					MODULE="dom4j-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
 					BundleID="org.apache.servicemix.bundles.dom4j"
 					REQUIRED="true" />
-
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="commons-logging-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="cxf-bundle"
 					MODULE="cxf-bundle-2.6.0-SNAPSHOT.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
-
 			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.1.jar"
+					MODULE="neethi-3.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/neethi-3.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.2.jar"
+					MODULE="wsdl4j-1.6.2.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/wsdl4j-1.6.2.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.1.jar"
+					MODULE="xmlschema-core-2.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/xmlschema-core-2.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="geronimo-activation_1.1_spec"
 					MODULE="geronimo-activation_1.1_spec-1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-annotation_1.0_spec"
-					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
+					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-annotation_1.0_spec-1.1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-jaxws_2.2_spec-1.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
+					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-stax-api_1.0_spec-1.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="jaxb-api"
 					MODULE="jaxb-api-2.2.6.jar"
 					BundleID=""
@@ -124,7 +111,6 @@
 					MODULE="jaxb-impl-2.2.5.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="stax2-api"
 					MODULE="stax2-api-3.1.1.jar"
 					BundleID=""
@@ -133,7 +119,6 @@
 					MODULE="woodstox-core-asl-4.1.2.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<IMPORT NAME="geronimo-servlet_2.5_spec"
 					MODULE="geronimo-servlet_2.5_spec-1.1.2.jar"
 					BundleID=""
@@ -158,14 +143,12 @@
 					MODULE="jetty-util-7.5.4.v20111024.jar"
 					BundleID=""
 					REQUIRED="true" />
-
 			<!-- IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.6.2.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="slf4j-jdk14"
 					MODULE="slf4j-jdk14-1.6.2.jar"
 					REQUIRED="true"/ -->
-
 			<IMPORT NAME="spring-aop"
 					MODULE="spring-aop-3.0.7.RELEASE.jar"
 					BundleID=""
@@ -196,7 +179,6 @@
 					REQUIRED="true" /-->
 		</IMPORTS>
 	</CODEGENERATION>
-
 	<RETURNS>
 		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer" />
 		<RETURN AVAILABILITY="FLOW" NAME="URI" TYPE="id_String" />
@@ -204,5 +186,4 @@
 		<RETURN AVAILABILITY="FLOW" NAME="URI_ABSOLUTE" TYPE="id_String" />
 		<RETURN AVAILABILITY="FLOW" NAME="HTTP_METHOD" TYPE="id_String" />
 	</RETURNS>
-
 </COMPONENT>
