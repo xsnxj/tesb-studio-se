@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -68,7 +67,7 @@ public class WSDLUtils {
 
     public static final String WSDL_LOCATION = "WSDL_LOCATION"; //$NON-NLS-1$
 
-    public static final String COMMUNICATION_STYLE = "COMMUNICATION_STYLE"; //$NON-NLS-1$        
+    public static final String COMMUNICATION_STYLE = "COMMUNICATION_STYLE"; //$NON-NLS-1$
 
     public static final String FAULTS = "FAULTS"; //$NON-NLS-1$
 
@@ -100,6 +99,9 @@ public class WSDLUtils {
                     map.put(WSDL_LOCATION, wsdlURI.getLocation().toPortableString());
 
                     BindingOperation bindingOperation = port.getBinding().getBindingOperation(operationName, null, null);
+                    if (null == bindingOperation) {
+                        throw getCoreException("Operation '" + operationName + "' not found in binding", null);
+                    }
                     map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput()) ? ONE_WAY : REQUEST_RESPONSE);
 
                     String faults = null;
@@ -163,12 +165,12 @@ public class WSDLUtils {
     public static IFile getWsdlFile(ServiceItem serviceItem) {
         IProject currentProject = ProjectManager.getInstance().getResourceProject(serviceItem);
         String foldPath = serviceItem.getState().getPath();
-        String folder = "";
-        if (!foldPath.equals("")) {
-            folder = "/" + foldPath;
+        String folder = "services"; //$NON-NLS-1$
+        if (!"".equals(foldPath)) { //$NON-NLS-1$
+            folder += '/' + foldPath;
         }
-        IFile file = currentProject.getFolder("services" + folder).getFile(
-                serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+        IFile file = currentProject.getFolder(folder).getFile(
+                serviceItem.getProperty().getLabel() + '_' + serviceItem.getProperty().getVersion() + ".wsdl"); //$NON-NLS-1$
 //        if (!file.exists()) {
 //            // copy file to item
 //            IFile fileTemp = null;
@@ -233,7 +235,7 @@ public class WSDLUtils {
             newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
             return newWSDLReader.readWSDL(null, new InputSource(is));
         } catch (WSDLException e) {
-            throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+            throw getCoreException(null, e);
         } finally {
             try {
                 is.close();
@@ -274,9 +276,12 @@ public class WSDLUtils {
         IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
 
         if (!validationReport.isWSDLValid()) {
-            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                    Messages.PublishMetadata_Exception_wsdl_not_valid));
+            throw getCoreException(Messages.PublishMetadata_Exception_wsdl_not_valid, null);
         }
     }
 
+    public static CoreException getCoreException(final String message, final Throwable e) {
+        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
+        return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
+    }
 }
