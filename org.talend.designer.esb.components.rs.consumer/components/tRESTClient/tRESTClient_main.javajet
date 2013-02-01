@@ -55,6 +55,11 @@ if (acceptType == null) {
 String convertToDomProperty = ElementParameterParser.getValue(node,"__CONVERT_TO_DOM__");
 boolean convertToDom = convertToDomProperty == null ? true : Boolean.valueOf(convertToDomProperty);
 
+String wrapJsonResponseProperty = ElementParameterParser.getValue(node,"__WRAP_JSON_RESPONSE__");
+boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
+
+String dropJsonRootProperty = ElementParameterParser.getValue(node,"__DROP_JSON_ROOT__");
+boolean dropJsonRoot = dropJsonRootProperty == null ? true : Boolean.valueOf(dropJsonRootProperty);
 
 String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
 if (contentType == null) {
@@ -199,10 +204,13 @@ try {
 	});
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
-		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
-		jsonProvider_<%=cid%>.setAttributesToElements(true);
-		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
-		jsonProvider_<%=cid%>.setWrapperName("root");
+	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+	jsonProvider_<%=cid%>.setAttributesToElements(true);
+	<% if (wrapJsonResponse) { %>
+	    jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+	    jsonProvider_<%=cid%>.setWrapperName("root");
+	<% } %>
+        jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
