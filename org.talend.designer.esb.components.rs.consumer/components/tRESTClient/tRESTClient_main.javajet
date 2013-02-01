@@ -211,20 +211,20 @@ try {
 
 	// set request path
 	webClient_<%=cid%>.path(<%=ElementParameterParser.getValue(node,"__PATH__")%>);
-
-// temporary comented due to problems with locator scenario
-//	// set connection properties
-//	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
-//	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-//	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
-//	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
-//	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
-//		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
-//		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
-//		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
-//		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
-//	<% } %>
-
+        <% if (!isSLEnable) { %>
+        // this temporarily does not work in with locator scenario
+	// set connection properties
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+	<% } %>
+        <% } %>
 	// set Content-Type
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
 		webClient_<%=cid%>.type("<%=contentType%>");
