@@ -913,6 +913,9 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 
+			final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
+					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+
 			<% boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_LOCATOR__")); %>
 			<% if (isSLEnable) { %>
 				boolean inOSGi = false;
@@ -954,12 +957,14 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 						slFeature.setAvailableEndpointProperties(slCustomProps);
 				<% } %>
 
-				final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
-					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
 				features.add(slFeature);
-
-				sf.setFeatures(features);
 			<% } %>
+
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__LOG_MESSAGES__"))) { %>
+				features.add(new org.apache.cxf.feature.LoggingFeature());
+			<% } %>
+
+			sf.setFeatures(features);
 
 			server = sf.create();
 
