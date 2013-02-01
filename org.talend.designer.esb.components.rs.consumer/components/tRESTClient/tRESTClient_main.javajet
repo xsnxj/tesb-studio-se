@@ -167,6 +167,10 @@ try {
 		features_<%=cid%>.add(samEventFeature);
 	<% } %>
 
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
+		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
+	<% } %>
+
 	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
 
 
