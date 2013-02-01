@@ -90,6 +90,13 @@ public class OpenTalendJobRefAction extends org.talend.designer.core.ui.editor.C
      */
     @Override
     public void run() {
+    	//diable switch perspective suggestion dialog. just for defense.
+    	String notAskAutoSwitchToDIKey="notAskAutoSwitchToDI";
+    	boolean oldValueNotSwitchToDiKey=PlatformUI.getPreferenceStore().getBoolean(notAskAutoSwitchToDIKey);
+    	PlatformUI.getPreferenceStore().setValue(notAskAutoSwitchToDIKey, true);
+    	//need to be  restore at the end .
+    	
+    	
         // open in editor, type and count already checked in calculateEnabled()
         List<?> selectedObjects = getSelectedObjects();
         Object select = selectedObjects.get(0);
@@ -117,7 +124,11 @@ public class OpenTalendJobRefAction extends org.talend.designer.core.ui.editor.C
             PlatformUI.getWorkbench().showPerspective(ORG_TALEND_RCP_INTEGRATION_PERSPECTIVE, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
         } catch (WorkbenchException e) {
             e.printStackTrace();
+        }finally {
+        	//Restore config of switch perspective suggestion dialog. just for defense.
+        	PlatformUI.getPreferenceStore().setValue(notAskAutoSwitchToDIKey, oldValueNotSwitchToDiKey);
         }
+        
     }
 
 }
