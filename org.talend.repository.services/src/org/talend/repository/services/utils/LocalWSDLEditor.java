@@ -10,15 +10,11 @@ import java.util.Map.Entry;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
@@ -27,7 +23,6 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
-import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
@@ -50,36 +45,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private RepositoryNode repositoryNode;
 
-    public LocalWSDLEditor() {
-
-    }
-
-    boolean isServiceUpdateRequired() {
-        if (this.getEditDomain() == null) {
-            return false;
-        }
-        CommandStack commandStack = this.getCommandStack();
-        return isDirty() || commandStack.canUndo() && commandStack.isDirty();
-        // return isDirty() || commandStack.canUndo();
-    }
-
-    protected AdapterImpl dirtyListener = new AdapterImpl() {
-
-        @Override
-        public void notifyChanged(Notification notification) {
-            if (notification.getEventType() == Notification.REMOVING_ADAPTER) {
-                if (isServiceUpdateRequired()) {
-                    save();
-                }
-            }
-        }
-    };
-
     @Override
     public void doSave(IProgressMonitor monitor) {
-        if (!isDirty()) {
-            return;
-        }
         super.doSave(monitor);
         save();
     }
@@ -87,20 +54,10 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     private void save() {
         if (serviceItem != null) {
             try {
-//                currentProject = ResourceModelUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-//                String foldPath = serviceItem.getState().getPath();
-//                String folder = "";
-//                if (!foldPath.equals("")) {
-//                    folder = "/" + foldPath;
-//                }
-//                IFile fileTemp = currentProject.getFolder("services" + folder).getFile(
-//                        repositoryNode.getObject().getProperty().getLabel() + "_"
-//                                + repositoryNode.getObject().getProperty().getVersion() + ".wsdl");
                 saveModel();
-                // if (isDirty()) {
+
                 // update
                 RepositoryUpdateManager.updateServices(serviceItem);
-                // }
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                 factory.save(serviceItem);
@@ -153,8 +110,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
         Definition definition = WSDLUtils.getDefinition(serviceItem);
-        Map portTypes = definition.getAllPortTypes();
-        Iterator it = portTypes.keySet().iterator();
 
         // changed for TDI-18005
         Map<String, String> portNameIdMap = new HashMap<String, String>();
@@ -192,9 +147,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
 
         ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
-        while (it.hasNext()) {
-            QName key = (QName) it.next();
-            PortType portType = (PortType) portTypes.get(key);
+        for (Object obj : definition.getAllPortTypes().values()) {
+            PortType portType = (PortType) obj;
             if (portType.isUndefined()) {
                 continue;
             }
@@ -288,21 +242,11 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
 
     public ServiceItem getServiceItem() {
-        return this.serviceItem;
+        return serviceItem;
     }
 
     public void setServiceItem(ServiceItem serviceItem) {
         this.serviceItem = serviceItem;
-    }
-
-    public void addListener() {
-        // ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener);
-        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().add(dirtyListener);
-    }
-
-    public void removeListener() {
-        ((ReferenceFileItem) this.serviceItem.getReferenceResources().get(0)).eAdapters().remove(dirtyListener);
-        // ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
     }
 
     public void setReadOnly(boolean isReadOnly) {

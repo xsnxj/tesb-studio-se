@@ -1,8 +1,5 @@
 package org.talend.repository.services.action;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
@@ -22,7 +19,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -33,7 +29,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -47,11 +42,9 @@ import org.talend.repository.ui.views.IRepositoryView;
 
 public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntroAction {
 
-    private ERepositoryObjectType currentNodeType;
-
     private final static String ID = "org.talend.repository.services.utils.LocalWSDLEditor";
 
-    private List<ServiceItem> scriptList = new ArrayList<ServiceItem>();
+    private ERepositoryObjectType currentNodeType;
 
     public OpenWSDLEditorAction() {
         this.setText("Open WSDL Editor");
@@ -59,6 +52,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
         this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
+
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
 
             public void partActivated(IWorkbenchPart part) {
@@ -70,32 +64,20 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
             }
 
             public void partClosed(IWorkbenchPart part) {
-                if (part instanceof InternalWSDLMultiPageEditor) {
-                    InternalWSDLMultiPageEditor editor = (InternalWSDLMultiPageEditor) part;
-                    if (editor instanceof LocalWSDLEditor) {
-                        LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) editor;
-                        if (localWSDLEditor.getServiceItem() != null) {
-                            localWSDLEditor.removeListener();
+                if (part instanceof LocalWSDLEditor) {
+                    LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) part;
+                    // unlock
+                    ServiceItem serviceItem = localWSDLEditor.getServiceItem();
+                    if (null != serviceItem) {
+                        try {
+                            DesignerPlugin.getDefault().getProxyRepositoryFactory().unlock(serviceItem);
+                        } catch (Exception e) {
+                            ExceptionHandler.process(e);
                         }
-                        localWSDLEditor.setServiceItem(null);
-                        localWSDLEditor.setRepositoryNode(null);
                     }
-                    String editorName = editor.getEditorInput().getName();
-                    IProxyRepositoryFactory repFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
-                    Iterator<ServiceItem> it = scriptList.iterator();
-                    try {
-                        while (it.hasNext()) {
-                            ServiceItem serviceItem = it.next();
-                            String name = editorName.substring(0, editorName.lastIndexOf("_"));
-                            if (name.equals(serviceItem.getProperty().getLabel())) {
-                                repFactory.unlock(serviceItem);
-                                it.remove();
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        ExceptionHandler.process(e);
-                    }
+
+                    localWSDLEditor.setServiceItem(null);
+                    localWSDLEditor.setRepositoryNode(null);
                 }
             }
 
@@ -179,12 +161,10 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
                 LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
                 wsdlEditor.setServiceItem(serviceItem);
                 wsdlEditor.setRepositoryNode(repositoryNode);
-                wsdlEditor.addListener();
                 // lock
                 if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
                     // TO BE REMOVED and Checked but the above line does the lock already so no need to do it twice.
                     DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
-                    scriptList.add(serviceItem);
                 } else {
                     wsdlEditor.setReadOnly(true);
                 }
