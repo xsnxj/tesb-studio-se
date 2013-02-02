@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.components.localprovider.CamelComponentPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.talend.commons,
  org.talend.core.runtime,
  org.talend.designer.core,
  org.talend.core,

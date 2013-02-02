@@ -7,7 +7,7 @@ Bundle-Activator: org.talend.designer.routines.camelprovider.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.4.0",
  org.talend.core,
- org.talend.commons,
+ org.talend.commons.runtime,
  org.talend.librariesmanager
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
