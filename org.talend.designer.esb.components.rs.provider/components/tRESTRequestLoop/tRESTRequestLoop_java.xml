@@ -59,13 +59,22 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="locator"
-					MODULE="${tesb-locator}"
-					BundleID="locator"
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT NAME="sam-common"
+					MODULE="sam-common-5.3.0-SNAPSHOT.jar"
+					BundleID="sam-common"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="sam-agent"
+					MODULE="sam-agent-5.3.0-SNAPSHOT.jar"
+					BundleID="sam-agent"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+
 			<IMPORT NAME="zookeeper"
-					MODULE="${tesb-zookeeper}"
+					MODULE="zookeeper-3.3.6.jar"
 					BundleID="org.apache.hadoop.zookeeper"
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT NAME="locator"
+					MODULE="locator-5.3.0-SNAPSHOT.jar"
+					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
 			<IMPORT NAME="javax.ws.rs-api"
