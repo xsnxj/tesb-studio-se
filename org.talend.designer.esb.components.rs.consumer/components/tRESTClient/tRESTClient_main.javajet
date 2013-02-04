@@ -157,7 +157,7 @@ try {
 		} else {
 			context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
 		}
-		org.talend.esb.sam.agent.feature.EventFeature samEventFeature  = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
 				ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
 		<% if (!samCustomProperties.isEmpty()) { %>
@@ -203,14 +203,14 @@ try {
 		}
 	});
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
-		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
-	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
-	jsonProvider_<%=cid%>.setAttributesToElements(true);
+			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
 	<% if (wrapJsonResponse) { %>
-	    jsonProvider_<%=cid%>.setSupportUnwrapped(true);
-	    jsonProvider_<%=cid%>.setWrapperName("root");
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
 	<% } %>
-        jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
+		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
@@ -219,20 +219,19 @@ try {
 
 	// set request path
 	webClient_<%=cid%>.path(<%=ElementParameterParser.getValue(node,"__PATH__")%>);
-        <% if (!isSLEnable) { %>
-        // this temporarily does not work in with locator scenario
-	// set connection properties
-	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
-	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
-	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
-	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
-		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
-		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
-		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
-		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+	<% if (!isSLEnable) { // this temporarily does not work in with locator scenario %>
+		// set connection properties
+		org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+		org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+		<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+			conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+			conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+			conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+			conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+		<% } %>
 	<% } %>
-        <% } %>
 	// set Content-Type
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
 		webClient_<%=cid%>.type("<%=contentType%>");
@@ -270,7 +269,7 @@ try {
 			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
 		<% } else if ("POST".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
-                <% } else if ("PUT".equals(method)) { %>
+		<% } else if ("PUT".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
