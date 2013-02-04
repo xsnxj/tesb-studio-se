@@ -20,7 +20,6 @@
       <import plugin="org.talend.core"/>
       <import plugin="org.talend.core.repository"/>
       <import plugin="org.talend.metadata.managment.ui"/>
-      <import plugin="org.talend.commons"/>
       <import plugin="org.apache.commons.lang"/>
       <import plugin="org.talend.commons.ui"/>
       <import plugin="org.talend.core.runtime"/>
