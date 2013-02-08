@@ -779,27 +779,27 @@ if (null != conns && !conns.isEmpty()) {
 		<% } %>
 			) {
 
-		java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
-		request.put("VERB", "<%=httpVerb%>");
-		request.put("OPERATION", "<%=connName%>");
-		request.put("PATTERN", <%=uriPattern%>);
+		java.util.Map<String, Object> request_<%=cid%> = new java.util.HashMap<String, Object>();
+		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
+		request_<%=cid%>.put("OPERATION", "<%=connName%>");
+		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
-		request.put("BODY", body);
+		request_<%=cid%>.put("BODY", body);
 		<% } %>
-		request.put("URI", ui.getPath());
-		request.put("URI_BASE", ui.getBaseUri().toString());
-		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
+		request_<%=cid%>.put("URI", ui.getPath());
+		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
+		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
-		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
+		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
-			parameters.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
+			parameters_<%=cid%>.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
 		<%	} %>
-		request.put("PARAMS", parameters);
+		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
-		request.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
-		request.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
+		request_<%=cid%>.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
+		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
 
-		return processRequest(request);
+		return processRequest(request_<%=cid%>);
 	}
 <%
 	}
@@ -941,18 +941,18 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 				}
 				sf.setServiceName(new javax.xml.namespace.QName(
-						"<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAMESPACE__")%>",
-						"<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAME__")%>"));
+						<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAMESPACE__")%>,
+						<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAME__")%>));
 
 				org.talend.esb.servicelocator.cxf.LocatorFeature slFeature =
 					new org.talend.esb.servicelocator.cxf.LocatorFeature();
 
 				<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
-						ElementParameterParser.getObjectValue(tRESTRequestNode, "__SL_META_DATA__"); %>
+						ElementParameterParser.getObjectValue(tRESTRequestNode, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
 				<% if (!customProperties.isEmpty()) { %>
 						final java.util.Map<String, String> slCustomProps = new java.util.HashMap<String, String>();
 					<% for (int k = 0; k < customProperties.size(); k++) { %>
-						slCustomProps.put(<%=customProperties.get(k).get("NAME")%>, <%=customProperties.get(k).get("VALUE")%>);
+						slCustomProps.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
 					<% } %>
 						slFeature.setAvailableEndpointProperties(slCustomProps);
 				<% } %>
