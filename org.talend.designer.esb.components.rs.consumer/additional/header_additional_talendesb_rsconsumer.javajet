@@ -21,10 +21,9 @@ boolean actAsRestConsumer = !process.getNodesOfType("tRESTClient").isEmpty();
 
 <% if (actAsRestConsumer) { %>
 	// ESB Service Activity Monitor Feature
-	private org.apache.cxf.feature.AbstractFeature samEventFeature;
-	
-	public void setEventFeature(
-			org.apache.cxf.feature.AbstractFeature eventFeature) {
-		this.samEventFeature = eventFeature;
+	private org.apache.cxf.feature.AbstractFeature eventFeature = null;
+
+	public void setEventFeature(org.apache.cxf.feature.AbstractFeature eventFeature) {
+		this.eventFeature = eventFeature;
 	}
 <% } %>

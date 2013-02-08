@@ -101,7 +101,7 @@ try {
 	<% if (isSLEnable || isSAMEnable) { %>
 		boolean inOSGi = false;
 		try {
-			inOSGi = (null != factoryBean_tRESTClient_1.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+			inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
 		} catch (ClassNotFoundException e) {
 			; // ignore
 		}
@@ -151,9 +151,30 @@ try {
 	<% } %>
 
 	<% if (isSAMEnable) { %>
-		if( null != samEventFeature){
-			features_<%=cid%>.add(samEventFeature);
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature = null;
+		if (null == eventFeature) {
+			org.springframework.context.support.ClassPathXmlApplicationContext context = null;
+		//	if (inOSGi) {
+		//		context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-osgi.xml");
+		//	} else {
+				context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+		//	}
+			samEventFeature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		} else {
+			samEventFeature = (org.talend.esb.sam.agent.feature.EventFeature) eventFeature;
 		}
+		<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
+				ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
+		<% if (!samCustomProperties.isEmpty()) { %>
+			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (int k = 0; k < samCustomProperties.size(); k++) { %>
+				samCustomProps_<%=cid%>.put(<%=samCustomProperties.get(k).get("PROP_NAME")%>, <%=samCustomProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
+			samEventFeature.setHandler(ciHandler);
+		<% } %>
+		features_<%=cid%>.add(samEventFeature);
 	<% } %>
 
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
