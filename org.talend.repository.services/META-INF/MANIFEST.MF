@@ -13,7 +13,6 @@ Require-Bundle: org.talend.core,
  org.talend.repository.view.di,
  org.talend.datatools.xml,
  org.talend.utils,
- org.talend.libraries.dom4j-jaxen,
  org.talend.resources,
  org.eclipse.core.filesystem,
  org.eclipse.jface.text,
@@ -24,13 +23,13 @@ Require-Bundle: org.talend.core,
  org.eclipse.xsd,
  org.eclipse.wst.xsd.ui,
  org.eclipse.wst.wsdl.validation,
- javax.wsdl;bundle-version="1.6.2"
+ org.talend.designer.publish.core,
+ javax.wsdl;bundle-version="1.6.2",
+ org.apache.commons.lang
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .
  ,lib/commons-collections-3.2.1.jar
- ,lib/commons-lang-2.6.jar
- ,lib/oro-2.0.8.jar
  ,lib/velocity-1.7.jar
  ,lib/xmlschema-core-2.0.3.jar
 Export-Package: org.talend.repository.services.action,
@@ -38,5 +37,4 @@ Export-Package: org.talend.repository.services.action,
  org.talend.repository.services.model.services.util,
  org.talend.repository.services.ui.action,
  org.talend.repository.services.utils
-Import-Package: org.talend.designer.publish.core
- ,org.talend.designer.publish.core.models
+Import-Package: org.dom4j

@@ -42,7 +42,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
-import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.repository.model.RepositoryNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -644,10 +644,10 @@ public final class CamelFeatureUtil {
 	 * Add feature and bundle to Feature Model
 	 * 
 	 * @param node
-	 * @param featuresModel
+	 * @param featureModel
 	 */
 	public static void addFeatureAndBundles(RepositoryNode node,
-			FeaturesModel featuresModel) {
+			FeatureModel featureModel) {
 
 		if (!checkNode(node)) {
 			return;
@@ -665,13 +665,13 @@ public final class CamelFeatureUtil {
 		Set<XMLBundleModel> bundles = getBundlesOfRoute(neededLibraries);
 
 		for (XMLFeatureModel model : features) {
-			featuresModel.addSubFeature(model.getName(), model.getVersion());
+			featureModel.addSubFeature(model.getName(), model.getVersion());
 		}
 
 		for (XMLBundleModel model : bundles) {
 			BundleModel bundleModel = new BundleModel(model.getGroudId(),
-					model.getSymbolicName(), model.getVersion());
-			featuresModel.addSubBundle(bundleModel);
+					model.getSymbolicName(), model.getVersion(), null);
+			featureModel.addBundle(bundleModel);
 		}
 
 		process.dispose();

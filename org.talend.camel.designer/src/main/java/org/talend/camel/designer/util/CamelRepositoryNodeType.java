@@ -17,20 +17,20 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 /**
  * DOC guanglong.du class global comment. Detailled comment
  */
-public class CamelRepositoryNodeType {
+public interface CamelRepositoryNodeType {
 
-    public static final String ROUTES = "ROUTES";
+    String ROUTES = "ROUTES";
 
-    public static final String BEANS = "BEANS";
+    String BEANS = "BEANS";
 
-	public static final String ROUTE_RESOURCES = "ROUTE_RESOURCES";
+	String ROUTE_RESOURCES = "ROUTE_RESOURCES";
 
-    public static ERepositoryObjectType repositoryRoutesType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
+    ERepositoryObjectType repositoryRoutesType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, ROUTES);
 
-    public static ERepositoryObjectType repositoryBeansType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
+    ERepositoryObjectType repositoryBeansType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, BEANS);
 
-	public static ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
+	ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
 			.valueOf(ERepositoryObjectType.class, ROUTE_RESOURCES);
 }

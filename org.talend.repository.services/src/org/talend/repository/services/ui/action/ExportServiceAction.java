@@ -1,8 +1,10 @@
 package org.talend.repository.services.ui.action;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,9 +26,8 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.publish.core.SaveAction;
 import org.talend.designer.publish.core.models.BundleModel;
-import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -65,10 +66,6 @@ public class ExportServiceAction implements IRunnableWithProgress {
     private String serviceName;
 
     private String groupId;
-
-    private static String JOB_CONTROLLER_FEATURE = "talend-job-controller";
-
-    private static String JOB_CONTROLLER_VERSION = "[5,6)";
 
     private final ServiceItem serviceItem;
 
@@ -147,21 +144,28 @@ public class ExportServiceAction implements IRunnableWithProgress {
             }
         }
 
+        FeatureModel feature = new FeatureModel(getGroupId(), getServiceName(), getServiceVersion());
+        feature.setConfigName(getServiceName());
+        feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
+
         try {
             String directoryName = serviceManager.getRootFolderName(tempFolder);
-            Map<String, String> bundles = new HashMap<String, String>();
             for (RepositoryNode node : nodes) {
                 JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
                         getServiceVersion());
                 JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
                         getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
                 job.run(monitor);
-                bundles.put(serviceManager.getNodeLabel(node), manager.getDestinationPath());
+                feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(manager.getDestinationPath())));
             }
             try {
+                // control bundle
                 final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-                bundles.put(artefactName, generateControlBundle(getGroupId(), artefactName));
-                processFeature(generateFeature(bundles));
+                File contrilBundle = generateControlBundle(getGroupId(), artefactName);
+                feature.addBundle(new BundleModel(getGroupId(), artefactName, getServiceVersion(), contrilBundle));
+
+                processFeature(feature);
+
                 processFinalResult(destinationPath);
             } catch (Exception e) {
                 throw new InvocationTargetException(e);
@@ -171,7 +175,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         }
     }
 
-    private String generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
+    private File generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
         File temp = new File(tempFolder, "temp");
         File metaInf = new File(temp, FileConstants.META_INF_FOLDER_NAME);
         metaInf.mkdirs();
@@ -197,29 +201,18 @@ public class ExportServiceAction implements IRunnableWithProgress {
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
-        return file.getAbsolutePath();
+        return file;
     }
 
-    private FeaturesModel generateFeature(Map<String, String> bundles) throws IOException {
-        FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(), getServiceVersion());
-        for (Map.Entry<String, String> entry : bundles.entrySet()) {
-            File jarFile = new File(entry.getValue());
-            BundleModel model = new BundleModel(jarFile, getGroupId(), entry.getKey(), getServiceVersion());
-            feature.addSubBundle(model);
-        }
-        // <feature version='[5,6)'>talend-job-controller</feature>
-        feature.addSubFeature(JOB_CONTROLLER_FEATURE, JOB_CONTROLLER_VERSION);
-        feature.setConfigName(getServiceName());
-        feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
-        return feature;
-    }
-
-    protected void processFeature(FeaturesModel feature) throws IOException {
-        String artefactName = getServiceName() + "-feature";
-        File filePath = serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion());
-        String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml";
-        String featureFilePath = new File(filePath, fileName).getAbsolutePath();
-        SaveAction.saveFeature(featureFilePath, feature);
+    protected void processFeature(FeatureModel feature) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(getFeatureFilePath())));
+		try {
+			bw.write(feature.getContent());
+			bw.flush();
+		} finally {
+			bw.close();
+		}
     }
 
     protected void processFinalResult(String destinationPath) throws IOException {
@@ -238,7 +231,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected String getControlBundleFilePath() {
         String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-        String fileName = artefactName + "-" + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX; //$NON-NLS-1$ 
+        String fileName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX; 
         String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
                 fileName).getAbsolutePath();
 
@@ -246,12 +239,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     protected String getFeatureFilePath() {
-        String artefactName = getServiceName() + "-feature"; //$NON-NLS-1$
-        String fileName = artefactName + "-" + getServiceVersion() + "-feature.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-        String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
-                fileName).getAbsolutePath();
-
-        return filePath;
+        String artefactName = getServiceName() + FeatureModel.NAME_SUFFIX;
+        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
+        		getServiceName() + '-' + getServiceVersion() + FeatureModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {

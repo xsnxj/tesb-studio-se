@@ -5,31 +5,22 @@ Bundle-SymbolicName: org.talend.camel.designer;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.camel.designer.CamelDesignerPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.talend.camel.model,
- org.talend.model,
- org.talend.core.runtime,
- org.talend.commons.ui,
+Require-Bundle: org.talend.camel.model,
  org.talend.core,
- org.eclipse.help,
  org.eclipse.ui.ide,
  org.eclipse.ui.intro,
  org.talend.repository,
  org.talend.core.repository,
  org.talend.designer.core,
- org.eclipse.ui.views.properties.tabbed,
- org.eclipse.jdt.debug,
  org.eclipse.debug.ui,
  org.talend.librariesmanager,
  org.eclipse.gef,
- org.talend.designer.codegen,
  org.talend.libraries.apache,
  org.talend.designer.camel.resource.core,
- org.talend.libraries.dom4j-jaxen,
- org.talend.resources
+ org.talend.resources,
+ org.talend.designer.publish.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.model,
  org.talend.camel.designer.ui.editor,
@@ -37,5 +28,4 @@ Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.ui.wizards.actions,
  org.talend.camel.designer.util
 Bundle-Vendor: .Talend SA.
-Import-Package: org.talend.designer.publish.core,
- org.talend.designer.publish.core.models
+Import-Package: org.dom4j
