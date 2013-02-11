@@ -445,7 +445,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode tRESTRequestNode = httpRequestComponentsList.get(0);
 	String cid = tRESTRequestNode.getUniqueName();
-	//cid = cid.replaceAll("_Loop", "");
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -464,10 +463,11 @@ private boolean restTalendJobAlreadyStarted = false;
 @javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class RestServiceProviderImpl4TalendJob {
 
-	@javax.ws.rs.core.Context 
-        private javax.ws.rs.core.UriInfo ui;
-        @javax.ws.rs.core.Context 
-        private javax.ws.rs.core.HttpHeaders httpHeaders;
+	@javax.ws.rs.core.Context
+	private javax.ws.rs.core.UriInfo ui;
+
+	@javax.ws.rs.core.Context
+	private javax.ws.rs.core.HttpHeaders httpHeaders;
 
 	private final <%=process.getName()%> job;
 
@@ -476,22 +476,22 @@ public static class RestServiceProviderImpl4TalendJob {
 	}
 
 	private javax.ws.rs.core.Response processRequest(java.util.Map<String, Object> request) {
-        final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
+		final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 		try {
 			globalMap.put("restRequest", request);
 
-            // pass DataSource
-            java.util.Map<String, routines.system.TalendDataSource> talendDataSources = 
-                (java.util.Map<String, routines.system.TalendDataSource>) job.globalMap.get(KEY_DB_DATASOURCES);
-            if (null != talendDataSources) {
-                java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
-                for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
-                    restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
-                }
-                globalMap.put(KEY_DB_DATASOURCES, restDataSources);
-            }
+			// pass DataSource
+			java.util.Map<String, routines.system.TalendDataSource> talendDataSources =
+				(java.util.Map<String, routines.system.TalendDataSource>) job.globalMap.get(KEY_DB_DATASOURCES);
+			if (null != talendDataSources) {
+				java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
+				for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
+					restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
+				}
+				globalMap.put(KEY_DB_DATASOURCES, restDataSources);
+			}
 
-            globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
+			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
 			job.<%=cid%>Process(globalMap);
 
@@ -503,7 +503,7 @@ public static class RestServiceProviderImpl4TalendJob {
 			if (null != response) {
 				responseBody = response.get("BODY");
 				status = (Integer) response.get("STATUS");
-                headers = (java.util.Map<String, String>) response.get("HEADERS");
+				headers = (java.util.Map<String, String>) response.get("HEADERS");
 			}
 			if (null == status) {
 				status = (request.containsKey("STATUS")) ? (Integer) request.get("STATUS") : 404;
@@ -522,18 +522,18 @@ public static class RestServiceProviderImpl4TalendJob {
 			ex.printStackTrace();
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
 		} finally {
-            // close DB connections
-            try {
-                java.util.Map<String, routines.system.TalendDataSource> restDataSources = 
-                    (java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
-                if (null != restDataSources) {
-                    for (routines.system.TalendDataSource restDataSource : restDataSources.values()) {
-                        restDataSource.close();
-                    }
-                }
-            } catch (Throwable e) {
-                e.printStackTrace(System.err);
-            }
+			// close DB connections
+			try {
+				java.util.Map<String, routines.system.TalendDataSource> restDataSources =
+					(java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
+				if (null != restDataSources) {
+					for (routines.system.TalendDataSource restDataSource : restDataSources.values()) {
+						restDataSource.close();
+					}
+				}
+			} catch (Throwable e) {
+				e.printStackTrace(System.err);
+			}
 		}
 	}
 
@@ -779,27 +779,27 @@ if (null != conns && !conns.isEmpty()) {
 		<% } %>
 			) {
 
-		java.util.Map<String, Object> request = new java.util.HashMap<String, Object>();
-		request.put("VERB", "<%=httpVerb%>");
-		request.put("OPERATION", "<%=connName%>");
-		request.put("PATTERN", <%=uriPattern%>);
+		java.util.Map<String, Object> request_<%=cid%> = new java.util.HashMap<String, Object>();
+		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
+		request_<%=cid%>.put("OPERATION", "<%=connName%>");
+		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
-		request.put("BODY", body);
+		request_<%=cid%>.put("BODY", body);
 		<% } %>
-		request.put("URI", ui.getPath());
-		request.put("URI_BASE", ui.getBaseUri().toString());
-		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
+		request_<%=cid%>.put("URI", ui.getPath());
+		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
+		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
 
-		java.util.Map<String, Object> parameters = new java.util.HashMap<String, Object>();
+		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
-			parameters.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
+			parameters_<%=cid%>.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
 		<%	} %>
-		request.put("PARAMS", parameters);
-                
-                request.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
-                request.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
+		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
-		return processRequest(request);
+		request_<%=cid%>.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
+		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
+
+		return processRequest(request_<%=cid%>);
 	}
 <%
 	}
@@ -849,13 +849,11 @@ public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.
 		response = provider.handleWrongRequest(messageContext, response.getStatus(), error);
 
 		java.util.List<javax.ws.rs.core.MediaType> accepts = messageContext.getHttpHeaders().getAcceptableMediaTypes();
-		javax.ws.rs.core.MediaType responseType = accepts.isEmpty() ? null : accepts.get(0); 
+		javax.ws.rs.core.MediaType responseType = accepts.isEmpty() ? null : accepts.get(0);
 
-		if (responseType == null || !responseType.getSubtype().equals("xml") &&  !responseType.getSubtype().equals("json")) {
-
-                    responseType = javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
-
-                }
+		if (responseType == null || !responseType.getSubtype().equals("xml") && !responseType.getSubtype().equals("json")) {
+			responseType = javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
+		}
 
 		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(responseType).build();
 	}
