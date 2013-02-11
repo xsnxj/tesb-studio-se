@@ -491,6 +491,9 @@ public static class RestServiceProviderImpl4TalendJob {
 				globalMap.put(KEY_DB_DATASOURCES, restDataSources);
 			}
 
+			// pass JMS connections
+			globalMap.putAll(job.getJmsConnections());
+
 			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
 			job.<%=cid%>_LoopProcess(globalMap);
