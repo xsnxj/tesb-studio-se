@@ -908,8 +908,11 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
 			jsonProvider.setAttributesToElements(true);
-                        jsonProvider.setSupportUnwrapped(true);
-                	jsonProvider.setWrapperName("root"); 
+                        <% boolean wrapJsonRequest = Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__WRAP_JSON_REQUEST__")); %> 
+                        <% if (wrapJsonRequest) { %>
+                            jsonProvider.setSupportUnwrapped(true);
+                            jsonProvider.setWrapperName("root"); 
+                        <% } %>  
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
