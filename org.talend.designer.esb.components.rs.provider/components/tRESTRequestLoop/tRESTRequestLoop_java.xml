@@ -59,7 +59,7 @@
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED="true" />
 			<IMPORT NAME="jettison"
-					MODULE="jettison-1.3.2.jar"
+					MODULE="jettison-1.3.3.jar"
 					BundleID="org.codehaus.jettison.jettison"
 					REQUIRED="true" />
 
@@ -74,7 +74,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.7.0.jar"
+					MODULE="cxf-bundle-2.7.3.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
 
@@ -91,20 +91,8 @@
 					BundleID=""
 					REQUIRED="true" />
 
-			<IMPORT NAME="geronimo-activation_1.1_spec"
-					MODULE="geronimo-activation_1.1_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-annotation_1.0_spec"
-					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -113,7 +101,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.1.13.jar"
+					MODULE="jaxb-impl-2.2.6.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -182,23 +170,23 @@
 					MODULE="spring-expression-3.0.7.RELEASE.jar"
 					BundleID=""
 					REQUIRED="true" />
-					
+
 			<IMPORT NAME="httpcore"
 					MODULE="httpcore-4.2.2.jar"
 					BundleID=""
-					REQUIRED="true" />										
+					REQUIRED="true" />
 			<IMPORT NAME="httpcore-nio"
 					MODULE="httpcore-nio-4.2.2.jar"
 					BundleID=""
-					REQUIRED="true" />															
+					REQUIRED="true" />
 			<IMPORT NAME="httpasyncclient"
 					MODULE="httpasyncclient-4.0-beta3.jar"
 					BundleID=""
-					REQUIRED="true" />																				
+					REQUIRED="true" />
 			<IMPORT NAME="httpclient"
 					MODULE="httpclient-4.2.1.jar"
 					BundleID=""
-					REQUIRED="true" />					
+					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
