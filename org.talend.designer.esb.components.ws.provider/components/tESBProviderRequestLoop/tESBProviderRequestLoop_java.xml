@@ -91,7 +91,7 @@
 					REQUIRED="true" />
 
 			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.7.0.jar"
+					MODULE="cxf-bundle-2.7.3.jar"
 					BundleID="org.apache.cxf.bundle"
 					REQUIRED="true" />
 
@@ -110,28 +110,9 @@
 					BundleID=""
 					REQUIRED="true" />
 
-			<IMPORT NAME="geronimo-activation_1.1_spec"
-					MODULE="geronimo-activation_1.1_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-annotation_1.0_spec"
-					MODULE="geronimo-annotation_1.0_spec-1.1.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-annotation_1.0_spec-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
 			<IMPORT NAME="geronimo-jaxws_2.2_spec"
 					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-jaxws_2.2_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-stax-api_1.0_spec"
-					MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-stax-api_1.0_spec-1.0.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="geronimo-ws-metadata_2.0_spec"
-					MODULE="geronimo-ws-metadata_2.0_spec-1.1.3.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-ws-metadata_2.0_spec-1.1.3.jar"
 					BundleID=""
 					REQUIRED="true" />
 
@@ -140,16 +121,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.1.13.jar"
-					BundleID=""
-					REQUIRED="true" />
-
-			<IMPORT NAME="saaj-api"
-					MODULE="saaj-api-1.3.4.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="saaj-impl"
-					MODULE="saaj-impl-1.3.18.jar"
+					MODULE="jaxb-impl-2.2.6.jar"
 					BundleID=""
 					REQUIRED="true" />
 
