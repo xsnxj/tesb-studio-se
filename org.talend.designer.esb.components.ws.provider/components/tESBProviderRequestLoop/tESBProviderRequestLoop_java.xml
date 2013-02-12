@@ -29,7 +29,6 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-<!-- ############ ESB start  -->
 		<PARAMETER NAME="KEEPLISTENING" FIELD="CHECK" NUM_ROW="250"
 				SHOW="true" DYNAMIC_SETTINGS="true">
 			<DEFAULT>true</DEFAULT>
@@ -72,8 +71,6 @@
 				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
 			<DEFAULT></DEFAULT>
 		</PARAMETER>
-
-<!-- ############ ESB end  -->
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>

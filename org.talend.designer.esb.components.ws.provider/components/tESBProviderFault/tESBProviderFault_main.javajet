@@ -7,8 +7,7 @@
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-		org.talend.core.model.metadata.types.JavaTypesManager
-		org.talend.core.model.metadata.types.JavaType
+
 		java.util.List
 		java.util.Map
 	"
@@ -16,30 +15,29 @@
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
-String cid = node.getUniqueName();
 
 if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 	System.out.println("[WARN] nonsense: tESBProviderFault component used without tESBProviderRequest component on the job");
-<% }
-
-List<IMetadataTable> metadatas = node.getMetadataList();
-if (null != metadatas && 0 < metadatas.size()) {
-	IMetadataTable metadata = metadatas.get(0);
-	if (null != metadata) {
-		List<? extends IConnection> conns = node.getIncomingConnections();
-		if (null != conns && 0 < conns.size()) {
-			IConnection conn = conns.get(0);
-			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+<% } else {
+	String cid = node.getUniqueName();
+	List<IMetadataTable> metadatas = node.getMetadataList();
+	if (null != metadatas && 0 < metadatas.size()) {
+		IMetadataTable metadata = metadatas.get(0);
+		if (null != metadata) {
+			List<? extends IConnection> conns = node.getIncomingConnections();
+			if (null != conns && 0 < conns.size()) {
+				IConnection conn = conns.get(0);
+				if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 %>
 	String esbProviderFaultTitle_<%=cid%> = <%= ElementParameterParser.getValue(node, "__ESB_FAULT_TITLE__")%> + " [<%=cid%>]";
 	Document esbProviderFaultDoc_<%=cid%> = null;
 <%
-				IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
-				if (null != column && "id_Document".equals(column.getTalendType())) {
+					IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
+					if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
 	esbProviderFaultDoc_<%=cid%> = <%=conn.getName()%>.payload;
 <%
-				}
+					}
 %>
 	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
@@ -64,8 +62,9 @@ if (null != metadatas && 0 < metadatas.size()) {
 		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 	}
 <%
-			}
-		}
-	}
+				} // end if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA))
+			} // end if (null != conns && 0 < conns.size())
+		} // end if (null != metadata)
+	} // end if (null != metadatas && 0 < metadatas.size())
 }
 %>

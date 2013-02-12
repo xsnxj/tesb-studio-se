@@ -7,8 +7,7 @@
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
 		org.talend.designer.codegen.config.CodeGeneratorArgument
-		org.talend.core.model.metadata.types.JavaTypesManager
-		org.talend.core.model.metadata.types.JavaType
+
 		java.util.List
 		java.util.Map
 	"
@@ -16,20 +15,21 @@
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
+
 if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 	System.out.println("[WARN] nonsense: tESBProviderResponse component used without tESBProviderRequest component on the job");
-<%	}
-String cid = node.getUniqueName();
-List<IMetadataTable> metadatas = node.getMetadataList();
-if (null != metadatas && 0 < metadatas.size()) {
-	IMetadataTable metadata = metadatas.get(0);
-	if (null != metadata) {
-		List<? extends IConnection> conns = node.getIncomingConnections();
-		if (null != conns && 0 < conns.size()) {
-			IConnection conn = conns.get(0);
-			if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-				IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
-				if (null != column && "id_Document".equals(column.getTalendType())) {
+<% } else {
+	String cid = node.getUniqueName();
+	List<IMetadataTable> metadatas = node.getMetadataList();
+	if (null != metadatas && 0 < metadatas.size()) {
+		IMetadataTable metadata = metadatas.get(0);
+		if (null != metadata) {
+			List<? extends IConnection> conns = node.getIncomingConnections();
+			if (null != conns && 0 < conns.size()) {
+				IConnection conn = conns.get(0);
+				if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+					IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
+					if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
 	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
 
@@ -52,9 +52,10 @@ if (null != metadatas && 0 < metadatas.size()) {
 		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 	}
 <%
-				}
-			}
-		}
-	}
+					} // end if (null != column && "id_Document".equals(column.getTalendType()))
+				} // end if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA))
+			} // end if (null != conns && 0 < conns.size())
+		} // end if (null != metadata)
+	} // end if (null != metadatas && 0 < metadatas.size())
 }
 %>

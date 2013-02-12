@@ -41,25 +41,11 @@ if (conns != null && conns.size() > 0) {
 
 List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
 List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-IConnection connResponse = null;
-IConnection connFault = null;
-if (connsResponse.size() == 1) {
-	connResponse = connsResponse.get(0);
-}
-if (connsFault.size() == 1) {
-	connFault = connsFault.get(0);
-}
-
+IConnection connResponse = (connsResponse.size() == 1) ? connsResponse.get(0) : null;
+IConnection connFault = (connsFault.size() == 1) ? connsFault.get(0) : null;
 
 
 String url = ElementParameterParser.getValue(node,"__URL__");
-
-String connectionTimeout = ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__");
-
-String receiveTimeout = ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__");
-
-List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
-List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
 
 String method = ElementParameterParser.getValue(node,"__METHOD__");
 
@@ -153,8 +139,8 @@ try {
 	// set connection properties
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
 	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
-	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=connectionTimeout%> * 1000));
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
 		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
 		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
@@ -172,12 +158,14 @@ try {
 	<% } %>
 
 	// set optional query and header properties if any
-	<% for (Map<String, String> header : headers) { %>
+	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
+		for (Map<String, String> header : headers) { %>
 		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
 	<% } %>
 
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
-	<% if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+	<% List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
+		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
 		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
 		<% for (Map<String, String> query : queries) { %>
 			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);

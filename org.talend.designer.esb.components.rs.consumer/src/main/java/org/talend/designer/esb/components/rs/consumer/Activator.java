@@ -1,6 +1,5 @@
 package org.talend.designer.esb.components.rs.consumer;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
