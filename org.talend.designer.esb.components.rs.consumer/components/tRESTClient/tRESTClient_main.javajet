@@ -275,7 +275,7 @@ try {
 		<% } else if ("POST".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else if ("PUT".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } %>
