@@ -68,6 +68,15 @@ if (acceptType == null) {
 	acceptType = "application/xml";
 }
 
+String convertToDomProperty = ElementParameterParser.getValue(node,"__CONVERT_TO_DOM__");
+boolean convertToDom = convertToDomProperty == null ? true : Boolean.valueOf(convertToDomProperty);
+
+String wrapJsonResponseProperty = ElementParameterParser.getValue(node,"__WRAP_JSON_RESPONSE__");
+boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
+
+String dropJsonRootProperty = ElementParameterParser.getValue(node,"__DROP_JSON_ROOT__");
+boolean dropJsonRoot = dropJsonRootProperty == null ? true : Boolean.valueOf(dropJsonRootProperty);
+
 String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
 if (contentType == null) {
 	contentType = "application/xml";
@@ -89,7 +98,7 @@ try {
 
 	// expected response body
 	Object responseDoc_<%=cid%> = null;
-	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType)) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
 
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
@@ -101,34 +110,41 @@ try {
 	<% } %>
 
 	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
+
 	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
-	    // workaround for https://jira.talendforge.org/browse/TESB-7276
-        public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
-                                           java.lang.reflect.Type type,
-                                           java.lang.annotation.Annotation[] anns, 
-                                           javax.ws.rs.core.MediaType mt,
-                                           javax.ws.rs.core.MultivaluedMap<String, String> headers, 
-                                           java.io.InputStream is) throws IOException, javax.ws.rs.WebApplicationException {
-            String contentLength = headers.getFirst("Content-Length"); 
-            if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
-                && Integer.valueOf(contentLength) <= 0) {
-                try {
-                    return org.dom4j.DocumentHelper.parseText("<root/>");
-                } catch (org.dom4j.DocumentException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-            return super.readFrom(cls, type, anns, mt, headers, is);
-        }
-    });
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+	});
+
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
-		new org.apache.cxf.jaxrs.provider.json.JSONProvider();
-	jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
-    jsonProvider_<%=cid%>.setAttributesToElements(true); 
-    jsonProvider_<%=cid%>.setSupportUnwrapped(true);
-    jsonProvider_<%=cid%>.setWrapperName("root");
+			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
+	<% if (wrapJsonResponse) { %>
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
+	<% } %>
+		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
+
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
 
@@ -180,6 +196,8 @@ try {
 			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
 		<% } else if ("POST".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else if ("PUT".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } %>

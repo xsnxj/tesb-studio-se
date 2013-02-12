@@ -37,7 +37,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequestLoop");
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
 if (!httpRequestComponentsList.isEmpty()) {
 
 	final class URITemplateUtils {
@@ -493,7 +493,7 @@ public static class RestServiceProviderImpl4TalendJob {
 
 			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
-			job.<%=cid%>Process(globalMap);
+			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
 
@@ -905,6 +905,10 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
 			jsonProvider.setAttributesToElements(true);
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__WRAP_JSON_REQUEST__"))) { %>
+				jsonProvider.setSupportUnwrapped(true);
+				jsonProvider.setWrapperName("root");
+			<% } %>
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
