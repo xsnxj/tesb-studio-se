@@ -19,6 +19,10 @@ public class BundleModel extends BaseModel {
 
 	private final File jarFile;
 
+	public BundleModel(String groupId, String artifactId, String version) {
+		this(groupId, artifactId, version, null);
+	}
+
 	public BundleModel(String groupId, String artifactId, String version, File jarFile) {
 		super(groupId, artifactId, version);
 		this.jarFile = jarFile;
