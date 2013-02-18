@@ -24,6 +24,10 @@ public class ServicesNodeTester extends AbstractNodeTester {
 
     private static final String IS_SERVICES_TOP_NODE = "isServicesTopNode"; //$NON-NLS-1$
 
+    private static final String IS_SERVICES_PORT_NODE = "isServicesPortNode"; //$NON-NLS-1$
+
+    private static final String IS_SERVICES_OPERATION_NODE = "isServicesOperationNode"; //$NON-NLS-1$
+
     /*
      * (non-Javadoc)
      * 
@@ -36,12 +40,24 @@ public class ServicesNodeTester extends AbstractNodeTester {
             RepositoryNode repositoryNode = (RepositoryNode) receiver;
             if (IS_SERVICES_TOP_NODE.equals(property)) {
                 return isServicesTopNode(repositoryNode);
+            } else if (IS_SERVICES_PORT_NODE.equals(property)) {
+                return isServicesPortNode(repositoryNode);
+            } else if (IS_SERVICES_OPERATION_NODE.equals(property)) {
+                return isServicesOperationNode(repositoryNode);
             }
         }
         return null;
     }
 
     public boolean isServicesTopNode(RepositoryNode repositoryNode) {
+        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
+    }
+
+    public boolean isServicesPortNode(RepositoryNode repositoryNode) {
+        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
+    }
+
+    public boolean isServicesOperationNode(RepositoryNode repositoryNode) {
         return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
     }
 

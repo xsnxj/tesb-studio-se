@@ -101,13 +101,51 @@
 				name="Services"
 				priority="normal">
 			<triggerPoints>
-				<or>
-					<adapt type="org.talend.repository.model.ProjectRepositoryNode" />
-					<instanceof value="org.talend.repository.model.ProjectRepositoryNode" />
-				</or>
+      <and>
+         <instanceof
+               value="org.talend.repository.model.RepositoryNode">
+         </instanceof>
+         <or>
+            <adapt
+                  type="org.talend.repository.model.ProjectRepositoryNode">
+            </adapt>
+            <instanceof
+                  value="org.talend.repository.model.ProjectRepositoryNode">
+            </instanceof>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesTopNode">
+            </test>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesPortNode">
+            </test>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesOperationNode">
+            </test>
+         </or></and>
 			</triggerPoints>
 			<possibleChildren>
-				<instanceof value="org.talend.repository.model.RepositoryNode" />
+      <and>
+         <instanceof
+               value="org.talend.repository.model.RepositoryNode">
+         </instanceof>
+         <or>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesTopNode">
+            </test>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesPortNode">
+            </test>
+            <test
+                  forcePluginActivation="true"
+                  property="org.talend.repository.node.isServicesOperationNode">
+            </test>
+         </or>
+      </and>
 			</possibleChildren>
 			<actionProvider
          class="org.talend.repository.view.di.viewer.action.DIRepositoryNodeActionProvider"
@@ -136,7 +174,7 @@
 				id="org.talend.repository.node.tester.services"
 				class="org.talend.repository.services.ui.viewer.tester.ServicesNodeTester"
 				namespace="org.talend.repository.node"
-				properties="isServicesTopNode"
+				properties="isServicesTopNode,isServicesPortNode,isServicesOperationNode"
 				type="org.talend.repository.model.RepositoryNode">
 		</propertyTester>
 	</extension>
