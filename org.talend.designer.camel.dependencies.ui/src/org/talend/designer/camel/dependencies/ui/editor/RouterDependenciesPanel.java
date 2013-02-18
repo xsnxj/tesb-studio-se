@@ -268,10 +268,12 @@ public class RouterDependenciesPanel extends Composite implements
 		if (open == Dialog.OK) {
 			OsgiDependencies<?> item = dialog.getDependencyItem();
 			selected.setName(item.getName());
-			selected.setMaxVersion(item.getMaxVersion());
-			selected.setMinVersion(item.getMinVersion());
+//			selected.setMaxVersion(item.getMaxVersion());
+//			selected.setMinVersion(item.getMinVersion());
 			selected.setOptional(item.isOptional());
-
+			selected.setVersionRange(item.getVersionRange());
+//			selected.setIncludeMinimum(item.getIncludeMinimum());
+//			selected.setIncludeMaximum(item.getIncludeMaximum());
 			tableViewer.update(selected, null);
 			fireDependenciesChangedListener();
 		}

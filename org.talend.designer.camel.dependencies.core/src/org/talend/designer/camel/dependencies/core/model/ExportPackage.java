@@ -5,43 +5,45 @@ import java.util.regex.Matcher;
 public class ExportPackage extends AbstractDependencyItem {
 
 	private String version = null;
-	
-	public ExportPackage(){
+
+	public ExportPackage() {
 	}
-	
-	public ExportPackage(String input){
+
+	public ExportPackage(String input) {
 		parse(input);
 	}
 
-	public ExportPackage(ExportPackage ep){
-		this.name = ep.getName();
-		this.version = ep.getVersion();
+	public ExportPackage(ExportPackage ep) {
+		if (ep != null) {
+			this.name = ep.getName();
+			this.version = ep.getVersion();
+		}
 	}
-	
+
 	private void parse(String input) {
-		if(input == null){
+		if (input == null) {
 			return;
 		}
 		String[] split = input.split(";"); //$NON-NLS-1$
-		if(split.length<1){
+		if (split.length < 1) {
 			return;
 		}
 		setName(split[0]);
-		if(split.length>1){
+		if (split.length > 1) {
 			int firstQuote = input.indexOf("\""); //$NON-NLS-1$
 			int lastQuote = input.lastIndexOf("\""); //$NON-NLS-1$
-			setVersion(input.substring(firstQuote+1, lastQuote));
+			setVersion(input.substring(firstQuote + 1, lastQuote));
 		}
 	}
-	
+
 	public void setVersion(String version) {
 		this.version = normalizeVersion(version);
 	}
-	
+
 	public String getVersion() {
 		return version;
 	}
-	
+
 	@Override
 	public String getLabel() {
 		StringBuilder sb = new StringBuilder();
@@ -61,29 +63,29 @@ public class ExportPackage extends AbstractDependencyItem {
 
 	@Override
 	public boolean strictEqual(Object obj) {
-		if(!equals(obj)){
+		if (!equals(obj)) {
 			return false;
 		}
-		return isEquals(version , ((ExportPackage)obj).getVersion());
+		return isEquals(version, ((ExportPackage) obj).getVersion());
 	}
-	
-	protected boolean isEquals(String a, String b){
-		if(a == null){
-			if( b == null){
+
+	protected boolean isEquals(String a, String b) {
+		if (a == null) {
+			if (b == null) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
-		
+
 		return a.equals(b);
 	}
-	
+
 	/**
 	 * only care about the name, ignore others
 	 */
 	@Override
-	public  boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -98,10 +100,10 @@ public class ExportPackage extends AbstractDependencyItem {
 		}
 		return name.equals(((ExportPackage) obj).getName());
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return name == null?super.hashCode():name.hashCode();
+		return name == null ? super.hashCode() : name.hashCode();
 	}
 
 	@Override
@@ -117,25 +119,25 @@ public class ExportPackage extends AbstractDependencyItem {
 
 		return sb.toString();
 	}
-	
+
 	public static final int VERSION_INVALID = 4;
-	
-	public int isValid(){
-		if(name == null || name.trim().equals("")){ //$NON-NLS-1$
+
+	public int isValid() {
+		if (name == null || name.trim().equals("")) { //$NON-NLS-1$
 			return NAME_NULL;
 		}
-		
-		if(!namePattern.matcher(name).matches()){
+
+		if (!namePattern.matcher(name).matches()) {
 			return NAME_INVALID;
 		}
-		
+
 		if (version != null && !version.trim().equals("")) { //$NON-NLS-1$
 			Matcher matcher = versionPattern.matcher(version);
 			if (!matcher.matches()) {
 				return VERSION_INVALID;
 			}
 		}
-		
+
 		return OK;
 	}
 }

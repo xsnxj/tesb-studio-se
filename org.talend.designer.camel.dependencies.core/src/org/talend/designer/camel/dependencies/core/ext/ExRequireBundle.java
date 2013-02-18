@@ -6,8 +6,17 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 public class ExRequireBundle extends AbstractExPredicator<RequireBundle, RequireBundle> {
 
 	private String bundleName;
-	private String minVersion;
-	private String maxVersion;
+//	private String minVersion;
+//	private String maxVersion;
+	private String versionRange;
+	public String getVersionRange() {
+		return versionRange;
+	}
+
+	public void setVersionRange(String versionRange) {
+		this.versionRange = versionRange;
+	}
+
 	private boolean isOptional;
 
 	ExRequireBundle() {
@@ -17,13 +26,6 @@ public class ExRequireBundle extends AbstractExPredicator<RequireBundle, Require
 		this.bundleName = bundleName;
 	}
 
-	void setMaxVersion(String maxVersion) {
-		this.maxVersion = maxVersion;
-	}
-
-	void setMinVersion(String minVersion) {
-		this.minVersion = minVersion;
-	}
 
 	void setOptional(boolean isOptional) {
 		this.isOptional = isOptional;
@@ -38,8 +40,8 @@ public class ExRequireBundle extends AbstractExPredicator<RequireBundle, Require
 	public RequireBundle toTargetIgnorePredicates() {
 		RequireBundle requireBundle = new RequireBundle();
 		requireBundle.setBuiltIn(true);
-		requireBundle.setMaxVersion(maxVersion);
-		requireBundle.setMinVersion(minVersion);
+		requireBundle.setVersionRange(versionRange);
+//		requireBundle.setMinVersion(minVersion);
 		requireBundle.setName(bundleName);
 		requireBundle.setOptional(isOptional);
 		return requireBundle;

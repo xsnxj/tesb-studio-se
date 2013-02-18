@@ -6,8 +6,16 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 public class ExImportPackage extends AbstractExPredicator<ImportPackage, ImportPackage> {
 
 	private String packageName;
-	private String minVersion;
-	private String maxVersion;
+	private String versionRange;
+
+	public String getVersionRange() {
+		return versionRange;
+	}
+
+	public void setVersionRange(String versionRange) {
+		this.versionRange = versionRange;
+	}
+
 	private boolean isOptional;
 
 	ExImportPackage() {
@@ -15,14 +23,6 @@ public class ExImportPackage extends AbstractExPredicator<ImportPackage, ImportP
 
 	void setPackageName(String packageName) {
 		this.packageName = packageName;
-	}
-
-	void setMaxVersion(String maxVersion) {
-		this.maxVersion = maxVersion;
-	}
-
-	void setMinVersion(String minVersion) {
-		this.minVersion = minVersion;
 	}
 
 	void setOptional(boolean isOptional) {
@@ -38,8 +38,7 @@ public class ExImportPackage extends AbstractExPredicator<ImportPackage, ImportP
 	public ImportPackage toTargetIgnorePredicates() {
 		ImportPackage importPackage = new ImportPackage();
 		importPackage.setBuiltIn(true);
-		importPackage.setMaxVersion(maxVersion);
-		importPackage.setMinVersion(minVersion);
+		importPackage.setVersionRange(versionRange);
 		importPackage.setName(packageName);
 		importPackage.setOptional(isOptional);
 		return importPackage;

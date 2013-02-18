@@ -16,11 +16,6 @@ public class Messages extends NLS {
 	public static String NewDependencyItemDialog_existCheckMessage;
 	public static String NewDependencyItemDialog_importPackage;
 	public static String NewDependencyItemDialog_importPackageMessage;
-	public static String NewDependencyItemDialog_maxVersion;
-	public static String NewDependencyItemDialog_maxVersionInvalidMsg;
-	public static String NewDependencyItemDialog_minVersion;
-	public static String NewDependencyItemDialog_minVersionGreatThanMaxVersionMsg;
-	public static String NewDependencyItemDialog_minVersionInvalidMsg;
 	public static String NewDependencyItemDialog_name;
 	public static String NewDependencyItemDialog_nameIsNullMessage;
 	public static String NewDependencyItemDialog_optional;
@@ -33,7 +28,6 @@ public class Messages extends NLS {
 	public static String NewExportPackageDialog_name;
 	public static String NewExportPackageDialog_nameAlreadyExist;
 	public static String NewExportPackageDialog_nameNullError;
-	public static String NewExportPackageDialog_version;
 	public static String NewExportPackageDialog_versionInvalidError;
 	public static String NewOrEditDependencyDialog_nameInvalidMsg;
 	public static String RelativeEditorsSaveDialog_saveEditorsMsg;
@@ -58,6 +52,18 @@ public class Messages extends NLS {
 	public static String RouterDependenciesPanel_removeBtn;
 	public static String RouterDependenciesPanel_selectAll;
 	public static String RouterDependenciesPanel_upBtn;
+
+	public static String DependencyVersionDialog_versionRangeError;
+	public static String NewExportPackageDialog_exportGroupText;
+	public static String NewOrEditDependencyDialog_properties;
+
+	public static String DependenceVersionPart_groupText;
+	public static String DependencyVersionPart_version;
+	public static String DependencyVersionPart_minimumVersion;
+	public static String DependencyVersionPart_maximumVersion;
+	public static String DependencyVersionPart_comboInclusive;
+	public static String DependencyVersionPart_comboExclusive;
+	public static String DependencyVersionPart_InvalidVersionFormat;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

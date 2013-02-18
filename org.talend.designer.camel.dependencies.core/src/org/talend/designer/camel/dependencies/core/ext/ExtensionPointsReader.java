@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
 
 public class ExtensionPointsReader {
 
@@ -170,10 +171,10 @@ public class ExtensionPointsReader {
 		ExImportPackage importPackage = new ExImportPackage();
 		importPackage.setPackageName(packageName);
 		if (maxVersion != null && !"".equals(maxVersion)) { //$NON-NLS-1$
-			importPackage.setMaxVersion(maxVersion);
+//			importPackage.setMaxVersion(maxVersion);
 		}
 		if (minVersion != null && !"".equals(minVersion)) { //$NON-NLS-1$
-			importPackage.setMinVersion(minVersion);
+//			importPackage.setMinVersion(minVersion);
 		}
 		if (optional != null) {
 			importPackage.setOptional(Boolean.getBoolean(optional));
@@ -234,12 +235,9 @@ public class ExtensionPointsReader {
 
 		ExRequireBundle requireBundle = new ExRequireBundle();
 		requireBundle.setBundleName(bundleName);
-		if (maxVersion != null && !"".equals(maxVersion)) { //$NON-NLS-1$
-			requireBundle.setMaxVersion(maxVersion);
-		}
-		if (minVersion != null && !"".equals(minVersion)) { //$NON-NLS-1$
-			requireBundle.setMinVersion(minVersion);
-		}
+		requireBundle.setVersionRange(VersionValidateUtil.tryToGetValidVersionRange(minVersion, maxVersion));
+		
+		
 		if (optional != null) {
 			requireBundle.setOptional(Boolean.getBoolean(optional));
 		}

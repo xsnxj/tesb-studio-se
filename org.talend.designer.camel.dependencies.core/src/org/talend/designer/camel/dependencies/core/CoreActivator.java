@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 
 public class CoreActivator implements BundleActivator {
 
+	public static final String PLUGIN_ID = "org.talend.designer.camel.dependencies.ui";
 	private static BundleContext context;
 
 	static BundleContext getContext() {
