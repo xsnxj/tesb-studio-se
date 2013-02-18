@@ -19,7 +19,10 @@ public class BaseModel {
 	private final String artifactId;
 	private final String version;
 
-	public BaseModel(String groupId, String artifactId, String version) {
+	BaseModel(String groupId, String artifactId, String version) {
+		if(groupId == null || artifactId == null || version == null) {
+			throw new IllegalArgumentException();
+		}
 		this.groupId = groupId;
 		this.artifactId = artifactId;
 		this.version = version;
@@ -39,25 +42,16 @@ public class BaseModel {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj == null){
-			return false;
+		if(obj instanceof BaseModel) {
+			BaseModel model = (BaseModel) obj;
+			return groupId.equals(model.getGroupId()) && artifactId.equals(model.getArtifactId());
 		}
-		if(this == obj){
-			return true;
-		}
-		if(!(obj instanceof BaseModel)){
-			return false;
-		}
-		if(groupId == null || artifactId == null || version == null){
-			return false;
-		}
-		BaseModel tmp = (BaseModel) obj;
-		return groupId.equals(tmp.getGroupId()) && artifactId.equals(tmp.getArtifactId()) && version.equals(tmp.getVersion());
+		return super.equals(obj);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return (groupId + '/' + artifactId + '/' + version).hashCode();
+		return (groupId + artifactId).hashCode();
 	}
 
 }

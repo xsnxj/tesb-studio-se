@@ -43,6 +43,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
+import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.RepositoryNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -58,95 +59,42 @@ import org.w3c.dom.NodeList;
  */
 public final class CamelFeatureUtil {
 
-	private static final String JAVA_SCRIPT = "javaScript";
-
-	private static final String VERSION_SCOPE = "[2,5)";
-
-	private static final String CAMEL_SCRIPT_JAVASCRIPT = "camel-script-javascript";
-	private static final String CAMEL_SCRIPT = "camel-script";
-	private static final String CAMEL_GROOVY = "camel-groovy";
-
-	private static final String LANGUAGES = "LANGUAGES";
-
-	private static final String LOOP_TYPE = "LOOP_TYPE";
-
-	/**
-	 * Inner model
-	 * 
-	 * @author LiXiaopeng
-	 * 
-	 */
-	protected static class XMLFeatureModel {
-
-		private String name = "";
-
-		private String version = "";
-
-		public XMLFeatureModel() {
-		}
-
-		/**
-		 * @param name
-		 * @param version
-		 */
-		public XMLFeatureModel(String name, String version) {
-			this.name = name;
-			this.version = version;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj != null && obj instanceof XMLFeatureModel) {
-				XMLFeatureModel model = (XMLFeatureModel) obj;
-				return model.getName().equals(this.name);
-				// && model.getVersion().equals(this.version); // fix the equals
-				// method, only compare the name, else, camel-spring will be
-				// added more times.
-			}
-			return super.equals(obj);
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getVersion() {
-			return version;
-		}
-
-		@Override
-		public int hashCode() {
-			if (name != null) {
-				return name.hashCode();
-			}
-			return super.hashCode();
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public void setVersion(String version) {
-			this.version = version;
-		}
-
-		@Override
-		public String toString() {
-			return name + ", " + version;
-		}
-	}
-
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
-	private static final String CAMEL_VERSION_RANGE = VERSION_SCOPE;
-
+	private static final String CAMEL_VERSION_RANGE = "[2,5)";
 	private static final String SPRING_VERSION_RANGE = "[3,5)";
 
-	private static final Map<String, Collection<XMLFeatureModel>> camelFeaturesMap =
-			new HashMap<String, Collection<XMLFeatureModel>>();
+	@SuppressWarnings("serial")
+	private static final Collection<FeatureModel> DEFAULT_FEATURES = new ArrayList<FeatureModel>() {{
+		add(new FeatureModel("camel", CAMEL_VERSION_RANGE));
+		add(new FeatureModel("camel-core", CAMEL_VERSION_RANGE));
+		add(new FeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
+		add(new FeatureModel("spring", SPRING_VERSION_RANGE));
+		add(new FeatureModel("spring-tx", SPRING_VERSION_RANGE));
+		add(new FeatureModel("camel-spring", CAMEL_VERSION_RANGE));
+	}};
+
+	private static final FeatureModel FEATURE_CAMEL_GROOVY = new FeatureModel("camel-groovy", CAMEL_VERSION_RANGE);
+	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript", CAMEL_VERSION_RANGE);
+	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script", CAMEL_VERSION_RANGE);
+
+	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-optional", "[5,10)");
+
+	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
+	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
+
+	private static final Map<String, Collection<FeatureModel>> camelFeaturesMap =
+			new HashMap<String, Collection<FeatureModel>>();
 
 	private static final Map<String, Collection<BundleModel>> camelBundlesMap =
 			new HashMap<String, Collection<BundleModel>>();
+
+
+	private static final String JAVA_SCRIPT = "javaScript";
+
+	private static final String LANGUAGES = "LANGUAGES";
+	private static final String LOOP_TYPE = "LOOP_TYPE";
+
 
 	/**
 	 * Check the node is Route
@@ -155,15 +103,12 @@ public final class CamelFeatureUtil {
 	 * @return
 	 */
 	private static boolean checkNode(RepositoryNode node) {
-
 		if (node == null) {
 			return false;
 		}
-
 		if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -190,7 +135,7 @@ public final class CamelFeatureUtil {
 	 * @param evtValue
 	 * @return
 	 */
-	private static Collection<XMLFeatureModel> computeFeature(String evtValue) {
+	private static Collection<FeatureModel> computeFeature(String evtValue) {
 		if (camelFeaturesMap.isEmpty()) {
 			initMap();
 		}
@@ -258,38 +203,30 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @return
 	 */
-	private static Collection<XMLFeatureModel> getFeaturesOfRoute(
+	private static Collection<FeatureModel> getFeaturesOfRoute(
 			Collection<String> neededLibraries, ProcessType processType) {
 
-		Collection<XMLFeatureModel> features = new HashSet<XMLFeatureModel>();
+		Collection<FeatureModel> features = new HashSet<FeatureModel>(DEFAULT_FEATURES);
 
 		for (String lib : neededLibraries) {
-			Collection<XMLFeatureModel> featureModel = computeFeature(lib);
+			Collection<FeatureModel> featureModel = computeFeature(lib);
 			if (featureModel != null) {
 				features.addAll(featureModel);
 			}
 		}
-
-		features.add(new XMLFeatureModel("camel-spring", CAMEL_VERSION_RANGE));
-		features.add(new XMLFeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
-		features.add(new XMLFeatureModel("camel", CAMEL_VERSION_RANGE));
-		features.add(new XMLFeatureModel("camel-core", CAMEL_VERSION_RANGE));
-		features.add(new XMLFeatureModel("spring", SPRING_VERSION_RANGE));
-		features.add(new XMLFeatureModel("spring-tx", SPRING_VERSION_RANGE));
-		features.add(new XMLFeatureModel("talend-job-controller", "[5,6)"));
 
 		addProcessSpecialFeatures(features, processType);
 
 		return features;
 	}
 
-	private static void addProcessSpecialFeatures(Collection<XMLFeatureModel> features,
+	private static void addProcessSpecialFeatures(Collection<FeatureModel> features,
 			ProcessType processType) {
 		addNodesSpecialFeatures(features, processType);
 		addConnectionsSpecialFeatures(features, processType);
 	}
 
-	private static void addNodesSpecialFeatures(Collection<XMLFeatureModel> features,
+	private static void addNodesSpecialFeatures(Collection<FeatureModel> features,
 			ProcessType processType) {
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
@@ -315,18 +252,18 @@ public final class CamelFeatureUtil {
 	}
 
 	private static void handleJmsConnectionFactory(
-			Collection<XMLFeatureModel> features, NodeType currentNode) {
+			Collection<FeatureModel> features, NodeType currentNode) {
 		ElementParameterType mqType = findElementParameterByName("MQ_TYPE", currentNode.getElementParameter());
 		if("ActiveMQ".equals(mqType.getValue())){
 			ElementParameterType useHttpBroker = findElementParameterByName("IS_AMQ_HTTP_BROKER", currentNode.getElementParameter());
 			if (null != useHttpBroker && "true".equals(useHttpBroker.getValue())) {
-				features.add(new XMLFeatureModel("activemq-optional", "[5,10)"));
+				features.add(FEATURE_ACTIVEMQ_OPTIONAL);
 			}
 		}
 	}
 
 	private static void addConnectionsSpecialFeatures(
-			Collection<XMLFeatureModel> features, ProcessType processType) {
+			Collection<FeatureModel> features, ProcessType processType) {
 		EList connections = processType.getConnection();
 		Iterator iterator = connections.iterator();
 		while(iterator.hasNext()){
@@ -352,19 +289,16 @@ public final class CamelFeatureUtil {
 //	            String[] strList = { "constant", "el", "groovy", "header", "javaScript", "jxpath", "mvel", "ognl", "php", "property",
 //	                    "python", "ruby", "simple", "spel", "sql", "xpath", "xquery" };
 				if("groovy".equals(ept.getValue())){
-					features.add(new XMLFeatureModel(CAMEL_GROOVY,
-							VERSION_SCOPE));
-				}else if("javaScript".equals(ept.getValue())){
-					features.add(new XMLFeatureModel(CAMEL_SCRIPT,
-							VERSION_SCOPE));
-					features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-							VERSION_SCOPE));
+					features.add(FEATURE_CAMEL_GROOVY);
+				} else if ("javaScript".equals(ept.getValue())) {
+					features.add(FEATURE_CAMEL_SCRIPT);
+					features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 				}
 			}
 		}
 	}
 	
-	protected static void handleSetHeaderCase(Collection<XMLFeatureModel> features,
+	protected static void handleSetHeaderCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		ElementParameterType element = findElementParameterByName("VALUES", currentNode.getElementParameter());
 		EList elementValue = element.getElementValue();
@@ -377,15 +311,14 @@ public final class CamelFeatureUtil {
 			ElementValueType evt = (ElementValueType) next;
 			String elementRef = evt.getElementRef();
 			if("LANGUAGE".equals(elementRef) && JAVA_SCRIPT.equals(evt.getValue())){
-				features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-						VERSION_SCOPE));
+				features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 				break;
 			}
 		}
 		
 	}
 
-	protected static void handleSetBodyCase(Collection<XMLFeatureModel> features,
+	protected static void handleSetBodyCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -393,12 +326,10 @@ public final class CamelFeatureUtil {
 		if(!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
-		features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-				VERSION_SCOPE));
-		
+		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 	}
 
-	private static void handleRecipientListCase(Collection<XMLFeatureModel> features,
+	private static void handleRecipientListCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -406,12 +337,10 @@ public final class CamelFeatureUtil {
 		if(!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
-		features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-				VERSION_SCOPE));
-		
+		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 	}
 
-	protected static void handleMessageFilterCase(Collection<XMLFeatureModel> features,
+	protected static void handleMessageFilterCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 
@@ -419,12 +348,10 @@ public final class CamelFeatureUtil {
 		if(!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
-		features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-				VERSION_SCOPE));
-		
+		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 	}
 
-	protected static void handleLoopCase(Collection<XMLFeatureModel> features,
+	protected static void handleLoopCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		EList parameters = currentNode.getElementParameter();
 		List<String> paraNames = new ArrayList<String>();
@@ -440,27 +367,22 @@ public final class CamelFeatureUtil {
 		if(!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
-		features.add(new XMLFeatureModel(CAMEL_SCRIPT_JAVASCRIPT,
-				VERSION_SCOPE));
+		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 	}
 
-	protected static void handleCXFcase(Collection<XMLFeatureModel> features,
+	protected static void handleCXFcase(Collection<FeatureModel> features,
 			NodeType currentNode) {
 		boolean sam = computeCheckElementValue("ENABLE_SAM",
 				currentNode.getElementParameter());
 		if (sam) {
-			features.add(new XMLFeatureModel("tesb-sam-common",
-					"[2,10)"));
-			features.add(new XMLFeatureModel("tesb-sam-agent",
-					"[2,10)"));
+			features.add(FEATURE_ESB_SAM);
 		}
 
 		boolean sl = computeCheckElementValue("ENABLE_SL",
 				currentNode.getElementParameter());
 		if (sl) {
 			// http://jira.talendforge.org/browse/TESB-5461
-			features.add(new XMLFeatureModel("tesb-zookeeper",
-					"[2,10)"));
+			features.add(FEATURE_ESB_LOCATOR);
 		}
 	}
 
@@ -493,17 +415,17 @@ public final class CamelFeatureUtil {
 							.getNamedItem("HotLib").getNodeValue();
 					// Use version properties
 					hotLib = hotLib.replace("$version$", camelVersion);
-					Collection<XMLFeatureModel> features = camelFeaturesMap
+					Collection<FeatureModel> features = camelFeaturesMap
 							.get(hotLib);
 					if (features == null) {
-						features = new HashSet<XMLFeatureModel>();
+						features = new HashSet<FeatureModel>();
 						camelFeaturesMap.put(hotLib, features);
 					}
 
 					String featureVersion = node.getAttributes()
 							.getNamedItem("version").getNodeValue();
 					String featureName = node.getFirstChild().getNodeValue();
-					features.add(new XMLFeatureModel(featureName,
+					features.add(new FeatureModel(featureName,
 							featureVersion));
 				}
 				list = (NodeList) newXPath.evaluate("//FeatureMap/Bundle",
@@ -542,10 +464,10 @@ public final class CamelFeatureUtil {
 	 * Add feature and bundle to Feature Model
 	 * 
 	 * @param node
-	 * @param featureModel
+	 * @param featuresModel
 	 */
 	public static void addFeatureAndBundles(RepositoryNode node,
-			FeatureModel featureModel) {
+			FeaturesModel featuresModel) {
 
 		if (!checkNode(node)) {
 			return;
@@ -559,15 +481,15 @@ public final class CamelFeatureUtil {
 		process.loadXmlFile();
 		Collection<String> neededLibraries = process.getNeededLibraries(true);
 
-		Collection<XMLFeatureModel> features = getFeaturesOfRoute(neededLibraries,
+		Collection<FeatureModel> features = getFeaturesOfRoute(neededLibraries,
 				((ProcessItem) property.getItem()).getProcess());
-		for (XMLFeatureModel model : features) {
-			featureModel.addSubFeature(model.getName(), model.getVersion());
+		for (FeatureModel model : features) {
+			featuresModel.addFeature(model);
 		}
 
 		Collection<BundleModel> bundles = getBundlesOfRoute(neededLibraries);
 		for (BundleModel model : bundles) {
-			featureModel.addBundle(model);
+			featuresModel.addBundle(model);
 		}
 
 		process.dispose();

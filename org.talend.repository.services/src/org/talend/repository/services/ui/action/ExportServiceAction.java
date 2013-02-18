@@ -27,7 +27,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.models.BundleModel;
-import org.talend.designer.publish.core.models.FeatureModel;
+import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -144,7 +144,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
             }
         }
 
-        FeatureModel feature = new FeatureModel(getGroupId(), getServiceName(), getServiceVersion());
+        FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(), getServiceVersion());
         feature.setConfigName(getServiceName());
         feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
 
@@ -204,7 +204,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         return file;
     }
 
-    protected void processFeature(FeatureModel feature) throws IOException {
+    protected void processFeature(FeaturesModel feature) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(getFeatureFilePath())));
 		try {
@@ -239,9 +239,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     protected String getFeatureFilePath() {
-        String artefactName = getServiceName() + FeatureModel.NAME_SUFFIX;
+        String artefactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
         return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
-        		getServiceName() + '-' + getServiceVersion() + FeatureModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
+        		getServiceName() + '-' + getServiceVersion() + FeaturesModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {

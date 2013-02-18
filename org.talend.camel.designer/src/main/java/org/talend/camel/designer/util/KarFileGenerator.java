@@ -22,7 +22,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
-import org.talend.designer.publish.core.models.FeatureModel;
+import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.RepositoryNode;
 
 public class KarFileGenerator {
@@ -53,11 +53,11 @@ public class KarFileGenerator {
          * feature file path: repository/[projectName]/[itemName]/[itemName]-feature
          * /[itemVersion]/[itemName]-[itemVersion]-feature.xml
          */
-        String featurePrefix = sb.append(itemName).append(FeatureModel.NAME_SUFFIX).append('/').append(version).append('/').append(itemName)
-                .append('-').append(version).append(FeatureModel.NAME_SUFFIX).append(".xml").toString();
+        String featurePrefix = sb.append(itemName).append(FeaturesModel.NAME_SUFFIX).append('/').append(version).append('/').append(itemName)
+                .append('-').append(version).append(FeaturesModel.NAME_SUFFIX).append(".xml").toString();
 
         String groupId = CamelFeatureUtil.getMavenGroupId(routeProperty.getItem());
-        FeatureModel featureModel = new FeatureModel(groupId, itemName, version);
+        FeaturesModel featuresModel = new FeaturesModel(groupId, itemName, version);
 
         for (ExportKarBundleModel p : bundleModels) {
             if (p == null || p.getBundleFilePath() == null) {
@@ -89,17 +89,17 @@ public class KarFileGenerator {
 
             // add bundle dependencies
             BundleModel bundleModel = new BundleModel(groupId, displayName, p.getRepositoryVersion());
-            featureModel.setContexts(getContextsMap(repositoryNode));
+            featuresModel.setContexts(getContextsMap(repositoryNode));
 
-            featureModel.addBundle(bundleModel);
+            featuresModel.addBundle(bundleModel);
 
             // http://jira.talendforge.org/browse/TESB-6311, add sub-features
             // and bundles, Xiaopeng Li
-            CamelFeatureUtil.addFeatureAndBundles(routerNode, featureModel);
+            CamelFeatureUtil.addFeatureAndBundles(routerNode, featuresModel);
 
         }
 
-        byte[] featureContent = featureModel.getContent().getBytes();
+        byte[] featureContent = featuresModel.getContent().getBytes();
 
         ZipEntry entry = new ZipEntry(featurePrefix);
         entry.setSize(featureContent.length);
