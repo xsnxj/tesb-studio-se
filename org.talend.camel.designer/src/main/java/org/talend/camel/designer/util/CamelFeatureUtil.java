@@ -413,14 +413,12 @@ public final class CamelFeatureUtil {
 
 	private static void handleJmsConnectionFactory(
 			Set<XMLFeatureModel> features, NodeType currentNode) {
-		List<String> names = new ArrayList<String>();
-		names.add("MQ_TYPE");
-		names.add("IS_AMQ_HTTP_BROKER");
-		Map<String, ElementParameterType> paras = findElementParameterByNames(names, currentNode.getElementParameter());
-		ElementParameterType mqType = paras.get("MQ_TYPE");
-		ElementParameterType useHttpBroker = paras.get("IS_AMQ_HTTP_BROKER");
-		if("ActiveMQ".equals(mqType.getValue()) && "true".equals(useHttpBroker.getValue())){
-			features.add(new XMLFeatureModel("activemq-optional", "[5,10)"));
+		ElementParameterType mqType = findElementParameterByName("MQ_TYPE", currentNode.getElementParameter());
+		if("ActiveMQ".equals(mqType.getValue())){
+			ElementParameterType useHttpBroker = findElementParameterByName("IS_AMQ_HTTP_BROKER", currentNode.getElementParameter());
+			if (null != useHttpBroker && "true".equals(useHttpBroker.getValue())) {
+				features.add(new XMLFeatureModel("activemq-optional", "[5,10)"));
+			}
 		}
 	}
 
