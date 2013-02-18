@@ -88,7 +88,7 @@ public class KarFileGenerator {
             is.close();
 
             // add bundle dependencies
-            BundleModel bundleModel = new BundleModel(groupId, displayName, p.getRepositoryVersion(), null);
+            BundleModel bundleModel = new BundleModel(groupId, displayName, p.getRepositoryVersion());
             featureModel.setContexts(getContextsMap(repositoryNode));
 
             featureModel.addBundle(bundleModel);
