@@ -908,11 +908,10 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
 			jsonProvider.setAttributesToElements(true);
-                        <% boolean wrapJsonRequest = Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__WRAP_JSON_REQUEST__")); %> 
-                        <% if (wrapJsonRequest) { %>
-                            jsonProvider.setSupportUnwrapped(true);
-                            jsonProvider.setWrapperName("root"); 
-                        <% } %>  
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__WRAP_JSON_REQUEST__"))) { %>
+				jsonProvider.setSupportUnwrapped(true);
+				jsonProvider.setWrapperName("root");
+			<% } %>
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
@@ -924,8 +923,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
 					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
 
-			<% boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_LOCATOR__")); %>
-			<% if (isSLEnable) { %>
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_LOCATOR__"))) { %>
 				boolean inOSGi = false;
 				try {
 					inOSGi = (null != sf.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
@@ -933,19 +931,6 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					; // ignore
 				}
 				if (!inOSGi) {
-					String studioHome = "<%= System.getProperties().get("eclipse.home.location") %>";
-					if (!studioHome.trim().isEmpty()) {
-						ClassLoader currentThreadClassLoader = Thread.currentThread().getContextClassLoader();
-
-						// Add the conf dir to the classpath
-						// Chain the current thread classloader
-						java.net.URLClassLoader urlClassLoader = new java.net.URLClassLoader(
-								new java.net.URL[]{ new java.net.URL(studioHome + "esb/") },
-								 currentThreadClassLoader);
-
-						// Replace the thread classloader - assumes you have permissions to do so
-						Thread.currentThread().setContextClassLoader(urlClassLoader);
-					}
 					sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 				}
 				sf.setServiceName(new javax.xml.namespace.QName(
