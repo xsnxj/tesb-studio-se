@@ -72,7 +72,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.prefs.ITalendCorePrefConstants;
-import org.talend.core.ui.AbstractWebService;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
@@ -89,7 +88,7 @@ import org.talend.repository.ui.utils.ConnectionContextHelper;
 /**
  * gcui class global comment. Detailled comment
  */
-public class WebServiceUI extends WizardPage implements AbstractWebService {
+public class WebServiceUI extends WizardPage {
 
     private static final String METHOD = "METHOD";
     private static final String NEED_SSL_TO_TRUSTSERVER = "NEED_SSL_TO_TRUSTSERVER";
