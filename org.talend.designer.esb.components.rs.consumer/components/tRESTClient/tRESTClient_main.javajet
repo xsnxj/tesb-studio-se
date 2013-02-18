@@ -105,21 +105,6 @@ try {
 		} catch (ClassNotFoundException e) {
 			; // ignore
 		}
-		if (!inOSGi) {
-			String studioHome = "<%= System.getProperties().get("eclipse.home.location") %>";
-			if (!studioHome.trim().isEmpty()) {
-				ClassLoader currentThreadClassLoader = Thread.currentThread().getContextClassLoader();
-
-				// Add the conf dir to the classpath
-				// Chain the current thread classloader
-				java.net.URLClassLoader urlClassLoader = new java.net.URLClassLoader(
-						new java.net.URL[]{ new java.net.URL(studioHome + "esb/") },
-						 currentThreadClassLoader);
-
-				// Replace the thread classloader - assumes you have permissions to do so
-				Thread.currentThread().setContextClassLoader(urlClassLoader);
-			}
-		}
 	<% } %>
 
 	<% if (isSLEnable) { %>
@@ -133,7 +118,7 @@ try {
 		}
 
 		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
-			new org.talend.esb.servicelocator.cxf.LocatorFeature();
+				new org.talend.esb.servicelocator.cxf.LocatorFeature();
 
 		<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
 				ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
@@ -247,7 +232,6 @@ try {
 	<% } %>
 
 	// set optional query and header properties if any
-
 	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
 		for (Map<String, String> header : headers) { %>
 		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
