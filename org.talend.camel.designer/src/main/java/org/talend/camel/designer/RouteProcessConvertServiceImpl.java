@@ -6,6 +6,7 @@ import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.core.IProcessConvertService;
+import org.talend.designer.core.ProcessConverterType;
 
 public class RouteProcessConvertServiceImpl implements IProcessConvertService {
 
@@ -26,10 +27,21 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.designer.core.IProcessConvertService#doConvert(org.talend.core.model.properties.Item,
+     * @see org.talend.designer.core.IProcessConvertService#convertToProcess(org.talend.core.model.properties.Item,
      * org.talend.core.model.repository.IRepositoryViewObject)
      */
-    public Item doConvert(Item item, IRepositoryViewObject repViewObject) {
+    public Item convertToProcess(Item item, IRepositoryViewObject repViewObject) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.core.IProcessConvertService#convertFromProcess(org.talend.core.model.properties.Item,
+     * org.talend.core.model.repository.IRepositoryViewObject)
+     */
+    public Item convertFromProcess(Item item, IRepositoryViewObject repViewObject) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -40,6 +52,7 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
      * @see org.talend.designer.core.IProcessConvertService#isOriginalItemDeleted()
      */
     public boolean isOriginalItemDeleted() {
+        // TODO Auto-generated method stub
         return false;
     }
 
@@ -49,7 +62,17 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
      * @see org.talend.designer.core.IProcessConvertService#isNewItemCreated()
      */
     public boolean isNewItemCreated() {
+        // TODO Auto-generated method stub
         return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.core.IProcessConvertService#getConverterType()
+     */
+    public ProcessConverterType getConverterType() {
+        return ProcessConverterType.CONVERTER_FOR_ROUTE;
     }
 
 }
