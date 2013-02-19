@@ -321,6 +321,11 @@
                  mapping="ROUTE_COMPONENT_TYPE"
                  name="Route Component Type">
            </generator>
+           <generator
+                 class="org.talend.camel.designer.generator.RouteInputProcessTypeGenerator"
+                 mapping="ROUTE_INPUT_PROCESS_TYPE"
+                 name="RouteInput Contained Process Type">
+           </generator>
         </extension>
         <extension
               point="org.talend.designer.core.check_nodes">
