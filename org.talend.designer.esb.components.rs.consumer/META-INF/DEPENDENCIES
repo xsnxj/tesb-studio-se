@@ -1,5 +1,5 @@
 
-Lists of 79 third-party dependencies.
+Lists of 80 third-party dependencies.
      (BSD License) AntLR Parser Generator (antlr:antlr:2.7.7 - http://www.antlr.org/)
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
      (BSD License) ASM Core (asm:asm:3.3.1 - http://asm.objectweb.org/asm/)
@@ -32,6 +32,7 @@ Lists of 79 third-party dependencies.
      (Apache Software License - Version 2.0) Apache CXF Runtime JAX-RS Frontend (org.apache.cxf:cxf-rt-frontend-jaxrs:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime JAX-WS Frontend (org.apache.cxf:cxf-rt-frontend-jaxws:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime Simple Frontend (org.apache.cxf:cxf-rt-frontend-simple:2.7.3 - http://cxf.apache.org)
+     (Apache Software License - Version 2.0) Apache CXF JAX-RS Extensions: Providers (org.apache.cxf:cxf-rt-rs-extension-providers:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime HTTP Transport (org.apache.cxf:cxf-rt-transports-http:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime Local Transport (org.apache.cxf:cxf-rt-transports-local:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Addressing (org.apache.cxf:cxf-rt-ws-addr:2.7.3 - http://cxf.apache.org)
