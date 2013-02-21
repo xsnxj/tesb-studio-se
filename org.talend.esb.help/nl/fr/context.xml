@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <contexts>
    <context id="cBeanRegister">
-      <description>Le cBeanRegister vous permet d'enregistrer un bean Java pouvant être référencé par le composant cBean.</description>
+      <description>Le cBeanRegister vous permet d'enregistrer un bean Java dans le registre, à utiliser dans les échanges de messages.</description>
       <topic href="guide/components/fr/cBeanRegister.html" label="cBeanRegister Component Documentation"/>
    </context>
    <context id="cConfig">
