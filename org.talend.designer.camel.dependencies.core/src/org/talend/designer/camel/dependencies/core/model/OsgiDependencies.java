@@ -17,9 +17,12 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 			//not parse empty range.
 			if (!(new VersionRange(versionRange).equals(VersionRange.emptyRange))) {
 				this.versionRange = versionRange;
+			}else {
+				this.versionRange=null;
 			}
 		} catch (Exception e) {
 			//version format illegal.
+			this.versionRange=null;
 		}
 	}
 
@@ -100,7 +103,9 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 			return false;
 		}
 		OsgiDependencies<?> o = (OsgiDependencies<?>) obj;
-		if (versionRange.equals(o.versionRange) && isOptional == o.isOptional()) {
+		
+		if (VersionValidateUtil.compare(name, versionRange, o.name, o.versionRange, VersionValidateUtil.IMatchRules.EQUIVALENT) 
+				&& isOptional == o.isOptional()) {
 			return true;
 		}
 		return false;
