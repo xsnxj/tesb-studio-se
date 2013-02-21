@@ -298,35 +298,35 @@
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
             <IMPORT NAME="cxf-rt-ws-policy"
                     MODULE="cxf-rt-ws-policy-2.7.3.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="neethi"
                     MODULE="neethi-3.0.2.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/neethi-3.0.2.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
             <IMPORT NAME="cxf-rt-ws-security"
                     MODULE="cxf-rt-ws-security-2.7.3.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="wss4j"
                     MODULE="wss4j-1.6.9.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="xmlsec"
                     MODULE="xmlsec-1.5.3.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true' />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
             <IMPORT NAME="sam-agent"
                     MODULE="sam-agent-5.3.0-SNAPSHOT.jar"
