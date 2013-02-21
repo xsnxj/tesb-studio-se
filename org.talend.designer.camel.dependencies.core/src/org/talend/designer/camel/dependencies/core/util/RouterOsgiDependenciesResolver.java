@@ -178,10 +178,10 @@ public class RouterOsgiDependenciesResolver implements IOsgiDependenciesService 
 		sb.setLength(0);
 		for (ImportPackage ip : importPackages) {
 			if (sb.length() == 0) {
-				sb.append(ip);
+				sb.append(ip.toManifestString());
 			} else {
 				sb.append(ITEM_SEPARATOR);
-				sb.append(ip);
+				sb.append(ip.toManifestString());
 			}
 		}
 		map.put(IMPORT_PACKAGE, sb.toString());
@@ -190,10 +190,10 @@ public class RouterOsgiDependenciesResolver implements IOsgiDependenciesService 
 		sb.setLength(0);
 		for (RequireBundle rb : requireBundles) {
 			if (sb.length() == 0) {
-				sb.append(rb);
+				sb.append(rb.toManifestString());
 			} else {
 				sb.append(ITEM_SEPARATOR);
-				sb.append(rb);
+				sb.append(rb.toManifestString());
 			}
 		}
 		map.put(REQUIRE_BUNDLE, sb.toString());

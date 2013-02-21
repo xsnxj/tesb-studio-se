@@ -48,10 +48,10 @@ public class DependenciesCoreUtil {
 				continue;
 			}
 			if (sb.length() == 0) {
-				sb.append(ip);
+				sb.append(ip.toManifestString());
 			} else {
 				sb.append(DELIMITER);
-				sb.append(ip);
+				sb.append(ip.toManifestString());
 			}
 		}
 		map.put(IMPORT_PACKAGE_ID, sb.toString());
@@ -63,10 +63,10 @@ public class DependenciesCoreUtil {
 				continue;
 			}
 			if (sb.length() == 0) {
-				sb.append(rb);
+				sb.append(rb.toManifestString());
 			} else {
 				sb.append(DELIMITER);
-				sb.append(rb);
+				sb.append(rb.toManifestString());
 			}
 		}
 		map.put(REQUIRE_BUNDLE_ID, sb.toString());

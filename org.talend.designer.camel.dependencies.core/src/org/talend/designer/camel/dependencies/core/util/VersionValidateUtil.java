@@ -20,15 +20,15 @@ import org.talend.designer.camel.dependencies.core.CoreActivator;
 import org.talend.designer.camel.dependencies.core.Messages;
 
 /**
- * The Class VersionValidateUtil.
- * Use for validate version string.
+ * The Class VersionValidateUtil. Use for validate version string.
  */
 public class VersionValidateUtil {
 
 	/**
 	 * Validate version.
-	 *
-	 * @param versionString the version string
+	 * 
+	 * @param versionString
+	 *            the version string
 	 * @return the i status
 	 */
 	public static IStatus validateVersion(String versionString) {
@@ -46,8 +46,9 @@ public class VersionValidateUtil {
 
 	/**
 	 * Validate version range.
-	 *
-	 * @param versionRangeString the version range string
+	 * 
+	 * @param versionRangeString
+	 *            the version range string
 	 * @return the i status
 	 */
 	public static IStatus validateVersionRange(String versionRangeString) {
@@ -63,12 +64,17 @@ public class VersionValidateUtil {
 
 	/**
 	 * Compare.
-	 *
-	 * @param id1 the id1
-	 * @param version1 the version1
-	 * @param id2 the id2
-	 * @param version2 the version2
-	 * @param match the match
+	 * 
+	 * @param id1
+	 *            the id1
+	 * @param version1
+	 *            the version1
+	 * @param id2
+	 *            the id2
+	 * @param version2
+	 *            the version2
+	 * @param match
+	 *            the match
 	 * @return true, if successful
 	 */
 	public static boolean compare(String id1, String version1, String id2,
@@ -114,9 +120,11 @@ public class VersionValidateUtil {
 
 	/**
 	 * Checks if is compatible with.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
+	 * 
+	 * @param v1
+	 *            the v1
+	 * @param v2
+	 *            the v2
 	 * @return true, if is compatible with
 	 */
 	public static boolean isCompatibleWith(Version v1, Version v2) {
@@ -135,9 +143,11 @@ public class VersionValidateUtil {
 
 	/**
 	 * Checks if is equivalent to.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
+	 * 
+	 * @param v1
+	 *            the v1
+	 * @param v2
+	 *            the v2
 	 * @return true, if is equivalent to
 	 */
 	public static boolean isEquivalentTo(Version v1, Version v2) {
@@ -152,9 +162,11 @@ public class VersionValidateUtil {
 
 	/**
 	 * Checks if is greater or equal to.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
+	 * 
+	 * @param v1
+	 *            the v1
+	 * @param v2
+	 *            the v2
 	 * @return true, if is greater or equal to
 	 */
 	public static boolean isGreaterOrEqualTo(Version v1, Version v2) {
@@ -175,9 +187,11 @@ public class VersionValidateUtil {
 
 	/**
 	 * Try to get valid version range.
-	 *
-	 * @param minV the min v
-	 * @param maxV the max v
+	 * 
+	 * @param minV
+	 *            the min v
+	 * @param maxV
+	 *            the max v
 	 * @return the string
 	 */
 	public static String tryToGetValidVersionRange(String minV, String maxV) {
@@ -186,32 +200,37 @@ public class VersionValidateUtil {
 
 	/**
 	 * Try to get valid version range.
-	 *
-	 * @param minV the min v
-	 * @param maxV the max v
-	 * @param minI the min i
-	 * @param maxI the max i
+	 * 
+	 * @param minV
+	 *            the min v
+	 * @param maxV
+	 *            the max v
+	 * @param minI
+	 *            the min i
+	 * @param maxI
+	 *            the max i
 	 * @return the string
 	 */
 	public static String tryToGetValidVersionRange(String minV, String maxV,
 			boolean minI, boolean maxI) {
-		if(minV==null) {
+		if (minV == null) {
 			return Version.emptyVersion.toString();
 		}
 		if (minV.equals(maxV)) {
 			minI = maxI = true;
 		}
-		return new VersionRange(minV==null?Version.emptyVersion:new Version(minV),
-				minI, 
-				maxV==null?Version.emptyVersion:new Version(maxV),
-				maxI).toString();
+		return new VersionRange(minV == null ? Version.emptyVersion
+				: new Version(minV), minI, maxV == null ? Version.emptyVersion
+				: new Version(maxV), maxI).toString();
 	}
 
 	/**
 	 * Compare macro minor micro.
-	 *
-	 * @param v1 the v1
-	 * @param v2 the v2
+	 * 
+	 * @param v1
+	 *            the v1
+	 * @param v2
+	 *            the v2
 	 * @return the int
 	 */
 	public static int compareMacroMinorMicro(Version v1, Version v2) {
@@ -229,8 +248,9 @@ public class VersionValidateUtil {
 
 	/**
 	 * Compute initial plugin version.
-	 *
-	 * @param version the version
+	 * 
+	 * @param version
+	 *            the version
 	 * @return the string
 	 */
 	public static String computeInitialPluginVersion(String version) {
@@ -284,7 +304,7 @@ public class VersionValidateUtil {
 		 * version.
 		 */
 		int GREATER_OR_EQUAL = 4;
-		
+
 		/** Attribute value for the 'greater or equal' rule. */
 		String RULE_GREATER_OR_EQUAL = "greaterOrEqual"; //$NON-NLS-1$
 		/**
@@ -292,7 +312,7 @@ public class VersionValidateUtil {
 		 * id.
 		 */
 		int PREFIX = 5;
-		
+
 		/** Attribute value for the 'prefix' id rule. */
 		String RULE_PREFIX = "prefix"; //$NON-NLS-1$
 		/**
@@ -306,16 +326,26 @@ public class VersionValidateUtil {
 
 	/**
 	 * Gets the version string.
-	 *
-	 * @param versionRange the version range
+	 * 
+	 * @param versionRange
+	 *            the version range
 	 * @return the version string
 	 */
-	public static String getVersionString(String versionRange) {
-		if(versionRange==null) {
+	public static String getVersionLabelString(String versionRange) {
+		if (versionRange == null) {
 			return "";
 		}
-		if(versionRange.matches("[^\\(\\)\\[\\]]+")) {
-			return "("+versionRange+")";
+		try {
+			if (new VersionRange(versionRange).equals(VersionRange.emptyRange)) {
+				return "";
+			}
+		} catch (Exception e) {
+			// illegal version
+			e.printStackTrace();
+			return "";
+		}
+		if (versionRange.matches("[^\\(\\)\\[\\]]+")) {
+			return "(" + versionRange + ")";
 		}
 		return versionRange;
 	}

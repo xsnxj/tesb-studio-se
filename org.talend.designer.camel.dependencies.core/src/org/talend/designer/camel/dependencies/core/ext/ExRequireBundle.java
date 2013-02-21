@@ -40,9 +40,8 @@ public class ExRequireBundle extends AbstractExPredicator<RequireBundle, Require
 	public RequireBundle toTargetIgnorePredicates() {
 		RequireBundle requireBundle = new RequireBundle();
 		requireBundle.setBuiltIn(true);
-		requireBundle.setVersionRange(versionRange);
-//		requireBundle.setMinVersion(minVersion);
 		requireBundle.setName(bundleName);
+		requireBundle.setVersionRange(versionRange);
 		requireBundle.setOptional(isOptional);
 		return requireBundle;
 	}

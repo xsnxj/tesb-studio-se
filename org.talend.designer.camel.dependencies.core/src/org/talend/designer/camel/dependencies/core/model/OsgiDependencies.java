@@ -1,5 +1,6 @@
 package org.talend.designer.camel.dependencies.core.model;
 
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
 
 public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
@@ -12,7 +13,14 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 	}
 
 	public void setVersionRange(String versionRange) {
-		this.versionRange = versionRange;
+		try {
+			//not parse empty range.
+			if (!(new VersionRange(versionRange).equals(VersionRange.emptyRange))) {
+				this.versionRange = versionRange;
+			}
+		} catch (Exception e) {
+			//version format illegal.
+		}
 	}
 
 	public OsgiDependencies() {
@@ -34,7 +42,29 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 		}
 	}
 
-	protected abstract void parse(String inputString);
+	private void parse(String inputString) {
+		String[] split = inputString.split(";"); //$NON-NLS-1$
+		setName(split[0]);
+		if (split.length <= 1) {
+			return;
+		}
+		for (int i = 1; i < split.length; i++) {
+			String s = split[i];
+			if ("resolution:=optional".equals(s)) { //$NON-NLS-1$
+				setOptional(true);
+			} else if (s.startsWith(getVersionPrefix())) { //$NON-NLS-1$
+				parseVersions(s);
+			}
+		}
+	}
+	
+	private void parseVersions(String input) {
+		int firstQuote = input.indexOf("\""); //$NON-NLS-1$
+		int lastQuote = input.lastIndexOf("\""); //$NON-NLS-1$
+		VersionRange versionRange = new VersionRange(input.substring(
+				firstQuote + 1, lastQuote));
+		setVersionRange(versionRange.toString());
+	}
 
 	public boolean isOptional() {
 		return isOptional;
@@ -70,7 +100,7 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 			return false;
 		}
 		OsgiDependencies<?> o = (OsgiDependencies<?>) obj;
-		if (versionRange.equals(o.versionRange)&& isOptional == o.isOptional()) {
+		if (versionRange.equals(o.versionRange) && isOptional == o.isOptional()) {
 			return true;
 		}
 		return false;
@@ -108,24 +138,30 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 
 	@Override
 	public String getLabel() {
-
-		return name
-				+ " "
-				+ (versionRange == null ? "" : VersionValidateUtil
-						.getVersionString(versionRange));
+		return name + " "
+				+ VersionValidateUtil.getVersionLabelString(versionRange);
 	}
 
 	public String toManifestString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
-		sb.append(";bundle-version=\"");
-		sb.append(VersionValidateUtil.getVersionString(versionRange));
-		sb.append("\"");
+		if (versionRange != null) {
+			sb.append(";");
+			sb.append(getVersionPrefix());
+			sb.append("=\"");
+			sb.append(versionRange);
+			sb.append("\"");
+		}
 
 		if (isOptional) {
 			sb.append(";resolution:=optional"); //$NON-NLS-1$
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public String toString() {
+		return toManifestString();
 	}
 
 	abstract protected String getVersionPrefix();
