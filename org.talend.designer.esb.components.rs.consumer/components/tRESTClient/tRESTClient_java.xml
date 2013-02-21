@@ -269,6 +269,11 @@
                     BundleID=""
                     REQUIRED="true" />
 
+            <IMPORT NAME="cxf-rt-frontend-jaxrs"
+                    MODULE="cxf-rt-frontend-jaxrs-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
                     MODULE="javax.ws.rs-api-2.0-m10.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
@@ -302,12 +307,12 @@
                     MODULE="locator-5.3.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.0-SNAPSHOT.jar"
                     BundleID="locator"
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true'"" />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="zookeeper"
                     MODULE="zookeeper-3.3.6.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
                     BundleID="org.apache.hadoop.zookeeper"
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true'"" />
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
