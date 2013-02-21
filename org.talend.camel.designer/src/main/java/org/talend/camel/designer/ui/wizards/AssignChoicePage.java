@@ -1,6 +1,5 @@
 package org.talend.camel.designer.ui.wizards;
 
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -12,13 +11,9 @@ public class AssignChoicePage extends WizardPage {
 
 	private Button assignJob;
 	private Button newJob;
-	private AssignJobPage assignJobPage;
-	private IWizardPage createJobPage;
 
-	protected AssignChoicePage(AssignJobPage assignJobPage, IWizardPage createJobPage, String pageName) {
+	protected AssignChoicePage(String pageName) {
 		super(pageName);
-		this.assignJobPage = assignJobPage;
-		this.createJobPage = createJobPage;
 	}
 
 	public void createControl(Composite parent) {
@@ -39,13 +34,12 @@ public class AssignChoicePage extends WizardPage {
 		setControl(composite);
 	}
 
-	@Override
-	public IWizardPage getNextPage() {
-		if (assignJob.getSelection()) {
-			return assignJobPage;
-		} else {
-			return createJobPage;
-	    }
+	public boolean isAssignJob(){
+		return assignJob.getSelection();
 	}
-
+	
+	public boolean isCreateJob(){
+		return newJob.getSelection();
+	}
+	
 }

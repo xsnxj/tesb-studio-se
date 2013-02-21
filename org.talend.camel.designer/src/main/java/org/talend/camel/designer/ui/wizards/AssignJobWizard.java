@@ -15,6 +15,9 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 import org.talend.designer.core.ui.wizards.NewProcessWizard;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.ui.views.IRepositoryView;
 
 public class AssignJobWizard extends Wizard {
 
@@ -22,36 +25,25 @@ public class AssignJobWizard extends Wizard {
 	private static String ASSIGN_JOB = "Assign_Job";
 
 	private AssignJobPage assignJobPage;
-	private IWizardPage createJobPage;
 	private NewProcessWizard processWizard;
 	private AssignChoicePage assignChoicePage;
-	private String currentProcessId;
 	private String selectedProcessId;	
 
 	public String getSelectedProcessId() {
 		return selectedProcessId;
 	}
 
-	public AssignJobWizard(String currentProcessId ) {
-		this.currentProcessId = currentProcessId;
+	public AssignJobWizard() {
 		setWindowTitle(Messages.getString("AssignJobWizard_windowTitle"));//$NON-NLS-1$
 	}
 
 	@Override
 	public void addPages() {
-		assignJobPage = new AssignJobPage(ASSIGN_JOB, currentProcessId);
+		assignJobPage = new AssignJobPage(ASSIGN_JOB);
 	
-		processWizard = new NewProcessWizard(null);
-		if (processWizard != null) {
-			processWizard.setContainer(getContainer());
-			processWizard.addPages();
-			createJobPage = processWizard.getPages()[0];
-		}
-		
-		assignChoicePage = new AssignChoicePage(assignJobPage, createJobPage, CHOICE_PAGE);
+		assignChoicePage = new AssignChoicePage(CHOICE_PAGE);
 		addPage(assignChoicePage);
 		addPage(assignJobPage);
-		addPage(createJobPage);
 	}
 
 	@Override
@@ -75,12 +67,16 @@ public class AssignJobWizard extends Wizard {
 				return true;				
 			}
 			return false;
-		} else if (currentPage == createJobPage && processWizard != null) {
+		} else if (processWizard != null && currentPage == processWizard.getPages()[0]) {
 			if (processWizard.performFinish()) {
-				addComponents(processWizard.getProcess().getProcess());
-				saveChangedProcess(processWizard.getProcess());
+				addRouteComponents(processWizard.getProcess().getProcess());
+				saveCreatedProcess(processWizard.getProcess());
 				selectedProcessId = processWizard.getProcess().getProperty().getId();
-				RepositoryManager.refreshCreatedNode(ERepositoryObjectType.PROCESS);				
+				IRepositoryView repositoryView = RepositoryManager.getRepositoryView();
+				IRepositoryNode processNodes = repositoryView.getRoot().getRootRepositoryNode(ERepositoryObjectType.PROCESS);
+				if(processNodes instanceof RepositoryNode){
+					repositoryView.refreshAllChildNodes((RepositoryNode) processNodes);
+				}
 				return true;
 			}
 			return false;
@@ -91,22 +87,31 @@ public class AssignJobWizard extends Wizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == assignChoicePage) {
-			return assignChoicePage.getNextPage();
+			if(assignChoicePage.isAssignJob()){
+				return assignJobPage;
+			}else if(assignChoicePage.isCreateJob()){
+				if(processWizard != null){
+					processWizard.dispose();
+				}
+				processWizard = new NewProcessWizard(null);
+				processWizard.setContainer(getContainer());
+				processWizard.addPages();
+				return processWizard.getPages()[0];
+			}
 		}
 		return null;
 	}
 
-	private void saveChangedProcess (ProcessItem processItem) {
+	private void saveCreatedProcess (ProcessItem processItem) {
 		IProxyRepositoryFactory proxyRepositoryFactory = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory();
 			try {
 				proxyRepositoryFactory.save(processItem);
 			} catch (PersistenceException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
 	
-	private void addComponents (ProcessType process) {
+	private void addRouteComponents (ProcessType process) {
         NodeType ntRouteInput = TalendFileFactory.eINSTANCE.createNodeType();
         ntRouteInput.setComponentName("tRouteInput");
         ntRouteInput.setPosX(100);            

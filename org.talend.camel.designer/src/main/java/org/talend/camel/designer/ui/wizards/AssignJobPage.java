@@ -25,21 +25,20 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
+import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.RecombineRepositoryNodeUtil;
 
 public class AssignJobPage extends WizardPage {
 	private AssignJobReviewDialog dialog;
-	private String processId;
 	private String id;
 
 	public String getId() {
 		return id;
 	}
 
-	protected AssignJobPage(String pageName, String currentProcessId) {
+	protected AssignJobPage(String pageName) {
 		super(pageName);
-		this.processId = currentProcessId;
 	}
 
 	public void createContents(Composite parent) {
@@ -70,6 +69,18 @@ public class AssignJobPage extends WizardPage {
 			final Item item = repositoryObject.getProperty().getItem();
 			id = item.getProperty().getId();
 			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isPageComplete() {
+		if(dialog != null){
+			RepositoryNode result = dialog.getResult();
+			if(result == null){
+				return false;
+			}
+			return result.getType() == ENodeType.REPOSITORY_ELEMENT;
 		}
 		return false;
 	}
