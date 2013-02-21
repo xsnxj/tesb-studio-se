@@ -264,6 +264,52 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
                     BundleID=""
                     REQUIRED="true" />
+
+            <IMPORT NAME="cxf-rt-transports-http-jetty"
+                    MODULE="cxf-rt-transports-http-jetty-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-jetty-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-server"
+                    MODULE="jetty-server-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-server-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-continuation"
+                    MODULE="jetty-continuation-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-continuation-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-http"
+                    MODULE="jetty-http-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-http-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-io"
+                    MODULE="jetty-io-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-io-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-util"
+                    MODULE="jetty-util-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-util-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jetty-security"
+                    MODULE="jetty-security-8.1.7.v20120910.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.7.v20120910.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.6.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.6.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="geronimo-servlet_3.0_spec"
+                    MODULE="geronimo-servlet_3.0_spec-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
