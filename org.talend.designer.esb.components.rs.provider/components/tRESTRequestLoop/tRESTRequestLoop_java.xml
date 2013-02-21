@@ -59,162 +59,206 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="sam-common"
-					MODULE="sam-common-5.3.0-SNAPSHOT.jar"
-					BundleID="sam-common"
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-			<IMPORT NAME="sam-agent"
-					MODULE="sam-agent-5.3.0-SNAPSHOT.jar"
-					BundleID="sam-agent"
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+            <IMPORT NAME="dom4j"
+                    MODULE="dom4j-1.6.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
+                    BundleID="org.apache.servicemix.bundles.dom4j"
+                    REQUIRED="true" />
 
-			<IMPORT NAME="zookeeper"
-					MODULE="zookeeper-3.3.6.jar"
-					BundleID="org.apache.hadoop.zookeeper"
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-			<IMPORT NAME="locator"
-					MODULE="locator-5.3.0-SNAPSHOT.jar"
-					BundleID="locator"
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+            <IMPORT NAME="cxf-api"
+                    MODULE="cxf-api-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="stax2-api"
+                    MODULE="stax2-api-3.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="woodstox-core-asl"
+                    MODULE="woodstox-core-asl-4.1.4.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.1.4.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="xmlschema-core"
+                    MODULE="xmlschema-core-2.0.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="geronimo-javamail_1.4_spec"
+                    MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="wsdl4j"
+                    MODULE="wsdl4j-1.6.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wsdl4j-1.6.2.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="javax.ws.rs-api-2.0-m10.jar"
-					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
-					REQUIRED="true" />
-			<IMPORT NAME="jettison"
-					MODULE="jettison-1.3.3.jar"
-					BundleID="org.codehaus.jettison.jettison"
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-core"
+                    MODULE="cxf-rt-core-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.1.13.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
-					BundleID="org.apache.servicemix.bundles.dom4j"
-					REQUIRED="true" />
+            <IMPORT NAME="javax.ws.rs-api"
+                    MODULE="javax.ws.rs-api-2.0-m10.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
+                    BundleID="org.apache.servicemix.specs.jsr339-api-m10"
+                    REQUIRED="true" />
 
-			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-bindings-xml"
+                    MODULE="cxf-rt-bindings-xml-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="cxf-bundle"
-					MODULE="cxf-bundle-2.7.3.jar"
-					BundleID="org.apache.cxf.bundle"
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-transports-http"
+                    MODULE="cxf-rt-transports-http-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 
-			<IMPORT NAME="neethi"
-					MODULE="neethi-3.0.2.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/neethi-3.0.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.2.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/wsdl4j-1.6.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="xmlschema-core"
-					MODULE="xmlschema-core-2.0.3.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-rs-extension-providers"
+                    MODULE="cxf-rt-rs-extension-providers-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-extension-providers-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="jettison"
+                    MODULE="jettison-1.3.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jettison-1.3.3.jar"
+                    BundleID="org.codehaus.jettison.jettison"
+                    REQUIRED="true" />
 
-			<IMPORT NAME="geronimo-jaxws_2.2_spec"
-					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-jaxws_2.2_spec-1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="locator"
+                    MODULE="locator-5.3.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.0-SNAPSHOT.jar"
+                    BundleID="locator"
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'"" />
+            <IMPORT NAME="zookeeper"
+                    MODULE="zookeeper-3.3.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
+                    BundleID="org.apache.hadoop.zookeeper"
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'"" />
 
-			<IMPORT NAME="jaxb-api"
-					MODULE="jaxb-api-2.2.6.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.2.6.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-features-clustering"
+                    MODULE="cxf-rt-features-clustering-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
-			<IMPORT NAME="stax2-api"
-					MODULE="stax2-api-3.1.1.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="woodstox-core-asl"
-					MODULE="woodstox-core-asl-4.1.4.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-ws-policy"
+                    MODULE="cxf-rt-ws-policy-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+            <IMPORT NAME="neethi"
+                    MODULE="neethi-3.0.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
-			<IMPORT NAME="geronimo-servlet_3.0_spec"
-					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jetty-continuation"
-					MODULE="jetty-continuation-8.1.7.v20120910.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jetty-http"
-					MODULE="jetty-http-8.1.7.v20120910.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jetty-io"
-					MODULE="jetty-io-8.1.7.v20120910.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jetty-server"
-					MODULE="jetty-server-8.1.7.v20120910.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jetty-util"
-					MODULE="jetty-util-8.1.7.v20120910.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-ws-security"
+                    MODULE="cxf-rt-ws-security-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+            <IMPORT NAME="wss4j"
+                    MODULE="wss4j-1.6.9.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.9.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+            <IMPORT NAME="xmlsec"
+                    MODULE="xmlsec-1.5.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
-			<!-- IMPORT NAME="slf4j-api"
-					MODULE="slf4j-api-1.6.2.jar"
-					REQUIRED="true" />
-			<IMPORT NAME="slf4j-jdk14"
-					MODULE="${tesb-slf4j-jdk14}"
-					REQUIRED="true"/ -->
+            <IMPORT NAME="sam-agent"
+                    MODULE="sam-agent-5.3.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.0-SNAPSHOT.jar"
+                    BundleID="sam-agent"
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+            <IMPORT NAME="sam-common"
+                    MODULE="sam-common-5.3.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.0-SNAPSHOT.jar"
+                    BundleID="sam-common"
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
-			<IMPORT NAME="spring-aop"
-					MODULE="spring-aop-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-asm"
-					MODULE="spring-asm-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-beans"
-					MODULE="spring-beans-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-context"
-					MODULE="spring-context-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-core"
-					MODULE="spring-core-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="spring-expression"
-					MODULE="spring-expression-3.0.7.RELEASE.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-frontend-jaxws"
+                    MODULE="cxf-rt-frontend-jaxws-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+            <IMPORT NAME="xml-resolver"
+                    MODULE="xml-resolver-1.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xml-resolver-1.2.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+            <IMPORT NAME="asm"
+                    MODULE="asm-3.3.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/asm-3.3.1.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
-			<IMPORT NAME="httpcore"
-					MODULE="httpcore-4.2.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="httpcore-nio"
-					MODULE="httpcore-nio-4.2.2.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="httpasyncclient"
-					MODULE="httpasyncclient-4.0-beta3.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="httpclient"
-					MODULE="httpclient-4.2.1.jar"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="cxf-rt-transports-local"
+                    MODULE="cxf-rt-transports-local-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+
+            <IMPORT NAME="cxf-rt-ws-addr"
+                    MODULE="cxf-rt-ws-addr-2.7.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.3.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+
+            <IMPORT NAME="spring-aop"
+                    MODULE="spring-aop-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="aopalliance"
+                    MODULE="aopalliance-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-asm"
+                    MODULE="spring-asm-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-beans"
+                    MODULE="spring-beans-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-context"
+                    MODULE="spring-context-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-core"
+                    MODULE="spring-core-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-expression"
+                    MODULE="spring-expression-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
