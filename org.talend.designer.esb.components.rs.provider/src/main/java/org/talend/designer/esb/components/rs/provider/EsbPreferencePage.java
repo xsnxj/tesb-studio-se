@@ -2,6 +2,8 @@ package org.talend.designer.esb.components.rs.provider;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -25,6 +27,26 @@ public class EsbPreferencePage extends FieldEditorPreferencePage
 				getFieldEditorParent());
 		localRestServiceUri.setEmptyStringAllowed(false);
 		addField(localRestServiceUri);
+		
+		final StringFieldEditor defaultServiceNamespace=new StringFieldEditor(
+				Activator.DEFAULT_SL_NAMESPACE_PREF,
+				Messages.EsbPreferencePage_SL_NAMESPACE, getFieldEditorParent());
+		defaultServiceNamespace.setEmptyStringAllowed(false);
+		defaultServiceNamespace.setPropertyChangeListener(new IPropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				Object value=event.getNewValue();
+				if(value instanceof String) {
+					String vString=(String) value;
+					if(!vString.matches(".+")) {
+						//defaut defaut is http://www.talend.org/rest/
+						defaultServiceNamespace.setErrorMessage(Messages.EsbPreferencePage_SLNotValid);
+					}
+				}
+			}
+		});
+		addField(defaultServiceNamespace);
 	}
 
 	@Override

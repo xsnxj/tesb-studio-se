@@ -13,9 +13,11 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.talend.designer.esb.components.rs.provider"; //$NON-NLS-1$
 
 	public static final String REST_URI_PREFERENCE = "restServiceDefaultUri";
-
 	public static final String REST_URI_DEFAULT = "http://127.0.0.1:8090/";
 
+	public static final String DEFAULT_SL_NAMESPACE_PREF="defaultSLNamespace";
+	public static final String DEFAULT_SL_NAMESPACE_DEFAULT="\"http://www.talend.org/rest/\"";
+	
 	// The shared instance
 	private static Activator plugin;
 
@@ -51,6 +53,7 @@ public class Activator extends AbstractUIPlugin {
 
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		store.setDefault(REST_URI_PREFERENCE, REST_URI_DEFAULT);
+		store.setDefault(DEFAULT_SL_NAMESPACE_PREF, DEFAULT_SL_NAMESPACE_DEFAULT);
 	}
 
 }
