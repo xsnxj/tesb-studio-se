@@ -1,0 +1,96 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cMessageFilter</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio for ESB Mediation Components"><link rel="up" href="ch-routing.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cLoadBalancer.html" title="cLoadBalancer"><link rel="next" href="cMessageRouter.html" title="cMessageRouter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cMessageFilter</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cLoadBalancer.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;6.&nbsp;Routing
+			components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cMessageRouter.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cMessageFilter"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cMessageFilter"></a>cMessageFilter</h2></div></div></div><div class="mediaobject"><img src="../images/cMessageFilter_icon32_white.png"></div><div class="section" title="cMessageFilter properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e14766"></a>cMessageFilter properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top"><p><span class="emphasis"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Routing</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="emphasis"><strong>cMessageFilter</strong></span> filters the content of messages according to
+								the specified criterion and routes the filtered messages to the
+								specified output channel. All messages that do not match the
+								criteria will be dropped.</p><p> For more information on the
+								Camel Message Filter EIP: <a class="link" href="http://camel.apache.org/message-filter.html" target="_top">http://camel.apache.org/message-filter.html</a>.</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Use <span class="emphasis"><strong>cMessageFilter</strong></span> to eliminate unwanted messages from a
+								channel according to the defined criterion.</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Language</em></span></p>
+						</td><td valign="top"><p>Select the language of the expression you use to
+								filter your messages from <span class="emphasis"><strong>Constant</strong></span>,
+									<span class="emphasis"><strong>EL</strong></span>, <span class="emphasis"><strong>Groovy</strong></span>, <span class="emphasis"><strong>Header</strong></span>,
+									<span class="emphasis"><strong>JavaScript</strong></span>, <span class="emphasis"><strong>JoSQL</strong></span>, <span class="emphasis"><strong>JXPath</strong></span>, <span class="emphasis"><strong>MVEL</strong></span>,
+									<span class="emphasis"><strong>None</strong></span>, <span class="emphasis"><strong>OGNL</strong></span>, <span class="emphasis"><strong>PHP</strong></span>,
+									<span class="emphasis"><strong>Property</strong></span>, <span class="emphasis"><strong>Python</strong></span>, <span class="emphasis"><strong>Ruby</strong></span>,
+									<span class="emphasis"><strong>Simple</strong></span>, <span class="emphasis"><strong>SpEL</strong></span>, <span class="emphasis"><strong>SQL</strong></span>,
+									<span class="emphasis"><strong>XPath</strong></span>, and <span class="emphasis"><strong>XQuery</strong></span>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression to use to filter the
+								messages.</p>
+						</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="emphasis"><strong>cMessageFilter</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top"><span class="emphasis"><strong>Connections</strong></span></td><td valign="top"><span class="emphasis"><em>Filter</em></span></td><td valign="top">Select this link to route the filtered messages to the
+							next endpoint.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="emphasis"><em>Route</em></span></td><td valign="top">Select this link to route all the messages from the
+							sender to the next endpoint.</td></tr><tr><td valign="top"><p><span class="emphasis"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Filtering messages according to a criterion"><div class="titlepage"><div><div><h3 class="title"><a name="d0e14939"></a>Scenario: Filtering messages according to a criterion</h3></div></div></div><p>In this use case, we filter XML messages that are sent from the sending endpoint according
+			to a defined criterion: only the XML files in which the value of the
+				<span class="emphasis"><em>city</em></span> node is <span class="emphasis"><em>Paris</em></span> are sent to a folder
+			named <span class="emphasis"><em>Paris_only</em></span>.</p><p>Of the four XML files used in this scenario, <span class="emphasis"><em>Message_1.xml</em></span> and <span class="emphasis"><em>Message_4.xml</em></span>
+			contain the city name of <span class="emphasis"><em>Paris</em></span>. The following is an
+			example:</p><pre class="programlisting">&lt;person&gt;
+  &lt;firstName&gt;Pierre&lt;/firstName&gt;
+  &lt;lastName&gt;Dupont&lt;/lastName&gt;
+  &lt;city&gt;Paris&lt;/city&gt;
+&lt;/person&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14966"></a>Dropping and linking the components</h4></div></div></div><p>This scenario requires one <span class="emphasis"><strong>cMessageFilter</strong></span>
+				component to filter the messages from the sender, one <span class="emphasis"><strong>cFile</strong></span> component as the message sender, one <span class="emphasis"><strong>cFile</strong></span> component to receiver the messages containing <span class="emphasis"><em>Paris</em></span>, one <span class="emphasis"><strong>cFile</strong></span>
+				component to receiver all the messages from the sender, and two <span class="emphasis"><strong>cProcessor</strong></span> components to monitor the messages routed to
+				the two receivers.</p><div class="mediaobject"><img src="../images/cmessagefilter_scenario1.png"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the
+							<span class="emphasis"><strong>Palette</strong></span>, drop three <span class="emphasis"><strong>cFile</strong></span> components onto the design workspace, and
+						label them <span class="emphasis"><em>Sender</em></span>, <span class="emphasis"><em>Paris_only</em></span>, and <span class="emphasis"><em>Unfiltered</em></span> respectively to better identify their
+						roles.</p></li><li class="step" title="Step 2"><p>From the <span class="emphasis"><strong>Routing</strong></span> folder, drop a <span class="emphasis"><strong>cMessageFilter</strong></span> component onto the design workspace, and
+						label it <span class="emphasis"><em>Filter</em></span>.</p></li><li class="step" title="Step 3"><p>From the <span class="emphasis"><strong>Processor</strong></span> folder, drop two
+							<span class="emphasis"><strong>cProcessor</strong></span> components onto the design
+						workspace, and label them <span class="emphasis"><em>Monitor_Paris</em></span>
+						and <span class="emphasis"><em>Monitor_Unfiltered</em></span>
+						respectively.</p></li><li class="step" title="Step 4"><p>Right-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Sender</em></span>, select <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> from the
+						contextual menu and click the <span class="emphasis"><strong>cMessageFilter</strong></span> component. </p></li><li class="step" title="Step 5"><p>Right-click the <span class="emphasis"><strong>cMessageFilter</strong></span> component,
+						select <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Filter</strong></span> from the contextual menu and click the <span class="emphasis"><strong>cFile</strong></span> component labeled <span class="emphasis"><em>Paris_only</em></span>. This endpoint will retrieve the messages that
+						meet the defined criterion.</p></li><li class="step" title="Step 6"><p>Right-click the <span class="emphasis"><strong>cMessageFilter</strong></span> component,
+						select <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> from the contextual menu and click the <span class="emphasis"><strong>cFile</strong></span> component labeled <span class="emphasis"><em>Unfiltered</em></span>. This endpoint will collect all the messages,
+						including those meeting the filter criterion. This connection is
+						optional.</p></li><li class="step" title="Step 7"><p>Right-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Paris_only</em></span>, select <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> from
+						the contextual menu and click the <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Monitor_Paris</em></span>. Repeat this step to connect the <span class="emphasis"><strong>cFile</strong></span> component labeled <span class="emphasis"><em>Unfiltered</em></span> to the <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Monitor_Unfiltered</em></span>.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e15128"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Sender</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject" align="center"><img src="../images/cmessagefilter_scenario1_bis.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Path</strong></span> field, specify the file path
+						to message source.</p></li><li class="step" title="Step 3"><p>From the <span class="emphasis"><strong>Encoding</strong></span> list, select the
+						encoding type of your message files. Leave the other parameters as they
+						are.</p></li><li class="step" title="Step 4"><p>Double-click the <span class="emphasis"><strong>cMessageFilter</strong></span> component
+						to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the
+							<span class="emphasis"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/cmessagefilter_scenario2.png"></div></li><li class="step" title="Step 5"><p>Select the language of the expression you want to use to filter your
+						messages, and enter an expression to define a criterion according to which
+						you want to filter your messages. </p><p>In this scenario, we want to sort out the XML files containing a city node
+						with the value of Paris, so we select <span class="emphasis"><strong>XPath</strong></span>
+						from the <span class="emphasis"><strong>Language</strong></span> list, and fill the in the
+							<span class="emphasis"><strong>Expression</strong></span> field with this expression:
+							<code class="code">"/person[city='Paris']"</code>.</p></li><li class="step" title="Step 6"><p>Double-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Paris_only</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> view, and specify the path for the messages
+						meeting the filter criterion in the <span class="emphasis"><strong>Path</strong></span>
+						field. </p><div class="mediaobject"><img src="../images/cmessagefilter_scenario3.png"></div><p>Repeat this step to define the path for all the messages from the sender
+						in the <span class="emphasis"><strong>cFile</strong></span> component labeled <span class="emphasis"><em>Unfiltered</em></span>.</p></li><li class="step" title="Step 7"><p>Double-click the <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Monitor_Paris</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> view, and customize the code in the <span class="emphasis"><strong>Code</strong></span> area to display the file names of the
+						messages that meet the filter criterion on the console:</p><pre class="programlisting">System.out.println("Message sent to folder Paris_only: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><p>Repeat this step to customize the code in the <span class="emphasis"><strong>cProcessor</strong></span>
+						component labeled <span class="emphasis"><em>Monitor_Unfiltered</em></span> to
+						display the file names of all the messages from the sender.</p></li><li class="step" title="Step 8"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing the code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e15257"></a>Viewing the code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>To have a look at the generated code, click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the design workspace.</p><div class="mediaobject"><img src="../images/cmessagefilter_scenario4.png"></div><p>As shown in this piece of code, messages <code class="code">from</code> the sender are filtered by
+							<code class="code">cMessageFilter_1</code> according to
+							<code class="code">.xpath("/person[city='Paris']")</code> and the messages matching
+						the filter are send <code class="code">.to</code> the endpoint <code class="code">Paris_only</code>,
+						while all messages are sent <code class="code">.to</code> the endpoint
+							<code class="code">Unfiltered</code>.</p></li><li class="step" title="Step 2"><p>Click the <span class="emphasis"><strong>Run</strong></span> view to display it and
+						click the <span class="emphasis"><strong>Run</strong></span> button to launch the
+						execution of your Route. </p><p>You can also press <span class="emphasis"><strong>F6</strong></span> to execute it. </p><p>RESULT: The messages are filtered according to the defined criterion and the messages
+						containing "<span class="emphasis"><em>Paris</em></span>" are redirected to the <span class="emphasis"><em>Paris_only</em></span> folder, all the messages, including
+						those containing "<span class="emphasis"><em>Paris</em></span>", are sent to the <span class="emphasis"><em>Unfiltered</em></span> folder.</p><div class="mediaobject"><img src="../images/cmessagefilter_scenario5.png"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cLoadBalancer.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-routing.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cMessageRouter.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cLoadBalancer&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;cMessageRouter</td></tr></table></div></body></html>

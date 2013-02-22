@@ -1,0 +1,172 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cHttp</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio for ESB Mediation Components"><link rel="up" href="ch-messaging.html" title="Chapter&nbsp;3.&nbsp;Messaging components"><link rel="prev" href="cFtp.html" title="cFtp"><link rel="next" href="cJMS.html" title="cJMS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cHttp</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cFtp.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;3.&nbsp;Messaging components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cJMS.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cHttp"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cHttp"></a>cHttp</h2></div></div></div><div class="mediaobject"><img src="../images/cHttp_icon32_white.png"></div><div class="section" title="cHttp properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5004"></a>cHttp properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cHttp</strong></span> provides Http-based endpoints for consuming
+								external Http resources, i.e. as a client to call external servers
+								using Http.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cHttp</strong></span> is designed to build a client
+								endpoint to call external Http resources using Http.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Uri</em></span>
+							</p>
+						</td><td valign="top">
+							<p>The URI of the Http resource to call.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Method</em></span>
+							</p>
+						</td><td valign="top">
+							<p>List of the Http request methods.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Get</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Retrieve the information identified by the request URI:</p>
+							<p><span class="emphasis"><strong>Parameters</strong></span>: click the <span class="emphasis"><strong>[+]</strong></span> button to add lines as needed and
+								define the key and value in the table.</p>
+							<p><span class="emphasis"><strong>Encoder Charset</strong></span>: enter the
+								encoder charset in the field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Post</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Request that the origin server accept the entity enclosed in the
+								request as a new subordinate of the resource identified by the
+								request URI:</p>
+							<p><span class="emphasis"><strong>Plain Text</strong></span>: select the <span class="emphasis"><strong>Content-Type</strong></span> from <span class="emphasis"><em>text/plain</em></span>, <span class="emphasis"><em>text/html</em></span>, <span class="emphasis"><em>text/xml</em></span>, <span class="emphasis"><em>application/x-www-form-urlencoded</em></span>, <span class="emphasis"><em>application/xml</em></span>, <span class="emphasis"><em>application/json</em></span>, or <span class="emphasis"><em>other...</em></span> (specify the Content-Type in
+								the next field that appears when <span class="emphasis"><em>other...</em></span> is selected), and type in the text in the
+									<span class="emphasis"><strong>Content</strong></span> box as the request
+								message.</p>
+							<p><span class="emphasis"><strong>Form Style</strong></span>: click the <span class="emphasis"><strong>[+]</strong></span> button to add lines as needed and
+								define the key and value in the <span class="emphasis"><strong>Parameters</strong></span> table. Also, enter the encoder charset in
+								the <span class="emphasis"><strong>Encoder Charset</strong></span> field.</p>
+							<p><span class="emphasis"><strong>Use Message Body</strong></span>: use the incoming message body as the
+								Http request. Select the <span class="emphasis"><strong>Content-Type</strong></span> from <span class="emphasis"><em>text/plain</em></span>, <span class="emphasis"><em>text/html</em></span>, <span class="emphasis"><em>text/xml</em></span>, <span class="emphasis"><em>application/x-www-form-urlencoded</em></span>, <span class="emphasis"><em>application/xml</em></span>, <span class="emphasis"><em>application/json</em></span>, or <span class="emphasis"><em>other...</em></span> (specify the Content-Type in
+								the next field that appears when <span class="emphasis"><em>other...</em></span> is selected),</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Put</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Request that the enclosed entity be stored under the supplied
+								request URI.</p>
+							<p><span class="emphasis"><strong>Plain Text</strong></span>: select the <span class="emphasis"><strong>Content-Type</strong></span> from <span class="emphasis"><em>text/plain</em></span>, <span class="emphasis"><em>text/html</em></span>, <span class="emphasis"><em>text/xml</em></span>, <span class="emphasis"><em>application/x-www-form-urlencoded</em></span>, <span class="emphasis"><em>application/xml</em></span>, <span class="emphasis"><em>application/json</em></span>, or <span class="emphasis"><em>other...</em></span> (specify the Content-Type in
+								the next field that appears when <span class="emphasis"><em>other...</em></span> is selected), and type in the text in the
+									<span class="emphasis"><strong>Content</strong></span> box as the request
+								message.</p>
+							<p><span class="emphasis"><strong>Form Style</strong></span>: click the <span class="emphasis"><strong>[+]</strong></span> button to add lines as needed and
+								define the key and value in the <span class="emphasis"><strong>Parameters</strong></span> table. Also, enter the encoder charset in
+								the <span class="emphasis"><strong>Encoder Charset</strong></span> field.</p>
+							<p><span class="emphasis"><strong>Use Message Body</strong></span>: use the
+								incoming message body as the Http request. Select the <span class="emphasis"><strong>Content-Type</strong></span> from <span class="emphasis"><em>text/plain</em></span>, <span class="emphasis"><em>text/html</em></span>, <span class="emphasis"><em>text/xml</em></span>, <span class="emphasis"><em>application/x-www-form-urlencoded</em></span>, <span class="emphasis"><em>application/xml</em></span>, <span class="emphasis"><em>application/json</em></span>, or <span class="emphasis"><em>other...</em></span> (specify the Content-Type in
+								the next field that appears when <span class="emphasis"><em>other...</em></span> is selected),</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Delete</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Request that the origin server delete the resource identified by
+								the request URI.</p>
+							<p><span class="emphasis"><strong>Parameters</strong></span>: click the <span class="emphasis"><strong>[+]</strong></span> button to add lines as needed and
+								define the key and value in the table.</p>
+							<p><span class="emphasis"><strong>Encoder Charset</strong></span>: enter the
+								encoder charset in the field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Head</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Identical to GET except that the server MUST NOT return a message
+								body in the response:</p>
+							<p><span class="emphasis"><strong>Parameters</strong></span>: click the <span class="emphasis"><strong>[+]</strong></span> button to add lines as needed and
+								define the key and value in the table.</p>
+							<p><span class="emphasis"><strong>Encoder Charset</strong></span>: enter the
+								encoder charset in the field.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Represent a request for information about the communication
+								options available on the request/response chain identified by the
+								request URI.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Trace</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Invoke a remote, application-layer loop-back of the request
+								message.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Advanced settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Headers</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Click the <span class="emphasis"><strong>[+]</strong></span> button to add lines
+								as needed and define the key and value for headers.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="emphasis"><strong>cHttp</strong></span> provides Http based
+								endpoints for consuming external Http resources, i.e. as a client to
+								call external servers using Http.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Retrieving the content of a remote file"><div class="titlepage"><div><div><h3 class="title"><a name="d0e5458"></a>Scenario: Retrieving the content of a remote file </h3></div></div></div><p>In this scenario, <span class="emphasis"><strong>cHttp</strong></span> is used to request the body of a
+			weather condition definition file that is available at <span><a class="link" href="http://wsf.cdyne.com/WeatherWS/Weather.asmx" target="_top">http://wsf.cdyne.com/WeatherWS/Weather.asmx</a></span>. </p><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e5470"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Drop the following components from the <span class="emphasis"><strong>Palette</strong></span> onto the
+						workspace: <span class="emphasis"><strong>cMessagingEndpoint</strong></span>, <span class="emphasis"><strong>cSetBody</strong></span>, <span class="emphasis"><strong>cHttp</strong></span>
+						and <span class="emphasis"><strong>cProcessor</strong></span>, labelled as <span class="emphasis"><strong>STARTER</strong></span>, <span class="emphasis"><strong>HTTP_REQUEST_BODY</strong></span>, <span class="emphasis"><strong>GET_WEATHER_DESCRIPTION</strong></span> and <span class="emphasis"><strong>PRINT_RESPONSE</strong></span> respectively.</p></li><li class="step" title="Step 2"><p>Link the components using a <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> connection.</p><div class="mediaobject"><img src="../images/use_case_chttp_1.png"></div></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e5516"></a>Configuring the components </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click <span class="emphasis"><strong>cMessagingEndpoint</strong></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. </p><div class="mediaobject"><img src="../images/use_case_chttp_2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>URI</strong></span> field, enter
+							<code class="code">timer:go?repeatCount=1</code> to define a timer for starting
+						message exchanges. In this example, only one message exchange will be
+						carried out due to the setting of <code class="code">repeatCount=1</code>. </p></li><li class="step" title="Step 3"><p>Double-click <span class="emphasis"><strong>cSetBody</strong></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_3.png" align="middle"></div></li><li class="step" title="Step 4"><p>In the <span class="emphasis"><strong>Language</strong></span> field, select <span class="emphasis"><em>Constant</em></span>.</p></li><li class="step" title="Step 5"><p>In the <span class="emphasis"><strong>Expression</strong></span> field, enter the
+						following as the body of the request message:</p><pre class="programlisting">&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:weat=\"http://ws.cdyne.com
+/WeatherWS/\"&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;weat:GetWeatherDefinitionInformation/&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</pre></li><li class="step" title="Step 6"><p>Double-click <span class="emphasis"><strong>cHttp</strong></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_4.png" align="middle"></div></li><li class="step" title="Step 7"><p>In the <span class="emphasis"><strong>Uri</strong></span> field, enter the location of the file to
+						fetch, <span class="emphasis"><em>http://wsf.cdyne.com/WeatherWS/Weather.asmx</em></span> in this
+						example.</p></li><li class="step" title="Step 8"><p>Select <span class="emphasis"><em>POST</em></span> in the <span class="emphasis"><strong>Method</strong></span> list and then the <span class="emphasis"><strong>Use Message
+							Body</strong></span> radio button. Select <span class="emphasis"><em>text/xml</em></span> in the <span class="emphasis"><strong>Content-Type</strong></span> list.</p></li><li class="step" title="Step 9"><p>Click <span class="emphasis"><strong>Advanced settings</strong></span> for further setup.</p><div class="mediaobject"><img src="../images/use_case_chttp_8.png"></div></li><li class="step" title="Step 10"><p>Click the <span class="emphasis"><strong>[+]</strong></span> button to add a line in the <span class="emphasis"><strong>Headers</strong></span> table. </p><p>Type in <code class="code">SOAPAction</code> and
+							<code class="code">http://ws.cdyne.com/WeatherWS/GetWeatherInformation</code> for the
+							<span class="emphasis"><strong>Key</strong></span> and <span class="emphasis"><strong>Value</strong></span> fields.</p></li><li class="step" title="Step 11"><p>Double-click <span class="emphasis"><strong>cProcessor</strong></span> to open its
+							<span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_5.png" align="middle"></div></li><li class="step" title="Step 12"><p>In the <span class="emphasis"><strong>Code</strong></span> area, enter the following to print the
+						response from the remote website, i.e. the body of the desired file:</p><pre class="programlisting">System.out.println("--------------------RESPONSE--------------------");
+System.out.println(exchange.getIn().getBody(String.class));
+System.out.println("--------------------END--------------------");</pre></li><li class="step" title="Step 13"><p>Press <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e5682"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the design workspace
+						to check the generated code.</p><div class="mediaobject"><img src="../images/use_case_chttp_6.png"></div><p>As shown above, the message exchange starts <code class="code">from</code> the endpoint
+							<code class="code">STARTER</code>, gets its body set to <code class="code">&lt;soapenv:Envelope
+							xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"xmlns:weat=\"http://ws.cdyne.com/WeatherWS/\"&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;weat:GetWeatherDefinitionInformation/&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</code>
+						at <code class="code">cSetBody_1</code>, and then is sent out to the specified website by
+							<code class="code">cHttp_1</code>. Finally, the response is printed out via
+							<code class="code">cProcessor_1</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="emphasis"><strong>F6</strong></span> to execute the Route.</p><div class="mediaobject"><img src="../images/use_case_chttp_7.png"></div><p>As shown above, the retrieved file defines up to 37 weather conditions
+						with detailed description.</p></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cFtp.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-messaging.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cJMS.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cFtp&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;cJMS</td></tr></table></div></body></html>

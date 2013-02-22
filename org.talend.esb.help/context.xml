@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <contexts>
    <context id="cBeanRegister">
-      <description>cBeanRegister allows you to register a Java bean that can be referenced by a cBean.</description>
+      <description>cBeanRegister allows you to register a Java bean in the registry to be used in message exchanges.</description>
       <topic href="guide/components/en/cBeanRegister.html" label="cBeanRegister Component Documentation"/>
    </context>
    <context id="cConfig">
