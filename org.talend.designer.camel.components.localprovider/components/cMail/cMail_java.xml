@@ -91,32 +91,56 @@
 	<CODEGENERATION>
 		<IMPORTS>
 
+            <!-- spring -->
+            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
+                REQUIRED="true" />
+            <IMPORT NAME="spring-context"
+                    MODULE="spring-context-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-aop"
+                    MODULE="spring-aop-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="aopalliance"
+                    MODULE="aopalliance-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-beans"
+                    MODULE="spring-beans-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-core"
+                    MODULE="spring-core-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-expression"
+                    MODULE="spring-expression-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-asm"
+                    MODULE="spring-asm-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-context-support" MODULE="spring-context-support-3.0.7.RELEASE.jar"
+                REQUIRED="true" />
+            <IMPORT NAME="spring-tx" MODULE="spring-tx-3.0.7.RELEASE.jar"
+                REQUIRED="true" />
+
 			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-asm" MODULE="spring-asm-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
 
-			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
-				REQUIRED="true" />
 			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="apache-camel" MODULE="camel-core-2.10.2.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
 			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.10.2.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.7.RELEASE.jar"
-				REQUIRED="true" />
-			<IMPORT NAME="spring-context-support" MODULE="spring-context-support-3.0.7.RELEASE.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
 				REQUIRED="true" />
