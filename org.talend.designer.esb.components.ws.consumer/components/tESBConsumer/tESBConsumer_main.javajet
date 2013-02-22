@@ -245,7 +245,7 @@ if (inputConn != null) {
                     javax.xml.transform.Source faultSource_<%=cid%> =
                         new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
                     <%=connFaultName%>.faultDetail = new Document();
-                    <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_tESBConsumer_1));
+                    <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_<%=cid%>));
                 }
             <% } else { %>
                 e.printStackTrace();
