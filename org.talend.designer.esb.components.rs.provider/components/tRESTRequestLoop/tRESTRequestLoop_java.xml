@@ -192,6 +192,21 @@
                     REQUIRED="true" />
 
             <!-- ESB Features-->
+            <IMPORT NAME="spring-context"
+                    MODULE="spring-context-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="spring-aop"
+                    MODULE="spring-aop-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="aopalliance"
+                    MODULE="aopalliance-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
             <IMPORT NAME="spring-beans"
                     MODULE="spring-beans-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
@@ -202,14 +217,19 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
                     BundleID=""
                     REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
-            <IMPORT NAME="spring-asm"
-                    MODULE="spring-asm-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="spring-expression"
+                    MODULE="spring-expression-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="spring-asm"
+                    MODULE="spring-asm-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
                     BundleID=""
                     REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
@@ -289,11 +309,6 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/joda-time-1.6.2.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
             <!-- SAM for RS -->
             <IMPORT NAME="sam-agent"
@@ -364,26 +379,6 @@
             <IMPORT NAME="neethi"
                     MODULE="neethi-3.0.2.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-context"
-                    MODULE="spring-context-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-aop"
-                    MODULE="spring-aop-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="aopalliance"
-                    MODULE="aopalliance-1.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-expression"
-                    MODULE="spring-expression-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 		</IMPORTS>
