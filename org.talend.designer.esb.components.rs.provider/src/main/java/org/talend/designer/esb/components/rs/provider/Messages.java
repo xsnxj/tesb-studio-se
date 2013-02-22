@@ -11,8 +11,12 @@ public class Messages extends NLS{
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	public static String EsbPreferencePage_SL_NAMESPACE;
-	protected static String EsbPreferencePage_SLNotValid;
 
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+	
 	private Messages() {
 	}
 
