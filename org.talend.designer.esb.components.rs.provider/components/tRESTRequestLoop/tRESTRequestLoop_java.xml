@@ -191,6 +191,28 @@
                     BundleID=""
                     REQUIRED="true" />
 
+            <!-- ESB Features-->
+            <IMPORT NAME="spring-beans"
+                    MODULE="spring-beans-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="spring-core"
+                    MODULE="spring-core-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="spring-asm"
+                    MODULE="spring-asm-3.0.7.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    BundleID=""
+                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+
             <!-- SL for RS -->
             <IMPORT NAME="locator"
                     MODULE="locator-5.3.0-SNAPSHOT.jar"
@@ -344,21 +366,6 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-beans"
-                    MODULE="spring-beans-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-core"
-                    MODULE="spring-core-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
@@ -377,11 +384,6 @@
             <IMPORT NAME="spring-expression"
                     MODULE="spring-expression-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="spring-asm"
-                    MODULE="spring-asm-3.0.7.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 		</IMPORTS>
