@@ -27,13 +27,15 @@
             </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.talend.repository.model.RepositoryNode">
-            </instanceof>
-            <test
-                  forcePluginActivation="true"
-                  property="org.talend.repository.node.isRoutesTopNode">
-            </test>
+            <and>
+               <instanceof
+                     value="org.talend.repository.model.RepositoryNode">
+               </instanceof>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isRoutesTopNode">
+               </test>
+            </and>
          </possibleChildren>
          <actionProvider
                class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
@@ -83,13 +85,15 @@
             </and>
          </triggerPoints>
          <possibleChildren>
-            <instanceof
-                  value="org.talend.repository.model.RepositoryNode">
-            </instanceof>
-            <test
-                  forcePluginActivation="true"
-                  property="org.talend.repository.node.code.isBeans">
-            </test>
+            <and>
+               <instanceof
+                     value="org.talend.repository.model.RepositoryNode">
+               </instanceof>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.code.isBeans">
+               </test>
+            </and>
          </possibleChildren>
          <actionProvider
                class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
@@ -136,6 +140,17 @@
                </test>
             </or>
          </triggerPoints>
+         <possibleChildren>
+            <and>
+               <instanceof
+                     value="org.talend.repository.model.RepositoryNode">
+               </instanceof>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isRouteResourceNode">
+               </test>
+            </and>
+         </possibleChildren>
          <actionProvider
                class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
                id="org.talend.repository.route.resources.action.provider.id">
@@ -157,15 +172,6 @@
                </and>
             </enablement>
          </actionProvider>
-         <possibleChildren>
-            <instanceof
-                  value="org.talend.repository.model.RepositoryNode">
-            </instanceof>
-            <test
-                  forcePluginActivation="true"
-                  property="org.talend.repository.node.isRouteResourceNode">
-            </test>
-         </possibleChildren>
       </navigatorContent>
      
    </extension>
