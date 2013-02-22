@@ -125,7 +125,7 @@
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_NAMESPACE" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
 				SHOW_IF="SERVICE_LOCATOR == 'true'">
-			<DEFAULT>"http://www.talend.org/rest/"</DEFAULT>
+			<DEFAULT>"__PREF:org.talend.designer.esb.components.rs.provider:defaultSLNamespace__"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="50"
 				SHOW_IF="SERVICE_LOCATOR == 'true'">
