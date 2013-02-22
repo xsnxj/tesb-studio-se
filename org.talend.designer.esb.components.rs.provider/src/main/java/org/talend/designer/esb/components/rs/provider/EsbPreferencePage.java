@@ -25,6 +25,12 @@ public class EsbPreferencePage extends FieldEditorPreferencePage
 				getFieldEditorParent());
 		localRestServiceUri.setEmptyStringAllowed(false);
 		addField(localRestServiceUri);
+
+		StringFieldEditor defaultServiceNamespace = new StringFieldEditor(
+				Activator.DEFAULT_SL_NAMESPACE_PREF,
+				Messages.EsbPreferencePage_SL_NAMESPACE, getFieldEditorParent());
+		defaultServiceNamespace.setEmptyStringAllowed(false);
+		addField(defaultServiceNamespace);
 	}
 
 	@Override
