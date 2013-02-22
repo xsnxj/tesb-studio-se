@@ -11,7 +11,7 @@ public abstract class AbstractDependencyItem implements IDependencyItem{
 	protected String name = null;
 	
 	// version regular expression
-	protected static final String VERSION_REGEX = "\\d+\\.\\d+\\.\\d(\\.(\\w|-|_)+)?"; //$NON-NLS-1$
+	protected static final String VERSION_REGEX = "\\d+\\.\\d+\\.\\d+(\\.(\\w|-|_)+)?"; //$NON-NLS-1$
 	
 	// name regular expression
 	protected static final String NAME_PATTERN = "[^\\s;=\"\\[\\]\\(\\),:|]+"; //$NON-NLS-1$

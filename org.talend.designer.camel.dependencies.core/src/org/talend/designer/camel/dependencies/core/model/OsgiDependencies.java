@@ -2,6 +2,8 @@ package org.talend.designer.camel.dependencies.core.model;
 
 import java.util.regex.Matcher;
 
+import org.osgi.framework.Version;
+
 public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends AbstractDependencyItem{
 	protected String minVersion = null;
 	protected String maxVersion = null;
@@ -143,23 +145,30 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends Ab
 		return OK;
 	}
 
+	/**
+	 * Compare min max.
+	 *
+	 * @return true, if check validated.
+	 */
 	private boolean compareMinMax() {
 		if (maxVersion == null || maxVersion.trim().equals("") || minVersion == null || minVersion.trim().equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
-		String[] maxSplit = maxVersion.split("\\."); //$NON-NLS-1$
-		String[] minSplit = minVersion.split("\\."); //$NON-NLS-1$
-		for (int i = 0; i < 3; i++) {
-			try {
-				if (Integer.parseInt(maxSplit[i])
-						- Integer.parseInt(minSplit[i]) < 0) {
-					return false;
-				}
-			} catch (Exception e) {
+		try {
+			Version minV=Version.parseVersion(minVersion);
+			Version maxV=Version.parseVersion(maxVersion);
+			if(minV==null&&maxV==null) {
 				return false;
 			}
+			if(minV.compareTo(maxV)>0) {
+				return false;
+			}else {
+				return true;
+			}
+		} catch (Exception e) {
+			//version illegal
+			return false;
 		}
-		return true;
 	}
 
 	@Override
@@ -183,42 +192,4 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends Ab
 		}
 		return sb.toString();
 	}
-	
-//	public static void main(String[] args) {
-//		ImportPackage importPackage = new ImportPackage();
-//		importPackage.setName("aa");
-//		ImportPackage importPackage2 = new ImportPackage();
-//		importPackage2.setName("aa");
-//		importPackage.setMinVersion("1");
-//		System.out.println(importPackage.strictEqual(importPackage2));
-//		Pattern compile = Pattern.compile(NAME_PATTERN);
-//		Matcher matcher = compile.matcher("aA.aaa.bb");
-//		System.out.println(matcher.matches()==true);
-//		matcher = compile.matcher("aa.aaa.b_-323DSG&*^b");
-//		System.out.println(matcher.matches()==true);
-//		matcher = compile.matcher("aa.a2a.bb");
-//		System.out.println(matcher.matches()==true);
-//		matcher = compile.matcher("aa.a|a.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.a[a.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.aa].bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("(a.aaa.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("a).aaa.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.a;a.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.a:a.bb");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.aaa.bb\"");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.aaa.b,b");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.aaa.b=b");
-//		System.out.println(matcher.matches()==false);
-//		matcher = compile.matcher("aa.aaa.b =b");
-//		System.out.println(matcher.matches()==false);
-//	}
 }
