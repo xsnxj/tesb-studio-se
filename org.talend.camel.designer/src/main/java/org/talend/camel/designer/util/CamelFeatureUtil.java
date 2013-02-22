@@ -448,7 +448,7 @@ public final class CamelFeatureUtil {
 					String groupId = node.getAttributes()
 							.getNamedItem("groupId").getNodeValue();
 					String name = node.getFirstChild().getNodeValue();
-					bundles.add(new BundleModel(name, groupId, version));
+					bundles.add(new BundleModel(groupId, name, version));
 				}
 			} finally {
 				input.close();
