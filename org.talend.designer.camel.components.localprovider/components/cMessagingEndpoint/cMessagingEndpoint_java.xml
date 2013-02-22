@@ -173,7 +173,7 @@
 			<IMPORT MODULE="slf4j-api-1.6.1.jar" NAME="slf4j" REQUIRED="true" />
 			<IMPORT MODULE="slf4j-log4j12-1.6.1.jar" NAME="slf4j-log4j"
 				REQUIRED="true" />
-			<IMPORT MODULE="cxf-bundle-2.7.0.jar" NAME="cxf-bundle"
+			<IMPORT MODULE="cxf-bundle-2.7.3.jar" NAME="cxf-bundle"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF_BUNDLE']" />
 			<IMPORT MODULE="camel-spring-2.10.2.jar" NAME="camel-spring"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING']" />

@@ -158,7 +158,7 @@
 				REQUIRED="true" />
 			<IMPORT NAME="talend-camel-jetty" MODULE="camel-jetty-alldep-2.10.2.jar"
 				REQUIRED="true" />
-			<IMPORT NAME="cxf-bundle" MODULE="cxf-bundle-2.7.0.jar"
+			<IMPORT NAME="cxf-bundle" MODULE="cxf-bundle-2.7.3.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="locator" MODULE="locator-5.1.1.jar" REQUIRED="true" />
 		</IMPORTS>
