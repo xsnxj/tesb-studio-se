@@ -443,8 +443,8 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	}
 
-	INode tRESTRequestNode = httpRequestComponentsList.get(0);
-	String cid = tRESTRequestNode.getUniqueName();
+	INode node = httpRequestComponentsList.get(0);
+	String cid = node.getUniqueName();
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -609,7 +609,7 @@ public static class RestServiceProviderImpl4TalendJob {
 
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
-	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(tRESTRequestNode, "__SCHEMAS__");
+	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
 	for (IConnection conn : conns) {
 		if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 			continue;
@@ -876,7 +876,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 %>
 	private final String defaultEndpointUrl = "<%=defaultUri%>";
 
-	private String endpointUrl = <%=ElementParameterParser.getValue(tRESTRequestNode, "__REST_ENDPOINT__")%>;
+	private String endpointUrl = <%=ElementParameterParser.getValue(node, "__REST_ENDPOINT__")%>;
 
 	private org.apache.cxf.endpoint.Server server;
 
@@ -908,7 +908,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
 			jsonProvider.setAttributesToElements(true);
-			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__WRAP_JSON_REQUEST__"))) { %>
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__WRAP_JSON_REQUEST__"))) { %>
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
@@ -923,25 +923,17 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
 					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
 
-			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_LOCATOR__"))) { %>
-				boolean inOSGi = false;
-				try {
-					inOSGi = (null != sf.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
-				} catch (ClassNotFoundException e) {
-					; // ignore
-				}
-				if (!inOSGi) {
-					sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-				}
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
+				sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 				sf.setServiceName(new javax.xml.namespace.QName(
-						<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAMESPACE__")%>,
-						<%=ElementParameterParser.getValue(tRESTRequestNode,"__SERVICE_NAME__")%>));
+						<%=ElementParameterParser.getValue(node,"__SERVICE_NAMESPACE__")%>,
+						<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>));
 
 				org.talend.esb.servicelocator.cxf.LocatorFeature slFeature =
-					new org.talend.esb.servicelocator.cxf.LocatorFeature();
+						new org.talend.esb.servicelocator.cxf.LocatorFeature();
 
 				<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
-						ElementParameterParser.getObjectValue(tRESTRequestNode, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
+						ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
 				<% if (!customProperties.isEmpty()) { %>
 						final java.util.Map<String, String> slCustomProps = new java.util.HashMap<String, String>();
 					<% for (int k = 0; k < customProperties.size(); k++) { %>
@@ -953,7 +945,29 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				features.add(slFeature);
 			<% } %>
 
-			<% if (Boolean.valueOf(ElementParameterParser.getValue(tRESTRequestNode,"__LOG_MESSAGES__"))) { %>
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"))) { %>
+				org.springframework.context.support.ClassPathXmlApplicationContext context =
+						new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+				org.talend.esb.sam.agent.feature.EventFeature samEventFeature =
+						context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+
+				<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
+						ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
+				<% if (!samCustomProperties.isEmpty()) { %>
+					org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler =
+							new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+					java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+					<% for (int k = 0; k < samCustomProperties.size(); k++) { %>
+						samCustomProps_<%=cid%>.put(<%=samCustomProperties.get(k).get("PROP_NAME")%>, <%=samCustomProperties.get(k).get("PROP_VALUE")%>);
+					<% } %>
+					ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
+					samEventFeature.setHandler(ciHandler);
+				<% } %>
+
+				features.add(samEventFeature);
+			<% } %>
+
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
 				features.add(new org.apache.cxf.feature.LoggingFeature());
 			<% } %>
 
