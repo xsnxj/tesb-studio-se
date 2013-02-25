@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.talend.designer.camel.dependencies.core.model.AbstractDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
 import org.talend.designer.camel.dependencies.ui.Messages;
@@ -170,10 +171,10 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 			return Status.OK_STATUS;
 		}
 		for (Object o : input) {
-			if (!(o instanceof OsgiDependencies<?>)) {
+			if (!(o instanceof AbstractDependencyItem)) {
 				continue;
 			}
-			OsgiDependencies<?> e = (OsgiDependencies<?>) o;
+			AbstractDependencyItem e = (AbstractDependencyItem) o;
 			if (name.equals(e.getName())) {
 				return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
 						Messages.NewExportPackageDialog_nameAlreadyExist);
