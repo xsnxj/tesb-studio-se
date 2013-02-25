@@ -111,7 +111,7 @@
          </instanceof>
          <test
                forcePluginActivation="true"
-               property="org.talend.repository.node.isServicesTopNode">
+               property="org.talend.repository.node.isServicesNode">
          </test>
          <test
                forcePluginActivation="true"
@@ -131,7 +131,7 @@
          <or>
             <test
                   forcePluginActivation="true"
-                  property="org.talend.repository.node.isServicesTopNode">
+                  property="org.talend.repository.node.isServicesNode">
             </test>
             <test
                   forcePluginActivation="true"
@@ -152,7 +152,7 @@
 						<instanceof value="org.talend.repository.model.RepositoryNode" />
 						<test
 								forcePluginActivation="true"
-								property="org.talend.repository.node.isServicesTopNode">
+								property="org.talend.repository.node.isServicesNode">
 						</test>
 						<not>
 							<test
@@ -171,7 +171,7 @@
 				id="org.talend.repository.node.tester.services"
 				class="org.talend.repository.services.ui.viewer.tester.ServicesNodeTester"
 				namespace="org.talend.repository.node"
-				properties="isServicesTopNode,isServicesPortNode,isServicesOperationNode"
+				properties="isServicesNode,isServicesPortNode,isServicesOperationNode"
 				type="org.talend.repository.model.RepositoryNode">
 		</propertyTester>
 	</extension>

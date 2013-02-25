@@ -19,9 +19,9 @@ import org.talend.core.model.repository.ERepositoryObjectType;
  */
 public class ESBRepositoryNodeType {
 
-    public static ERepositoryObjectType SERVICES = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
-            ERepositoryObjectType.class, "SERVICES");
+    public static ERepositoryObjectType SERVICES = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "SERVICES");
 
-    public static ERepositoryObjectType SERVICEPORT = (ERepositoryObjectType) ERepositoryObjectType.SERVICESPORT;
+    public static ERepositoryObjectType SERVICEPORT = ERepositoryObjectType.SERVICESPORT;
 
+    public static ERepositoryObjectType SERVICESOPERATION = ERepositoryObjectType.SERVICESOPERATION;
 }

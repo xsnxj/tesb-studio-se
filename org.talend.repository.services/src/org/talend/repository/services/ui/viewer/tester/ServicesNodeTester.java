@@ -22,7 +22,7 @@ import org.talend.repository.tester.AbstractNodeTester;
  */
 public class ServicesNodeTester extends AbstractNodeTester {
 
-    private static final String IS_SERVICES_TOP_NODE = "isServicesTopNode"; //$NON-NLS-1$
+    private static final String IS_SERVICES_NODE = "isServicesNode"; //$NON-NLS-1$
 
     private static final String IS_SERVICES_PORT_NODE = "isServicesPortNode"; //$NON-NLS-1$
 
@@ -38,8 +38,8 @@ public class ServicesNodeTester extends AbstractNodeTester {
     protected Boolean testProperty(Object receiver, String property, Object[] args, Object expectedValue) {
         if (receiver instanceof RepositoryNode) {
             RepositoryNode repositoryNode = (RepositoryNode) receiver;
-            if (IS_SERVICES_TOP_NODE.equals(property)) {
-                return isServicesTopNode(repositoryNode);
+            if (IS_SERVICES_NODE.equals(property)) {
+                return isServicesNode(repositoryNode);
             } else if (IS_SERVICES_PORT_NODE.equals(property)) {
                 return isServicesPortNode(repositoryNode);
             } else if (IS_SERVICES_OPERATION_NODE.equals(property)) {
@@ -49,21 +49,22 @@ public class ServicesNodeTester extends AbstractNodeTester {
         return null;
     }
 
-    public boolean isServicesTopNode(RepositoryNode repositoryNode) {
+    public boolean isServicesNode(RepositoryNode repositoryNode) {
         return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
     }
 
     public boolean isServicesPortNode(RepositoryNode repositoryNode) {
-        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
+        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICEPORT);
     }
 
     public boolean isServicesOperationNode(RepositoryNode repositoryNode) {
-        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICES);
+        return isTypeNode(repositoryNode, ESBRepositoryNodeType.SERVICESOPERATION);
     }
 
     @Override
     public boolean isTypeNode(RepositoryNode repositoryNode, ERepositoryObjectType type) {
-        boolean is = repositoryNode.getContentType() == type;
-        return is;
+        // boolean is = repositoryNode.getContentType() == type;
+        // return is;
+        return super.isTypeNode(repositoryNode, type);
     }
 }
