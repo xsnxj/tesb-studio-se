@@ -227,20 +227,18 @@ if (inputConn != null) {
                 }
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
-        } catch (org.apache.cxf.interceptor.Fault e) {
+        } catch (org.apache.cxf.binding.soap.SoapFault e) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
                 <%=connFaultName%>.faultCode = e.getFaultCode().toString();
-                if (e instanceof org.apache.cxf.binding.soap.SoapFault) {
-                    <%=connFaultName%>.faultString = ((org.apache.cxf.binding.soap.SoapFault) e).getReason();
-                    <%=connFaultName%>.faultActor = ((org.apache.cxf.binding.soap.SoapFault) e).getRole();
-                    <%=connFaultName%>.faultNode = ((org.apache.cxf.binding.soap.SoapFault) e).getNode();
-                } else {
-                    <%=connFaultName%>.faultString = e.getMessage();
-                }
+
+                <%=connFaultName%>.faultString = e.getReason();
+                <%=connFaultName%>.faultActor = e.getRole();
+                <%=connFaultName%>.faultNode = e.getNode();
+
                 if (null != e.getDetail() && null != e.getDetail().getFirstChild()) {
                     javax.xml.transform.Source faultSource_<%=cid%> =
                         new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
@@ -248,7 +246,7 @@ if (inputConn != null) {
                     <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_<%=cid%>));
                 }
             <% } else { %>
-                e.printStackTrace();
+                e.printStackTrace(System.err);
             <% } %>
         } catch (GenericFaultInfoException e) {
             <% if (null != connFault) {
