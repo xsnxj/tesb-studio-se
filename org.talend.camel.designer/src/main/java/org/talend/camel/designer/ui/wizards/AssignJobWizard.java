@@ -6,8 +6,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -15,9 +13,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 import org.talend.designer.core.ui.wizards.NewProcessWizard;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.ui.views.IRepositoryView;
 
 public class AssignJobWizard extends Wizard {
 
@@ -55,6 +50,11 @@ public class AssignJobWizard extends Wizard {
 		if(assignChoicePage == getContainer().getCurrentPage()){
 			return false;
 		}
+		if(getContainer().getCurrentPage() == assignJobPage){
+			return assignJobPage.isPageComplete();
+		}else  if (processWizard != null && getContainer().getCurrentPage() == processWizard.getPages()[0]){
+			return processWizard.getPages()[0].isPageComplete();
+		}
 		return super.canFinish();
 	}
 	
@@ -72,11 +72,6 @@ public class AssignJobWizard extends Wizard {
 				addRouteComponents(processWizard.getProcess().getProcess());
 				saveCreatedProcess(processWizard.getProcess());
 				selectedProcessId = processWizard.getProcess().getProperty().getId();
-				IRepositoryView repositoryView = RepositoryManager.getRepositoryView();
-				IRepositoryNode processNodes = repositoryView.getRoot().getRootRepositoryNode(ERepositoryObjectType.PROCESS);
-				if(processNodes instanceof RepositoryNode){
-					repositoryView.refreshAllChildNodes((RepositoryNode) processNodes);
-				}
 				return true;
 			}
 			return false;
@@ -96,7 +91,9 @@ public class AssignJobWizard extends Wizard {
 				processWizard = new NewProcessWizard(null);
 				processWizard.setContainer(getContainer());
 				processWizard.addPages();
-				return processWizard.getPages()[0];
+				IWizardPage p = processWizard.getPages()[0];
+				p.setWizard(this);
+				return p;
 			}
 		}
 		return null;
