@@ -190,16 +190,16 @@
             <IMPORT NAME="spring-tx" MODULE="spring-tx-3.0.7.RELEASE.jar"
                 REQUIRED="true" />
 
-			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
-				REQUIRED="true" />
+            <!--IMPORT NAME="osgi-core"
+                    MODULE="osgi-core"
+                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
+                    REQUIRED="true" /-->
+            <IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
+                REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
+                REQUIRED="true" />
 
-			<IMPORT MODULE="org.osgi.core-4.2.0.jar" NAME="org.osgi.core"
-				REQUIRED="true" />
-			<IMPORT MODULE="camel-osgi-2.3.0.jar" NAME="camel-osgi"
-				REQUIRED="true" />
 			<IMPORT MODULE="camel-core-2.10.2.jar" NAME="apache-camel"
-				REQUIRED="true" />
-			<IMPORT MODULE="commons-management-1.0.jar" NAME="commons-management"
 				REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                 MODULE="commons-logging-1.1.1.jar"
@@ -219,8 +219,11 @@
                 REQUIRED="true" />
 			<IMPORT MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" NAME="log4j" REQUIRED="true" />
 			<IMPORT MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" NAME="slf4j" REQUIRED="true" />
-			<IMPORT MODULE="slf4j-log4j12-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar" NAME="slf4j-log4j"
-				REQUIRED="true" />
+            <IMPORT NAME="commons-httpclient"
+                MODULE="commons-httpclient-3.1.jar"
+                UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
+                REQUIRED="true" />
+
 			<IMPORT MODULE="camel-amqp-alldep-2.10.2.jar" NAME="talend-camel-amqp"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
 			<IMPORT MODULE="camel-atom-alldep-2.10.2.jar" NAME="talend-camel-atom"
@@ -233,15 +236,15 @@
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BEAN-VALIDATOR']" />
 			<IMPORT MODULE="camel-bindy-alldep-2.10.2.jar" NAME="talend-camel-bindy"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BINDY']" />
-			<IMPORT MODULE="camel-blueprint-2.10.2.jar" NAME="talend-camel-blueprint"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BLUEPRINT']" />
+			<IMPORT MODULE="camel-blueprint-alldep-2.10.2.jar" NAME="talend-camel-blueprint"
+				REQUIRED_IF="(HOTLIBS.LIBPATH IN ['BLUEPRINT']) OR (HOTLIBS.LIBPATH IN ['CXF'])" />
 			<IMPORT MODULE="camel-cache-alldep-2.10.2.jar" NAME="talend-camel-cache"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CACHE']" />
 			<IMPORT MODULE="camel-castor-alldep-2.10.2.jar" NAME="talend-camel-castor"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CASTOR']" />
 			<IMPORT MODULE="camel-cometd-alldep-2.10.2.jar" NAME="talend-camel-cometd"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['COMETD']" />
-			<IMPORT MODULE="camel-context-alldep-2.10.2.jar" NAME="talend-camel-context"
+			<IMPORT MODULE="camel-context-2.10.2.jar" NAME="talend-camel-context"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CONTEXT']" />
 			<IMPORT MODULE="camel-crypto-alldep-2.10.2.jar" NAME="talend-camel-crypto"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CRYPTO']" />
