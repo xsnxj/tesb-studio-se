@@ -259,41 +259,10 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 /**
  * web service provider implementation
  */
-<% if (null == wsdlLocation || wsdlLocation.trim().isEmpty()) { %>
-@javax.jws.WebService(
-		name = "<%=serviceName%>PortType",
-		targetNamespace = "<%=serviceNS%>"
-	)
-<% } %>
-@javax.jws.soap.SOAPBinding(
-		parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE
-	)
-@javax.xml.ws.ServiceMode(
-		value = javax.xml.ws.Service.Mode.PAYLOAD
-	)
-@javax.xml.ws.WebServiceProvider(
-<% if (null != wsdlLocation && !wsdlLocation.trim().isEmpty()) { %>
-		wsdlLocation="<%=wsdlLocation%>",<% } %>
-		targetNamespace="<%=serviceNS%>",
-		serviceName="<%=serviceName%>",
-		portName="<%=portName%>"
-	)
+@javax.xml.ws.ServiceMode(value = javax.xml.ws.Service.Mode.PAYLOAD)
+@javax.xml.ws.WebServiceProvider()
 public class ESBProvider_<%=cid%> implements
 		javax.xml.ws.Provider<javax.xml.transform.Source> {
-
-	private final javax.xml.ws.WebServiceProvider annotation =
-			ESBProvider_<%=cid%>.class.getAnnotation(
-					javax.xml.ws.WebServiceProvider.class);
-	private final String TARGET_NS = annotation.targetNamespace();
-	private final String SERVICE_NAME = annotation.serviceName();
-	private final String PORT_NAME = annotation.portName();
-
-	private final javax.xml.namespace.QName serviceName =
-			new javax.xml.namespace.QName(TARGET_NS, SERVICE_NAME);
-	private final javax.xml.namespace.QName portName =
-			new javax.xml.namespace.QName(TARGET_NS, PORT_NAME);
-	private final javax.xml.namespace.QName operationName =
-			new javax.xml.namespace.QName("<%=operationNS%>", "<%=operationName%>");
 
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
@@ -434,7 +403,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 
 class HandlerThread_<%=cid%> extends Thread {
 
-	private javax.xml.ws.Endpoint endpoint;
+	private org.apache.cxf.endpoint.Server server;
 	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
 
 	String endpointUrl = "<%=endpointUrl%>";
@@ -493,15 +462,27 @@ class HandlerThread_<%=cid%> extends Thread {
 					"Cannot start provider with uri: " + endpointUrl + ". Malformed URL.");
 		}
 
-		// null - WSDL value should be used
-		endpoint = javax.xml.ws.Endpoint.publish(/* null */ endpointUrl, new ESBProvider_<%=cid%>(handler));
+        org.apache.cxf.jaxws.JaxWsServerFactoryBean serverFactory = new org.apache.cxf.jaxws.JaxWsServerFactoryBean();
+<% if (null != wsdlLocation && !wsdlLocation.trim().isEmpty()) { %>
+        serverFactory.setWsdlURL("<%=wsdlLocation%>");
+<% } %>
+        serverFactory.setServiceName(new javax.xml.namespace.QName(
+                "<%=serviceNS%>", "<%=serviceName%>"));
+        serverFactory.setEndpointName(new javax.xml.namespace.QName(
+                "<%=serviceNS%>", "<%=portName%>"));
+        // in case null - WSDL value used
+        serverFactory.setAddress(endpointUrl);
+
+        serverFactory.setServiceBean(new ESBProvider_<%=cid%>(handler));
+        server = serverFactory.create();
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
 	}
 
 	public void stopEndpoint() {
-		if (null != endpoint) {
-			endpoint.stop();
+		if (null != server) {
+			server.stop();
+            server.destroy();
 			System.out.println("web service [endpoint: " + endpointUrl + "] unpublished");
 		}
 	}
