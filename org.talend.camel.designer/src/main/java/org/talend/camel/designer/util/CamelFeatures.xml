@@ -18,7 +18,7 @@
 	<FeatureMap HotLib="camel-bindy-alldep-$version$.jar">
 		<Feature version="[2,5)">camel-bindy</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-blueprint-alldep-$version$.jar">
+	<FeatureMap HotLib="camel-blueprint-$version$.jar">
 		<Feature version="[2,5)">camel-blueprint</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cache-alldep-$version$.jar">
@@ -272,7 +272,7 @@
 	<FeatureMap HotLib="camel-xstream-alldep-$version$.jar">
 		<Feature version="[2,5)">camel-xstream</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-talendjob-5.2.1.jar">
+	<FeatureMap HotLib="camel-talendjob-5.3.0.jar">
 		<Feature version="[2,10)">camel-talendjob</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="activemq-all-5.7.0.jar">
