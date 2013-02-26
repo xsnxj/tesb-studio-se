@@ -151,8 +151,9 @@
 		<IMPORTS>
 
             <!-- spring -->
-            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
-                REQUIRED="true" />
+            <IMPORT NAME="camel-spring" 
+            		MODULE="camel-spring-2.10.2.jar"
+                	REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
@@ -160,10 +161,6 @@
             <IMPORT NAME="spring-aop"
                     MODULE="spring-aop-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="aopalliance"
-                    MODULE="aopalliance-1.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-beans"
                     MODULE="spring-beans-3.0.7.RELEASE.jar"
@@ -173,10 +170,6 @@
                     MODULE="spring-core-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
-                    REQUIRED="true" />
             <IMPORT NAME="spring-expression"
                     MODULE="spring-expression-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
@@ -185,44 +178,40 @@
                     MODULE="spring-asm-3.0.7.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="spring-context-support" MODULE="spring-context-support-3.0.7.RELEASE.jar"
-                REQUIRED="true" />
-            <IMPORT NAME="spring-tx" MODULE="spring-tx-3.0.7.RELEASE.jar"
-                REQUIRED="true" />
+            <IMPORT NAME="spring-context-support" 
+	            	MODULE="spring-context-support-3.0.7.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.0.7.RELEASE.jar"
+	                REQUIRED="true" />
+            <IMPORT NAME="spring-tx" 
+	            	MODULE="spring-tx-3.0.7.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.0.7.RELEASE.jar"
+	                REQUIRED="true" />
 
-            <!--IMPORT NAME="osgi-core"
-                    MODULE="osgi-core"
-                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
-                    REQUIRED="true" /-->
-            <IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
-                REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
-                REQUIRED="true" />
+            <IMPORT NAME="org.osgi.core" 
+	            	MODULE="org.osgi.core-4.2.0.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/org.osgi.core-4.2.0.jar"
+	                REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core" 
+		            MODULE="spring-osgi-core-1.2.1.jar"
+		            UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-osgi-core-1.2.1.jar"
+	                REQUIRED="true" />
 
-			<IMPORT MODULE="camel-core-2.10.2.jar" NAME="apache-camel"
-				REQUIRED="true" />
+			<IMPORT NAME="apache-camel" 
+					MODULE="camel-core-2.10.2.jar"
+					REQUIRED="true" />
+
+			<IMPORT NAME="log4j" 
+					MODULE="log4j-1.2.16.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" 
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j" 
+					MODULE="slf4j-api-1.6.1.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" 
+					REQUIRED="true" />
             <IMPORT NAME="commons-logging"
-                MODULE="commons-logging-1.1.1.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-logging-1.1.1.jar"
-                REQUIRED="true" />
-            <IMPORT NAME="commons-collections"
-                MODULE="commons-collections-3.2.1.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.1.jar"
-                REQUIRED="true" />
-            <IMPORT NAME="commons-codec"
-                MODULE="commons-codec-1.6.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
-                REQUIRED="true" />
-            <IMPORT NAME="commons-lang"
-                MODULE="commons-lang-2.6.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-lang-2.6.jar"
-                REQUIRED="true" />
-			<IMPORT MODULE="log4j-1.2.16.jar" UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" NAME="log4j" REQUIRED="true" />
-			<IMPORT MODULE="slf4j-api-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" NAME="slf4j" REQUIRED="true" />
-            <IMPORT NAME="commons-httpclient"
-                MODULE="commons-httpclient-3.1.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
-                REQUIRED="true" />
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    REQUIRED="true" />
 
 			<IMPORT MODULE="camel-amqp-alldep-2.10.2.jar" NAME="talend-camel-amqp"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
@@ -580,7 +569,7 @@
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.3.jar"
-                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
+                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" /> 
 		</IMPORTS>
 	</CODEGENERATION>
 
