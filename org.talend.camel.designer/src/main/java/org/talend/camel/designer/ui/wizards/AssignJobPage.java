@@ -16,12 +16,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.camel.designer.i18n.Messages;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.PluginChecker;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.ui.IJobletProviderService;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
@@ -89,7 +93,15 @@ public class AssignJobPage extends WizardPage {
 
 		private List<IRepositoryNode> routeInputContainedJobs = new ArrayList<IRepositoryNode>();
 
+		private IJobletProviderService service = null;
+		
 		private RouteInputContainedFilter() {
+			
+			if (PluginChecker.isJobLetPluginLoaded()) {
+				service = (IJobletProviderService) GlobalServiceRegister.getDefault().getService(
+						IJobletProviderService.class);
+			}
+			
 			/*
 			 * find all RouteInput contained Jobs first
 			 */
@@ -179,6 +191,15 @@ public class AssignJobPage extends WizardPage {
 						if ("tRouteInput".equals(componentName)) {
 							routeInputContainedJobs.add(jobNode);
 							return;
+						}else if(service != null){
+							ProcessType jobletProcess = service.getJobletProcess(nt);
+							if(jobletProcess == null){
+								continue;
+							}
+							if(checkRouteInputExistInJoblet(jobletProcess)){
+								routeInputContainedJobs.add(jobNode);
+								return;
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -189,6 +210,34 @@ public class AssignJobPage extends WizardPage {
 			for (IRepositoryNode child : children) {
 				addAllRouteInputContainedJob(routeInputContainedJobs, child);
 			}
+		}
+
+		private boolean checkRouteInputExistInJoblet(ProcessType jobletProcess) {
+			if(jobletProcess == null){
+				return false;
+			}
+			EList<?> node = jobletProcess.getNode();
+			Iterator<?> iterator = node.iterator();
+			while(iterator.hasNext()){
+				Object next = iterator.next();
+				if(!(next instanceof NodeType)){
+					continue;
+				}
+				NodeType nt = (NodeType) next;
+				String componentName = nt.getComponentName();
+				if ("tRouteInput".equals(componentName)) {
+					return true;
+				}else if(service != null){
+					ProcessType subProcess = service.getJobletProcess(nt);
+					if(subProcess == null){
+						continue;
+					}
+					if(checkRouteInputExistInJoblet(subProcess)){
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	}	
 	
