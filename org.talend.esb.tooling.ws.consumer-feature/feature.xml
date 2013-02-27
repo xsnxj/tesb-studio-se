@@ -61,12 +61,6 @@
          version="2.4.0"/>
 
    <plugin
-         id="org.apache.commons.jxpath"
-         download-size="0"
-         install-size="0"
-         version="1.3.0"/>
-
-   <plugin
          id="org.talend.libraries.esb"
          download-size="0"
          install-size="0"
