@@ -246,7 +246,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="wsdl4j"
                     MODULE="wsdl4j-1.6.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wsdl4j-1.6.2.jar"
+                    UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
@@ -261,7 +261,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="geronimo-javamail_1.4_spec"
                     MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
+                    UrlPath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
                     BundleID=""
                     REQUIRED="true" />
 
@@ -273,7 +273,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="xml-resolver"
                     MODULE="xml-resolver-1.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xml-resolver-1.2.jar"
+                    UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="asm"
@@ -353,7 +353,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-ws-policy"
