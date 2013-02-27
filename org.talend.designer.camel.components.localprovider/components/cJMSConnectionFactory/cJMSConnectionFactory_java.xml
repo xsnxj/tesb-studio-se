@@ -167,7 +167,7 @@
 
             <!-- spring -->
             <IMPORT NAME="camel-spring" 
-            		MODULE="camel-spring-2.10.2.jar"
+            		MODULE="camel-spring-2.10.4.jar"
                 	REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.0.7.RELEASE.jar"
@@ -212,7 +212,7 @@
 	                REQUIRED="true" />
 
 			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.10.2.jar"
+					MODULE="camel-core-2.10.4.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="spring-jms" 
 					MODULE="spring-jms-3.0.7.RELEASE.jar"
@@ -240,7 +240,7 @@
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.7.0.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="jms" 
-					MODULE="camel-jms-alldep-2.10.2.jar"
+					MODULE="camel-jms-alldep-2.10.4.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="common-pool" 
 					MODULE="commons-pool-1.5.4.jar" 

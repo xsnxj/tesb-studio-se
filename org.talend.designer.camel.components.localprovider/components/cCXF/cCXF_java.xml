@@ -130,7 +130,7 @@
 		<IMPORTS>
 
             <!-- spring -->
-            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
+            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.4.jar"
                 REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.0.7.RELEASE.jar"
@@ -175,7 +175,7 @@
 	                REQUIRED="true" />
 
 			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.10.2.jar"
+					MODULE="camel-core-2.10.4.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="log4j" 
 					MODULE="log4j-1.2.16.jar" 
@@ -191,10 +191,10 @@
                     REQUIRED="true" />
                     
 			<IMPORT NAME="talend-camel-cxf" 
-					MODULE="camel-cxf-alldep-2.10.2.jar"
+					MODULE="camel-cxf-alldep-2.10.4.jar"
 					REQUIRED="true" />
             <IMPORT NAME="talend-camel-blueprint"
-            		MODULE="camel-blueprint-alldep-2.10.2.jar" 
+            		MODULE="camel-blueprint-alldep-2.10.4.jar" 
                 	REQUIRED="true" />
 			<IMPORT NAME="locator" 
 					MODULE="locator-5.3.0-SNAPSHOT.jar" 
