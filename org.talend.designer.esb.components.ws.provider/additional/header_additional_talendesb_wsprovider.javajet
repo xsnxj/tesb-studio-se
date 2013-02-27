@@ -16,7 +16,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-if (!process.getNodesOfType("tESBProviderRequest").isEmpty()) { // if ESB provider job
+if (!process.getNodesOfType("tESBProviderRequestLoop").isEmpty()) { // if ESB provider job
 
 	// Web Service Provider
 	INode tESBProviderRequestNode = process.getNodesOfType("tESBProviderRequestLoop").get(0);

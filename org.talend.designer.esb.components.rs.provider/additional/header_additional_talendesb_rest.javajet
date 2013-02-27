@@ -37,7 +37,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
+List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequestLoop");
 if (!httpRequestComponentsList.isEmpty()) {
 
 	final class URITemplateUtils {
@@ -496,7 +496,7 @@ public static class RestServiceProviderImpl4TalendJob {
 
 			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
-			job.<%=cid%>_LoopProcess(globalMap);
+			job.<%=cid%>Process(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
 
