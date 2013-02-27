@@ -177,17 +177,17 @@
 			<IMPORT NAME="apache-camel" 
 					MODULE="camel-core-2.10.4.jar"
 					REQUIRED="true" />
-			<IMPORT NAME="log4j" 
-					MODULE="log4j-1.2.16.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.16.jar" 
-					REQUIRED="true" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED="true" />
 			<IMPORT NAME="slf4j" 
 					MODULE="slf4j-api-1.6.1.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" 
 					REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
                     REQUIRED="true" />
                     
 			<IMPORT NAME="talend-camel-cxf" 
@@ -196,12 +196,8 @@
             <IMPORT NAME="talend-camel-blueprint"
             		MODULE="camel-blueprint-alldep-2.10.4.jar" 
                 	REQUIRED="true" />
-			<IMPORT NAME="locator" 
-					MODULE="locator-5.3.0-SNAPSHOT.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.0-SNAPSHOT.jar"
-					REQUIRED="true" />
-					
-			
+
+
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.3.jar"
@@ -220,7 +216,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="wsdl4j"
                     MODULE="wsdl4j-1.6.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wsdl4j-1.6.2.jar"
+                    UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
                     MODULE="jaxb-impl-2.1.13.jar"
@@ -232,7 +228,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="geronimo-javamail_1.4_spec"
                     MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
+                    UrlPath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
                     REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
@@ -241,7 +237,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="xml-resolver"
                     MODULE="xml-resolver-1.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xml-resolver-1.2.jar"
+                    UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
                     REQUIRED="true" />
             <IMPORT NAME="asm"
                     MODULE="asm-3.3.1.jar"
@@ -305,7 +301,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-ws-policy"
                     MODULE="cxf-rt-ws-policy-2.7.3.jar"
@@ -374,10 +370,22 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
                     REQUIRED="true" />
 
+            <IMPORT NAME="locator"
+                    MODULE="locator-5.3.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.0-SNAPSHOT.jar"
+                    REQUIRED_IF="ENABLE_SL == 'true'" />
+            <IMPORT NAME="zookeeper"
+                    MODULE="zookeeper-3.3.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
+                    REQUIRED_IF="ENABLE_SL == 'true'" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.3.jar"
-                    REQUIRED="true" />
+                    REQUIRED_IF="ENABLE_SL == 'true'" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
