@@ -246,14 +246,6 @@
 					MODULE="commons-pool-1.5.4.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.5.4.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
-			<IMPORT NAME="jms_jar" 
-					MODULE="jms.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jms.jar"
-					REQUIRED="true" />
-			<IMPORT NAME="jta" 
-					MODULE="jta.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.hibernate/lib/jta.jar"
-					REQUIRED="true" />
 			<IMPORT NAME="jndi" 
 					MODULE="jndi.jar"
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jndi.jar"
