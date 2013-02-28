@@ -415,20 +415,13 @@ class HandlerThread_<%=cid%> extends Thread {
 
 	public void run() {
 
-<%
-	//http://jira.talendforge.org/browse/TESB-3603 Clean up default port codes
-	//String defaultPort = (String) System.getProperties().get("wsHttpPort");
-	//if (null == defaultPort || defaultPort.trim().isEmpty()) {
-	//	defaultPort = "8088";
-	//}
-%>
 		// test for busy
-		java.net.ServerSocket ss = null;
+		java.net.URI endpointURI = java.net.URI.create(endpointUrl);
+		String host = endpointURI.getHost();
 		try {
-			java.net.URL endpointURL = new java.net.URL(endpointUrl);
-			String host = endpointURL.getHost();
-			int port = endpointURL.getPort();
-			if ("localhost".equals(host) || host.startsWith("127.0.0")) {
+			if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
+				int port = endpointURI.getPort();
+				java.net.ServerSocket ss = null;
 				try {
 					ss = new java.net.ServerSocket(port);
 				} catch (IOException e) {
@@ -456,10 +449,8 @@ class HandlerThread_<%=cid%> extends Thread {
 					//ok, nobody listens, proceed
 				}
 			}
-		} catch (java.net.MalformedURLException e) {
-			// rethrow exception
-			throw new IllegalArgumentException(
-					"Cannot start provider with uri: " + endpointUrl + ". Malformed URL.");
+		} catch (java.net.UnknownHostException e) {
+			// ignore
 		}
 
         org.apache.cxf.jaxws.JaxWsServerFactoryBean serverFactory = new org.apache.cxf.jaxws.JaxWsServerFactoryBean();
