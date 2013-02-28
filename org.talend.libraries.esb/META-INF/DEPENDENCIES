@@ -1,13 +1,10 @@
 
-Lists of 54 third-party dependencies.
+Lists of 48 third-party dependencies.
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
      (BSD License) ASM Core (asm:asm:3.3.1 - http://asm.objectweb.org/asm/)
      (CDDL 1.0) (GPL2 w/ CPE) JAXB RI (com.sun.xml.bind:jaxb-impl:2.1.13 - https://jaxb.dev.java.net/)
-     (Apache Software License - Version 2.0) Commons Lang (commons-lang:commons-lang:2.6 - http://commons.apache.org/lang/)
-     (Apache Software License - Version 2.0) Commons Logging (commons-logging:commons-logging:1.1.1 - http://commons.apache.org/logging)
      (CDDL 1.1) (GPL2 w/ CPE) javax.ws.rs-api (javax.ws.rs:javax.ws.rs-api:2.0-m10 - http://jax-rs-spec.java.net)
      (Apache Software License - Version 2.0) Joda time (joda-time:joda-time:1.6.2 - http://joda-time.sourceforge.net)
-     (Apache Software License - Version 2.0) Apache Log4j (log4j:log4j:1.2.15 - http://logging.apache.org:80/log4j/1.2/)
      (Apache Software License - Version 2.0) Ehcache Core (net.sf.ehcache:ehcache-core:2.5.1 - http://ehcache.org)
      (Apache Software License - Version 2.0) Apache CXF API (org.apache.cxf:cxf-api:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime SOAP Binding (org.apache.cxf:cxf-rt-bindings-soap:2.7.3 - http://cxf.apache.org)
@@ -25,7 +22,6 @@ Lists of 54 third-party dependencies.
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Addressing (org.apache.cxf:cxf-rt-ws-addr:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Policy (org.apache.cxf:cxf-rt-ws-policy:2.7.3 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Security (org.apache.cxf:cxf-rt-ws-security:2.7.3 - http://cxf.apache.org)
-     (Apache Software License - Version 2.0) JavaMail 1.4 (org.apache.geronimo.specs:geronimo-javamail_1.4_spec:1.7.1 - http://geronimo.apache.org/maven/specs/geronimo-javamail_1.4_spec/1.7.1)
      (Apache Software License - Version 2.0) Servlet 3.0 (org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0 - http://geronimo.apache.org/maven/specs/geronimo-servlet_3.0_spec/1.0)
      (Apache Software License - Version 2.0) Apache Neethi (org.apache.neethi:neethi:3.0.2 - http://ws.apache.org/neethi/)
      (Apache Software License - Version 2.0) Apache XML Security for Java (org.apache.santuario:xmlsec:1.5.3 - http://santuario.apache.org/)
@@ -52,5 +48,3 @@ Lists of 54 third-party dependencies.
      (Apache Software License - Version 2.0) spring-core (org.springframework:spring-core:3.0.7.RELEASE - no url defined)
      (Apache Software License - Version 2.0) spring-expression (org.springframework:spring-expression:3.0.7.RELEASE - no url defined)
      (Apache Software License - Version 2.0) StAX API (stax:stax-api:1.0.1 - http://stax.codehaus.org/)
-     (CPL) WSDL4J (wsdl4j:wsdl4j:1.6.2 - http://sf.net/projects/wsdl4j)
-     (Apache Software License - Version 2.0) XML Commons Resolver Component (xml-resolver:xml-resolver:1.2 - http://xml.apache.org/commons/components/resolver/)
