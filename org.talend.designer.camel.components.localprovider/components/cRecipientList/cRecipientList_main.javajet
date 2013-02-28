@@ -21,8 +21,8 @@ imports="
 	String resultClassType = getSetting("__RESULT_CLASS_TYPE__");
 	boolean useNamespaces = getBoolSetting( "__USE_NAMESPACES__");
 
-	//boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
-	//String delimiter = getSetting( "__DELIMITER__");
+	boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
+	String delimiter = getSetting( "__DELIMITER__");
 	
 	boolean useStrategy = getBoolSetting( "__USE_STRATEGY__");
 	String strategyRef = getSetting( "__STRATEGY_REF__");
@@ -49,7 +49,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-						.recipientList().
+			.recipientList(<%	if(useSpecifyDelimiter){%><%=delimiter%><%}		%>).
 <%	
 			//will return ExpressionClause instance, then wait for fill  expression
 			if(!"none".equals(language)){
