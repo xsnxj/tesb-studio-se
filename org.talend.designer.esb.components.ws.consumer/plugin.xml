@@ -29,14 +29,4 @@
 			beforeLogon="false" />
 	</extension>
 
-	<!-- TESB-3602 Remove ESB page
-	<extension point="org.eclipse.ui.preferencePages">
-		<page
-			category="org.talend.core.prefs"
-			class="org.talend.designer.esb.webservice.ui.EsbPreferencePage"
-			id="org.talend.designer.esb"
-			name="%preferencesPage.main">
-		</page>
-	</extension>
-	-->
 </plugin>
