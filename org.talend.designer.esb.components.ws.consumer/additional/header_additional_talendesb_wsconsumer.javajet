@@ -15,7 +15,7 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
-boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
+boolean actAsProvider = !process.getNodesOfType("tESBProviderRequestLoop").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 
 if (actAsConsumer) { %>
