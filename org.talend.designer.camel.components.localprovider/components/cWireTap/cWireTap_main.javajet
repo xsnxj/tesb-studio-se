@@ -22,10 +22,14 @@ imports="
 %>
 	.wireTap(<%=URI%>)
 <%
-	if(!"true".equals(copy_original_message)){
+	if("true".equals(copy_original_message)){
+%>
+	.copy(true)
+<%
+	}else{
 %>
 	.copy(false)
-<%
+<%	
 	}
 	if("true".equals(new_exchange)){
 		if("true".equals(expression)){
