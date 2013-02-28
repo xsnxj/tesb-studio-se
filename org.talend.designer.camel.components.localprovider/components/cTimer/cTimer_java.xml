@@ -118,10 +118,10 @@
                     MODULE="log4j-1.2.15.jar"
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
                     REQUIRED="true" />
-			<IMPORT NAME="slf4j" 
-					MODULE="slf4j-api-1.6.1.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-api-1.6.1.jar" 
-					REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.6.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.6.2.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
                     UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
