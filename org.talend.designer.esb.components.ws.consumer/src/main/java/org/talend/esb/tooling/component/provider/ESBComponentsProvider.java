@@ -1,7 +1,6 @@
 package org.talend.esb.tooling.component.provider;
 
 import java.io.File;
-import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -16,14 +15,15 @@ public class ESBComponentsProvider extends AbstractComponentsProvider {
 	protected File getExternalComponentsLocation() {
 		if (null == components) {
 			try {
-				URL url = FileLocator.find(
-						WebServiceComponentPlugin.getDefault().getBundle(),
-						new Path("components"),	null);
-				URL fileUrl = FileLocator.toFileURL(url);
-				components = new File(fileUrl.getPath());
+				components = new File(
+					FileLocator.toFileURL(
+						FileLocator.find(
+							WebServiceComponentPlugin.getDefault().getBundle(),
+							new Path("components"),
+							null)).getPath());
 			} catch (Exception e) {
 				WebServiceComponentPlugin.getDefault().getLog().log(
-						WebServiceComponentPlugin.getStatus(null, e));
+					WebServiceComponentPlugin.getStatus(null, e));
 			}
 		}
 		return components;
