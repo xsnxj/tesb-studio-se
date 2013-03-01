@@ -12,7 +12,6 @@ Bundle-ClassPath: .,
  libs/camel-hawtdb-2.7.3.jar,
  libs/camel-jms-2.7.3.jar,
  libs/camel-spring-2.7.3.jar,
- libs/commons-logging-1.1.1.jar,
  libs/commons-management-1.0.jar,
  libs/cxf-api-2.4.2.jar,
  libs/cxf-common-utilities-2.4.2.jar,
@@ -38,3 +37,4 @@ Bundle-ClassPath: .,
 Export-Package: org.talend.designer.camel.spring.core,
  org.talend.designer.camel.spring.core.models
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.apache.commons.logging

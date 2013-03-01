@@ -7,7 +7,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/camel-hawtdb-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/camel-jms-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/camel-spring-2.7.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-management-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/cxf-api-2.4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/cxf-common-utilities-2.4.2.jar"/>

@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.spring.ui.CamelSpringUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.apache.commons.logging,
  org.eclipse.core.runtime,
  org.talend.camel.model,
  org.talend.core.repository,
