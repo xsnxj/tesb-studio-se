@@ -31,6 +31,7 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
@@ -150,7 +151,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
             IEditorPart openEditor = getActivePage().openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
             CommandStack commandStack = (CommandStack) openEditor.getAdapter(CommandStack.class);
 
-            final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST), fileEditorInput.getLoadedProcess());
+            final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
 
             final RepositoryNode portNode = nodeOperation.getParent();
             ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
@@ -164,7 +165,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
             commandStack.execute(cNcc);
 
             if (!serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE).equals(WSDLUtils.ONE_WAY)) {
-                Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE), fileEditorInput.getLoadedProcess());
+                Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
                 cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
                         new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
@@ -173,7 +174,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
             if (null != faults) {
                 int horMultiplier = 15;
                 for (String fault : faults.split(",")) {
-                    Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT), fileEditorInput.getLoadedProcess());
+                    Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
                     cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
                             new Point(horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                     commandStack.execute(cNcc);
