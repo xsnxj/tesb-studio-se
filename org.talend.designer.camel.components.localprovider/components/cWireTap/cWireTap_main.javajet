@@ -11,8 +11,8 @@ imports="
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 	String URI = ElementParameterParser.getValue(node, "__URI__");
-	String new_exchange  = ElementParameterParser.getValue(node, "__NEW_EXCHANGE__");
-	String copy_original_message  = ElementParameterParser.getValue(node, "__COPY_ORIGINAL_MESSAGE__");
+	boolean new_exchange  = "true".equals(ElementParameterParser.getValue(node, "__NEW_EXCHANGE__"));
+	boolean copy_original_message  = "true".equals(ElementParameterParser.getValue(node, "__COPY_ORIGINAL_MESSAGE__"));
 	String expression  = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String processor  = ElementParameterParser.getValue(node, "__PROCESSOR__");
 	String code = ElementParameterParser.getValue(node, "__CODE__");
@@ -22,16 +22,18 @@ imports="
 %>
 	.wireTap(<%=URI%>)
 <%
-	if("true".equals(copy_original_message)){
+
+
+	if(new_exchange){
+		if(copy_original_message){
 %>
-	.copy(true)
+			.copy(true)
 <%
-	}else{
+		}else{
 %>
-	.copy(false)
+			.copy(false)
 <%	
-	}
-	if("true".equals(new_exchange)){
+		}
 		if("true".equals(expression)){
 %>
 			.newExchangeBody(<%=language%>(<%=expressiontxt%>))
