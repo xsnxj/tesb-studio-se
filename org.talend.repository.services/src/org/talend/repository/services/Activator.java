@@ -1,7 +1,7 @@
 package org.talend.repository.services;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
 
 public class Activator extends AbstractUIPlugin {
 
@@ -86,15 +87,17 @@ public class Activator extends AbstractUIPlugin {
         esbConfigsFolderUrl = FileLocator.toFileURL(esbConfigsFolderUrl);
 
         // obtain Studio installation location URI
+        
         String eclipseHome = (String) System.getProperties().get("eclipse.home.location");
-
+        File eclipseEsbFolder=new File(new URL(eclipseHome).getPath(),"esb");
         // create ESB configuration folder under Studio instalation
         IFileSystem fileSystem = EFS.getLocalFileSystem();
-        IFileStore esbConfigsTargetFolder = fileSystem.getStore(URI.create(eclipseHome + "esb"));
+        IFileStore esbConfigsTargetFolder = fileSystem.getStore(eclipseEsbFolder.toURI());
         esbConfigsTargetFolder = esbConfigsTargetFolder.mkdir(EFS.SHALLOW, null);
 
         // retrieve all ESB configuration files packed inside plug-in
-        IFileStore esbConfigsFolderStore = fileSystem.getStore(esbConfigsFolderUrl.toURI());
+        File fileEsbConfigFolder=new File(esbConfigsFolderUrl.getPath());
+        IFileStore esbConfigsFolderStore = fileSystem.getStore(fileEsbConfigFolder.toURI());
         IFileStore[] esbConfigsFolderStoreChildren = esbConfigsFolderStore.childStores(EFS.NONE, null);
         if (0 == esbConfigsFolderStoreChildren.length) {
             getLog().log(
