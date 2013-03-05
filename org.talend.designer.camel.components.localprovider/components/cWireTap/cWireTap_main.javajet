@@ -23,17 +23,17 @@ imports="
 	.wireTap(<%=URI%>)
 <%
 
+	if(copy_original_message){
+%>
+		.copy(true)
+<%
+	}else{
+%>
+		.copy(false)
+<%	
+	}
 
 	if(new_exchange){
-		if(copy_original_message){
-%>
-			.copy(true)
-<%
-		}else{
-%>
-			.copy(false)
-<%	
-		}
 		if("true".equals(expression)){
 %>
 			.newExchangeBody(<%=language%>(<%=expressiontxt%>))
