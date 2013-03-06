@@ -150,10 +150,19 @@
 				<enablement>
 					<and>
 						<instanceof value="org.talend.repository.model.RepositoryNode" />
-						<test
-								forcePluginActivation="true"
-								property="org.talend.repository.node.isServicesNode">
-						</test>
+      <or>
+         <test
+               forcePluginActivation="true"
+               property="org.talend.repository.node.isServicesNode">
+         </test>
+         <test
+               forcePluginActivation="true"
+               property="org.talend.repository.node.isServicesPortNode">
+         </test>
+         <test
+               forcePluginActivation="true"
+               property="org.talend.repository.node.isServicesOperationNode">
+         </test></or>
 						<not>
 							<test
 									forcePluginActivation="true"
