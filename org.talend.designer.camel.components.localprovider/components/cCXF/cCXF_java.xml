@@ -382,6 +382,10 @@
                     MODULE="log4j-1.2.15.jar"
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
+            <IMPORT NAME="slf4j-log4j12"
+                    MODULE="slf4j-log4j12-1.6.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.3.jar"
