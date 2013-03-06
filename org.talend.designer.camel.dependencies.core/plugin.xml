@@ -114,6 +114,21 @@
                   attributeValue="true">
             </predicate>
          </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.configuration">
+         </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.bus.osgi">
+         </importPackage>
+         <importPackage
+               packageName="META-INF.cxf">
+         </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.bus.spring">
+         </importPackage>
+         <importPackage
+               packageName="org.springframework.osgi.context.support">
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
