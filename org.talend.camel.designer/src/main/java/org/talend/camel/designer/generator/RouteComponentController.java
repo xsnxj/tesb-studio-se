@@ -96,20 +96,9 @@ public class RouteComponentController extends
 	private Command createButtonCommand(Button button) {
 
 		Object[] listItemsValue = curParameter.getListItemsValue();
-
 		RouteComponentSelectionDialog dlg = null;
-		if (listItemsValue == null) {
-			dlg = new RouteComponentSelectionDialog(button.getShell(), null,
+		dlg = new RouteComponentSelectionDialog(button.getShell(), listItemsValue,
 					(INode) elem);
-		} else {
-
-			String[] types = new String[listItemsValue.length];
-			for (int index = 0; index < types.length; index++) {
-				types[index] = (String) listItemsValue[index];
-			}
-			dlg = new RouteComponentSelectionDialog(button.getShell(), types,
-					(INode) elem);
-		}
 
 		IElementParameter itemParam = curParameter.getChildParameters().get(
 				EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());

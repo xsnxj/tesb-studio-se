@@ -40,6 +40,9 @@ import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.IProcess2;
+import org.talend.designer.core.model.components.Expression;
+
+import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author LiXiaopeng Dialog for cJMS ConnectionFactory selection.
@@ -116,7 +119,7 @@ public class RouteComponentSelectionDialog extends Dialog {
 
 	private TreeViewer treeViewer;
 
-	private String[] nodeTypes;
+	private Object[] nodeTypes;
 
 	private INode result;
 
@@ -124,10 +127,10 @@ public class RouteComponentSelectionDialog extends Dialog {
 
 	private String selectedId;
 
-	public RouteComponentSelectionDialog(Shell parentShell, String[] nodeTypes,
+	public RouteComponentSelectionDialog(Shell parentShell, Object[] listItemsValue,
 			INode sourceNode) {
 		super(parentShell);
-		this.nodeTypes = nodeTypes;
+		this.nodeTypes = listItemsValue;
 		this.sourceNode = sourceNode;
 
 		initModels();
@@ -231,10 +234,22 @@ public class RouteComponentSelectionDialog extends Dialog {
 		if (nodeTypes == null || nodeTypes.length == 0) {
 			return true;
 		}
+		if(node==sourceNode) {
+			return false;
+		}
 		String name = node.getComponent().getName();
-		for (String type : nodeTypes) {
-			if (name.equals(type)) {
-				return true;
+		for (Object type : nodeTypes) {
+			if (type instanceof StringPair) {
+				StringPair item = (StringPair) type;
+				if (name.equals(item.getFirst())) {
+					String filter = item.getSecond();
+					return filter == null
+							|| Expression.evaluate(filter,
+									node.getElementParameters());
+
+				}
+			}else {
+				return name.equals(String.valueOf(type));
 			}
 		}
 		return false;
