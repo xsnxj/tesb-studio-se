@@ -20,7 +20,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/geronimo-jms_1.1_spec-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hsqldb-1.8.0.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/neethi-3.0.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/slf4j-api-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-aop-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-asm-3.0.5.RELEASE.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-beans-3.0.5.RELEASE.jar"/>
