@@ -29,6 +29,7 @@ public class ServiceMetadataDialog extends Dialog {
 
     public static final String SECURITY_BASIC = "Security.Basic";
     public static final String SECURITY_SAML = "Security.SAML";
+    public static final String AUTHORIZATION = "Authorization";    
     public static final String USE_SAM = "UseSAM";
     public static final String USE_SL = "UseSL";
     public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_";
@@ -41,6 +42,7 @@ public class ServiceMetadataDialog extends Dialog {
     private Map<String, String> slCustomProperties = new HashMap<String, String>();
     private boolean securityBasic;
 	private boolean securitySAML;
+	private boolean authorization;	
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
         super(parentShell);
@@ -52,6 +54,7 @@ public class ServiceMetadataDialog extends Dialog {
             useSL = Boolean.valueOf(props.get(USE_SL));
             securitySAML = Boolean.valueOf(props.get(SECURITY_SAML));
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
+            authorization = Boolean.valueOf(props.get(AUTHORIZATION));            
 
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
@@ -109,24 +112,41 @@ public class ServiceMetadataDialog extends Dialog {
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         securityGroup.setLayout(new GridLayout());
 
+
         final Button basicCheck = new Button(securityGroup, SWT.CHECK);
+        final Button samlCheck = new Button(securityGroup, SWT.CHECK);
+        final Button authorizationCheck = new Button(securityGroup, SWT.CHECK);
+        
         basicCheck.setText("Username / Password");
         basicCheck.setSelection(securityBasic);
         basicCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securityBasic = basicCheck.getSelection();
+                authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());
             }
         });
 
-        final Button samlCheck = new Button(securityGroup, SWT.CHECK);
+
         samlCheck.setText("SAML Token");
         samlCheck.setSelection(securitySAML);
         samlCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securitySAML = samlCheck.getSelection();
+                authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());
             }
         });
-
+        
+        
+        authorizationCheck.setText("Authorization");
+        authorizationCheck.setSelection(authorization);
+        authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());        
+        authorizationCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	authorization = authorizationCheck.getSelection();
+            }
+        });
+        
+        
         return super.createDialogArea(parent);
     }
 
@@ -146,6 +166,10 @@ public class ServiceMetadataDialog extends Dialog {
         return securitySAML;
     }
 
+    private boolean getAuthorization() {
+        return authorization;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -157,6 +181,7 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(USE_SL, Boolean.toString(isUseSL()));
             props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
+            props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
 
             if (isUseSL()) {
                 slCustomProperties = new HashMap<String, String>(customPropertiesTable
