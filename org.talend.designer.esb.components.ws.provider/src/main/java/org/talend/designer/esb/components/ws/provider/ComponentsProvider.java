@@ -1,32 +1,46 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2013 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.designer.esb.components.ws.provider;
 
 import java.io.File;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.osgi.framework.Bundle;
 import org.talend.core.model.components.AbstractComponentsProvider;
 
 public class ComponentsProvider extends AbstractComponentsProvider {
 
-	private static Logger logger = Logger.getLogger(ComponentsProvider.class);
+    private File providedLocation = null;
 
-	protected File getExternalComponentsLocation() {
-		Bundle bundle = Activator.getDefault().getBundle();
-		try	{
-			URL localURL = FileLocator.toFileURL(
-					FileLocator.find(bundle, new Path("components"), null));
-			return new File(localURL.getPath());
-		} catch (Exception localException) {
-			logger.error(localException);
-			localException.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+    protected File getExternalComponentsLocation() {
+        if (null == providedLocation) {
+            Activator plugin = Activator.getDefault();
+            try {
+                URL url = FileLocator.find(plugin.getBundle(), new Path("components"), null); //$NON-NLS-1$
+                url = FileLocator.toFileURL(url);
+                providedLocation = new File(url.getPath());
+            } catch (Exception e) {
+                plugin.getLog().log(Activator.getStatus(null, e));
+            }
+        }
+        return providedLocation;
+    }
 
-	public String getFamilyTranslation(String paramString) {
-		return null;
-	}
+    @Override
+    public String getFamilyTranslation(String paramString) {
+        return null;
+    }
+
 }
