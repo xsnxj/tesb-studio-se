@@ -177,6 +177,8 @@ if (inputConn != null) {
                                 put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
 
                                 <% if (useAuth) { %>
+                                    put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
+                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
                                     put("esbSecurity", "<%=authType%>");
                                     put("username", <%=username%>);
                                     put("password", <%=password%>);
