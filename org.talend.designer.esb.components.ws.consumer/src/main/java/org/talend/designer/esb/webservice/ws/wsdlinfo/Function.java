@@ -26,9 +26,10 @@ public class Function {
 
     private String communicationStyle;
 
-    public Function(String name, String portName) {
+    public Function(String name, String portName, QName serviceName) {
         this.name = name;
         this.portName = portName;
+        this.serviceName = serviceName;
     }
 
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {

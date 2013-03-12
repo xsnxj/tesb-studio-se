@@ -28,6 +28,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,6 +65,7 @@ import org.talend.commons.utils.data.bean.IBeanPropertyAccessors;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
+import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextManager;
 import org.talend.core.model.process.IElementParameter;
@@ -140,15 +142,31 @@ public class WebServiceUI extends WizardPage {
     }
 
     private void initWebserviceUI() {
-        IElementParameter METHODPara = webServiceComponent.getElementParameter(METHOD);
-        Object obj = METHODPara.getValue();
-        if (obj != null && obj instanceof String && !"".equals(obj)) {
-            String currentPort = (String) webServiceComponent.getElementParameter(PORT_NAME).getValue(); //$NON-NLS-1$
-
-            allPortNames.add(currentPort);
-            currentFunction = new Function(obj.toString(), currentPort);
-            allFunctions.add(currentFunction);
+        String operationName = getElementParameterStringValue(webServiceComponent, METHOD);
+        if (null != operationName) {
+            String portName = getElementParameterStringValue(webServiceComponent, PORT_NAME);
+            if (null != portName) {
+                String serviceName = getElementParameterStringValue(webServiceComponent, "SERVICE_NAME");
+                String targetNamespace = getElementParameterStringValue(webServiceComponent, "SERVICE_NS");
+                if (null != serviceName && null != targetNamespace) {
+                    allPortNames.add(portName);
+                    currentFunction = new Function(operationName, portName, new QName(targetNamespace, serviceName));
+                    allFunctions.add(currentFunction);
+                }
+            }
         }
+    }
+
+    private static String getElementParameterStringValue(AbstractExternalNode node, String parameterName) {
+        IElementParameter elementParameter = node.getElementParameter(parameterName);
+        if (null != elementParameter) {
+            Object parameterValue = elementParameter.getValue();
+            if (null != parameterValue && parameterValue instanceof String) {
+                String value = parameterValue.toString().trim();
+                return value.isEmpty() ? null : value;
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("rawtypes")
