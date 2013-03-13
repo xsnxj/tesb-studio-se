@@ -129,6 +129,38 @@
          <importPackage
                packageName="org.springframework.osgi.context.support">
          </importPackage>
+         <importPackage
+               packageName="org.apache.neethi">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.ws.security.wss4j">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.ws.policy">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               packageName="org.apache.ws.security.validate">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+            <predicate
+                  attributeName="SECURITY_TYPE"
+                  attributeValue="USER">
+            </predicate>
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
