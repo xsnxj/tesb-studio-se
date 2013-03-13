@@ -30,6 +30,7 @@ public class ServiceMetadataDialog extends Dialog {
     public static final String SECURITY_BASIC = "Security.Basic";
     public static final String SECURITY_SAML = "Security.SAML";
     public static final String AUTHORIZATION = "Authorization";    
+    public static final String USE_SERVICE_REGISTRY = "UseServiceRegisrty";    
     public static final String USE_SAM = "UseSAM";
     public static final String USE_SL = "UseSL";
     public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_";
@@ -39,6 +40,7 @@ public class ServiceMetadataDialog extends Dialog {
     private ServiceMetadataCustomPropertiesTable customPropertiesTable;
     private boolean useSAM;
     private boolean useSL;
+    private boolean useServiceRegistry;    
     private Map<String, String> slCustomProperties = new HashMap<String, String>();
     private boolean securityBasic;
 	private boolean securitySAML;
@@ -54,7 +56,8 @@ public class ServiceMetadataDialog extends Dialog {
             useSL = Boolean.valueOf(props.get(USE_SL));
             securitySAML = Boolean.valueOf(props.get(SECURITY_SAML));
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
-            authorization = Boolean.valueOf(props.get(AUTHORIZATION));            
+            authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
+            useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
 
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
@@ -107,18 +110,32 @@ public class ServiceMetadataDialog extends Dialog {
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
         customPropertiesTable.setEditable(useSL);
 
-        Group securityGroup = new Group(container, SWT.NONE);
+        final Group securityGroup = new Group(container, SWT.NONE);
         securityGroup.setText("ESB Service Security");
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         securityGroup.setLayout(new GridLayout());
 
-
+        final Button useSR = new Button(container, SWT.CHECK);
         final Button basicCheck = new Button(securityGroup, SWT.CHECK);
         final Button samlCheck = new Button(securityGroup, SWT.CHECK);
         final Button authorizationCheck = new Button(securityGroup, SWT.CHECK);
         
+        
+        useSR.setText("Use Service Registry");
+        useSR.setSelection(useServiceRegistry);
+        useSR.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	useServiceRegistry = useSR.getSelection();
+            	securityGroup.setEnabled(!useSR.getSelection());
+            	authorizationCheck.setEnabled(!useSR.getSelection() && (samlCheck.getSelection() || basicCheck.getSelection()) );
+            	samlCheck.setEnabled(!useSR.getSelection());            	
+            	basicCheck.setEnabled(!useSR.getSelection());            	
+            }
+        });
+        
         basicCheck.setText("Username / Password");
         basicCheck.setSelection(securityBasic);
+    	basicCheck.setEnabled(!useSR.getSelection());        
         basicCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securityBasic = basicCheck.getSelection();
@@ -129,6 +146,7 @@ public class ServiceMetadataDialog extends Dialog {
 
         samlCheck.setText("SAML Token");
         samlCheck.setSelection(securitySAML);
+    	samlCheck.setEnabled(!useSR.getSelection());        
         samlCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securitySAML = samlCheck.getSelection();
@@ -139,7 +157,7 @@ public class ServiceMetadataDialog extends Dialog {
         
         authorizationCheck.setText("Authorization");
         authorizationCheck.setSelection(authorization);
-        authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());        
+        authorizationCheck.setEnabled(!useSR.getSelection() && (samlCheck.getSelection() || basicCheck.getSelection()));        
         authorizationCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	authorization = authorizationCheck.getSelection();
@@ -169,6 +187,10 @@ public class ServiceMetadataDialog extends Dialog {
     private boolean getAuthorization() {
         return authorization;
     }
+
+    private boolean getUseServiceRegistry() {
+        return useServiceRegistry;
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
@@ -182,6 +204,7 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
             props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
+            props.put(USE_SERVICE_REGISTRY, Boolean.toString(getUseServiceRegistry()));            
 
             if (isUseSL()) {
                 slCustomProperties = new HashMap<String, String>(customPropertiesTable

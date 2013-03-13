@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 		xmlns:jaxws="http://cxf.apache.org/jaxws"
 		xmlns:osgi="http://www.springframework.org/schema/osgi"
-#if (${endpoint.useSecuritySAML})
+#if (${endpoint.useSecuritySAML} || ${endpoint.useServiceRegistry})
 		xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
 #end
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
@@ -14,7 +14,7 @@
 			http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-#if (${endpoint.useSecuritySAML})
+#if (${endpoint.useSecuritySAML} || ${endpoint.useServiceRegistry})
 			http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
 #end
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
@@ -39,16 +39,19 @@
 			address="${endpoint.address}"
 			wsdlLocation="classpath:/${endpoint.wsdlLocation}">
 		<jaxws:properties>
-#if (${endpoint.useSecurityToken})
+#if (${endpoint.useSecurityToken} || ${endpoint.useServiceRegistry})
 			<entry key="ws-security.ut.validator" value-ref="jaasUTValidator" />
 #end
-#if (${endpoint.useSecuritySAML})
+#if (${endpoint.useSecuritySAML} || ${endpoint.useServiceRegistry})
 #[[
 			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
 			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
 			<entry key="ws-security.callback-handler"><ref bean="callback" /></entry>
 ]]#
 #end
+
+        	<entry key="use.service.registry" value="${endpoint.useServiceRegistry}" />
+        	
 		</jaxws:properties>
 		<jaxws:features>
 #if (${endpoint.useSAM})
@@ -116,12 +119,12 @@
 		<property name="bus" ref="cxf" />
 	</bean>
 
-#if (${endpoint.useSecurityToken})
+#if (${endpoint.useSecurityToken} || ${endpoint.useServiceRegistry})
 	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
 		<property name="contextName" value="karaf" />
 	</bean>
 #end
-#if (${endpoint.useSecuritySAML})
+#if (${endpoint.useSecuritySAML} || ${endpoint.useServiceRegistry})
 #[[
 	<osgix:cm-properties id="service-props" persistent-id="org.talend.esb.job.service" />
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

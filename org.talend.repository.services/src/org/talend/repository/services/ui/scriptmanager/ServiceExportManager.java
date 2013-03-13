@@ -129,9 +129,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
         endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)));
         endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
-        endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC)));
-        endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML)));
-        endpointInfo.put("useAuthorization", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION)));        
+        endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC))
+        		                        && !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
+        endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML))
+        								&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
+        endpointInfo.put("useAuthorization", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION))
+        								&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );        
+        endpointInfo.put("useServiceRegistry", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)));        
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
         if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))) {
