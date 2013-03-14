@@ -32,6 +32,7 @@ String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
+Boolean useSR = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
@@ -106,7 +107,7 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
 
-                <% if (useAuth) { %>
+                <% if (useAuth && !useSR) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
@@ -176,7 +177,11 @@ if (inputConn != null) {
                                 // use Service Activity Monitor
                                 put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
 
-                                <% if (useAuth) { %>
+                                <% if (useSR) { %>
+                                    put("useServiceRegisrty", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
+                                    put("username", <%=username%>);
+                                    put("password", <%=password%>);
+                                <% } else if (useAuth) { %>
                                     put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
                                     put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
                                     put("esbSecurity", "<%=authType%>");
