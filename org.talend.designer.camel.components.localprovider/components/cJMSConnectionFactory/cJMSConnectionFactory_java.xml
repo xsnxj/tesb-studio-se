@@ -150,11 +150,11 @@
 		<IMPORTS>
 			<IMPORT NAME="httpclient" 
 					MODULE="httpclient-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.publish/lib/httpclient-4.2.1.jar" 
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.1.jar" 
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 			<IMPORT NAME="httpcore" 
 					MODULE="httpcore-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.publish/lib/httpcore-4.2.1.jar" 
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 			<IMPORT NAME="xpp3" 
 					MODULE="xpp3-1.1.4c.jar"
