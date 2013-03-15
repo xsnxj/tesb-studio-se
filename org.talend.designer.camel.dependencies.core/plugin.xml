@@ -216,6 +216,20 @@
                   attributeValue="SAML">
             </predicate>
          </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.headers">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               packageName="org.apache.camel.component.cxf.common.header">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
