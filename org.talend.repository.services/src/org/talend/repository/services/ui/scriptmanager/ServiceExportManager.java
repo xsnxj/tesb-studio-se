@@ -127,7 +127,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
 
         EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
-        endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)));
+        endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))
+                						&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
         endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
         endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC))
         		                        && !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
@@ -138,7 +139,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useServiceRegistry", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)));        
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
-        if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))) {
+        if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)) 
+   		&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) ) {
             for (Map.Entry<String, String> prop : additionalInfo.entrySet()) {
                 if (prop.getKey().startsWith(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX)) {
                     slCustomProperties.put(prop.getKey().substring(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX.length()),

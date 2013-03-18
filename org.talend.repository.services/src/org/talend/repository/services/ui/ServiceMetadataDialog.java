@@ -82,13 +82,34 @@ public class ServiceMetadataDialog extends Dialog {
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
         container.setLayout(new GridLayout());
+        
+        final Button useSRCheck = new Button(container, SWT.CHECK);
+        Group samSlGroup = new Group(container, SWT.NONE);        
+        final Button samCheck = new Button(samSlGroup, SWT.CHECK);        
+        final Button slCheck = new Button(samSlGroup, SWT.CHECK);       
+        final Group securityGroup = new Group(container, SWT.NONE);        
+        final Button basicCheck = new Button(securityGroup, SWT.CHECK);
+        final Button samlCheck = new Button(securityGroup, SWT.CHECK);
+        final Button authorizationCheck = new Button(securityGroup, SWT.CHECK);
 
-        Group samSlGroup = new Group(container, SWT.NONE);
+        useSRCheck.setText("Use Service Registry");
+        useSRCheck.setSelection(useServiceRegistry);
+        useSRCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	useServiceRegistry = useSRCheck.getSelection();
+            	authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML || securityBasic) );
+            	samlCheck.setEnabled(!useServiceRegistry);            	
+            	basicCheck.setEnabled(!useServiceRegistry);            	
+            	slCheck.setEnabled(!useServiceRegistry); 
+            	customPropertiesTable.setEditable(useSL && !useServiceRegistry);
+            }
+        });
+        
+
         samSlGroup.setText("ESB Service Features");
         samSlGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         samSlGroup.setLayout(new GridLayout());
 
-        final Button samCheck = new Button(samSlGroup, SWT.CHECK);
         samCheck.setText("Use Service Activity Monitor");
         samCheck.setSelection(useSAM);
         samCheck.addSelectionListener(new SelectionAdapter() {
@@ -97,67 +118,48 @@ public class ServiceMetadataDialog extends Dialog {
             }
         });
 
-        final Button slCheck = new Button(samSlGroup, SWT.CHECK);
         slCheck.setText("Use Service Locator");
         slCheck.setSelection(useSL);
+        slCheck.setEnabled(!useServiceRegistry);        
         slCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 useSL = slCheck.getSelection();
-                customPropertiesTable.setEditable(slCheck.getSelection());
+                customPropertiesTable.setEditable(useSL && !useServiceRegistry);
             }
         });
 
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
-        customPropertiesTable.setEditable(useSL);
+        customPropertiesTable.setEditable(useSL && !useServiceRegistry);
 
-        final Group securityGroup = new Group(container, SWT.NONE);
         securityGroup.setText("ESB Service Security");
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         securityGroup.setLayout(new GridLayout());
-
-        final Button useSR = new Button(container, SWT.CHECK);
-        final Button basicCheck = new Button(securityGroup, SWT.CHECK);
-        final Button samlCheck = new Button(securityGroup, SWT.CHECK);
-        final Button authorizationCheck = new Button(securityGroup, SWT.CHECK);
-        
-        
-        useSR.setText("Use Service Registry");
-        useSR.setSelection(useServiceRegistry);
-        useSR.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-            	useServiceRegistry = useSR.getSelection();
-            	securityGroup.setEnabled(!useSR.getSelection());
-            	authorizationCheck.setEnabled(!useSR.getSelection() && (samlCheck.getSelection() || basicCheck.getSelection()) );
-            	samlCheck.setEnabled(!useSR.getSelection());            	
-            	basicCheck.setEnabled(!useSR.getSelection());            	
-            }
-        });
-        
+     
         basicCheck.setText("Username / Password");
         basicCheck.setSelection(securityBasic);
-    	basicCheck.setEnabled(!useSR.getSelection());        
+    	basicCheck.setEnabled(!useServiceRegistry);        
         basicCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securityBasic = basicCheck.getSelection();
-                authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());
+                authorizationCheck.setEnabled(securitySAML || securityBasic);
             }
         });
 
 
         samlCheck.setText("SAML Token");
         samlCheck.setSelection(securitySAML);
-    	samlCheck.setEnabled(!useSR.getSelection());        
+    	samlCheck.setEnabled(!useServiceRegistry);        
         samlCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securitySAML = samlCheck.getSelection();
-                authorizationCheck.setEnabled(samlCheck.getSelection() || basicCheck.getSelection());
+                authorizationCheck.setEnabled(securitySAML || securityBasic);
             }
         });
         
         
         authorizationCheck.setText("Authorization");
         authorizationCheck.setSelection(authorization);
-        authorizationCheck.setEnabled(!useSR.getSelection() && (samlCheck.getSelection() || basicCheck.getSelection()));        
+        authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML || securityBasic));        
         authorizationCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	authorization = authorizationCheck.getSelection();
