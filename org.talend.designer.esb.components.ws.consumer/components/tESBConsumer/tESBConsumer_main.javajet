@@ -138,7 +138,7 @@ if (inputConn != null) {
             } else {
                     <%
                     Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
-                    if (useSl) {
+                    if (useSl && !useSR) {
                         %>
                         final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                         <%
@@ -169,8 +169,8 @@ if (inputConn != null) {
                                 put("logMessages", <%=logMessages%>);
 
                                 // use Service Locator
-                                put("useServiceLocator", <%=useSl%>);
-                                <% if (useSl) { %>
+                                put("useServiceLocator", <%=(useSl && !useSR)%>);
+                                <% if (useSl && !useSR) { %>
                                     put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
                                     put("SL-PROPS", slCustomProps_<%=cid%>);
                                 <% } %>
