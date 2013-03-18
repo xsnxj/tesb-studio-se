@@ -28,12 +28,13 @@ import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
+import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
@@ -50,7 +51,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.codegen.ICodeGeneratorService;
 import org.talend.designer.codegen.ISQLPatternSynchronizer;
 import org.talend.designer.codegen.ITalendSynchronizer;
-import org.talend.designer.core.ui.MultiPageTalendEditor;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.editor.RepositoryEditorInput;
@@ -265,7 +265,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
                     // fileEditorInput.setView(getViewPart());
                     fileEditorInput.setRepositoryNode(node);
                     if (item instanceof CamelProcessItem) {
-                        page.openEditor(fileEditorInput, MultiPageTalendEditor.ID, readonly);
+                        page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, readonly);
 
                     } else if (item instanceof BusinessProcessItem) {
                         CorePlugin.getDefault().getDiagramModelService().openBusinessDiagramEditor(page, fileEditorInput);
