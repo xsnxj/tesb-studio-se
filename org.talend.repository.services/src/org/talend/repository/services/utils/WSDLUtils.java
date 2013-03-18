@@ -233,7 +233,8 @@ public class WSDLUtils {
 
             newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
             newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-            return newWSDLReader.readWSDL(null, new InputSource(is));
+            String documentBaseUri=pathToWsdl.getLocationURI().toString();
+            return newWSDLReader.readWSDL(documentBaseUri, new InputSource(is));
         } catch (WSDLException e) {
             throw getCoreException(null, e);
         } finally {
@@ -274,7 +275,6 @@ public class WSDLUtils {
         WSDLValidator wsdlValidator = WSDLValidator.getInstance();
         // wsdlValidator.addURIResolver(new URIResolverWrapper());
         IValidationReport validationReport = wsdlValidator.validate(wsdlUri);
-
         if (!validationReport.isWSDLValid()) {
             throw getCoreException(Messages.PublishMetadata_Exception_wsdl_not_valid, null);
         }
