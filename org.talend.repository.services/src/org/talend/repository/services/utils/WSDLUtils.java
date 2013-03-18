@@ -233,7 +233,12 @@ public class WSDLUtils {
 
             newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
             newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-            String documentBaseUri=pathToWsdl.getLocationURI().toString();
+            String documentBaseUri=null;
+            try {
+            	documentBaseUri=pathToWsdl.getLocationURI().toString();
+			} catch (Exception e) {
+				//can not get uri of ifile.
+			}
             return newWSDLReader.readWSDL(documentBaseUri, new InputSource(is));
         } catch (WSDLException e) {
             throw getCoreException(null, e);
