@@ -558,7 +558,8 @@ public class WebServiceUI extends WizardPage {
 
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
         newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        definition = newWSDLReader.readWSDL(null, new WSDLLoader().load(getRealWsdlLocation()));
+        String realWsdlLocation=getRealWsdlLocation();
+        definition = newWSDLReader.readWSDL(realWsdlLocation, new WSDLLoader().load(realWsdlLocation));
 
         List<Function> functionsAvailable = new ArrayList<Function>();
         for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
