@@ -2,10 +2,8 @@ package org.talend.camel.designer.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -16,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.camel.designer.i18n.Messages;
+import org.talend.camel.designer.util.CamelDesignerUtil;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.properties.Item;
@@ -24,11 +23,9 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.ui.IJobletProviderService;
-import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
+import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.RecombineRepositoryNodeUtil;
@@ -120,6 +117,9 @@ public class AssignJobPage extends WizardPage {
 			}
 			IRepositoryNode node = (IRepositoryNode) element;
 			ENodeType type = node.getType();
+			if(type == ENodeType.SYSTEM_FOLDER){
+				return true;
+			}
 			/*
 			 * if it's an element and contains a tRouteInput then selected
 			 */
@@ -179,28 +179,8 @@ public class AssignJobPage extends WizardPage {
 						return;
 					}
 					ProcessItem pi = (ProcessItem) item;
-					EList<?> nodes = pi.getProcess().getNode();
-					Iterator<?> iterator = nodes.iterator();
-					while (iterator.hasNext()) {
-						Object next = iterator.next();
-						if (!(next instanceof NodeType)) {
-							continue;
-						}
-						NodeType nt = (NodeType) next;
-						String componentName = nt.getComponentName();
-						if ("tRouteInput".equals(componentName)) {
-							routeInputContainedJobs.add(jobNode);
-							return;
-						}else if(service != null){
-							ProcessType jobletProcess = service.getJobletProcess(nt);
-							if(jobletProcess == null){
-								continue;
-							}
-							if(checkRouteInputExistInJoblet(jobletProcess)){
-								routeInputContainedJobs.add(jobNode);
-								return;
-							}
-						}
+					if(CamelDesignerUtil.checkRouteInputExistInJob(pi)){
+						routeInputContainedJobs.add(jobNode);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -211,35 +191,7 @@ public class AssignJobPage extends WizardPage {
 				addAllRouteInputContainedJob(routeInputContainedJobs, child);
 			}
 		}
-
-		private boolean checkRouteInputExistInJoblet(ProcessType jobletProcess) {
-			if(jobletProcess == null){
-				return false;
-			}
-			EList<?> node = jobletProcess.getNode();
-			Iterator<?> iterator = node.iterator();
-			while(iterator.hasNext()){
-				Object next = iterator.next();
-				if(!(next instanceof NodeType)){
-					continue;
-				}
-				NodeType nt = (NodeType) next;
-				String componentName = nt.getComponentName();
-				if ("tRouteInput".equals(componentName)) {
-					return true;
-				}else if(service != null){
-					ProcessType subProcess = service.getJobletProcess(nt);
-					if(subProcess == null){
-						continue;
-					}
-					if(checkRouteInputExistInJoblet(subProcess)){
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}	
+	}
 	
 	class AssignJobReviewDialog extends RepositoryReviewDialog {
 
@@ -272,5 +224,4 @@ public class AssignJobPage extends WizardPage {
 			super.okPressed();
 		}
 	}
-	
 }
