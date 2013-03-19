@@ -5,8 +5,8 @@ import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.designer.core.IProcessConvertService;
-import org.talend.designer.core.ProcessConverterType;
+import org.talend.designer.core.convert.IProcessConvertService;
+import org.talend.designer.core.convert.ProcessConverterType;
 
 public class RouteProcessConvertServiceImpl implements IProcessConvertService {
 
