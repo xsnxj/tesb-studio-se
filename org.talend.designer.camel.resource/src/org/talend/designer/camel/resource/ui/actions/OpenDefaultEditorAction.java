@@ -1,11 +1,8 @@
 package org.talend.designer.camel.resource.ui.actions;
 
-import java.util.Properties;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IWorkbenchPage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
@@ -20,9 +17,7 @@ import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.AContextualAction;
-import org.talend.repository.ui.views.IRepositoryView;
 
 public class OpenDefaultEditorAction extends AContextualAction {
 
