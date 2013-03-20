@@ -97,7 +97,7 @@ public class ServiceMetadataDialog extends Dialog {
         useSRCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	useServiceRegistry = useSRCheck.getSelection();
-            	authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML || securityBasic) );
+            	authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML /*|| securityBasic*/) );
             	samlCheck.setEnabled(!useServiceRegistry);            	
             	basicCheck.setEnabled(!useServiceRegistry);            	
             	slCheck.setEnabled(!useServiceRegistry); 
@@ -141,7 +141,7 @@ public class ServiceMetadataDialog extends Dialog {
         basicCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securityBasic = basicCheck.getSelection();
-                authorizationCheck.setEnabled(securitySAML || securityBasic);
+                //authorizationCheck.setEnabled(securitySAML || securityBasic);
             }
         });
 
@@ -152,14 +152,14 @@ public class ServiceMetadataDialog extends Dialog {
         samlCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securitySAML = samlCheck.getSelection();
-                authorizationCheck.setEnabled(securitySAML || securityBasic);
+                authorizationCheck.setEnabled(securitySAML /*|| securityBasic*/);
             }
         });
         
         
         authorizationCheck.setText("Authorization");
         authorizationCheck.setSelection(authorization);
-        authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML || securityBasic));        
+        authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML /*|| securityBasic*/));        
         authorizationCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
             	authorization = authorizationCheck.getSelection();

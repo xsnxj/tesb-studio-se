@@ -135,7 +135,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML))
         								&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
         endpointInfo.put("useAuthorization", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION))
-        								&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );        
+    			                          && Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML))        		
+        								  && !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );        
         endpointInfo.put("useServiceRegistry", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)));        
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();

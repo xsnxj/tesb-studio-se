@@ -80,7 +80,7 @@
 #if (${endpoint.useAuthorization})
 					<wsp:ExactlyOne>
 						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.token.authz.policy" />
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 						</wsp:All>
 						<wsp:All>
 							<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
