@@ -33,7 +33,7 @@ public class AddSpringConfigurationMigrationTask extends
 	}
 
 	public Date getOrder() {
-		GregorianCalendar gc = new GregorianCalendar(2012, 12, 17, 14, 00, 00);
+		GregorianCalendar gc = new GregorianCalendar(2012, 11, 17, 14, 00, 00);
 		return gc.getTime();
 	}
 

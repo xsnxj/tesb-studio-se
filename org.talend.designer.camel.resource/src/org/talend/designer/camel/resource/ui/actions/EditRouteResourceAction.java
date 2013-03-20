@@ -12,12 +12,9 @@
 // ============================================================================
 package org.talend.designer.camel.resource.ui.actions;
 
-import java.util.Properties;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IWorkbenchPage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
@@ -33,9 +30,7 @@ import org.talend.repository.model.BinRepositoryNode;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.AContextualAction;
-import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
@@ -45,7 +40,7 @@ import org.talend.repository.ui.views.IRepositoryView;
  */
 public class EditRouteResourceAction extends AContextualAction {
 
-	private Properties params;
+//	private Properties params;
 
 	public EditRouteResourceAction() {
 	}
@@ -56,7 +51,7 @@ public class EditRouteResourceAction extends AContextualAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	protected void doRun() {
-		ISelection selection = getSelectedObject();
+		ISelection selection = getSelection();
 		if (selection == null) {
 			return;
 		}
@@ -80,21 +75,21 @@ public class EditRouteResourceAction extends AContextualAction {
 		return RouteResourceItem.class;
 	}
 
-	private ISelection getSelectedObject() {
-		if (params == null) {
-			return getSelection();
-		} else {
-			RepositoryNode repositoryNode = RepositoryNodeUtilities
-					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
-			IRepositoryView viewPart = getViewPart();
-			if (repositoryNode != null && viewPart != null) {
-				RepositoryNodeUtilities.expandParentNode(viewPart,
-						repositoryNode);
-				return new StructuredSelection(repositoryNode);
-			}
-			return null;
-		}
-	}
+//	private ISelection getSelectedObject() {
+//		if (params == null) {
+//			return getSelection();
+//		} else {
+//			RepositoryNode repositoryNode = RepositoryNodeUtilities
+//					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
+//			IRepositoryView viewPart = getViewPart();
+//			if (repositoryNode != null && viewPart != null) {
+//				RepositoryNodeUtilities.expandParentNode(viewPart,
+//						repositoryNode);
+//				return new StructuredSelection(repositoryNode);
+//			}
+//			return null;
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)

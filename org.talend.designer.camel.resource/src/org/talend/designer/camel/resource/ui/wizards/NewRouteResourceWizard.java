@@ -203,7 +203,8 @@ public class NewRouteResourceWizard extends Wizard {
 		workUnit.setAvoidUnloadResources(true);
 		repositoryFactory.executeRepositoryWorkUnit(workUnit);
 
-		return item != null;
+//		return item != null;
+		return true;
 	}
 
 	public void setFilePath(IPath filePath) {

@@ -197,7 +197,9 @@ public class ResourceCheckExtensionPointManager {
 				String paramName = model.getParamName();
 				ResourceDependencyModel denpModel = createDenpendencyModel(
 						paramName, node);
-
+				if(denpModel == null){
+					continue;
+				}
 				boolean isContained = false;
 				for (ResourceDependencyModel rdm : models) {
 					if (rdm.equals(denpModel)) {

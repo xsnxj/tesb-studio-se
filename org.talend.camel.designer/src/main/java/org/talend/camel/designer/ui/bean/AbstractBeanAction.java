@@ -37,7 +37,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public abstract class AbstractBeanAction extends AContextualAction {
 
-    protected RepositoryNode repositoryNode;
+//    protected RepositoryNode repositoryNode;
 
     /*
      * (non-Jsdoc)

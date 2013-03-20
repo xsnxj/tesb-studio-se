@@ -69,7 +69,7 @@ public class CheckCXFNodesService implements ICheckNodesService {
 						|| wsdlFileParam.getValue().toString().isEmpty()
 						|| wsdlFileParam.getValue().toString().equals("\"\"")) { //$NON-NLS-1$
 					String errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
-							, wsdlFileParam.getDisplayName());
+							, wsdlFileParam==null?"":wsdlFileParam.getDisplayName());
 					Problems.add(ProblemStatus.ERROR, (Element) node,
 							errorMessage);
 				}

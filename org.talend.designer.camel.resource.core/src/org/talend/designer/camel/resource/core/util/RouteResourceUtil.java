@@ -368,8 +368,8 @@ public class RouteResourceUtil {
             } else {
                 newStoreValue = newModelId + SLASH_TAG + model.getSelectedVersion();
             }
+            additionalProperties.put(ROUTE_RESOURCES_PROP, newStoreValue);
         }
-        additionalProperties.put(ROUTE_RESOURCES_PROP, newStoreValue);
         try {
             ProxyRepositoryFactory.getInstance().save(routeItem, false);
         } catch (PersistenceException e) {
@@ -394,11 +394,14 @@ public class RouteResourceUtil {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        Item item = rvo.getProperty().getItem();
-        ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
-        resourceDependencyModel.setSelectedVersion(version);
-        resourceDependencyModel.setBuiltIn(true);
-        return resourceDependencyModel;
+        if(rvo != null){
+	        Item item = rvo.getProperty().getItem();
+	        ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
+	        resourceDependencyModel.setSelectedVersion(version);
+	        resourceDependencyModel.setBuiltIn(true);
+	        return resourceDependencyModel;
+        }
+        return null;
     }
 
     /**

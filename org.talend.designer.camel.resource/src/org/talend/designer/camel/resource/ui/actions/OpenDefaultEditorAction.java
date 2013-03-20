@@ -26,7 +26,7 @@ import org.talend.repository.ui.views.IRepositoryView;
 
 public class OpenDefaultEditorAction extends AContextualAction {
 
-	private Properties params;
+//	private Properties params;
 
 	public OpenDefaultEditorAction() {
 	}
@@ -37,7 +37,7 @@ public class OpenDefaultEditorAction extends AContextualAction {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	protected void doRun() {
-		ISelection selection = getSelectedObject();
+		ISelection selection = getSelection();
 		if (selection == null) {
 			return;
 		}
@@ -61,21 +61,22 @@ public class OpenDefaultEditorAction extends AContextualAction {
 		return RouteResourceItem.class;
 	}
 
-	private ISelection getSelectedObject() {
-		if (params == null) {
-			return getSelection();
-		} else {
-			RepositoryNode repositoryNode = RepositoryNodeUtilities
-					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
-			IRepositoryView viewPart = getViewPart();
-			if (repositoryNode != null && viewPart != null) {
-				RepositoryNodeUtilities.expandParentNode(viewPart,
-						repositoryNode);
-				return new StructuredSelection(repositoryNode);
-			}
-			return null;
-		}
-	}
+//	private ISelection getSelectedObject() {
+//		if (params == null) {
+//			return getSelection();
+//		}
+//		else {
+//			RepositoryNode repositoryNode = RepositoryNodeUtilities
+//					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
+//			IRepositoryView viewPart = getViewPart();
+//			if (repositoryNode != null && viewPart != null) {
+//				RepositoryNodeUtilities.expandParentNode(viewPart,
+//						repositoryNode);
+//				return new StructuredSelection(repositoryNode);
+//			}
+//			return null;
+//		}
+//	}
 
 	/*
 	 * (non-Javadoc)
