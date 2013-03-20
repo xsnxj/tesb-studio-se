@@ -178,7 +178,7 @@ if (inputConn != null) {
                                 put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
 
                                 <% if (useSR) { %>
-                                    put("useServiceRegisrty", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
+                                    put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
                                     put("username", <%=username%>);
                                     put("password", <%=password%>);
                                 <% } else if (useAuth) { %>
