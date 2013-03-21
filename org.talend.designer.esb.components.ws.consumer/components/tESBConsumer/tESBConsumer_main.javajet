@@ -182,8 +182,10 @@ if (inputConn != null) {
                                     put("username", <%=username%>);
                                     put("password", <%=password%>);
                                 <% } else if (useAuth) { %>
+                                <% if (authType.equals("SAML")) { %>
                                     put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
                                     put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
+                                    <% } %>
                                     put("esbSecurity", "<%=authType%>");
                                     put("username", <%=username%>);
                                     put("password", <%=password%>);
