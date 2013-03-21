@@ -45,7 +45,6 @@ import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.action.AbstractProcessAction;
 import org.talend.designer.runprocess.ItemCacheManager;
 import org.talend.repository.ProjectManager;
@@ -137,11 +136,6 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
                     ((CamelMultiPageTalendEditor) editorPart).setReadOnly(fileEditorInput.setForceReadOnly(false));
                     page.activate(editorPart);
                 }
-                // see the bug 6585,qli comment.
-                if (editorPart instanceof AbstractMultiPageTalendEditor) {
-                    ((AbstractMultiPageTalendEditor) editorPart).updateTitleImage();
-                }
-                refresh(obj);
             } catch (PartInitException e) {
                 MessageBoxExceptionHandler.process(e);
             } catch (PersistenceException e) {

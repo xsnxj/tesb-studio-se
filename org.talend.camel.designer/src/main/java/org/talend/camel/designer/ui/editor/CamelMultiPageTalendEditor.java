@@ -16,8 +16,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -26,16 +24,14 @@ import org.eclipse.ui.PartInitException;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.process.IProcess2;
-import org.talend.core.model.properties.InformationLevel;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.ui.ISVNProviderService;
-import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
@@ -80,28 +76,11 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.designer.core.ui.AbstractMultiPageTalendEditor#updateTitleImage()
+     * @see org.talend.designer.core.ui.AbstractMultiPageTalendEditor#getEditorTitleImage()
      */
     @Override
-    public void updateTitleImage() {
-        Display.getDefault().syncExec(new Runnable() {
-
-            public void run() {
-                Image image = null;
-                if (getProcess() == null) {
-                    return;
-                }
-                InformationLevel level = getProcess().getProperty().getMaxInformationLevel();
-                if (level.equals(InformationLevel.ERROR_LITERAL)) {
-                    image = OverlayImageProvider.getImageWithError(ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON))
-                            .createImage();
-                } else {
-                    image = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
-                }
-                setTitleImage(image);
-            }
-
-        });
+    protected IImage getEditorTitleImage() {
+        return ECamelCoreImage.ROUTES_ICON;
     }
 
     /**
