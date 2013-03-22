@@ -80,7 +80,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
         originalVersion = processObject.getProperty().getVersion();
 
         ERepositoryStatus status = processObject.getRepositoryStatus();
-        if (status == ERepositoryStatus.LOCK_BY_OTHER || status.equals(ERepositoryStatus.LOCK_BY_USER)
+        if (status == ERepositoryStatus.READ_ONLY || status == ERepositoryStatus.LOCK_BY_OTHER || status.equals(ERepositoryStatus.LOCK_BY_USER)
                 && RepositoryManager.isOpenedItemInEditor(processObject)) {
             alreadyEditedByUser = true;
         }

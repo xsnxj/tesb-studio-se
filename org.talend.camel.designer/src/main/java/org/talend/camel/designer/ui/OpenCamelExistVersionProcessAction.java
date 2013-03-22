@@ -33,13 +33,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
+import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.CommonsPlugin;
+import org.talend.commons.exception.LoginException;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.process.IProcess2;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryObject;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.IUIRefresher;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.repository.editor.JobEditorInput;
@@ -64,29 +69,59 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
 
     @Override
     protected void doRun() {
-        ISelection selection = getSelection();
-        Object obj = ((IStructuredSelection) selection).getFirstElement();
-        RepositoryNode node = (RepositoryNode) obj;
+    	ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+    	ISelection selection = getSelection();
+    	Object obj = ((IStructuredSelection) selection).getFirstElement();
+    	RepositoryNode node = (RepositoryNode) obj;
+    	IRepositoryViewObject repositoryViewObject = node.getObject();
+    	
+    	ERepositoryStatus status = factory.getStatus(repositoryViewObject);
+    	
+    	boolean lockedByCurrent = false;
+    	
+    	try{
 
-        IPath path = RepositoryNodeUtilities.getPath(node);
-        String originalName = node.getObject().getLabel();
+    		if(!(status.equals(ERepositoryStatus.READ_ONLY) || status == ERepositoryStatus.LOCK_BY_OTHER || status.equals(ERepositoryStatus.LOCK_BY_USER)
+    				|| CamelEditorUtil.hasEditorOpened(node))){
+    			factory.lock(repositoryViewObject);
+    			lockedByCurrent = true;
+    		}
 
-        RepositoryObject repositoryObj = new RepositoryObject(node.getObject().getProperty());
-        repositoryObj.setRepositoryNode(node.getObject().getRepositoryNode());
-        OpenCamelExistVersionProcessWizard wizard = new OpenCamelExistVersionProcessWizard(repositoryObj);
-        PropertyManagerWizardDialog dialog = new PropertyManagerWizardDialog(Display.getCurrent().getActiveShell(), wizard);
-        dialog.setPageSize(300, 250);
-        dialog.setTitle(Messages.getString("OpenExistVersionProcess.open.dialog")); //$NON-NLS-1$
-        if (dialog.open() == Dialog.OK) {
-            refresh(node);
-            // refresh the corresponding editor's name
-            IEditorPart part = getCorrespondingEditor(node);
-            if (part != null && part instanceof IUIRefresher) {
-                ((IUIRefresher) part).refreshName();
-            } else {
-                processRoutineRenameOperation(originalName, node, path);
-            }
-        }
+    		IPath path = RepositoryNodeUtilities.getPath(node);
+    		String originalName = node.getObject().getLabel();
+
+    		RepositoryObject repositoryObj = new RepositoryObject(node.getObject().getProperty());
+    		repositoryObj.setRepositoryNode(node.getObject().getRepositoryNode());
+    		OpenCamelExistVersionProcessWizard wizard = new OpenCamelExistVersionProcessWizard(repositoryObj);
+    		PropertyManagerWizardDialog dialog = new PropertyManagerWizardDialog(Display.getCurrent().getActiveShell(), wizard);
+    		dialog.setPageSize(300, 250);
+    		dialog.setTitle(Messages.getString("OpenExistVersionProcess.open.dialog")); //$NON-NLS-1$
+    		if (dialog.open() == Dialog.OK) {
+    			refresh(node);
+    			// refresh the corresponding editor's name
+    			IEditorPart part = getCorrespondingEditor(node);
+    			if (part != null && part instanceof IUIRefresher) {
+    				((IUIRefresher) part).refreshName();
+    			} else {
+    				processRoutineRenameOperation(originalName, node, path);
+    			}
+    		}
+    	} catch (PersistenceException e) {
+			e.printStackTrace();
+		} catch (LoginException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(lockedByCurrent){
+					factory.unlock(repositoryViewObject);
+				}
+			} catch (PersistenceException e) {
+				e.printStackTrace();
+			} catch (LoginException e) {
+				e.printStackTrace();
+			}
+		}
+    	
     }
 
     public class PropertyManagerWizardDialog extends WizardDialog {
