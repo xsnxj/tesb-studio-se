@@ -19,6 +19,7 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.runprocess.ItemCacheManager;
 
 public class ExDependenciesResolver {
 
@@ -177,12 +178,11 @@ public class ExDependenciesResolver {
 					}
 					if (jobId == null && "SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) { //$NON-NLS-1$
 						jobId = ept.getValue();
+						ProcessItem pi = ItemCacheManager.getProcessItem(jobId.toString());
+						jobName=pi.getProperty().getLabel();
 					}
 					if (jobVersion == null && "SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) { //$NON-NLS-1$
 						jobVersion = ept.getValue();
-					}
-					if(jobName==null && "SELECTED_JOB_NAME".equals(eptName)){ //$NON-NLS-1$
-						jobName = ept.getValue();
 					}
 				}
 
