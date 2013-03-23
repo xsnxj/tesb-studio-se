@@ -36,13 +36,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.generator.RouteComponentController;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.IProcess2;
-import org.talend.designer.core.model.components.Expression;
-
-import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author LiXiaopeng Dialog for cJMS ConnectionFactory selection.
@@ -218,41 +216,11 @@ public class RouteComponentSelectionDialog extends Dialog {
 		nodes = new ArrayList<INode>();
 
 		for (INode node : allNodes) {
-			if (matchTypes(node)) {
+			if(RouteComponentController.validateNodeByFilter(node,sourceNode,nodeTypes)) {
 				nodes.add(node);
 			}
 		}
 
-	}
-
-	/**
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private boolean matchTypes(INode node) {
-		if (nodeTypes == null || nodeTypes.length == 0) {
-			return true;
-		}
-		if(node==sourceNode) {
-			return false;
-		}
-		String name = node.getComponent().getName();
-		for (Object type : nodeTypes) {
-			if (type instanceof StringPair) {
-				StringPair item = (StringPair) type;
-				if (name.equals(item.getFirst())) {
-					String filter = item.getSecond();
-					return filter == null
-							|| Expression.evaluate(filter,
-									node.getElementParameters());
-
-				}
-			}else {
-				return name.equals(String.valueOf(type));
-			}
-		}
-		return false;
 	}
 
 	/**

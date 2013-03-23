@@ -40,13 +40,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.talend.camel.designer.dialog.RouteComponentSelectionDialog;
-import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
+import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.Item;
@@ -54,9 +53,12 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.properties.tab.IDynamicProperty;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.model.components.Expression;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
+
+import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author Xiaopeng Li
@@ -293,8 +295,11 @@ public class RouteComponentController extends
 									.getProcess().getGraphicalNodes();
 							for (INode n : graphicalNodes) {
 								if (n.getUniqueName().equals(value)) {
-									labelText.setText(n.getLabel());
-									has = true;
+									//check validate again by filter.
+									if(validateNodeByFilter(n, elem, curParameter.getListItemsValue())) {
+										labelText.setText(n.getLabel());
+										has = true;
+									}
 									break;
 								}
 							}
@@ -306,7 +311,8 @@ public class RouteComponentController extends
 						}
 
 						if (elem != null && elem instanceof Node) {
-							((Node) elem).checkAndRefreshNode();
+							Node sourceNode=(Node)elem;
+							sourceNode.checkAndRefreshNode();
 						}
 					}
 				});
@@ -314,6 +320,36 @@ public class RouteComponentController extends
 			}
 		}.start();
 
+	}
+	
+	/**
+	 * Validate node by filter.
+	 *
+	 * @param n the parameter choosed node.
+	 * @param sourceNode the source component node. Which has a parameter can specify an other node.
+	 * @param listItemsValue the list items value
+	 * @return true, if successful
+	 */
+	public static boolean validateNodeByFilter(INode n,IElement sourceNode,Object[] listItemsValue) {
+		if (listItemsValue == null||listItemsValue.length==0) {
+			return true;
+		}
+		if(n==sourceNode) {
+			return false;
+		}
+		for (Object itemValue : listItemsValue) {
+			if(itemValue instanceof StringPair) {
+				StringPair pair=(StringPair) itemValue;
+				if(pair.getFirst().equals(n.getComponent().getName())){
+					if(Expression.evaluate(pair.getSecond(), n.getElementParameters())){
+						return true;
+					}
+				}
+			}else {
+					return n.getComponent().getName().equals(String.valueOf(itemValue));
+			}
+		}
+		return false;
 	}
 
 	private void refreshItemeProperty(IRepositoryViewObject repositoryObject) {
@@ -362,33 +398,4 @@ public class RouteComponentController extends
 
 	}
 
-	private void resetTextValue(final Item item) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("Resource: ");
-		sb.append(getlabel(item));
-		labelText.setText(sb.toString());
-
-	}
-
-	/**
-	 * see feature 0003664: tRunJob: When opening the tree dialog to select the
-	 * job target, it could be useful to open it on previous selected job if
-	 * exists.
-	 * 
-	 * @param button
-	 * @param dialog
-	 */
-	private void selectNodeIfExists(Button button,
-			RouteResourceSelectionDialog dialog) {
-		try {
-			if (elem != null && elem instanceof Node) {
-				Node runJobNode = (Node) elem;
-				String paramName = (String) button.getData(PARAMETER_NAME);
-				String jobId = (String) runJobNode.getPropertyValue(paramName); // .getElementParameter(name).getValue();
-				dialog.setSelectedNodeId(jobId);
-			}
-		} catch (Throwable e) {
-			ExceptionHandler.process(e);
-		}
-	}
 }
