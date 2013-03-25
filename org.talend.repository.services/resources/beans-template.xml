@@ -49,7 +49,11 @@
 			<entry key="ws-security.callback-handler"><ref bean="callback" /></entry>
 ]]#
 #end
-
+#if (${endpoint.useAuthorization})
+#[[
+            <entry key="tesb.pdp.address" value="$service{tesb.pdp.address}" />
+]]#            
+#end
         	<entry key="use.service.registry" value="${endpoint.useServiceRegistry}" />
         	
 		</jaxws:properties>
@@ -160,5 +164,6 @@
 			<entry key="service.pid" value="${endpoint.studioName}" />
 		</osgi:service-properties>
 	</osgi:service>
+
 
 </beans>

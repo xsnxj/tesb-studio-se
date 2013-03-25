@@ -82,30 +82,50 @@ public class ServiceMetadataDialog extends Dialog {
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
         container.setLayout(new GridLayout());
+        final Button useSRCheck;
+        if (isStudioEEVersion()) {
+            useSRCheck = new Button(container, SWT.CHECK);
+        } else {
+            useSRCheck = null;        	
+        	useServiceRegistry = false;
+        }
         
-        final Button useSRCheck = new Button(container, SWT.CHECK);
         Group samSlGroup = new Group(container, SWT.NONE);        
         final Button samCheck = new Button(samSlGroup, SWT.CHECK);        
         final Button slCheck = new Button(samSlGroup, SWT.CHECK);       
         final Group securityGroup = new Group(container, SWT.NONE);        
         final Button basicCheck = new Button(securityGroup, SWT.CHECK);
         final Button samlCheck = new Button(securityGroup, SWT.CHECK);
-        final Button authorizationCheck = new Button(securityGroup, SWT.CHECK);
-
-        useSRCheck.setText("Use Service Registry");
-        useSRCheck.setSelection(useServiceRegistry);
-        useSRCheck.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-            	useServiceRegistry = useSRCheck.getSelection();
-            	authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML /*|| securityBasic*/) );
-            	samlCheck.setEnabled(!useServiceRegistry);            	
-            	basicCheck.setEnabled(!useServiceRegistry);            	
-            	slCheck.setEnabled(!useServiceRegistry); 
-            	customPropertiesTable.setEditable(useSL && !useServiceRegistry);
-            }
-        });
         
-
+        final Button authorizationCheck;
+        if (isStudioEEVersion()) {
+        	authorizationCheck = new Button(securityGroup, SWT.CHECK);
+        } else {
+        	authorizationCheck = null;        	
+        	authorization = false;
+        }
+        
+		if (isStudioEEVersion()) {
+			useSRCheck.setText("Use Service Registry");
+			useSRCheck.setSelection(useServiceRegistry);
+			if (!isStudioEEVersion()) {
+				useSRCheck.setSelection(false);
+				useSRCheck.setVisible(false);
+				useServiceRegistry = false;
+			}
+			useSRCheck.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					useServiceRegistry = useSRCheck.getSelection();
+					authorizationCheck.setEnabled(!useServiceRegistry
+							&& (securitySAML /* || securityBasic */));
+					samlCheck.setEnabled(!useServiceRegistry);
+					basicCheck.setEnabled(!useServiceRegistry);
+					slCheck.setEnabled(!useServiceRegistry);
+					customPropertiesTable.setEditable(useSL
+							&& !useServiceRegistry);
+				}
+			});
+		}
         samSlGroup.setText("ESB Service Features");
         samSlGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         samSlGroup.setLayout(new GridLayout());
@@ -156,16 +176,22 @@ public class ServiceMetadataDialog extends Dialog {
             }
         });
         
-        
-        authorizationCheck.setText("Authorization");
-        authorizationCheck.setSelection(authorization);
-        authorizationCheck.setEnabled(!useServiceRegistry && (securitySAML /*|| securityBasic*/));        
-        authorizationCheck.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-            	authorization = authorizationCheck.getSelection();
-            }
-        });
-        
+		if (isStudioEEVersion()) {
+			authorizationCheck.setText("Authorization");
+			authorizationCheck.setSelection(authorization);
+			if (!isStudioEEVersion()) {
+				authorizationCheck.setSelection(false);
+				authorizationCheck.setVisible(false);
+				authorization = false;
+			}
+			authorizationCheck.setEnabled(!useServiceRegistry
+					&& (securitySAML /* || securityBasic */));
+			authorizationCheck.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					authorization = authorizationCheck.getSelection();
+				}
+			});
+		}
         
         return super.createDialogArea(parent);
     }
@@ -193,7 +219,11 @@ public class ServiceMetadataDialog extends Dialog {
     private boolean getUseServiceRegistry() {
         return useServiceRegistry;
     }
-    
+
+    private boolean isStudioEEVersion() {
+    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline");
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -201,7 +231,7 @@ public class ServiceMetadataDialog extends Dialog {
     protected void okPressed() {
         EMap<String, String> props = serviceConnection.getAdditionalInfo();
         if (props != null) {
-            props.put(USE_SAM, Boolean.toString(isUseSam()));
+        	props.put(USE_SAM, Boolean.toString(isUseSam()));
             props.put(USE_SL, Boolean.toString(isUseSL()));
             props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));

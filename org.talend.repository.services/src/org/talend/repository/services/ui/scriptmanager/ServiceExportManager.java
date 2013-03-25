@@ -56,7 +56,12 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     public ServiceExportManager(Map<ExportChoice, Object> exportChoiceMap) {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
-
+    
+    private boolean isStudioEEVersion() {
+    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline");
+        //return true;
+    }
+    
     public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports,
             ServiceConnection serviceConnection, IFile wsdl, String studioServiceName) throws IOException, CoreException {
 
@@ -127,6 +132,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
 
         EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
+        if (!isStudioEEVersion()) {
+        	additionalInfo.put(ServiceMetadataDialog.USE_SERVICE_REGISTRY, Boolean.toString(false));
+        	additionalInfo.put(ServiceMetadataDialog.AUTHORIZATION, Boolean.toString(false));
+        }
         endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))
                 						&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
         endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
