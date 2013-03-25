@@ -15,8 +15,8 @@ imports="
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid="";
 	
-	boolean asProductor = "true".equals(ElementParameterParser.getValue(node, "__CREATE_ENDPOINT__"));
-	if(!asProductor){
+	boolean asConsumer = (node.getOutgoingConnections().size()==0);
+	if(asConsumer){
 		Object srcPoint= ElementParameterParser.getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
 		if(srcPoint!=null){
 			cid=srcPoint.toString();	
