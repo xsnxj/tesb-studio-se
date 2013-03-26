@@ -226,7 +226,7 @@ public class RouteComponentSelectionDialog extends Dialog {
 				excludeNode=excludeNode.getIncomingConnections().get(0).getSource();
 			}
 			//then excludeNode ref root node.
-			allNodes.remove(excludeNode);
+			nodes.remove(excludeNode);
 		}
 	}
 
