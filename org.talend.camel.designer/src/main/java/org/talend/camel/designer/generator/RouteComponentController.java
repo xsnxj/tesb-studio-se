@@ -337,10 +337,16 @@ public class RouteComponentController extends
 		if(n==sourceNode) {
 			return false;
 		}
+		if(!n.isActivate()) {
+			return false;
+		}
 		for (Object itemValue : listItemsValue) {
 			if(itemValue instanceof StringPair) {
 				StringPair pair=(StringPair) itemValue;
 				if(pair.getFirst().equals(n.getComponent().getName())){
+					if(pair.getSecond()==null) {
+						return true;
+					}
 					if(Expression.evaluate(pair.getSecond(), n.getElementParameters())){
 						return true;
 					}

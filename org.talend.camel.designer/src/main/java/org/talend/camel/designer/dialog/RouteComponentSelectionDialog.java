@@ -220,7 +220,14 @@ public class RouteComponentSelectionDialog extends Dialog {
 				nodes.add(node);
 			}
 		}
-
+		if(nodes.size()>0){
+			INode excludeNode = sourceNode;
+			while(!excludeNode.getIncomingConnections().isEmpty()) {
+				excludeNode=excludeNode.getIncomingConnections().get(0).getSource();
+			}
+			//then excludeNode ref root node.
+			allNodes.remove(excludeNode);
+		}
 	}
 
 	/**
