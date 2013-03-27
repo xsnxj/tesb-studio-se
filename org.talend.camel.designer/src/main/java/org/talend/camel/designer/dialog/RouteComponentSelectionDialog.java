@@ -150,6 +150,8 @@ public class RouteComponentSelectionDialog extends Dialog {
 
 		newShell.setText("Select a Node:");
 	}
+	
+	
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -173,7 +175,16 @@ public class RouteComponentSelectionDialog extends Dialog {
 			}
 		});
 		setSelection();
+
 		return container;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		if(treeViewer.getTree().getSelectionCount()==0) {
+			getButton(OK).setEnabled(false);
+		}
 	}
 
 	public void executeCommand(Command cmd) {
