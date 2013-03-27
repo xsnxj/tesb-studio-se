@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class FeaturesModel extends BaseModel {
 
 	public static final String NAME_SUFFIX = "-feature";
@@ -132,7 +134,7 @@ public class FeaturesModel extends BaseModel {
 				if (i != 0) {
 					sb.append(',');
 				}
-				sb.append(contextList[i]);
+				sb.append(StringEscapeUtils.escapeXml(contextList[i]));
 			}
 			sb.append("\"\n");
 			sb.append("\t\t</config>\n");
@@ -140,13 +142,13 @@ public class FeaturesModel extends BaseModel {
 			// add contexts config
 			for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
 				sb.append("\t\t<config name=\"");
-				sb.append(name).append(".talendcontext.").append(context.getKey());
+				sb.append(name).append(".talendcontext.").append(StringEscapeUtils.escapeXml(context.getKey()));
 				sb.append("\">\n");
 				for (Map.Entry<String, String> property : context.getValue().entrySet()) {
 					sb.append("\t\t\t");
-					sb.append(property.getKey());
+					sb.append(StringEscapeUtils.escapeXml(property.getKey()));
 					sb.append('=');
-					sb.append(property.getValue());
+					sb.append(StringEscapeUtils.escapeXml(property.getValue()));
 					sb.append("\n");
 				}
 				sb.append("\t\t</config>\n");

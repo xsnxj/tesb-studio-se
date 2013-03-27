@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.talend.designer.publish.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.talend.designer.publish.core.models
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.commons.lang
