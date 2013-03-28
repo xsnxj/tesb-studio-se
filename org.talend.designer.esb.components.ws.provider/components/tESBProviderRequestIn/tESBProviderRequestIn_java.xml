@@ -6,7 +6,7 @@
 			SERIAL="" STARTABLE="true"
 			SCHEMA_AUTO_PROPAGATE="false"
 			DATA_AUTO_PROPAGATE="false"
-			TECHNICAL="true" PARTITIONING="NONE">
+			TECHNICAL="true">
 			<!-- EXTENSION="org.talend.designer.esb.webservice" -->
 		<SIGNATURE />
 	</HEADER>
