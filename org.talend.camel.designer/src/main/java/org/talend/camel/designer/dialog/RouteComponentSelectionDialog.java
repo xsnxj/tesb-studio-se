@@ -182,7 +182,7 @@ public class RouteComponentSelectionDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		if(treeViewer.getTree().getSelectionCount()==0) {
+		if(treeViewer.getTree().getItemCount()==0) {
 			getButton(OK).setEnabled(false);
 		}
 	}
