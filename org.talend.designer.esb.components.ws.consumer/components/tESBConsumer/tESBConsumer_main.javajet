@@ -33,6 +33,7 @@ String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTe
 
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
 Boolean useSR = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
+Boolean useAuthorization =   Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
 
 //if no a EE version then useSR should be false
 boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
@@ -191,7 +192,11 @@ if (inputConn != null) {
                                 <% } else if (useAuth) { %>
                                 <% if (authType.equals("SAML") && isStudioEEVersion) { %>
                                     put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
-                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
+                                    <% if (useAuthorization) { %>
+	                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
+	                                <% } else { %>
+	                                    put("role", "");   
+                                    <% } %>
                                     <% } %>
                                     put("esbSecurity", "<%=authType%>");
                                     put("username", <%=username%>);

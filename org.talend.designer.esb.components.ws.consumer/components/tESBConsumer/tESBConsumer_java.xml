@@ -10,9 +10,7 @@
 			STARTABLE="true"
 			DATA_AUTO_PROPAGATE="false"
 			HAS_CONDITIONAL_OUTPUTS="true"
-			EXTENSION="org.talend.designer.esb.components.ws.consumer"
-			PARTITIONING="AUTO"
-			>
+			EXTENSION="org.talend.designer.esb.components.ws.consumer" >
 		<SIGNATURE />
 	</HEADER>
 
