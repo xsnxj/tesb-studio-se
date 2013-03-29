@@ -213,6 +213,16 @@
 			<IMPORT NAME="talend-camel-jetty"
 					MODULE="camel-jetty-alldep-2.10.4.jar" 
 					REQUIRED_IF="SERVER=='true'" />
+					
+			<IMPORT NAME="httpclient"
+					MODULE="commons-httpclient-3.1.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
+					REQUIRED="true" />
+					
+			<IMPORT NAME="commons-codec"
+					MODULE="commons-codec-1.6.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
+					REQUIRED_IF="CLIENT=='true'" />
 		</IMPORTS>
 	</CODEGENERATION>
 
