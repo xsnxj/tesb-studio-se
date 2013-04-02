@@ -445,6 +445,9 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode node = httpRequestComponentsList.get(0);
 	String cid = node.getUniqueName();
+
+	String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__");
+	boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -505,6 +508,14 @@ public static class RestServiceProviderImpl4TalendJob {
 			java.util.Map<String, String> headers = null;
 			if (null != response) {
 				responseBody = response.get("BODY");
+				<% if (dropJsonRoot) { %>
+					// !!! temporary fix - after upgrade to CXF 2.7.4 should be removed !!!
+					if (null != responseBody && responseBody instanceof org.dom4j.Document) {
+						if (null != ((org.dom4j.Document) responseBody).getRootElement()) {
+							((org.dom4j.Document) responseBody).getRootElement().setName("Document");
+						}
+					}
+				<% } %>
 				status = (Integer) response.get("STATUS");
 				headers = (java.util.Map<String, String>) response.get("HEADERS");
 			}
@@ -912,6 +923,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
+			jsonProvider.setDropRootElement(<%=dropJsonRoot%>);
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
