@@ -13,25 +13,33 @@ imports="
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
+	INode consumerNode = node;
 	String cid="";
 	
 	boolean asProductor = node.getIncomingConnections().size()>0;
 	if(asProductor){
-		Object srcPoint= ElementParameterParser.getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
-		if(srcPoint!=null){
-			cid=srcPoint.toString();	
-		}
-	}else{
-	   	cid = node.getUniqueName();
-		//  http://jira.talendforge.org/browse/TESB-5241
-		/*
-	   	 * change to use label + unique to make it unique but readable
-	   	 */
-		IElementParameter param = node.getElementParameter("LABEL");
-		if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
-			cid = (String)param.getValue()+"_"+cid;	
+		Object desNode= ElementParameterParser.getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
+		if(desNode!=null){
+			String desNodeName = desNode.toString();	
+			List<? extends INode> allNodes = node.getProcess().getGraphicalNodes();
+			for(INode aNode : allNodes){
+				if(aNode.getUniqueName().equals(desNodeName)){
+					consumerNode=aNode;
+					break;
+				}
+			}
 		}
 	}
+   	cid = consumerNode.getUniqueName();
+	//  http://jira.talendforge.org/browse/TESB-5241
+	/*
+   	 * change to use label + unique to make it unique but readable
+   	 */
+	IElementParameter param = consumerNode.getElementParameter("LABEL");
+	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+		cid = (String)param.getValue()+"_"+cid;	
+	}
+	
 	
 	
 	String uriRef = "uriMap.get(\"" + cid + "\")";
