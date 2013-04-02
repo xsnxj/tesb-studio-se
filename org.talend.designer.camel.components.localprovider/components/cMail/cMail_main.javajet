@@ -24,6 +24,7 @@ imports="
   		cid = (String)param.getValue()+"_"+cid;	
   	}
     String uriRef = "uriMap.get(\"" + cid + "\")";
+	String endpointVar = "mail_" + node.getUniqueName();
     
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
@@ -34,16 +35,16 @@ imports="
 				&& source.getIncomingConnections()
 						.size() < 1){
 %>
-			.from(<%=uriRef%>)
+			.from(<%=endpointVar%>)
 <%
 		}else{
 %>
-			.to(<%=uriRef%>)
+			.to(<%=endpointVar%>)
 <%
 		}
 	} else {
 %>
-		from(<%=uriRef%>)
+		from(<%=endpointVar%>)
 <%
 	}
 %>

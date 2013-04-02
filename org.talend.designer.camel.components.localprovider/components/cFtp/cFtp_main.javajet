@@ -26,6 +26,8 @@ imports="
     
     String uriRef = "uriMap.get(\"" + cid + "\")";
     
+	String endpointVar = "ftp_" + node.getUniqueName();
+    
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		IConnection iConnection = conns.get(0);
@@ -35,16 +37,16 @@ imports="
 				&& source.getIncomingConnections()
 						.size() < 1){
 %>
-			.from(<%=uriRef%>)
+			.from(<%=endpointVar%>)
 <%
 		}else{
 %>
-			.to(<%=uriRef%>)
+			.to(<%=endpointVar%>)
 <%
 		}
 	} else {
 %>
-		from(<%=uriRef%>)
+		from(<%=endpointVar%>)
 <%
 	}
 %>
