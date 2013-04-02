@@ -172,7 +172,9 @@ public class ServiceMetadataDialog extends Dialog {
         samlCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 securitySAML = samlCheck.getSelection();
-                authorizationCheck.setEnabled(securitySAML /*|| securityBasic*/);
+                if (isStudioEEVersion()) {
+                	authorizationCheck.setEnabled(securitySAML /*|| securityBasic*/);
+                }
             }
         });
         

@@ -101,11 +101,7 @@
 					</wsp:ExactlyOne>
 #end					
 #elseif (${endpoint.useSecurityToken})
-#if (${endpoint.useAuthorization})
-					<wsp:PolicyReference URI="org.talend.esb.job.token.authz.policy" />
-#else
-					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
-#end					
+ 					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 #elseif (${endpoint.useSecuritySAML})
 #if (${endpoint.useAuthorization})
 					<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
