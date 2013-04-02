@@ -60,6 +60,9 @@ if (contentType == null) {
 
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
 boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
+
+	String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__");
+	boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
 %>
 
 try {
@@ -69,6 +72,14 @@ try {
 	<% if (null != inputConn) { %>
 		if (null != <%=inputConn.getName()%>.body) {
 			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+			<% if (dropJsonRoot) { %>
+				if (null != requestDoc_<%=cid%>) {
+					if (null != requestDoc_<%=cid%>.getRootElement()) {
+						// !!! temporary fix - after upgrade to CXF 2.7.4 should be removed !!!
+						requestDoc_<%=cid%>.getRootElement().setName("Document");
+					}
+				}
+			<% } %>
 		}
 		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
 	<% } %>
@@ -200,10 +211,6 @@ try {
 		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
 		jsonProvider_<%=cid%>.setWrapperName("root");
 	<% } %>
-	<%
-		String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__");
-		boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
-	%>
 		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
