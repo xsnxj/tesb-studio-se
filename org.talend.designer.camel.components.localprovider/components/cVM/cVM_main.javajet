@@ -14,9 +14,10 @@ imports="
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid="";
+	boolean inputName="true".equals(ElementParameterParser.getValue(node, "____INPUT_ENDPOINT_NAME____"));
 	
 	boolean asProductor = node.getIncomingConnections().size()>0;
-	if(asProductor){
+	if(asProductor || inputName){
 		Object srcPoint= ElementParameterParser.getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
 		if(srcPoint!=null){
 			cid=srcPoint.toString();	
