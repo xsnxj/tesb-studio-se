@@ -56,6 +56,11 @@ if (actAsConsumer) { %>
 		private String address;
 		private String wsdlURL;
 
+        private boolean useSL;
+        private java.util.Map<String, String> slProperties;
+        private boolean useSAM;
+        private java.util.Map<String, String> samCustomInfo;
+
 		private String authType;
 		private String username;
 		private String password;
@@ -99,6 +104,22 @@ if (actAsConsumer) { %>
 		public void setWsdlURL(String wsdlURL) {
 			this.wsdlURL = wsdlURL;
 		}
+
+        public void setUseSL(boolean useSL) {
+            this.useSL = useSL;
+        }
+
+        public void setSlProperties(java.util.Map<String, String> slProperties) {
+            this.slProperties = slProperties;
+        }
+
+        public void setUseSAM(boolean useSAM) {
+            this.useSAM = useSAM;
+        }
+
+        public void setSamCustomInfo(java.util.Map<String, String> samCustomInfo) {
+            this.samCustomInfo = samCustomInfo;
+        }
 
 		public void setAuthType(String authType) {
 			this.authType = authType;
@@ -188,6 +209,32 @@ if (actAsConsumer) { %>
 
 			clientFactory.setAddress(address);
 			clientFactory.getProperties(true).put("soap.no.validate.parts", Boolean.TRUE);
+
+            if (useSL) {
+                clientFactory.setAddress("locator://");
+
+                // if (!inOSGi) {
+                clientFactory.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                // }
+                org.talend.esb.servicelocator.cxf.LocatorFeature feature = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+                if (null != slProperties && !slProperties.isEmpty()) {
+                    feature.setRequiredEndpointProperties(slProperties);
+                }
+                clientFactory.getFeatures().add(feature);
+            }
+            if (useSAM) {
+                // if (null == eventFeature) {
+                org.springframework.context.support.ClassPathXmlApplicationContext context =
+                        new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+                org.talend.esb.sam.agent.feature.EventFeature feature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+                // }
+                if (null != samCustomInfo && !samCustomInfo.isEmpty()) {
+                    org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+                    ciHandler.setCustomInfo(samCustomInfo);
+                    feature.setHandler(ciHandler);
+                }
+                clientFactory.getFeatures().add(feature);
+            }
 
 			if (logMessages) {
 				clientFactory.getFeatures().add(new org.apache.cxf.feature.LoggingFeature());
