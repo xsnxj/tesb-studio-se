@@ -27,8 +27,8 @@ public abstract class AbstractExPredicator<T, K> {
 			 * LOG: if no name or value, the predicate will be ignored
 			 */
 			if (attributeValue == null || attributeName == null) {
-				System.out.println(componentName + " ignored: " + attributeName
-						+ ", " + attributeValue);
+//				System.out.println(componentName + " ignored: " + attributeName
+//						+ ", " + attributeValue);
 				continue;
 			}
 			boolean regex = p.isRegex();
@@ -49,9 +49,9 @@ public abstract class AbstractExPredicator<T, K> {
 			 * LOG: if the attribute didn't find, then ignore it
 			 */
 			if (!matched) {
-				System.out.println(componentName + ": Attribute "
-						+ attributeName + " doesn't match the expect value "
-						+ attributeValue);
+//				System.out.println(componentName + ": Attribute "
+//						+ attributeName + " doesn't match the expect value "
+//						+ attributeValue);
 				return false;
 			}
 		}
@@ -123,8 +123,8 @@ public abstract class AbstractExPredicator<T, K> {
 		 * else return false;
 		 */
 		if (!found) {
-			System.out.println(componentName + " didn't find: "
-					+ parentAttrName + "." + childAttrName);
+//			System.out.println(componentName + " didn't find: "
+//					+ parentAttrName + "." + childAttrName);
 			return true;
 		}else{
 			return false;
@@ -171,8 +171,8 @@ public abstract class AbstractExPredicator<T, K> {
 		 * else return false;
 		 */
 		if (!found) {
-			System.out
-					.println(componentName + " didn't find: " + attributeName);
+//			System.out
+//					.println(componentName + " didn't find: " + attributeName);
 			return true;
 		}else{
 			return false;
