@@ -56,6 +56,9 @@ if (actAsConsumer) { %>
         private String address;
         private String wsdlURL;
 
+        private java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures;
+        private org.apache.cxf.Bus bus;
+
         private String authType;
         private String username;
         private String password;
@@ -98,6 +101,15 @@ if (actAsConsumer) { %>
 
         public void setWsdlURL(String wsdlURL) {
             this.wsdlURL = wsdlURL;
+        }
+
+        public void setEsbFeatures(
+                java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures) {
+            this.esbFeatures = esbFeatures;
+        }
+
+        public void setBus(org.apache.cxf.Bus bus) {
+            this.bus = bus;
         }
 
         public void setAuthType(String authType) {
@@ -189,6 +201,12 @@ if (actAsConsumer) { %>
             clientFactory.setAddress(address);
             clientFactory.getProperties(true).put("soap.no.validate.parts", Boolean.TRUE);
 
+            if (null != bus) {
+                clientFactory.setBus(bus);
+            }
+            if (null != esbFeatures) {
+                clientFactory.getFeatures().addAll(esbFeatures);
+            }
             if (logMessages) {
                 clientFactory.getFeatures().add(new org.apache.cxf.feature.LoggingFeature());
             }

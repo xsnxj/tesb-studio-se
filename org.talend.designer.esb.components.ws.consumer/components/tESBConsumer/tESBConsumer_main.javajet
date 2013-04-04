@@ -33,13 +33,15 @@ String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTe
 
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
 Boolean useSR = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
-Boolean useAuthorization =   Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
+Boolean useAuthorization = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
 
 //if no a EE version then useSR should be false
 boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 if(!isStudioEEVersion){
 	useSR = false;
 }
+Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) && !useSR;
+Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
@@ -103,6 +105,28 @@ if (inputConn != null) {
         try {
             org.dom4j.Document responseDoc_<%=cid%> = null;
 
+            <% if (useSl) { %>
+                final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+                <%
+                List<Map<String, String>> customProperties = (List<Map<String,String>>)
+                        ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+                for (int k = 0; k < customProperties.size(); k++) { %>
+                    slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+                <% }
+            } %>
+
+            java.util.Map<String, String> customProps_<%=cid%> = null;
+            <% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+                List<Map<String, String>> customProperties = (List<Map<String,String>>)
+                        ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+                if (!customProperties.isEmpty()) { %>
+                    customProps_<%=cid%> = new java.util.HashMap<String, String>();
+                    <% for (int k = 0; k < customProperties.size(); k++) { %>
+                    customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+                    <% } %>
+                <% } %>
+            <% } %>
+
             if (null == this.registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
@@ -114,6 +138,36 @@ if (inputConn != null) {
                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
+
+                java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures_<%=cid%> =
+                        new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+
+                <% if (useSl) { %>
+                    genericConsumer_<%=cid%>.setAddress("locator://");
+        
+                    // if (!inOSGi) {
+                    genericConsumer_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    // }
+                    org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+                    if (null != slCustomProps_<%=cid%> && !slCustomProps_<%=cid%>.isEmpty()) {
+                        featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+                    }
+                    esbFeatures_<%=cid%>.add(featureSL_<%=cid%>);
+                <% } %>
+                <% if (useSAM) { %>
+                    // if (null == eventFeature) {
+                    org.springframework.context.support.ClassPathXmlApplicationContext context =
+                            new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+                    org.talend.esb.sam.agent.feature.EventFeature featureSAM_<%=cid%> = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+                    // }
+                    if (null != customProps_<%=cid%> && !customProps_<%=cid%>.isEmpty()) {
+                        org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+                        ciHandler.setCustomInfo(customProps_<%=cid%>);
+                        featureSAM_<%=cid%>.setHandler(ciHandler);
+                    }
+                    esbFeatures_<%=cid%>.add(featureSAM_<%=cid%>);
+                <% } %>
+                genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
                 <% if (useAuth && !useSR) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
@@ -144,95 +198,71 @@ if (inputConn != null) {
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
 
             } else {
-                    <%
-                    Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
-                    if (useSl && !useSR) {
-                        %>
-                        final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
-                        <%
-                        List<Map<String, String>> customProperties = (List<Map<String,String>>)
-                                ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
-                        for (int k = 0; k < customProperties.size(); k++) { %>
-                            slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-                        <% }
-                    } %>
+                ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
+                    new ESBEndpointInfo() {
 
-                    ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
-                        new ESBEndpointInfo() {
+                        @SuppressWarnings("serial")
+                        private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
+                            put("dataFormat", "PAYLOAD");
+                            put("portName", portName_<%=cid%>.toString());
+                            put("serviceName", serviceName_<%=cid%>.toString());
+                            put("defaultOperationName", "<%=method%>");
+                            put("defaultOperationNameSpace", "");
+                            put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                            if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
+                                put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
+                            }
+                            put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+                            put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
 
-                            @SuppressWarnings("serial")
-                            private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>() {{
-                                put("dataFormat", "PAYLOAD");
-                                put("portName", portName_<%=cid%>.toString());
-                                put("serviceName", serviceName_<%=cid%>.toString());
-                                put("defaultOperationName", "<%=method%>");
-                                put("defaultOperationNameSpace", "");
-                                put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
-                                if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
-                                    put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
-                                }
-                                put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-                                put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
+                            put("logMessages", <%=logMessages%>);
 
-                                put("logMessages", <%=logMessages%>);
+                            // use Service Locator
+                            put("useServiceLocator", <%=useSl%>);
+                            <% if (useSl) { %>
+                                put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
+                                put("SL-PROPS", slCustomProps_<%=cid%>);
+                            <% } %>
+                            // use Service Activity Monitor
+                            put("useServiceActivityMonitor", <%=useSAM%>);
 
-                                // use Service Locator
-                                put("useServiceLocator", <%=(useSl && !useSR)%>);
-                                <% if (useSl && !useSR) { %>
-                                    put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
-                                    put("SL-PROPS", slCustomProps_<%=cid%>);
+                            <% if (useSR) { %>
+                                put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
+                                put("username", <%=username%>);
+                                put("password", <%=password%>);
+                            <% } else if (useAuth) { %>
+                            <% if (authType.equals("SAML") && isStudioEEVersion) { %>
+                                put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
+                                <% if (useAuthorization) { %>
+                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
+                                <% } else { %>
+                                    put("role", "");   
                                 <% } %>
-                                // use Service Activity Monitor
-                                put("useServiceActivityMonitor", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))%>);
-
-                                <% if (useSR) { %>
-                                    put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
-                                    put("username", <%=username%>);
-                                    put("password", <%=password%>);
-                                <% } else if (useAuth) { %>
-                                <% if (authType.equals("SAML") && isStudioEEVersion) { %>
-                                    put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
-                                    <% if (useAuthorization) { %>
-	                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
-	                                <% } else { %>
-	                                    put("role", "");   
-                                    <% } %>
-                                    <% } %>
-                                    put("esbSecurity", "<%=authType%>");
-                                    put("username", <%=username%>);
-                                    put("password", <%=password%>);
                                 <% } %>
-                                if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
-                                    put("soapHeaders", headersTalendDoc_<%=cid%>.getDocument());
-                                }
-                            }};
-
-                            public String getEndpointUri() {
-                                // projectName + "_" + processName + "_" + componentName
-                                return "<%=projectName%>_<%=processName%>_<%=cid%>";
+                                put("esbSecurity", "<%=authType%>");
+                                put("username", <%=username%>);
+                                put("password", <%=password%>);
+                            <% } %>
+                            if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
+                                put("soapHeaders", headersTalendDoc_<%=cid%>.getDocument());
                             }
+                        }};
 
-                            public java.util.Map<String, Object> getEndpointProperties() {
-                                return props;
-                            }
-
-                            public String getEndpointKey() {
-                                return "cxf";
-                            }
+                        public String getEndpointUri() {
+                            // projectName + "_" + processName + "_" + componentName
+                            return "<%=projectName%>_<%=processName%>_<%=cid%>";
                         }
-                    );
 
-                java.util.Map<String, String> customProps_<%=cid%> = null;
-                <% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
-                    List<Map<String, String>> customProperties = (List<Map<String,String>>)
-                            ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
-                    if (!customProperties.isEmpty()) { %>
-                        customProps_<%=cid%> = new java.util.HashMap<String, String>();
-                        <% for (int k = 0; k < customProperties.size(); k++) { %>
-                        customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-                        <% } %>
-                    <% } %>
-                <% } %>
+                        public java.util.Map<String, Object> getEndpointProperties() {
+                            return props;
+                        }
+
+                        public String getEndpointKey() {
+                            return "cxf";
+                        }
+                    }
+                );
+
                 Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
                 responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
             }
