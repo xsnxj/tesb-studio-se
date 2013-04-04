@@ -87,8 +87,10 @@ public class Activator extends AbstractUIPlugin {
         esbConfigsFolderUrl = FileLocator.toFileURL(esbConfigsFolderUrl);
 
         // obtain Studio installation location URI
-        
+
         String eclipseHome = (String) System.getProperties().get("eclipse.home.location");
+        //Platform.getInstallLocation().getURL();
+
         File eclipseEsbFolder=new File(new URL(eclipseHome).getPath(),"esb");
         // create ESB configuration folder under Studio instalation
         IFileSystem fileSystem = EFS.getLocalFileSystem();

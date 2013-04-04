@@ -3,6 +3,7 @@ package org.talend.repository.services.ui.scriptmanager;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
-import org.talend.commons.exception.SystemException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.ProcessItem;
@@ -42,10 +42,10 @@ import org.talend.repository.model.ResourceModelUtils;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
-import org.talend.repository.services.utils.TemplateProcessor;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
+import org.talend.repository.utils.TemplateProcessor;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
@@ -56,14 +56,14 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     public ServiceExportManager(Map<ExportChoice, Object> exportChoiceMap) {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
-    
+
     private boolean isStudioEEVersion() {
-    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline");
-        //return true;
+        return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
-    
-    public void createSpringBeans(String outputFile, Map<ServicePort, Map<String, String>> ports,
-            ServiceConnection serviceConnection, IFile wsdl, String studioServiceName) throws IOException, CoreException {
+
+    public void createSpringBeans(File outputFile, Map<ServicePort, Map<String, String>> ports,
+            ServiceConnection serviceConnection, IFile wsdl, String studioServiceName)
+                    throws IOException, CoreException {
 
         // TODO: support multiport!!!
         Entry<ServicePort, Map<String, String>> studioPort = ports.entrySet().iterator().next();
@@ -133,24 +133,26 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
         EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
         if (!isStudioEEVersion()) {
-        	additionalInfo.put(ServiceMetadataDialog.USE_SERVICE_REGISTRY, Boolean.toString(false));
-        	additionalInfo.put(ServiceMetadataDialog.AUTHORIZATION, Boolean.toString(false));
+            additionalInfo.put(ServiceMetadataDialog.USE_SERVICE_REGISTRY, Boolean.toString(false));
+            additionalInfo.put(ServiceMetadataDialog.AUTHORIZATION, Boolean.toString(false));
         }
-        endpointInfo.put("useSL", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL))
-                						&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
-        endpointInfo.put("useSAM", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM)));
-        endpointInfo.put("useSecurityToken", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC))
-        		                        && !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
-        endpointInfo.put("useSecuritySAML", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML))
-        								&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );
-        endpointInfo.put("useAuthorization", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION))
-    			                          && Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML))        		
-        								  && !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) );        
-        endpointInfo.put("useServiceRegistry", Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)));        
+
+        boolean useMonitor = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+        boolean useLocator = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useRegistry = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
+        boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
+        boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
+        boolean useAuthorization = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
+
+        endpointInfo.put("useSL", useLocator && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useSAM", useMonitor); //$NON-NLS-1$
+        endpointInfo.put("useSecurityToken", useSecurityToken && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
-        if (Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL)) 
-   		&& !Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)) ) {
+        if (useLocator && !useRegistry) {
             for (Map.Entry<String, String> prop : additionalInfo.entrySet()) {
                 if (prop.getKey().startsWith(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX)) {
                     slCustomProperties.put(prop.getKey().substring(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX.length()),
@@ -161,31 +163,18 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("slCustomProps", slCustomProperties); //$NON-NLS-1$
 
         Map<String, Object> contextParams = new HashMap<String, Object>();
-        contextParams.put("endpoint", endpointInfo);
+        contextParams.put("endpoint", endpointInfo); //$NON-NLS-1$
 
-        FileWriter fileWriter = null;
         try {
-            fileWriter = new FileWriter(outputFile);
-            TemplateProcessor.processTemplate(TEMPLATE_SPRING_BEANS, contextParams, fileWriter);
-        } catch (SystemException e) {
-            // something wrong with template processing
-            LOG.error(e.getLocalizedMessage(), e);
+            TemplateProcessor.processTemplate("DATA_SERVICE_SPRING_CONFIG", contextParams, outputFile, //$NON-NLS-1$
+                    new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SPRING_BEANS)));
         } catch (IOException e) {
-            // something wrong with output file
             LOG.error(e.getLocalizedMessage(), e);
-        } finally {
-            if (null != fileWriter) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    LOG.warn(e.getLocalizedMessage(), e);
-                }
-            }
         }
     }
 
-    public static Collection<ExtensibilityElement> findExtensibilityElement(List<ExtensibilityElement> extensibilityElements,
-            String elementType) {
+    public static Collection<ExtensibilityElement> findExtensibilityElement(
+            List<ExtensibilityElement> extensibilityElements, String elementType) {
         List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
         if (extensibilityElements != null) {
             for (ExtensibilityElement elment : extensibilityElements) {
@@ -207,7 +196,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         a.put(new Attributes.Name("Bundle-ManifestVersion"), "2"); //$NON-NLS-1$ //$NON-NLS-2$
         IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
                 IBrandingService.class);
-        a.put(new Attributes.Name("Created-By"), brandingService.getFullProductName() + " (" + brandingService.getAcronym() + "_"
+        a.put(new Attributes.Name("Created-By"), brandingService.getFullProductName() + " ("
+                + brandingService.getAcronym() + "_"
                 + RepositoryPlugin.getDefault().getBundle().getVersion().toString() + ")");
         a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
                 "javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
@@ -253,13 +243,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         return exportChoiceMap;
     }
 
-    public JobScriptsManager getJobManager(Map<ExportChoice, Object> exportChoiceMap, String parentPath, RepositoryNode node,
-            String groupId, String serviceVersion) {
+    public JobScriptsManager getJobManager(Map<ExportChoice, Object> exportChoiceMap, String parentPath,
+            RepositoryNode node, String groupId, String serviceVersion) {
         if (exportChoiceMap == null) {
             exportChoiceMap = getDefaultExportChoiceMap();
         }
-        JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap, "Default", serviceVersion,
-                statisticPort, tracePort);
+        JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap,
+                "Default", serviceVersion, statisticPort, tracePort); //$NON-NLS-1$
         String artefactName = getNodeLabel(node);
         File path = getFilePath(parentPath, groupId, artefactName, serviceVersion);
         File file = new File(path, artefactName + '-' + serviceVersion + manager.getOutputSuffix());
@@ -268,7 +258,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public File getFilePath(String parentPath, String groupId, String artefactName, String serviceVersion) {
-        File folder = new File(parentPath, "repository");
+        File folder = new File(parentPath, "repository"); //$NON-NLS-1$
         File group = new File(folder, groupId.replace('.', File.separatorChar));
         File artefact = new File(group, artefactName);
         File version = new File(artefact, serviceVersion);
@@ -284,7 +274,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                 return processItem.getProperty().getLabel();
             }
         }
-        return "Job";
+        return "Job"; //$NON-NLS-1$
     }
 
     public String getTmpFolderPath() {

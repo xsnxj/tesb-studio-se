@@ -15,6 +15,7 @@ package org.talend.repository.services.ui;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -70,7 +71,7 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
-import org.talend.repository.services.utils.TemplateProcessor;
+import org.talend.repository.utils.TemplateProcessor;
 import org.talend.repository.services.utils.WSDLLoader;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
@@ -227,8 +228,10 @@ public class OpenWSDLPage extends WizardPage {
                     if (null == path) {
                         baos = new ByteArrayOutputStream();
                         // create new WSDL file from template
-                        TemplateProcessor.processTemplate(TEMPLATE_SERVICE_WSDL,
-                                Collections.singletonMap("serviceName", (Object) label), new OutputStreamWriter(baos));
+                        TemplateProcessor.processTemplate("DATA_SERVICE_WSDL",
+                                Collections.singletonMap("serviceName", (Object) label),
+                                new OutputStreamWriter(baos),
+                                new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SERVICE_WSDL)));
                         //path = fileTemp.getLocation().toPortableString();
                     } else {
 //                            baos = new ByteArrayOutputStream();

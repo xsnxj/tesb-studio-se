@@ -189,7 +189,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml").getAbsolutePath(), ports, serviceConnection, serviceWsdl,
+        serviceManager.createSpringBeans(new File(spring, "beans.xml"), ports, serviceConnection, serviceWsdl,
                 getServiceName());
         String fileName = artefactName + "-" + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File file = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), fileName);
@@ -205,14 +205,14 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     protected void processFeature(FeaturesModel feature) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(getFeatureFilePath())));
-		try {
-			bw.write(feature.getContent());
-			bw.flush();
-		} finally {
-			bw.close();
-		}
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+                getFeatureFilePath())));
+        try {
+            bw.write(feature.getContent());
+            bw.flush();
+        } finally {
+            bw.close();
+        }
     }
 
     protected void processFinalResult(String destinationPath) throws IOException {
@@ -231,7 +231,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected String getControlBundleFilePath() {
         String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-        String fileName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX; 
+        String fileName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         String filePath = new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
                 fileName).getAbsolutePath();
 
@@ -241,7 +241,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
     protected String getFeatureFilePath() {
         String artefactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
         return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
-        		getServiceName() + '-' + getServiceVersion() + FeaturesModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
+                getServiceName() + '-' + getServiceVersion() + FeaturesModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {
