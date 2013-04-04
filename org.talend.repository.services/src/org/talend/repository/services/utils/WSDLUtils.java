@@ -226,27 +226,15 @@ public class WSDLUtils {
 //    }
 
     public static Definition getDefinition(IFile pathToWsdl) throws CoreException {
-        InputStream is = pathToWsdl.getContents();
         try {
             WSDLFactory wsdlFactory = WSDLFactory.newInstance();
             WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
 
             newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
             newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-            String documentBaseUri=null;
-            try {
-            	documentBaseUri=pathToWsdl.getLocationURI().toString();
-			} catch (Exception e) {
-				//can not get uri of ifile.
-			}
-            return newWSDLReader.readWSDL(documentBaseUri, new InputSource(is));
+            return newWSDLReader.readWSDL(pathToWsdl.getLocationURI().toString());
         } catch (WSDLException e) {
             throw getCoreException(null, e);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-            }
         }
     }
 //    public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
