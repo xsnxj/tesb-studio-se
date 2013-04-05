@@ -280,44 +280,44 @@ if (inputConn != null) {
                 }
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
-        } catch (org.apache.cxf.binding.soap.SoapFault e) {
+        } catch (org.apache.cxf.binding.soap.SoapFault e_<%=cid%>) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
-                <%=connFaultName%>.faultCode = e.getFaultCode().toString();
+                <%=connFaultName%>.faultCode = e_<%=cid%>.getFaultCode().toString();
 
-                <%=connFaultName%>.faultString = e.getReason();
-                <%=connFaultName%>.faultActor = e.getRole();
-                <%=connFaultName%>.faultNode = e.getNode();
+                <%=connFaultName%>.faultString = e_<%=cid%>.getReason();
+                <%=connFaultName%>.faultActor = e_<%=cid%>.getRole();
+                <%=connFaultName%>.faultNode = e_<%=cid%>.getNode();
 
-                if (null != e.getDetail() && null != e.getDetail().getFirstChild()) {
+                if (null != e_<%=cid%>.getDetail() && null != e_<%=cid%>.getDetail().getFirstChild()) {
                     javax.xml.transform.Source faultSource_<%=cid%> =
-                        new javax.xml.transform.dom.DOMSource(e.getDetail().getFirstChild());
+                        new javax.xml.transform.dom.DOMSource(e_<%=cid%>.getDetail().getFirstChild());
                     <%=connFaultName%>.faultDetail = new Document();
                     <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_<%=cid%>));
                 }
             <% } else { %>
-                e.printStackTrace(System.err);
+                e_<%=cid%>.printStackTrace(System.err);
             <% } %>
-        } catch (GenericFaultInfoException e) {
+        } catch (GenericFaultInfoException e_<%=cid%>) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
-                <%=connFaultName%>.faultString = e.getMessage();
+                <%=connFaultName%>.faultString = e_<%=cid%>.getMessage();
 
                 <%=connFaultName%>.faultDetail = new Document();
-                <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e.getFaultInfo());
+                <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e_<%=cid%>.getFaultInfo());
             <% } else { %>
-                System.err.println(e.getMessage() + ": " + ((org.dom4j.Document) e.getFaultInfo()).asXML());
+                System.err.println(e.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
             <% } %>
-        } catch (javax.xml.ws.soap.SOAPFaultException e) {
+        } catch (javax.xml.ws.soap.SOAPFaultException e_<%=cid%>) {
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
-                javax.xml.soap.SOAPFault soapFault_<%=cid%> = e.getFault();
+                javax.xml.soap.SOAPFault soapFault_<%=cid%> = e_<%=cid%>.getFault();
                 org.dom4j.Document faultDoc_<%=cid%> = null;
                 if (null != soapFault_<%=cid%>.getDetail() && null != soapFault_<%=cid%>.getDetail().getFirstChild()) {
                     try {
@@ -328,8 +328,8 @@ if (inputConn != null) {
                         javax.xml.transform.TransformerFactory.newInstance()
                             .newTransformer().transform(faultSource_<%=cid%>, result_<%=cid%>);
                         faultDoc_<%=cid%> = result_<%=cid%>.getDocument();
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    } catch (Exception e1_<%=cid%>) {
+                        e1_<%=cid%>.printStackTrace();
                     }
                 }
 
@@ -347,7 +347,7 @@ if (inputConn != null) {
                     try {
                         <%=connFaultName%>.faultNode = soapFault_<%=cid%>.getFaultNode();
                         <%=connFaultName%>.faultRole = soapFault_<%=cid%>.getFaultRole();
-                    } catch (java.lang.UnsupportedOperationException uoe) { }
+                    } catch (java.lang.UnsupportedOperationException uoe_<%=cid%>) { }
                 }
 
                 Document faultTalendDoc_<%=cid%> = null;
@@ -357,14 +357,14 @@ if (inputConn != null) {
                 }
                 <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
             <% } else { %>
-                e.printStackTrace();
+                e_<%=cid%>.printStackTrace();
             <% } %>
         }
-    } catch(Exception e){
+    } catch (Exception e_<%=cid%>){
         <% if (("true").equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
-            throw(e);
+            throw(e_<%=cid%>);
         <% } else { %>
-            System.err.print(e.getMessage());
+            System.err.print(e_<%=cid%>.getMessage());
         <% } %>
     }
 
