@@ -72,9 +72,9 @@
 					while(true) {
 						Thread.sleep(60000);
 					}
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-					// throw new TalendException(e, "wholeJob", globalMap);
+				} catch (InterruptedException e_<%=cid%>) {
+					// e_<%=cid%>.printStackTrace();
+					// throw new TalendException(e_<%=cid%>, "wholeJob", globalMap);
 				}
 			}
 			return;
