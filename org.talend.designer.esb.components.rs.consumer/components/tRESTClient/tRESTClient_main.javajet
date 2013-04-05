@@ -109,7 +109,7 @@ try {
 		boolean inOSGi = false;
 		try {
 			inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e_<%=cid%>) {
 			; // ignore
 		}
 	<% } %>
@@ -191,8 +191,8 @@ try {
 				&& Integer.valueOf(contentLength) <= 0) {
 				try {
 					return org.dom4j.DocumentHelper.parseText("<root/>");
-				} catch (org.dom4j.DocumentException e) {
-					e.printStackTrace();
+				} catch (org.dom4j.DocumentException e_<%=cid%>) {
+					e_<%=cid%>.printStackTrace();
 				}
 				return null;
 			}
