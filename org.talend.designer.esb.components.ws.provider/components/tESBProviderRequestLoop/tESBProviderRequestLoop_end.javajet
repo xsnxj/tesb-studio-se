@@ -13,11 +13,11 @@
 
 	Boolean keepListening = Boolean.valueOf(ElementParameterParser.getValue(node, "__KEEPLISTENING__"));
 %>
-		} catch (ESBJobInterruptedException e) {
+		} catch (ESBJobInterruptedException e_<%=cid%>) {
 			// job interrupted from outside
 			break;
-		} catch (Throwable e) {
-			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFault(e);
+		} catch (Throwable e_<%=cid%>) {
+			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFault(e_<%=cid%>);
 			globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 		} finally {
 			// close DB connections
@@ -29,8 +29,8 @@
 						talendDataSource.close();
 					}
 				}
-			} catch (Throwable e) {
-			    e.printStackTrace(System.err);
+			} catch (Throwable e_<%=cid%>) {
+			    e_<%=cid%>.printStackTrace(System.err);
 			}
 
 			// Exit from this loop is made by the configuring "Keep listening"
