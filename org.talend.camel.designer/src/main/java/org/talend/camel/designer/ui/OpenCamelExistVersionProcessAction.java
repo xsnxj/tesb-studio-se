@@ -81,6 +81,9 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
     	
     	try{
 
+    		/*
+    		 * if it's lockable, then lock it, and set the marker
+    		 */
     		if(!(status.equals(ERepositoryStatus.READ_ONLY) || status == ERepositoryStatus.LOCK_BY_OTHER || status.equals(ERepositoryStatus.LOCK_BY_USER)
     				|| CamelEditorUtil.hasEditorOpened(node))){
     			factory.lock(repositoryViewObject);
@@ -112,7 +115,10 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
 			e.printStackTrace();
 		}finally{
 			try {
-				if(lockedByCurrent){
+				/*
+				 * check the marker,and also check if it's opened by some others.
+				 */
+				if(lockedByCurrent && !CamelEditorUtil.hasEditorOpened(node)){
 					factory.unlock(repositoryViewObject);
 				}
 			} catch (PersistenceException e) {

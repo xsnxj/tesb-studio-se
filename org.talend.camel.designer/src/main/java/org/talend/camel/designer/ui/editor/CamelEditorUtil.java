@@ -60,7 +60,16 @@ public class CamelEditorUtil {
 				try {
 					Object adapter = r.getEditorInput().getAdapter(
 							RepositoryNode.class);
-					if (adapter != null && node == adapter) {
+					if(adapter == null || !(adapter instanceof RepositoryNode)){
+						continue;
+					}
+					
+					if (adapter != null
+							&& node.equals(adapter)
+							&& node.getObject()
+									.getVersion()
+									.equals(((RepositoryNode) adapter)
+											.getObject().getVersion())) {
 						return true;
 					}
 				} catch (Exception e) {
