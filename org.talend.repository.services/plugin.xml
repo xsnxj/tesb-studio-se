@@ -72,6 +72,7 @@
         folder="services"
         icon="icons/services.png"
         isResouce="true"
+        key="repository.Services"
         label="%NavigatorContent.services"
         ordinal="5"
         products="DI"
