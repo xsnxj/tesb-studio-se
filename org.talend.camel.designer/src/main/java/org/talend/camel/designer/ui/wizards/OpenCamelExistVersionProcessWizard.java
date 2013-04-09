@@ -19,8 +19,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -64,7 +66,7 @@ import org.talend.repository.ui.actions.routines.RoutineEditorInput;
  */
 public class OpenCamelExistVersionProcessWizard extends Wizard {
 
-	OpenAnotherVersionPage mainPage = null;
+    OpenAnotherVersionPage mainPage = null;
 
     private final IRepositoryViewObject processObject;
 
@@ -80,16 +82,15 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
         originalVersion = processObject.getProperty().getVersion();
 
         ERepositoryStatus status = processObject.getRepositoryStatus();
-        if (status == ERepositoryStatus.READ_ONLY || status == ERepositoryStatus.LOCK_BY_OTHER || status.equals(ERepositoryStatus.LOCK_BY_USER)
-                && RepositoryManager.isOpenedItemInEditor(processObject)) {
+        if (status == ERepositoryStatus.READ_ONLY || status == ERepositoryStatus.LOCK_BY_OTHER
+                || status.equals(ERepositoryStatus.LOCK_BY_USER) && RepositoryManager.isOpenedItemInEditor(processObject)) {
             alreadyEditedByUser = true;
         }
     }
 
     @Override
     public void addPages() {
-		mainPage = new OpenAnotherVersionPage(alreadyEditedByUser,
-				processObject);
+        mainPage = new OpenAnotherVersionPage(alreadyEditedByUser, processObject);
         addPage(mainPage);
         setWindowTitle(Messages.getString("NewProcessWizard.windowTitle")); //$NON-NLS-1$
     }
@@ -129,80 +130,101 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
     @Override
-	public boolean performFinish() {
-		if (mainPage.isCreateNewVersionJob()) {
+    public boolean performFinish() {
+        if (mainPage.isCreateNewVersionJob()) {
+            try {
+                ProxyRepositoryFactory.getInstance().updateLockStatus();
+            } catch (PersistenceException e1) {
+                ExceptionHandler.process(e1);
+            }
+            ERepositoryStatus repositoryStatus = ProxyRepositoryFactory.getInstance().getStatus(processObject);
+            if ((repositoryStatus.equals(ERepositoryStatus.READ_ONLY)) || repositoryStatus == ERepositoryStatus.LOCK_BY_OTHER
+                    || repositoryStatus.equals(ERepositoryStatus.LOCK_BY_USER)) {
+                Display.getDefault().syncExec(new Runnable() {
 
-			// http://jira.talendforge.org/browse/TESB-5864
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+                    public void run() {
+                        MessageDialog.openWarning(getShell(), "Warning",
+                                Messages.getString("OpenCamelExistVersionProcessWizard.labelContent"));
+                    }
 
-				public void run(final IProgressMonitor monitor)
-						throws CoreException {
-					if (!alreadyEditedByUser) {
-						refreshNewJob();
-						try {
-							ProxyRepositoryFactory.getInstance().saveProject(
-									ProjectManager.getInstance()
-											.getCurrentProject());
-						} catch (Exception e) {
-							ExceptionHandler.process(e);
-						}
-					}
+                });
+                return false;
+            } else {
+                IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
-					try {
-						ProxyRepositoryFactory.getInstance()
-								.lock(processObject);
-					} catch (PersistenceException e) {
-						ExceptionHandler.process(e);
-					} catch (LoginException e) {
-						ExceptionHandler.process(e);
-					}
+                    public void run(final IProgressMonitor monitor) throws CoreException {
+                        try {
+                            ProxyRepositoryFactory.getInstance().lock(processObject);
+                        } catch (PersistenceException e) {
+                            ExceptionHandler.process(e);
+                        } catch (LoginException e) {
+                            ExceptionHandler.process(e);
+                        }
+                    }
+                };
+                IWorkspace workspace = ResourcesPlugin.getWorkspace();
+                try {
+                    ISchedulingRule schedulingRule = workspace.getRoot();
+                    // the update the project files need to be done in the workspace
+                    // runnable to avoid all notification
+                    // of changes before the end of the modifications.
+                    workspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, null);
+                } catch (CoreException e) {
+                    MessageBoxExceptionHandler.process(e);
+                }
+            }
+            // http://jira.talendforge.org/browse/TESB-5864
+            IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
-					boolean locked = processObject.getRepositoryStatus()
-							.equals(ERepositoryStatus.LOCK_BY_USER);
-					openAnotherVersion(
-							(RepositoryNode) processObject.getRepositoryNode(),
-							!locked);
-					try {
-						ProxyRepositoryFactory.getInstance().saveProject(
-								ProjectManager.getInstance()
-										.getCurrentProject());
-					} catch (Exception e) {
-						ExceptionHandler.process(e);
-					}
-				}
-			};
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			try {
-				ISchedulingRule schedulingRule = workspace.getRoot();
-				// the update the project files need to be done in the workspace
-				// runnable to avoid all notification
-				// of changes before the end of the modifications.
-				workspace.run(runnable, schedulingRule,
-						IWorkspace.AVOID_UPDATE, null);
-			} catch (CoreException e) {
-				MessageBoxExceptionHandler.process(e);
-			}
-		} else {
-			StructuredSelection selection = (StructuredSelection) mainPage
-					.getSelection();
-			RepositoryNode node = (RepositoryNode) selection.getFirstElement();
-			boolean lastVersion = node.getObject().getVersion()
-					.equals(processObject.getVersion());
-//			processObject.getProperty().setVersion(originalVersion);
-			if (lastVersion) {
-				lockObject(processObject);
-			}
-			ERepositoryStatus status = node.getObject().getRepositoryStatus();
-			boolean isLocked = false;
-			if (status == ERepositoryStatus.LOCK_BY_USER) {
-				isLocked = true;
-			}
+                public void run(final IProgressMonitor monitor) throws CoreException {
+                    if (!alreadyEditedByUser) {
+                        refreshNewJob();
+                        try {
+                            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+                        } catch (Exception e) {
+                            ExceptionHandler.process(e);
+                        }
+                    }
 
-			// Only latest version can be editted
-			openAnotherVersion(node, !lastVersion || !isLocked);
-		}
-		return true;
-	}
+                    boolean locked = processObject.getRepositoryStatus().equals(ERepositoryStatus.LOCK_BY_USER);
+                    openAnotherVersion((RepositoryNode) processObject.getRepositoryNode(), !locked);
+                    try {
+                        ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
+                }
+            };
+            IWorkspace workspace = ResourcesPlugin.getWorkspace();
+            try {
+                ISchedulingRule schedulingRule = workspace.getRoot();
+                // the update the project files need to be done in the workspace
+                // runnable to avoid all notification
+                // of changes before the end of the modifications.
+                workspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, null);
+            } catch (CoreException e) {
+                MessageBoxExceptionHandler.process(e);
+            }
+        } else {
+            StructuredSelection selection = (StructuredSelection) mainPage.getSelection();
+            RepositoryNode node = (RepositoryNode) selection.getFirstElement();
+            boolean lastVersion = node.getObject().getVersion().equals(processObject.getVersion());
+            // processObject.getProperty().setVersion(originalVersion);
+            if (lastVersion) {
+                lockObject(processObject);
+            }
+            ERepositoryStatus status = node.getObject().getRepositoryStatus();
+            boolean isLocked = false;
+            if (status == ERepositoryStatus.LOCK_BY_USER) {
+                isLocked = true;
+            }
+
+            // Only latest version can be editted
+            restoreVersion();
+            openAnotherVersion(node, !lastVersion || !isLocked);
+        }
+        return true;
+    }
 
     private boolean refreshNewJob() {
         if (alreadyEditedByUser) {

@@ -17,6 +17,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,15 +32,17 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.ui.views.jobsettings.tabs.ProcessVersionComposite;
 import org.talend.repository.ProjectManager;
+import org.talend.repository.model.IProxyRepositoryFactory;
 
 /**
  * 
  */
 public class OpenAnotherVersionPage extends WizardPage {
 
-	private final static String TITLE = Messages.getString("OpenAnotherVersionPage.Title"); //$NON-NLS-1$
+    private final static String TITLE = Messages.getString("OpenAnotherVersionPage.Title"); //$NON-NLS-1$
 
     private final IRepositoryViewObject processObject;
 
@@ -65,11 +72,10 @@ public class OpenAnotherVersionPage extends WizardPage {
      * 
      * @param pageName
      */
-	public OpenAnotherVersionPage(final boolean alreadyEditedByUser,
-			final IRepositoryViewObject processObject) {
+    public OpenAnotherVersionPage(final boolean alreadyEditedByUser, final IRepositoryViewObject processObject) {
         super(Messages.getString("OpenAnotherVersionPage.Page")); //$NON-NLS-1$
         setTitle(TITLE);
-		setMessage(Messages.getString("OpenAnotherVersionPage.Message")); //$NON-NLS-1$
+        setMessage(Messages.getString("OpenAnotherVersionPage.Message")); //$NON-NLS-1$
         this.processObject = processObject;
         originVersion = getProperty().getVersion();
         this.alreadyEditedByUser = alreadyEditedByUser;
@@ -88,9 +94,40 @@ public class OpenAnotherVersionPage extends WizardPage {
         setControl(versionListComposite);
         versionListComposite.refresh();
 
-        createNewVersionButton = new Button(parent, SWT.CHECK);
-		createNewVersionButton.setText(Messages.getString("OpenAnotherVersionPage.Create")); //$NON-NLS-1$
+        Composite createNewVersionButtonComposite = new Composite(parent, SWT.NONE);
+        createNewVersionButtonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        createNewVersionButtonComposite.setLayout(new FormLayout());
+
+        createNewVersionButton = new Button(createNewVersionButtonComposite, SWT.CHECK);
+        createNewVersionButton.setText(Messages.getString("OpenExistVersionProcessPage.textContent")); //$NON-NLS-1$
         createNewVersionButton.setEnabled(!alreadyEditedByUser && !isContainedRefProject());
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        if (factory.isUserReadOnlyOnCurrentProject()) {
+            createNewVersionButton.setEnabled(false);
+        }
+        GC gc = new GC(createNewVersionButton);
+        Point labelSize = gc.stringExtent(Messages.getString("OpenExistVersionProcessPage.textContent")); //$NON-NLS-1$
+        gc.dispose();
+        FormData date = new FormData();
+        date.left = new FormAttachment(0, 0);
+        date.right = new FormAttachment(0, labelSize.x);
+        date.top = new FormAttachment(0, 0);
+        date.bottom = new FormAttachment(100, 0);
+        createNewVersionButton.setLayoutData(date);
+
+        Label redLabel = new Label(createNewVersionButtonComposite, SWT.NONE);
+        redLabel.setText(Messages.getString("OpenExistVersionProcessPage.labelContent"));
+        gc = new GC(redLabel);
+        labelSize = gc.stringExtent(Messages.getString("OpenExistVersionProcessPage.labelContent")); //$NON-NLS-1$
+        gc.dispose();
+        date = new FormData();
+        date.left = new FormAttachment(createNewVersionButton, 10, SWT.RIGHT);
+        date.right = new FormAttachment(createNewVersionButton, 10 + labelSize.x, SWT.RIGHT);
+        date.top = new FormAttachment(0, 0);
+        date.bottom = new FormAttachment(100, 0);
+        redLabel.setLayoutData(date);
+        redLabel.setForeground(redLabel.getDisplay().getSystemColor(SWT.COLOR_RED));
+        redLabel.setVisible(!createNewVersionButton.getEnabled());
 
         Composite bc = new Composite(parent, SWT.NULL);
         bc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -100,7 +137,7 @@ public class OpenAnotherVersionPage extends WizardPage {
 
         // Create Version
         Label versionLab = new Label(bc, SWT.NONE);
-		versionLab.setText(Messages.getString("OpenAnotherVersionPage.Version")); //$NON-NLS-1$
+        versionLab.setText(Messages.getString("OpenAnotherVersionPage.Version")); //$NON-NLS-1$
 
         versionModifComposite = new Composite(bc, SWT.NONE);
         versionModifComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -115,33 +152,30 @@ public class OpenAnotherVersionPage extends WizardPage {
         versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         versionMajorBtn = new Button(versionModifComposite, SWT.PUSH);
-		versionMajorBtn.setText(Messages.getString("OpenAnotherVersionPage.Major")); //$NON-NLS-1$
-		versionMajorBtn.setEnabled(!alreadyEditedByUser
-				&& !isContainedRefProject());
+        versionMajorBtn.setText(Messages.getString("OpenAnotherVersionPage.Major")); //$NON-NLS-1$
+        versionMajorBtn.setEnabled(!alreadyEditedByUser && !isContainedRefProject());
 
         versionMinorBtn = new Button(versionModifComposite, SWT.PUSH);
-		versionMinorBtn.setText(Messages.getString("OpenAnotherVersionPage.Minor")); //$NON-NLS-1$
-		versionMinorBtn.setEnabled(!alreadyEditedByUser
-				&& !isContainedRefProject());
+        versionMinorBtn.setText(Messages.getString("OpenAnotherVersionPage.Minor")); //$NON-NLS-1$
+        versionMinorBtn.setEnabled(!alreadyEditedByUser && !isContainedRefProject());
 
         versionText.setText(getProperty().getVersion());
 
         addListener();
 
-		refreshButtonState(false);
+        refreshButtonState(false);
 
         setPageComplete(false);
 
-		updatePageStatus();
+        updatePageStatus();
     }
 
+    private void refreshButtonState(boolean state) {
+        versionMajorBtn.setEnabled(state);
+        versionMinorBtn.setEnabled(state);
+    }
 
-	private void refreshButtonState(boolean state) {
-		versionMajorBtn.setEnabled(state);
-		versionMinorBtn.setEnabled(state);
-	}
-
-	private void addListener() {
+    private void addListener() {
 
         createNewVersionButton.addSelectionListener(new SelectionListener() {
 
@@ -153,7 +187,7 @@ public class OpenAnotherVersionPage extends WizardPage {
                 boolean create = createNewVersionButton.getSelection();
                 versionModifComposite.setEnabled(create);
                 versionListComposite.setEnabled(!create);
-				refreshButtonState(create);
+                refreshButtonState(create);
                 createNewVersionJob = create;
                 updatePageStatus();
             }
@@ -189,20 +223,20 @@ public class OpenAnotherVersionPage extends WizardPage {
         if (createNewVersionButton.getSelection()) {
             setPageComplete(!versionText.getText().equals(getOriginVersion()));
             if (!isPageComplete()) {
-				setErrorMessage(Messages.getString("OpenAnotherVersionPage.Error")); //$NON-NLS-1$
+                setErrorMessage(Messages.getString("OpenAnotherVersionPage.Error")); //$NON-NLS-1$
             } else {
                 setErrorMessage(null);
             }
         } else {
             setPageComplete(getSelection() != null);
-			setErrorMessage(null);
+            setErrorMessage(null);
         }
 
-		if (alreadyEditedByUser || isContainedRefProject()) {
-			setMessage(Messages.getString("OpenAnotherVersionPage.LockMessage"));
-		} else {
-			setMessage(Messages.getString("OpenAnotherVersionPage.Message"));
-		}
+        if (alreadyEditedByUser || isContainedRefProject()) {
+            setMessage(Messages.getString("OpenAnotherVersionPage.LockMessage"));
+        } else {
+            setMessage(Messages.getString("OpenAnotherVersionPage.Message"));
+        }
     }
 
     public Object getSelection() {
