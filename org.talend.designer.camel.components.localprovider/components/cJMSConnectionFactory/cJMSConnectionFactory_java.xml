@@ -228,7 +228,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-log4j12"
                     MODULE="slf4j-log4j12-1.6.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.6.1.jar"
                     REQUIRED_IF="MQ_TYPE != 'ACTIVEMQ'" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"
@@ -243,8 +243,16 @@
 					MODULE="activemq-pool-5.7.0.jar"
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.7.0.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
-			<IMPORT NAME="jms" 
+			<IMPORT NAME="camel-jms-alldep" 
 					MODULE="camel-jms-alldep-2.10.4.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jms" 
+					MODULE="jms.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jms.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jta" 
+					MODULE="jta.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jta.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="common-pool" 
 					MODULE="commons-pool-1.5.4.jar" 

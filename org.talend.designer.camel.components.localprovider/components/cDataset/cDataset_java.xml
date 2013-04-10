@@ -131,7 +131,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-log4j12"
                     MODULE="slf4j-log4j12-1.6.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.6.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="commons-logging"
                     MODULE="commons-logging-1.1.1.jar"

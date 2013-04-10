@@ -408,7 +408,7 @@
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="slf4j-log4j12"
                     MODULE="slf4j-log4j12-1.6.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.hive/lib/slf4j-log4j12-1.6.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.6.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.3.jar"
