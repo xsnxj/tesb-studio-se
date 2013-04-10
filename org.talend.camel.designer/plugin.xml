@@ -15,6 +15,7 @@
                   class="org.talend.camel.designer.model.CamelExtendRoutesNode"
                   folder="routes"
                   isResouce="true"
+                  key="Routes"
                   label="Routes"
                   products="CAMEL"
                   type="ROUTES">
@@ -23,6 +24,7 @@
                   class="org.talend.camel.designer.model.CamelExtendBeansNode"
                   folder="code/beans"
                   isResouce="true"
+                  key="Beans"
                   label="Beans"
                   parentNodeType="CODE"
                   products="CAMEL"
