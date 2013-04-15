@@ -106,10 +106,6 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
 
     @Override
     public boolean performCancel() {
-        // fix for http://jira.talendforge.org/browse/TESB-5928
-        if (!alreadyEditedByUser) {
-            restoreVersion();
-        }
         return super.performCancel();
     }
 
@@ -154,6 +150,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
 
                     public void run(final IProgressMonitor monitor) throws CoreException {
                         if (!alreadyEditedByUser) {
+                            getProperty().setVersion(mainPage.getNewVersion());
                             refreshNewJob();
                             try {
                                 ProxyRepositoryFactory.getInstance()
@@ -204,7 +201,6 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
             }
 
             // Only latest version can be editted
-            restoreVersion();
             openAnotherVersion(node, !lastVersion || !isLocked);
         }
         return true;
@@ -300,10 +296,6 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
 
     public String getOriginVersion() {
         return this.originalVersion;
-    }
-
-    private void restoreVersion() {
-        getProperty().setVersion(getOriginVersion());
     }
 
 }
