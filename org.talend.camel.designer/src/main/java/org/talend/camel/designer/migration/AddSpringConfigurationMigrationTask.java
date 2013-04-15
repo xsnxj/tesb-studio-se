@@ -54,8 +54,11 @@ public class AddSpringConfigurationMigrationTask extends
 
 	private void addDefaultSpringContentFor(CamelProcessItem item)
 			throws PersistenceException {
-		String defaultContent = CamelSpringUtil.getDefaultContent(item);
-		item.setSpringContent(defaultContent);
+		String springContent = item.getSpringContent();
+		if(springContent == null || "".equals(springContent.trim())){
+			String defaultContent = CamelSpringUtil.getDefaultContent(item);
+			item.setSpringContent(defaultContent);
+		}
 		FACTORY.save(item, true);
 	}
 }
