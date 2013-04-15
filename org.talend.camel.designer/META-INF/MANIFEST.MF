@@ -21,7 +21,8 @@ Require-Bundle: org.apache.commons.collections,
  org.talend.libraries.apache,
  org.talend.designer.camel.resource.core,
  org.talend.resources,
- org.talend.designer.publish.core
+ org.talend.designer.publish.core,
+ org.talend.libraries.dom4j-jaxen
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.talend.camel.designer.dialog,
@@ -31,4 +32,3 @@ Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.ui.wizards.actions,
  org.talend.camel.designer.util
 Bundle-Vendor: .Talend SA.
-Import-Package: org.dom4j

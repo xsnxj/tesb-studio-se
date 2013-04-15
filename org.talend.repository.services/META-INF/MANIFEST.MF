@@ -26,7 +26,8 @@ Require-Bundle: org.apache.commons.collections,
  org.eclipse.wst.wsdl.validation,
  org.talend.designer.publish.core,
  javax.wsdl;bundle-version="1.6.2",
- org.apache.commons.lang
+ org.apache.commons.lang,
+ org.talend.libraries.dom4j-jaxen
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .,
@@ -36,4 +37,3 @@ Export-Package: org.talend.repository.services.action,
  org.talend.repository.services.model.services.util,
  org.talend.repository.services.ui.action,
  org.talend.repository.services.utils
-Import-Package: org.dom4j
