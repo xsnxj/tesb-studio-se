@@ -52,6 +52,7 @@ blockquote {
 a:link.xh {
     color: #404040;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 a:hover.xh {
@@ -141,18 +142,15 @@ div#header {
 }
 
 .bottom {
-    width: 880px;
-    height: 24px;
     text-align: right;
-    margin-top: 20px;
-    margin-bottom: 5px;
+    margin: 5px 5px 5px 0px;
     color: #000000;
 }
 
 .separator {
     border-left: 2px solid #217b39;
-    padding-left: 5px;
-    margin-left: 15px;
+    padding-left: 0px;
+    margin-left: 0px;
 }
 -->
 </style></head>
@@ -168,53 +166,55 @@ div#header {
         </tr>
         <tr align="left" valign="top">
             <td>
-                <div id="div_left_part" >
+                <div id="div_left_part" style="width:260px">
                     <span class="style_1 style_2 style_3">Latest items</span>
-                    <br />
-                    <img style="padding-top:10px;margin-left:15px;" src="imgs/img_service.png" /> <span class="style_3">&nbsp;&nbsp;Services</span>
-                    <br />
-                    <!-- latest modified services -->
-                    <blockquote style="margin-left:30px;">
-                        <contentProvider id="SERVICESPORT" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp"></contentProvider>
-                    </blockquote>
-                    <img style="padding-top:15px;margin-left:15px;" src="imgs/img_route.png" /> <span class="style_3">&nbsp;&nbsp;Routes</span>
-                    <br />
-                    <!-- latest modified routes -->
-                    <blockquote style="margin-left:30px;">
-                        <contentProvider id="ROUTE" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp"></contentProvider>
-                    </blockquote>
-                </div><!--left over-->
+                    <div style="overflow:auto;height:370px;width:240px;padding:15px 0px 0px 5px">
+                        <!-- latest modified services -->
+                        <img src="imgs/img_service.png" style="vertical-align:middle" /><span class="style_3" style="padding-left:4px">Services</span>
+                        <blockquote style="margin-left:20px">
+                            <contentProvider id="SERVICESPORT" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp" />
+                        </blockquote>
+                        <!-- latest modified routes -->
+                        <img src="imgs/img_route.png" style="vertical-align:middle" /><span class="style_3" style="padding-left:4px">Routes</span>
+                        <blockquote style="margin-left:20px">
+                            <contentProvider id="ROUTE" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp" />
+                        </blockquote>
+                        <!-- latest modified jobs -->
+                        <img src="imgs/img_process.jpg" style="vertical-align:middle" /><span class="style_3" style="padding-left:4px">Jobs</span>
+                        <blockquote style="margin-left:20px">
+                            <contentProvider id="PROCESS" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp" />
+                        </blockquote>
+                    </div>
+                </div>
             </td>
             <td class="separator">
-                <div id="div_right_part">
+                <div id="div_right_part" style="width:300px">
                     <span class="style_1 style_2 style_3">Create a new</span>
-                    <br />
-                    <img style="padding-top:10px;margin-left:15px;" src="imgs/img_service.png" />
-                    <a class="xh" title="Create new ESB Service" href="http://org.eclipse.ui.intro/runAction?pluginId=org.talend.repository.services&amp;class=org.talend.repository.services.action.CreateESBAction&amp;id=org.talend.repository.services.action.CreateESBAction&amp;type=SERVICES"><span class="style_3">Service</span></a>
-                    <br />
-                    <img style="padding-top:15px;margin-left:15px;" src="imgs/img_route.png" />
-                    <a class="xh" title="Create new Route" href="http://org.eclipse.ui.intro/runAction?pluginId=org.talend.camel.designer&amp;class=org.talend.camel.designer.ui.CreateCamelProcess&amp;id=org.talend.camel.designer.ui.CreateCamelProcess&amp;type=ROUTES"><span class="style_3">Route</span></a>
-
-                    <blockquote>
+                    <blockquote style="margin-left:15px">
+                        <img style="vertical-align:middle;margin:3px" src="imgs/img_service.png" />
+                        <a class="xh" title="Create new ESB Service" href="http://org.eclipse.ui.intro/runAction?pluginId=org.talend.repository.services&amp;class=org.talend.repository.services.action.CreateESBAction&amp;id=org.talend.repository.services.action.CreateESBAction&amp;type=SERVICES"><span class="style_3">Service</span></a>
+                        <br />
+                        <img style="vertical-align:middle;margin:3px" src="imgs/img_route.png" />
+                        <a class="xh" title="Create new Route" href="http://org.eclipse.ui.intro/runAction?pluginId=org.talend.camel.designer&amp;class=org.talend.camel.designer.ui.CreateCamelProcess&amp;id=org.talend.camel.designer.ui.CreateCamelProcess&amp;type=ROUTES"><span class="style_3">Route</span></a>
+                        <br />
+                        <img style="vertical-align:middle;margin:3px" src="imgs/img_process.jpg" />
+                        <a class="xh" title="Create new Job" href="http://org.eclipse.ui.intro/runAction?pluginId=org.talend.designer.core&amp;class=org.talend.designer.core.ui.action.CreateProcess&amp;id=org.talend.designer.core.actions.createprocess&amp;type=PROCESS"><span class="style_3">Job</span></a>
                     </blockquote>
-
-                    <contentProvider id="DOCUMENTATIONTITLE" class="org.talend.rcp.intro.contentProvider.WelcomePageDynamicContentProvider" pluginId="org.talend.rcp"></contentProvider> <contentProvider id="GETTINGSTARTEDTITLE" class="org.talend.rcp.intro.contentProvider.WelcomePageDynamicContentProvider" pluginId="org.talend.rcp"></contentProvider>
-               <p align="center"><a href="http://org.eclipse.ui.intro/close"><img src="imgs/startNow.jpg" width="120px" height="25px" /></a></p> 
-              </div>
+                    <contentProvider id="DOCUMENTATIONTITLE" class="org.talend.rcp.intro.contentProvider.WelcomePageDynamicContentProvider" pluginId="org.talend.rcp" />
+                    <contentProvider id="GETTINGSTARTEDTITLE" class="org.talend.rcp.intro.contentProvider.WelcomePageDynamicContentProvider" pluginId="org.talend.rcp" />
+                    <p align="center"><a href="http://org.eclipse.ui.intro/close"><img src="imgs/startNow.jpg" width="120px" height="25px" /></a></p>
+                </div>
             </td>
-            <contentProvider id="CUSTOMER_PAGE" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp">
-                    </contentProvider>
-
-
+            <contentProvider id="CUSTOMER_PAGE" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp" />
         </tr>
-        <tr  align="left" valign="top">
+        <tr align="left" valign="top">
             <td colspan="3">
-                <div class="bottom"><contentProvider id="ALWAYS_WELCOME" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp"></contentProvider></div>
+                <div class="bottom"><contentProvider id="ALWAYS_WELCOME" class="org.talend.rcp.intro.contentProvider.DynamicContentProvider" pluginId="org.talend.rcp" />&nbsp;</div>
             </td>
         </tr>
-        <tr><td colspan="5" valign="top"><img src="imgs/bottom.png" width="880px"/></td></tr>
+        <tr><td colspan="3" valign="top"><img src="imgs/bottom.png" width="880px"/></td></tr>
     </table>
-    
+
 </div><!--page over-->
 
 </body>
