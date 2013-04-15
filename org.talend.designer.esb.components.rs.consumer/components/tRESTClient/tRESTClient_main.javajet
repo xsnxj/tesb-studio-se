@@ -61,8 +61,11 @@ if (contentType == null) {
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
 boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
 
+boolean dropJsonRoot = false;
+if (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType)) {
 	String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__");
-	boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
+	dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
+}
 %>
 
 try {
