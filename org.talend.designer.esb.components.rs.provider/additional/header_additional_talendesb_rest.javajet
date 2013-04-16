@@ -911,6 +911,44 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				endpointUrl = defaultEndpointUrl + endpointUrl;
 			}
 
+			//test for busy
+			java.net.URI endpointURI = java.net.URI.create(endpointUrl);
+			String host = endpointURI.getHost();
+			try {
+				if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
+					int port = endpointURI.getPort();
+					java.net.ServerSocket ss = null;
+					try {
+						ss = new java.net.ServerSocket(port);
+					} catch (IOException e) {
+						// rethrow exception
+						throw new IllegalArgumentException(
+								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
+					} finally {
+						if (ss != null) {
+							try {
+								ss.close();
+							} catch (IOException e) {
+								// ignore
+							}
+						}
+					}
+					try {
+						// ok, let's doublecheck for silent listeners
+						java.net.Socket cs = new java.net.Socket(host, port);
+						// if succeed - somebody silently listening, fail!
+						cs.close();
+						// rethrow exception
+						throw new IllegalArgumentException(
+								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
+					} catch (IOException e) {
+						//ok, nobody listens, proceed
+					}
+				}
+			} catch (java.net.UnknownHostException e) {
+				// ignore
+			}
+
 			RestServiceProviderImpl4TalendJob provider = new RestServiceProviderImpl4TalendJob(job);
 
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =
