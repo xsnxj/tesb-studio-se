@@ -661,7 +661,10 @@ if (null != conns && !conns.isEmpty()) {
 				JavaTypesManager.LONG,
 				JavaTypesManager.FLOAT,
 				JavaTypesManager.DOUBLE,
-				JavaTypesManager.BIGDECIMAL
+				JavaTypesManager.BIGDECIMAL,
+				
+				//date
+				JavaTypesManager.DATE
 			));
 
 		Map<String, Parameter> parameters = new HashMap<String, Parameter>();
