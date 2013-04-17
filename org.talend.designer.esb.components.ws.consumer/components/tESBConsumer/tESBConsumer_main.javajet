@@ -158,9 +158,9 @@ if (inputConn != null) {
                 <% } %>
                 <% if (useSAM) { %>
                     // if (null == eventFeature) {
-                    org.springframework.context.support.ClassPathXmlApplicationContext context =
+                    org.springframework.context.support.ClassPathXmlApplicationContext classpathXmlApplicationContext =
                             new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
-                    org.talend.esb.sam.agent.feature.EventFeature featureSAM_<%=cid%> = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+                    org.talend.esb.sam.agent.feature.EventFeature featureSAM_<%=cid%> = classpathXmlApplicationContext.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
                     // }
                     if (null != customProps_<%=cid%> && !customProps_<%=cid%>.isEmpty()) {
                         org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
