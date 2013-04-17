@@ -120,9 +120,9 @@ public class ServiceMetadataDialog extends Dialog {
 							&& (securitySAML /* || securityBasic */));
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
-					slCheck.setEnabled(!useServiceRegistry);
-					customPropertiesTable.setEditable(useSL
-							&& !useServiceRegistry);
+//					slCheck.setEnabled(!useServiceRegistry);
+//					customPropertiesTable.setEditable(useSL
+//							&& !useServiceRegistry);
 				}
 			});
 		}
@@ -140,16 +140,16 @@ public class ServiceMetadataDialog extends Dialog {
 
         slCheck.setText("Use Service Locator");
         slCheck.setSelection(useSL);
-        slCheck.setEnabled(!useServiceRegistry);        
+//        slCheck.setEnabled(!useServiceRegistry);        
         slCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 useSL = slCheck.getSelection();
-                customPropertiesTable.setEditable(useSL && !useServiceRegistry);
+                customPropertiesTable.setEditable(useSL /*&& !useServiceRegistry*/);
             }
         });
 
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
-        customPropertiesTable.setEditable(useSL && !useServiceRegistry);
+        customPropertiesTable.setEditable(useSL /*&& !useServiceRegistry*/);
 
         securityGroup.setText("ESB Service Security");
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
