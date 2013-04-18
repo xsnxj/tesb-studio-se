@@ -69,7 +69,22 @@ public class Messages extends NLS {
 	public static String ServiceExportWizard_destinationExistMessage;
 	
 	public static String ServiceExportWizard_destinationExistTitle;
+	
+	public static String WSDLFileIsReadOnly_Title;
+	
+	public static String WSDLFileIsReadOnly_Message;
 
+	public static String ServiceMetadataDialog_authorizationBtnText;
+	public static String ServiceMetadataDialog_dialogReadonlyTitle;
+	public static String ServiceMetadataDialog_dialogTitle;
+	public static String ServiceMetadataDialog_samlBtnText;
+	public static String ServiceMetadataDialog_samSlGroupTitle;
+	public static String ServiceMetadataDialog_securityGroupTitle;
+	public static String ServiceMetadataDialog_usernamePsBtnText;
+	public static String ServiceMetadataDialog_useSAMBtnText;
+	public static String ServiceMetadataDialog_useSLBtnTExt;
+	public static String ServiceMetadataDialog_useSRBtnText;
+	
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

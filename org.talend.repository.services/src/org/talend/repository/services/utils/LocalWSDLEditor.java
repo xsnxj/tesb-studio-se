@@ -18,6 +18,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -27,10 +28,12 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.AssignJobAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -47,11 +50,25 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+    	if(!isEditableCurrently()){
+    		return;
+    	}
         super.doSave(monitor);
         save();
     }
+    
+    private boolean isEditableCurrently(){
+    	if (!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
+    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
+            return false;
+        }
+    	return true;
+    }
 
     private void save() {
+    	if(!isEditableCurrently()){
+    		return;
+    	}
         if (serviceItem != null) {
             try {
                 saveModel();
@@ -251,6 +268,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     public void setReadOnly(boolean isReadOnly) {
         if (isReadOnly) {
+        	setPartName(getPartName()+" (ReadOnly)");
             ActionRegistry actionRegistry = getActionRegistry();
 
             IAction ASDAddMessageAction = actionRegistry.getAction("ASDAddMessageAction");

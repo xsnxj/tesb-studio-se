@@ -19,11 +19,13 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
+import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -70,6 +72,17 @@ public class PublishMetadataAction extends AContextualAction {
                 && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
             serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
             shell = viewer.getTree().getShell();
+            
+            try {
+            	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+    			factory.updateLockStatus();
+    			if(!factory.isEditableAndLockIfPossible(node.getObject())){
+    				setEnabled(false);
+    				return;
+    			}
+    		} catch (PersistenceException e) {
+    			e.printStackTrace();
+    		}
             setEnabled(true);
         }
     }

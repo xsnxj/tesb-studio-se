@@ -32,6 +32,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
@@ -102,7 +103,12 @@ public class AssignJobAction extends AbstractCreateAction {
         }
         this.setText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
-        setEnabled(true);
+        
+        if(!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(node.getObject())){
+			setEnabled(false);
+		}else{
+			setEnabled(true);
+		}
     }
 
     /*

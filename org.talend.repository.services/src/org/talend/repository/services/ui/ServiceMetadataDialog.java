@@ -21,19 +21,21 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.Messages;
 
 public class ServiceMetadataDialog extends Dialog {
 
-    public static final String SECURITY_BASIC = "Security.Basic";
-    public static final String SECURITY_SAML = "Security.SAML";
-    public static final String AUTHORIZATION = "Authorization";    
-    public static final String USE_SERVICE_REGISTRY = "UseServiceRegisrty";    
-    public static final String USE_SAM = "UseSAM";
-    public static final String USE_SL = "UseSL";
-    public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_";
+    public static final String SECURITY_BASIC = "Security.Basic"; //$NON-NLS-1$
+    public static final String SECURITY_SAML = "Security.SAML"; //$NON-NLS-1$
+    public static final String AUTHORIZATION = "Authorization";     //$NON-NLS-1$
+    public static final String USE_SERVICE_REGISTRY = "UseServiceRegisrty";     //$NON-NLS-1$
+    public static final String USE_SAM = "UseSAM"; //$NON-NLS-1$
+    public static final String USE_SL = "UseSL"; //$NON-NLS-1$
+    public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_"; //$NON-NLS-1$
 
     private final ServiceItem serviceItem;
     private final ServiceConnection serviceConnection;
@@ -106,7 +108,7 @@ public class ServiceMetadataDialog extends Dialog {
         }
         
 		if (isStudioEEVersion()) {
-			useSRCheck.setText("Use Service Registry");
+			useSRCheck.setText(Messages.ServiceMetadataDialog_useSRBtnText);
 			useSRCheck.setSelection(useServiceRegistry);
 			if (!isStudioEEVersion()) {
 				useSRCheck.setSelection(false);
@@ -126,11 +128,11 @@ public class ServiceMetadataDialog extends Dialog {
 				}
 			});
 		}
-        samSlGroup.setText("ESB Service Features");
+        samSlGroup.setText(Messages.ServiceMetadataDialog_samSlGroupTitle);
         samSlGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         samSlGroup.setLayout(new GridLayout());
 
-        samCheck.setText("Use Service Activity Monitor");
+        samCheck.setText(Messages.ServiceMetadataDialog_useSAMBtnText);
         samCheck.setSelection(useSAM);
         samCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -138,7 +140,7 @@ public class ServiceMetadataDialog extends Dialog {
             }
         });
 
-        slCheck.setText("Use Service Locator");
+        slCheck.setText(Messages.ServiceMetadataDialog_useSLBtnTExt);
         slCheck.setSelection(useSL);
 //        slCheck.setEnabled(!useServiceRegistry);        
         slCheck.addSelectionListener(new SelectionAdapter() {
@@ -151,11 +153,11 @@ public class ServiceMetadataDialog extends Dialog {
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
         customPropertiesTable.setEditable(useSL /*&& !useServiceRegistry*/);
 
-        securityGroup.setText("ESB Service Security");
+        securityGroup.setText(Messages.ServiceMetadataDialog_securityGroupTitle);
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         securityGroup.setLayout(new GridLayout());
      
-        basicCheck.setText("Username / Password");
+        basicCheck.setText(Messages.ServiceMetadataDialog_usernamePsBtnText);
         basicCheck.setSelection(securityBasic);
     	basicCheck.setEnabled(!useServiceRegistry);        
         basicCheck.addSelectionListener(new SelectionAdapter() {
@@ -166,7 +168,7 @@ public class ServiceMetadataDialog extends Dialog {
         });
 
 
-        samlCheck.setText("SAML Token");
+        samlCheck.setText(Messages.ServiceMetadataDialog_samlBtnText);
         samlCheck.setSelection(securitySAML);
     	samlCheck.setEnabled(!useServiceRegistry);        
         samlCheck.addSelectionListener(new SelectionAdapter() {
@@ -179,7 +181,7 @@ public class ServiceMetadataDialog extends Dialog {
         });
         
 		if (isStudioEEVersion()) {
-			authorizationCheck.setText("Authorization");
+			authorizationCheck.setText(Messages.ServiceMetadataDialog_authorizationBtnText);
 			authorizationCheck.setSelection(authorization);
 			if (!isStudioEEVersion()) {
 				authorizationCheck.setSelection(false);
@@ -195,6 +197,13 @@ public class ServiceMetadataDialog extends Dialog {
 			});
 		}
         
+		if(!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)){
+			parent.setEnabled(false);
+			getShell().setText(Messages.ServiceMetadataDialog_dialogReadonlyTitle);
+		}else{
+			parent.setEnabled(true);
+			getShell().setText(Messages.ServiceMetadataDialog_dialogTitle);
+		}
         return super.createDialogArea(parent);
     }
 
@@ -223,7 +232,7 @@ public class ServiceMetadataDialog extends Dialog {
     }
 
     private boolean isStudioEEVersion() {
-    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline");
+    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
