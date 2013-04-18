@@ -1138,7 +1138,7 @@
          id="org.apache.ant"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.7.1.v20100518-1145"/>
 
    <plugin
          id="org.eclipse.jem.util"
@@ -1272,27 +1272,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <!--plugin
-         id="org.talend.designer.camel.spring.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.talend.designer.camel.spring.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.talend.designer.camel.spring.ui.nl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/-->
 
    <plugin
          id="org.talend.camel.designer.nl"
