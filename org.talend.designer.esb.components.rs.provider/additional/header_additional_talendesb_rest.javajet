@@ -495,7 +495,7 @@ public static class RestServiceProviderImpl4TalendJob {
 			}
 
 			// pass JMS connections
-			globalMap.putAll(job.getJmsConnections());
+			globalMap.putAll(job.getSharedConnections4REST());
 
 			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
 
