@@ -26,10 +26,15 @@ public class Function {
 
     private String communicationStyle;
 
-    public Function(String name, String portName, QName serviceName) {
+    public Function(String name, String portName, QName serviceName,
+			String address, String soapAction, String nameSpaceURI, String commStyle) {
         this.name = name;
         this.portName = portName;
         this.serviceName = serviceName;
+        this.addressLocation = address;
+        this.soapAction = soapAction;
+        this.nameSpaceURI = nameSpaceURI;
+        this.communicationStyle = commStyle;
     }
 
     public Function(ServiceInfo serviceInfo, OperationInfo oper) {

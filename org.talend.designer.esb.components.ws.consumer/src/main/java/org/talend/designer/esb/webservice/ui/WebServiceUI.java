@@ -150,7 +150,14 @@ public class WebServiceUI extends WizardPage {
                 String targetNamespace = getElementParameterStringValue(webServiceComponent, "SERVICE_NS");
                 if (null != serviceName && null != targetNamespace) {
                     allPortNames.add(portName);
-                    currentFunction = new Function(operationName, portName, new QName(targetNamespace, serviceName));
+                    
+                    String address = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "ESB_ENDPOINT"));
+                    String soapAction = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "SOAP_ACTION"));
+                    String namespaceURI = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "METHOD_NS"));
+                    String commStyle = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "COMMUNICATION_STYLE"));
+                    
+                    currentFunction = new Function(operationName, portName, new QName(targetNamespace, serviceName),
+                    			address, soapAction, namespaceURI, commStyle);
                     allFunctions.add(currentFunction);
                 }
             }
@@ -674,8 +681,10 @@ public class WebServiceUI extends WizardPage {
                 Port_NS.setValue(currentFunction.getServiceNameSpace());
             }
 
-            IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
-            Soap_Action.setValue(currentFunction.getSoapAction());
+            if(currentFunction.getSoapAction() != null){
+	            IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
+	            Soap_Action.setValue(currentFunction.getSoapAction());
+            }
 
             IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
             if (esbEndpoint != null) {
