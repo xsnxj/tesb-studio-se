@@ -312,7 +312,7 @@ if (inputConn != null) {
                 <%=connFaultName%>.faultDetail = new Document();
                 <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e_<%=cid%>.getFaultInfo());
             <% } else { %>
-                System.err.println(e.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
+                System.err.println(e_<%=cid%>.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
             <% } %>
         } catch (javax.xml.ws.soap.SOAPFaultException e_<%=cid%>) {
             <% if (null != connFault) {
