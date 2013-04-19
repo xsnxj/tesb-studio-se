@@ -268,7 +268,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     public void setReadOnly(boolean isReadOnly) {
         if (isReadOnly) {
-        	setPartName(getPartName()+" (ReadOnly)");
+        	setPartName(getEditorInput().getName()+" (ReadOnly)");
             ActionRegistry actionRegistry = getActionRegistry();
 
             IAction ASDAddMessageAction = actionRegistry.getAction("ASDAddMessageAction");

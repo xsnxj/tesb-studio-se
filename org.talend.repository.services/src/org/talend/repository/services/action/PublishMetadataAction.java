@@ -76,7 +76,8 @@ public class PublishMetadataAction extends AContextualAction {
             try {
             	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
     			factory.updateLockStatus();
-    			if(!factory.isEditableAndLockIfPossible(node.getObject())){
+    			ERepositoryStatus status = factory.getStatus(node.getObject());
+    			if(!status.isEditable() && !status.isPotentiallyEditable()){
     				setEnabled(false);
     				return;
     			}

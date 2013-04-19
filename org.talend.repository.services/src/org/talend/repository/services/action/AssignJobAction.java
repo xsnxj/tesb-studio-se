@@ -41,6 +41,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.repository.RepositoryPlugin;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -104,7 +105,14 @@ public class AssignJobAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         
-        if(!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(node.getObject())){
+        IProxyRepositoryFactory proxyFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
+        try {
+			proxyFactory.updateLockStatus();
+		} catch (PersistenceException e) {
+			e.printStackTrace();
+		}
+        ERepositoryStatus status = proxyFactory.getStatus(node.getObject());
+        if(!status.isEditable() && !status.isPotentiallyEditable()){
 			setEnabled(false);
 		}else{
 			setEnabled(true);
