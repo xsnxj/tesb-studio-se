@@ -445,9 +445,6 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode node = httpRequestComponentsList.get(0);
 	String cid = node.getUniqueName();
-
-	String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__");
-	boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
 %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
@@ -457,6 +454,35 @@ public void setRunInTalendEsbRuntimeContainer(boolean flag) {
 }
 
 private boolean restTalendJobAlreadyStarted = false;
+
+public static class CustomJSONProvider extends org.apache.cxf.jaxrs.provider.json.JSONProvider {
+    @Override
+    protected javax.xml.stream.XMLStreamWriter createWriter(
+            Object actualObject, Class actualClass,
+            java.lang.reflect.Type genericType, String enc,
+            java.io.OutputStream os, boolean isCollection)
+            throws Exception {
+        // is drop root required
+        boolean dropRoot = org.apache.cxf.message.MessageUtils
+                .isTrue(getContext().get(
+                        "drop.json.root.element"));
+
+        // JSON configuration
+        org.codehaus.jettison.mapped.Configuration config = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+                .createConfiguration(
+                        new java.util.concurrent.ConcurrentHashMap<String, String>(),
+                        false, true, null);
+        // JSON writer
+        javax.xml.stream.XMLStreamWriter writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+                .createStreamWriter(os, new javax.xml.namespace.QName("Document"), false, config,
+                        false,
+                        new java.util.ArrayList<String>(),
+                        dropRoot);
+        writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+                .createIgnoreNsWriterIfNeeded(writer, true);
+        return writer;
+    }
+};
 
 /**
  * REST provider implementation
@@ -471,6 +497,9 @@ public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context
 	private javax.ws.rs.core.HttpHeaders httpHeaders;
+
+    @javax.ws.rs.core.Context
+    private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
 	private final <%=process.getName()%> job;
 
@@ -502,20 +531,22 @@ public static class RestServiceProviderImpl4TalendJob {
 			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
+			Boolean dropJsonRoot = (Boolean) response.get("drop.json.root.element");
+			messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
 			Object responseBody = null;
 			Integer status = null;
 			java.util.Map<String, String> headers = null;
 			if (null != response) {
 				responseBody = response.get("BODY");
-				<% if (dropJsonRoot) { %>
+				if (dropJsonRoot) {
 					// !!! temporary fix - after upgrade to CXF 2.7.4 should be removed !!!
 					if (null != responseBody && responseBody instanceof org.dom4j.Document) {
 						if (null != ((org.dom4j.Document) responseBody).getRootElement()) {
 							((org.dom4j.Document) responseBody).getRootElement().setName("Document");
 						}
 					}
-				<% } %>
+				}
 				status = (Integer) response.get("STATUS");
 				headers = (java.util.Map<String, String>) response.get("HEADERS");
 			}
@@ -956,15 +987,13 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			java.util.List<Object> providers = new java.util.ArrayList<Object>();
 			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider());
-			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider =
-					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider = new CustomJSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);
 			jsonProvider.setAttributesToElements(true);
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__WRAP_JSON_REQUEST__"))) { %>
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
-			jsonProvider.setDropRootElement(<%=dropJsonRoot%>);
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
