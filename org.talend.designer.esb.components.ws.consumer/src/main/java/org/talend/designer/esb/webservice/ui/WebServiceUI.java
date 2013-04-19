@@ -150,14 +150,7 @@ public class WebServiceUI extends WizardPage {
                 String targetNamespace = getElementParameterStringValue(webServiceComponent, "SERVICE_NS");
                 if (null != serviceName && null != targetNamespace) {
                     allPortNames.add(portName);
-                    
-                    String address = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "ESB_ENDPOINT"));
-                    String soapAction = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "SOAP_ACTION"));
-                    String namespaceURI = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "METHOD_NS"));
-                    String commStyle = TalendTextUtils.removeQuotes(getElementParameterStringValue(webServiceComponent, "COMMUNICATION_STYLE"));
-                    
-                    currentFunction = new Function(operationName, portName, new QName(targetNamespace, serviceName),
-                    			address, soapAction, namespaceURI, commStyle);
+                    currentFunction = new Function(operationName, portName, new QName(targetNamespace, serviceName));
                     allFunctions.add(currentFunction);
                 }
             }
@@ -686,12 +679,15 @@ public class WebServiceUI extends WizardPage {
 	            Soap_Action.setValue(currentFunction.getSoapAction());
             }
 
-            IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
-            if (esbEndpoint != null) {
-                esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
+            String addressLocation = currentFunction.getAddressLocation();
+            if(addressLocation != null){
+            	IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
+            	esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
             }
-            IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
-            if (commStyle != null) {
+            
+            String communicationStyle = currentFunction.getCommunicationStyle();
+            if(communicationStyle != null){
+            	IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
                 commStyle.setValue(currentFunction.getCommunicationStyle());
             }
 
