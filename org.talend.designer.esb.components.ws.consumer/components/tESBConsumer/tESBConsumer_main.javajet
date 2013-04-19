@@ -40,7 +40,7 @@ boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 if(!isStudioEEVersion){
 	useSR = false;
 }
-Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) || useSR;
+Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) && !useSR;
 Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
