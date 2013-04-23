@@ -12,16 +12,19 @@
 // ============================================================================
 package org.talend.repository.services.action;
 
-import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.LoginException;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
+import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -32,16 +35,13 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
 
 /**
- * Action used to export job scripts. <br/>
+ * Action used to set service metadata. <br/>
  * 
- * $Id: ExportJobScriptAction.java 1 2006-12-13 下午03:12:05 bqian
  * 
  */
 public class ServiceMetadataAction extends AContextualAction {
 
     protected static final String ACTION_LABEL = "ESB Runtime Options";
-
-    private IStructuredSelection selection;
 
     /*
      * (non-Javadoc)
@@ -50,32 +50,24 @@ public class ServiceMetadataAction extends AContextualAction {
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
     public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = true;
-        if (selection.isEmpty() || (selection.size() > 1)) {
+        if (selection.size() != 1) {
             setEnabled(false);
             return;
         }
-
-        @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-        for (RepositoryNode node : nodes) {
-            if ((node.getType() != ENodeType.REPOSITORY_ELEMENT)
-                    || (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES)
-                    || (node.getObject() == null)
-                    || (ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)) {
-                canWork = false;
-                break;
-            } else {
-                this.selection = selection;
-            }
-            if (canWork) {
-                canWork = isLastVersion(node);
-            }
-        }
-        setEnabled(canWork);
+        RepositoryNode node = (RepositoryNode) selection.getFirstElement();
+        if ((node.getType() != ENodeType.REPOSITORY_ELEMENT)
+                || (node.getProperties(EProperties.CONTENT_TYPE) != ESBRepositoryNodeType.SERVICES)
+                || (node.getObject() == null)
+                || (ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED)) {
+            setEnabled(false);
+            return;
+        } 
+    	setNode(node);
+    	setEnabled(true);
     }
 
-    public boolean isVisible() {
+    @Override
+	public boolean isVisible() {
         return isEnabled();
     }
 
@@ -86,15 +78,28 @@ public class ServiceMetadataAction extends AContextualAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
     }
 
-    protected void doRun() {
+    @Override
+	protected void doRun() {
         IWorkbenchWindow window = getWorkbenchWindow();
         ServiceItem serviceItem = null;
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-        for (RepositoryNode node : nodes) {
-            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-            Dialog dialog = new ServiceMetadataDialog(window, serviceItem, serviceConnection);
-            dialog.open();
+        
+    	IRepositoryNode node = getNode();
+        serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
+        ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+        boolean isLocked=serviceItem.getState().isLocked();
+        Dialog dialog = new ServiceMetadataDialog(window, serviceItem, serviceConnection);
+        dialog.open();
+        if(!isLocked) {
+        //restore lock state.
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance(); 
+        try {
+				factory.unlock(node.getObject());
+			} catch (PersistenceException e) {
+				ExceptionHandler.process(e);
+			} catch (LoginException e) {
+				ExceptionHandler.process(e);
+			} 
         }
+        
     }
 }
