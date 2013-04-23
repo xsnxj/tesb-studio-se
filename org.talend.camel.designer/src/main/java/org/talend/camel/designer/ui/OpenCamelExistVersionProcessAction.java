@@ -75,6 +75,7 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
         repositoryObj.setRepositoryNode(node.getObject().getRepositoryNode());
         OpenCamelExistVersionProcessWizard wizard = new OpenCamelExistVersionProcessWizard(repositoryObj);
         PropertyManagerWizardDialog dialog = new PropertyManagerWizardDialog(Display.getCurrent().getActiveShell(), wizard);
+        dialog.setHelpAvailable(false);
         dialog.setPageSize(300, 250);
         dialog.setTitle(Messages.getString("OpenExistVersionProcess.open.dialog")); //$NON-NLS-1$
         if (dialog.open() == Dialog.OK) {
