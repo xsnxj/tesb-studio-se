@@ -21,6 +21,9 @@ import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.ICoreService;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -86,7 +89,7 @@ public class ServiceMetadataAction extends AContextualAction {
     	IRepositoryNode node = getNode();
         serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
         ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-        boolean isLocked=serviceItem.getState().isLocked();
+        boolean isLocked=isLocked(node.getObject());
         Dialog dialog = new ServiceMetadataDialog(window, serviceItem, serviceConnection);
         dialog.open();
         if(!isLocked) {
@@ -101,5 +104,17 @@ public class ServiceMetadataAction extends AContextualAction {
 			} 
         }
         
+    }
+    
+    private static boolean isLocked(IRepositoryViewObject object) {
+         if (GlobalServiceRegister.getDefault().isServiceRegistered(ICoreService.class)) {
+             ICoreService coreService = (ICoreService) GlobalServiceRegister.getDefault().getService(ICoreService.class);
+             boolean isOpened = coreService.isOpenedItemInEditor(object);
+             if(isOpened) {
+            	 return true;
+             }
+         }
+         ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
+         return serviceItem.getState().isLocked();
     }
 }
