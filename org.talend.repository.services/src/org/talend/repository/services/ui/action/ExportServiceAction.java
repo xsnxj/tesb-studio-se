@@ -104,6 +104,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
                     if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
                         String operationName = operation.getName();
                         RepositoryNode jobNode = getJobRepositoryNode(operation.getReferenceJobId());
+                        if(jobNode==null) {
+                        	continue;
+                        }
                         String jobName = jobNode.getObject().getLabel();
                         operations.put(operationName, jobName);
                         nodes.add(jobNode);
