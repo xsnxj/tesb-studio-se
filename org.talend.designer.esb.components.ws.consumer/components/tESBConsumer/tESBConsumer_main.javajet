@@ -232,6 +232,7 @@ if (inputConn != null) {
                                 put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
+                                put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
                             <% } else if (useAuth) { %>
                             <% if (authType.equals("SAML") && isStudioEEVersion) { %>
                                 put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
