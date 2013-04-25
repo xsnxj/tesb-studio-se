@@ -27,7 +27,12 @@ public class ServiceEditorInput extends RepositoryEditorInput {
     public ServiceEditorInput(IFile file, Item item) {
         super(file, item);
     }
-
+    
+    @Override
+    public String getName() {
+    	return getFile().getName();
+    }
+    
     @Override
 	public boolean equals(final Object obj) {
 
@@ -45,5 +50,6 @@ public class ServiceEditorInput extends RepositoryEditorInput {
 
         return super.equals(obj);
     }
+    
 
 }

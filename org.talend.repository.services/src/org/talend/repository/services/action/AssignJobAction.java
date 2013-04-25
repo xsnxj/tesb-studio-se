@@ -13,8 +13,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
@@ -215,7 +215,7 @@ public class AssignJobAction extends AbstractCreateAction {
         }
     }
 
-    public boolean  assign(RepositoryNode jobNode) {
+    public boolean  assign(IRepositoryNode jobNode) {
         if (jobNode == null) {
             return false;
         }
