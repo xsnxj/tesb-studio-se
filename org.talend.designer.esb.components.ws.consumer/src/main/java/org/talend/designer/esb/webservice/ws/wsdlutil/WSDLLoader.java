@@ -282,12 +282,12 @@ public class WSDLLoader {
 		for(int i = 0; i < nnm.getLength(); ++i) {
 			Node attr = nnm.item(i);
 			String attrNameSchema = attr.getNodeName();
-			if(attrNameSchema.startsWith("xmlns") && namespace.equals(attr.getNodeValue())) {
+			if(attrNameSchema.startsWith("xmlns") && namespace.equals(attr.getNodeValue())) { //$NON-NLS-1$
 				int index = attrNameSchema.indexOf(':');
 				if (-1 != index) {
 					return attrNameSchema.substring(attrNameSchema.indexOf(':') + 1);
 				} else {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 			}
 		}
@@ -311,16 +311,23 @@ public class WSDLLoader {
 			Node attr = nnm.item(i);
 			String value = attr.getNodeValue(); 
 			if(value != null) {
-				// TODO: support for default namespace?
 				int index = value.indexOf(':');
 				if(index != -1) {
 					String prefixOld = value.substring(0, index);
 					/*String*/ prefixNew = prefixMapping.get(prefixOld);
 					if(prefixNew != null) {
-						if ("".equals(prefixNew)) {
+						if (0 == prefixNew.length()) {
 							attr.setNodeValue(value.substring(index + 1));
 						} else {
 							attr.setNodeValue(prefixNew + ':' + value.substring(index + 1));
+						}
+					}
+				} else { // check for default namespace changes
+					prefixNew = prefixMapping.get("xmlns"); //$NON-NLS-1$
+					if (null != prefixNew) {
+						String name = attr.getLocalName();
+						if ("type".equals(name) || "base".equals(name) || "ref".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							attr.setNodeValue(prefixNew + ':' + value);
 						}
 					}
 				}
