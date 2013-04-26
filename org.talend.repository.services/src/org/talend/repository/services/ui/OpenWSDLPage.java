@@ -228,7 +228,7 @@ public class OpenWSDLPage extends WizardPage {
                                 new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SERVICE_WSDL)));
                         is = new ByteArrayInputStream(baos.toByteArray());
                     } else {
-                        String filenameTemplate = item.getProperty().getLabel() + "_%d_" + item.getProperty().getVersion() + ".wsdl"; //$NON-NLS-1$ //$NON-NLS-2$
+                        String filenameTemplate = item.getProperty().getLabel() + '_' + item.getProperty().getVersion() + "_%d.wsdl"; //$NON-NLS-1$
                         Map<String, InputStream> wsdls = new WSDLLoader().load(path, filenameTemplate);
                         is = wsdls.remove(WSDLLoader.DEFAULT_FILENAME);
                         for (Map.Entry<String, InputStream> wsdl : wsdls.entrySet()) {

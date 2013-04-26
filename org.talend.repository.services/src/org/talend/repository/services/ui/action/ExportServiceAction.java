@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -188,7 +189,15 @@ public class ExportServiceAction implements IRunnableWithProgress {
         out.close();
         // wsdl
         File wsdl = new File(temp, serviceWsdl.getName());
-        FilesUtils.copyFile(serviceWsdl.getLocation().toFile(), wsdl);
+        FilesUtils.copyFile(serviceWsdl.getContents(), wsdl);
+        // wsdl:import
+        String serviceWsdlPrefix = serviceName + '_' + serviceVersion + '_';
+        for (IResource resource : serviceWsdl.getParent().members()) {
+            if (IResource.FILE == resource.getType()
+                && resource.getName().startsWith(serviceWsdlPrefix)) {
+                FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
+            }
+        }
         // spring
         File spring = new File(metaInf, "spring");
         spring.mkdirs();
