@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.talend.repository.services.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -43,16 +44,26 @@ import org.xml.sax.SAXException;
  */
 public class WSDLLoader {
 
+	public static final String DEFAULT_FILENAME = "";
+
 	private static final String XSD_NS = "http://www.w3.org/2001/XMLSchema";
+	private static final String WSDL_NS = "http://schemas.xmlsoap.org/wsdl/";
 
 	private static DocumentBuilder documentBuilder = null;
+	private static int filenameIndex;
 
 	private final Map<String, Collection<URL>> importedSchemas = new HashMap<String, Collection<URL>>();
 
-	public ByteArrayOutputStream load(String wsdlLocation) throws InvocationTargetException {
+	public Map<String, InputStream> load(String wsdlLocation, String filenameTemplate) throws InvocationTargetException {
+		filenameIndex = 0;
+		return load(null, wsdlLocation, filenameTemplate);
+	}
+
+	private Map<String, InputStream> load(URL baseURL, String wsdlLocation, String filenameTemplate) throws InvocationTargetException {
+		Map<String, InputStream> wsdls = new HashMap<String, InputStream>();
 		try {
-			final URL wsdlURL = getURL(null, wsdlLocation);
-			final Document wsdlDocument = getDocumentBuilder().parse(wsdlLocation);
+			final URL wsdlURL = getURL(baseURL, wsdlLocation);
+			final Document wsdlDocument = getDocumentBuilder().parse(wsdlURL.toExternalForm());
 
 			final NodeList schemas = wsdlDocument.getElementsByTagNameNS(
 					XSD_NS, "schema");
@@ -66,12 +77,25 @@ public class WSDLLoader {
 				loadSchemas (schema, schema, wsdlURL);
 			}
 
+			// wsdl:import
+			final NodeList imports = wsdlDocument.getElementsByTagNameNS(
+					WSDL_NS, "import");
+			for(int index = 0; index < imports.getLength(); ++index) {
+				Element wsdlImport = (Element)imports.item(index);
+				String filename = String.format(filenameTemplate, filenameIndex++);
+				Map<String, InputStream> importedWsdls = new WSDLLoader().load(wsdlURL, wsdlImport.getAttribute("location"), filenameTemplate);
+				wsdlImport.setAttribute("location", filename);
+				wsdls.put(filename, importedWsdls.remove(DEFAULT_FILENAME));
+				wsdls.putAll(importedWsdls);
+			}
+
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			Source xmlSource = new DOMSource(wsdlDocument);
 			Result outputTarget = new StreamResult(outputStream);
 			TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
-			//return new ByteArrayInputStream(outputStream.toByteArray());
-			return outputStream;
+			wsdls.put(DEFAULT_FILENAME, new ByteArrayInputStream(outputStream.toByteArray()));
+
+			return wsdls;
 		} catch (InvocationTargetException e) {
 			throw e;
 		} catch (Exception e) {
