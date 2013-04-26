@@ -255,8 +255,8 @@
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jta.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="common-pool" 
-					MODULE="commons-pool-1.5.4.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.5.4.jar"
+					MODULE="commons-pool-1.6.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="jndi" 
 					MODULE="jndi.jar"
