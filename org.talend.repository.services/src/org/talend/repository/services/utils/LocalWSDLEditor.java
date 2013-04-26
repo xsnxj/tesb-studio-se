@@ -23,8 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
 import org.eclipse.wst.xsd.ui.internal.adt.editor.EditorModeManager;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -240,7 +240,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                     if (repObj != null) {
                         for (String name : operationNames) {
-                            if (name.equals(operation.getName() + "-" + repObj.getLabel())) {
+                            if (name.equals(operation.getName() + '-' + repObj.getLabel())) {
                                 serviceOperation.setLabel(name);
                                 hasAssignedjob = true;
                                 break;
