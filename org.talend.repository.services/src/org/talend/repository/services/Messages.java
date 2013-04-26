@@ -85,6 +85,11 @@ public class Messages extends NLS {
 	public static String ServiceMetadataDialog_useSLBtnTExt;
 	public static String ServiceMetadataDialog_useSRBtnText;
 	
+	public static String LocalWSDLEditor_refreshBindingMessage;
+	public static String LocalWSDLEditor_refreshBindingTitle;
+	
+	
+	
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

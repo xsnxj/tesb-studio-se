@@ -20,6 +20,7 @@ import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
 import org.eclipse.wst.xsd.ui.internal.adt.editor.EditorModeManager;
@@ -123,7 +124,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                 }
                 // ////////// TODO
-
+                MessageDialog.openWarning(new Shell(), Messages.LocalWSDLEditor_refreshBindingTitle,
+                		Messages.LocalWSDLEditor_refreshBindingMessage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
