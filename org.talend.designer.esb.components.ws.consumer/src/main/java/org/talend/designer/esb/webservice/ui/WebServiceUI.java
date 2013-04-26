@@ -14,7 +14,6 @@ package org.talend.designer.esb.webservice.ui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -338,19 +337,11 @@ public class WebServiceUI extends WizardPage {
      * @return WSDL as String object. Or null in case errors/not possible to create object.
      */
     private String getWSDL() throws WSDLException {
-        InputStream is = null;
         ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
         OutputStream os = compressAndEncode(wsdlOs);
         try {
             WSDLFactory.newInstance().newWSDLWriter().writeWSDL(definition, os);
         } finally {
-            if (null != is) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
             if (null != os) {
                 try {
                     os.close();
