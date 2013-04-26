@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,6 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
-import org.xml.sax.InputSource;
 
 /**
  * DOC ycbai class global comment. Detailled comment

@@ -149,31 +149,25 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         if (repositoryNode.getObject() == null) {
             return;
         }
-        ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
-        IFile file = WSDLUtils.getWsdlFile(serviceItem);
-        ServiceEditorInput editorInput=new ServiceEditorInput(file, serviceItem);
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         try {
+        	ServiceItem serviceItem = (ServiceItem) repositoryNode.getObject().getProperty().getItem();
+        	IFile file = WSDLUtils.getWsdlFile(serviceItem);
+        	ServiceEditorInput editorInput=new ServiceEditorInput(file, serviceItem);
+        	if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
+        		editorInput.setReadOnly(false);
+        	} else {
+        		editorInput.setReadOnly(true);
+        	}
+        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
             IEditorPart editor = page.openEditor(editorInput, ID, true);
             if (editor instanceof LocalWSDLEditor) {
                 LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
                 wsdlEditor.setServiceItem(serviceItem);
                 wsdlEditor.setRepositoryNode(repositoryNode);
-                // lock
-                if (DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
-                    // TO BE REMOVED and Checked but the above line does the lock already so no need to do it twice.
-                    DesignerPlugin.getDefault().getProxyRepositoryFactory().lock(serviceItem);
-                } else {
-                    wsdlEditor.setReadOnly(true);
-                }
             }
         } catch (CoreException e) {
             ExceptionHandler.process(e);
-        } catch (LoginException e) {
-            ExceptionHandler.process(e);
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        }
+        } 
     }
 
     public void setRepositoryNode(RepositoryNode repositoryNode) {

@@ -18,8 +18,11 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
+import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
+import org.eclipse.wst.xsd.ui.internal.adt.editor.EditorModeManager;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
@@ -29,6 +32,7 @@ import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -48,25 +52,28 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private RepositoryNode repositoryNode;
 
+    public LocalWSDLEditor(){
+    	super();
+    	getEditDomain().setCommandStack(new LocalCommandStack(this));
+    }
+    
     @Override
     public void doSave(IProgressMonitor monitor) {
-    	if(!isEditableCurrently()){
+    	if(isEditorInputReadOnly()){
+    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
     		return;
     	}
         super.doSave(monitor);
         save();
     }
     
-    private boolean isEditableCurrently(){
-    	if (!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)) {
-    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
-            return false;
-        }
-    	return true;
+    public boolean isEditorInputReadOnly(){
+    	return ((RepositoryEditorInput)getEditorInput()).isReadOnly();
     }
 
     private void save() {
-    	if(!isEditableCurrently()){
+    	if(isEditorInputReadOnly()){
+    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
     		return;
     	}
         if (serviceItem != null) {
@@ -250,6 +257,15 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
     }
 
+    @Override
+    protected void initializeGraphicalViewer() {
+    	super.initializeGraphicalViewer();
+    	MenuManager contextMenu = getGraphicalViewer().getContextMenu();
+    	if(isEditorInputReadOnly()){
+    		contextMenu.setVisible(false);
+    	}
+    }
+    
     public RepositoryNode getRepositoryNode() {
         return this.repositoryNode;
     }
@@ -266,127 +282,17 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         this.serviceItem = serviceItem;
     }
 
-    public void setReadOnly(boolean isReadOnly) {
-        if (isReadOnly) {
-        	setPartName(getEditorInput().getName()+" (ReadOnly)");
-            ActionRegistry actionRegistry = getActionRegistry();
-
-            IAction ASDAddMessageAction = actionRegistry.getAction("ASDAddMessageAction");
-            if (ASDAddMessageAction != null) {
-                actionRegistry.removeAction(ASDAddMessageAction);
-            }
-            IAction ASDAddPartAction = actionRegistry.getAction("ASDAddPartAction");
-            if (ASDAddPartAction != null) {
-                actionRegistry.removeAction(ASDAddPartAction);
-            }
-            IAction ASDSetNewMessageAction = actionRegistry.getAction("ASDSetNewMessageAction");
-            if (ASDSetNewMessageAction != null) {
-                actionRegistry.removeAction(ASDSetNewMessageAction);
-            }
-            IAction ASDSetMessageInterfaceAction = actionRegistry.getAction("ASDSetMessageInterfaceAction");
-            if (ASDSetMessageInterfaceAction != null) {
-                actionRegistry.removeAction(ASDSetMessageInterfaceAction);
-            }
-            IAction ASDSetNewTypeAction = actionRegistry.getAction("ASDSetNewTypeAction");
-            if (ASDSetNewTypeAction != null) {
-                actionRegistry.removeAction(ASDSetNewTypeAction);
-            }
-            IAction ASDSetExistingTypeAction = actionRegistry.getAction("ASDSetExistingTypeAction");
-            if (ASDSetExistingTypeAction != null) {
-                actionRegistry.removeAction(ASDSetExistingTypeAction);
-            }
-            IAction ASDSetNewElementAction = actionRegistry.getAction("ASDSetNewElementAction");
-            if (ASDSetNewElementAction != null) {
-                actionRegistry.removeAction(ASDSetNewElementAction);
-            }
-            IAction ASDSetExistingElementAction = actionRegistry.getAction("ASDSetExistingElementAction");
-            if (ASDSetExistingElementAction != null) {
-                actionRegistry.removeAction(ASDSetExistingElementAction);
-            }
-            IAction directEditAction = actionRegistry.getAction(GEFActionConstants.DIRECT_EDIT);
-            if (directEditAction != null) {
-                actionRegistry.removeAction(directEditAction);
-            }
-            IAction ASDAddServiceAction = actionRegistry.getAction("ASDAddServiceAction");
-            if (ASDAddServiceAction != null) {
-                actionRegistry.removeAction(ASDAddServiceAction);
-            }
-            IAction ASDAddBindingAction = actionRegistry.getAction("ASDAddBindingAction");
-            if (ASDAddBindingAction != null) {
-                actionRegistry.removeAction(ASDAddBindingAction);
-            }
-            IAction ASDAddInterfaceAction = actionRegistry.getAction("ASDAddInterfaceAction");
-            if (ASDAddInterfaceAction != null) {
-                actionRegistry.removeAction(ASDAddInterfaceAction);
-            }
-            IAction ASDAddEndPointAction = actionRegistry.getAction("ASDAddEndPointAction");
-            if (ASDAddEndPointAction != null) {
-                actionRegistry.removeAction(ASDAddEndPointAction);
-            }
-            IAction ASDAddOperationAction = actionRegistry.getAction("ASDAddOperationAction");
-            if (ASDAddOperationAction != null) {
-                actionRegistry.removeAction(ASDAddOperationAction);
-            }
-            IAction ASDAddInputActionn = actionRegistry.getAction("ASDAddInputActionn");
-            if (ASDAddInputActionn != null) {
-                actionRegistry.removeAction(ASDAddInputActionn);
-            }
-            IAction ASDAddOutputActionn = actionRegistry.getAction("ASDAddOutputActionn");
-            if (ASDAddInputActionn != null) {
-                actionRegistry.removeAction(ASDAddOutputActionn);
-            }
-            IAction ASDAddFaultActionn = actionRegistry.getAction("ASDAddFaultActionn");
-            if (ASDAddFaultActionn != null) {
-                actionRegistry.removeAction(ASDAddFaultActionn);
-            }
-            IAction ASDDeleteAction = actionRegistry.getAction("ASDDeleteAction");
-            if (ASDDeleteAction != null) {
-                actionRegistry.removeAction(ASDDeleteAction);
-            }
-            IAction ASDSetNewBindingAction = actionRegistry.getAction("ASDSetNewBindingAction");
-            if (ASDSetNewBindingAction != null) {
-                actionRegistry.removeAction(ASDSetNewBindingAction);
-            }
-            IAction ASDSetExistingBindingAction = actionRegistry.getAction("ASDSetExistingBindingAction");
-            if (ASDSetExistingBindingAction != null) {
-                actionRegistry.removeAction(ASDSetExistingBindingAction);
-            }
-            IAction ASDSetNewInterfaceAction = actionRegistry.getAction("ASDSetNewInterfaceAction");
-            if (ASDSetNewInterfaceAction != null) {
-                actionRegistry.removeAction(ASDSetNewInterfaceAction);
-            }
-            IAction ASDSetExistingInterfaceAction = actionRegistry.getAction("ASDSetExistingInterfaceAction");
-            if (ASDSetExistingInterfaceAction != null) {
-                actionRegistry.removeAction(ASDSetExistingInterfaceAction);
-            }
-            IAction ASDGenerateBindingActionn = actionRegistry.getAction("ASDGenerateBindingActionn");
-            if (ASDGenerateBindingActionn != null) {
-                actionRegistry.removeAction(ASDGenerateBindingActionn);
-            }
-            IAction ASDAddImportAction = actionRegistry.getAction("ASDAddImportAction");
-            if (ASDAddImportAction != null) {
-                actionRegistry.removeAction(ASDAddImportAction);
-            }
-            IAction ASDAddParameterAction = actionRegistry.getAction("ASDAddParameterAction");
-            if (ASDAddParameterAction != null) {
-                actionRegistry.removeAction(ASDAddParameterAction);
-            }
-            IAction ASDAddSchemaAction = actionRegistry.getAction("ASDAddSchemaAction");
-            if (ASDAddSchemaAction != null) {
-                actionRegistry.removeAction(ASDAddSchemaAction);
-            }
-            IAction ASDOpenSchemaAction = actionRegistry.getAction("ASDOpenSchemaAction");
-            if (ASDOpenSchemaAction != null) {
-                actionRegistry.removeAction(ASDOpenSchemaAction);
-            }
-            IAction ASDOpenImportAction = actionRegistry.getAction("ASDOpenImportAction");
-            if (ASDOpenImportAction != null) {
-                actionRegistry.removeAction(ASDOpenImportAction);
-            }
-            IAction OpenInNewEditorAction = actionRegistry.getAction("org.eclipse.wst.wsdl.ui.OpenInNewEditor");
-            if (OpenInNewEditorAction != null) {
-                actionRegistry.removeAction(OpenInNewEditorAction);
-            }
-        }
+    @Override
+    public boolean isFileReadOnly() {
+    	return super.isFileReadOnly() || isEditorInputReadOnly();
     }
+    
+    @Override
+    public Object getAdapter(Class type) {
+    	if(type == IOpenExternalEditorHelper.class  && isEditorInputReadOnly()){
+    		return null;
+    	}
+    	return super.getAdapter(type);
+    }
+    
 }

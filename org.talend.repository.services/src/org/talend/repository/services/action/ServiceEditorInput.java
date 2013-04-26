@@ -30,7 +30,7 @@ public class ServiceEditorInput extends RepositoryEditorInput {
     
     @Override
     public String getName() {
-    	return getFile().getName();
+    	return getFile().getName()+ (isReadOnly()?" (ReadOnly)":"");
     }
     
     @Override
