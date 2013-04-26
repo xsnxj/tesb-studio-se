@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Nl
-Bundle-SymbolicName: org.talend.designer.camel.spring.ui.nl
-Bundle-Version: 1.0.0.qualifier
-Fragment-Host: org.talend.designer.camel.spring.ui
