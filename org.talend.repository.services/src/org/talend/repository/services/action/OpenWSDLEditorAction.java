@@ -8,29 +8,26 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
-import org.talend.commons.exception.LoginException;
-import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
@@ -50,44 +47,6 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
         this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
         currentNodeType = ESBRepositoryNodeType.SERVICES;
-
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
-
-            public void partActivated(IWorkbenchPart part) {
-
-            }
-
-            public void partBroughtToTop(IWorkbenchPart part) {
-
-            }
-
-            public void partClosed(IWorkbenchPart part) {
-                if (part instanceof LocalWSDLEditor) {
-                    LocalWSDLEditor localWSDLEditor = (LocalWSDLEditor) part;
-                    // unlock
-                    ServiceItem serviceItem = localWSDLEditor.getServiceItem();
-                    if (null != serviceItem) {
-                        try {
-                            DesignerPlugin.getDefault().getProxyRepositoryFactory().unlock(serviceItem);
-                        } catch (Exception e) {
-                            ExceptionHandler.process(e);
-                        }
-                    }
-
-                    localWSDLEditor.setServiceItem(null);
-                    localWSDLEditor.setRepositoryNode(null);
-                }
-            }
-
-            public void partDeactivated(IWorkbenchPart part) {
-
-            }
-
-            public void partOpened(IWorkbenchPart part) {
-
-            }
-
-        });
     }
 
     /*
@@ -120,7 +79,8 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         setEnabled(flag);
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public Class getClassForDoubleClick() {
         return ServiceItem.class;
     }
@@ -180,7 +140,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         do_SwitchPerspective_ExpandRepositoryNode_SelectNodeItem(IBrandingConfiguration.PERSPECTIVE_DI_ID,
                 ESBRepositoryNodeType.SERVICES, params.getProperty("nodeId"));
 
-        repositoryNode = RepositoryNodeUtilities.getRepositoryNode(params.getProperty("nodeId"), false);
+        repositoryNode = (RepositoryNode) RepositorySeekerManager.getInstance().searchRepoViewNode(params.getProperty("nodeId"), false);
 
         doRun();
     }
@@ -222,7 +182,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
             viewer.setSelection(new StructuredSelection(repositoryNode));
 
             // find node item
-            RepositoryNode nodeItem = RepositoryNodeUtilities.getRepositoryNode(nodeItemId, false);
+            IRepositoryNode nodeItem = RepositorySeekerManager.getInstance().searchRepoViewNode(nodeItemId, false);
             if (null != nodeItem) {
                 // expand/select node item
                 if (viewer instanceof TreeViewer) {

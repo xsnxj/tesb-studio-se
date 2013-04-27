@@ -20,8 +20,11 @@ import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.eclipse.wst.wsdl.ui.internal.actions.OpenInNewEditor;
@@ -32,17 +35,19 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.AssignJobAction;
+import org.talend.repository.services.action.ServiceEditorInput;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -117,7 +122,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         if (referenceJobId != null) {
                             for (IRepositoryNode operationNode : portNode.getChildren()) {
                                 if (operationNode.getObject().getLabel().startsWith(operation.getName() + "-")) {
-                                    RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(referenceJobId, false);
+                                    IRepositoryNode jobNode = org.talend.core.repository.seeker.RepositorySeekerManager.getInstance().searchRepoViewNode(referenceJobId, false);
                                     AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
                                     action.assign(jobNode);
                                     break;
@@ -326,11 +331,53 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
     
     @Override
-    public Object getAdapter(Class type) {
+    public Object getAdapter(@SuppressWarnings("rawtypes") Class type) {
     	if(type == IOpenExternalEditorHelper.class  && isEditorInputReadOnly()){
     		return null;
     	}
     	return super.getAdapter(type);
+    }
+    
+    @Override
+    public void dispose() {
+    	//unlock item if necessary
+    	IEditorInput currentEditorInput=getEditorInput();
+    	if(currentEditorInput!=null&&currentEditorInput instanceof ServiceEditorInput) {
+    		ServiceEditorInput serviceEditorInput=(ServiceEditorInput) currentEditorInput;
+    		Item currentItem = serviceEditorInput.getItem();
+			if(currentItem!=null) {
+    			//unlock item if no other editors open it.
+				boolean openItemInOtherEditor=false;
+    			IEditorReference[] editorRefs=getEditorSite().getPage().getEditorReferences();
+    			for (IEditorReference editorRef : editorRefs) {
+    				if(editorRef.getEditor(false)==this) {
+    					continue;
+    				}
+    				try {
+    					IEditorInput editorInput = editorRef.getEditorInput();
+    					if(editorInput instanceof ServiceEditorInput) {
+    						Item item=((ServiceEditorInput) editorInput).getItem();
+    						if(item==currentItem) {
+    							//open this item & not this one.
+    							openItemInOtherEditor=true;
+    						}
+    					}
+    				} catch (PartInitException e) {
+    					//ignore and compare others
+    				}
+    			}
+    			if(!openItemInOtherEditor) {
+    				try {
+    					DesignerPlugin.getDefault().getProxyRepositoryFactory().unlock(currentItem);
+    				} catch (Exception e) {
+    					ExceptionHandler.process(e);
+    				}
+    			}
+    			
+    		}
+    	}
+    	
+    	super.dispose();
     }
     
 }
