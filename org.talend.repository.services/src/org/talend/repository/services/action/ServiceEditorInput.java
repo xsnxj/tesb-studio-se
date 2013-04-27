@@ -35,20 +35,13 @@ public class ServiceEditorInput extends RepositoryEditorInput {
     
     @Override
 	public boolean equals(final Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof IFileEditorInput)) {
-            return false;
-        }
-        IFileEditorInput other = (IFileEditorInput) obj;
-
-        if (getFile().equals(other.getFile())) {
-            return true;
-        }
-
-        return super.equals(obj);
+    	if(obj==null){
+    		return false;
+    	}
+    	if(obj instanceof IFileEditorInput){
+    		return getFile().equals(((IFileEditorInput)obj).getFile());
+    	}
+    	return false;
     }
     
 

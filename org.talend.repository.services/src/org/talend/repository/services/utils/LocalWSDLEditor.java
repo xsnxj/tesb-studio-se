@@ -15,15 +15,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.ui.actions.ActionRegistry;
-import org.eclipse.gef.ui.actions.GEFActionConstants;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
+import org.eclipse.wst.wsdl.ui.internal.actions.OpenInNewEditor;
+import org.eclipse.wst.wsdl.ui.internal.adapters.WSDLBaseAdapter;
+import org.eclipse.wst.wsdl.ui.internal.asd.actions.BaseSelectionAction;
 import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
-import org.eclipse.wst.xsd.ui.internal.adt.editor.EditorModeManager;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
@@ -32,7 +36,6 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
@@ -203,7 +206,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             if (port.getId() == null || port.getId().equals("")) {
                 port.setId(factory.getNextId());
             }
-            List<Operation> list = portType.getOperations();
+            @SuppressWarnings("unchecked")
+			List<Operation> list = portType.getOperations();
             for (Operation operation : list) {
                 if (operation.isUndefined()) {
                     // means the operation has been removed already ,why ?
@@ -257,6 +261,38 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
         }
+    }
+    
+    @Override
+    protected void createActions() {
+    	super.createActions();
+    	ActionRegistry registry = getActionRegistry();
+    	BaseSelectionAction action = new OpenInNewEditor(this) {
+    		@Override
+    		public void run() {
+
+    		    if (getSelectedObjects().size() > 0)
+    		    {
+    		      Object o = getSelectedObjects().get(0);
+    		      // should make this generic and be able to get the owner from a facade object
+    		      if (o instanceof WSDLBaseAdapter)
+    		      {
+    		        WSDLBaseAdapter baseAdapter = (WSDLBaseAdapter)o;
+    		        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    		        IEditorPart editorPart = workbenchWindow.getActivePage().getActiveEditor();
+    		        Object object = editorPart.getAdapter(org.eclipse.wst.wsdl.Definition.class);
+    		        if (object instanceof org.eclipse.wst.wsdl.Definition)
+    		        {
+    		          EObject eObject = (EObject)baseAdapter.getTarget();
+    		          OpenOnSelectionHelper openHelper = new OpenOnSelectionHelper((org.eclipse.wst.wsdl.Definition)object);
+    		          openHelper.openEditor(eObject);
+    		        }
+    		      }
+    		    }
+    		}
+    	};
+    	action.setSelectionProvider(getSelectionManager());
+	    registry.registerAction(action);
     }
 
     @Override
