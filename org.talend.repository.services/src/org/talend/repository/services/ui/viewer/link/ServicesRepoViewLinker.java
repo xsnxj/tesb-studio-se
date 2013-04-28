@@ -15,9 +15,13 @@ package org.talend.repository.services.ui.viewer.link;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.talend.core.model.properties.Item;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.link.AbstractFileEditorInputLinker;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.action.ServiceEditorInput;
 
 /**
  * DOC ggu class global comment. Detailled comment <br/>
@@ -63,13 +67,22 @@ public class ServicesRepoViewLinker extends AbstractFileEditorInputLinker {
      */
     @Override
     protected RepositoryNode getRepoNodeFromEditor(IEditorPart editorPart) {
-        if (editorPart != null && editorPart instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
-            RepositoryNode repositoryNode = ((org.talend.repository.services.utils.LocalWSDLEditor) editorPart)
-                    .getRepositoryNode();
-            expandToRepoViewNode(repositoryNode);
-            return repositoryNode;
-        }
-        return null;
+    	if (editorPart != null && editorPart instanceof org.talend.repository.services.utils.LocalWSDLEditor) {
+
+    		IEditorInput editorInput= ((org.talend.repository.services.utils.LocalWSDLEditor) editorPart)
+    				.getEditorInput();
+    		if(editorInput instanceof ServiceEditorInput) {
+    			Item item=((ServiceEditorInput) editorInput).getItem();
+    			if(item!=null) {
+    				IRepositoryNode node = RepositorySeekerManager.getInstance().searchRepoViewNode(item.getProperty().getId(), false);
+    				if(node!=null&&node instanceof RepositoryNode) {
+    					return (RepositoryNode) node;
+    				}
+    			}
+    		}
+
+    	}
+    	return null;
     }
 
 }
