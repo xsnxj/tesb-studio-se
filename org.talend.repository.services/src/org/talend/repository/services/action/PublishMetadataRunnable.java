@@ -225,39 +225,17 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     Input inDef = oper.getInput();
                     if (inDef != null) {
                         Message inMsg = inDef.getMessage();
-                        if (inMsg != null) {
-                            // fix for TDI-20699
-                            QName parameterFromMessage = getParameterFromMessage(inMsg);
-                            if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
-                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
-                                paths.add(folderPath);
-                            }
-                        }
+                        addParamsToPath(portType, oper, inMsg, paths, alreadyCreated);
                     }
 
                     Output outDef = oper.getOutput();
                     if (outDef != null) {
                         Message outMsg = outDef.getMessage();
-                        if (outMsg != null) {
-                            QName parameterFromMessage = getParameterFromMessage(outMsg);
-                            if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
-                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
-                                paths.add(folderPath);
-                            }
-                        }
+                        addParamsToPath(portType, oper, outMsg, paths, alreadyCreated);
                     }
                     for (Fault fault : (Collection<Fault>) oper.getFaults().values()) {
                         Message faultMsg = fault.getMessage();
-                        if (faultMsg != null) {
-                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
-                            if (alreadyCreated.add(parameterFromMessage)) {
-                                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
-                                    parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
-                                paths.add(folderPath);
-                            }
-                        }
+                        addParamsToPath(portType, oper, faultMsg, paths, alreadyCreated);
                     }
                 }
             }
@@ -265,10 +243,30 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return paths;
     }
 
+	private void addParamsToPath(final QName portType, Operation oper,
+			Message msg, final Set<String> paths,
+			final Set<QName> alreadyCreated) throws URISyntaxException {
+		if (msg != null) {
+		    QName parameterFromMessage = getParameterFromMessage(msg);
+		    if(parameterFromMessage==null) {
+		    	return;
+		    }
+		    if (alreadyCreated.add(parameterFromMessage)) {
+		        String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
+		            parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
+		        paths.add(folderPath);
+		    }
+		}
+	}
+
     private static QName getParameterFromMessage(Message msg) {
         // add first parameter from message.
-        @SuppressWarnings("unchecked")
-        Part part = ((Collection<Part>)msg.getParts().values()).iterator().next();
+    	@SuppressWarnings("unchecked")
+    	Collection<Part> values = msg.getParts().values();
+        if(values==null||values.isEmpty()) {
+        	return null;
+        }
+        Part part = values.iterator().next();
         if (part.getElementName() != null) {
             return part.getElementName();
         } else if (part.getTypeName() != null) {
@@ -308,6 +306,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	                        if (inMsg != null) {
 	                            // fix for TDI-20699
 	                            QName parameterFromMessage = getParameterFromMessage(inMsg);
+	                            if(parameterFromMessage==null) {
+	                            	continue;
+	                            }
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
@@ -322,6 +323,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	                        Message outMsg = outDef.getMessage();
 	                        if (outMsg != null) {
 	                            QName parameterFromMessage = getParameterFromMessage(outMsg);
+	                            if(parameterFromMessage==null) {
+	                            	continue;
+	                            }
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
@@ -334,6 +338,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	                        Message faultMsg = fault.getMessage();
 	                        if (faultMsg != null) {
 	                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
+	                            if(parameterFromMessage==null) {
+	                            	continue;
+	                            }
 	                            if (alreadyCreated.add(parameterFromMessage)) {
 	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
 	                                if (null != schemaFile) {
