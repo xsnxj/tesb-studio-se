@@ -36,6 +36,7 @@ public class ServiceMetadataDialog extends Dialog {
     public static final String USE_SAM = "UseSAM"; //$NON-NLS-1$
     public static final String USE_SL = "UseSL"; //$NON-NLS-1$
     public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_"; //$NON-NLS-1$
+    public static final String LOG_MESSAGES = "LogMessages"; //$NON-NLS-1$    
 
     private final ServiceItem serviceItem;
     private final ServiceConnection serviceConnection;
@@ -47,6 +48,7 @@ public class ServiceMetadataDialog extends Dialog {
     private boolean securityBasic;
 	private boolean securitySAML;
 	private boolean authorization;	
+	private boolean logMessages;	
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
         super(parentShell);
@@ -60,6 +62,7 @@ public class ServiceMetadataDialog extends Dialog {
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
             authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
             useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
+            logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));            
 
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
@@ -98,6 +101,7 @@ public class ServiceMetadataDialog extends Dialog {
         final Group securityGroup = new Group(container, SWT.NONE);        
         final Button basicCheck = new Button(securityGroup, SWT.CHECK);
         final Button samlCheck = new Button(securityGroup, SWT.CHECK);
+        final Button logMessagesCheck = new Button(container, SWT.CHECK);        
         
         final Button authorizationCheck;
         if (isStudioEEVersion()) {
@@ -196,7 +200,15 @@ public class ServiceMetadataDialog extends Dialog {
 				}
 			});
 		}
-        
+
+        logMessagesCheck.setText(Messages.ServiceMetadataDialog_logMessages);
+        logMessagesCheck.setSelection(logMessages);
+        logMessagesCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	logMessages = logMessagesCheck.getSelection();
+            }
+        });
+		
 		if(!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem)){
 			parent.setEnabled(false);
 			getShell().setText(Messages.ServiceMetadataDialog_dialogReadonlyTitle);
@@ -231,6 +243,10 @@ public class ServiceMetadataDialog extends Dialog {
         return useServiceRegistry;
     }
 
+    private boolean isLogMessages() {
+        return logMessages;
+    }
+    
     private boolean isStudioEEVersion() {
     	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
@@ -248,6 +264,7 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
             props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
             props.put(USE_SERVICE_REGISTRY, Boolean.toString(getUseServiceRegistry()));            
+            props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));            
 
             if (isUseSL()) {
                 slCustomProperties = new HashMap<String, String>(customPropertiesTable

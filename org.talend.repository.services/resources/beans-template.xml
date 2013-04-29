@@ -77,6 +77,9 @@
 #end
 			</bean>
 #end
+#if ($endpoint.logMessages)
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+#end
 #if (${endpoint.useSecurityToken} || ${endpoint.useSecuritySAML})
 			<p:policies>
 				<wsp:Policy>
