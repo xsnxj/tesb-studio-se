@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
@@ -19,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -132,18 +133,60 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                     }
                 }
                 // ////////// TODO
-                MessageDialog.openWarning(new Shell(), Messages.LocalWSDLEditor_refreshBindingTitle,
-                		Messages.LocalWSDLEditor_refreshBindingMessage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+	private boolean needRefreshBinding(Definition definition) {
+		try {
+			List<String> lstBindingOperations = new ArrayList<String>();
+			for (Object obj : definition.getBindings().values()) {
+				Binding binding = (Binding) obj;
+				String ns = binding.getPortType().getQName().getNamespaceURI();
+				@SuppressWarnings("unchecked")
+				List<BindingOperation> list = binding.getBindingOperations();
+				for (BindingOperation bindingoperation : list) {
+					if (bindingoperation.getOperation().isUndefined()) {
+						// show warning if operation was deleted
+						return true;
+					}
+					String name = bindingoperation.getOperation().getName();
+					lstBindingOperations.add(ns + ";" + name);
+				}
+			}
+
+			for (Object obj : definition.getPortTypes().values()) {
+				PortType portType = (PortType) obj;
+				String ns = portType.getQName().getNamespaceURI();
+				@SuppressWarnings("unchecked")
+				List<Operation> list = portType.getOperations();
+				for (Operation operation : list) {
+					String name = operation.getName();
+					if (!lstBindingOperations.contains(ns + ";" + name)) {
+						// show warning if operation was added
+						return true;
+					}
+				}
+			}
+		} catch (NullPointerException npe) {
+			// Show warning if any object is null
+			return true;
+		}
+		return false;
+	}
+    
+    
     private void saveModel() throws CoreException {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
         Definition definition = WSDLUtils.getDefinition(serviceItem);
+		if (needRefreshBinding(definition)) {
+			MessageDialog.openWarning(getSite().getShell(),
+					Messages.LocalWSDLEditor_refreshBindingTitle,
+					Messages.LocalWSDLEditor_refreshBindingMessage);
+		}
 
         // changed for TDI-18005
         Map<String, String> portNameIdMap = new HashMap<String, String>();
@@ -181,7 +224,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
 
         ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
-        for (Object obj : definition.getAllPortTypes().values()) {
+        for (Object obj : definition.getPortTypes().values()) {
             PortType portType = (PortType) obj;
             if (portType.isUndefined()) {
                 continue;
