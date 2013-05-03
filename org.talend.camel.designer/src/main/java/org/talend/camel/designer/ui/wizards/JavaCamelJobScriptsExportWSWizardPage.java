@@ -63,6 +63,7 @@ import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
+import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -78,6 +79,7 @@ import org.talend.resource.IExportRouteResourcesService;
  * DOC x class global comment. Detailled comment <br/>
  * 
  */
+@SuppressWarnings("restriction")
 public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsExportWizardPage {
 
     public static final String EXPORTTYPE_POJO = "Autonomous Route"; //$NON-NLS-1$
@@ -511,7 +513,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         }
     }
 
-    public boolean isAddMavenScript() {
+    @Override
+	public boolean isAddMavenScript() {
         if (addBSButton != null) {
             return addBSButton.getSelection();
         }
@@ -705,8 +708,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             // genCodeButton.setSelection(settings.getBoolean(STORE_GENERATECODE_ID));
         }
 
-        launcherCombo.setItems(manager.getLauncher());
-        if (manager.getLauncher().length > 0) {
+        launcherCombo.setItems(JobScriptsManager.getLauncher());
+        if (JobScriptsManager.getLauncher().length > 0) {
             launcherCombo.select(0);
         }
         if (getProcessItem() != null && contextCombo != null) {
@@ -762,7 +765,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             String[] directoryNames = new String[1];
             String destinationValue = manager.getDestinationPath();
             if (destinationValue != null) {
-                destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf(File.separator));
+            	IPath path=Path.fromOSString(destinationValue);
+            	destinationValue = path.removeLastSegments(1).toOSString();
             }
             directoryNames[0] = destinationValue;
 
@@ -1095,7 +1099,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         contextCombo.setLayoutData(gd);
 
         if (this.getProcessItem() != null) {
-            List<String> contextNames = this.getJobContexts(this.getProcessItem());
+            List<String> contextNames = JobScriptsExportWizardPage.getJobContexts(this.getProcessItem());
             this.contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
         }
 
