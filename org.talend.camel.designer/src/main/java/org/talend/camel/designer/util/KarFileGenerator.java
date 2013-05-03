@@ -35,7 +35,7 @@ public class KarFileGenerator {
         String projectName = routerNode.getObject().getProjectLabel().toLowerCase();
 
         // Create the parent file if not exist
-        File destFile = new File(destination);
+        File destFile = new File(destination).getAbsoluteFile();
         File parentDestFile = destFile.getParentFile();
         if (!parentDestFile.exists()) {
             parentDestFile.mkdirs();
@@ -116,9 +116,9 @@ public class KarFileGenerator {
         Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
         ProcessType process = ((ProcessItem) node.getObject().getProperty().getItem()).getProcess();
         if (process != null) {
-            EList context = process.getContext();
+            EList<?> context = process.getContext();
             if (context != null) {
-                Iterator iterator = context.iterator();
+                Iterator<?> iterator = context.iterator();
                 while (iterator.hasNext()) {
                     Object next = iterator.next();
                     if (!(next instanceof ContextType)) {
@@ -128,7 +128,8 @@ public class KarFileGenerator {
                     String name = ct.getName();
                     HashMap<String, String> contextParams = new HashMap<String, String>();
                     contextValues.put(name, contextParams);
-                    EList<ContextParameterType> params = ct.getContextParameter();
+                    @SuppressWarnings("unchecked")
+					EList<ContextParameterType> params = ct.getContextParameter();
                     for (ContextParameterType param : params) {
                         contextParams.put(param.getName(), param.getValue());
                     }
