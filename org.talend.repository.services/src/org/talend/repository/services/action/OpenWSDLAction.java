@@ -89,15 +89,14 @@ public class OpenWSDLAction extends AbstractCreateAction {
         	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 			factory.updateLockStatus();
 			ERepositoryStatus status = factory.getStatus(node.getObject());
-			if(!status.isEditable()){
+			if(status.isEditable() || ERepositoryStatus.DEFAULT==status){
+				setEnabled(isLastVersion(node));
+			}else {
 				setEnabled(false);
-				return;
 			}
 		} catch (PersistenceException e) {
 			e.printStackTrace();
 		}
-        
-        setEnabled(isLastVersion(node));
     }
 
     @Override
