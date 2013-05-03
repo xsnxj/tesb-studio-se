@@ -53,4 +53,13 @@ public class CamelComponentsHandler implements IComponentsHandler {
         return filteredComponents;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.model.components.IComponentsHandler#extractComponentsCategory()
+     */
+    public ComponentCategory extractComponentsCategory() {
+        return ComponentCategory.CATEGORY_4_DI;
+    }
+
 }
