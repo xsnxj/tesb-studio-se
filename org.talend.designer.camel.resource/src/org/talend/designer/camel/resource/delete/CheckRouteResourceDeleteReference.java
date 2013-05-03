@@ -26,7 +26,6 @@ import org.talend.core.repository.model.AbstractCheckDeleteItemReference;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.ItemReferenceBean;
 import org.talend.repository.ui.actions.DeleteActionCache;
 
@@ -40,8 +39,7 @@ public class CheckRouteResourceDeleteReference extends
 	@Override
 	protected Set<ItemReferenceBean> checkItemReferenceBeans(
 			IProxyRepositoryFactory factory,
-			DeleteActionCache deleteActionCache, IRepositoryNode currentJobNode) {
-		IRepositoryViewObject object = currentJobNode.getObject();
+			DeleteActionCache deleteActionCache, IRepositoryViewObject object) {
 		Item nodeItem = object.getProperty().getItem();
 		Set<ItemReferenceBean> list = new HashSet<ItemReferenceBean>();
 		List<IRepositoryViewObject> allRoutes;
