@@ -350,8 +350,8 @@
 
             <!-- SL for RS -->
             <IMPORT NAME="locator"
-                    MODULE="locator-5.3.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.0.jar"
+                    MODULE="locator-5.3.1-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.1-SNAPSHOT.jar"
                     BundleID="locator"
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="zookeeper"
@@ -365,8 +365,8 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-features-clustering"
-                    MODULE="cxf-rt-features-clustering-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.3.jar"
+                    MODULE="cxf-rt-features-clustering-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-policy"
@@ -432,13 +432,13 @@
 
             <!-- SAM for RS -->
             <IMPORT NAME="sam-agent"
-                    MODULE="sam-agent-5.3.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.0.jar"
+                    MODULE="sam-agent-5.3.1-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.1-SNAPSHOT.jar"
                     BundleID="sam-agent"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="sam-common"
-                    MODULE="sam-common-5.3.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.0.jar"
+                    MODULE="sam-common-5.3.1-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.1-SNAPSHOT.jar"
                     BundleID="sam-common"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="commons-lang"
@@ -477,8 +477,8 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-transports-local"
-                    MODULE="cxf-rt-transports-local-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.3.jar"
+                    MODULE="cxf-rt-transports-local-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-addr"
