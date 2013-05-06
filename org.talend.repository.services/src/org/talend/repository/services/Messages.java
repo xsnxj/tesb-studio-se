@@ -14,7 +14,11 @@ public class Messages extends NLS {
 
 	public static String ExportServiceAction_Action_Label;
 
-    public static String ServiceExportManager_Exception_cannot_create_document_builder;
+    public static String ExportServiceAction_noJobDialogMsg;
+
+	public static String ExportServiceAction_noJobDialogTitle;
+
+	public static String ServiceExportManager_Exception_cannot_create_document_builder;
 
     public static String ServiceExportManager_Exception_cannot_open_file;
 

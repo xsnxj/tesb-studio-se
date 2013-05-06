@@ -12,22 +12,33 @@
 // ============================================================================
 package org.talend.repository.services.action;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.model.properties.Item;
+import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServiceConnection;
+import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceExportWizard;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -86,14 +97,63 @@ public class ExportServiceAction extends AContextualAction {
 
     @Override
     protected void doRun() {
+    	Shell activeShell = Display.getCurrent().getActiveShell();
+    	
+    	Iterator<?> iterator = ((IStructuredSelection)getSelection()).iterator();
+    	try {
+    		while (iterator.hasNext()) {
+    			RepositoryNode node = (RepositoryNode) iterator.next();
+    			Item item = node.getObject().getProperty().getItem();
+    			if (!(item instanceof ServiceItem)) {
+    				continue;
+    			}
+    			if (!isAllOperationsAssignedJob((ServiceItem) item)) {
+    				boolean isContinue = MessageDialog
+    						.openQuestion(activeShell, Messages.ExportServiceAction_noJobDialogTitle,
+    								Messages.ExportServiceAction_noJobDialogMsg);
+    				if (!isContinue) {
+    					return;
+    				}
+    			}
+    		}
+    	} catch (PersistenceException e) {
+    		e.printStackTrace();
+    	}
+		
         ServiceExportWizard processWizard = new ServiceExportWizard();
         IWorkbench workbench = getWorkbench();
         processWizard.setWindowTitle(EXPORT_SERVICE_LABEL);
         processWizard.init(workbench, (IStructuredSelection) this.getSelection());
 
-        Shell activeShell = Display.getCurrent().getActiveShell();
         WizardDialog dialog = new WizardDialog(activeShell, processWizard);
         workbench.saveAllEditors(true);
         dialog.open();
+    }
+    
+    private boolean isAllOperationsAssignedJob(ServiceItem serviceItem) throws PersistenceException{
+    	ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+    	EList<ServicePort> servicePort = connection.getServicePort();
+    	List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS);
+    	for(ServicePort port: servicePort){
+    		EList<ServiceOperation> serviceOperation = port.getServiceOperation();
+    		for(ServiceOperation operation: serviceOperation){
+    			String referenceJobId = operation.getReferenceJobId();
+    			if(referenceJobId == null || referenceJobId.equals("")){ //$NON-NLS-1$
+    				return false;
+    			}
+
+    			boolean found = false;
+    			for (IRepositoryViewObject job : jobs) {
+    				if (referenceJobId.equals(job.getId())) {
+    					found = true;
+    					break;
+    				}
+    			}
+    			if(!found){
+    				return false;
+    			}
+    		}
+    	}
+    	return true;
     }
 }
