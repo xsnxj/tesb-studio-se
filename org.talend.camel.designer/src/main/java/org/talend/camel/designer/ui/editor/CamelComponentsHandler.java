@@ -59,7 +59,7 @@ public class CamelComponentsHandler implements IComponentsHandler {
      * @see org.talend.core.model.components.IComponentsHandler#extractComponentsCategory()
      */
     public ComponentCategory extractComponentsCategory() {
-        return ComponentCategory.CATEGORY_4_DI;
+        return ComponentCategory.CATEGORY_4_CAMEL;
     }
 
 }
