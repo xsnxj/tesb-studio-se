@@ -72,18 +72,18 @@
 
             <!-- CXF Core -->
             <IMPORT NAME="cxf-rt-core"
-                    MODULE="cxf-rt-core-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.3.jar"
+                    MODULE="cxf-rt-core-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="cxf-api"
-                    MODULE="cxf-api-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.3.jar"
+                    MODULE="cxf-api-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="woodstox-core-asl"
-                    MODULE="woodstox-core-asl-4.1.4.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.1.4.jar"
+                    MODULE="woodstox-core-asl-4.2.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.0.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="stax2-api"
@@ -92,7 +92,7 @@
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="wsdl4j"
-                    MODULE="wsdl4j-1.6.2.jar"
+                    MODULE="wsdl4j-1.6.3.jar"
                     UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
                     BundleID=""
                     REQUIRED="true" />
@@ -114,8 +114,8 @@
 
             <!-- RS client -->
             <IMPORT NAME="cxf-rt-frontend-jaxrs"
-                    MODULE="cxf-rt-frontend-jaxrs-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.3.jar"
+                    MODULE="cxf-rt-frontend-jaxrs-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
@@ -124,18 +124,18 @@
                     BundleID="org.apache.servicemix.specs.jsr339-api-m10"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-bindings-xml"
-                    MODULE="cxf-rt-bindings-xml-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.3.jar"
+                    MODULE="cxf-rt-bindings-xml-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-transports-http"
-                    MODULE="cxf-rt-transports-http-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.3.jar"
+                    MODULE="cxf-rt-transports-http-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
-                    MODULE="cxf-rt-rs-extension-providers-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-extension-providers-2.7.3.jar"
+                    MODULE="cxf-rt-rs-extension-providers-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-extension-providers-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="jettison"
@@ -151,8 +151,8 @@
 
             <!-- providers -->
             <IMPORT NAME="cxf-rt-transports-http-jetty"
-                    MODULE="cxf-rt-transports-http-jetty-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-jetty-2.7.3.jar"
+                    MODULE="cxf-rt-transports-http-jetty-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-jetty-2.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="jetty-server"
@@ -186,8 +186,8 @@
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.6.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.6.2.jar"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
                     BundleID=""
                     REQUIRED="true" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
@@ -260,8 +260,8 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-policy"
-                    MODULE="cxf-rt-ws-policy-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.3.jar"
+                    MODULE="cxf-rt-ws-policy-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="neethi"
@@ -270,18 +270,18 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-security"
-                    MODULE="cxf-rt-ws-security-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.3.jar"
+                    MODULE="cxf-rt-ws-security-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-bindings-soap"
-                    MODULE="cxf-rt-bindings-soap-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.3.jar"
+                    MODULE="cxf-rt-bindings-soap-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-databinding-jaxb"
-                    MODULE="cxf-rt-databinding-jaxb-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.3.jar"
+                    MODULE="cxf-rt-databinding-jaxb-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="ehcache-core"
@@ -290,13 +290,13 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="wss4j"
-                    MODULE="wss4j-1.6.9.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.9.jar"
+                    MODULE="wss4j-1.6.10.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.10.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="xmlsec"
-                    MODULE="xmlsec-1.5.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.3.jar"
+                    MODULE="xmlsec-1.5.4.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.4.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="opensaml"
@@ -337,8 +337,8 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-frontend-jaxws"
-                    MODULE="cxf-rt-frontend-jaxws-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.3.jar"
+                    MODULE="cxf-rt-frontend-jaxws-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="xml-resolver"
@@ -352,18 +352,18 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-bindings-soap"
-                    MODULE="cxf-rt-bindings-soap-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.3.jar"
+                    MODULE="cxf-rt-bindings-soap-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-databinding-jaxb"
-                    MODULE="cxf-rt-databinding-jaxb-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.3.jar"
+                    MODULE="cxf-rt-databinding-jaxb-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-frontend-simple"
-                    MODULE="cxf-rt-frontend-simple-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.3.jar"
+                    MODULE="cxf-rt-frontend-simple-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-transports-local"
@@ -372,13 +372,13 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-addr"
-                    MODULE="cxf-rt-ws-addr-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.3.jar"
+                    MODULE="cxf-rt-ws-addr-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="cxf-rt-ws-policy"
-                    MODULE="cxf-rt-ws-policy-2.7.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.3.jar"
+                    MODULE="cxf-rt-ws-policy-2.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.5.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="neethi"
