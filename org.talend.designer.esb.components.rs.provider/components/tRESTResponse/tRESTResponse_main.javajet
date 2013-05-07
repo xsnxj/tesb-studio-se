@@ -72,7 +72,7 @@ for (Map<String, String> header : headers) { %>
 		restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
 		restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
 		restResponse_<%=cid%>.put("HEADERS", restProviderResponseHeaders_<%=cid%>);
-        restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
+		restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
 		globalMap.put("restResponse", restResponse_<%=cid%>);
 
 <%
