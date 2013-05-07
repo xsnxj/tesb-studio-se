@@ -60,12 +60,6 @@ if (contentType == null) {
 
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
 boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
-
-boolean dropJsonRoot = false;
-if (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType)) {
-	String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__");
-	dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
-}
 %>
 
 try {
@@ -75,14 +69,6 @@ try {
 	<% if (null != inputConn) { %>
 		if (null != <%=inputConn.getName()%>.body) {
 			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
-			<% if (dropJsonRoot) { %>
-				if (null != requestDoc_<%=cid%>) {
-					if (null != requestDoc_<%=cid%>.getRootElement()) {
-						// !!! temporary fix - after upgrade to CXF 2.7.4 should be removed !!!
-						requestDoc_<%=cid%>.getRootElement().setName("Document");
-					}
-				}
-			<% } %>
 		}
 		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
 	<% } %>
@@ -214,6 +200,10 @@ try {
 		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
 		jsonProvider_<%=cid%>.setWrapperName("root");
 	<% } %>
+	<%
+		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType))
+				? Boolean.valueOf(ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__")) : false;
+	%>
 		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
@@ -223,19 +213,19 @@ try {
 
 	// set request path
 	webClient_<%=cid%>.path(<%=ElementParameterParser.getValue(node,"__PATH__")%>);
-	<% if (!isSLEnable) { // this temporarily does not work in with locator scenario %>
-		// set connection properties
-		org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
-		org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
-		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
-		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
-		<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
-			conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
-			conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
-			conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
-			conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
-		<% } %>
+
+	// set connection properties
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
 	<% } %>
+
 	// set Content-Type
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
 		webClient_<%=cid%>.type("<%=contentType%>");
