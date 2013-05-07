@@ -223,5 +223,20 @@
           name="Services">
     </seeker>
  </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="org.talend.repository.services.utils.RefactorRenameHandler"
+          commandId="org.eclipse.wst.wsdl.ui.refactor.rename.element">
+       <activeWhen>
+          <with
+                variable="activeEditorId">
+             <equals
+                   value="org.talend.repository.services.utils.LocalWSDLEditor">
+             </equals>
+          </with>
+       </activeWhen>
+    </handler>
+ </extension>
 
 </plugin>
