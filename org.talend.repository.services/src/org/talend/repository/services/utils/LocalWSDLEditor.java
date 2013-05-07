@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -190,7 +189,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
         // changed for TDI-18005
         Map<String, String> portNameIdMap = new HashMap<String, String>();
-        Map<String, Map<String, String>> portAdditionalMap = new HashMap<String, Map<String, String>>();
+        Map<String, EMap<String, String>> portAdditionalMap = new HashMap<String, EMap<String, String>>();
         Map<String, String> operNameIdMap = new HashMap<String, String>();
         Map<String, String> operJobMap = new HashMap<String, String>();
 
@@ -203,14 +202,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             portNameIdMap.put(servicePort.getName(), servicePort.getId());
 
             // keep additional infos
-            Map<String, String> additionInfoMap = new HashMap<String, String>();
-            EMap<String, String> oldInfo = servicePort.getAdditionalInfo();
-            Iterator<Entry<String, String>> iterator = oldInfo.iterator();
-            while (iterator.hasNext()) {
-                Entry<String, String> next = iterator.next();
-                additionInfoMap.put(next.getKey(), next.getValue());
-            }
-            portAdditionalMap.put(servicePort.getId(), additionInfoMap);
+            portAdditionalMap.put(servicePort.getId(), servicePort.getAdditionalInfo());
 
             EList<ServiceOperation> operations = servicePort.getServiceOperation();
             ArrayList<String> operationNames = new ArrayList<String>();
@@ -224,7 +216,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
 
         ((ServiceConnection) serviceItem.getConnection()).getServicePort().clear();
-        for (Object obj : definition.getPortTypes().values()) {
+        for (Object obj : definition.getAllPortTypes().values()) {
             PortType portType = (PortType) obj;
             if (portType.isUndefined()) {
                 continue;
@@ -234,26 +226,15 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             String portName = portType.getQName().getLocalPart();
             port.setName(portName);
             // set port id
-            Iterator<String> portIterator = portNameIdMap.keySet().iterator();
-            while (portIterator.hasNext()) {
-                String oldportName = portIterator.next();
-                if (oldportName.equals(portName)) {
-                    String id = portNameIdMap.get(oldportName);
-                    port.setId(id);
-
-                    // restore additional infos
-                    Map<String, String> storedAdditions = portAdditionalMap.get(id);
-                    Iterator<String> keySet = storedAdditions.keySet().iterator();
-                    while (keySet.hasNext()) {
-                        String next = keySet.next();
-                        String value = storedAdditions.get(next);
-                        port.getAdditionalInfo().put(next, value);
-                    }
-                }
-            }
-            if (port.getId() == null || port.getId().equals("")) {
+            String id = portNameIdMap.get(portName);
+            if (id != null) {
+                port.setId(id);
+                // restore additional infos
+                port.getAdditionalInfo().putAll(portAdditionalMap.get(id));
+            } else {
                 port.setId(factory.getNextId());
             }
+
             @SuppressWarnings("unchecked")
 			List<Operation> list = portType.getOperations();
             for (Operation operation : list) {
