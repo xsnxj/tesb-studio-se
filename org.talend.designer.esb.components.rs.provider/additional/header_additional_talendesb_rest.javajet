@@ -456,32 +456,32 @@ public void setRunInTalendEsbRuntimeContainer(boolean flag) {
 private boolean restTalendJobAlreadyStarted = false;
 
 public static class CustomJSONProvider extends org.apache.cxf.jaxrs.provider.json.JSONProvider {
-    @Override
-    protected javax.xml.stream.XMLStreamWriter createWriter(
-            Object actualObject, Class actualClass,
-            java.lang.reflect.Type genericType, String enc,
-            java.io.OutputStream os, boolean isCollection)
-            throws Exception {
-        // is drop root required
-        boolean dropRoot = org.apache.cxf.message.MessageUtils
-                .isTrue(getContext().get(
-                        "drop.json.root.element"));
+	@Override
+	protected javax.xml.stream.XMLStreamWriter createWriter(
+			Object actualObject, Class actualClass,
+			java.lang.reflect.Type genericType, String enc,
+			java.io.OutputStream os, boolean isCollection)
+			throws Exception {
+		// is drop root required
+		boolean dropRoot = org.apache.cxf.message.MessageUtils
+				.isTrue(getContext().get(
+						"drop.json.root.element"));
 
-        // JSON configuration
-        org.codehaus.jettison.mapped.Configuration config = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
-                .createConfiguration(
-                        new java.util.concurrent.ConcurrentHashMap<String, String>(),
-                        false, true, null);
-        // JSON writer
-        javax.xml.stream.XMLStreamWriter writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
-                .createStreamWriter(os, new javax.xml.namespace.QName("Document"), false, config,
-                        false,
-                        new java.util.ArrayList<String>(),
-                        dropRoot);
-        writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
-                .createIgnoreNsWriterIfNeeded(writer, true);
-        return writer;
-    }
+		// JSON configuration
+		org.codehaus.jettison.mapped.Configuration config = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+				.createConfiguration(
+						new java.util.concurrent.ConcurrentHashMap<String, String>(),
+						false, true, null);
+		// JSON writer
+		javax.xml.stream.XMLStreamWriter writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+				.createStreamWriter(os, new javax.xml.namespace.QName("Document"), false, config,
+						false,
+						new java.util.ArrayList<String>(),
+						dropRoot);
+		writer = org.apache.cxf.jaxrs.provider.json.utils.JSONUtils
+				.createIgnoreNsWriterIfNeeded(writer, true);
+		return writer;
+	}
 };
 
 /**
@@ -498,8 +498,8 @@ public static class RestServiceProviderImpl4TalendJob {
 	@javax.ws.rs.core.Context
 	private javax.ws.rs.core.HttpHeaders httpHeaders;
 
-    @javax.ws.rs.core.Context
-    private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
+	@javax.ws.rs.core.Context
+	private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
 	private final <%=process.getName()%> job;
 
@@ -531,7 +531,8 @@ public static class RestServiceProviderImpl4TalendJob {
 			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
-			Boolean dropJsonRoot = (Boolean) response.get("drop.json.root.element");
+			Object dropJsonRootProp = response.get("drop.json.root.element");
+			Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
 			messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
 			Object responseBody = null;
@@ -693,7 +694,7 @@ if (null != conns && !conns.isEmpty()) {
 				JavaTypesManager.FLOAT,
 				JavaTypesManager.DOUBLE,
 				JavaTypesManager.BIGDECIMAL,
-				
+
 				//date
 				JavaTypesManager.DATE
 			));
