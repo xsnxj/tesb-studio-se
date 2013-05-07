@@ -26,8 +26,8 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -40,6 +40,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
@@ -56,7 +57,6 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -144,8 +144,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
         try {
             // Set readonly to false since created job will always be editable.
             ProcessEditorInput fileEditorInput = new ProcessEditorInput(process, false, true, false);
-            IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem().getProperty()
-                    .getId(), false);
+            IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(
+            		fileEditorInput.getItem().getProperty().getId());
             fileEditorInput.setRepositoryNode(repositoryNode);
 
             IEditorPart openEditor = getActivePage().openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
@@ -164,7 +164,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
                     new Point(3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
             commandStack.execute(cNcc);
 
-            if (!serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE).equals(WSDLUtils.ONE_WAY)) {
+            if (!WSDLUtils.ONE_WAY.equals(serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE))) {
                 Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
                 cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
                         new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
