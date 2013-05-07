@@ -156,7 +156,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 				}
 			}
 
-			for (Object obj : definition.getPortTypes().values()) {
+			for (Object obj : definition.getAllPortTypes().values()) {
 				PortType portType = (PortType) obj;
 				String ns = portType.getQName().getNamespaceURI();
 				@SuppressWarnings("unchecked")
