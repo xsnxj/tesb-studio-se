@@ -34,6 +34,7 @@ String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTe
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
 Boolean useSR = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
 Boolean useAuthorization = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
+String authorizationRole = ElementParameterParser.getValue(node, "__ROLE__");
 
 //if no a EE version then useSR should be false
 boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
@@ -232,15 +233,15 @@ if (inputConn != null) {
                                 put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
-                                put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
+                                put("role", <%=authorizationRole%>);
                             <% } else if (useAuth) { %>
-                            <% if (authType.equals("SAML") && isStudioEEVersion) { %>
-                                put("useAuthorization", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))%>);
-                                <% if (useAuthorization) { %>
-                                    put("role", <%=ElementParameterParser.getValue(node, "__ROLE__")%>);   
-                                <% } else { %>
-                                    put("role", "");   
-                                <% } %>
+                                <% if ("SAML".equals(authType) && isStudioEEVersion) { %>
+                                    put("useAuthorization", <%=useAuthorization%>);
+                                    <% if (useAuthorization) { %>
+                                        put("role", <%=authorizationRole%>);
+                                    <% } else { %>
+                                        put("role", "");
+                                    <% } %>
                                 <% } %>
                                 put("esbSecurity", "<%=authType%>");
                                 put("username", <%=username%>);
@@ -362,7 +363,7 @@ if (inputConn != null) {
             <% } %>
         }
     } catch (Exception e_<%=cid%>){
-        <% if (("true").equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+        <% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
             throw(e_<%=cid%>);
         <% } else { %>
             System.err.print(e_<%=cid%>.getMessage());
