@@ -146,8 +146,7 @@ public class QueuedExchangeContextImpl<T> {
 	/**
 	 * @throws InterruptedException
 	 */
-	void waitForRelease(long timeout, java.util.concurrent.TimeUnit unit)
-			throws InterruptedException {
+	void waitForRelease(long timeout, java.util.concurrent.TimeUnit unit) throws InterruptedException {
 		latch.await(timeout, unit);
 	}
 
@@ -195,8 +194,7 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	 * will be completed for request-response operations
 	 */
 	public QueuedExchangeContextImpl<T> invoke(T request) {
-		QueuedExchangeContextImpl<T> context =
-			new QueuedExchangeContextImpl<T>(request);
+		QueuedExchangeContextImpl<T> context = new QueuedExchangeContextImpl<T>(request);
 		boolean inserted = queue.offer(context);
 		if (!inserted) {
 			try {
@@ -206,16 +204,13 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 			}
 			// context.serveFault("job pool overflow exceed", null);
 			throw new RuntimeException(
-					"Can't queue request, queue size of "
-							+ MAX_QUEUE_SIZE + " is exceeded");
+					"Can't queue request, queue size of " + MAX_QUEUE_SIZE + " is exceeded");
 		} else {
 			try {
-				context.waitForRelease(WAIT_TIMEOUT_SECONDS,
-						java.util.concurrent.TimeUnit.SECONDS);
+				context.waitForRelease(WAIT_TIMEOUT_SECONDS, java.util.concurrent.TimeUnit.SECONDS);
 			} catch (InterruptedException ie) {
 				// context.serveFault("job execution timeout", ie);
-				throw new RuntimeException(
-						"job execution timeout: " + ie.getMessage());
+				throw new RuntimeException("job execution timeout: " + ie.getMessage());
 			}
 		}
 		return context;
@@ -261,16 +256,14 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
  */
 @javax.xml.ws.ServiceMode(value = javax.xml.ws.Service.Mode.PAYLOAD)
 @javax.xml.ws.WebServiceProvider()
-public class ESBProvider_<%=cid%> implements
-		javax.xml.ws.Provider<javax.xml.transform.Source> {
+public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
 	@javax.annotation.Resource()
 	private javax.xml.ws.WebServiceContext context;
 
-	public ESBProvider_<%=cid%>(
-			QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
+	public ESBProvider_<%=cid%>(QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
 
@@ -280,10 +273,10 @@ public class ESBProvider_<%=cid%> implements
 	public javax.xml.transform.Source invoke(javax.xml.transform.Source request) {
 
 		try {
-            java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
-            org.apache.cxf.staxutils.StaxUtils.copy(request, os);
-            org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
-                    .read(new java.io.ByteArrayInputStream(os.toByteArray()));
+			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+			org.apache.cxf.staxutils.StaxUtils.copy(request, os);
+			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
+					.read(new java.io.ByteArrayInputStream(os.toByteArray()));
 
 			// System.out.println("request: " + requestDoc.asXML());
 
@@ -359,18 +352,15 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 			if(error != null && error.getMessage() != null){
 				msg = error.getMessage();
 			}
-			talendJobError = new RuntimeException(
-					"Talend job execution error: "+ msg, error);
+			talendJobError = new RuntimeException("Talend job execution error: "+ msg, error);
 		}
 		esbProviderCallback.sendResponse(talendJobError);
 	}
 
-	public void sendBusinessFault(String faultString,
-			org.dom4j.Document faultDetail) {
+	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {
 
 		try {
-			javax.xml.soap.SOAPFactory soapFactory =
-				javax.xml.soap.SOAPFactory.newInstance();
+			javax.xml.soap.SOAPFactory soapFactory = javax.xml.soap.SOAPFactory.newInstance();
 			javax.xml.soap.SOAPFault soapFault = soapFactory.createFault(
 					faultString, new javax.xml.namespace.QName(TNS, "businessFault"));
 			if (null != faultDetail) {
@@ -386,8 +376,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 						soapFault.getOwnerDocument().importNode(
 								faultDetailDom.getDocumentElement(), true));
 			}
-			esbProviderCallback.sendResponse(
-					wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
+			esbProviderCallback.sendResponse(wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
 		} catch (Exception e) {
 			this.sendFault(e);
 		}
@@ -408,8 +397,7 @@ class HandlerThread_<%=cid%> extends Thread {
 
 	String endpointUrl = "<%=endpointUrl%>";
 
-	public HandlerThread_<%=cid%>(
-			QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
+	public HandlerThread_<%=cid%>(QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
 		this.handler = handler;
 	}
 
@@ -453,19 +441,17 @@ class HandlerThread_<%=cid%> extends Thread {
 			// ignore
 		}
 
-        org.apache.cxf.jaxws.JaxWsServerFactoryBean serverFactory = new org.apache.cxf.jaxws.JaxWsServerFactoryBean();
+		org.apache.cxf.jaxws.JaxWsServerFactoryBean serverFactory = new org.apache.cxf.jaxws.JaxWsServerFactoryBean();
 <% if (null != wsdlLocation && !wsdlLocation.trim().isEmpty()) { %>
-        serverFactory.setWsdlURL("<%=wsdlLocation%>");
+		serverFactory.setWsdlURL("<%=wsdlLocation%>");
 <% } %>
-        serverFactory.setServiceName(new javax.xml.namespace.QName(
-                "<%=serviceNS%>", "<%=serviceName%>"));
-        serverFactory.setEndpointName(new javax.xml.namespace.QName(
-                "<%=serviceNS%>", "<%=portName%>"));
-        // in case null - WSDL value used
-        serverFactory.setAddress(endpointUrl);
+		serverFactory.setServiceName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>"));
+		serverFactory.setEndpointName(new javax.xml.namespace.QName("<%=serviceNS%>", "<%=portName%>"));
+		// in case null - WSDL value used
+		serverFactory.setAddress(endpointUrl);
 
-        serverFactory.setServiceBean(new ESBProvider_<%=cid%>(handler));
-        server = serverFactory.create();
+		serverFactory.setServiceBean(new ESBProvider_<%=cid%>(handler));
+		server = serverFactory.create();
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
 	}
@@ -473,7 +459,7 @@ class HandlerThread_<%=cid%> extends Thread {
 	public void stopEndpoint() {
 		if (null != server) {
 			server.stop();
-            server.destroy();
+			server.destroy();
 			System.out.println("web service [endpoint: " + endpointUrl + "] unpublished");
 		}
 	}
