@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -31,7 +30,6 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
-import org.talend.repository.services.utils.LocalWSDLEditor;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.views.IRepositoryView;
 
@@ -119,12 +117,7 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         		editorInput.setReadOnly(true);
         	}
         	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IEditorPart editor = page.openEditor(editorInput, ID, true);
-            if (editor instanceof LocalWSDLEditor) {
-                LocalWSDLEditor wsdlEditor = (LocalWSDLEditor) editor;
-                wsdlEditor.setServiceItem(serviceItem);
-                wsdlEditor.setRepositoryNode(repositoryNode);
-            }
+            page.openEditor(editorInput, ID, true);
         } catch (CoreException e) {
             ExceptionHandler.process(e);
         } 

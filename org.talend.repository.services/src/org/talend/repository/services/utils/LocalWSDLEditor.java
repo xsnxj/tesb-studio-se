@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -40,6 +41,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -58,7 +60,6 @@ import org.talend.repository.services.model.services.ServicesFactory;
 public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private ServiceItem serviceItem;
-
     private RepositoryNode repositoryNode;
 
     public LocalWSDLEditor(){
@@ -67,6 +68,23 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
     
     @Override
+	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
+		super.init(site, editorInput);
+		if (editorInput != null && editorInput instanceof ServiceEditorInput) {
+			ServiceEditorInput serviceEditorInput = (ServiceEditorInput) editorInput;
+			Item item = serviceEditorInput.getItem();
+			if (item != null) {
+				IRepositoryNode node = RepositorySeekerManager.getInstance()
+						.searchRepoViewNode(item.getProperty().getId(), false);
+				repositoryNode = (RepositoryNode) node;
+				if(item instanceof ServiceItem) {
+					serviceItem = (ServiceItem) item;
+				}
+			}
+		}
+	}
+
+	@Override
     public void doSave(IProgressMonitor monitor) {
     	if(isEditorInputReadOnly()){
     		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
@@ -333,22 +351,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     	}
     }
     
-    public RepositoryNode getRepositoryNode() {
-        return this.repositoryNode;
-    }
-
-    public void setRepositoryNode(RepositoryNode repositoryNode) {
-        this.repositoryNode = repositoryNode;
-    }
-
-    public ServiceItem getServiceItem() {
-        return serviceItem;
-    }
-
-    public void setServiceItem(ServiceItem serviceItem) {
-        this.serviceItem = serviceItem;
-    }
-
     @Override
     public boolean isFileReadOnly() {
     	return super.isFileReadOnly() || isEditorInputReadOnly();
