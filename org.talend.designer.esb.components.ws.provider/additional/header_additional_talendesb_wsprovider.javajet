@@ -409,6 +409,9 @@ class HandlerThread_<%=cid%> extends Thread {
 		try {
 			if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
 				int port = endpointURI.getPort();
+				if (-1 == port) {
+				    port = 80;
+				}
 				java.net.ServerSocket ss = null;
 				try {
 					ss = new java.net.ServerSocket(port);
