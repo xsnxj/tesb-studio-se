@@ -39,6 +39,10 @@ public class EsbStartingBrowser extends StartingBrowser {
             browser.addLocationListener(new BrowserDynamicPartLocationListener());
         } catch (IOException e) {
             ExceptionHandler.process(e);
+        } catch (Throwable t) {
+
+            Exception ex = new Exception("The internal web browser can not be access,the starting page won't be displayed");
+            ExceptionHandler.process(ex);
         }
     }
 
