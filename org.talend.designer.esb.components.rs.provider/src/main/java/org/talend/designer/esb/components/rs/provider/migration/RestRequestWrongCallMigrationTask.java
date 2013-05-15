@@ -74,10 +74,8 @@ public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask
 		Iterator iterator = columns.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
-			if (next != null && next instanceof ColumnType) {
-				if (name.equals(((ColumnType) next).getName())) {
-					return;
-				}
+			if (next instanceof ColumnType && name.equals(((ColumnType) next).getName())) {
+				return;
 			}
 		}
 		ColumnType columnType = TalendFileFactory.eINSTANCE.createColumnType();
