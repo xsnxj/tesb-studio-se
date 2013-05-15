@@ -87,7 +87,7 @@ public class ConsumerFaultResponseMigrationTask extends
 		Iterator iterator = column.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
-			if (next != null && next instanceof ColumnType) {
+			if (next instanceof ColumnType) {
 				ColumnType ct = (ColumnType) next;
 				if (name.equals(ct.getName())) {
 					return;

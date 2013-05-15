@@ -160,7 +160,7 @@ public class WebServiceUI extends WizardPage {
         IElementParameter elementParameter = node.getElementParameter(parameterName);
         if (null != elementParameter) {
             Object parameterValue = elementParameter.getValue();
-            if (null != parameterValue && parameterValue instanceof String) {
+            if (parameterValue instanceof String) {
                 String value = parameterValue.toString().trim();
                 return value.isEmpty() ? null : value;
             }
