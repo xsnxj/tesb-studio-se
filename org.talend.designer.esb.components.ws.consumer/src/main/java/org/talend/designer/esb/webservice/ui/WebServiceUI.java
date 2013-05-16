@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -300,6 +301,11 @@ public class WebServiceUI extends WizardPage {
             populateCheckbox.setText("Populate schema to repository on finish");
             populateCheckbox.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false, wsdlUrlcompositeColumn, 1));
         }
+
+        Label noteLabel = new Label(wsdlComposite, SWT.NONE);
+        noteLabel.setText(Messages.getString("WebServiceUI.NotSupportRpc"));
+        noteLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
+        GridDataFactory.generate(noteLabel, wsdlUrlcompositeColumn, 1);
 
         setControl(wsdlComposite);
         setPageComplete(false);

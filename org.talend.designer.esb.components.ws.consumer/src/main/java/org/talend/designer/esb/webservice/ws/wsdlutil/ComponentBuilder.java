@@ -23,6 +23,8 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 @SuppressWarnings("unchecked")
 public class ComponentBuilder {
 
+	private final static String OPERATION_TYPE_RPC="rpc";
+
     private ComponentBuilder() {
     }
 
@@ -57,6 +59,11 @@ public class ComponentBuilder {
 
                 SOAPOperation soapOperation = findExtensibilityElement(operation.getExtensibilityElements(), SOAPOperation.class);
                 if (null != soapOperation) {
+                	if(OPERATION_TYPE_RPC.equalsIgnoreCase(soapOperation.getStyle())){
+                		//TESB-6151 disable display of unsupported RPC type.
+                		continue;
+                	}
+                	
                     operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
                 }
 
