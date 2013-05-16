@@ -92,12 +92,6 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 				.getActivePage();
 	}
 
-	@Override
-	public boolean performCancel() {
-		restoreVersion();
-		return super.performCancel();
-	}
-
 	private void lockObject(IRepositoryViewObject object) {
 		IProxyRepositoryFactory repositoryFactory = CorePlugin.getDefault()
 				.getRepositoryService().getProxyRepositoryFactory();
@@ -124,6 +118,7 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 				public void run(final IProgressMonitor monitor)
 						throws CoreException {
 					if (!alreadyEditedByUser) {
+						getProperty().setVersion(mainPage.getNewVersion());
 						refreshNewJob();
 						try {
 							ProxyRepositoryFactory.getInstance().saveProject(
@@ -228,10 +223,6 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 
 	public String getOriginVersion() {
 		return this.originalVersion;
-	}
-
-	public void restoreVersion() {
-		getProperty().setVersion(getOriginVersion());
 	}
 
 }

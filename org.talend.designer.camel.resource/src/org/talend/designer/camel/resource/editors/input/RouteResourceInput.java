@@ -62,4 +62,11 @@ public class RouteResourceInput extends RepositoryEditorInput {
 		return listener;
 	}
 
+	public String getName() {
+		String label = (getItem() == null ? "" : getItem().getProperty()
+				.getLabel());
+		String version = (getItem() == null ? "0.1" : getItem().getProperty()
+				.getVersion());
+		return label + " " + version+ (isReadOnly()?" (ReadOnly)":"");
+	}
 }

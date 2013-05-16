@@ -1,5 +1,7 @@
 package org.talend.designer.camel.resource.ui.util;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorDescriptor;
@@ -9,10 +11,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.camel.resource.editors.ResourceEditorListener;
 import org.talend.designer.camel.resource.editors.RouteResourceEditor;
 import org.talend.designer.camel.resource.editors.RouteResoureChangeListener;
@@ -170,7 +174,32 @@ public class RouteResourceEditorUtil {
 			return true;
 		}
 		
+		if(!isLatestVersion(property)){
+			return true;
+		}
+		
 		return false;
 	}
 
+	private static boolean isLatestVersion(Property property){
+		try{
+			List<IRepositoryViewObject> allVersion = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory().getAllVersion(property.getId());
+			if (allVersion == null || allVersion.isEmpty()) {
+				return false;
+			}
+			String lastVersion = VersionUtils.DEFAULT_VERSION;
+
+			for (IRepositoryViewObject object : allVersion) {
+				if (VersionUtils.compareTo(object.getVersion(), lastVersion) > 0) {
+					lastVersion = object.getVersion();
+				}
+			}
+			if (VersionUtils.compareTo(property.getVersion(), lastVersion) == 0) {
+				return true;
+			}
+			return false;
+		}catch(Exception e){
+		}
+		return true;
+	}
 }
