@@ -445,7 +445,7 @@
                     BundleID="org.apache.hadoop.zookeeper"
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
+                    MODULE="log4j-1.2.17.jar"
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
