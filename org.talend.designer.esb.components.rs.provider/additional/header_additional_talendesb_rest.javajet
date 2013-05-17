@@ -502,14 +502,15 @@ public static class RestServiceProviderImpl4TalendJob {
 			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
-			Object dropJsonRootProp = response == null? false : response.get("drop.json.root.element");
-			Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
-			messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
 			Object responseBody = null;
 			Integer status = null;
 			java.util.Map<String, String> headers = null;
 			if (null != response) {
+                Object dropJsonRootProp = response == null? false : response.get("drop.json.root.element");
+                Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
+                messageContext.put("drop.json.root.element", dropJsonRoot.toString());
+
 				responseBody = response.get("BODY");
 				status = (Integer) response.get("STATUS");
 				headers = (java.util.Map<String, String>) response.get("HEADERS");
