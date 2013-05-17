@@ -92,7 +92,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
     public void addPages() {
         mainPage = new OpenAnotherVersionPage(alreadyEditedByUser, processObject);
         addPage(mainPage);
-        setWindowTitle(Messages.getString("NewProcessWizard.windowTitle")); //$NON-NLS-1$
+        setWindowTitle(Messages.getString("OpenExistVersionProcess.open.title")); //$NON-NLS-1$
     }
 
     /**
