@@ -13,6 +13,7 @@
 	} catch (Throwable e_<%=cid%>) {
 		java.util.Map<String, Object> restFault_<%=cid%> = new java.util.HashMap<String, Object>();
 		restFault_<%=cid%>.put("STATUS", 500);
+		restFault_<%=cid%>.put("BODY", e_<%=cid%>.getMessage());
 		globalMap.put("restResponse", restFault_<%=cid%>);
 	}
 	nb_line_<%=cid%>++;
