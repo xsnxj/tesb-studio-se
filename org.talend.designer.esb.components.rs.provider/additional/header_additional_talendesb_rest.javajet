@@ -502,7 +502,7 @@ public static class RestServiceProviderImpl4TalendJob {
 			job.<%=cid%>_LoopProcess(globalMap);
 
 			java.util.Map<String, Object> response = (java.util.Map<String, Object>) globalMap.get("restResponse");
-			Object dropJsonRootProp = response.get("drop.json.root.element");
+			Object dropJsonRootProp = response == null? false : response.get("drop.json.root.element");
 			Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
 			messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
@@ -583,16 +583,27 @@ public static class RestServiceProviderImpl4TalendJob {
 		private final String paramType;
 		private final String defaultValue;
 		private final String variableName;
+		private String pattern = "";
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue) {
-			this(name, paramType, javaType, defaultValue, false);
+			this(name, paramType, javaType, defaultValue, "", false);
+		}
+		
+		
+		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern) {
+			this(name, paramType, javaType, defaultValue, pattern, false);
 		}
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue, boolean generateVariableName) {
+			this(name, paramType, javaType, defaultValue, "", generateVariableName);
+		}
+		
+		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean generateVariableName) {
 			this.name = name;
 			this.javaType = javaType;
 			this.paramType = paramType;
 			this.defaultValue = defaultValue;
+			this.pattern = pattern;
 			this.variableName = (generateVariableName) ? new TalendString(name).getAsciiRandomString(5) : name;
 		}
 
@@ -610,6 +621,9 @@ public static class RestServiceProviderImpl4TalendJob {
 		}
 		public String getVariableName() {
 			return variableName;
+		}
+		public String getPattern(){
+			return pattern;
 		}
 	}
 
@@ -690,7 +704,7 @@ if (null != conns && !conns.isEmpty()) {
 							JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
 							if (supportedJavaTypes.contains(javaType)) {
 								String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault());
+								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault(), column.getPattern());
 							} else {
 								// defined java type is unsupported - will define with default String type below (and this parameter will not be set to flow field)
 								schemaFieldType = "id_String";
@@ -698,7 +712,7 @@ if (null != conns && !conns.isEmpty()) {
 						} else {
 							// uri parameter hidden by parameter of another type in schema - will use generated variable name in rest service method
 							String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, true);
+							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, column.getPattern(), true);
 						}
 						break;
 					}
@@ -752,7 +766,7 @@ if (null != conns && !conns.isEmpty()) {
 
 				if (supportedJavaTypes.contains(javaType)) {
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault());
+					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern());
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
 					//Report that the Java type is unsupported
@@ -777,11 +791,18 @@ if (null != conns && !conns.isEmpty()) {
 				} else {
 					%>, <%
 				}
-
+				String javaType = param.getJavaType();
+				String variableName = param.getVariableName();
+				if("java.util.Date".equals(javaType)){
+					javaType = "String";
+					variableName += "_"+cid;
+				}
+				
 				if (param.getDefaultValue() != null) { %>
 					@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>")
 				<% } %>
-				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%=param.getJavaType()%> <%=param.getVariableName()%>
+				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%= javaType%> <%=variableName%>
+				
 		<%	} %>
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) {
 			if (paramCommaWritten) {
@@ -790,7 +811,23 @@ if (null != conns && !conns.isEmpty()) {
 			org.dom4j.Document body
 		<% } %>
 			) {
-
+<%
+		for (String parameter : parameters.keySet()) {
+			Parameter param = parameters.get(parameter);
+			String javaType = param.getJavaType();
+			String variableName = param.getVariableName();
+			if("java.util.Date".equals(javaType)){
+%>
+				java.util.Date <%=variableName%> = null;
+				try{
+					<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
+				}catch(Exception e){
+					<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+				}
+<%
+			}
+		}
+%>
 		java.util.Map<String, Object> request_<%=cid%> = new java.util.HashMap<String, Object>();
 		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
 		request_<%=cid%>.put("OPERATION", "<%=connName%>");
