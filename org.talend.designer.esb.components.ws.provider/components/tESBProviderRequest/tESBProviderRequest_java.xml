@@ -90,7 +90,7 @@
 	<CODEGENERATION>
 		<TEMPLATES INPUT="Loop" OUTPUT="In">
 			<TEMPLATE NAME="Loop" COMPONENT="tESBProviderRequestLoop">
-				<LINK_TO NAME="In" CTYPE="ITERATE" />
+				<LINK_TO NAME="In" CTYPE="FLOW" />
 			</TEMPLATE>
 
 			<TEMPLATE NAME="In" COMPONENT="tESBProviderRequestIn" />
