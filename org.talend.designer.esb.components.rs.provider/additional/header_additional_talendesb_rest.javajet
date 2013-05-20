@@ -507,7 +507,7 @@ public static class RestServiceProviderImpl4TalendJob {
 			Integer status = null;
 			java.util.Map<String, String> headers = null;
 			if (null != response) {
-                Object dropJsonRootProp = response == null? false : response.get("drop.json.root.element");
+                Object dropJsonRootProp = response.get("drop.json.root.element");
                 Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
                 messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
