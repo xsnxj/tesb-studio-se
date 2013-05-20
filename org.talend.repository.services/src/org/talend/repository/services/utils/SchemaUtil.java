@@ -15,8 +15,10 @@ package org.talend.repository.services.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Import;
 import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
@@ -34,6 +36,16 @@ public class SchemaUtil {
     public SchemaUtil(Definition wsdlDefinition) {
         if (null != wsdlDefinition.getTypes()) {
             init(wsdlDefinition.getTypes());
+        } else {
+            @SuppressWarnings("unchecked")
+            Map<String, List<Import>> imports = wsdlDefinition.getImports();
+            for (List<Import> wsdlImports : imports.values()) {
+                for (Import wsdlImport : wsdlImports) {
+                    if (null != wsdlImport.getDefinition().getTypes()) {
+                        init(wsdlImport.getDefinition().getTypes());
+                    }
+                }
+            }
         }
     }
 
