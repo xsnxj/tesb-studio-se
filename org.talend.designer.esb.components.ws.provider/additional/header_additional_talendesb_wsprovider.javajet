@@ -316,6 +316,7 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
 	void setCustomProperties(java.util.Map<String, String> props);
 	void sendFault(Throwable e);
+	void sendFaultByDefault(Throwable e);
 	void sendBusinessFault(String faultString, org.dom4j.Document faultDetail);
 }
 
@@ -326,13 +327,16 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 
 	private ESBProviderCallback esbProviderCallback;
 	private java.util.Map<String, String> customProperty;
+	private boolean waitResponse = false;
 
 	public ESBProviderCallbackTalendJobWrapper_<%=cid%>(ESBProviderCallback callback) {
 		esbProviderCallback = callback;
 	}
 
 	public Object getRequest() throws ESBJobInterruptedException {
-		return esbProviderCallback.getRequest();
+		Object req = esbProviderCallback.getRequest();
+		waitResponse = true;
+		return req;
 	}
 
 	public void setCustomProperties(java.util.Map<String, String> props) {
@@ -340,7 +344,12 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	}
 
 	public void sendResponse(Object response) {
-		esbProviderCallback.sendResponse(wrapOutput(response));
+		if(waitResponse){
+			esbProviderCallback.sendResponse(wrapOutput(response));
+			waitResponse = false;
+		}else{
+			throw new RuntimeException("Send Response failed! Response already sent with current request.");
+		}
 	}
 
 	public void sendFault(Throwable error) {
@@ -355,6 +364,12 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 			talendJobError = new RuntimeException("Talend job execution error: "+ msg, error);
 		}
 		esbProviderCallback.sendResponse(talendJobError);
+	}
+	
+	public void sendFaultByDefault(Throwable error){
+		if(waitResponse){
+			sendFault(error);
+		}
 	}
 
 	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {

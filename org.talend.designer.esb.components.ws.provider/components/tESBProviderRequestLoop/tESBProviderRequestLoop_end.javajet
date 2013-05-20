@@ -1,5 +1,9 @@
 <%@ jet
 	imports="
+	    java.util.List
+
+        org.talend.core.model.process.EConnectionType
+        org.talend.core.model.process.IConnection
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
@@ -16,9 +20,10 @@
 		} catch (ESBJobInterruptedException e_<%=cid%>) {
 			// job interrupted from outside
 			break;
-		} catch (Throwable e_<%=cid%>) {
-			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFault(e_<%=cid%>);
-			globalMap.put("wsRequestReceivedAndResponseSentBack", true);
+		} catch (Exception e_<%=cid%>) {
+		new TalendException(e_tESBProviderRequest_1, currentComponent, globalMap).printStackTrace();
+		((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFaultByDefault(e_<%=cid%>);
+		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 		} finally {
 			// close DB connections
 			try {
