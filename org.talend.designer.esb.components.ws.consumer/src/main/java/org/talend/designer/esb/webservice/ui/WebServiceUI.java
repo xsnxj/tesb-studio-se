@@ -77,7 +77,6 @@ import org.talend.core.prefs.ITalendCorePrefConstants;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
-import org.talend.designer.esb.webservice.i18n.Messages;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
@@ -196,9 +195,8 @@ public class WebServiceUI extends WizardPage {
         }
 
         @SuppressWarnings("unchecked")
-		protected void createColumns(TableViewerCreator<T> tableViewerCreator, Table table) {
+        protected void createColumns(TableViewerCreator<T> tableViewerCreator, Table table) {
             rowColumn = new TableViewerCreatorColumn(tableViewerCreator);
-            rowColumn.setTitle(Messages.getString("WebServiceUI.COLUMN")); //$NON-NLS-1$
             rowColumn.setBeanPropertyAccessors(accessors);
             rowColumn.setWeight(60);
             rowColumn.setModifiable(true);
@@ -672,19 +670,19 @@ public class WebServiceUI extends WizardPage {
             }
 
             if(currentFunction.getSoapAction() != null){
-	            IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
-	            Soap_Action.setValue(currentFunction.getSoapAction());
+                IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
+                Soap_Action.setValue(currentFunction.getSoapAction());
             }
 
             String addressLocation = currentFunction.getAddressLocation();
             if(addressLocation != null){
-            	IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
-            	esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
+                IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
+                esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
             }
-            
+
             String communicationStyle = currentFunction.getCommunicationStyle();
             if(communicationStyle != null){
-            	IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
+                IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
                 commStyle.setValue(currentFunction.getCommunicationStyle());
             }
 
