@@ -53,19 +53,15 @@ public class ComponentBuilder {
             }
             Binding binding = port.getBinding();
             for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
+            	SOAPOperation soapOperation = findExtensibilityElement(operation.getExtensibilityElements(), SOAPOperation.class);
+            	if (null != soapOperation && OPERATION_TYPE_RPC.equalsIgnoreCase(soapOperation.getStyle())){
+            		//TESB-6151 disable display of unsupported RPC type.
+            		continue;
+            	}
                 OperationInfo operationInfo = new OperationInfo(operation.getOperation());
                 operationInfo.setPortName(port.getName());
                 operationInfo.setNamespaceURI(binding.getPortType().getQName().getNamespaceURI());
-
-                SOAPOperation soapOperation = findExtensibilityElement(operation.getExtensibilityElements(), SOAPOperation.class);
-                if (null != soapOperation) {
-                	if(OPERATION_TYPE_RPC.equalsIgnoreCase(soapOperation.getStyle())){
-                		//TESB-6151 disable display of unsupported RPC type.
-                		continue;
-                	}
-                	
-                    operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
-                }
+                operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
 
                 operationInfo.setTargetURL(soapLocation);
                 serviceInfo.addOperation(operationInfo);
