@@ -354,8 +354,6 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 	        }
         } catch (IOException e) {
             throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             for (File file : fileToSchemaMap.values()) {
                 file.delete();
