@@ -585,26 +585,28 @@ public static class RestServiceProviderImpl4TalendJob {
 		private final String defaultValue;
 		private final String variableName;
 		private String pattern = "";
+		private boolean isNullable = false;
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue) {
-			this(name, paramType, javaType, defaultValue, "", false);
+			this(name, paramType, javaType, defaultValue, "", false, false);
 		}
 		
 		
-		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern) {
-			this(name, paramType, javaType, defaultValue, pattern, false);
+		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable) {
+			this(name, paramType, javaType, defaultValue, pattern, isNullable, false);
 		}
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue, boolean generateVariableName) {
-			this(name, paramType, javaType, defaultValue, "", generateVariableName);
+			this(name, paramType, javaType, defaultValue, "", false,  generateVariableName);
 		}
 		
-		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean generateVariableName) {
+		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable, boolean generateVariableName) {
 			this.name = name;
 			this.javaType = javaType;
 			this.paramType = paramType;
 			this.defaultValue = defaultValue;
 			this.pattern = pattern;
+			this.isNullable = isNullable;
 			this.variableName = (generateVariableName) ? new TalendString(name).getAsciiRandomString(5) : name;
 		}
 
@@ -625,6 +627,9 @@ public static class RestServiceProviderImpl4TalendJob {
 		}
 		public String getPattern(){
 			return pattern;
+		}
+		public boolean isNullable(){
+			return isNullable;
 		}
 	}
 
@@ -695,7 +700,7 @@ if (null != conns && !conns.isEmpty()) {
 						// "body" is reserved name for content parameter
 						continue;
 					}
-
+					
 					if (uriVariable.equals(schemaFieldName)) {
 						String restParameterType = column.getComment();
 						schemaFieldType = column.getTalendType();
@@ -705,7 +710,7 @@ if (null != conns && !conns.isEmpty()) {
 							JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
 							if (supportedJavaTypes.contains(javaType)) {
 								String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault(), column.getPattern());
+								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
 							} else {
 								// defined java type is unsupported - will define with default String type below (and this parameter will not be set to flow field)
 								schemaFieldType = "id_String";
@@ -713,7 +718,7 @@ if (null != conns && !conns.isEmpty()) {
 						} else {
 							// uri parameter hidden by parameter of another type in schema - will use generated variable name in rest service method
 							String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, column.getPattern(), true);
+							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, column.getPattern(), column.isNullable(), true);
 						}
 						break;
 					}
@@ -767,7 +772,7 @@ if (null != conns && !conns.isEmpty()) {
 
 				if (supportedJavaTypes.contains(javaType)) {
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern());
+					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
 					//Report that the Java type is unsupported
@@ -820,12 +825,44 @@ if (null != conns && !conns.isEmpty()) {
 			if("java.util.Date".equals(javaType)){
 %>
 				java.util.Date <%=variableName%> = null;
-				try{
-					<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
-				}catch(Exception e){
-					<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-				}
 <%
+				if(param.isNullable() && param.getDefaultValue() == null){
+%>
+					if(<%=variableName%>_<%=cid%> == null){
+								<%=variableName%> = new java.util.Date();
+					} else {
+<%
+						if(param.getPattern() != null && !"".equals(param.getPattern().trim())){
+%>
+							try{
+								<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
+							}catch(Exception e){
+								<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+							}
+<%
+						}else{
+%>
+							<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+<%
+						}
+%>
+					}
+<%
+				}else{
+						if(param.getPattern() != null && !"".equals(param.getPattern().trim())){
+%>
+							try{
+								<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
+							}catch(Exception e){
+								<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+							}
+<%
+						}else{
+%>
+							<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+<%
+						}
+				}
 			}
 		}
 %>
