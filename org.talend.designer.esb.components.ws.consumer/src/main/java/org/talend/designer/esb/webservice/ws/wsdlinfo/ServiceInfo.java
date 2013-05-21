@@ -17,8 +17,18 @@ public class ServiceInfo {
 
     /** The list of operations that this service defines. */
     private final List<OperationInfo> operations = new ArrayList<OperationInfo>();
+    
+    private boolean hasRpcOperation = false;
 
-    public QName getServerName() {
+    public boolean isHasRpcOperation() {
+		return hasRpcOperation;
+	}
+
+	public void setHasRpcOperation(boolean hasRpcOperation) {
+		this.hasRpcOperation = hasRpcOperation;
+	}
+
+	public QName getServerName() {
         return serviceName;
     }
 

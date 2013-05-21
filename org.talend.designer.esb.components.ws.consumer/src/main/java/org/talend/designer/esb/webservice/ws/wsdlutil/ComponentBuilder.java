@@ -56,6 +56,7 @@ public class ComponentBuilder {
             	SOAPOperation soapOperation = findExtensibilityElement(operation.getExtensibilityElements(), SOAPOperation.class);
             	if (null != soapOperation && OPERATION_TYPE_RPC.equalsIgnoreCase(soapOperation.getStyle())){
             		//TESB-6151 disable display of unsupported RPC type.
+            		serviceInfo.setHasRpcOperation(true);
             		continue;
             	}
                 OperationInfo operationInfo = new OperationInfo(operation.getOperation());

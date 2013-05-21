@@ -132,6 +132,8 @@ public class WebServiceUI extends WizardPage {
     private String currentPortName;
 
     private Definition definition;
+    
+    private boolean hasRpcOperation = false;    
 
     public WebServiceUI(WebServiceComponent webServiceComponent) {
         super("WebServiceUI"); //$NON-NLS-1$
@@ -300,11 +302,6 @@ public class WebServiceUI extends WizardPage {
             populateCheckbox.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false, wsdlUrlcompositeColumn, 1));
         }
 
-        Label noteLabel = new Label(wsdlComposite, SWT.NONE);
-        noteLabel.setText(Messages.getString("WebServiceUI.NotSupportRpc"));
-        noteLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
-        GridDataFactory.generate(noteLabel, wsdlUrlcompositeColumn, 1);
-
         setControl(wsdlComposite);
         setPageComplete(false);
     }
@@ -430,6 +427,9 @@ public class WebServiceUI extends WizardPage {
             } else {
                 selectFirstFunction();
             }
+            if (hasRpcOperation) {
+            	setErrorMessage(Messages.getString("WebServiceUI.NotSupportRpc"));
+            } 
         } catch (InvocationTargetException e) {
             setErrorMessage("Error getting service description: " + e.getCause().getMessage());
             setPageComplete(false);
@@ -542,30 +542,38 @@ public class WebServiceUI extends WizardPage {
         }
     }
 
-    private List<Function> getFunctionsList() throws WSDLException, InvocationTargetException {
-        IElementParameter parameter = webServiceComponent.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
-        if ((parameter != null) && Boolean.parseBoolean(parameter.getValue().toString())) {
-            useSSL();
-        }
+	private List<Function> getFunctionsList() throws WSDLException,
+			InvocationTargetException {
+		IElementParameter parameter = webServiceComponent
+				.getElementParameter(NEED_SSL_TO_TRUSTSERVER);
+		if ((parameter != null)
+				&& Boolean.parseBoolean(parameter.getValue().toString())) {
+			useSSL();
+		}
 
-        WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-        WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+		WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+		WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
 
-        newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-        newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        String realWsdlLocation=getRealWsdlLocation();
-        definition = newWSDLReader.readWSDL(realWsdlLocation, new WSDLLoader().load(realWsdlLocation));
+		newWSDLReader.setExtensionRegistry(wsdlFactory
+				.newPopulatedExtensionRegistry());
+		newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+		String realWsdlLocation = getRealWsdlLocation();
+		definition = newWSDLReader.readWSDL(realWsdlLocation,
+				new WSDLLoader().load(realWsdlLocation));
+		hasRpcOperation = false;
+		List<Function> functionsAvailable = new ArrayList<Function>();
+		for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
+			if (serviceInfo.isHasRpcOperation()) {
+				hasRpcOperation = true;
+			}
+			for (OperationInfo oper : serviceInfo.getOperations()) {
+				Function f = new Function(serviceInfo, oper);
+				functionsAvailable.add(f);
+			}
+		}
 
-        List<Function> functionsAvailable = new ArrayList<Function>();
-        for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
-            for (OperationInfo oper : serviceInfo.getOperations()) {
-                Function f = new Function(serviceInfo, oper);
-                functionsAvailable.add(f);
-            }
-        }
-
-        return functionsAvailable;
-    }
+		return functionsAvailable;
+	}
 
     private String getRealWsdlLocation() {
         if (!URLValue.contains("\"")) {
