@@ -3,44 +3,10 @@ package org.talend.camel.designer.ui.editor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
+import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.RepositoryNode;
 
 public class CamelEditorUtil {
-
-	/**
-	 * check if there are more than one editors
-	 * coming from the same RepositoryNode
-	 * @param node
-	 * @return
-	 */
-	public static boolean hasMultiEditorOpened(RepositoryNode node) {
-		if (node == null) {
-			return false;
-		}
-		try {
-			int count = 0;
-			IEditorReference[] editorReferences = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage()
-					.getEditorReferences();
-			for (IEditorReference r : editorReferences) {
-				try {
-					Object adapter = r.getEditorInput().getAdapter(
-							RepositoryNode.class);
-					if (adapter != null && node == adapter) {
-						count++;
-					}
-					if (count > 1) {
-						return true;
-					}
-				} catch (Exception e) {
-					continue;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 
 	/**
 	 * check if there's any editor is opened which
@@ -106,7 +72,12 @@ public class CamelEditorUtil {
 					}
 					Object adapter = editorInput
 							.getAdapter(RepositoryNode.class);
-					if (node == adapter) {
+					if (node.equals(adapter)){
+						if(editorInput != null && editorInput instanceof RepositoryEditorInput){
+							if(((RepositoryEditorInput)editorInput).isReadOnly()){
+								continue;
+							}
+						}
 						return true;
 					}
 				} catch (Exception e) {

@@ -29,20 +29,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.ui.editor.CamelEditorUtil;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -57,6 +52,7 @@ import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
 import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
 import org.talend.designer.camel.dependencies.ui.editor.controls.SearchControl;
+import org.talend.designer.camel.dependencies.ui.util.DependenciesUiUtil;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
 
@@ -255,7 +251,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		try {
 			List<IEditorPart> dirtyList = new ArrayList<IEditorPart>();
 			
-			IEditorPart processEditor = getCorrespondingProcessEditor();
+			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem());
 			if (processEditor != null && processEditor.isDirty()) {
 				dirtyList.add(processEditor);
 			}
@@ -284,8 +280,8 @@ public class RouterDependenciesEditor extends EditorPart implements
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//check camel editor and update the input source every time
 				try {
-					updatePropertyFromProcessEditor(getCorrespondingProcessEditor());
-				} catch (PersistenceException e) {
+					updatePropertyFromProcessEditor(DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem()));
+				} catch (PartInitException e) {
 					e.printStackTrace();
 					return Status.CANCEL_STATUS;
 				}
@@ -375,7 +371,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 	public void doSave(IProgressMonitor monitor) {
 		try {
 			//check editor and update the input source before saving
-			IEditorPart processEditor = getCorrespondingProcessEditor();
+			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem());
 			updatePropertyFromProcessEditor(processEditor);
 			
 			//save all datas
@@ -407,24 +403,6 @@ public class RouterDependenciesEditor extends EditorPart implements
 			e.printStackTrace();
 		}
 
-	}
-	
-	/**
-	 * return Editor if the process editor exist
-	 * 
-	 * @return
-	 * @throws PersistenceException
-	 */
-	private IEditorPart getCorrespondingProcessEditor() throws PersistenceException {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		Item item = property.getItem();
-		CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput(
-				(CamelProcessItem) item, true, true, false);
-
-		IEditorPart processEditor = activePage
-				.findEditor((IEditorInput) processEditorInput);
-		return processEditor;
 	}
 	
 	/**

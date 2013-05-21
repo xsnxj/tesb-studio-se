@@ -41,6 +41,7 @@ import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.branding.IBrandingConfiguration;
@@ -165,22 +166,26 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
         if (canWork) {
             Object o = selection.getFirstElement();
             RepositoryNode node = (RepositoryNode) o;
-            switch (node.getType()) {
-            case REPOSITORY_ELEMENT:
-                if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
-                    canWork = false;
-                } else {
-                    IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
-                    IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
-                    if (repFactory.isPotentiallyEditable(node.getObject())) {
-                        this.setText(EDIT_LABEL);
-                    } else {
-                        this.setText(OPEN_LABEL);
-                    }
-                }
-                break;
-            default:
+            if (RepositoryManager.isOpenedItemInEditor(node.getObject())) {
                 canWork = false;
+            } else{
+	            switch (node.getType()) {
+	            case REPOSITORY_ELEMENT:
+	                if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
+	                    canWork = false;
+	                } else {
+	                    IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
+	                    IProxyRepositoryFactory repFactory = service.getProxyRepositoryFactory();
+	                    if (repFactory.isPotentiallyEditable(node.getObject())) {
+	                        this.setText(EDIT_LABEL);
+	                    } else {
+	                        this.setText(OPEN_LABEL);
+	                    }
+	                }
+	                break;
+	            default:
+	                canWork = false;
+	            }
             }
             RepositoryNode parent = node.getParent();
             if (canWork && parent != null && parent instanceof BinRepositoryNode) {

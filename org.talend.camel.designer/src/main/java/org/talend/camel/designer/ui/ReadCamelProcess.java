@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
+import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
@@ -90,14 +91,18 @@ public class ReadCamelProcess extends AbstractProcessAction {
         if (canWork) {
             Object o = selection.getFirstElement();
             RepositoryNode node = (RepositoryNode) o;
-            switch (node.getType()) {
-            case REPOSITORY_ELEMENT:
-                if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
-                    canWork = false;
-                }
-                break;
-            default:
+            if (CamelEditorUtil.hasEditorOpened(node)) {
                 canWork = false;
+            } else{
+	            switch (node.getType()) {
+	            case REPOSITORY_ELEMENT:
+	                if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
+	                    canWork = false;
+	                }
+	                break;
+	            default:
+	                canWork = false;
+	            }
             }
         }
         setEnabled(canWork);

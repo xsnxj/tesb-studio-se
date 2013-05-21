@@ -3,14 +3,12 @@ package org.talend.designer.camel.dependencies.ui.actions;
 import java.util.Arrays;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
@@ -21,6 +19,8 @@ import org.talend.designer.camel.dependencies.ui.UIActivator;
 import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditor;
 import org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditorInput;
+import org.talend.designer.camel.dependencies.ui.util.DependenciesUiUtil;
+import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -65,7 +65,7 @@ public class EditDependenciesContextualAction extends AContextualAction {
 		// should be route process
 		ERepositoryObjectType objectType = node.getObjectType();
 		if (objectType != ERepositoryObjectType.valueOf(
-				ERepositoryObjectType.class, "ROUTES")) {
+				ERepositoryObjectType.class, "ROUTES")) { //$NON-NLS-1$
 			return;
 		}
 		
@@ -115,16 +115,24 @@ public class EditDependenciesContextualAction extends AContextualAction {
 			/*
 			 * if corresponding camel editor is opened, then reuse the model with it
 			 */
-			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput((CamelProcessItem) item, true, true, false);
+//			CamelProcessEditorInput processEditorInput = new CamelProcessEditorInput((CamelProcessItem) item, true, true);
 			
-			IWorkbenchPage activePage = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			
-			IEditorPart processEditor = activePage.findEditor((IEditorInput) processEditorInput);
-			if(processEditor != null && processEditor.isDirty()){
-				RelativeEditorsSaveDialog dialog = new RelativeEditorsSaveDialog(activePage.getWorkbenchWindow().getShell(), Arrays.asList(processEditor));
-				int open = dialog.open();
-				if(open != Dialog.OK){
+			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(item);
+			
+			if(processEditor != null){
+				if(processEditor.isDirty()){
+					RelativeEditorsSaveDialog dialog = new RelativeEditorsSaveDialog(activePage.getWorkbenchWindow().getShell(), Arrays.asList(processEditor));
+					int open = dialog.open();
+					if(open != Dialog.OK){
+						return;
+					}
+				}else if(processEditor instanceof AbstractMultiPageTalendEditor && ((AbstractMultiPageTalendEditor)processEditor).getDesignerEditor().isReadOnly()){
+					MessageDialog
+							.openWarning(activePage.getWorkbenchWindow()
+									.getShell(), Messages.EditDependenciesContextualAction_readonlyOpenedTitle,
+									Messages.EditDependenciesContextualAction_readonlyOpenedMsg);
 					return;
 				}
 			}
