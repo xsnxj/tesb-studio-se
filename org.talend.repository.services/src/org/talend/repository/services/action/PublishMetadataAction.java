@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -71,7 +72,12 @@ public class PublishMetadataAction extends AContextualAction {
                 && node.getObject() != null
                 && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
             serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            shell = viewer.getTree().getShell();
+            
+            try{
+            	shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            }catch(Exception e){
+            	shell = new Shell();
+            }
             
             try {
             	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
