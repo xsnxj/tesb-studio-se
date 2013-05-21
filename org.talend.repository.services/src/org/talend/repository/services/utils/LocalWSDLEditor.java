@@ -31,6 +31,7 @@ import org.eclipse.wst.wsdl.ui.internal.InternalWSDLMultiPageEditor;
 import org.eclipse.wst.wsdl.ui.internal.actions.OpenInNewEditor;
 import org.eclipse.wst.wsdl.ui.internal.adapters.WSDLBaseAdapter;
 import org.eclipse.wst.wsdl.ui.internal.asd.actions.BaseSelectionAction;
+import org.eclipse.wst.wsdl.ui.internal.asd.design.directedit.DirectEditSelectionTool;
 import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
@@ -64,7 +65,20 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     public LocalWSDLEditor(){
     	super();
-    	getEditDomain().setCommandStack(new LocalCommandStack(this));
+    	DirectEditSelectionTool tool=new DirectEditSelectionTool() {
+    		@Override
+    		protected boolean handleButtonDown(int button) {
+    			try {
+    				super.handleButtonDown(button);
+				} catch (NullPointerException e) {
+					//ignore NPE when click wrong area.
+				}
+				return false;
+    		}
+    	};
+    	getEditDomain().setActiveTool(tool);
+        getEditDomain().setDefaultTool(tool);
+        getEditDomain().setCommandStack(new LocalCommandStack(this));
     }
     
     @Override
