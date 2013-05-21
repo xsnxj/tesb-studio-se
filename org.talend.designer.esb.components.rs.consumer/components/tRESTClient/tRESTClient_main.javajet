@@ -4,6 +4,7 @@
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.ElementParameterParser
 		org.talend.core.model.process.IConnectionCategory
+		org.talend.core.model.process.EConnectionType
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
 		java.util.List
@@ -255,8 +256,7 @@ try {
 		<% } %>
 	<% } %>
 
-
-	try {
+		//start send request
 
 		<% if ("GET".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
@@ -289,23 +289,24 @@ try {
 			}
 		<% } %>
 
-	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
-		<% if (null != connFault) {
-			String connFaultName = connFault.getName(); %>
-			if (<%=connFaultName%> == null) {
-				<%=connFaultName%> = new <%=connFaultName%>Struct();
-			}
-			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
-			<%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
-		<% } else { %>
-			System.out.println("error response: " + ex_<%=cid%>.getResponse().getStatus() + ":" + ex_<%=cid%>.getMessage());
-		<% } %>
-	}
-
-} catch(Exception e_<%=cid%>) {
+	} catch (Exception e_<%=cid%>) {
+	<% if (null != connFault) {
+		String connFaultName = connFault.getName(); %>
+		if (<%=connFaultName%> == null) {
+			<%=connFaultName%> = new <%=connFaultName%>Struct();
+		}
+		if(e_<%=cid%> instanceof javax.ws.rs.WebApplicationException){
+			<%=connFaultName%>.errorCode = ((javax.ws.rs.WebApplicationException)e_<%=cid%>).getResponse().getStatus();
+		}else{
+			<%=connFaultName%>.errorCode = 404;
+		}
+		<%=connFaultName%>.errorMessage = e_<%=cid%>.getMessage();
+	<% }
+	%>
+	
 	<% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
-		throw(e_<%=cid%>);
+		throw new TalendException(e_<%=cid%>, currentComponent, globalMap);
 	<% } else { %>
-		System.err.print(e_<%=cid%>.getMessage());
+		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
 	<% } %>
 }
