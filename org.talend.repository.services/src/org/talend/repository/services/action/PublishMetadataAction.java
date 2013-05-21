@@ -72,13 +72,13 @@ public class PublishMetadataAction extends AContextualAction {
                 && node.getObject() != null
                 && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED) {
             serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            
-            try{
-            	shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-            }catch(Exception e){
-            	shell = new Shell();
+
+            if (viewer != null) {
+                shell = viewer.getTree().getShell();
+            } else {
+                shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
             }
-            
+
             try {
             	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
     			factory.updateLockStatus();
