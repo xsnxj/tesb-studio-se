@@ -71,10 +71,10 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
-import org.talend.repository.services.utils.WSDLLoader;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 import org.talend.repository.utils.TemplateProcessor;
+import org.talend.utils.wsdl.WSDLLoader;
 
 /**
  * hwang class global comment. Detailed comment
