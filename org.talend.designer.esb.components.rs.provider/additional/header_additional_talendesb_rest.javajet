@@ -803,16 +803,15 @@ if (null != conns && !conns.isEmpty()) {
 					javaType = "String";
 					variableName += "_"+cid;
 				}
-				
-				if (param.getDefaultValue() != null) {
+
+				if (param.getDefaultValue() != null && param.getDefaultValue().length() > 0) {
 				    if ("String".equals(javaType)) { %>
-                        @javax.ws.rs.DefaultValue(<%=param.getDefaultValue()%>)
-				    <% } else { %>
-					    @javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>")
-				<%  }
+                        @javax.ws.rs.DefaultValue(<%=param.getDefaultValue()%>) <%
+				    } else { %>
+					    @javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>") <%
+				    }
                 } %>
 				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%= javaType%> <%=variableName%>
-				
 		<%	} %>
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) {
 			if (paramCommaWritten) {
