@@ -327,31 +327,31 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 
 	private ESBProviderCallback esbProviderCallback;
 	private java.util.Map<String, String> customProperty;
-	private boolean waitResponse = false;
 
 	public ESBProviderCallbackTalendJobWrapper_<%=cid%>(ESBProviderCallback callback) {
 		esbProviderCallback = callback;
 	}
 
 	public Object getRequest() throws ESBJobInterruptedException {
-		Object req = esbProviderCallback.getRequest();
-		waitResponse = true;
-		return req;
+		return esbProviderCallback.getRequest();
 	}
 
 	public void setCustomProperties(java.util.Map<String, String> props) {
 		customProperty = props;
 	}
-
-	public void sendResponse(Object response) {
-		if(waitResponse){
-			esbProviderCallback.sendResponse(wrapOutput(response));
-			waitResponse = false;
-		}else{
+	
+	private void doSendResponse(Object obj){
+		if((Boolean)globalMap.get("wsRequestReceivedAndResponseSentBack")){
 			throw new RuntimeException("Send Response failed! Response already sent with current request.");
+		}else{
+			globalMap.put("wsRequestReceivedAndResponseSentBack",true);
+			esbProviderCallback.sendResponse(obj);
 		}
 	}
 
+	public void sendResponse(Object response) {
+		doSendResponse(wrapOutput(response));
+	}
 	public void sendFault(Throwable error) {
 		RuntimeException talendJobError;
 		if (error instanceof RuntimeException) {
@@ -363,11 +363,11 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 			}
 			talendJobError = new RuntimeException("Talend job execution error: "+ msg, error);
 		}
-		esbProviderCallback.sendResponse(talendJobError);
+		doSendResponse(talendJobError);
 	}
 	
 	public void sendFaultByDefault(Throwable error){
-		if(waitResponse){
+		if(!(Boolean)globalMap.get("wsRequestReceivedAndResponseSentBack")){
 			sendFault(error);
 		}
 	}
@@ -391,7 +391,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 						soapFault.getOwnerDocument().importNode(
 								faultDetailDom.getDocumentElement(), true));
 			}
-			esbProviderCallback.sendResponse(wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
+			doSendResponse(wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
 		} catch (Exception e) {
 			this.sendFault(e);
 		}

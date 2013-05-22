@@ -49,7 +49,6 @@ if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 
 		esbProviderCallback_<%=cid%>.setCustomProperties(customProps_<%=cid%>);
 		esbProviderCallback_<%=cid%>.sendResponse(esbProviderResponseDoc_<%=cid%>.getDocument());
-		globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 	}
 <%
 					} // end if (null != column && "id_Document".equals(column.getTalendType()))

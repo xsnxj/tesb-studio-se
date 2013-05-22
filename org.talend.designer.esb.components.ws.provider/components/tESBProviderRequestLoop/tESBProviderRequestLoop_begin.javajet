@@ -59,7 +59,6 @@ try {
 			if (!(Boolean) globalMap.get("wsRequestReceivedAndResponseSentBack")) {
 				// esbHandler_<%=cid%>.sendFault(new RuntimeException("response/fault is not provided by Talend job"));
 				esbHandler_<%=cid%>.sendResponse(org.dom4j.DocumentHelper.createDocument());
-				globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 			}
 <% } %>
 
