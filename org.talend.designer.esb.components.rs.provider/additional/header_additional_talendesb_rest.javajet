@@ -879,7 +879,9 @@ if (null != conns && !conns.isEmpty()) {
 
 		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
+        if (null != <%=paramEntry.getValue().getVariableName()%>) {
 			parameters_<%=cid%>.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
+        }
 		<%	} %>
 		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
