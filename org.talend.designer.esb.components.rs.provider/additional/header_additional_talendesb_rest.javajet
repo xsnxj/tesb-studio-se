@@ -771,7 +771,7 @@ if (null != conns && !conns.isEmpty()) {
 				JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
 
 				if (supportedJavaTypes.contains(javaType)) {
-					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
+					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, column.isNullable());
 					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
@@ -879,9 +879,7 @@ if (null != conns && !conns.isEmpty()) {
 
 		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
-        if (null != <%=paramEntry.getValue().getVariableName()%>) {
 			parameters_<%=cid%>.put("<%=paramEntry.getKey()%>", <%=paramEntry.getValue().getVariableName()%>);
-        }
 		<%	} %>
 		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
