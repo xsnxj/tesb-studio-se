@@ -26,13 +26,11 @@ import java.util.zip.DeflaterOutputStream;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -77,11 +75,11 @@ import org.talend.core.prefs.ITalendCorePrefConstants;
 import org.talend.core.ui.proposal.TalendProposalUtils;
 import org.talend.designer.esb.webservice.WebServiceComponent;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
+import org.talend.designer.esb.webservice.util.WSDLHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
-import org.talend.designer.esb.webservice.ws.wsdlutil.WSDLLoader;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 import org.talend.repository.ui.utils.ConnectionContextHelper;
@@ -551,16 +549,9 @@ public class WebServiceUI extends WizardPage {
 			useSSL();
 		}
 
-		WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-		WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+        definition = WSDLHelper.load(getRealWsdlLocation());
 
-		newWSDLReader.setExtensionRegistry(wsdlFactory
-				.newPopulatedExtensionRegistry());
-		newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-		String realWsdlLocation = getRealWsdlLocation();
-		definition = newWSDLReader.readWSDL(realWsdlLocation,
-				new WSDLLoader().load(realWsdlLocation));
-		hasRpcOperation = false;
+        hasRpcOperation = false;
 		List<Function> functionsAvailable = new ArrayList<Function>();
 		for (ServiceInfo serviceInfo : ComponentBuilder.buildModel(definition)) {
 			if (serviceInfo.isHasRpcOperation()) {
