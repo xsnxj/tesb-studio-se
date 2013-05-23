@@ -129,7 +129,10 @@ try {
 
 		features_<%=cid%>.add(feature_<%=cid%>);
 	<% } else { %>
-		factoryBean_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node,"__URL__")%>);
+	    String url = <%=ElementParameterParser.getValue(node,"__URL__")%>;
+	    // {baseUri}tRESTClient
+        factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(url, "tRESTClient"));
+		factoryBean_<%=cid%>.setAddress(url);
 	<% } %>
 
 	<% if (isSAMEnable) { %>
