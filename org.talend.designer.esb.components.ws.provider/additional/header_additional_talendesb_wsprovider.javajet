@@ -119,15 +119,8 @@ public class QueuedExchangeContextImpl<T> {
 	 */
 	public void release() throws Exception {
 		latch.countDown();
-		Exception exception;
-		try {
-			exception = exceptionExchange.exchange(null, EXCHANGE_TIMEOUT,
+		Exception exception = exceptionExchange.exchange(null, EXCHANGE_TIMEOUT,
 					java.util.concurrent.TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			throw new Exception(e);
-		} catch (java.util.concurrent.TimeoutException e) {
-			throw new Exception(e);
-		}
 		if (exception != null) {
 			throw exception;
 		}
@@ -183,8 +176,8 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 
 	private final int WAIT_TIMEOUT_SECONDS = 120;
 
-	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl<?>> queue =
-		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl<?>>(MAX_QUEUE_SIZE);
+	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl<T>> queue =
+		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl<T>>(MAX_QUEUE_SIZE);
 
 	/**
 	 * This method add a newly created
@@ -193,7 +186,7 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	 * Then it waits until the {@link QueuedExchangeContextImpl}
 	 * will be completed for request-response operations
 	 */
-	public QueuedExchangeContextImpl<T> invoke(T request) {
+	public QueuedExchangeContextImpl<T> invoke(T request, boolean wait) {
 		QueuedExchangeContextImpl<T> context = new QueuedExchangeContextImpl<T>(request);
 		boolean inserted = queue.offer(context);
 		if (!inserted) {
@@ -205,7 +198,7 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 			// context.serveFault("job pool overflow exceed", null);
 			throw new RuntimeException(
 					"Can't queue request, queue size of " + MAX_QUEUE_SIZE + " is exceeded");
-		} else {
+		} else if (wait) {
 			try {
 				context.waitForRelease(WAIT_TIMEOUT_SECONDS, java.util.concurrent.TimeUnit.SECONDS);
 			} catch (InterruptedException ie) {
@@ -221,10 +214,9 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	public T getRequest() throws ESBJobInterruptedException {
 		currentExchangeContext = null;
 		try {
-			currentExchangeContext = (QueuedExchangeContextImpl<T>) queue.take();
+			currentExchangeContext = queue.take();
 		} catch (InterruptedException e) {
-			// e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new ESBJobInterruptedException("job interrupted", e);
 		}
 		return currentExchangeContext.getInputMessage();
 	}
@@ -260,9 +252,6 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 
 	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
 
-	@javax.annotation.Resource()
-	private javax.xml.ws.WebServiceContext context;
-
 	public ESBProvider_<%=cid%>(QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
@@ -278,14 +267,12 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
 					.read(new java.io.ByteArrayInputStream(os.toByteArray()));
 
-			// System.out.println("request: " + requestDoc.asXML());
+			QueuedExchangeContextImpl<org.dom4j.Document> messageExchange = messageHandler.invoke(requestDoc, <%=!isOneWay%>);
 
-			QueuedExchangeContextImpl<org.dom4j.Document> messageExchange = messageHandler.invoke(requestDoc);
-
-			try {
 <% if (isOneWay) { %>
-				return null;
+			return null;
 <% } else { %>
+            try {
 				if (messageExchange.isFault()) {
 					throw messageExchange.getFault();
 				} else {
@@ -300,10 +287,10 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 					return new javax.xml.transform.stream.StreamSource(
 							new java.io.ByteArrayInputStream(baos.toByteArray()));
 				}
-<% } %>
 			} finally {
 				messageExchange.completeQueuedProcessing();
-			}
+            }
+<% } %>
 		} catch (RuntimeException ex) {
 			throw ex;
 		} catch (Throwable ex) {
