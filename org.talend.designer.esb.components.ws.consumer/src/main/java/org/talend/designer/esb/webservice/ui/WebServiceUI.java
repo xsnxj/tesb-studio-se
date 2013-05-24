@@ -20,10 +20,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Import;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
@@ -332,24 +337,48 @@ public class WebServiceUI extends WizardPage {
 
     /**
      * Gets WSDL as ZLIB-compressed and Base64-encoded String.
-     *
+     * Use ZipStream -> InflaterStream -> Base64Stream to read.
      * @return WSDL as String object. Or null in case errors/not possible to create object.
      */
-    private String getWSDL() throws WSDLException {
-        ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
+	private String getWSDL() throws WSDLException {
+    	ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
         OutputStream os = compressAndEncode(wsdlOs);
+        ZipOutputStream zipOs=new ZipOutputStream(os);
         try {
-            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(definition, os);
-        } finally {
-            if (null != os) {
+        	ZipEntry zipEntry = new ZipEntry("main.wsdl");
+			zipOs.putNextEntry(zipEntry);
+            WSDLFactory.newInstance().newWSDLWriter().writeWSDL(definition, zipOs);
+            appendImportDifinitions(definition,zipOs);
+        } catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+            if (null != zipOs) {
                 try {
-                    os.close();
+                	zipOs.close();
                 } catch (IOException e) {
                     // ignore
                 }
             }
         }
         return new String(wsdlOs.toByteArray());
+    }
+    
+    @SuppressWarnings("unchecked")
+	private void appendImportDifinitions(Definition definition,ZipOutputStream zipOs) {
+    	Map<? , Vector<Import>> imports=definition.getImports();
+        for (Vector<Import> vector : imports.values()) {
+			for (Import impt : vector) {
+				try {
+					zipOs.putNextEntry(new ZipEntry(impt.getLocationURI()));
+					WSDLFactory.newInstance().newWSDLWriter().writeWSDL(impt.getDefinition(), zipOs);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (WSDLException e) {
+					e.printStackTrace();
+				}
+				appendImportDifinitions(impt.getDefinition(),zipOs);
+			}
+		}
     }
 
 //    public Definition getWSDL(String compressedAndEncodedWsdl) {
