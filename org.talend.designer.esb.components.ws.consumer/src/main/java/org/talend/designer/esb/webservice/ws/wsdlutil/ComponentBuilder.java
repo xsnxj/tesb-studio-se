@@ -62,7 +62,9 @@ public class ComponentBuilder {
                 OperationInfo operationInfo = new OperationInfo(operation.getOperation());
                 operationInfo.setPortName(port.getName());
                 operationInfo.setNamespaceURI(binding.getPortType().getQName().getNamespaceURI());
-                operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
+                if(soapOperation!=null) {
+                	operationInfo.setSoapActionURI(soapOperation.getSoapActionURI());
+                }
 
                 operationInfo.setTargetURL(soapLocation);
                 serviceInfo.addOperation(operationInfo);
