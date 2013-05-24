@@ -12,15 +12,11 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
 import javax.wsdl.Types;
-import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
 
 import org.apache.ws.commons.schema.XmlSchema;
@@ -33,13 +29,12 @@ public class SchemaUtil {
 
     private final XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
+    @SuppressWarnings("unchecked")
     public SchemaUtil(Definition wsdlDefinition) {
         if (null != wsdlDefinition.getTypes()) {
             init(wsdlDefinition.getTypes());
         } else {
-            @SuppressWarnings("unchecked")
-            Map<String, List<Import>> imports = wsdlDefinition.getImports();
-            for (List<Import> wsdlImports : imports.values()) {
+            for (Collection<Import> wsdlImports : (Collection<Collection<Import>>) wsdlDefinition.getImports().values()) {
                 for (Import wsdlImport : wsdlImports) {
                     if (null != wsdlImport.getDefinition().getTypes()) {
                         init(wsdlImport.getDefinition().getTypes());
@@ -50,24 +45,10 @@ public class SchemaUtil {
     }
 
     private void init(Types types) {
-        @SuppressWarnings("unchecked")
-        Collection<Schema> schemas = findExtensibilityElement(types.getExtensibilityElements(), Schema.class);
+        Collection<Schema> schemas = WSDLUtils.findExtensibilityElements(types.getExtensibilityElements(), Schema.class);
         for (Schema schema : schemas) {
             createXmlSchema(schema.getElement(), schema.getDocumentBaseURI());
         }
-    }
-
-    private static <T> Collection<T> findExtensibilityElement(Collection<ExtensibilityElement> extensibilityElements,
-            Class<T> clazz) {
-        List<T> elements = new ArrayList<T>();
-        if (extensibilityElements != null) {
-            for (ExtensibilityElement element : extensibilityElements) {
-                if (clazz.isAssignableFrom(element.getClass())) {
-                    elements.add(clazz.cast(element));
-                }
-            }
-        }
-        return elements;
     }
 
     private void createXmlSchema(Element schemaElement, String documentBase) {

@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,7 @@ import org.talend.repository.services.model.services.ServicePort;
 /**
  * DOC ycbai class global comment. Detailled comment
  */
+@SuppressWarnings("restriction")
 public class WSDLUtils {
 
     public static final String SERVICE_NAME = "SERVICE_NAME"; //$NON-NLS-1$
@@ -111,21 +114,8 @@ public class WSDLUtils {
                     }
                     map.put(FAULTS, faults);
 
-                    String endpointUri = null;
-                    List<?> extElements = port.getExtensibilityElements();
-                    if (null != extElements) {
-                        for (Object extElement : extElements) {
-                            if (extElement instanceof SOAPAddress) {
-                                endpointUri = ((SOAPAddress) extElement).getLocationURI();
-                                break;
-                            } else if (extElement instanceof SOAP12Address) {
-                                endpointUri = ((SOAP12Address) extElement).getLocationURI();
-                                break;
-                            }
-                        }
-                    }
                     // map.put(OPERATION_NS, targetNs);
-                    map.put(ENDPOINT_URI, endpointUri);
+                    map.put(ENDPOINT_URI, getPortAddress(port));
 
                     break;
                 }
@@ -260,7 +250,6 @@ public class WSDLUtils {
      * @param wsdlUri
      * @throws CoreException
      */
-    @SuppressWarnings("restriction")
     public static void validateWsdl(String wsdlUri) throws CoreException {
         WSDLValidator wsdlValidator = WSDLValidator.getInstance();
         // wsdlValidator.addURIResolver(new URIResolverWrapper());
@@ -270,8 +259,47 @@ public class WSDLUtils {
         }
     }
 
-    public static CoreException getCoreException(final String message, final Throwable e) {
+    public static String getPortAddress(final Port port) {
+        final Collection<?> extensibilityElements = port.getExtensibilityElements();
+        SOAPAddress soapAddress = findExtensibilityElement(extensibilityElements, SOAPAddress.class);
+        if (null != soapAddress) {
+            return soapAddress.getLocationURI();
+        }
+        SOAP12Address soap12Address = findExtensibilityElement(extensibilityElements, SOAP12Address.class);
+        if (null != soap12Address) {
+            return soap12Address.getLocationURI();
+        }
+        return null;
+    }
+
+    private static <T> T findExtensibilityElement(final Collection<?> extensibilityElements, // ExtensibilityElement
+            Class<T> clazz) {
+        if (extensibilityElements != null) {
+            for (Object element : extensibilityElements) {
+                if (clazz.isAssignableFrom(element.getClass())) {
+                    return clazz.cast(element);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static <T> Collection<T> findExtensibilityElements(final Collection<?> extensibilityElements, // ExtensibilityElement
+            Class<T> clazz) {
+        Collection<T> elements = new ArrayList<T>();
+        if (extensibilityElements != null) {
+            for (Object element : extensibilityElements) {
+                if (clazz.isAssignableFrom(element.getClass())) {
+                    elements.add(clazz.cast(element));
+                }
+            }
+        }
+        return elements;
+    }
+
+    private static CoreException getCoreException(final String message, final Throwable e) {
         String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
         return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
     }
+
 }
