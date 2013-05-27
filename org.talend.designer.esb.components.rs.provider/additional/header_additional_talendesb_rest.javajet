@@ -677,6 +677,8 @@ if (null != conns && !conns.isEmpty()) {
 				JavaTypesManager.FLOAT,
 				JavaTypesManager.DOUBLE,
 				JavaTypesManager.BIGDECIMAL,
+                //List
+				JavaTypesManager.LIST,
 
 				//date
 				JavaTypesManager.DATE
@@ -798,6 +800,10 @@ if (null != conns && !conns.isEmpty()) {
 					%>, <%
 				}
 				String javaType = param.getJavaType();
+				if ("List".equals(javaType)) {
+					javaType = "List<String>";
+				}
+
 				String variableName = param.getVariableName();
 				if("java.util.Date".equals(javaType)){
 					javaType = "String";
