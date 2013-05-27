@@ -617,6 +617,9 @@ public class WebServiceUI extends WizardPage {
     }
 
     public boolean performFinish() {
+    	if(definition==null) {
+    		return true; 
+    	}
         if (!saveValue()) {
             return false;
         }
