@@ -136,7 +136,7 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
                 <% String soapAction=ElementParameterParser.getValue(node, "__SOAP_ACTION__");
                 	if(soapAction!=null&&(!soapAction.matches("\\s*"))){
-                		%>genericConsumer_<%=cid%>.setSoapAction(<%=soapAction%>);<%                	
+                		%>genericConsumer_<%=cid%>.setSoapAction("<%=soapAction%>");<%                	
                 	}
                 %>
                 genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
