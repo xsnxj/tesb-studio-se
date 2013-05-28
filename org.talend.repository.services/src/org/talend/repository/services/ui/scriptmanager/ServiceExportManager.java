@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
@@ -18,26 +16,17 @@ import java.util.jar.Manifest;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EMap;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.model.general.Project;
-import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.runprocess.IProcessor;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.ResourceModelUtils;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
@@ -85,35 +74,31 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                     serviceName = serviceQName.getLocalPart();
                     serviceNS = serviceQName.getNamespaceURI();
                     endpointName = port.getName();
-                    Collection<ExtensibilityElement> addrElems = findExtensibilityElement(port.getExtensibilityElements(),
-                            "address"); //$NON-NLS-1$
-                    for (ExtensibilityElement element : addrElems) {
-                        if (element != null && element instanceof SOAPAddress) {
-                            // http://jira.talendforge.org/browse/TESB-3638
-                            endpointAddress = ((SOAPAddress) element).getLocationURI();
-                            try {
-                                URI uri = new URI(endpointAddress);
-                                endpointAddress = uri.getRawSchemeSpecificPart();
-                                {
-                                	int interrogationMark=endpointAddress.indexOf('?');
-                                	if(interrogationMark>0) {
-                                		endpointAddress=endpointAddress.substring(0, interrogationMark);
-                                	}
-                                }
-
-                                if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
-                                    // pass as is
-                                } else if (endpointAddress.startsWith("/services/")) {
-                                    // remove forwarding "/services/" context as required by runtime
-                                    endpointAddress = endpointAddress.substring("/services/".length() - 1); // leave
-                                                                                                            // forwarding
-                                                                                                            // slash
-                                } else if (endpointAddress.length() == 1) { // empty path
-                                    endpointAddress += studioServiceName;
-                                }
-                            } catch (URISyntaxException e) {
-                                LOG.warn("Endpoint URI invalid: " + e);
+                    endpointAddress = WSDLUtils.getPortAddress(port);
+                    if (null != endpointAddress) {
+                        // http://jira.talendforge.org/browse/TESB-3638
+                        try {
+                            URI uri = new URI(endpointAddress);
+                            endpointAddress = uri.getRawSchemeSpecificPart();
+                            {
+                            	int interrogationMark=endpointAddress.indexOf('?');
+                            	if(interrogationMark>0) {
+                            		endpointAddress=endpointAddress.substring(0, interrogationMark);
+                            	}
                             }
+
+                            if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
+                                // pass as is
+                            } else if (endpointAddress.startsWith("/services/")) {
+                                // remove forwarding "/services/" context as required by runtime
+                                endpointAddress = endpointAddress.substring("/services/".length() - 1); // leave
+                                                                                                        // forwarding
+                                                                                                        // slash
+                            } else if (endpointAddress.length() == 1) { // empty path
+                                endpointAddress += studioServiceName;
+                            }
+                        } catch (URISyntaxException e) {
+                            LOG.warn("Endpoint URI invalid: " + e);
                         }
                     }
                 }
@@ -149,7 +134,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useAuthorization = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
-        boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));        
+        boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
 
         endpointInfo.put("useSL", useLocator /*&& !useRegistry*/); //$NON-NLS-1$
         endpointInfo.put("useSAM", useMonitor); //$NON-NLS-1$
@@ -157,7 +142,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
-        endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$        
+        endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
         if (useLocator /*&& !useRegistry*/) {
@@ -179,19 +164,6 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-    }
-
-    public static Collection<ExtensibilityElement> findExtensibilityElement(
-            List<ExtensibilityElement> extensibilityElements, String elementType) {
-        List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
-        if (extensibilityElements != null) {
-            for (ExtensibilityElement elment : extensibilityElements) {
-                if (elment.getElementType().getLocalPart().equalsIgnoreCase(elementType)) {
-                    elements.add(elment);
-                }
-            }
-        }
-        return elements;
     }
 
     public Manifest getManifest(String artefactName, String serviceVersion) {
@@ -275,32 +247,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public String getNodeLabel(RepositoryNode node) {
-        if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
-            IRepositoryViewObject repositoryObject = node.getObject();
-            if (repositoryObject.getProperty().getItem() instanceof ProcessItem) {
-                ProcessItem processItem = (ProcessItem) repositoryObject.getProperty().getItem();
-                return processItem.getProperty().getLabel();
-            }
-        }
-        return "Job"; //$NON-NLS-1$
-    }
-
-    public String getTmpFolderPath() {
-        Project project = ProjectManager.getInstance().getCurrentProject();
-        String tmpFolderPath;
-        try {
-            IProject physProject = ResourceModelUtils.getProject(project);
-            tmpFolderPath = physProject.getFolder("temp").getLocation().toPortableString(); //$NON-NLS-1$
-        } catch (Exception e) {
-            tmpFolderPath = System.getProperty("user.dir"); //$NON-NLS-1$
-        }
-        tmpFolderPath = tmpFolderPath + "/serviceExporter"; //$NON-NLS-1$
-        File tmpFolder = new File(tmpFolderPath);
-        if (!tmpFolder.exists()) {
-            tmpFolder.mkdirs();
-        }
-
-        return tmpFolderPath;
+        return node.getObject().getProperty().getLabel();
     }
 
 }
