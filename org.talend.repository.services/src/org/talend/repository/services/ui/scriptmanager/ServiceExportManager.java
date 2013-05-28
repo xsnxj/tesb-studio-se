@@ -1,7 +1,6 @@
 package org.talend.repository.services.ui.scriptmanager;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -61,7 +60,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
 
-    public void createSpringBeans(File outputFile, Map<ServicePort, Map<String, String>> ports,
+    @SuppressWarnings("unchecked")
+	public void createSpringBeans(File outputFile, Map<ServicePort, Map<String, String>> ports,
             ServiceConnection serviceConnection, IFile wsdl, String studioServiceName)
                     throws IOException, CoreException {
 
@@ -93,7 +93,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             endpointAddress = ((SOAPAddress) element).getLocationURI();
                             try {
                                 URI uri = new URI(endpointAddress);
-                                endpointAddress = uri.getPath();
+                                endpointAddress = uri.getRawSchemeSpecificPart();
+                                {
+                                	int interrogationMark=endpointAddress.indexOf('?');
+                                	if(interrogationMark>0) {
+                                		endpointAddress=endpointAddress.substring(0, interrogationMark);
+                                	}
+                                }
 
                                 if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
                                     // pass as is
