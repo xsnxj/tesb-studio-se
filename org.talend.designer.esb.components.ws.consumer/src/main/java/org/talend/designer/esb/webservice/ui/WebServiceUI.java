@@ -483,7 +483,6 @@ public class WebServiceUI extends WizardPage {
             servicebut.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent e) {
-                    // TODO
                     RepositoryReviewDialog dialog = new RepositoryReviewDialog(
                             getShell(),
                             ERepositoryObjectType.METADATA,
@@ -617,9 +616,6 @@ public class WebServiceUI extends WizardPage {
     }
 
     public boolean performFinish() {
-    	if(definition==null) {
-    		return true; 
-    	}
         if (!saveValue()) {
             return false;
         }
@@ -669,55 +665,42 @@ public class WebServiceUI extends WizardPage {
         IElementParameter wsdlContentPara = webServiceComponent.getElementParameter("WSDL_CONTENT");
         wsdlContentPara.setValue(wsdlString);
 
+        IElementParameter Port_Name = webServiceComponent.getElementParameter("PORT_NAME");
         if (currentPortName != null) {
-            IElementParameter Port_Name = webServiceComponent.getElementParameter("PORT_NAME");
             Port_Name.setValue(currentPortName);
         } else if (currentPortName == null && !allPortNames.isEmpty()) {
             currentPortName = allPortNames.get(0);
-            IElementParameter Port_Name = webServiceComponent.getElementParameter("PORT_NAME");
             Port_Name.setValue(currentPortName);
+        }else {
+        	Port_Name.setValue(null);
         }
 
-        if (currentFunction != null) {
-            if (currentFunction.getNameSpaceURI() != null) {
-                IElementParameter METHODPara = webServiceComponent.getElementParameter("METHOD_NS");
-                METHODPara.setValue(currentFunction.getNameSpaceURI());
-            }
-            if (currentFunction.getName() != null) {
-                IElementParameter METHODPara = webServiceComponent.getElementParameter("METHOD");
-                METHODPara.setValue(currentFunction.getName());
-            }
-            if (currentFunction.getServiceNameSpace() != null) {
-                IElementParameter Service_NS = webServiceComponent.getElementParameter("SERVICE_NS");
-                Service_NS.setValue(currentFunction.getServiceNameSpace());
-            }
-            if (currentFunction.getServiceName() != null) {
-                IElementParameter Service_Name = webServiceComponent.getElementParameter("SERVICE_NAME");
-                Service_Name.setValue(currentFunction.getServiceName());
-            }
-            if (currentFunction.getServiceNameSpace() != null) {
-                IElementParameter Port_NS = webServiceComponent.getElementParameter("PORT_NS");
-                Port_NS.setValue(currentFunction.getServiceNameSpace());
-            }
+        IElementParameter METHOD_NSPara = webServiceComponent.getElementParameter("METHOD_NS");
+        METHOD_NSPara.setValue(currentFunction.getNameSpaceURI());
 
-            if(currentFunction.getSoapAction() != null){
-                IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
-                Soap_Action.setValue(currentFunction.getSoapAction());
-            }
+        IElementParameter METHODPara = webServiceComponent.getElementParameter("METHOD");
+        METHODPara.setValue(currentFunction.getName());
+    
+        IElementParameter Service_NS = webServiceComponent.getElementParameter("SERVICE_NS");
+        Service_NS.setValue(currentFunction.getServiceNameSpace());
 
-            String addressLocation = currentFunction.getAddressLocation();
-            if(addressLocation != null){
-                IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
-                esbEndpoint.setValue(TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
-            }
+        IElementParameter Service_Name = webServiceComponent.getElementParameter("SERVICE_NAME");
+        Service_Name.setValue(currentFunction.getServiceName());
 
-            String communicationStyle = currentFunction.getCommunicationStyle();
-            if(communicationStyle != null){
-                IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
-                commStyle.setValue(currentFunction.getCommunicationStyle());
-            }
+        IElementParameter Port_NS = webServiceComponent.getElementParameter("PORT_NS");
+        Port_NS.setValue(currentFunction.getServiceNameSpace());
 
-        }
+        IElementParameter Soap_Action = webServiceComponent.getElementParameter("SOAP_ACTION");
+        Soap_Action.setValue(currentFunction.getSoapAction());
+
+        String addressLocation = currentFunction.getAddressLocation();
+        IElementParameter esbEndpoint = webServiceComponent.getElementParameter("ESB_ENDPOINT");
+        esbEndpoint.setValue(TalendTextUtils.addQuotes(addressLocation));
+
+        String communicationStyle = currentFunction.getCommunicationStyle();
+        IElementParameter commStyle = webServiceComponent.getElementParameter("COMMUNICATION_STYLE");
+        commStyle.setValue(communicationStyle);
+
         return true;
     }
 

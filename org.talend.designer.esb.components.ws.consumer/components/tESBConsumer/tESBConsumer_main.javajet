@@ -134,7 +134,11 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
                 genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=methodNS%>", "<%=method%>"));
                 genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
-                genericConsumer_<%=cid%>.setSoapAction("<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                <% String soapAction=ElementParameterParser.getValue(node, "__SOAP_ACTION__");
+                	if(soapAction!=null&&(!soapAction.matches("\\s*"))){
+                		%>genericConsumer_<%=cid%>.setSoapAction(<%=soapAction%>);<%                	
+                	}
+                %>
                 genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
