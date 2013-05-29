@@ -370,7 +370,7 @@ if (inputConn != null) {
         <% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
             throw(e_<%=cid%>);
         <% } else { %>
-            System.err.print(e_<%=cid%>.getMessage());
+            new TalendException(e_<%=cid%>,currentComponent,globalMap).printStackTrace();
         <% } %>
     }
 
