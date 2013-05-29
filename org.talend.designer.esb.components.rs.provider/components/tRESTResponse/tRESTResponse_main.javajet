@@ -32,6 +32,13 @@ if (node.getProcess().getNodesOfType("tRESTRequestLoop").isEmpty()) { %>
 				if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 
 
+%>
+	if(globalMap.containsKey("restResponse")){
+		throw new RuntimeException("Rest response already sent.");
+	}else if(!globalMap.containsKey("restRequest")){
+		throw new RuntimeException("Not received rest request yet.");
+	}else {
+<%
 
 String selectedStatusCode = ElementParameterParser.getValue(node, "__STATUS_CODE__");
 if ("CUSTOM".equals(selectedStatusCode)) { %>
@@ -75,6 +82,7 @@ for (Map<String, String> header : headers) { %>
 		restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
 		globalMap.put("restResponse", restResponse_<%=cid%>);
 
+	}
 <%
 				} // (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA))
 			} // (null != conns && 0 < conns.size())
