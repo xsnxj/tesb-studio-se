@@ -228,42 +228,33 @@ public class OpenWSDLPage extends WizardPage {
                                 new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SERVICE_WSDL)));
                         is = new ByteArrayInputStream(baos.toByteArray());
                     } else {
-                        String filenameTemplate = item.getProperty().getLabel() + '_' + item.getProperty().getVersion() + "_%d.wsdl"; //$NON-NLS-1$
+                        String filenameTemplate = item.getProperty().getLabel() + '_' + item.getProperty().getVersion() + ".%d.wsdl"; //$NON-NLS-1$
                         Map<String, InputStream> wsdls = new WSDLLoader().load(path, filenameTemplate);
                         is = wsdls.remove(WSDLLoader.DEFAULT_FILENAME);
                         for (Map.Entry<String, InputStream> wsdl : wsdls.entrySet()) {
-                            IFile importedWsdl = fileWsdl.getParent().getFile(new Path(wsdl.getKey()));
+                            String filename = wsdl.getKey();
+                            IFile importedWsdl = fileWsdl.getParent().getFile(new Path(filename));
                             if (!importedWsdl.exists()) {
-                                importedWsdl.create(wsdl.getValue(), true, null);
+                                importedWsdl.create(wsdl.getValue(), true, monitor);
                             } else {
-                                importedWsdl.setContents(wsdl.getValue(), 0, null);
+                                importedWsdl.setContents(wsdl.getValue(), 0, monitor);
                             }
+                            createReferenceResources(filename.substring(filename.lastIndexOf('.', filename.lastIndexOf('.') - 1) + 1));
                         }
                     }
 
                     // store WSDL in service
                     if (!fileWsdl.exists()) {
-                        fileWsdl.create(is, true, null);
+                        fileWsdl.create(is, true, monitor);
                     } else {
-                        fileWsdl.setContents(is, 0, null);
+                        fileWsdl.setContents(is, 0, monitor);
                     }
 
                     // create reference to wsdl
-                    if (item.getReferenceResources().isEmpty()) {
-                        ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-                        //ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-                        //createReferenceFileItem.setContent(byteArray);
-                        referenceFileItem.setExtension("wsdl");
-                        item.getReferenceResources().add(referenceFileItem);
-                    //} else {
-                    //    createReferenceFileItem = (ReferenceFileItem) item.getReferenceResources().get(0);
-                    }
-                    //createReferenceFileItem.getContent().setInnerContent(baos.toByteArray());
+                    createReferenceResources("wsdl"); //$NON-NLS-1$
 
-                    //
                     definition = WSDLUtils.getDefinition(fileWsdl); // path
                     populateModelFromWsdl(factory, definition, item, repositoryNode);
-
 
                     factory.save(item);
                     ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
@@ -332,6 +323,19 @@ public class OpenWSDLPage extends WizardPage {
             }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
         }
+    }
+
+    private void createReferenceResources(String fileExtension) {
+        for (Object resource : item.getReferenceResources()) {
+            if (resource instanceof ReferenceFileItem) {
+                if (fileExtension.equals(((ReferenceFileItem) resource).getExtension())) {
+                    return;
+                }
+            }
+        }
+        ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+        referenceFileItem.setExtension(fileExtension);
+        item.getReferenceResources().add(referenceFileItem);
     }
 
     private static CoreException getCoreException(String message, Throwable initialException) {
