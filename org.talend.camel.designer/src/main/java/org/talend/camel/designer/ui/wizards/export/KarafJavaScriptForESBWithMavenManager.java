@@ -428,7 +428,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 StringBuilder sb = new StringBuilder();
                 sb.append("repository/").append(projectName).append(PATH_SEPARATOR).append(jobName).append(PATH_SEPARATOR); //$NON-NLS-1$
                 String featurePath = sb.append(jobName).append("-feature/").append(jobVersion).append(PATH_SEPARATOR) //$NON-NLS-1$
-                        .append(jobName).append("-feature-").append(jobVersion).append("-feature.xml").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+                        .append(jobName).append("-").append(jobVersion).append("-feature.xml").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                 ExportFileResource featureFileResource = new ExportFileResource(null, ""); //$NON-NLS-1$
                 try {
                     ZipFile zipFile = new ZipFile(karFile);
