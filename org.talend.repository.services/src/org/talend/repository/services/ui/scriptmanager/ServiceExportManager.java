@@ -79,8 +79,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         // http://jira.talendforge.org/browse/TESB-3638
                         try {
                             URI uri = new URI(endpointAddress);
-                            endpointAddress = uri.getRawSchemeSpecificPart();
-                            {
+                            endpointAddress = uri.getPath();
+                            if(endpointAddress==null) {
+                            	endpointAddress = uri.getRawSchemeSpecificPart();
                             	int interrogationMark=endpointAddress.indexOf('?');
                             	if(interrogationMark>0) {
                             		endpointAddress=endpointAddress.substring(0, interrogationMark);
