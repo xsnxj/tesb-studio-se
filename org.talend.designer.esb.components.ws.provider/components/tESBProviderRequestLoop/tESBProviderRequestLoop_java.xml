@@ -122,7 +122,7 @@
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-javamail_1.4_spec"
 					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-					UrlPath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
