@@ -18,6 +18,7 @@
 			restFault_<%=cid%>.put("BODY", e_<%=cid%>.getMessage());
 			globalMap.put("restResponse", restFault_<%=cid%>);
 		}
+		return;
 	}
 	nb_line_<%=cid%>++;
 	globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);

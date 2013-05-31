@@ -56,7 +56,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 				} // for (IConnection conn : connsAll)
 				if(!hasWrongCall){
 %>
-				new TalendException(new RuntimeException(requestMessage_<%=cid%>.toString()), currentComponent, globalMap).printStackTrace();
+				throw new RuntimeException(requestMessage_<%=cid%>.toString());
 <%
 				}
 			} // if (null != connsAll && !connsAll.isEmpty())
