@@ -42,8 +42,10 @@ public class RouteResourceInput extends RepositoryEditorInput {
 	public static RouteResourceInput createInput(IRepositoryNode node, RouteResourceItem item) {
 		RouteResourceInput routeResourceInput = new RouteResourceInput(
 				RouteResourceUtil.getSourceFile(item), item);
-		routeResourceInput.setRepositoryNode(node);
-		routeResourceInput.setReadOnly(RouteResourceEditorUtil.isReadOnly(node));
+		if(node!=null) {
+			routeResourceInput.setRepositoryNode(node);
+			routeResourceInput.setReadOnly(RouteResourceEditorUtil.isReadOnly(node));
+		}
 		return routeResourceInput;
 	}
 

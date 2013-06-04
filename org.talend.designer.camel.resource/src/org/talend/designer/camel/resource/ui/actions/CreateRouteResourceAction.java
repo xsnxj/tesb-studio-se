@@ -63,7 +63,6 @@ public class CreateRouteResourceAction extends AContextualAction implements
 		}
 		Object obj = ((IStructuredSelection) selection).getFirstElement();
 		node = (IRepositoryNode) obj;
-
 		IRepositoryService service = DesignerPlugin.getDefault()
 				.getRepositoryService();
 		IPath path = service.getRepositoryPath((RepositoryNode) node);
@@ -80,7 +79,7 @@ public class CreateRouteResourceAction extends AContextualAction implements
 		if (open == Window.OK) {
 			RouteResourceItem item = wizard.getItem();
 			IWorkbenchPage page = getActivePage();
-			RouteResourceEditorUtil.openEditor(page, node, item);
+			RouteResourceEditorUtil.openEditor(page, null, item);
 		}
 	}
 
