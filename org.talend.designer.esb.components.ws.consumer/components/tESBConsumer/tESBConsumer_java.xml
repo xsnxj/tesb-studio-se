@@ -445,8 +445,8 @@
 
 			<!-- SL for WS -->
 			<IMPORT NAME="locator"
-					MODULE="locator-5.3.1-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.1-SNAPSHOT.jar"
+					MODULE="locator-5.3.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.1.jar"
 					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
@@ -477,13 +477,13 @@
 
 			<!-- SAM for WS -->
 			<IMPORT NAME="sam-agent"
-					MODULE="sam-agent-5.3.1-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.1-SNAPSHOT.jar"
+					MODULE="sam-agent-5.3.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.1.jar"
 					BundleID="sam-agent"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="sam-common"
-					MODULE="sam-common-5.3.1-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.1-SNAPSHOT.jar"
+					MODULE="sam-common-5.3.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.1.jar"
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
