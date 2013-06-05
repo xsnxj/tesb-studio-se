@@ -98,10 +98,10 @@ if (inputConn != null) {
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
-    final Document headersTalendDoc_<%=cid%> = <% if(hasHeaders) { %> <%=inputConn.getName()%>.headers; <% } else { %> null;<% } %>
+    final routines.system.Document headersTalendDoc_<%=cid%> = <% if(hasHeaders) { %> <%=inputConn.getName()%>.headers; <% } else { %> null;<% } %>
 
     try {
-        Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
+        routines.system.Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
         try {
             org.dom4j.Document responseDoc_<%=cid%> = null;
@@ -279,9 +279,9 @@ if (inputConn != null) {
                 if (<%=connResponseName%> == null) {
                     <%=connResponseName%> = new <%=connResponseName%>Struct();
                 }
-                Document responseTalendDoc_<%=cid%> = null;
+                routines.system.Document responseTalendDoc_<%=cid%> = null;
                 if (null != responseDoc_<%=cid%>) {
-                    responseTalendDoc_<%=cid%> = new Document();
+                    responseTalendDoc_<%=cid%> = new routines.system.Document();
                     responseTalendDoc_<%=cid%>.setDocument(responseDoc_<%=cid%>);
                 }
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
@@ -301,7 +301,7 @@ if (inputConn != null) {
                 if (null != e_<%=cid%>.getDetail() && null != e_<%=cid%>.getDetail().getFirstChild()) {
                     javax.xml.transform.Source faultSource_<%=cid%> =
                         new javax.xml.transform.dom.DOMSource(e_<%=cid%>.getDetail().getFirstChild());
-                    <%=connFaultName%>.faultDetail = new Document();
+                    <%=connFaultName%>.faultDetail = new routines.system.Document();
                     <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_<%=cid%>));
                 }
             <% } else { %>
@@ -315,7 +315,7 @@ if (inputConn != null) {
                 }
                 <%=connFaultName%>.faultString = e_<%=cid%>.getMessage();
 
-                <%=connFaultName%>.faultDetail = new Document();
+                <%=connFaultName%>.faultDetail = new routines.system.Document();
                 <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e_<%=cid%>.getFaultInfo());
             <% } else { %>
                 System.err.println(e_<%=cid%>.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
@@ -356,9 +356,9 @@ if (inputConn != null) {
                     } catch (java.lang.UnsupportedOperationException uoe_<%=cid%>) { }
                 }
 
-                Document faultTalendDoc_<%=cid%> = null;
+                routines.system.Document faultTalendDoc_<%=cid%> = null;
                 if (null != faultDoc_<%=cid%>) {
-                    faultTalendDoc_<%=cid%> = new Document();
+                    faultTalendDoc_<%=cid%> = new routines.system.Document();
                     faultTalendDoc_<%=cid%>.setDocument(faultDoc_<%=cid%>);
                 }
                 <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
