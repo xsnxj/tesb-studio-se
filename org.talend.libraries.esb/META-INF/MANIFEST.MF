@@ -20,9 +20,9 @@ Bundle-ClassPath: .,lib/cxf-rt-core-2.7.5.jar,lib/cxf-api-2.7.5.jar,lib/
  SE.jar,lib/spring-aop-3.0.7.RELEASE.jar,lib/aopalliance-1.0.jar,lib/spr
  ing-beans-3.0.7.RELEASE.jar,lib/spring-core-3.0.7.RELEASE.jar,lib/sprin
  g-expression-3.0.7.RELEASE.jar,lib/spring-asm-3.0.7.RELEASE.jar,lib/loc
- ator-5.3.1-SNAPSHOT.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clu
- stering-2.7.5.jar,lib/sam-agent-5.3.1-SNAPSHOT.jar,lib/sam-common-5.3.1
- -SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.5.jar
+ ator-5.3.1.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clustering-2
+ .7.5.jar,lib/sam-agent-5.3.1.jar,lib/sam-common-5.3.1.jar,lib/cxf-rt-tr
+ ansports-local-2.7.5.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: org.talend.libraries.esb
 Bundle-SymbolicName: org.talend.libraries.esb
