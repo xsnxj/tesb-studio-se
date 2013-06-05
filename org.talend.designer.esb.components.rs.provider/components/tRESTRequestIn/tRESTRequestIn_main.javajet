@@ -65,9 +65,9 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 			String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
 			String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
-			Document body_<%=cid%> = null;
+			routines.system.Document body_<%=cid%> = null;
 			if (requestMessage_<%=cid%>.get("BODY") != null) {
-				body_<%=cid%> = new Document();
+				body_<%=cid%> = new routines.system.Document();
 				body_<%=cid%>.setDocument((org.dom4j.Document) requestMessage_<%=cid%>.get("BODY"));
 			}
 			java.util.Map<String, Object> params_<%=cid%> =
