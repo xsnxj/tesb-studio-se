@@ -282,9 +282,9 @@ try {
 				if (responseClass_<%=cid%> == String.class) {
 					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
 				} else {
-					Document responseTalendDoc_<%=cid%> = null;
+					routines.system.Document responseTalendDoc_<%=cid%> = null;
 					if (null != responseDoc_<%=cid%>) {
-						responseTalendDoc_<%=cid%> = new Document();
+						responseTalendDoc_<%=cid%> = new routines.system.Document();
 						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
 					}
 					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
