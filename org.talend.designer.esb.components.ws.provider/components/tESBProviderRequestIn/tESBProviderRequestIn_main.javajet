@@ -34,7 +34,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 			// esbHandler_<%=cid%>.sendResponse(null);
 <% } %>
 
-			Document talendDocument_<%=cid%> = new Document();
+			routines.system.Document talendDocument_<%=cid%> = new routines.system.Document();
 			talendDocument_<%=cid%>.setDocument(requestMessage_<%=cid%>);
 			<%=conn.getName()%>.payload = talendDocument_<%=cid%>;
 <%

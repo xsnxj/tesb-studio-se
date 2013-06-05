@@ -30,7 +30,7 @@ if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 				if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 %>
 	String esbProviderFaultTitle_<%=cid%> = <%= ElementParameterParser.getValue(node, "__ESB_FAULT_TITLE__")%> + " [<%=cid%>]";
-	Document esbProviderFaultDoc_<%=cid%> = null;
+	routines.system.Document esbProviderFaultDoc_<%=cid%> = null;
 <%
 					IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
 					if (null != column && "id_Document".equals(column.getTalendType())) {

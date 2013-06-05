@@ -31,7 +31,7 @@ if (node.getProcess().getNodesOfType("tESBProviderRequestLoop").isEmpty()) { %>
 					IMetadataColumn column = conn.getMetadataTable().getColumn("payload");
 					if (null != column && "id_Document".equals(column.getTalendType())) {
 %>
-	Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
+	routines.system.Document esbProviderResponseDoc_<%=cid%> = <%=conn.getName()%>.payload;
 
 	ESBProviderCallbackTalendJobInner esbProviderCallback_<%=cid%> = (ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler");
 	if (null != esbProviderCallback_<%=cid%>) {
