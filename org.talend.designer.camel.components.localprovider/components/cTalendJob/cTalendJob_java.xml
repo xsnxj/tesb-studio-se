@@ -91,7 +91,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="camel-talendjob" MODULE="camel-talendjob-5.3.1-SNAPSHOT.jar" REQUIRED="true" />
+			<IMPORT NAME="camel-talendjob" MODULE="camel-talendjob-5.3.1.jar" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
