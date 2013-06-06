@@ -61,6 +61,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.OpenWSDLEditorAction;
@@ -274,17 +275,14 @@ public class OpenWSDLPage extends WizardPage {
             // the update of the project files need to be done in the workspace runnable to avoid all notification
             // of changes before the end of the modifications.
             workspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, null);
+            repositoryNode = RepositoryNodeUtilities.getRepositoryNode(new RepositoryViewObject(item.getProperty()));
+            OpenWSDLEditorAction action = new OpenWSDLEditorAction();
+            action.setRepositoryNode(repositoryNode);
+            action.run();
         } catch (CoreException e) {
             MessageBoxExceptionHandler.process(e);
             return false;
         }
-
-        // open wsdl editor
-        OpenWSDLEditorAction action = new OpenWSDLEditorAction();
-        action.setServiceItem(item);
-        action.run();
-
-        // import schemas if required
         if (checkImport.isVisible() && checkImport.getSelection() && null != definition) {
             PublishMetadataRunnable publishMetadataRunnable = new PublishMetadataRunnable(definition, getShell());
             try {
