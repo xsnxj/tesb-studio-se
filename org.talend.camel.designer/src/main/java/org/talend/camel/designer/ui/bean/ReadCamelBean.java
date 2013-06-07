@@ -28,6 +28,7 @@ import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 
 /**
@@ -97,6 +98,10 @@ public class ReadCamelBean extends AbstractBeanAction {// AbstractProcessAction
                 }
                 break;
             default:
+                canWork = false;
+            }
+            if (canWork && node.getObject() != null
+                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.LOCK_BY_USER) {
                 canWork = false;
             }
         }
