@@ -1,8 +1,19 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2013 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.action;
 
 import java.util.Properties;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -19,13 +30,11 @@ import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.WSDLUtils;
-import org.talend.repository.ui.views.IRepositoryView;
 
 public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntroAction {
 
@@ -39,6 +48,9 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         this.setToolTipText("Open WSDL Editor");
 
         this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
+
+        // avoid NPE at save
+        setAvoidUnloadResources(true);
     }
 
     @Override
@@ -62,8 +74,8 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
     @Override
     protected void doRun() {
-        IFile file = WSDLUtils.getWsdlFile(serviceItem);
-        ServiceEditorInput editorInput = new ServiceEditorInput(file, serviceItem);
+        ServiceEditorInput editorInput = new ServiceEditorInput(WSDLUtils.getWsdlFile(serviceItem), serviceItem);
+        editorInput.setRepositoryNode(repositoryNode);
         editorInput.setReadOnly(!DesignerPlugin.getDefault().getProxyRepositoryFactory().isEditableAndLockIfPossible(serviceItem));
         try {
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, EDITOR_ID, true);
@@ -92,18 +104,12 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
         }
 
         // find repository node
-        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
-        IRepositoryNode repositoryNode = view.getRoot().getRootRepositoryNode(ESBRepositoryNodeType.SERVICES);
+        repositoryNode = (RepositoryNode) RepositorySeekerManager.getInstance().searchRepoViewNode(params.getProperty("nodeId"), false);
         if (null != repositoryNode) {
-            setWorkbenchPart(view);
-            // find node item
-            IRepositoryNode nodeItem = RepositorySeekerManager.getInstance().searchRepoViewNode(params.getProperty("nodeId"), false);
-            if (null != nodeItem) {
-                // expand/select node item
-                view.getViewer().setSelection(new StructuredSelection(nodeItem));
-                init((RepositoryNode) nodeItem);
-                doRun();
-            }
+            // expand/select node item
+            RepositoryManagerHelper.getRepositoryView().getViewer().setSelection(new StructuredSelection(repositoryNode));
+            init(repositoryNode);
+            doRun();
         }
     }
 

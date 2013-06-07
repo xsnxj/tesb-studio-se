@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2013 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.utils;
 
 import java.util.ArrayList;
@@ -42,7 +54,6 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -50,7 +61,6 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.AssignJobAction;
-import org.talend.repository.services.action.ServiceEditorInput;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -84,17 +94,10 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     @Override
 	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
 		super.init(site, editorInput);
-		if (editorInput != null && editorInput instanceof ServiceEditorInput) {
-			ServiceEditorInput serviceEditorInput = (ServiceEditorInput) editorInput;
-			Item item = serviceEditorInput.getItem();
-			if (item != null) {
-				IRepositoryNode node = RepositorySeekerManager.getInstance()
-						.searchRepoViewNode(item.getProperty().getId(), false);
-				repositoryNode = (RepositoryNode) node;
-				if(item instanceof ServiceItem) {
-					serviceItem = (ServiceItem) item;
-				}
-			}
+		if (editorInput instanceof RepositoryEditorInput) {
+			RepositoryEditorInput serviceEditorInput = (RepositoryEditorInput) editorInput;
+			serviceItem = (ServiceItem) serviceEditorInput.getItem();
+			repositoryNode = serviceEditorInput.getRepositoryNode();
 		}
 	}
 
@@ -105,67 +108,62 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     		return;
     	}
         super.doSave(monitor);
-        save();
+        if (null != serviceItem && null != repositoryNode) {
+            save();
+        }
     }
-    
+
     public boolean isEditorInputReadOnly(){
     	return ((RepositoryEditorInput)getEditorInput()).isReadOnly();
     }
 
     private void save() {
-    	if(isEditorInputReadOnly()){
-    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
-    		return;
-    	}
-        if (serviceItem != null) {
-            try {
-                saveModel();
+        try {
+            saveModel();
 
-                // update
-                RepositoryUpdateManager.updateServices(serviceItem);
+            // update
+            RepositoryUpdateManager.updateServices(serviceItem);
 
-                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-                factory.save(serviceItem);
-                RepositoryManager.refreshSavedNode(repositoryNode);
+            ProxyRepositoryFactory.getInstance().save(serviceItem);
 
-                if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
-                    IESBService service = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
-                    if (service != null) {
-                        service.refreshComponentView(serviceItem);
-                    }
+            RepositoryManager.refreshSavedNode(repositoryNode);
+
+            if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+                IESBService service = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+                if (service != null) {
+                    service.refreshComponentView(serviceItem);
                 }
-                // ////////// TODO: remove this ugly patch! do correct changeset
-                EList<ServicePort> servicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
-                for (ServicePort servicePort : servicePorts) {
-                    List<IRepositoryNode> portNodes = repositoryNode.getChildren();
-                    IRepositoryNode portNode = null;
-                    for (IRepositoryNode node : portNodes) {
-                        if ((node.getObject()).getLabel().equals(servicePort.getName())) {
-                            portNode = node;
-                        }
-                    }
-                    if (portNode == null) {
-                        // for now, if the port has been renamed, we just lose all links (avoid an NPE for nothing)
-                        continue;
-                    }
-                    EList<ServiceOperation> operations = servicePort.getServiceOperation();
-                    for (ServiceOperation operation : operations) {
-                        String referenceJobId = operation.getReferenceJobId();
-                        if (referenceJobId != null) {
-                            for (IRepositoryNode operationNode : portNode.getChildren()) {
-                                if (operationNode.getObject().getLabel().startsWith(operation.getName() + "-")) {
-                                    IRepositoryNode jobNode = org.talend.core.repository.seeker.RepositorySeekerManager.getInstance().searchRepoViewNode(referenceJobId, false);
-                                    AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
-                                    action.assign(jobNode);
-                                    break;
-                                }
-                            }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        // ////////// TODO: remove this ugly patch! do correct changeset
+        EList<ServicePort> servicePorts = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+        for (ServicePort servicePort : servicePorts) {
+            List<IRepositoryNode> portNodes = repositoryNode.getChildren();
+            IRepositoryNode portNode = null;
+            for (IRepositoryNode node : portNodes) {
+                if ((node.getObject()).getLabel().equals(servicePort.getName())) {
+                    portNode = node;
+                }
+            }
+            if (portNode == null) {
+                // for now, if the port has been renamed, we just lose all links (avoid an NPE for nothing)
+                continue;
+            }
+            EList<ServiceOperation> operations = servicePort.getServiceOperation();
+            for (ServiceOperation operation : operations) {
+                String referenceJobId = operation.getReferenceJobId();
+                if (referenceJobId != null) {
+                    for (IRepositoryNode operationNode : portNode.getChildren()) {
+                        if (operationNode.getObject().getLabel().startsWith(operation.getName() + '-')) {
+                            IRepositoryNode jobNode = org.talend.core.repository.seeker.RepositorySeekerManager.getInstance().searchRepoViewNode(referenceJobId, false);
+                            AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
+                            action.assign(jobNode);
+                            break;
                         }
                     }
                 }
-                // ////////// TODO
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
@@ -207,8 +205,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 		}
 		return false;
 	}
-    
-    
+
     private void saveModel() throws CoreException {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
@@ -382,8 +379,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     public void dispose() {
     	//unlock item if necessary
     	IEditorInput currentEditorInput=getEditorInput();
-    	if(currentEditorInput!=null&&currentEditorInput instanceof ServiceEditorInput) {
-    		ServiceEditorInput serviceEditorInput=(ServiceEditorInput) currentEditorInput;
+    	if (currentEditorInput instanceof RepositoryEditorInput) {
+    		RepositoryEditorInput serviceEditorInput=(RepositoryEditorInput) currentEditorInput;
     		Item currentItem = serviceEditorInput.getItem();
 			if(currentItem!=null) {
     			//unlock item if no other editors open it.
@@ -395,8 +392,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     				}
     				try {
     					IEditorInput editorInput = editorRef.getEditorInput();
-    					if(editorInput instanceof ServiceEditorInput) {
-    						Item item=((ServiceEditorInput) editorInput).getItem();
+    					if(editorInput instanceof RepositoryEditorInput) {
+    						Item item=((RepositoryEditorInput) editorInput).getItem();
     						if(item==currentItem) {
     							//open this item & not this one.
     							openItemInOtherEditor=true;
@@ -419,5 +416,5 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     	
     	super.dispose();
     }
-    
+
 }
