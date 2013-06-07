@@ -27,7 +27,9 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.ui.action.AbstractProcessAction;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 
 /**
@@ -97,6 +99,10 @@ public class ReadCamelProcess extends AbstractProcessAction {
                 }
                 break;
             default:
+                canWork = false;
+            }
+            if (canWork && node.getObject() != null
+                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.LOCK_BY_USER) {
                 canWork = false;
             }
         }
