@@ -24,21 +24,6 @@
             </enablement>
          </resourceParameter>
       </component>
-      <component
-            componentName="cODT">
-         <resourceParameter
-               parameterName="PROJECT_ARCHIVES_REPO">
-            <enablement>
-               <and>
-                  <attribute
-                        parameterName="PROJECT_ARCHIVES_TYPE"
-                        parameterValue="repository"
-                        regularExpresson="false">
-                  </attribute>
-               </and>
-            </enablement>
-         </resourceParameter>
-      </component>
    </extension>
 
 </plugin>
