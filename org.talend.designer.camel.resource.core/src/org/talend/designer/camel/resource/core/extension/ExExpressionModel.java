@@ -32,11 +32,8 @@ public class ExExpressionModel {
 
 	public boolean evalute(INode node) {
 		if (AND.equals(operator)) {
-			if (leftModel != null && rightModel != null) {
-				return leftModel.evalute(node) && rightModel.evalute(node);
-			} else {
-				return false;
-			}
+			return (leftModel != null && leftModel.evalute(node))
+					&& (rightModel == null || rightModel.evalute(node));
 		} else if (OR.equals(operator)) {
 			if (leftModel != null && rightModel != null) {
 				return leftModel.evalute(node) || rightModel.evalute(node);
