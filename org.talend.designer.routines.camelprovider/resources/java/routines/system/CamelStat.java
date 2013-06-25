@@ -22,48 +22,42 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.InterceptStrategy;
 
 public class CamelStat implements Runnable {
 
     private org.apache.camel.CamelContext theContext;
-
-    private javax.management.MBeanServer mBeanServer;
-
-    private java.util.Set<javax.management.ObjectName> set = null;
-
-    private java.util.List<javax.management.ObjectName> routes;
-
-    private java.util.Set<javax.management.ObjectName> processors;
+    private HashMap<String, Integer> statisticsMap=new HashMap<String, Integer>();
+    private final HashMap<String, String> targetNodeToConnectionMap=new HashMap<String, String>();
 
     public CamelStat(org.apache.camel.CamelContext context) {
         this.theContext = context;
     }
-
-    public void setParams() throws MalformedObjectNameException, NullPointerException {
-        this.mBeanServer = theContext.getManagementStrategy().getManagementAgent().getMBeanServer();
-        this.set = mBeanServer.queryNames(new javax.management.ObjectName(
-                org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN + ":type=routes,*"), null);
-        // this.routes = new java.util.ArrayList<javax.management.ObjectName>();
-        this.processors = mBeanServer.queryNames(new javax.management.ObjectName(
-                org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN + ":type=processors,*"), null);
+    
+    public void addConnectionMapping(String targetNode,String connection){
+    	targetNodeToConnectionMap.put(targetNode, connection);
     }
 
-    // public void setRoutes(String routeName) throws
-    // MalformedObjectNameException, NullPointerException {
-    // this.routes.add(javax.management.ObjectName.getInstance(org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN+" ,type=routes,name=\""+routeName+"\""));
-    // }
-
-    // public void setProcessors(String processorName) throws
-    // MalformedObjectNameException, NullPointerException {
-    // this.processors.add(mBeanServer.queryNames(new
-    // javax.management.ObjectName(org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN
-    // + ":type=processors,name=\""+routeName+"\""), null));
-    // }
+    public void setParams() throws NullPointerException {
+        theContext.addInterceptStrategy(new InterceptStrategy() {
+			
+			public Processor wrapProcessorInInterceptors(CamelContext context,
+					final ProcessorDefinition<?> node, final Processor target,
+					Processor nextTarget) throws Exception {
+				return new Processor() {
+					
+					public void process(Exchange arg0) throws Exception {
+						CamelStat.this.addRowByTargetNode(node.getId());
+						target.process(arg0);
+					}
+				};
+			}
+		});
+    }
 
     private boolean openSocket = true;
 
@@ -131,10 +125,6 @@ public class CamelStat implements Runnable {
             return this.connectionId;
         }
 
-        public void setConnectionId(String connectionId) {
-            this.connectionId = connectionId;
-        }
-
         public int getNbLine() {
             return this.nbLine;
         }
@@ -155,10 +145,6 @@ public class CamelStat implements Runnable {
             return startTime;
         }
 
-        public void setStartTime(long startTime) {
-            this.startTime = startTime;
-        }
-
         public long getEndTime() {
             return endTime;
         }
@@ -171,16 +157,8 @@ public class CamelStat implements Runnable {
             return this.exec;
         }
 
-        public void setExec(String exec) {
-            this.exec = exec;
-        }
-
         public int getJobStat() {
             return jobStat;
-        }
-
-        public void setJobStat(int jobStat) {
-            this.jobStat = jobStat;
         }
 
         public String getItemId() {
@@ -341,26 +319,11 @@ public class CamelStat implements Runnable {
     long lastStatsUpdate = 0;
 
     public synchronized void updateStatOnConnection(String connectionId, int mode, String nodeName)
-            throws AttributeNotFoundException, InstanceNotFoundException, MBeanException, ReflectionException,
-            MalformedObjectNameException, NullPointerException {
+            throws NullPointerException {
 
         StatBean bean;
         String key = connectionId;
-        javax.management.ObjectName routeMBean = null;
 
-        java.util.Iterator<javax.management.ObjectName> iterator = this.processors.iterator();
-        while (iterator.hasNext()) {
-            routeMBean = iterator.next();
-            if (("\"" + nodeName + "\"").equals(routeMBean.getKeyProperty("name"))) {
-                // System.out.println(nodeName);
-                break;
-            }
-
-			// http://jira.talendforge.org/browse/TESB-5628 Fix bug LiXiaopeng
-			routeMBean = null;
-        }
-
-        // javax.management.ObjectName routeMBean = iterator.next();
         if (connectionId.contains(".")) {
             String firstKey = null;
             String connectionName = connectionId.split("\\.")[0];
@@ -396,11 +359,11 @@ public class CamelStat implements Runnable {
         }
         bean.setState(mode);
         bean.setEndTime(System.currentTimeMillis());
-		if (routeMBean != null) {
-			bean.setNbLine(Integer.parseInt(mBeanServer.getAttribute(
-					routeMBean, "ExchangesTotal").toString()));
-		}
-        processStats.put(key, bean);
+
+        Integer count=statisticsMap.get(key);
+		bean.setNbLine(count==null?0:count);
+
+		processStats.put(key, bean);
 
         // if tFileList-->tFileInputDelimited-->tFileOuputDelimited, it should
         // clear the data every iterate
@@ -420,56 +383,16 @@ public class CamelStat implements Runnable {
         }
     }
 
-    // public synchronized void updateStatOnConnection(String connectionId, int
-    // mode, String exec) {
-    // StatBean bean;
-    // String key = connectionId + "|" + mode;
-    //
-    // if (connectionId.startsWith("iterate")) {
-    // key = connectionId + "|" + mode + "|" + exec;
-    // } else {
-    // if (connectionId.contains(".")) {
-    // String firstKey = null;
-    // String connectionName = connectionId.split(".")[0];
-    // int nbKeys = 0;
-    // for (String myKey : keysList) {
-    // if (myKey.startsWith(connectionName + ".")) {
-    // if (firstKey == null) {
-    // firstKey = myKey;
-    // }
-    // nbKeys++;
-    // if (nbKeys == 4) {
-    // break;
-    // }
-    // }
-    // }
-    // if (nbKeys == 4) {
-    // keysList.remove(firstKey);
-    // }
-    // }
-    // }
-    // if (keysList.contains(key)) {
-    // keysList.remove(key);
-    // }
-    // keysList.add(key);
-    // // System.out.println(connectionId);
-    // if (processStats.containsKey(key)) {
-    // bean = processStats.get(key);
-    // } else {
-    // bean = new StatBean(connectionId);
-    // }
-    // bean.setState(mode);
-    // bean.setExec(exec);
-    // processStats.put(key, bean);
-    //
-    // // Set a maximum interval for each update of 250ms.
-    // // since Iterate can be fast, we try to update the UI often.
-    // long newStatsUpdate = System.currentTimeMillis();
-    // if (lastStatsUpdate == 0 || lastStatsUpdate + 250 < newStatsUpdate) {
-    // sendMessages();
-    // lastStatsUpdate = newStatsUpdate;
-    // }
-    // }
+	public synchronized void addRowByTargetNode(String targetNode) {
+		String connection = targetNodeToConnectionMap.get(targetNode);
+		Integer count = statisticsMap.get(connection);
+		if (count == null) {
+			count = 1;
+		} else {
+			count++;
+		}
+		statisticsMap.put(connection, count);
+	}
 
     public synchronized void updateStatOnJob(int jobStat, String parentNodeName) {
         StatBean bean = new StatBean(jobStat, parentNodeName);
