@@ -15,14 +15,16 @@ package org.talend.designer.camel.resource.ui.actions;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IEditorPart;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.camel.resource.i18n.Messages;
+import org.talend.designer.camel.resource.ui.wizards.EditRouteResourcePropertiesWizard;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.EditPropertiesAction;
+import org.talend.repository.ui.wizards.PropertiesWizard;
 
 /**
  * smallet class global comment. Detailled comment <br/>
@@ -39,20 +41,6 @@ public class EditRouteResourcePropertiesAction extends EditPropertiesAction {
 		this.setToolTipText(Messages
 				.getString("EditRouteResourcePropertiesAction.tooltip")); //$NON-NLS-1$
 		this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
-	}
-
-	protected void doRun() {
-		super.doRun();
-	}
-
-	/**
-	 * Find the editor that is related to the node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	protected IEditorPart getCorrespondingEditor(RepositoryNode node) {
-		return super.getCorrespondingEditor(node);
 	}
 
 	public void init(TreeViewer viewer, IStructuredSelection selection) {
@@ -81,18 +69,10 @@ public class EditRouteResourcePropertiesAction extends EditPropertiesAction {
 		}
 		setEnabled(canWork);
 	}
-
-	/**
-	 * delete the used routine java file if the routine is renamed. This method
-	 * is added for solving bug 1321, only supply to talend java version.
-	 * 
-	 * @param path
-	 * @param node
-	 * @param originalName
-	 */
-	protected void processRoutineRenameOperation(String originalName,
-			RepositoryNode node, IPath path) {
-		super.processRoutineRenameOperation(originalName, node, path);
+	
+	@Override
+	protected PropertiesWizard getPropertiesWizard(
+			IRepositoryViewObject object, IPath path) {
+		return new EditRouteResourcePropertiesWizard(object, path, getNeededVersion() == null);
 	}
-
 }

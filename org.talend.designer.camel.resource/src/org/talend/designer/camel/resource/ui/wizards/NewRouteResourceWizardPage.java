@@ -15,8 +15,12 @@ package org.talend.designer.camel.resource.ui.wizards;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -32,10 +36,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.camel.resource.i18n.Messages;
-import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
@@ -51,6 +56,8 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 	private Text filenameText;
 	private URL url;
 
+	private List<IRepositoryViewObject> listExistingResources;
+	
 	/**
 	 * Constructs a new NewProjectWizardPage.
 	 * 
@@ -63,31 +70,49 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 
 	}
 
+	public NewRouteResourceWizardPage(String pageName, Property property,
+			IPath destinationPath, boolean readOnly, boolean editPath,
+			String lastVersionFound) {
+		super(pageName, property, destinationPath, readOnly, editPath, lastVersionFound);
+	}
+
+	public NewRouteResourceWizardPage(String pageName, Property property,
+			IPath destinationPath, boolean readOnly, boolean editPath) {
+		super(pageName, property, destinationPath, readOnly, editPath);
+	}
+
+	public NewRouteResourceWizardPage(String pageName, Property property,
+			IPath destinationPath) {
+		super(pageName, property, destinationPath);
+	}
+
 	@Override
 	protected void addListeners() {
 		super.addListeners();
-		browseBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				String filename = dlg.open();
-				if (filename != null) {
-					filenameText.setText(filename);
+		if(browseBtn != null && filenameText != null){
+			browseBtn.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+					String filename = dlg.open();
+					if (filename != null) {
+						filenameText.setText(filename);
+					}
 				}
-			}
-		});
-		filenameText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				File file = new File(filenameText.getText());
-				String fileName = file.getName();
-				if (nameText.getText().isEmpty()) {
-					nameText.setText(fileName); //$NON-NLS-1$ //$NON-NLS-2$
+			});
+			filenameText.addModifyListener(new ModifyListener() {
+	
+				@Override
+				public void modifyText(ModifyEvent e) {
+					File file = new File(filenameText.getText());
+					String fileName = file.getName();
+					if (nameText.getText().isEmpty()) {
+						nameText.setText(fileName); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					evaluateFields();
 				}
-				evaluateFields();
-			}
-		});
+			});
+		}
 	}
 
 	/**
@@ -97,103 +122,132 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		container.setLayout(layout);
-
-		GridData data;
-
-		// Source file
-		Label filenameLab = new Label(container, SWT.NONE);
-		filenameLab.setText(Messages.getString("NewRouteResourceWizardPage.sourceFile")); //$NON-NLS-1$
-
-		Composite filenameContainer = new Composite(container, SWT.NONE);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = layout.numColumns - 1;
-		filenameContainer.setLayoutData(data);
-		GridLayout filenameLayout = new GridLayout(2, false);
-		filenameLayout.marginHeight = 0;
-		filenameLayout.marginWidth = 0;
-		filenameContainer.setLayout(filenameLayout);
-
-		filenameText = new Text(filenameContainer, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		filenameText.setLayoutData(data);
-
-		browseBtn = new Button(filenameContainer, SWT.PUSH);
-		browseBtn.setText(Messages.getString("NewRouteResourceWizardPage.browse")); //$NON-NLS-1$
-		browseBtn.setToolTipText(Messages.getString("NewRouteResourceWizardPage.browseTip")); //$NON-NLS-1$
-
-		super.createControl(container);
-
+		if(!isEditPath()){
+			super.createControl(container);
+		}else{
+			// Source file
+			Label filenameLab = new Label(container, SWT.NONE);
+			filenameLab.setText(Messages.getString("NewRouteResourceWizardPage.sourceFile")); //$NON-NLS-1$
+	
+			Composite filenameContainer = new Composite(container, SWT.NONE);
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = layout.numColumns - 1;
+			filenameContainer.setLayoutData(data);
+			GridLayout filenameLayout = new GridLayout(2, false);
+			filenameLayout.marginHeight = 0;
+			filenameLayout.marginWidth = 0;
+			filenameContainer.setLayout(filenameLayout);
+	
+			filenameText = new Text(filenameContainer, SWT.BORDER);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			filenameText.setLayoutData(data);
+	
+			browseBtn = new Button(filenameContainer, SWT.PUSH);
+			browseBtn.setText(Messages.getString("NewRouteResourceWizardPage.browse")); //$NON-NLS-1$
+			browseBtn.setToolTipText(Messages.getString("NewRouteResourceWizardPage.browseTip")); //$NON-NLS-1$
+	
+			super.createControl(container);
+	
+		}
 		setControl(container);
 		updateContent();
 		addListeners();
 		setPageComplete(false);
-
+		
+		nameText.selectAll();
 		nameText.setFocus();
 	}
 
 	@Override
 	protected void evaluateTextField() {
 		
-		super.evaluateTextField();
+		String trimName = nameText.getText().trim();
+		//Check name is a valid file name
+		nameStatus = ResourcesPlugin.getWorkspace().validateName(trimName, IResource.FILE);
+		if(!nameStatus.isOK()){
+			updatePageStatus();
+			return;
+		}
+		//Check name is existing or not
+		else if(!isValidResourceName(trimName)){
+			nameStatus = createStatus(IStatus.ERROR, Messages.getString("NewRouteResourceWizardPage.itemAlreadyExist")); //$NON-NLS-1$
+			updatePageStatus();
+			return;
+		}
+		//consider it's a valid name
+		else{
+			if (property != null && nameStatus.getSeverity() == IStatus.OK) {
+				property.setLabel(getPropertyLabel(trimName));
+				property.setDisplayName(trimName);
+				property.setModificationDate(new Date());
+			}
+		}
 
-		boolean isValid = true;
-		String text = filenameText.getText();
-
-
-		// An empty file, allowed
-		if (text != null && !text.isEmpty()) {
-			File file = new File(text);
-			if (!file.exists()) {
-				try {
-					url = new URL(text);
-					InputStream is = url.openStream();
-					if (is == null) {
+		if(filenameText != null){
+			//Check the specified file path is valid or not
+			String filePath = filenameText.getText().trim();
+			// An empty file, allowed
+			if (filePath != null && !filePath.isEmpty()) {
+				File file = new File(filePath);
+				if (!file.exists()) {
+					try {
+						url = new URL(filePath);
+						InputStream is = url.openStream();
+						if (is == null) {
+							url = null;
+						}
+						if (is != null) {
+							is.close();
+						}
+					} catch (Exception e) {
 						url = null;
 					}
-					if (is != null) {
-						is.close();
+				} else {
+					try {
+						url = file.toURI().toURL();
+					} catch (Exception e) {
+						url = null;
 					}
-				} catch (Exception e) {
-					url = null;
 				}
-			} else {
-				try {
-					url = file.toURI().toURL();
-				} catch (Exception e) {
-					url = null;
-				}
-			}
-			if (url == null) {
-				nameStatus = createStatus(IStatus.ERROR,
-						Messages.getString("NewRouteResourceWizardPage.errorLoadFile") + text + "."); //$NON-NLS-1$ //$NON-NLS-2$
-				isValid = false;
-			}
-		}
-
-		if (isValid && nameText.getText().isEmpty()) {
-			isValid = false;
-			nameStatus = createStatus(IStatus.ERROR, Messages.getString("NewRouteResourceWizardPage.nameEmpty")); //$NON-NLS-1$
-		}
-
-//		if (isValid
-//				&& !Pattern.matches(RepositoryConstants
-//						.getPattern(ERepositoryObjectType.PROCESS), nameText
-//						.getText()) || nameText.getText().trim().contains(" ")) { //$NON-NLS-1$
-//			nameStatus = createStatus(IStatus.ERROR,
-//					Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
-//		}
-		if(isValid){
-			String namePattern = getRepositoryObjectType().getNamePattern();
-			if(namePattern != null){
-				boolean matches = Pattern.matches(namePattern, nameText.getText());
-				if(!matches){
+				if (url == null) {
 					nameStatus = createStatus(IStatus.ERROR,
-							Messages.getString("NewRouteResourceWizardPage.nameInvalid")); //$NON-NLS-1$
+							Messages.getString("NewRouteResourceWizardPage.errorLoadFile") + filePath + "."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
+
 		updatePageStatus();
 
+	}
+	
+	private boolean isValidResourceName(String itemName){
+		if(listExistingResources == null){
+			listExistingResources = getListExistingObjects();
+		}
+		if(listExistingResources == null){
+			try {
+				listExistingResources = loadRepositoryViewObjectList();
+			} catch (PersistenceException e) {
+				listExistingResources = new ArrayList<IRepositoryViewObject>();
+			}
+		}
+		for(IRepositoryViewObject object: listExistingResources){
+			try{
+				String p = object.getProperty().getItem().getState().getPath();
+				if(p == null){
+					continue;
+				}
+				if(!p.equalsIgnoreCase(getDestinationPath().toPortableString())){
+					continue;
+				}
+				if(itemName.equalsIgnoreCase(object.getProperty().getLabel())){
+					return false;
+				}
+			}catch(Exception e){
+				
+			}
+		}
+		return true;
 	}
 
 	public ERepositoryObjectType getRepositoryObjectType() {

@@ -6,6 +6,7 @@
             <repositoryNode
                   class="org.talend.designer.camel.resource.ui.models.RouteResourceExtendRepositoryNode"
                   folder="route_resources"
+                  isAllowMultiName="true"
                   isResouce="true"
                   key="Resources"
                   label="Resources"

@@ -23,3 +23,4 @@ Require-Bundle: org.eclipse.ui,
  org.talend.designer.camel.resource.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.commons.io
