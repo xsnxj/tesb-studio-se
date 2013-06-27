@@ -21,11 +21,11 @@ imports="
 	if(conns.size()>0) {
 		if("false".equals(specifyMethod)) {
 %>
-			.dynamicRouter(bean(<%=beanClass%>))
+			.dynamicRouter(method(<%=beanClass%>))
 <%
 		} else {
 %>
-			.dynamicRouter(bean(<%=beanClass%>, <%=method%>))
+			.dynamicRouter(method(<%=beanClass%>, <%=method%>))
 <%
 		}
 		if("true".equals(ignore)) {

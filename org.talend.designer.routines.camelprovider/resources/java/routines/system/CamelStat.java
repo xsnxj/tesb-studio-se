@@ -42,7 +42,7 @@ public class CamelStat implements Runnable {
     	targetNodeToConnectionMap.put(targetNode, connection);
     }
 
-    public void setParams() throws NullPointerException {
+    public void initStatisticsInterceptor() throws NullPointerException {
         theContext.addInterceptStrategy(new InterceptStrategy() {
 			
 			public Processor wrapProcessorInInterceptors(CamelContext context,
