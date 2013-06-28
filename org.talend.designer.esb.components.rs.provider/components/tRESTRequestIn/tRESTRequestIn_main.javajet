@@ -28,14 +28,12 @@ if (null != metadatas && 0 < metadatas.size()) {
 <%
 			List<? extends IConnection> connsAll = node.getOutgoingSortedConnections();
 			if (null != connsAll && !connsAll.isEmpty()) {
-				boolean hasWrongCall = false;
 				for (IConnection conn : connsAll) {
 					if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 						continue;
 					}
 					String connectionName = conn.getName();
 					if ("WRONG_CALLS".equals(conn.getConnectorName())) { // "WRONG_CALL" flow
-						hasWrongCall = true;
 %>
 						String wrongCallUri_<%=cid%> = (String) requestMessage_<%=cid%>.get("URI");
 						String wrongCallMethod_<%=cid%> = (String) requestMessage_<%=cid%>.get("VERB");
@@ -54,11 +52,6 @@ if (null != metadatas && 0 < metadatas.size()) {
 <%
 					} // "WRONG_CALLS".equals(conn.getConnectorName()
 				} // for (IConnection conn : connsAll)
-				if(!hasWrongCall){
-%>
-				throw new RuntimeException(requestMessage_<%=cid%>.toString());
-<%
-				}
 			} // if (null != connsAll && !connsAll.isEmpty())
 %>
 		} else { // non-error (not wrong request)
