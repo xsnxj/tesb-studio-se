@@ -20,13 +20,13 @@ Bundle-ClassPath: .,lib/cxf-rt-core-2.7.5.jar,lib/cxf-api-2.7.5.jar,lib/
  SE.jar,lib/spring-aop-3.0.7.RELEASE.jar,lib/aopalliance-1.0.jar,lib/spr
  ing-beans-3.0.7.RELEASE.jar,lib/spring-core-3.0.7.RELEASE.jar,lib/sprin
  g-expression-3.0.7.RELEASE.jar,lib/spring-asm-3.0.7.RELEASE.jar,lib/loc
- ator-5.3.1.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clustering-2
- .7.5.jar,lib/sam-agent-5.3.1.jar,lib/sam-common-5.3.1.jar,lib/cxf-rt-tr
- ansports-local-2.7.5.jar
+ ator-5.4.0-SNAPSHOT.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clu
+ stering-2.7.5.jar,lib/sam-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0
+ -SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.5.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: org.talend.libraries.esb
 Bundle-SymbolicName: org.talend.libraries.esb
-Bundle-Version: 5.3.1.qualifier
+Bundle-Version: 5.4.0.qualifier
 Created-By: Apache Maven Bundle Plugin
 Export-Package: javax.ws.rs.ext;version="2.0.0.m10",javax.ws.rs.client;v
  ersion="2.0.0.m10",javax.ws.rs.core;version="2.0.0.m10",javax.ws.rs;ver
@@ -50,7 +50,7 @@ Export-Package: javax.ws.rs.ext;version="2.0.0.m10",javax.ws.rs.client;v
  .5",org.apache.cxf.ws.security.sts.provider.model.xmldsig;version="2.7.
  5",org.apache.cxf.jaxrs.ext.form;version="2.7.5",org.apache.cxf.jaxws.s
  pi;version="2.7.5",org.apache.cxf.management;version="2.7.5",org.apache
- .cxf.wsdl11;version="2.7.5",org.apache.cxf.internal;version="5.3.1.qual
+ .cxf.wsdl11;version="2.7.5",org.apache.cxf.internal;version="5.4.0.qual
  ifier",org.apache.cxf.jaxrs.provider.aegis;version="2.7.5",org.apache.c
  xf.binding.soap;version="2.7.5",org.apache.cxf.jaxws.handler;version="2
  .7.5",org.apache.cxf.ws.security.policy.builders;version="2.7.5",org.ap
