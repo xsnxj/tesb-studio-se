@@ -105,15 +105,20 @@
 				SHOW_IF="NEED_AUTH == 'true'">
 			<ITEMS DEFAULT="SECURITY_BASIC">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
+				<ITEM NAME="SECURITY_OAUTH2" VALUE="OAUTH2" />
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
-				SHOW_IF="NEED_AUTH == 'true'">
+				SHOW_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_BASIC')">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
-				SHOW_IF="NEED_AUTH == 'true'">
+				SHOW_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_BASIC')">
 			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_BEARER_TOKEN" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
+				SHOW_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_OAUTH2')">
+			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="50"
 				DYNAMIC_SETTINGS="true" SHOW="true" >
@@ -265,7 +270,7 @@
 					REQUIRED="true" />
 			<IMPORT NAME="geronimo-javamail_1.4_spec"
 					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
