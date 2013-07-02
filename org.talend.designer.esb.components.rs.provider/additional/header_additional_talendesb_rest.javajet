@@ -819,7 +819,9 @@ if (null != conns && !conns.isEmpty()) {
                 } %>
 				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%= javaType%> <%=variableName%>
 		<%	} %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) {
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
+				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
+				|| formSupported)) {
 			if (paramCommaWritten) {
 				%>, <%
 			} %>
@@ -879,7 +881,9 @@ if (null != conns && !conns.isEmpty()) {
 		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
 		request_<%=cid%>.put("OPERATION", "<%=connName%>");
 		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || formSupported)) { %>
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
+				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
+				|| formSupported)) { %>
 		request_<%=cid%>.put("BODY", body);
 		<% } %>
 		request_<%=cid%>.put("URI", ui.getPath());
