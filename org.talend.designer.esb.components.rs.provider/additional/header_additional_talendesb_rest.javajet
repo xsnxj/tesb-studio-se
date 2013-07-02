@@ -507,9 +507,9 @@ public static class RestServiceProviderImpl4TalendJob {
 			Integer status = null;
 			java.util.Map<String, String> headers = null;
 			if (null != response) {
-                Object dropJsonRootProp = response.get("drop.json.root.element");
-                Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
-                messageContext.put("drop.json.root.element", dropJsonRoot.toString());
+				Object dropJsonRootProp = response.get("drop.json.root.element");
+				Boolean dropJsonRoot = (null == dropJsonRootProp) ? false : (Boolean) dropJsonRootProp;
+				messageContext.put("drop.json.root.element", dropJsonRoot.toString());
 
 				responseBody = response.get("BODY");
 				status = (Integer) response.get("STATUS");
@@ -590,16 +590,15 @@ public static class RestServiceProviderImpl4TalendJob {
 		public Parameter(String name, String paramType, String javaType, String defaultValue) {
 			this(name, paramType, javaType, defaultValue, "", false, false);
 		}
-		
-		
+
 		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable) {
 			this(name, paramType, javaType, defaultValue, pattern, isNullable, false);
 		}
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue, boolean generateVariableName) {
-			this(name, paramType, javaType, defaultValue, "", false,  generateVariableName);
+			this(name, paramType, javaType, defaultValue, "", false, generateVariableName);
 		}
-		
+
 		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable, boolean generateVariableName) {
 			this.name = name;
 			this.javaType = javaType;
@@ -633,6 +632,10 @@ public static class RestServiceProviderImpl4TalendJob {
 		}
 	}
 
+
+// "body" is reserved name for request body content parameter
+final String SCHEMA_FIELD_NAME_4_REQUEST_BODY = "body";
+
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
@@ -663,7 +666,7 @@ if (null != conns && !conns.isEmpty()) {
 		// All the parameters specified in the Schema Editor need to be handled.
 		final Set<String> restParameterTypes = new HashSet<String>(Arrays.asList("PATH", "QUERY", "FORM", "HEADER", "MATRIX"));
 
-		final Set<JavaType> supportedJavaTypes = new HashSet<JavaType>(Arrays.asList(
+		final Set<JavaType> supportedJavaTypes4Params = new HashSet<JavaType>(Arrays.asList(
 				JavaTypesManager.STRING,
 
 				JavaTypesManager.BOOLEAN,
@@ -677,16 +680,58 @@ if (null != conns && !conns.isEmpty()) {
 				JavaTypesManager.FLOAT,
 				JavaTypesManager.DOUBLE,
 				JavaTypesManager.BIGDECIMAL,
-                //List
+
+				// List
 				JavaTypesManager.LIST,
 
-				//date
+				// date
 				JavaTypesManager.DATE
 			));
 
+		final Set<JavaType> supportedJavaTypes4Content = new HashSet<JavaType>(Arrays.asList(
+				JavaTypesManager.STRING,
+
+				JavaTypesManager.BOOLEAN,
+
+				JavaTypesManager.BYTE,
+
+				// number
+				JavaTypesManager.SHORT,
+				JavaTypesManager.INTEGER,
+				JavaTypesManager.LONG,
+				JavaTypesManager.FLOAT,
+				JavaTypesManager.DOUBLE,
+				JavaTypesManager.BIGDECIMAL,
+
+				// date
+				JavaTypesManager.DATE
+
+				// Document
+				// +++
+			));
+
+		Parameter bodyParameter = null;
 		Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 		if (null != uriPattern) {
 			IMetadataTable connMetadata = conn.getMetadataTable();
+
+			// determine request body type
+			for (IMetadataColumn column : connMetadata.getListColumns()) {
+				if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(column.getLabel())) {
+					String bodySchemaFieldType = column.getTalendType();
+					if ("id_Document".equals(bodySchemaFieldType)) {
+						JavaType bodyJavaType = JavaTypesManager.getJavaTypeFromId(bodySchemaFieldType);
+						bodyParameter = new Parameter(SCHEMA_FIELD_NAME_4_REQUEST_BODY, null, "org.dom4j.Document", null, "", true);
+					} else {
+						JavaType bodyJavaType = JavaTypesManager.getJavaTypeFromId(bodySchemaFieldType);
+						if (supportedJavaTypes4Content.contains(bodyJavaType)) {
+							String bodyJavaTypeWhole = JavaTypesManager.getTypeToGenerate(bodyJavaType, true);
+							bodyParameter = new Parameter(SCHEMA_FIELD_NAME_4_REQUEST_BODY, null, bodyJavaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
+						}
+					}
+					break;
+				}
+			}
 
 			URITemplateUtils uriTemplate = new URITemplateUtils(uriPattern);
 			List<String> uriVariables = uriTemplate.getVariables();
@@ -698,11 +743,10 @@ if (null != conns && !conns.isEmpty()) {
 				for (IMetadataColumn column : connMetadata.getListColumns()) {
 					// schema parameter name
 					String schemaFieldName = column.getLabel();
-					if ("body".equals(schemaFieldName)) {
-						// "body" is reserved name for content parameter
+					if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName)) {
 						continue;
 					}
-					
+
 					if (uriVariable.equals(schemaFieldName)) {
 						String restParameterType = column.getComment();
 						schemaFieldType = column.getTalendType();
@@ -710,7 +754,7 @@ if (null != conns && !conns.isEmpty()) {
 						if (restParameterType == null || restParameterType.trim().length() == 0 || "Path".equalsIgnoreCase(restParameterType.trim())) {
 
 							JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
-							if (supportedJavaTypes.contains(javaType)) {
+							if (supportedJavaTypes4Params.contains(javaType)) {
 								String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
 								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
 							} else {
@@ -740,8 +784,7 @@ if (null != conns && !conns.isEmpty()) {
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
 				// schema parameter name
 				String schemaFieldName = column.getLabel();
-				if (schemaFieldName.equals("body")) {
-					// "body" is reserved name for content parameter
+				if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName)) {
 					continue;
 				}
 
@@ -772,7 +815,7 @@ if (null != conns && !conns.isEmpty()) {
 				String schemaFieldType = column.getTalendType();
 				JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
 
-				if (supportedJavaTypes.contains(javaType)) {
+				if (supportedJavaTypes4Params.contains(javaType)) {
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, column.isNullable());
 					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
@@ -805,74 +848,47 @@ if (null != conns && !conns.isEmpty()) {
 				}
 
 				String variableName = param.getVariableName();
-				if("java.util.Date".equals(javaType)){
+				if ("java.util.Date".equals(javaType)) {
 					javaType = "String";
-					variableName += "_"+cid;
+					variableName += "_" + cid;
 				}
 
 				if (param.getDefaultValue() != null && param.getDefaultValue().length() > 0) {
-				    if ("String".equals(javaType)) { %>
-                        @javax.ws.rs.DefaultValue(<%=param.getDefaultValue()%>) <%
-				    } else { %>
-					    @javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>") <%
-				    }
-                } %>
+					if ("String".equals(javaType)) { %>
+						@javax.ws.rs.DefaultValue(<%=param.getDefaultValue()%>) <%
+					} else { %>
+						@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>") <%
+					}
+				} %>
 				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%= javaType%> <%=variableName%>
 		<%	} %>
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
 				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported)) {
-			if (paramCommaWritten) {
-				%>, <%
-			} %>
-			org.dom4j.Document body
+				|| formSupported) && null != bodyParameter) {
+			if (paramCommaWritten) { %>, <% } %><%=bodyParameter.getJavaType()%> body
 		<% } %>
 			) {
 <%
 		for (String parameter : parameters.keySet()) {
 			Parameter param = parameters.get(parameter);
-			String javaType = param.getJavaType();
 			String variableName = param.getVariableName();
-			if("java.util.Date".equals(javaType)){
+
+			if ("java.util.Date".equals(param.getJavaType())) {
 %>
 				java.util.Date <%=variableName%> = null;
-<%
-				if(param.isNullable() && param.getDefaultValue() == null){
-%>
-					if(<%=variableName%>_<%=cid%> == null){
-								<%=variableName%> = new java.util.Date();
-					} else {
-<%
-						if(param.getPattern() != null && !"".equals(param.getPattern().trim())){
-%>
-							try{
-								<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
-							}catch(Exception e){
-								<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-							}
-<%
-						}else{
-%>
-							<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-<%
-						}
-%>
+				<% if(param.isNullable() && null == param.getDefaultValue()) { %>
+					if (null == <%=variableName%>_<%=cid%>) {
+						<%=variableName%> = new java.util.Date();
 					}
-<%
-				}else{
-						if(param.getPattern() != null && !"".equals(param.getPattern().trim())){
-%>
-							try{
-								<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
-							}catch(Exception e){
-								<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-							}
-<%
-						}else{
-%>
+					<% if(param.getPattern() != null && !"".equals(param.getPattern().trim())) { %>
+						try {
+							<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
+						} catch (Exception e) {
 							<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-<%
 						}
+					<% } else { %>
+						<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+					<% }
 				}
 			}
 		}
@@ -883,7 +899,7 @@ if (null != conns && !conns.isEmpty()) {
 		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
 				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported)) { %>
+				|| formSupported) && null != bodyParameter) { %>
 		request_<%=cid%>.put("BODY", body);
 		<% } %>
 		request_<%=cid%>.put("URI", ui.getPath());

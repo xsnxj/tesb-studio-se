@@ -58,11 +58,7 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 			String matchedUriPattern_<%=cid%> = (String) requestMessage_<%=cid%>.get("PATTERN");
 			String matchedFlow_<%=cid%> = (String) requestMessage_<%=cid%>.get("OPERATION");
-			routines.system.Document body_<%=cid%> = null;
-			if (requestMessage_<%=cid%>.get("BODY") != null) {
-				body_<%=cid%> = new routines.system.Document();
-				body_<%=cid%>.setDocument((org.dom4j.Document) requestMessage_<%=cid%>.get("BODY"));
-			}
+
 			java.util.Map<String, Object> params_<%=cid%> =
 				(java.util.Map<String, Object>) requestMessage_<%=cid%>.get("PARAMS");
 <%
@@ -102,7 +98,17 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 							if ("body".equals(columnName)) {
 %>
-								<%=connectionName%>.body = body_<%=cid%>;
+								Object bodyObject_<%=cid%> = requestMessage_<%=cid%>.get("BODY");
+								if (null != bodyObject_<%=cid%>) {
+									<% if ("id_Document".equals(schemaFieldType)) { %>
+										routines.system.Document body_<%=cid%> = new routines.system.Document();
+										body_<%=cid%>.setDocument((org.dom4j.Document) bodyObject_<%=cid%>);
+										<%=connectionName%>.body = body_<%=cid%>;
+									<% } else { %>
+										<% String javaTypeFull = JavaTypesManager.getTypeToGenerate(schemaFieldType, true); %>
+										<%=connectionName%>.body = (<%= javaTypeFull%>) bodyObject_<%=cid%>;
+									<% } %>
+								}
 <%
 							} else {
 								String javaTypeFull = JavaTypesManager.getTypeToGenerate(schemaFieldType, true);
