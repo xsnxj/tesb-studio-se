@@ -58,6 +58,9 @@ if (contentType == null) {
 	contentType = "application/xml";
 }
 
+boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"));
+String authType = ElementParameterParser.getValue(node,"__AUTH_TYPE__");
+
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
 boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
 %>
@@ -86,7 +89,8 @@ try {
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
 		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
-	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"))) { %>
+	<% if (useAuth && "BASIC".equals(authType)) { %>
+		// set BASIC auth
 		factoryBean_<%=cid%>.setUsername(<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>);
 		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
 	<% } %>
@@ -229,19 +233,25 @@ try {
 		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
 	<% } %>
 
-	// set Content-Type
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
+		// set Content-Type
 		webClient_<%=cid%>.type("<%=contentType%>");
 	<% } %>
-	// set Accept-Type
+
 	<% if (!acceptType.isEmpty()) { %>
+		// set Accept-Type
 		webClient_<%=cid%>.accept("<%=acceptType%>");
 	<% } %>
 
-	// set optional query and header properties if any
-	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
-		for (Map<String, String> header : headers) { %>
-		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
+	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__"); %>
+		// set optional query and header properties if any
+	<% for (Map<String, String> header : headers) { %>
+		webClient_<%=cid%>.header(<%=header.get("NAME")%>, <%=header.get("VALUE")%>);
+	<% } %>
+
+	<% if (useAuth && "OAUTH2".equals(authType)) { %>
+		// set oAuth2 bearer token
+		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=ElementParameterParser.getValue(node,"__AUTH_BEARER_TOKEN__")%>);
 	<% } %>
 
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
@@ -249,12 +259,12 @@ try {
 		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
 		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
 		<% for (Map<String, String> query : queries) { %>
-			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+			form_<%=cid%>.set(<%=query.get("NAME")%> ,<%=query.get("VALUE")%>);
 		<% } %>
 		requestBody_<%=cid%> = form_<%=cid%>;
 	<% } else { %>
 		<% for (Map<String, String> query : queries) { %>
-			webClient_<%=cid%>.query(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+			webClient_<%=cid%>.query(<%=query.get("NAME")%> ,<%=query.get("VALUE")%>);
 		<% } %>
 	<% } %>
 
