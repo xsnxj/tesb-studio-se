@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class FeaturesModel extends UploadableModel {
 
 	private Set<String> subFeatures = new HashSet<String>();
@@ -197,7 +199,7 @@ public class FeaturesModel extends UploadableModel {
 				if (i != 0) {
 					sb.append(",");
 				}
-				sb.append(contextList[i]);
+				sb.append(StringEscapeUtils.escapeXml(contextList[i]));
 			}
 			sb.append("\"\n");
 			sb.append("\t\t</config>\n");
@@ -206,13 +208,13 @@ public class FeaturesModel extends UploadableModel {
 			String serviceName = artifactId.substring(0,artifactId.indexOf(nameSuffix));
 			for (Map.Entry<String, Map<String, String>> context : contexts.entrySet()) {
 				sb.append("\t\t<config name=\"");
-				sb.append(serviceName).append(".talendcontext.").append(context.getKey());
+				sb.append(serviceName).append(".talendcontext.").append(StringEscapeUtils.escapeXml(context.getKey()));
 				sb.append("\">\n");
 				for (Map.Entry<String, String> property : context.getValue().entrySet()) {
 					sb.append("\t\t\t");
-					sb.append(property.getKey());
+					sb.append(StringEscapeUtils.escapeXml(property.getKey()));
 					sb.append("=");
-					sb.append(property.getValue());
+					sb.append(StringEscapeUtils.escapeXml(property.getValue()));
 					sb.append("\n");
 				}
 				sb.append("\t\t</config>\n");
