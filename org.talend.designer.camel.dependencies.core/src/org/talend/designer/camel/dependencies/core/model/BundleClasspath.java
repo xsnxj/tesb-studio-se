@@ -70,4 +70,17 @@ public class BundleClasspath extends AbstractDependencyItem {
 	public boolean strictEqual(Object obj) {
 		return equals(obj);
 	}
+
+	@Override
+	public void setName(String nameWithParam) {
+		if (nameWithParam != null) {
+
+			int indexParam = nameWithParam.indexOf('?');
+			if (indexParam > 0) {
+				super.setName(nameWithParam.substring(0, indexParam));
+				return;
+			}
+		}
+		super.setName(nameWithParam);
+	}
 }
