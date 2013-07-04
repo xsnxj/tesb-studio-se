@@ -32,5 +32,13 @@
 			class="org.talend.designer.esb.components.rs.provider.EsbPreferencePage"
 			name="%preferencesPage.main" />
 	</extension>
+ <extension
+       point="org.talend.designer.core.generators">
+    <generator
+          class="org.talend.designer.esb.components.rs.provider.generator.ResponseSchemaGenerator"
+          mapping="REST_RESPONSE_SCHEMA_TYPE"
+          name="REST Response Schema">
+    </generator>
+ </extension>
 
 </plugin>
