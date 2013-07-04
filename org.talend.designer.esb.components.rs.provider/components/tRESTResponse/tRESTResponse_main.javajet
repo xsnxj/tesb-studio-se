@@ -47,17 +47,6 @@ if ("CUSTOM".equals(selectedStatusCode)) { %>
 		Integer restProviderStatusCode_<%=cid%> = <%= selectedStatusCode%>;
 <% } %>
 
-<%
-
-String selectedContentType = ElementParameterParser.getValue(node, "__CONTENT_TYPE__");
-if ("CUSTOM".equals(selectedContentType)) { %>
-		String restProviderContentType_<%=cid%> = <%= ElementParameterParser.getValue(node, "__CUSTOM_CONTENT_TYPE__")%>;
-<% } else if (!"USE_INHERITANCE".equals(selectedContentType)){ %>
-		String restProviderContentType_<%=cid%> = "<%= selectedContentType%>";
-<% } %>
-
-
-
 		Object restProviderResponse_<%=cid%> = null;
 <%
 IMetadataColumn column = conn.getMetadataTable().getColumn("string");
@@ -79,9 +68,7 @@ if (null != column) {
  } %>
 
 		java.util.Map<String, String> restProviderResponseHeaders_<%=cid%> = new java.util.HashMap<String, String>();
-		<%if (!"USE_INHERITANCE".equals(selectedContentType)){%>
-		restProviderResponseHeaders_<%=cid%>.put("Content-type", restProviderContentType_<%=cid%>);
-		<%}%>
+
 <%
 List<Map<String, String>> headers = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node,"__RESPONSE_HEADERS__");
 for (Map<String, String> header : headers) { %>
