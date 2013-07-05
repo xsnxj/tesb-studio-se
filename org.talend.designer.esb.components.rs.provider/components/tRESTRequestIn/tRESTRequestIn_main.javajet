@@ -85,11 +85,9 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 							String restParameterType = connColumn.getComment();
 							if (restParameterType == null || restParameterType.trim().length() == 0) {
-								restParameterType = "Path";
+								restParameterType = "PATH";
 							} else {
-								restParameterType = restParameterType.trim();
-								// convert from say "PATH" to "Path"
-								restParameterType = restParameterType.substring(0, 1).toUpperCase() + restParameterType.substring(1).toLowerCase();
+								restParameterType = restParameterType.trim().toUpperCase();
 							}
 
 							String schemaFieldType = connColumn.getTalendType();

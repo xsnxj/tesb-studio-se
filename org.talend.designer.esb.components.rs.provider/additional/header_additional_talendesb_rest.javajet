@@ -579,24 +579,47 @@ public static class RestServiceProviderImpl4TalendJob {
 	* JAXRS Parameter Representation
 	*/
 	final class Parameter {
+
+		public static final String JAVA_TYPE_DOCUMENT_ID = "id_Document";
+
 		private final String name;
 		private final String javaType;
 		private final String paramType;
 		private final String defaultValue;
 		private final String variableName;
-		private String pattern = "";
-		private boolean isNullable = false;
+		private final String pattern;
+		private final boolean isNullable;
 
-		public Parameter(String name, String paramType, String javaType, String defaultValue) {
-			this(name, paramType, javaType, defaultValue, "", false, false);
+		public Parameter(String paramType, IMetadataColumn column) {
+			this(paramType, column, false);
 		}
 
-		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable) {
-			this(name, paramType, javaType, defaultValue, pattern, isNullable, false);
+		public Parameter(String paramType, IMetadataColumn column, boolean generateVariableName) {
+			this.name = column.getLabel();
+
+			String fieldType = column.getTalendType();
+			this.javaType = (JAVA_TYPE_DOCUMENT_ID.equals(fieldType)) ? "org.dom4j.Document"
+							: JavaTypesManager.getTypeToGenerate(JavaTypesManager.getJavaTypeFromId(fieldType), true);
+
+
+			this.paramType = paramType;
+
+			if (JAVA_TYPE_DOCUMENT_ID.equals(fieldType)
+				|| JavaTypesManager.LIST.getId().equals(fieldType)
+				|| JavaTypesManager.BYTE_ARRAY.getId().equals(fieldType)) {
+				this.defaultValue = null;
+				this.pattern = "";
+			} else {
+				this.defaultValue = column.getDefault();
+				this.pattern = column.getPattern();
+			}
+
+			this.isNullable = column.isNullable();
+			this.variableName = (generateVariableName) ? new TalendString(name).getAsciiRandomString(5) : name;
 		}
 
-		public Parameter(String name, String paramType, String javaType, String defaultValue, boolean generateVariableName) {
-			this(name, paramType, javaType, defaultValue, "", false, generateVariableName);
+		public Parameter(String name, String paramType, String javaType, boolean generateVariableName) {
+			this(name, paramType, javaType, null, "", false, generateVariableName);
 		}
 
 		public Parameter(String name, String paramType, String javaType, String defaultValue, String pattern, boolean isNullable, boolean generateVariableName) {
@@ -632,7 +655,6 @@ public static class RestServiceProviderImpl4TalendJob {
 		}
 	}
 
-
 // "body" is reserved name for request body content parameter
 final String SCHEMA_FIELD_NAME_4_REQUEST_BODY = "body";
 
@@ -662,52 +684,82 @@ if (null != conns && !conns.isEmpty()) {
 		}
 
 		boolean formSupported = false;
+		boolean multipartSupported = false;
 
 		// All the parameters specified in the Schema Editor need to be handled.
-		final Set<String> restParameterTypes = new HashSet<String>(Arrays.asList("PATH", "QUERY", "FORM", "HEADER", "MATRIX"));
+		final Map<String, String> restParameterTypes = new HashMap<String, String>() {{
+			put("PATH", "javax.ws.rs.PathParam");
+			put("FORM", "javax.ws.rs.FormParam");
+			put("QUERY", "javax.ws.rs.QueryParam");
+			put("HEADER", "javax.ws.rs.HeaderParam");
+			put("MATRIX", "javax.ws.rs.MatrixParam");
+			put("MULTIPART", "org.apache.cxf.jaxrs.ext.multipart.Multipart");
+		}};
 
-		final Set<JavaType> supportedJavaTypes4Params = new HashSet<JavaType>(Arrays.asList(
-				JavaTypesManager.STRING,
 
-				JavaTypesManager.BOOLEAN,
+		final Set<String> supportedTypes4Params = new HashSet<String>(Arrays.asList(
+				// string
+				JavaTypesManager.STRING.getId(),
 
-				JavaTypesManager.BYTE,
+				// boolean
+				JavaTypesManager.BOOLEAN.getId(),
+
+				// byte
+				JavaTypesManager.BYTE.getId(),
 
 				// number
-				JavaTypesManager.SHORT,
-				JavaTypesManager.INTEGER,
-				JavaTypesManager.LONG,
-				JavaTypesManager.FLOAT,
-				JavaTypesManager.DOUBLE,
-				JavaTypesManager.BIGDECIMAL,
+				JavaTypesManager.SHORT.getId(),
+				JavaTypesManager.INTEGER.getId(),
+				JavaTypesManager.LONG.getId(),
+				JavaTypesManager.FLOAT.getId(),
+				JavaTypesManager.DOUBLE.getId(),
+				JavaTypesManager.BIGDECIMAL.getId(),
 
 				// List
-				JavaTypesManager.LIST,
+				JavaTypesManager.LIST.getId(),
 
 				// date
-				JavaTypesManager.DATE
+				JavaTypesManager.DATE.getId()
 			));
 
-		final Set<JavaType> supportedJavaTypes4Content = new HashSet<JavaType>(Arrays.asList(
-				JavaTypesManager.STRING,
+		final Set<String> supportedTypes4Body = new HashSet<String>(Arrays.asList(
+				// string
+				JavaTypesManager.STRING.getId(),
 
-				JavaTypesManager.BOOLEAN,
+				// byte array
+				JavaTypesManager.BYTE_ARRAY.getId(),
 
-				JavaTypesManager.BYTE,
+				// xml document
+				Parameter.JAVA_TYPE_DOCUMENT_ID
+			));
+
+
+		final Set<String> supportedTypes4Part = new HashSet<String>(Arrays.asList(
+				// string
+				JavaTypesManager.STRING.getId(),
+
+				// boolean
+				JavaTypesManager.BOOLEAN.getId(),
 
 				// number
-				JavaTypesManager.SHORT,
-				JavaTypesManager.INTEGER,
-				JavaTypesManager.LONG,
-				JavaTypesManager.FLOAT,
-				JavaTypesManager.DOUBLE,
-				JavaTypesManager.BIGDECIMAL,
+				JavaTypesManager.SHORT.getId(),
+				JavaTypesManager.INTEGER.getId(),
+				JavaTypesManager.LONG.getId(),
+				JavaTypesManager.FLOAT.getId(),
+				JavaTypesManager.DOUBLE.getId(),
+				JavaTypesManager.BIGDECIMAL.getId(),
 
 				// date
-				JavaTypesManager.DATE
+				JavaTypesManager.DATE.getId(),
 
-				// Document
-				// +++
+				// byte
+				JavaTypesManager.BYTE.getId(),
+
+				// byte array
+				JavaTypesManager.BYTE_ARRAY.getId(),
+
+				// xml document
+				Parameter.JAVA_TYPE_DOCUMENT_ID
 			));
 
 		Parameter bodyParameter = null;
@@ -718,16 +770,8 @@ if (null != conns && !conns.isEmpty()) {
 			// determine request body type
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
 				if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(column.getLabel())) {
-					String bodySchemaFieldType = column.getTalendType();
-					if ("id_Document".equals(bodySchemaFieldType)) {
-						JavaType bodyJavaType = JavaTypesManager.getJavaTypeFromId(bodySchemaFieldType);
-						bodyParameter = new Parameter(SCHEMA_FIELD_NAME_4_REQUEST_BODY, null, "org.dom4j.Document", null, "", true);
-					} else {
-						JavaType bodyJavaType = JavaTypesManager.getJavaTypeFromId(bodySchemaFieldType);
-						if (supportedJavaTypes4Content.contains(bodyJavaType)) {
-							String bodyJavaTypeWhole = JavaTypesManager.getTypeToGenerate(bodyJavaType, true);
-							bodyParameter = new Parameter(SCHEMA_FIELD_NAME_4_REQUEST_BODY, null, bodyJavaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
-						}
+					if (supportedTypes4Body.contains(column.getTalendType())) {
+						bodyParameter = new Parameter(null, column);
 					}
 					break;
 				}
@@ -753,10 +797,8 @@ if (null != conns && !conns.isEmpty()) {
 
 						if (restParameterType == null || restParameterType.trim().length() == 0 || "Path".equalsIgnoreCase(restParameterType.trim())) {
 
-							JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
-							if (supportedJavaTypes4Params.contains(javaType)) {
-								String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, true);
-								parameter = new Parameter(uriVariable, "Path", javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
+							if (supportedTypes4Params.contains(schemaFieldType)) {
+								parameter = new Parameter("PATH", column);
 							} else {
 								// defined java type is unsupported - will define with default String type below (and this parameter will not be set to flow field)
 								schemaFieldType = "id_String";
@@ -764,7 +806,7 @@ if (null != conns && !conns.isEmpty()) {
 						} else {
 							// uri parameter hidden by parameter of another type in schema - will use generated variable name in rest service method
 							String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null, column.getPattern(), column.isNullable(), true);
+							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, true);
 						}
 						break;
 					}
@@ -775,12 +817,12 @@ if (null != conns && !conns.isEmpty()) {
 					// or unsupported java type in schema parameter definition
 					// so we will declare default java type - String
 					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-					parameter = new Parameter(uriVariable, "Path", javaTypeWhole, null);
+					parameter = new Parameter(uriVariable, "PATH", javaTypeWhole, false);
 				}
-				parameters.put("Path:" + uriVariable + ":" + schemaFieldType, parameter);
+				parameters.put("PATH:" + uriVariable + ":" + schemaFieldType, parameter);
 			}
 
-			// now we are going to declare all other (non uri template) variables ("Query", "Form", "Header" parameter types by REST)
+			// now we are going to declare all other (non uri template) variables ("Query", "Form", "Header", "Matrix", "Multipart" parameter types by REST)
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
 				// schema parameter name
 				String schemaFieldName = column.getLabel();
@@ -796,8 +838,8 @@ if (null != conns && !conns.isEmpty()) {
 				restParameterType = restParameterType.trim().toUpperCase();
 
 				// must be a supported parameter type
-				if (!restParameterTypes.contains(restParameterType)) {
-					// Report unsupported JAX-RS parameter type
+				if (!restParameterTypes.keySet().contains(restParameterType)) {
+					// unsupported JAX-RS parameter type
 					continue;
 				}
 				if ("PATH".equals(restParameterType)) {
@@ -805,22 +847,28 @@ if (null != conns && !conns.isEmpty()) {
 					continue;
 				}
 
+
+				Set<String> supportedTypes = supportedTypes4Params;
 				// having at least one form parameter means form submissions are supported
 				if ("FORM".equals(restParameterType)) {
-					formSupported = true;
+					if (multipartSupported) {
+						continue; // ignore this parameter (earlier multipart parameter won)
+					}
+ 					formSupported = true;
+				} else if ("MULTIPART".equals(restParameterType)) {
+					if (formSupported) {
+						continue; // ignore this parameter (earlier form parameter won)
+					}
+					supportedTypes = supportedTypes4Part;
+					multipartSupported = true;
 				}
-				// convert from say "PATH" to "Path"
-				restParameterType = restParameterType.substring(0, 1) + restParameterType.substring(1).toLowerCase();
 
 				String schemaFieldType = column.getTalendType();
-				JavaType javaType = JavaTypesManager.getJavaTypeFromId(schemaFieldType);
-
-				if (supportedJavaTypes4Params.contains(javaType)) {
-					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(javaType, column.isNullable());
-					Parameter parameter = new Parameter(schemaFieldName, restParameterType, javaTypeWhole, column.getDefault(), column.getPattern(), column.isNullable());
+				if (supportedTypes.contains(schemaFieldType)) {
+					Parameter parameter = new Parameter(restParameterType, column);
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
-					//Report that the Java type is unsupported
+					// the Java type is unsupported
 				}
 			}
 		}
@@ -831,6 +879,8 @@ if (null != conns && !conns.isEmpty()) {
 <% } %>
 <% if (formSupported) { %>
 	@javax.ws.rs.Consumes("application/x-www-form-urlencoded")
+<% } else if (multipartSupported) { %>
+	@javax.ws.rs.Consumes({"multipart/form-data", "multipart/mixed", "multipart/related"})
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%
@@ -860,11 +910,11 @@ if (null != conns && !conns.isEmpty()) {
 						@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>") <%
 					}
 				} %>
-				@javax.ws.rs.<%=param.getParamType()%>Param("<%=param.getName()%>") <%= javaType%> <%=variableName%>
+				@<%= restParameterTypes.get(param.getParamType())%>("<%=param.getName()%>") <%= javaType%> <%=variableName%>
+
 		<%	} %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
-				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported) && null != bodyParameter) {
+		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
+				|| formSupported || multipartSupported) && null != bodyParameter) {
 			if (paramCommaWritten) { %>, <% } %><%=bodyParameter.getJavaType()%> body
 		<% } %>
 			) {
@@ -897,11 +947,10 @@ if (null != conns && !conns.isEmpty()) {
 		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
 		request_<%=cid%>.put("OPERATION", "<%=connName%>");
 		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb)
-				|| "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported) && null != bodyParameter) { %>
+	<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
+				|| formSupported || multipartSupported) && null != bodyParameter) { %>
 		request_<%=cid%>.put("BODY", body);
-		<% } %>
+	<% } %>
 		request_<%=cid%>.put("URI", ui.getPath());
 		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
 		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
