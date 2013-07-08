@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.camel.designer;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -22,14 +24,17 @@ import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.Status;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.utils.XmiResourceManager;
+import org.talend.core.runtime.CoreRuntimePlugin;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -38,6 +43,18 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
 
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
+    @Override
+    public List<Status> getPropertyStatus(Item item) {
+    	if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM){
+    		 try {
+                 return CoreRuntimePlugin.getInstance().getProxyRepositoryFactory().getTechnicalStatus();
+             } catch (PersistenceException e) {
+                 ExceptionHandler.process(e);
+             }
+    	}
+    	return super.getPropertyStatus(item);
+    }
+    
     @Override
     public boolean isProcess(Item item) {
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {

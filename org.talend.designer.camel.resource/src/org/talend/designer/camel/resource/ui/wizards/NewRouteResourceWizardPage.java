@@ -233,6 +233,9 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		}
 		for(IRepositoryViewObject object: listExistingResources){
 			try{
+				if(object.getProperty() == getProperty()){
+					continue;
+				}
 				String p = object.getProperty().getItem().getState().getPath();
 				if(p == null){
 					continue;
