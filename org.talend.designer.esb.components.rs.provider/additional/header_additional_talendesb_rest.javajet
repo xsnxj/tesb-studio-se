@@ -658,6 +658,83 @@ public static class RestServiceProviderImpl4TalendJob {
 // "body" is reserved name for request body content parameter
 final String SCHEMA_FIELD_NAME_4_REQUEST_BODY = "body";
 
+final String javaType4UndeclaredParameter = JavaTypesManager.STRING.getId(); // == "id_String"
+final String javaTypeWhole4UndeclaredParameter = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
+
+final Map<String, String> restParameterTypes = new HashMap<String, String>() {{
+		put("PATH", "javax.ws.rs.PathParam");
+		put("FORM", "javax.ws.rs.FormParam");
+		put("QUERY", "javax.ws.rs.QueryParam");
+		put("HEADER", "javax.ws.rs.HeaderParam");
+		put("MATRIX", "javax.ws.rs.MatrixParam");
+		put("MULTIPART", "org.apache.cxf.jaxrs.ext.multipart.Multipart");
+	}};
+
+
+final Set<String> supportedTypes4Params = new HashSet<String>(Arrays.asList(
+		// string
+		JavaTypesManager.STRING.getId(),
+
+		// boolean
+		JavaTypesManager.BOOLEAN.getId(),
+
+		// byte
+		JavaTypesManager.BYTE.getId(),
+
+		// number
+		JavaTypesManager.SHORT.getId(),
+		JavaTypesManager.INTEGER.getId(),
+		JavaTypesManager.LONG.getId(),
+		JavaTypesManager.FLOAT.getId(),
+		JavaTypesManager.DOUBLE.getId(),
+		JavaTypesManager.BIGDECIMAL.getId(),
+
+		// List
+		JavaTypesManager.LIST.getId(),
+
+		// date
+		JavaTypesManager.DATE.getId()
+	));
+
+final Set<String> supportedTypes4Body = new HashSet<String>(Arrays.asList(
+		// string
+		JavaTypesManager.STRING.getId(),
+
+		// byte array
+		JavaTypesManager.BYTE_ARRAY.getId(),
+
+		// xml document
+		Parameter.JAVA_TYPE_DOCUMENT_ID
+	));
+
+final Set<String> supportedTypes4Part = new HashSet<String>(Arrays.asList(
+		// string
+		JavaTypesManager.STRING.getId(),
+
+		// boolean
+		JavaTypesManager.BOOLEAN.getId(),
+
+		// number
+		JavaTypesManager.SHORT.getId(),
+		JavaTypesManager.INTEGER.getId(),
+		JavaTypesManager.LONG.getId(),
+		JavaTypesManager.FLOAT.getId(),
+		JavaTypesManager.DOUBLE.getId(),
+		JavaTypesManager.BIGDECIMAL.getId(),
+
+		// date
+		JavaTypesManager.DATE.getId(),
+
+		// byte
+		JavaTypesManager.BYTE.getId(),
+
+		// byte array
+		JavaTypesManager.BYTE_ARRAY.getId(),
+
+		// xml document
+		Parameter.JAVA_TYPE_DOCUMENT_ID
+	));
+
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
@@ -687,81 +764,6 @@ if (null != conns && !conns.isEmpty()) {
 		boolean multipartSupported = false;
 
 		// All the parameters specified in the Schema Editor need to be handled.
-		final Map<String, String> restParameterTypes = new HashMap<String, String>() {{
-			put("PATH", "javax.ws.rs.PathParam");
-			put("FORM", "javax.ws.rs.FormParam");
-			put("QUERY", "javax.ws.rs.QueryParam");
-			put("HEADER", "javax.ws.rs.HeaderParam");
-			put("MATRIX", "javax.ws.rs.MatrixParam");
-			put("MULTIPART", "org.apache.cxf.jaxrs.ext.multipart.Multipart");
-		}};
-
-
-		final Set<String> supportedTypes4Params = new HashSet<String>(Arrays.asList(
-				// string
-				JavaTypesManager.STRING.getId(),
-
-				// boolean
-				JavaTypesManager.BOOLEAN.getId(),
-
-				// byte
-				JavaTypesManager.BYTE.getId(),
-
-				// number
-				JavaTypesManager.SHORT.getId(),
-				JavaTypesManager.INTEGER.getId(),
-				JavaTypesManager.LONG.getId(),
-				JavaTypesManager.FLOAT.getId(),
-				JavaTypesManager.DOUBLE.getId(),
-				JavaTypesManager.BIGDECIMAL.getId(),
-
-				// List
-				JavaTypesManager.LIST.getId(),
-
-				// date
-				JavaTypesManager.DATE.getId()
-			));
-
-		final Set<String> supportedTypes4Body = new HashSet<String>(Arrays.asList(
-				// string
-				JavaTypesManager.STRING.getId(),
-
-				// byte array
-				JavaTypesManager.BYTE_ARRAY.getId(),
-
-				// xml document
-				Parameter.JAVA_TYPE_DOCUMENT_ID
-			));
-
-
-		final Set<String> supportedTypes4Part = new HashSet<String>(Arrays.asList(
-				// string
-				JavaTypesManager.STRING.getId(),
-
-				// boolean
-				JavaTypesManager.BOOLEAN.getId(),
-
-				// number
-				JavaTypesManager.SHORT.getId(),
-				JavaTypesManager.INTEGER.getId(),
-				JavaTypesManager.LONG.getId(),
-				JavaTypesManager.FLOAT.getId(),
-				JavaTypesManager.DOUBLE.getId(),
-				JavaTypesManager.BIGDECIMAL.getId(),
-
-				// date
-				JavaTypesManager.DATE.getId(),
-
-				// byte
-				JavaTypesManager.BYTE.getId(),
-
-				// byte array
-				JavaTypesManager.BYTE_ARRAY.getId(),
-
-				// xml document
-				Parameter.JAVA_TYPE_DOCUMENT_ID
-			));
-
 		Parameter bodyParameter = null;
 		Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 		if (null != uriPattern) {
@@ -770,8 +772,15 @@ if (null != conns && !conns.isEmpty()) {
 			// determine request body type
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
 				if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(column.getLabel())) {
-					if (supportedTypes4Body.contains(column.getTalendType())) {
-						bodyParameter = new Parameter(null, column);
+					// rest parameter type
+					String restParameterType = column.getComment();
+					restParameterType = (null == restParameterType) ? "" : restParameterType.trim().toUpperCase();
+
+					// check that the field is not one of supported rest parameter type
+					if (!restParameterTypes.keySet().contains(restParameterType)) {
+						if (supportedTypes4Body.contains(column.getTalendType())) {
+							bodyParameter = new Parameter(null, column);
+						}
 					}
 					break;
 				}
@@ -782,31 +791,36 @@ if (null != conns && !conns.isEmpty()) {
 			// we are going to declare all uri template variables ("Path" parameter type by REST)
 			for (String uriVariable : uriVariables) {
 				Parameter parameter = null;
-				String schemaFieldType = "id_String";
+				String schemaFieldType = javaType4UndeclaredParameter;
 
 				for (IMetadataColumn column : connMetadata.getListColumns()) {
 					// schema parameter name
 					String schemaFieldName = column.getLabel();
-					if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName)) {
-						continue;
-					}
-
 					if (uriVariable.equals(schemaFieldName)) {
 						String restParameterType = column.getComment();
 						schemaFieldType = column.getTalendType();
 
-						if (restParameterType == null || restParameterType.trim().length() == 0 || "Path".equalsIgnoreCase(restParameterType.trim())) {
-
-							if (supportedTypes4Params.contains(schemaFieldType)) {
+						if (restParameterType == null || restParameterType.trim().length() == 0 || "PATH".equalsIgnoreCase(restParameterType.trim())) {
+							if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName) && null != bodyParameter) {
+								// "body" field in schema really sute for request content (by rest type and field type)
+								// that mean uri parameter "body" is hidden by reserved request content field "body"
+								// -> will use generated variable name in rest service method with default String type
+								//    (and this uri parameter will not be set to flow field later)
+								schemaFieldType = javaType4UndeclaredParameter;
+								parameter = new Parameter(uriVariable, "PATH", javaTypeWhole4UndeclaredParameter, true);
+							} else if (supportedTypes4Params.contains(schemaFieldType)) {
 								parameter = new Parameter("PATH", column);
 							} else {
-								// defined java type is unsupported - will define with default String type below (and this parameter will not be set to flow field)
-								schemaFieldType = "id_String";
+								// defined java type is unsupported
+								// -> will define with default String type below
+								//    (and this parameter will not be set to flow field later)
 							}
 						} else {
-							// uri parameter hidden by parameter of another type in schema - will use generated variable name in rest service method
-							String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-							parameter = new Parameter(uriVariable, "Path", javaTypeWhole, true);
+							// uri parameter hidden by parameter of another type in schema
+							// -> will use generated variable name in rest service method with default String type
+							//    (and this uri parameter will not be set to flow field later)
+							schemaFieldType = javaType4UndeclaredParameter;
+							parameter = new Parameter(uriVariable, "PATH", javaTypeWhole4UndeclaredParameter, true);
 						}
 						break;
 					}
@@ -816,46 +830,37 @@ if (null != conns && !conns.isEmpty()) {
 					// (both by uri variable name and schema parameter type = 'Path')
 					// or unsupported java type in schema parameter definition
 					// so we will declare default java type - String
-					String javaTypeWhole = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
-					parameter = new Parameter(uriVariable, "PATH", javaTypeWhole, false);
+					// (and this uri parameter will not be set to flow field later)
+					schemaFieldType = javaType4UndeclaredParameter;
+					parameter = new Parameter(uriVariable, "PATH", javaTypeWhole4UndeclaredParameter, false);
 				}
 				parameters.put("PATH:" + uriVariable + ":" + schemaFieldType, parameter);
 			}
 
 			// now we are going to declare all other (non uri template) variables ("Query", "Form", "Header", "Matrix", "Multipart" parameter types by REST)
 			for (IMetadataColumn column : connMetadata.getListColumns()) {
-				// schema parameter name
-				String schemaFieldName = column.getLabel();
-				if (SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName)) {
-					continue;
-				}
-
-				// rest parameter type - if empty - default to 'Path'
+				// rest parameter type
 				String restParameterType = column.getComment();
-				if (restParameterType == null || restParameterType.trim().length() == 0) {
-					restParameterType = "PATH";
+				// skip "Path" parameters as we already collect uri template parameters
+				if (restParameterType == null || restParameterType.trim().length() == 0 || "PATH".equalsIgnoreCase(restParameterType.trim())) {
+					continue;
 				}
 				restParameterType = restParameterType.trim().toUpperCase();
-
 				// must be a supported parameter type
 				if (!restParameterTypes.keySet().contains(restParameterType)) {
-					// unsupported JAX-RS parameter type
+					// skip unsupported (wrong) JAX-RS parameter type
 					continue;
 				}
-				if ("PATH".equals(restParameterType)) {
-					// we already collect uri template parameters
-					continue;
-				}
-
 
 				Set<String> supportedTypes = supportedTypes4Params;
-				// having at least one form parameter means form submissions are supported
 				if ("FORM".equals(restParameterType)) {
+					// having at least one form parameter means form submissions are supported
 					if (multipartSupported) {
 						continue; // ignore this parameter (earlier multipart parameter won)
 					}
  					formSupported = true;
 				} else if ("MULTIPART".equals(restParameterType)) {
+					// having at least one multipart parameter means request multiparts are supported
 					if (formSupported) {
 						continue; // ignore this parameter (earlier form parameter won)
 					}
@@ -863,9 +868,12 @@ if (null != conns && !conns.isEmpty()) {
 					multipartSupported = true;
 				}
 
+				// schema parameter name
+				String schemaFieldName = column.getLabel();
+				// schema parameter type
 				String schemaFieldType = column.getTalendType();
 				if (supportedTypes.contains(schemaFieldType)) {
-					Parameter parameter = new Parameter(restParameterType, column);
+					Parameter parameter = new Parameter(restParameterType, column, SCHEMA_FIELD_NAME_4_REQUEST_BODY.equals(schemaFieldName));
 					parameters.put(restParameterType + ":" + schemaFieldName + ":" + schemaFieldType, parameter);
 				} else {
 					// the Java type is unsupported

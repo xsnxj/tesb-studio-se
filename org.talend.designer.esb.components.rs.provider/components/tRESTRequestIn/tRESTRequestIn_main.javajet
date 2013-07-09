@@ -82,19 +82,13 @@ if (null != metadatas && 0 < metadatas.size()) {
 <%
 						for (IMetadataColumn connColumn : conn.getMetadataTable().getListColumns()) {
 							String columnName = connColumn.getLabel();
-
+							String schemaFieldType = connColumn.getTalendType();
 							String restParameterType = connColumn.getComment();
 							if (restParameterType == null || restParameterType.trim().length() == 0) {
-								restParameterType = "PATH";
-							} else {
-								restParameterType = restParameterType.trim().toUpperCase();
+								restParameterType = "";
 							}
 
-							String schemaFieldType = connColumn.getTalendType();
-
-							String parameterKey = restParameterType + ":" + columnName + ":" + schemaFieldType;
-
-							if ("body".equals(columnName)) {
+							if ("body".equals(columnName) && "".equals(restParameterType)) {
 %>
 								Object bodyObject_<%=cid%> = requestMessage_<%=cid%>.get("BODY");
 								if (null != bodyObject_<%=cid%>) {
@@ -109,13 +103,21 @@ if (null != metadatas && 0 < metadatas.size()) {
 								}
 <%
 							} else {
-								String javaTypeFull = JavaTypesManager.getTypeToGenerate(schemaFieldType, true);
+								restParameterType = ("".equals(restParameterType)) ? "PATH" : restParameterType.trim().toUpperCase();
+								String parameterKey = restParameterType + ":" + columnName + ":" + schemaFieldType;
 %>
 								if (params_<%=cid%>.containsKey("<%=parameterKey%>")) {
-									<%=connectionName%>.<%=columnName%> = (<%= javaTypeFull%>) params_<%=cid%>.get("<%=parameterKey%>");
+									<% if ("id_Document".equals(schemaFieldType)) { %>
+										routines.system.Document <%=columnName%>_<%=cid%> = new routines.system.Document();
+										<%=columnName%>_<%=cid%>.setDocument((org.dom4j.Document) params_<%=cid%>.get("<%=parameterKey%>"));
+										<%=connectionName%>.<%=columnName%> = <%=columnName%>_<%=cid%>;
+									<% } else { %>
+										<% String javaTypeFull = JavaTypesManager.getTypeToGenerate(schemaFieldType, true); %>
+										<%=connectionName%>.<%=columnName%> = (<%= javaTypeFull%>) params_<%=cid%>.get("<%=parameterKey%>");
+									<% } %>
 								}
 <%
-							} // if (!"body".equals(columnName))
+							} // if ("body".equals(columnName) && "".equals(restParameterType))
 						} // for (IMetadataColumn connColumn : conn.getMetadataTable().getListColumns())
 %>
 					} else { // non matched flow
