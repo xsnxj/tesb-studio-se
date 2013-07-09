@@ -306,6 +306,8 @@ try {
 					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
 				}
 			}
+
+			globalMap.put("<%=cid%>_HEADERS", webClient_<%=cid%>.getResponse().getHeaders());
 		<% } %>
 
 	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
@@ -325,6 +327,8 @@ try {
 				}
 			}
 			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
+
+			globalMap.put("<%=cid%>_HEADERS", ex_<%=cid%>.getResponse().getHeaders());
 		<% } else { %>
 			throw ex_<%=cid%>;
 		<% } %>
