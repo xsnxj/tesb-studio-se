@@ -1,0 +1,111 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cTry</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-en..html" title="Talend Open Studio for ESB Mediation Components"><link rel="up" href="ch-exception.html" title="Chapter&nbsp;2.&nbsp;Exception components"><link rel="prev" href="cOnException.html" title="cOnException"><link rel="next" href="ch-messaging.html" title="Chapter&nbsp;3.&nbsp;Messaging components"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cTry</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cOnException.html">Prev</a>&nbsp;</td><th width="60%" align="center">Chapter&nbsp;2.&nbsp;Exception components</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ch-messaging.html">Next</a></td></tr></table><hr></div><div lang="EN" class="section" title="cTry"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cTry"></a>cTry</h2></div></div></div><div class="mediaobject"><img src="../images/cTry_icon32_white.png"></div><div class="section" title="cTry properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2442"></a>cTry properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cTry</strong></span> offers Java's exception
+								handling abilities by building Try/Catch/Finally blocks.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cTry</strong></span> is designed to build
+								Try/Catch/Finally blocks to handle exceptions.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="emphasis"><strong>cTry</strong></span> is used as a middle component
+								in a Route.</p>
+						</td></tr><tr><td rowspan="4" valign="top">
+							<span class="emphasis"><strong>Connections</strong></span>
+						</td><td valign="top">
+							<span class="emphasis"><em>Try</em></span>
+						</td><td valign="top">
+							<p>Select this link to isolate the part of your Route that is likely to throw an exception or exceptions.</p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>When the <span class="emphasis"><strong>Try</strong></span> link is followed by multiple components, a compile error may occur showing "<code class="code">The method doCatch() is undefined for the type ExpressionNode</code>". In this case, use a <span class="emphasis"><strong>cJavaDSLProcessor</strong></span> component to end the Try block with the code <code class="code">.endDoTry()</code> as a workaround.</p></div>
+						</td></tr><tr><td valign="top">
+							<span class="emphasis"><em>Catch</em></span>
+						</td><td valign="top">
+							<p>Select this link to catch any exception thrown in the
+								Route.</p>
+							<p>In the <span class="emphasis"><strong>Exceptions</strong></span> field, type in
+								an expression to filter the type of exception to catch. </p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>This link can be used only when a Try link is present.</p></div>
+						</td></tr><tr><td valign="top">
+							<span class="emphasis"><em>Finally</em></span>
+						</td><td valign="top">
+							<p>Select link to execute final instructions regardless of any
+								exceptions that may occur in the Route.</p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>This link can be used only when a Try link is present.</p></div>
+						</td></tr><tr><td valign="top">
+							<span class="emphasis"><em>Route</em></span>
+						</td><td valign="top">Select this link to route all the messages from the
+							sender to the next endpoint.</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Using cTry to build Try/Catch/Finally blocks for exception handling"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2606"></a>Scenario: Using cTry to build Try/Catch/Finally blocks for exception handling</h3></div></div></div><p>In this scenario, the content of each file sent from the message sender to the receiver is
+			checked and if any file does not meet the content requirement, an exception is thrown
+			and the relevant information is displayed on the console. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_1.png" align="middle"></div><div class="section" title="Dropping and linking components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2614"></a>Dropping and linking components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="emphasis"><strong>Messaging</strong></span> folder of the
+							<span class="emphasis"><strong>Palette</strong></span>, drop two<span class="emphasis"><strong>cFile</strong></span> components onto the design workspace, one as the
+						message sender and the other as the message receiver.</p></li><li class="step" title="Step 2"><p>From the <span class="emphasis"><strong>Exception</strong></span> folder, drop a
+							<span class="emphasis"><strong>cTry</strong></span> component onto the design
+						workspace to build Try, Catch and Finally blocks.</p></li><li class="step" title="Step 3"><p>From the <span class="emphasis"><strong>Processor</strong></span> folder, drop two
+							<span class="emphasis"><strong>cProcessor</strong></span> components onto the design
+						workspace.</p></li><li class="step" title="Step 4"><p>Link the <span class="emphasis"><strong>cFile</strong></span> component serving as
+						message sender to the <span class="emphasis"><strong>cTry</strong></span> component using
+						a <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Route</strong></span> connection.</p></li><li class="step" title="Step 5"><p>Link the <span class="emphasis"><strong>cTry</strong></span> component to one <span class="emphasis"><strong>cProcessor</strong></span> using a <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Try</strong></span> connection. This
+							<span class="emphasis"><strong>cProcessor</strong></span> component will throw an
+						exception if any file coming via this connection does not contain the
+						required content.</p></li><li class="step" title="Step 6"><p>Link the <span class="emphasis"><strong>cTry</strong></span> component to the other
+							<span class="emphasis"><strong>cProcessor</strong></span> component using a <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Catch</strong></span>
+						connection to catch the exception. This <span class="emphasis"><strong>cProcessor</strong></span> component will display the information related to
+						the exception and the file name that does not contain the required
+						content.</p></li><li class="step" title="Step 7"><p>Link the <span class="emphasis"><strong>cTry</strong></span> component to the receiving
+							<span class="emphasis"><strong>cFile</strong></span> component using a <span class="emphasis"><strong>Row</strong></span> &gt; <span class="emphasis"><strong>Finally</strong></span>
+						connection.</p></li><li class="step" title="Step 8"><p>Label the components according to their roles in the Route.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2717"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="emphasis"><strong>cFile</strong></span> component labeled
+							<span class="emphasis"><em>Sender</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_2.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="emphasis"><strong>Path</strong></span> field, fill in or browse to
+						the path to the folder that holds the source files.</p></li><li class="step" title="Step 3"><p>From the <span class="emphasis"><strong>Encoding</strong></span> list, select the
+						encoding type of your source files. Leave the other parameters as they
+						are.</p></li><li class="step" title="Step 4"><p>Repeat these step to define the output file path and encoding type in the
+							<span class="emphasis"><strong>Basic settings</strong></span> view of the other
+							<span class="emphasis"><strong>cFile</strong></span> component, which is labeled
+							<span class="emphasis"><em>Receiver</em></span>.</p></li><li class="step" title="Step 5"><p>Double-click the <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Throw_exception</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab, and customize the code in the <span class="emphasis"><strong>Code</strong></span> area to throw an exception and display
+						relevant information if any file coming via the <span class="emphasis"><strong>try</strong></span> connection does not meet the content requirement, as
+						follows:</p><pre class="programlisting">String body = exchange.getIn().getBody(String.class);
+System.out.println("\nTrying: "+body);
+Exception e = new Exception("Only 'Talend Integration Solutions' is acceptable. Please check the file:");
+if(!"Talend Integration Solutions".equals(body)){
+	throw e;
+}else{
+    System.out.println("File is good.");
+}</pre></li><li class="step" title="Step 6"><p>Click the <span class="emphasis"><strong>catch</strong></span> connection and then the <span class="emphasis"><strong>Component</strong></span> tab to open its <span class="emphasis"><strong>Basic settings</strong></span> view, and fill the <span class="emphasis"><strong>Expression</strong></span> field with an expression to specify the type of
+						exception to catch.</p><p>In this scenario, fill in <code class="code">Exception.class</code> to catch any exception
+						thrown.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_4.png" align="middle"></div></li><li class="step" title="Step 7"><p>Double-click <span class="emphasis"><strong>cProcessor</strong></span> component labeled <span class="emphasis"><em>Show_exception</em></span> to open its <span class="emphasis"><strong>Basic settings</strong></span> view in the <span class="emphasis"><strong>Component</strong></span> tab, and customize the code in the <span class="emphasis"><strong>Code</strong></span> area to display the exception information
+						and the related file name, as follows:</p><pre class="programlisting">System.out.println(exchange.getProperty("CamelExceptionCaught")+
+" " + exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="Step 8"><p>Click <span class="emphasis"><strong>Ctrl+S</strong></span> to save your Route. </p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2835"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="emphasis"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to check the generated code.</p><div class="mediaobject"><img src="../images/use_case_ctry_8.png"></div><p>As shown above, while messages are routed <code class="code">from</code> the sender
+							<code class="code">.to</code> the receiver, <code class="code">.doTry()</code>,
+							<code class="code">.doCatch()</code> and <code class="code">.doFinally()</code> blocks are built
+						by <code class="code">cTry_1</code>. Thus, when any file does not meet the content
+						requirement, an exception is thrown and caught, before each file is finally
+						routed to the receiver.</p></li><li class="step" title="Step 2"><p>Press <span class="emphasis"><strong>F6</strong></span> to execute the Route.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_9.png" align="middle"></div><p>RESULT: When a file that does not meet the content requirement is detected, an exception
+						is thrown, and the exception information is displayed on the console.
+						Regardless of the exception, all the files from the sender are sent to the
+						receiver.</p></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cOnException.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-exception.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ch-messaging.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">cOnException&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-en..html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Chapter&nbsp;3.&nbsp;Messaging components</td></tr></table></div></body></html>
