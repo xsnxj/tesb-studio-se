@@ -934,20 +934,28 @@ if (null != conns && !conns.isEmpty()) {
 			if ("java.util.Date".equals(param.getJavaType())) {
 %>
 				java.util.Date <%=variableName%> = null;
-				<% if(param.isNullable() && null == param.getDefaultValue()) { %>
-					if (null == <%=variableName%>_<%=cid%>) {
-						<%=variableName%> = new java.util.Date();
-					}
-					<% if(param.getPattern() != null && !"".equals(param.getPattern().trim())) { %>
+				<% if (param.getPattern() != null && !"".equals(param.getPattern().trim())) { %>
+					if (null != <%=variableName%>_<%=cid%> && 0 != <%=variableName%>_<%=cid%>.trim().length()) {
 						try {
 							<%=variableName%> = new java.text.SimpleDateFormat(<%=param.getPattern()%>).parse(<%=variableName%>_<%=cid%>);
 						} catch (Exception e) {
-							<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+							// try to parse date by usual way later
 						}
-					<% } else { %>
+					}
+				<% } %>
+				if (null == <%=variableName%> && null != <%=variableName%>_<%=cid%> && 0 != <%=variableName%>_<%=cid%>.trim().length()) {
+					try {
 						<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
-					<% }
+					} catch (Exception e) {
+						// wrong date parameter passed
+					}
 				}
+				<% if (!param.isNullable()) { %>
+					if (null == <%=variableName%>) {
+						<%=variableName%> = new java.util.Date(); // dummy fake
+					}
+				<% } %>
+<%
 			}
 		}
 %>
