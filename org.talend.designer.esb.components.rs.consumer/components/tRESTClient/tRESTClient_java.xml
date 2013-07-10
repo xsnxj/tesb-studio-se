@@ -516,6 +516,6 @@
 
 	<RETURNS>
 		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
-		<RETURN NAME="HEADERS" TYPE="id_Object" AVAILABILITY="FLOW" />
+		<RETURN NAME="HEADERS" TYPE="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" AVAILABILITY="FLOW" />
 	</RETURNS>
 </COMPONENT>
