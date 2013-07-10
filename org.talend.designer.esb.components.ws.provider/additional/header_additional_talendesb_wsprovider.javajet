@@ -56,6 +56,8 @@ if (!process.getNodesOfType("tESBProviderRequest").isEmpty()) { // if ESB provid
 		isOneWay = process.getNodesOfType("tESBProviderFault").isEmpty()
 			&& process.getNodesOfType("tESBProviderResponse").isEmpty();
 	}
+
+	Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
 %>
 	public ESBEndpointInfo getEndpoint() {
 		return new ESBEndpointInfo() {
@@ -456,6 +458,9 @@ class HandlerThread_<%=cid%> extends Thread {
 		serverFactory.setAddress(endpointUrl);
 
 		serverFactory.setServiceBean(new ESBProvider_<%=cid%>(handler));
+		if (logMessages) {
+			serverFactory.getFeatures().add(new org.apache.cxf.feature.LoggingFeature());
+		}
 		server = serverFactory.create();
 
 		System.out.println("web service [endpoint: " + endpointUrl + "] published");
