@@ -249,7 +249,7 @@ try {
 		webClient_<%=cid%>.header(<%=header.get("NAME")%>, <%=header.get("VALUE")%>);
 	<% } %>
 
-	<% if (useAuth && "OAUTH2".equals(authType)) { %>
+	<% if (useAuth && "OAUTH2_BEARER".equals(authType)) { %>
 		// set oAuth2 bearer token
 		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=ElementParameterParser.getValue(node,"__AUTH_BEARER_TOKEN__")%>);
 	<% } %>
