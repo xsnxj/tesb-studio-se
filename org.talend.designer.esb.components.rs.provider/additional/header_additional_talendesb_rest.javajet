@@ -464,12 +464,6 @@ private boolean restTalendJobAlreadyStarted = false;
 public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context
-	private javax.ws.rs.core.UriInfo ui;
-
-	@javax.ws.rs.core.Context
-	private javax.ws.rs.core.HttpHeaders httpHeaders;
-
-	@javax.ws.rs.core.Context
 	private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
 	private final <%=process.getName()%> job;
@@ -967,6 +961,9 @@ if (null != conns && !conns.isEmpty()) {
 				|| formSupported || multipartSupported) && null != bodyParameter) { %>
 		request_<%=cid%>.put("BODY", body);
 	<% } %>
+
+		final javax.ws.rs.core.UriInfo ui = messageContext.getUriInfo();
+
 		request_<%=cid%>.put("URI", ui.getPath());
 		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
 		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
@@ -977,7 +974,7 @@ if (null != conns && !conns.isEmpty()) {
 		<%	} %>
 		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
-		request_<%=cid%>.put("ALL_HEADER_PARAMS", httpHeaders.getRequestHeaders());
+		request_<%=cid%>.put("ALL_HEADER_PARAMS", messageContext.getHttpHeaders().getRequestHeaders());
 		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
 
 		return processRequest(request_<%=cid%>);
