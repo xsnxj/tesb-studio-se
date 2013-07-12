@@ -187,11 +187,10 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
             }
         }
-        // spring
-        File metaInf = new File(temp, FileConstants.META_INF_FOLDER_NAME);
-        File spring = new File(metaInf, "spring");
-        spring.mkdirs();
-        serviceManager.createSpringBeans(new File(spring, "beans.xml"), ports, serviceConnection, serviceWsdl,
+        // blueprint
+        File blueprint = new File(temp, FileConstants.BLUEPRINT_FOLDER_NAME);
+        blueprint.mkdirs();
+        serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, serviceConnection, serviceWsdl,
                 getServiceName());
         String jarName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File jar = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), jarName);

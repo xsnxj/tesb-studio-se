@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+#if ($useSAM)
+    <reference id="eventFeature" interface="org.talend.esb.sam.agent.feature.EventFeature"
+        ext:proxy-method="classes" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" />
+#end
+
+	<jaxws:endpoint xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
+	        id="service"
+			implementor="#genericServiceProvider"
+			xmlns:tns="${namespace}"
+			serviceName="tns:${service}"
+			endpointName="tns:${port}"
+			address="${address}"
+			wsdlLocation="classpath:/${wsdlLocation}">
+		<jaxws:properties>
+#if ($useSecurityToken || $useServiceRegistry)
+			<entry key="ws-security.ut.validator" value-ref="jaasUTValidator" />
+#end
+#if ($useSecuritySAML || $useServiceRegistry)
+#[[
+			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
+			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
+			<entry key="ws-security.callback-handler" value-ref="callback" />
+]]#
+#end
+#if ($useAuthorization || $useServiceRegistry)
+#[[
+			<entry key="tesb.pdp.address" value="$service{tesb.pdp.address}" />
+]]#
+#end
+			<entry key="use.service.registry" value="${useServiceRegistry}" />
+		</jaxws:properties>
+		<jaxws:features>
+#if ($useSAM)
+            <ref component-id="eventFeature" />
+#end
+#if ($useSL)
+			<bean class="org.talend.esb.servicelocator.cxf.LocatorFeature">
+#if (!$slCustomProps.isEmpty())
+				<property name="availableEndpointProperties">
+					<map>
+#foreach ($entry in $slCustomProps.entrySet())
+						<entry>
+							<key><value>${entry.key}</value></key>
+							<value>${entry.value}</value>
+						</entry>
+#end
+					</map>
+				</property>
+#end
+			</bean>
+#end
+#if ($logMessages)
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+#end
+#if ($useSecurityToken || $useSecuritySAML)
+			<p:policies xmlns:p="http://cxf.apache.org/policy">
+				<wsp:Policy xmlns:wsp="http://www.w3.org/ns/ws-policy">
+#if ($useSecurityToken && $useSecuritySAML)
+#if ($useAuthorization)
+					<wsp:ExactlyOne>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+						</wsp:All>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+						</wsp:All>
+					</wsp:ExactlyOne>
+#else
+					<wsp:ExactlyOne>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+						</wsp:All>
+						<wsp:All>
+							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+						</wsp:All>
+					</wsp:ExactlyOne>
+#end
+#elseif ($useSecurityToken)
+					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+#elseif ($useSecuritySAML)
+#if ($useAuthorization)
+					<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+#else
+					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+#end
+#end
+				</wsp:Policy>
+			</p:policies>
+#end
+		</jaxws:features>
+	</jaxws:endpoint>
+
+	<bean class="org.apache.cxf.management.counters.CounterRepository">
+		<property name="bus" ref="cxf" />
+	</bean>
+
+#if ($useSecurityToken || $useServiceRegistry)
+	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
+		<property name="contextName" value="karaf" />
+	</bean>
+#end
+#if ($useSecuritySAML || $useServiceRegistry)
+#[[
+    <cm:property-placeholder persistent-id="org.talend.esb.job.service" placeholder-prefix="$service{" update-strategy="reload"
+        xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"/>
+    <bean id="callback" class="org.apache.cxf.interceptor.security.NamePasswordCallbackHandler">
+        <argument type="java.lang.String" value="$service{ws-security.signature.username}" />
+        <argument type="java.lang.String" value="$service{ws-security.signature.password}" />
+        <argument type="java.lang.String" value="setPassword" />
+    </bean>
+]]#
+#end
+
+	<reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory" />
+	<bean id="genericServiceProvider" factory-ref="providerFactory" factory-method="create">
+		<argument>
+			<map>
+#foreach ($entry in $operation2job.entrySet())
+				<entry>
+					<key><value>${entry.key}</value></key>
+					<value>${entry.value}</value>
+				</entry>
+#end
+			</map>
+		</argument>
+#if ($useSecuritySAML || $useServiceRegistry)
+        <argument type="org.apache.cxf.Bus" ref="cxf" />
+#end
+#if ($useSAM)
+		<property name="eventFeature" ref="eventFeature" />
+#end
+	</bean>
+	<service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
+		<service-properties>
+			<entry key="service.pid" value="${studioName}" />
+		</service-properties>
+	</service>
+
+
+</blueprint>

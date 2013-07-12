@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2013 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.ui.scriptmanager;
 
 import java.io.File;
@@ -37,7 +49,7 @@ import org.talend.repository.utils.TemplateProcessor;
 
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
-    private static final String TEMPLATE_SPRING_BEANS = "/resources/beans-template.xml"; //$NON-NLS-1$
+    private static final String TEMPLATE_BLUEPRINT = "/resources/blueprint-template.xml"; //$NON-NLS-1$
 
     private static final Logger LOG = Logger.getLogger(ServiceExportManager.class);
 
@@ -45,12 +57,12 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 
-    private boolean isStudioEEVersion() {
+    private static boolean isStudioEEVersion() {
         return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
 
     @SuppressWarnings("unchecked")
-	public void createSpringBeans(File outputFile, Map<ServicePort, Map<String, String>> ports,
+	public void createBlueprint(File outputFile, Map<ServicePort, Map<String, String>> ports,
             ServiceConnection serviceConnection, IFile wsdl, String studioServiceName)
                     throws IOException, CoreException {
 
@@ -156,15 +168,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         }
         endpointInfo.put("slCustomProps", slCustomProperties); //$NON-NLS-1$
 
-        Map<String, Object> contextParams = new HashMap<String, Object>();
-        contextParams.put("endpoint", endpointInfo); //$NON-NLS-1$
-
-        try {
-            TemplateProcessor.processTemplate("DATA_SERVICE_SPRING_CONFIG", contextParams, outputFile, //$NON-NLS-1$
-                    new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SPRING_BEANS)));
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
+        TemplateProcessor.processTemplate("DATA_SERVICE_BLUEPRINT_CONFIG", endpointInfo, outputFile, //$NON-NLS-1$
+                new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_BLUEPRINT)));
     }
 
     public Manifest getManifest(String artefactName, String serviceVersion) {
