@@ -885,10 +885,8 @@ if (null != conns && !conns.isEmpty()) {
 	@javax.ws.rs.Consumes({"multipart/form-data", "multipart/mixed", "multipart/related"})
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
-		<%
-			boolean paramCommaWritten = false;
-			for (String parameter : parameters.keySet()) {
-				Parameter param = parameters.get(parameter);
+		<%	boolean paramCommaWritten = false;
+			for (Parameter param : parameters.values()) {
 				if (!paramCommaWritten) {
 					paramCommaWritten = true;
 				} else {
@@ -912,17 +910,15 @@ if (null != conns && !conns.isEmpty()) {
 						@javax.ws.rs.DefaultValue("<%=param.getDefaultValue()%>") <%
 					}
 				} %>
-				@<%= restParameterTypes.get(param.getParamType())%>("<%=param.getName()%>") <%= javaType%> <%=variableName%>
-
-		<%	} %>
+				@<%=restParameterTypes.get(param.getParamType())%>("<%=param.getName()%>") <%= javaType%> <%=variableName%>
+		<%	} // loop thru jax-rs parameters %>
 		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
 				|| formSupported || multipartSupported) && null != bodyParameter) {
 			if (paramCommaWritten) { %>, <% } %><%=bodyParameter.getJavaType()%> body
 		<% } %>
 			) {
 <%
-		for (String parameter : parameters.keySet()) {
-			Parameter param = parameters.get(parameter);
+		for (Parameter param : parameters.values()) {
 			String variableName = param.getVariableName();
 
 			if ("java.util.Date".equals(param.getJavaType())) {
@@ -951,7 +947,7 @@ if (null != conns && !conns.isEmpty()) {
 				<% } %>
 <%
 			}
-		}
+		} // loop thru jax-rs parameters (for Date params handling)
 %>
 		java.util.Map<String, Object> request_<%=cid%> = new java.util.HashMap<String, Object>();
 		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
@@ -977,6 +973,30 @@ if (null != conns && !conns.isEmpty()) {
 		request_<%=cid%>.put("ALL_HEADER_PARAMS", messageContext.getHttpHeaders().getRequestHeaders());
 		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
 
+<% if (multipartSupported) { %>
+		java.util.Map<String, String> attachmentFilenames = new java.util.HashMap<String, String>();
+
+		java.util.Map<String, java.util.Map<String, java.util.List<String>>> attachmentHeaders =
+			new java.util.HashMap<String, java.util.Map<String, java.util.List<String>>>();
+<%		for (Parameter param : parameters.values()) {
+			if ("MULTIPART".equals(param.getParamType())) {
+				String partName = param.getVariableName(); %>
+				org.apache.cxf.jaxrs.ext.multipart.Attachment att_<%=partName%>_<%=cid%> = getFirstMatchingPart(messageContext, "<%=partName%>");
+				if (att_<%=partName%>_<%=cid%> != null) {
+					attachmentHeaders.put("<%=partName%>", att_<%=partName%>_<%=cid%>.getHeaders());
+					if (null != att_<%=partName%>_<%=cid%>.getContentDisposition()) {
+						String filename = att_<%=partName%>_<%=cid%>.getContentDisposition().getParameter("filename");
+						if (null != filename) {
+							attachmentFilenames.put("<%=partName%>", filename);
+						}
+					}
+				}
+<%			}
+		} // loop thru jax-rs parameters %>
+ 		request_<%=cid%>.put("ATTACHMENT_HEADERS", attachmentHeaders);
+ 		request_<%=cid%>.put("ATTACHMENT_FILENAMES", attachmentFilenames);
+<% } %>
+
 		return processRequest(request_<%=cid%>);
 	}
 <%
@@ -997,6 +1017,23 @@ if (null != conns && !conns.isEmpty()) {
 		wrongRequest.put("URI_ABSOLUTE", context.getUriInfo().getAbsolutePath().toString());
 
 		return processRequest(wrongRequest);
+	}
+
+	private static org.apache.cxf.jaxrs.ext.multipart.Attachment getFirstMatchingPart(
+			org.apache.cxf.jaxrs.ext.MessageContext messageContext, String partName) {
+		List<org.apache.cxf.jaxrs.ext.multipart.Attachment> all =
+			org.apache.cxf.jaxrs.utils.multipart.AttachmentUtils.getAttachments(messageContext);
+		for (org.apache.cxf.jaxrs.ext.multipart.Attachment att : all) {
+			if (partName.equals(att.getContentId())) {
+				return att;
+			}
+			org.apache.cxf.jaxrs.ext.multipart.ContentDisposition cd = att.getContentDisposition();
+			if (null != cd && partName.equals(cd.getParameter("name"))) {
+				return att;
+			}
+		}
+		// unexpected
+		throw new javax.ws.rs.InternalServerErrorException();
 	}
 }
 
