@@ -45,6 +45,7 @@ Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE
 Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
 
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
+Boolean authPropagate = Boolean.valueOf(ElementParameterParser.getValue(node, "__AUTH_PROPAGATE__"));
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
 
@@ -198,10 +199,12 @@ if (inputConn != null) {
                     System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
-                java.util.Collection<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
-                if (null != soapHeaders_<%=cid%>) {
-                    genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
-                }
+                <% if (authPropagate) { %>
+                    java.util.Collection<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
+                    if (null != soapHeaders_<%=cid%>) {
+                        genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
+                    }
+                <% } %>
 
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
                     genericConsumer_<%=cid%>.setCustomSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
