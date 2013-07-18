@@ -33,8 +33,8 @@ if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 0) {
 	ESBProviderCallbackTalendJobInner providerCallback_<%=cid%>;
 	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
 	if (null == this.callback) {
-		final QueuedMessageHandlerImpl<org.dom4j.Document> handler_<%=cid%> =
-			new QueuedMessageHandlerImpl<org.dom4j.Document>();
+		final QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> handler_<%=cid%> =
+			new QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document>();
 		handlerThread_<%=cid%> =
 			new HandlerThread_<%=cid%>(handler_<%=cid%>); //
 		handlerThread_<%=cid%>.start();
@@ -62,8 +62,14 @@ try {
 			}
 <% } %>
 
-			org.dom4j.Document requestMessage_<%=cid%> =
-					(org.dom4j.Document) esbHandler_<%=cid%>.getRequest();
+            Object request_<%=cid%> = esbHandler_<%=cid%>.getRequest();
+            org.dom4j.Document requestMessage_<%=cid%>;
+            if (request_<%=cid%> instanceof java.util.Map) {
+                java.util.Map<String, Object> esbRequest = (java.util.Map<String, Object>) request_<%=cid%>;
+                requestMessage_<%=cid%> = (org.dom4j.Document) esbRequest.get(ESBProviderCallback.REQUEST);
+            } else {
+                requestMessage_<%=cid%> = (org.dom4j.Document) request_<%=cid%>;
+            }
 
 <% if (!isOneWay) { %>
 			globalMap.put("wsRequestReceivedAndResponseSentBack", false);

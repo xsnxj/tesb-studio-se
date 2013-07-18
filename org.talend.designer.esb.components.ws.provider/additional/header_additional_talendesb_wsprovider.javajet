@@ -94,7 +94,7 @@ if (!process.getNodesOfType("tESBProviderRequest").isEmpty()) { // if ESB provid
 /**
  * queued message exchange
  */
-public class QueuedExchangeContextImpl<T> {
+public class QueuedExchangeContextImpl<IN, OUT> {
 
 	/**
 	 * Exchange timeout in seconds
@@ -106,12 +106,12 @@ public class QueuedExchangeContextImpl<T> {
 	private final java.util.concurrent.CountDownLatch latch =
 		new java.util.concurrent.CountDownLatch(1);
 
-	private final T input;
+	private final IN input;
 
-	private T output = null;
+	private OUT output = null;
 	private Throwable fault = null;
 
-	public QueuedExchangeContextImpl(T inMsg) {
+	public QueuedExchangeContextImpl(IN inMsg) {
 		this.input = inMsg;
 	}
 
@@ -145,11 +145,11 @@ public class QueuedExchangeContextImpl<T> {
 		latch.await(timeout, unit);
 	}
 
-	public T getInputMessage() {
+	public IN getInputMessage() {
 		return input;
 	}
 
-	public void serveOutputMessage(T response) {
+	public void serveOutputMessage(OUT response) {
 		output = response;
 	}
 
@@ -161,7 +161,7 @@ public class QueuedExchangeContextImpl<T> {
 		return fault != null;
 	}
 
-	public T getResponse() {
+	public OUT getResponse() {
 		return output;
 	}
 
@@ -173,13 +173,13 @@ public class QueuedExchangeContextImpl<T> {
 /**
  * message exchange controller
  */
-public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
+public class QueuedMessageHandlerImpl<IN, OUT> implements ESBProviderCallback {
 	private final int MAX_QUEUE_SIZE = 1000;
 
 	private final int WAIT_TIMEOUT_SECONDS = 120;
 
-	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl<T>> queue =
-		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl<T>>(MAX_QUEUE_SIZE);
+	private final java.util.concurrent.BlockingQueue<QueuedExchangeContextImpl<IN, OUT>> queue =
+		new java.util.concurrent.LinkedBlockingQueue<QueuedExchangeContextImpl<IN, OUT>>(MAX_QUEUE_SIZE);
 
 	/**
 	 * This method add a newly created
@@ -188,8 +188,8 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 	 * Then it waits until the {@link QueuedExchangeContextImpl}
 	 * will be completed for request-response operations
 	 */
-	public QueuedExchangeContextImpl<T> invoke(T request, boolean wait) {
-		QueuedExchangeContextImpl<T> context = new QueuedExchangeContextImpl<T>(request);
+	public QueuedExchangeContextImpl<IN, OUT> invoke(IN request, boolean wait) {
+		QueuedExchangeContextImpl<IN, OUT> context = new QueuedExchangeContextImpl<IN, OUT>(request);
 		boolean inserted = queue.offer(context);
 		if (!inserted) {
 			try {
@@ -211,9 +211,9 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 		return context;
 	}
 
-	QueuedExchangeContextImpl<T> currentExchangeContext;
+	QueuedExchangeContextImpl<IN, OUT> currentExchangeContext;
 
-	public T getRequest() throws ESBJobInterruptedException {
+	public IN getRequest() throws ESBJobInterruptedException {
 		currentExchangeContext = null;
 		try {
 			currentExchangeContext = queue.take();
@@ -233,7 +233,7 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 			currentExchangeContext.serveFault((Throwable) output);
 		} else {
 			// response
-			currentExchangeContext.serveOutputMessage((T) output);
+			currentExchangeContext.serveOutputMessage((OUT) output);
 		}
 
 		try {
@@ -252,9 +252,12 @@ public class QueuedMessageHandlerImpl<T> implements ESBProviderCallback {
 @javax.xml.ws.WebServiceProvider()
 public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 
-	private QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler;
+    @javax.annotation.Resource
+    private javax.xml.ws.WebServiceContext context;
 
-	public ESBProvider_<%=cid%>(QueuedMessageHandlerImpl<org.dom4j.Document> messageHandler) {
+	private QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> messageHandler;
+
+	public ESBProvider_<%=cid%>(QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> messageHandler) {
 		this.messageHandler = messageHandler;
 	}
 
@@ -269,7 +272,12 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
 					.read(new java.io.ByteArrayInputStream(os.toByteArray()));
 
-			QueuedExchangeContextImpl<org.dom4j.Document> messageExchange = messageHandler.invoke(requestDoc, <%=!isOneWay%>);
+			java.util.Collection<org.apache.cxf.headers.Header> headers = (java.util.Collection<org.apache.cxf.headers.Header>) context.getMessageContext().get(org.apache.cxf.headers.Header.HEADER_LIST);
+			java.util.Map<String, Object> esbRequest = new java.util.HashMap<String, Object>();
+			esbRequest.put(ESBProviderCallback.HEADERS, headers);
+			esbRequest.put(ESBProviderCallback.REQUEST, requestDoc);
+
+			QueuedExchangeContextImpl<java.util.Map, org.dom4j.Document> messageExchange = messageHandler.invoke(esbRequest, <%=!isOneWay%>);
 
 <% if (isOneWay) { %>
 			return null;
@@ -397,11 +405,11 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 class HandlerThread_<%=cid%> extends Thread {
 
 	private org.apache.cxf.endpoint.Server server;
-	QueuedMessageHandlerImpl<org.dom4j.Document> handler;
+	QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> handler;
 
 	String endpointUrl = "<%=endpointUrl%>";
 
-	public HandlerThread_<%=cid%>(QueuedMessageHandlerImpl<org.dom4j.Document> handler) {
+	public HandlerThread_<%=cid%>(QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> handler) {
 		this.handler = handler;
 	}
 
