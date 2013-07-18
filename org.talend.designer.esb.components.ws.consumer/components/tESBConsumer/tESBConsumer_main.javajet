@@ -198,8 +198,13 @@ if (inputConn != null) {
                     System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
+                java.util.Collection<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
+                if (null != soapHeaders_<%=cid%>) {
+                    genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
+                }
+
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
-                    genericConsumer_<%=cid%>.setSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
+                    genericConsumer_<%=cid%>.setCustomSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());

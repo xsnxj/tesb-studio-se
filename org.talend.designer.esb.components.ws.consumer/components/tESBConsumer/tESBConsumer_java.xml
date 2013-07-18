@@ -113,12 +113,24 @@
 		</PARAMETER>
 
 
+        <PARAMETER NAME="AUTH_PROPAGATE" FIELD="CHECK" REQUIRED="true" NUM_ROW="45"
+                GROUP="ESB" REPOSITORY_VALUE="AUTH_PROPAGATE"
+                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND (AUTH_TYPE == 'SAML'))
+                         OR
+                         ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
-				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME" SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME"
+                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND ((AUTH_TYPE != 'SAML') OR (AUTH_PROPAGATE == 'false')))
+                         OR
+                         ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
-				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD" SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD"
+				SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND ((AUTH_TYPE != 'SAML') OR (AUTH_PROPAGATE == 'false')))
+				         OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 

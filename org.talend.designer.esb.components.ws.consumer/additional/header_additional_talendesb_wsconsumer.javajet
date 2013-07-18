@@ -73,7 +73,8 @@ if (actAsConsumer) { %>
 
         private boolean logMessages;
 
-        private org.dom4j.Document soapHeaders;
+        private org.dom4j.Document customSoapHeaders;
+        private java.util.Collection<org.apache.cxf.headers.Header> soapHeaders = java.util.Collections.emptyList();
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
@@ -152,7 +153,11 @@ if (actAsConsumer) { %>
             this.logMessages = logMessages;
         }
 
-        public void setSoapHeaders(org.dom4j.Document soapHeaders) {
+        public void setCustomSoapHeaders(org.dom4j.Document customSoapHeaders) {
+            this.customSoapHeaders = customSoapHeaders;
+        }
+
+        public void setSoapHeaders(java.util.Collection<org.apache.cxf.headers.Header> soapHeaders) {
             this.soapHeaders = soapHeaders;
         }
 
@@ -260,15 +265,17 @@ if (actAsConsumer) { %>
             httpClientPolicy.setReceiveTimeout(receiveTimeout);
 
             try {
-                if (soapHeaders != null) {
-                    java.util.List<org.apache.cxf.headers.Header> headers = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-                    javax.xml.transform.dom.DOMResult result = new javax.xml.transform.dom.DOMResult();
-                    FACTORY.newTransformer().transform(new org.dom4j.io.DocumentSource(soapHeaders), result);
-                    for (org.w3c.dom.Node node = ((org.w3c.dom.Document) result.getNode()).getDocumentElement().getFirstChild();
-                            node != null;
-                            node = node.getNextSibling()) {
-                        if (org.w3c.dom.Node.ELEMENT_NODE == node.getNodeType()) {
-                            headers.add(new org.apache.cxf.headers.Header(new javax.xml.namespace.QName(node.getNamespaceURI(), node.getLocalName()), node));
+                if (customSoapHeaders != null || !soapHeaders.isEmpty()) {
+                    java.util.List<org.apache.cxf.headers.Header> headers = new java.util.ArrayList<org.apache.cxf.headers.Header>(soapHeaders);
+                    if (customSoapHeaders != null) {
+                        javax.xml.transform.dom.DOMResult result = new javax.xml.transform.dom.DOMResult();
+                        FACTORY.newTransformer().transform(new org.dom4j.io.DocumentSource(customSoapHeaders), result);
+                        for (org.w3c.dom.Node node = ((org.w3c.dom.Document) result.getNode()).getDocumentElement().getFirstChild();
+                                node != null;
+                                node = node.getNextSibling()) {
+                            if (org.w3c.dom.Node.ELEMENT_NODE == node.getNodeType()) {
+                                headers.add(new org.apache.cxf.headers.Header(new javax.xml.namespace.QName(node.getNamespaceURI(), node.getLocalName()), node));
+                            }
                         }
                     }
                     client.getRequestContext().put(org.apache.cxf.headers.Header.HEADER_LIST, headers);
