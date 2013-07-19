@@ -99,8 +99,6 @@ if (inputConn != null) {
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
-    final routines.system.Document headersTalendDoc_<%=cid%> = <% if(hasHeaders) { %> <%=inputConn.getName()%>.headers; <% } else { %> null;<% } %>
-
     try {
         routines.system.Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
 
@@ -129,6 +127,33 @@ if (inputConn != null) {
                 <% } %>
             <% } %>
 
+            final java.util.List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
+            <% if (authPropagate) { %>
+                java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
+                if (null != existingSoapHeaders_<%=cid%>) {
+                    for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
+                        if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
+                                && "Security".equals(existingHeader.getName().getLocalPart())) {
+                            soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
+                        }
+                    }
+                }
+            <% } %>
+            <% if (hasHeaders) { %>
+                final routines.system.Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
+                if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
+                    javax.xml.transform.dom.DOMResult result = new javax.xml.transform.dom.DOMResult();
+                    javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(new org.dom4j.io.DocumentSource(headersTalendDoc_<%=cid%>.getDocument()), result);
+                    for (org.w3c.dom.Node node = ((org.w3c.dom.Document) result.getNode()).getDocumentElement().getFirstChild();
+                            node != null;
+                            node = node.getNextSibling()) {
+                        if (org.w3c.dom.Node.ELEMENT_NODE == node.getNodeType()) {
+                            soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(new javax.xml.namespace.QName(node.getNamespaceURI(), node.getLocalName()), node));
+                        }
+                    }
+                }
+            <% } %>
+            
             if (null == this.registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
@@ -136,10 +161,10 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=methodNS%>", "<%=method%>"));
                 genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
                 <% String soapAction=ElementParameterParser.getValue(node, "__SOAP_ACTION__");
-                	if(soapAction!=null&&(!soapAction.matches("\\s*"))){
-                		%>genericConsumer_<%=cid%>.setSoapAction("<%=soapAction%>");<%                	
-                	}
-                %>
+                    if(soapAction != null && (!soapAction.matches("\\s*"))) { %>
+                        genericConsumer_<%=cid%>.setSoapAction("<%=soapAction%>");
+                <%  } %>
+
                 genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
@@ -199,22 +224,8 @@ if (inputConn != null) {
                     System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
-                <% if (authPropagate) { %>
-                    java.util.Collection<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
-                    if (null != soapHeaders_<%=cid%>) {
-                        java.util.List<org.apache.cxf.headers.Header> soapHeaders = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-                        for (org.apache.cxf.headers.Header existingHeader : soapHeaders_tESBConsumer_1) {
-                            if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
-                                    && "Security".equals(existingHeader.getName().getLocalPart())) {
-                                soapHeaders.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
-                            }
-                        }
-                        genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders);
-                    }
-                <% } %>
-
-                if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
-                    genericConsumer_<%=cid%>.setCustomSoapHeaders(headersTalendDoc_<%=cid%>.getDocument());
+                if (!soapHeaders_<%=cid%>.isEmpty()) {
+                    genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
@@ -266,8 +277,9 @@ if (inputConn != null) {
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
                             <% } %>
-                            if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
-                                put("soapHeaders", headersTalendDoc_<%=cid%>.getDocument());
+
+                            if (!soapHeaders_<%=cid%>.isEmpty()) {
+                                put("soapHeaders", soapHeaders_<%=cid%>);
                             }
                         }};
 
