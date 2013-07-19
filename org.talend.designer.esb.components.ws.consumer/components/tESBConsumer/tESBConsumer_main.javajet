@@ -202,7 +202,14 @@ if (inputConn != null) {
                 <% if (authPropagate) { %>
                     java.util.Collection<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
                     if (null != soapHeaders_<%=cid%>) {
-                        genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
+                        java.util.List<org.apache.cxf.headers.Header> soapHeaders = new java.util.ArrayList<org.apache.cxf.headers.Header>();
+                        for (org.apache.cxf.headers.Header existingHeader : soapHeaders_tESBConsumer_1) {
+                            if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
+                                    && "Security".equals(existingHeader.getName().getLocalPart())) {
+                                soapHeaders.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
+                            }
+                        }
+                        genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders);
                     }
                 <% } %>
 
