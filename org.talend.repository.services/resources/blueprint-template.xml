@@ -132,6 +132,7 @@
 #if ($useSAM)
 		<property name="eventFeature" ref="eventFeature" />
 #end
+        <property name="extractHeaders" value="true" />
 	</bean>
 	<service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
 		<service-properties>
