@@ -44,7 +44,6 @@ import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
@@ -52,6 +51,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.properties.tab.IDynamicProperty;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.CoreUIPlugin;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.Expression;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -64,344 +64,314 @@ import com.sun.corba.se.spi.orb.StringPair;
  * @author Xiaopeng Li
  * 
  */
-public class RouteComponentController extends
-		AbstractElementPropertySectionController {
+public class RouteComponentController extends AbstractElementPropertySectionController {
 
-	private static final String STRING = ":";
+    private static final String STRING = ":";
 
-	public static final String COMMA = ";";
+    public static final String COMMA = ";";
 
-	private Text labelText;
+    private Text labelText;
 
-	SelectionListener listenerSelection = new SelectionListener() {
+    SelectionListener listenerSelection = new SelectionListener() {
 
-		public void widgetDefaultSelected(SelectionEvent e) {
-			// do nothing.
-		}
+        public void widgetDefaultSelected(SelectionEvent e) {
+            // do nothing.
+        }
 
-		public void widgetSelected(SelectionEvent e) {
-			Command cmd = createCommand(e);
-			executeCommand(cmd);
-		}
-	};
+        public void widgetSelected(SelectionEvent e) {
+            Command cmd = createCommand(e);
+            executeCommand(cmd);
+        }
+    };
 
-	public RouteComponentController(IDynamicProperty dp) {
-		super(dp);
-	}
+    public RouteComponentController(IDynamicProperty dp) {
+        super(dp);
+    }
 
-	/**
-	 * DOC nrousseau Comment method "createButtonCommand".
-	 * 
-	 * @param source
-	 * @return
-	 */
-	private Command createButtonCommand(Button button) {
+    /**
+     * DOC nrousseau Comment method "createButtonCommand".
+     * 
+     * @param source
+     * @return
+     */
+    private Command createButtonCommand(Button button) {
 
-		Object[] listItemsValue = curParameter.getListItemsValue();
-		RouteComponentSelectionDialog dlg = null;
-		dlg = new RouteComponentSelectionDialog(button.getShell(), listItemsValue,
-					(INode) elem);
+        Object[] listItemsValue = curParameter.getListItemsValue();
+        RouteComponentSelectionDialog dlg = null;
+        dlg = new RouteComponentSelectionDialog(button.getShell(), listItemsValue, (INode) elem);
 
-		IElementParameter itemParam = curParameter.getChildParameters().get(
-				EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
+        IElementParameter itemParam = curParameter.getChildParameters().get(EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
 
-		dlg.setSelectedId((String) itemParam.getValue());
-		if (dlg.open() == Window.OK) {
-			INode node = dlg.getResult();
-			String paramName = (String) button.getData(PARAMETER_NAME);
-			return new RouteComponentChangeCommand(elem, paramName,
-					node.getUniqueName());
-		}
-		return null;
+        dlg.setSelectedId((String) itemParam.getValue());
+        if (dlg.open() == Window.OK) {
+            INode node = dlg.getResult();
+            String paramName = (String) button.getData(PARAMETER_NAME);
+            return new RouteComponentChangeCommand(elem, paramName, node.getUniqueName());
+        }
+        return null;
 
-	}
+    }
 
-	private Command createCommand(SelectionEvent selectionEvent) {
-		if (selectionEvent.getSource() instanceof Button) {
-			return createButtonCommand((Button) selectionEvent.getSource());
-		}
-		return null;
-	}
+    private Command createCommand(SelectionEvent selectionEvent) {
+        if (selectionEvent.getSource() instanceof Button) {
+            return createButtonCommand((Button) selectionEvent.getSource());
+        }
+        return null;
+    }
 
-	@Override
-	public Control createControl(final Composite subComposite,
-			final IElementParameter param, final int numInRow,
-			final int nbInRow, final int top, final Control lastControl) {
-		this.curParameter = param;
-		this.paramFieldType = param.getFieldType();
-		FormData data;
+    @Override
+    public Control createControl(final Composite subComposite, final IElementParameter param, final int numInRow,
+            final int nbInRow, final int top, final Control lastControl) {
+        this.curParameter = param;
+        this.paramFieldType = param.getFieldType();
+        FormData data;
 
-		IElementParameter processTypeParameter = param.getChildParameters()
-				.get(EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
+        IElementParameter processTypeParameter = param.getChildParameters().get(EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
 
-		final DecoratedField dField = new DecoratedField(subComposite,
-				SWT.BORDER | SWT.READ_ONLY, new SelectAllTextControlCreator());
-		if (param.isRequired()) {
-			FieldDecoration decoration = FieldDecorationRegistry.getDefault()
-					.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
-			dField.addFieldDecoration(decoration, SWT.RIGHT | SWT.TOP, false);
-		}
-		Control cLayout = dField.getLayoutControl();
+        final DecoratedField dField = new DecoratedField(subComposite, SWT.BORDER | SWT.READ_ONLY,
+                new SelectAllTextControlCreator());
+        if (param.isRequired()) {
+            FieldDecoration decoration = FieldDecorationRegistry.getDefault().getFieldDecoration(
+                    FieldDecorationRegistry.DEC_REQUIRED);
+            dField.addFieldDecoration(decoration, SWT.RIGHT | SWT.TOP, false);
+        }
+        Control cLayout = dField.getLayoutControl();
 
-		labelText = (Text) dField.getControl();
+        labelText = (Text) dField.getControl();
 
-		labelText.setData(PARAMETER_NAME, param.getName());
+        labelText.setData(PARAMETER_NAME, param.getName());
 
-		cLayout.setBackground(subComposite.getBackground());
-		labelText.setEditable(false);
-		if (elem instanceof Node) {
-			labelText
-					.setToolTipText(VARIABLE_TOOLTIP + param.getVariableName());
-		}
+        cLayout.setBackground(subComposite.getBackground());
+        labelText.setEditable(false);
+        if (elem instanceof Node) {
+            labelText.setToolTipText(VARIABLE_TOOLTIP + param.getVariableName());
+        }
 
-		addDragAndDropTarget(labelText);
+        addDragAndDropTarget(labelText);
 
-		CLabel labelLabel = getWidgetFactory().createCLabel(subComposite,
-				param.getDisplayName());
-		data = new FormData();
-		if (lastControl != null) {
-			data.left = new FormAttachment(lastControl, 0);
-		} else {
-			data.left = new FormAttachment(
-					(((numInRow - 1) * MAX_PERCENT) / (nbInRow + 1)), 0);
-		}
-		data.top = new FormAttachment(0, top);
-		labelLabel.setLayoutData(data);
-		if (numInRow != 1) {
-			labelLabel.setAlignment(SWT.RIGHT);
-		}
+        CLabel labelLabel = getWidgetFactory().createCLabel(subComposite, param.getDisplayName());
+        data = new FormData();
+        if (lastControl != null) {
+            data.left = new FormAttachment(lastControl, 0);
+        } else {
+            data.left = new FormAttachment((((numInRow - 1) * MAX_PERCENT) / (nbInRow + 1)), 0);
+        }
+        data.top = new FormAttachment(0, top);
+        labelLabel.setLayoutData(data);
+        if (numInRow != 1) {
+            labelLabel.setAlignment(SWT.RIGHT);
+        }
 
-		data = new FormData();
-		int currentLabelWidth = STANDARD_LABEL_WIDTH;
-		GC gc = new GC(labelLabel);
-		Point labelSize = gc.stringExtent(param.getDisplayName());
-		gc.dispose();
-		if ((labelSize.x + ITabbedPropertyConstants.HSPACE) > currentLabelWidth) {
-			currentLabelWidth = labelSize.x + ITabbedPropertyConstants.HSPACE;
-		}
+        data = new FormData();
+        int currentLabelWidth = STANDARD_LABEL_WIDTH;
+        GC gc = new GC(labelLabel);
+        Point labelSize = gc.stringExtent(param.getDisplayName());
+        gc.dispose();
+        if ((labelSize.x + ITabbedPropertyConstants.HSPACE) > currentLabelWidth) {
+            currentLabelWidth = labelSize.x + ITabbedPropertyConstants.HSPACE;
+        }
 
-		if (numInRow == 1) {
-			if (lastControl != null) {
-				data.left = new FormAttachment(lastControl, currentLabelWidth);
-			} else {
-				data.left = new FormAttachment(0, currentLabelWidth);
-			}
+        if (numInRow == 1) {
+            if (lastControl != null) {
+                data.left = new FormAttachment(lastControl, currentLabelWidth);
+            } else {
+                data.left = new FormAttachment(0, currentLabelWidth);
+            }
 
-		} else {
-			data.left = new FormAttachment(labelLabel, 0, SWT.RIGHT);
-		}
-		data.right = new FormAttachment((numInRow * MAX_PERCENT)
-				/ (nbInRow + 1), 0);
-		data.top = new FormAttachment(0, top);
-		cLayout.setLayoutData(data);
+        } else {
+            data.left = new FormAttachment(labelLabel, 0, SWT.RIGHT);
+        }
+        data.right = new FormAttachment((numInRow * MAX_PERCENT) / (nbInRow + 1), 0);
+        data.top = new FormAttachment(0, top);
+        cLayout.setLayoutData(data);
 
-		Button btn;
-		Point btnSize;
+        Button btn;
+        Point btnSize;
 
-		btn = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
-		btnSize = btn.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        btn = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
+        btnSize = btn.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-		btn.setImage(ImageProvider.getImage(CorePlugin
-				.getImageDescriptor(DOTS_BUTTON)));
+        btn.setImage(ImageProvider.getImage(CoreUIPlugin.getImageDescriptor(DOTS_BUTTON)));
 
-		btn.addSelectionListener(listenerSelection);
-		btn.setData(PARAMETER_NAME, param.getName() + STRING
-				+ processTypeParameter.getName()); //$NON-NLS-1$
-		btn.setEnabled(!param.isReadOnly());
-		data = new FormData();
-		data.left = new FormAttachment(cLayout, 0);
-		data.right = new FormAttachment(cLayout, STANDARD_BUTTON_WIDTH,
-				SWT.RIGHT);
-		data.top = new FormAttachment(0, top);
-		data.height = STANDARD_HEIGHT - 2;
-		btn.setLayoutData(data);
+        btn.addSelectionListener(listenerSelection);
+        btn.setData(PARAMETER_NAME, param.getName() + STRING + processTypeParameter.getName());
+        btn.setEnabled(!param.isReadOnly());
+        data = new FormData();
+        data.left = new FormAttachment(cLayout, 0);
+        data.right = new FormAttachment(cLayout, STANDARD_BUTTON_WIDTH, SWT.RIGHT);
+        data.top = new FormAttachment(0, top);
+        data.height = STANDARD_HEIGHT - 2;
+        btn.setLayoutData(data);
 
-		hashCurControls.put(
-				param.getName() + STRING + processTypeParameter.getName(),
-				labelText);
-		Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT,
-				SWT.DEFAULT);
+        hashCurControls.put(param.getName() + STRING + processTypeParameter.getName(), labelText);
+        Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-		dynamicProperty.setCurRowSize(Math.max(initialSize.y, btnSize.y)
-				+ ITabbedPropertyConstants.VSPACE);
-		return btn;
-	}
+        dynamicProperty.setCurRowSize(Math.max(initialSize.y, btnSize.y) + ITabbedPropertyConstants.VSPACE);
+        return btn;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.talend.designer.core.ui.editor.properties.controllers.
-	 * AbstractElementPropertySectionController#estimateRowSize
-	 * (org.eclipse.swt.widgets.Composite,
-	 * org.talend.core.model.process.IElementParameter)
-	 */
-	@Override
-	public int estimateRowSize(Composite subComposite, IElementParameter param) {
-		final DecoratedField dField = new DecoratedField(subComposite,
-				SWT.BORDER, new IControlCreator() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.core.ui.editor.properties.controllers.
+     * AbstractElementPropertySectionController#estimateRowSize (org.eclipse.swt.widgets.Composite,
+     * org.talend.core.model.process.IElementParameter)
+     */
+    @Override
+    public int estimateRowSize(Composite subComposite, IElementParameter param) {
+        final DecoratedField dField = new DecoratedField(subComposite, SWT.BORDER, new IControlCreator() {
 
-					public Control createControl(Composite parent, int style) {
-						return getWidgetFactory().createButton(
-								parent,
-								EParameterName.ROUTE_COMPONENT_TYPE
-										.getDisplayName(), SWT.None);
-					}
+            public Control createControl(Composite parent, int style) {
+                return getWidgetFactory().createButton(parent, EParameterName.ROUTE_COMPONENT_TYPE.getDisplayName(), SWT.None);
+            }
 
-				});
-		Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT,
-				SWT.DEFAULT);
-		dField.getLayoutControl().dispose();
+        });
+        Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        dField.getLayoutControl().dispose();
 
-		return initialSize.y + ITabbedPropertyConstants.VSPACE;
-	}
+        return initialSize.y + ITabbedPropertyConstants.VSPACE;
+    }
 
-	protected String getlabel(Item item) {
-		String label = item.getProperty().getDisplayName();
-		String parentPaths = item.getState().getPath();
-		if (parentPaths != null && !parentPaths.isEmpty()) {
-			label = parentPaths + "/" + label;
-		}
-		return label;
-	}
+    protected String getlabel(Item item) {
+        String label = item.getProperty().getDisplayName();
+        String parentPaths = item.getState().getPath();
+        if (parentPaths != null && !parentPaths.isEmpty()) {
+            label = parentPaths + "/" + label;
+        }
+        return label;
+    }
 
-	public void propertyChange(PropertyChangeEvent arg0) {
+    public void propertyChange(PropertyChangeEvent arg0) {
 
-	}
+    }
 
-	@Override
-	public void refresh(final IElementParameter param, boolean check) {
-		new Thread() {
-			@Override
-			public void run() {
+    @Override
+    public void refresh(final IElementParameter param, boolean check) {
+        new Thread() {
 
-				Display.getDefault().syncExec(new Runnable() {
+            @Override
+            public void run() {
 
-					public void run() {
-						if (hashCurControls == null) {
-							return;
-						}
+                Display.getDefault().syncExec(new Runnable() {
 
-						IElementParameter param = elem
-								.getElementParameter(EParameterName.ROUTE_COMPONENT_TYPE_ID
-										.getName());
-						String value = (String) param.getValue();
-						if (value == null) {
-							labelText.setText("");
-							param.setValue("");
-						} else {
-							boolean has = false;
-							INode node = (INode) elem;
-							List<? extends INode> graphicalNodes = node
-									.getProcess().getGraphicalNodes();
-							for (INode n : graphicalNodes) {
-								if (n.getUniqueName().equals(value)) {
-									//check validate again by filter.
-									if(validateNodeByFilter(n, elem, curParameter.getListItemsValue())) {
-										labelText.setText(n.getLabel());
-										has = true;
-									}
-									break;
-								}
-							}
-							if (!has) {
-								labelText.setText("");
-								param.setValue("");
-							}
+                    public void run() {
+                        if (hashCurControls == null) {
+                            return;
+                        }
 
-						}
+                        IElementParameter param = elem.getElementParameter(EParameterName.ROUTE_COMPONENT_TYPE_ID.getName());
+                        String value = (String) param.getValue();
+                        if (value == null) {
+                            labelText.setText("");
+                            param.setValue("");
+                        } else {
+                            boolean has = false;
+                            INode node = (INode) elem;
+                            List<? extends INode> graphicalNodes = node.getProcess().getGraphicalNodes();
+                            for (INode n : graphicalNodes) {
+                                if (n.getUniqueName().equals(value)) {
+                                    // check validate again by filter.
+                                    if (validateNodeByFilter(n, elem, curParameter.getListItemsValue())) {
+                                        labelText.setText(n.getLabel());
+                                        has = true;
+                                    }
+                                    break;
+                                }
+                            }
+                            if (!has) {
+                                labelText.setText("");
+                                param.setValue("");
+                            }
 
-						if (elem != null && elem instanceof Node) {
-							Node sourceNode=(Node)elem;
-							sourceNode.checkAndRefreshNode();
-						}
-					}
-				});
+                        }
 
-			}
-		}.start();
+                        if (elem != null && elem instanceof Node) {
+                            Node sourceNode = (Node) elem;
+                            sourceNode.checkAndRefreshNode();
+                        }
+                    }
+                });
 
-	}
-	
-	/**
-	 * Validate node by filter.
-	 *
-	 * @param n the parameter choosed node.
-	 * @param sourceNode the source component node. Which has a parameter can specify an other node.
-	 * @param listItemsValue the list items value
-	 * @return true, if successful
-	 */
-	public static boolean validateNodeByFilter(INode n,IElement sourceNode,Object[] listItemsValue) {
-		if (listItemsValue == null||listItemsValue.length==0) {
-			return true;
-		}
-		if(n==sourceNode) {
-			return false;
-		}
-		if(!n.isActivate()) {
-			return false;
-		}
-		for (Object itemValue : listItemsValue) {
-			if(itemValue instanceof StringPair) {
-				StringPair pair=(StringPair) itemValue;
-				if(pair.getFirst().equals(n.getComponent().getName())){
-					if(pair.getSecond()==null) {
-						return true;
-					}
-					if(Expression.evaluate(pair.getSecond(), n.getElementParameters())){
-						return true;
-					}
-				}
-			}else {
-					return n.getComponent().getName().equals(String.valueOf(itemValue));
-			}
-		}
-		return false;
-	}
+            }
+        }.start();
 
-	private void refreshItemeProperty(IRepositoryViewObject repositoryObject) {
+    }
 
-		IEditorPart activeEditor = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (activeEditor != null
-				&& activeEditor instanceof CamelMultiPageTalendEditor) {
-			CamelMultiPageTalendEditor camelEdtior = (CamelMultiPageTalendEditor) activeEditor;
-			IEditorInput editorInput = camelEdtior.getEditorInput();
-			CamelProcessEditorInput input = (CamelProcessEditorInput) editorInput;
-			Item item = input.getItem();
+    /**
+     * Validate node by filter.
+     * 
+     * @param n the parameter choosed node.
+     * @param sourceNode the source component node. Which has a parameter can specify an other node.
+     * @param listItemsValue the list items value
+     * @return true, if successful
+     */
+    public static boolean validateNodeByFilter(INode n, IElement sourceNode, Object[] listItemsValue) {
+        if (listItemsValue == null || listItemsValue.length == 0) {
+            return true;
+        }
+        if (n == sourceNode) {
+            return false;
+        }
+        if (!n.isActivate()) {
+            return false;
+        }
+        for (Object itemValue : listItemsValue) {
+            if (itemValue instanceof StringPair) {
+                StringPair pair = (StringPair) itemValue;
+                if (pair.getFirst().equals(n.getComponent().getName())) {
+                    if (pair.getSecond() == null) {
+                        return true;
+                    }
+                    if (Expression.evaluate(pair.getSecond(), n.getElementParameters())) {
+                        return true;
+                    }
+                }
+            } else {
+                return n.getComponent().getName().equals(String.valueOf(itemValue));
+            }
+        }
+        return false;
+    }
 
-			EMap additionalProperties = item.getProperty()
-					.getAdditionalProperties();
+    private void refreshItemeProperty(IRepositoryViewObject repositoryObject) {
 
-			String id = repositoryObject.getId();
+        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+        if (activeEditor != null && activeEditor instanceof CamelMultiPageTalendEditor) {
+            CamelMultiPageTalendEditor camelEdtior = (CamelMultiPageTalendEditor) activeEditor;
+            IEditorInput editorInput = camelEdtior.getEditorInput();
+            CamelProcessEditorInput input = (CamelProcessEditorInput) editorInput;
+            Item item = input.getItem();
 
-			if (additionalProperties != null) {
-				Object object = additionalProperties
-						.get("ROUTE_RESOURCES_PROP");
-				if (object == null) {
-					additionalProperties.put("ROUTE_RESOURCES_PROP", id);
-				} else {
-					String idStrs = object.toString();
-					String[] strings = idStrs.split(",");
-					boolean contained = false;
-					for (String str : strings) {
-						if (str.trim().equals(id)) {
-							contained = true;
-						}
-					}
-					if (!contained) {
-						idStrs = idStrs + "," + id;
-						additionalProperties
-								.put("ROUTE_RESOURCES_PROP", idStrs);
-					}
-				}
-			}
+            EMap additionalProperties = item.getProperty().getAdditionalProperties();
 
-			try {
-				ProxyRepositoryFactory.getInstance().save(item, false);
-			} catch (PersistenceException e) {
-			}
-		}
+            String id = repositoryObject.getId();
 
-	}
+            if (additionalProperties != null) {
+                Object object = additionalProperties.get("ROUTE_RESOURCES_PROP");
+                if (object == null) {
+                    additionalProperties.put("ROUTE_RESOURCES_PROP", id);
+                } else {
+                    String idStrs = object.toString();
+                    String[] strings = idStrs.split(",");
+                    boolean contained = false;
+                    for (String str : strings) {
+                        if (str.trim().equals(id)) {
+                            contained = true;
+                        }
+                    }
+                    if (!contained) {
+                        idStrs = idStrs + "," + id;
+                        additionalProperties.put("ROUTE_RESOURCES_PROP", idStrs);
+                    }
+                }
+            }
+
+            try {
+                ProxyRepositoryFactory.getInstance().save(item, false);
+            } catch (PersistenceException e) {
+            }
+        }
+
+    }
 
 }

@@ -49,7 +49,6 @@ import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
-import org.talend.core.CorePlugin;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
@@ -57,6 +56,7 @@ import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.properties.tab.IDynamicProperty;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.CoreUIPlugin;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.components.EParameterName;
@@ -233,7 +233,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         btn = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
         btnSize = btn.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-        btn.setImage(ImageProvider.getImage(CorePlugin.getImageDescriptor(DOTS_BUTTON)));
+        btn.setImage(ImageProvider.getImage(CoreUIPlugin.getImageDescriptor(DOTS_BUTTON)));
 
         btn.addSelectionListener(listenerSelection);
         btn.setData(PARAMETER_NAME, param.getName() + STRING + processTypeParameter.getName());

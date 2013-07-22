@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.resource.RouteResourceActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.talend.commons.ui,
  org.talend.core.runtime,
  org.talend.core,
  org.talend.core.repository,
@@ -24,3 +25,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.io
+Bundle-Vendor: .Talend SA.

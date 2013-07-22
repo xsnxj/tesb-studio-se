@@ -7,8 +7,10 @@ Bundle-Activator: org.talend.camel.designer.CamelDesignerPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.apache.commons.collections,
  org.apache.commons.lang,
+ org.talend.commons.ui,
  org.talend.camel.model,
  org.talend.core,
+ org.talend.core.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.intro,
  org.talend.repository,
