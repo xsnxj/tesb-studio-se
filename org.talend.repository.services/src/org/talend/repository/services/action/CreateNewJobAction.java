@@ -145,13 +145,14 @@ public class CreateNewJobAction extends AbstractCreateAction {
             // Set readonly to false since created job will always be editable.
             ProcessEditorInput fileEditorInput = new ProcessEditorInput(process, false, true, false);
             IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(
-            		fileEditorInput.getItem().getProperty().getId());
+                    fileEditorInput.getItem().getProperty().getId());
             fileEditorInput.setRepositoryNode(repositoryNode);
 
             IEditorPart openEditor = getActivePage().openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
             CommandStack commandStack = (CommandStack) openEditor.getAdapter(CommandStack.class);
 
-            final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
+            final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST,
+                    ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
 
             final RepositoryNode portNode = nodeOperation.getParent();
             ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
@@ -160,25 +161,27 @@ public class CreateNewJobAction extends AbstractCreateAction {
                     ((OperationRepositoryObject) nodeOperation.getObject()).getName(), portNode.getObject().getLabel());
             setProviderRequestComponentConfiguration(nodeProviderRequest, serviceParameters);
 
-            CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(nodeProviderRequest),
-                    new Point(3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+            CreateNodeContainerCommand cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(),
+                    new NodeContainer(nodeProviderRequest), new Point(3 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
             commandStack.execute(cNcc);
 
             if (!WSDLUtils.ONE_WAY.equals(serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE))) {
-                Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
-                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
-                        new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE,
+                        ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
+                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node), new Point(
+                        9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
             }
             String faults = serviceParameters.get(WSDLUtils.FAULTS);
             if (null != faults) {
                 int horMultiplier = 15;
                 for (String fault : faults.split(",")) {
-                    Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT, ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
-                    cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
-                            new Point(horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                    Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT,
+                            ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
+                    cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node), new Point(
+                            horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                     commandStack.execute(cNcc);
-                    node.getElementParameter("ESB_FAULT_TITLE").setValue('\"' + fault+ '\"'); //$NON-NLS-1$
+                    node.getElementParameter("ESB_FAULT_TITLE").setValue('\"' + fault + '\"'); //$NON-NLS-1$
 
                     horMultiplier += 6;
                 }
@@ -204,7 +207,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
             repositoryChange(nodeOperation, nodeProviderRequest);
 
             ProxyRepositoryFactory.getInstance().save(serviceItem);
-            RepositoryManager.refreshSavedNode(nodeOperation);
             return true;
         } catch (PartInitException e) {
             ExceptionHandler.process(e);
@@ -274,10 +276,9 @@ public class CreateNewJobAction extends AbstractCreateAction {
             String serviceId = connectionItem.getProperty().getId();
             String portId = ((PortRepositoryObject) nodeOperation.getParent().getObject()).getId();
             String operationId = ((OperationRepositoryObject) nodeOperation.getObject()).getId();
-            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(
-                    nodeProviderRequest,
-                    connectionItem.getConnection(),
-                    param.getName() + ':' + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(nodeProviderRequest,
+                    connectionItem.getConnection(), param.getName() + ':' + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(),
+                    serviceId + " - " + portId + " - " + operationId); //$NON-NLS-1$
             command2.execute();
         }
     }

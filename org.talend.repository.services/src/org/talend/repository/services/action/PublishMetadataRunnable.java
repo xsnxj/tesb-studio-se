@@ -73,7 +73,6 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.cwm.helper.ConnectionHelper;
@@ -107,8 +106,11 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         this.shell = shell;
     }
 
+    @Override
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         final IWorkspaceRunnable op = new IWorkspaceRunnable() {
+
+            @Override
             public void run(IProgressMonitor monitor) throws CoreException {
                 monitor.beginTask(Messages.PublishMetadataAction_Importing, 3);
 
@@ -136,8 +138,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     return;
                 }
 
-                boolean validateWsdl = Activator.getDefault().getPreferenceStore().getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
-                if(validateWsdl){
+                boolean validateWsdl = Activator.getDefault().getPreferenceStore()
+                        .getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
+                if (validateWsdl) {
                     WSDLUtils.validateWsdl(wsdlDefinition.getDocumentBaseURI());
                 }
                 monitor.worked(1);
@@ -148,8 +151,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                 try {
                     process(wsdlDefinition, selectTables);
                 } catch (IOException e) {
-                    throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-                            "Error during schema processing", e));
+                    throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error during schema processing", e));
                 }
                 monitor.done();
 
@@ -173,6 +175,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     private static class RewriteSchemaDialogRunnable implements Runnable {
 
         private final Shell shell;
+
         private final Collection<XmlFileConnectionItem> xmlObjs;
 
         private Collection<XmlFileConnectionItem> selectTables;
@@ -182,6 +185,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             this.xmlObjs = xmlObjs;
         }
 
+        @Override
         public void run() {
             RewriteSchemaDialog selectContextDialog = new RewriteSchemaDialog(shell, xmlObjs);
             if (selectContextDialog.open() == Window.OK) {
@@ -197,14 +201,12 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
     }
 
-
     private Collection<XmlFileConnectionItem> initFileConnection() throws URISyntaxException, PersistenceException {
         Collection<String> paths = getAllPaths();
         Collection<XmlFileConnectionItem> connItems = new ArrayList<XmlFileConnectionItem>();
 
         for (ConnectionItem item : DesignerPlugin.getDefault().getProxyRepositoryFactory().getMetadataConnectionsItem()) {
-            if (item instanceof XmlFileConnectionItem
-                    && paths.contains(item.getState().getPath())
+            if (item instanceof XmlFileConnectionItem && paths.contains(item.getState().getPath())
                     && !ConnectionHelper.getTables(item.getConnection()).isEmpty()) {
                 connItems.add((XmlFileConnectionItem) item);
             }
@@ -243,28 +245,27 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return paths;
     }
 
-	private void addParamsToPath(final QName portType, Operation oper,
-			Message msg, final Set<String> paths,
-			final Set<QName> alreadyCreated) throws URISyntaxException {
-		if (msg != null) {
-		    QName parameterFromMessage = getParameterFromMessage(msg);
-		    if(parameterFromMessage==null) {
-		    	return;
-		    }
-		    if (alreadyCreated.add(parameterFromMessage)) {
-		        String folderPath = FolderNameUtil.getImportedXmlSchemaPath(
-		            parameterFromMessage.getNamespaceURI(), portType.getLocalPart(), oper.getName());
-		        paths.add(folderPath);
-		    }
-		}
-	}
+    private void addParamsToPath(final QName portType, Operation oper, Message msg, final Set<String> paths,
+            final Set<QName> alreadyCreated) throws URISyntaxException {
+        if (msg != null) {
+            QName parameterFromMessage = getParameterFromMessage(msg);
+            if (parameterFromMessage == null) {
+                return;
+            }
+            if (alreadyCreated.add(parameterFromMessage)) {
+                String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameterFromMessage.getNamespaceURI(),
+                        portType.getLocalPart(), oper.getName());
+                paths.add(folderPath);
+            }
+        }
+    }
 
     private static QName getParameterFromMessage(Message msg) {
         // add first parameter from message.
-    	@SuppressWarnings("unchecked")
-    	Collection<Part> values = msg.getParts().values();
-        if(values==null||values.isEmpty()) {
-        	return null;
+        @SuppressWarnings("unchecked")
+        Collection<Part> values = msg.getParts().values();
+        if (values == null || values.isEmpty()) {
+            return null;
         }
         Part part = values.iterator().next();
         if (part.getElementName() != null) {
@@ -276,18 +277,18 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     }
 
     @SuppressWarnings("unchecked")
-	private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
+    private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
         Map<String, File> fileToSchemaMap = new HashMap<String, File>();
         File zip = null;
         final SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
 
         try {
-	        populationUtil = new XSDPopulationUtil2();
-	        for (XmlSchema schema : schemaUtil.getSchemas()) {
-	            File file = initFileContent(schema);
-	            fileToSchemaMap.put(schema.getTargetNamespace(), file);
-	            populationUtil.addSchema(file.getPath());
-	        }
+            populationUtil = new XSDPopulationUtil2();
+            for (XmlSchema schema : schemaUtil.getSchemas()) {
+                File file = initFileContent(schema);
+                fileToSchemaMap.put(schema.getTargetNamespace(), file);
+                populationUtil.addSchema(file.getPath());
+            }
 
             zip = File.createTempFile("tempXSDFile", ".zip");
             Collection<File> files = fileToSchemaMap.values();
@@ -299,59 +300,62 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                 final QName portType = binding.getPortType().getQName();
                 if (portTypes.add(portType)) {
                     for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
-	                    Operation oper = operation.getOperation();
-	                    Input inDef = oper.getInput();
-	                    if (inDef != null) {
-	                        Message inMsg = inDef.getMessage();
-	                        if (inMsg != null) {
-	                            // fix for TDI-20699
-	                            QName parameterFromMessage = getParameterFromMessage(inMsg);
-	                            if(parameterFromMessage==null) {
-	                            	continue;
-	                            }
-	                            if (alreadyCreated.add(parameterFromMessage)) {
-	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
-	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
-	                                }
-	                            }
-	                        }
-	                    }
-	
-	                    Output outDef = oper.getOutput();
-	                    if (outDef != null) {
-	                        Message outMsg = outDef.getMessage();
-	                        if (outMsg != null) {
-	                            QName parameterFromMessage = getParameterFromMessage(outMsg);
-	                            if(parameterFromMessage==null) {
-	                            	continue;
-	                            }
-	                            if (alreadyCreated.add(parameterFromMessage)) {
-	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
-	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
-	                                }
-	                            }
-	                        }
-	                    }
+                        Operation oper = operation.getOperation();
+                        Input inDef = oper.getInput();
+                        if (inDef != null) {
+                            Message inMsg = inDef.getMessage();
+                            if (inMsg != null) {
+                                // fix for TDI-20699
+                                QName parameterFromMessage = getParameterFromMessage(inMsg);
+                                if (parameterFromMessage == null) {
+                                    continue;
+                                }
+                                if (alreadyCreated.add(parameterFromMessage)) {
+                                    File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+                                    if (null != schemaFile) {
+                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
+                                                schemaFile, selectTables, zip);
+                                    }
+                                }
+                            }
+                        }
+
+                        Output outDef = oper.getOutput();
+                        if (outDef != null) {
+                            Message outMsg = outDef.getMessage();
+                            if (outMsg != null) {
+                                QName parameterFromMessage = getParameterFromMessage(outMsg);
+                                if (parameterFromMessage == null) {
+                                    continue;
+                                }
+                                if (alreadyCreated.add(parameterFromMessage)) {
+                                    File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+                                    if (null != schemaFile) {
+                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
+                                                schemaFile, selectTables, zip);
+                                    }
+                                }
+                            }
+                        }
                         for (Fault fault : (Collection<Fault>) oper.getFaults().values()) {
-	                        Message faultMsg = fault.getMessage();
-	                        if (faultMsg != null) {
-	                            QName parameterFromMessage = getParameterFromMessage(faultMsg);
-	                            if(parameterFromMessage==null) {
-	                            	continue;
-	                            }
-	                            if (alreadyCreated.add(parameterFromMessage)) {
-	                                File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
-	                                if (null != schemaFile) {
-			                            populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(), schemaFile, selectTables, zip);
-	                                }
-	                            }
-	                        }
-	                    }
-	                }
-	            }
-	        }
+                            Message faultMsg = fault.getMessage();
+                            if (faultMsg != null) {
+                                QName parameterFromMessage = getParameterFromMessage(faultMsg);
+                                if (parameterFromMessage == null) {
+                                    continue;
+                                }
+                                if (alreadyCreated.add(parameterFromMessage)) {
+                                    File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
+                                    if (null != schemaFile) {
+                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
+                                                schemaFile, selectTables, zip);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             throw e;
         } finally {
@@ -364,7 +368,6 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         }
     }
 
-
     private int orderId;
 
     private boolean loopElementFound;
@@ -375,10 +378,10 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
      * 
      * @param operationName
      * @param hashMap
-     * @throws IOException 
+     * @throws IOException
      */
-    private void populateMessage2(QName parameter, String portTypeName, String operationName,
-            File schemaFile, Collection<XmlFileConnectionItem> selectItems, File zip) throws IOException {
+    private void populateMessage2(QName parameter, String portTypeName, String operationName, File schemaFile,
+            Collection<XmlFileConnectionItem> selectItems, File zip) throws IOException {
         String name = /* componentName + "_"+ */parameter.getLocalPart();
         XmlFileConnection connection = null;
         Property connectionProperty = null;
@@ -487,14 +490,12 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         try {
             // http://jira.talendforge.org/browse/TESB-3655 Remove possible
             // schema prefix
-            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName,
-                    operationName);
+            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName, operationName);
             IPath path = new Path(folderPath);
             factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
                                                         // existing in the same path
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-            RepositoryManager.refresh(ERepositoryObjectType.METADATA_FILE_XML);
         } catch (PersistenceException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -599,8 +600,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr; //$NON-NLS-1$
         columnName = PATTERN_TOREPLACE.matcher(columnName).replaceAll("_"); //$NON-NLS-1$
 
-        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(
-                columnName, fullSchemaTargetList) {
+        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(columnName,
+                fullSchemaTargetList) {
+
             @Override
             protected String getBeanString(MetadataColumn bean) {
                 return bean.getLabel();
@@ -609,6 +611,5 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         columnName = uniqueStringGenerator.getUniqueString();
         return columnName;
     }
-
 
 }

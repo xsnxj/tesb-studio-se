@@ -15,7 +15,6 @@ package org.talend.camel.designer.dialog;
 import java.util.ArrayList;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,9 +37,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.generator.RouteComponentController;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.IGEFProcess;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
-import org.talend.core.model.process.IProcess2;
+import org.talend.core.ui.CoreUIPlugin;
 
 /**
  * @author LiXiaopeng Dialog for cJMS ConnectionFactory selection.
@@ -48,215 +48,207 @@ import org.talend.core.model.process.IProcess2;
  */
 public class RouteComponentSelectionDialog extends Dialog {
 
-	static class ConnectionFactoryContentProvider implements
-			ITreeContentProvider {
+    static class ConnectionFactoryContentProvider implements ITreeContentProvider {
 
-		public void dispose() {
+        public void dispose() {
 
-		}
+        }
 
-		public Object[] getChildren(Object parentElement) {
-			return getElements(parentElement);
-		}
+        public Object[] getChildren(Object parentElement) {
+            return getElements(parentElement);
+        }
 
-		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof java.util.List<?>) {
-				return ((java.util.List<?>) inputElement).toArray();
-			}
-			return new Object[0];
-		}
+        public Object[] getElements(Object inputElement) {
+            if (inputElement instanceof java.util.List<?>) {
+                return ((java.util.List<?>) inputElement).toArray();
+            }
+            return new Object[0];
+        }
 
-		public Object getParent(Object element) {
-			return null;
-		}
+        public Object getParent(Object element) {
+            return null;
+        }
 
-		public boolean hasChildren(Object element) {
-			return getChildren(element).length > 0;
-		}
+        public boolean hasChildren(Object element) {
+            return getChildren(element).length > 0;
+        }
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
-		}
+        }
 
-	}
+    }
 
-	static class ConnectionFactoryLabelProvider extends LabelProvider {
+    static class ConnectionFactoryLabelProvider extends LabelProvider {
 
-		static final Image image = CamelDesignerPlugin
-				.imageDescriptorFromPlugin(CamelDesignerPlugin.PLUGIN_ID,
-						"icons/routes_icon.png").createImage();
+        static final Image image = CamelDesignerPlugin.imageDescriptorFromPlugin(CamelDesignerPlugin.PLUGIN_ID,
+                "icons/routes_icon.png").createImage();
 
-		@Override
-		public Image getImage(Object element) {
-			return image;
-		}
+        @Override
+        public Image getImage(Object element) {
+            return image;
+        }
 
-		@Override
-		public String getText(Object element) {
-			if (element instanceof INode) {
+        @Override
+        public String getText(Object element) {
+            if (element instanceof INode) {
 
-				return getLabel((INode) element);
+                return getLabel((INode) element);
 
-			}
-			return super.getText(element);
-		}
-	}
+            }
+            return super.getText(element);
+        }
+    }
 
-	public static String getLabel(INode element) {
-		IElementParameter param = element.getElementParameter("LABEL");
-		String label = "";
-		if (param != null && !"__UNIQUE_NAME__".equals(param.getValue())) {
-			label = (String) param.getValue();
-		} else {
-			label = ((INode) element).getUniqueName();
-		}
-		return label;
-	}
+    public static String getLabel(INode element) {
+        IElementParameter param = element.getElementParameter("LABEL");
+        String label = "";
+        if (param != null && !"__UNIQUE_NAME__".equals(param.getValue())) {
+            label = (String) param.getValue();
+        } else {
+            label = element.getUniqueName();
+        }
+        return label;
+    }
 
-	private java.util.List<INode> nodes;
+    private java.util.List<INode> nodes;
 
-	private TreeViewer treeViewer;
+    private TreeViewer treeViewer;
 
-	private Object[] nodeTypes;
+    private Object[] nodeTypes;
 
-	private INode result;
+    private INode result;
 
-	private INode sourceNode;
+    private INode sourceNode;
 
-	private String selectedId;
+    private String selectedId;
 
-	public RouteComponentSelectionDialog(Shell parentShell, Object[] listItemsValue,
-			INode sourceNode) {
-		super(parentShell);
-		this.nodeTypes = listItemsValue;
-		this.sourceNode = sourceNode;
+    public RouteComponentSelectionDialog(Shell parentShell, Object[] listItemsValue, INode sourceNode) {
+        super(parentShell);
+        this.nodeTypes = listItemsValue;
+        this.sourceNode = sourceNode;
 
-		initModels();
+        initModels();
 
-	}
+    }
 
-	@Override
-	protected void buttonPressed(int buttonId) {
+    @Override
+    protected void buttonPressed(int buttonId) {
 
-		if (buttonId == IDialogConstants.OK_ID) {
-			setSelectedNode();
-		}
-		super.buttonPressed(buttonId);
-	}
+        if (buttonId == IDialogConstants.OK_ID) {
+            setSelectedNode();
+        }
+        super.buttonPressed(buttonId);
+    }
 
-	@Override
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
 
-		newShell.setText("Select a Node:");
-	}
-	
-	
+        newShell.setText("Select a Node:");
+    }
 
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		container.setLayout(new GridLayout());
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayoutData(new GridData(GridData.FILL_BOTH));
+        container.setLayout(new GridLayout());
 
-		treeViewer = new TreeViewer(container, SWT.SINGLE | SWT.BORDER
-				| SWT.V_SCROLL);
-		Tree tree = treeViewer.getTree();
+        treeViewer = new TreeViewer(container, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+        Tree tree = treeViewer.getTree();
 
-		treeViewer.setContentProvider(new ConnectionFactoryContentProvider());
-		treeViewer.setLabelProvider(new ConnectionFactoryLabelProvider());
-		treeViewer.setInput(nodes);
-		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+        treeViewer.setContentProvider(new ConnectionFactoryContentProvider());
+        treeViewer.setLabelProvider(new ConnectionFactoryLabelProvider());
+        treeViewer.setInput(nodes);
+        tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		tree.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				buttonPressed(IDialogConstants.OK_ID);
-			}
-		});
-		setSelection();
+        tree.addSelectionListener(new SelectionAdapter() {
 
-		return container;
-	}
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                buttonPressed(IDialogConstants.OK_ID);
+            }
+        });
+        setSelection();
 
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		if(treeViewer.getTree().getItemCount()==0) {
-			getButton(OK).setEnabled(false);
-		}
-	}
+        return container;
+    }
 
-	public void executeCommand(Command cmd) {
-		IProcess process = sourceNode.getProcess();
-		if (process != null && process instanceof IProcess2) {
-			CommandStack commandStack = ((IProcess2) process).getCommandStack();
-			if (commandStack != null) {
-				commandStack.execute(cmd);
-				return;
-			}
-		}
-		cmd.execute();
-	}
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        super.createButtonsForButtonBar(parent);
+        if (treeViewer.getTree().getItemCount() == 0) {
+            getButton(OK).setEnabled(false);
+        }
+    }
 
-	@Override
-	protected Point getInitialSize() {
-		return new Point(320, 450);
-	}
+    public void executeCommand(Command cmd) {
+        IProcess process = sourceNode.getProcess();
+        boolean executed = false;
+        if (process != null && process instanceof IGEFProcess) {
+            executed = CoreUIPlugin.getDefault().getDesignerCoreUIService().executeCommand((IGEFProcess) process, cmd);
+        }
+        if (!executed) {
+            cmd.execute();
+        }
+    }
 
-	/**
+    @Override
+    protected Point getInitialSize() {
+        return new Point(320, 450);
+    }
+
+    /**
 	 * 
 	 */
-	private void setSelectedNode() {
-		IStructuredSelection sslection = (IStructuredSelection) treeViewer
-				.getSelection();
-		result = (INode) sslection.getFirstElement();
-	}
+    private void setSelectedNode() {
+        IStructuredSelection sslection = (IStructuredSelection) treeViewer.getSelection();
+        result = (INode) sslection.getFirstElement();
+    }
 
-	public INode getResult() {
-		return result;
-	}
+    public INode getResult() {
+        return result;
+    }
 
-	/**
-	 * Load the JMSConnectionFactory nodes.
-	 */
-	private void initModels() {
-		java.util.List<? extends INode> allNodes = sourceNode.getProcess()
-				.getGraphicalNodes();
+    /**
+     * Load the JMSConnectionFactory nodes.
+     */
+    private void initModels() {
+        java.util.List<? extends INode> allNodes = sourceNode.getProcess().getGraphicalNodes();
 
-		nodes = new ArrayList<INode>();
+        nodes = new ArrayList<INode>();
 
-		for (INode node : allNodes) {
-			if(RouteComponentController.validateNodeByFilter(node,sourceNode,nodeTypes)) {
-				nodes.add(node);
-			}
-		}
-		if(nodes.size()>0){
-			INode excludeNode = sourceNode;
-			while(!excludeNode.getIncomingConnections().isEmpty()) {
-				excludeNode=excludeNode.getIncomingConnections().get(0).getSource();
-			}
-			//then excludeNode ref root node.
-			nodes.remove(excludeNode);
-		}
-	}
+        for (INode node : allNodes) {
+            if (RouteComponentController.validateNodeByFilter(node, sourceNode, nodeTypes)) {
+                nodes.add(node);
+            }
+        }
+        if (nodes.size() > 0) {
+            INode excludeNode = sourceNode;
+            while (!excludeNode.getIncomingConnections().isEmpty()) {
+                excludeNode = excludeNode.getIncomingConnections().get(0).getSource();
+            }
+            // then excludeNode ref root node.
+            nodes.remove(excludeNode);
+        }
+    }
 
-	/**
-	 * Initial selection.
-	 */
-	private void setSelection() {
-		if (selectedId == null) {
-			return;
-		}
-		for (INode node : nodes) {
-			if (selectedId.equals(node.getUniqueName())) {
-				treeViewer.setSelection(new StructuredSelection(node));
-			}
+    /**
+     * Initial selection.
+     */
+    private void setSelection() {
+        if (selectedId == null) {
+            return;
+        }
+        for (INode node : nodes) {
+            if (selectedId.equals(node.getUniqueName())) {
+                treeViewer.setSelection(new StructuredSelection(node));
+            }
 
-		}
-	}
+        }
+    }
 
-	public void setSelectedId(String selectedId) {
-		this.selectedId = selectedId;
-	}
+    public void setSelectedId(String selectedId) {
+        this.selectedId = selectedId;
+    }
 }

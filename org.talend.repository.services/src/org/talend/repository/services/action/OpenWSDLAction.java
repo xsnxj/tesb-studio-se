@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.repository.model.ERepositoryStatus;
@@ -71,7 +70,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
             return;
         }
         this.setText(createLabel);
-        //IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        // IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         switch (node.getType()) {
         case REPOSITORY_ELEMENT:
             // if (factory.isPotentiallyEditable(node.getObject())) {
@@ -84,19 +83,19 @@ public class OpenWSDLAction extends AbstractCreateAction {
         default:
             return;
         }
-        
+
         try {
-        	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-			factory.updateLockStatus();
-			ERepositoryStatus status = factory.getStatus(node.getObject());
-			if(status.isEditable() || ERepositoryStatus.DEFAULT==status){
-				setEnabled(isLastVersion(node));
-			}else {
-				setEnabled(false);
-			}
-		} catch (PersistenceException e) {
-			e.printStackTrace();
-		}
+            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+            factory.updateLockStatus();
+            ERepositoryStatus status = factory.getStatus(node.getObject());
+            if (status.isEditable() || ERepositoryStatus.DEFAULT == status) {
+                setEnabled(isLastVersion(node));
+            } else {
+                setEnabled(false);
+            }
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -116,12 +115,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         if (isToolbar()) {
             init(repositoryNode);
         }
-        WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(),
-            new OpenWSDLWizard(repositoryNode));
-
-        if (!creation) {
-            RepositoryManager.refreshSavedNode(repositoryNode);
-        }
+        WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), new OpenWSDLWizard(repositoryNode));
 
         wizardDialog.setPageSize(WIZARD_WIDTH, WIZARD_HEIGHT);
         wizardDialog.create();

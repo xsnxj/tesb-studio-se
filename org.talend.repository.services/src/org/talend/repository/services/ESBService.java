@@ -45,7 +45,6 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.core.IDesignerCoreService;
@@ -167,6 +166,7 @@ public class ESBService implements IESBService {
         }
     }
 
+    @Override
     public String getWsdlFilePath(Item item) {
         if (item != null && item instanceof ServiceItem) {
             ServiceItem si = (ServiceItem) item;
@@ -315,10 +315,12 @@ public class ESBService implements IESBService {
      * 
      * @see org.talend.core.IESBService#getServicesType()
      */
+    @Override
     public ERepositoryObjectType getServicesType() {
         return ESBRepositoryNodeType.SERVICES;
     }
 
+    @Override
     public String getServiceLabel(Item item, String linkedRepository) {
         String serviceName = item.getProperty().getLabel();
         if (item instanceof ServiceItem) {
@@ -346,6 +348,7 @@ public class ESBService implements IESBService {
         return serviceName;
     }
 
+    @Override
     public void updateOperation(INode node, String linkedRepository, RepositoryNode selectNode) {
         String[] ids = linkedRepository.split(" - ");
         if (ids.length == 3) {
@@ -405,9 +408,8 @@ public class ESBService implements IESBService {
                     try {
                         factory.save(servicesItem);
                     } catch (PersistenceException e) {
-                        e.printStackTrace();
+                        ExceptionHandler.process(e);
                     }
-                    RepositoryManager.refreshSavedNode(selectNode);
                 }
             } catch (PersistenceException e) {
                 ExceptionHandler.process(e);
@@ -433,6 +435,7 @@ public class ESBService implements IESBService {
         }
     }
 
+    @Override
     public Object getValue(Item connItem, String value, INode node) {
         if (connItem instanceof ServiceItem) {
             ServiceItem serviceItem = ((ServiceItem) connItem);
@@ -498,6 +501,7 @@ public class ESBService implements IESBService {
      * 
      * @param item
      */
+    @Override
     public void refreshComponentView(Item item) {
         try {
             IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -582,6 +586,7 @@ public class ESBService implements IESBService {
         });
     }
 
+    @Override
     public void refreshOperationLabel(String jobID) {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         try {
@@ -605,6 +610,7 @@ public class ESBService implements IESBService {
         }
     }
 
+    @Override
     public StringBuffer getAllTheJObNames(IRepositoryNode jobObject) {
         StringBuffer jobNames = null;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -648,6 +654,7 @@ public class ESBService implements IESBService {
         return jobNames;
     }
 
+    @Override
     public void editJobName(String originaleObjectLabel, String newLabel) {
         IProxyRepositoryFactory proxyRepositoryFactory = CoreRuntimePlugin.getInstance().getProxyRepositoryFactory();
         Project project = ProjectManager.getInstance().getCurrentProject();
@@ -701,6 +708,7 @@ public class ESBService implements IESBService {
         return objList;
     }
 
+    @Override
     public void deleteOldRelation(String jobID) {
         boolean portBreak = false;
         boolean serviceBreak = false;
@@ -737,7 +745,6 @@ public class ESBService implements IESBService {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        RepositoryManager.refresh(ESBRepositoryNodeType.SERVICES);
     }
 
     /*
@@ -745,6 +752,7 @@ public class ESBService implements IESBService {
      * 
      * @see org.talend.core.IESBService#isServiceItem(int)
      */
+    @Override
     public boolean isServiceItem(int classifierID) {
         if (classifierID == ServicesPackage.SERVICE_ITEM) {
             return true;

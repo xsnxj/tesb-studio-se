@@ -29,7 +29,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.designer.core.DesignerPlugin;
@@ -104,19 +103,19 @@ public class AssignJobAction extends AbstractCreateAction {
         }
         this.setText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
-        
+
         IProxyRepositoryFactory proxyFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
         try {
-			proxyFactory.updateLockStatus();
-		} catch (PersistenceException e) {
-			e.printStackTrace();
-		}
+            proxyFactory.updateLockStatus();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
         ERepositoryStatus status = proxyFactory.getStatus(node.getObject());
-        if(!status.isEditable() && !status.isPotentiallyEditable()){
-			setEnabled(false);
-		}else{
-			setEnabled(true);
-		}
+        if (!status.isEditable() && !status.isPotentiallyEditable()) {
+            setEnabled(false);
+        } else {
+            setEnabled(true);
+        }
     }
 
     /*
@@ -215,7 +214,7 @@ public class AssignJobAction extends AbstractCreateAction {
         }
     }
 
-    public boolean  assign(IRepositoryNode jobNode) {
+    public boolean assign(IRepositoryNode jobNode) {
         if (jobNode == null) {
             return false;
         }
@@ -333,7 +332,6 @@ public class AssignJobAction extends AbstractCreateAction {
             } catch (PersistenceException e) {
                 e.printStackTrace();
             }
-            RepositoryManager.refreshSavedNode(repositoryNode);
             return true;
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -341,6 +339,7 @@ public class AssignJobAction extends AbstractCreateAction {
         return false;
     }
 
+    @Override
     public Class getClassForDoubleClick() {
         try {
             RepositoryNode repositoryNode = getCurrentRepositoryNode();
@@ -359,10 +358,10 @@ public class AssignJobAction extends AbstractCreateAction {
         return getTopParent(repositoryNode);
     }
 
-    public List<String> getAllReferenceJobId(){
-    	return getAllReferenceJobId(getCurrentRepositoryNode());
+    public List<String> getAllReferenceJobId() {
+        return getAllReferenceJobId(getCurrentRepositoryNode());
     }
-    
+
     private List<String> getAllReferenceJobId(RepositoryNode repositoryNode) {
         repositoryNode = getTopParent(repositoryNode);
         List<IRepositoryNode> nodeList = repositoryNode.getChildren();

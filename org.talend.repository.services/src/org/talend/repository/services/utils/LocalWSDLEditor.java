@@ -51,7 +51,6 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.DesignerPlugin;
@@ -71,50 +70,53 @@ import org.talend.repository.services.model.services.ServicesFactory;
 public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
 
     private ServiceItem serviceItem;
+
     private RepositoryNode repositoryNode;
 
-    public LocalWSDLEditor(){
-    	super();
-    	DirectEditSelectionTool tool=new DirectEditSelectionTool() {
-    		@Override
-    		protected boolean handleButtonDown(int button) {
-    			try {
-    				super.handleButtonDown(button);
-				} catch (NullPointerException e) {
-					//ignore NPE when click wrong area.
-				}
-				return false;
-    		}
-    	};
-    	getEditDomain().setActiveTool(tool);
+    public LocalWSDLEditor() {
+        super();
+        DirectEditSelectionTool tool = new DirectEditSelectionTool() {
+
+            @Override
+            protected boolean handleButtonDown(int button) {
+                try {
+                    super.handleButtonDown(button);
+                } catch (NullPointerException e) {
+                    // ignore NPE when click wrong area.
+                }
+                return false;
+            }
+        };
+        getEditDomain().setActiveTool(tool);
         getEditDomain().setDefaultTool(tool);
         getEditDomain().setCommandStack(new LocalCommandStack(this));
     }
-    
-    @Override
-	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
-		super.init(site, editorInput);
-		if (editorInput instanceof RepositoryEditorInput) {
-			RepositoryEditorInput serviceEditorInput = (RepositoryEditorInput) editorInput;
-			serviceItem = (ServiceItem) serviceEditorInput.getItem();
-			repositoryNode = serviceEditorInput.getRepositoryNode();
-		}
-	}
 
-	@Override
+    @Override
+    public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
+        super.init(site, editorInput);
+        if (editorInput instanceof RepositoryEditorInput) {
+            RepositoryEditorInput serviceEditorInput = (RepositoryEditorInput) editorInput;
+            serviceItem = (ServiceItem) serviceEditorInput.getItem();
+            repositoryNode = serviceEditorInput.getRepositoryNode();
+        }
+    }
+
+    @Override
     public void doSave(IProgressMonitor monitor) {
-    	if(isEditorInputReadOnly()){
-    		MessageDialog.openWarning(getSite().getShell(),  Messages.WSDLFileIsReadOnly_Title,  Messages.WSDLFileIsReadOnly_Message);
-    		return;
-    	}
+        if (isEditorInputReadOnly()) {
+            MessageDialog.openWarning(getSite().getShell(), Messages.WSDLFileIsReadOnly_Title,
+                    Messages.WSDLFileIsReadOnly_Message);
+            return;
+        }
         super.doSave(monitor);
         if (null != serviceItem && null != repositoryNode) {
             save();
         }
     }
 
-    public boolean isEditorInputReadOnly(){
-    	return ((RepositoryEditorInput)getEditorInput()).isReadOnly();
+    public boolean isEditorInputReadOnly() {
+        return ((RepositoryEditorInput) getEditorInput()).isReadOnly();
     }
 
     private void save() {
@@ -125,8 +127,6 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             RepositoryUpdateManager.updateServices(serviceItem);
 
             ProxyRepositoryFactory.getInstance().save(serviceItem);
-
-            RepositoryManager.refreshSavedNode(repositoryNode);
 
             if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
                 IESBService service = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
@@ -157,7 +157,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 if (referenceJobId != null) {
                     for (IRepositoryNode operationNode : portNode.getChildren()) {
                         if (operationNode.getObject().getLabel().startsWith(operation.getName() + '-')) {
-                            IRepositoryNode jobNode = org.talend.core.repository.seeker.RepositorySeekerManager.getInstance().searchRepoViewNode(referenceJobId, false);
+                            IRepositoryNode jobNode = org.talend.core.repository.seeker.RepositorySeekerManager.getInstance()
+                                    .searchRepoViewNode(referenceJobId, false);
                             AssignJobAction action = new AssignJobAction((RepositoryNode) operationNode);
                             action.assign(jobNode);
                             break;
@@ -168,53 +169,52 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
     }
 
-	private boolean needRefreshBinding(Definition definition) {
-		try {
-			List<String> lstBindingOperations = new ArrayList<String>();
-			for (Object obj : definition.getBindings().values()) {
-				Binding binding = (Binding) obj;
-				String ns = binding.getPortType().getQName().getNamespaceURI();
-				@SuppressWarnings("unchecked")
-				List<BindingOperation> list = binding.getBindingOperations();
-				for (BindingOperation bindingoperation : list) {
-					if (bindingoperation.getOperation().isUndefined()) {
-						// show warning if operation was deleted
-						return true;
-					}
-					String name = bindingoperation.getOperation().getName();
-					lstBindingOperations.add(ns + ";" + name);
-				}
-			}
+    private boolean needRefreshBinding(Definition definition) {
+        try {
+            List<String> lstBindingOperations = new ArrayList<String>();
+            for (Object obj : definition.getBindings().values()) {
+                Binding binding = (Binding) obj;
+                String ns = binding.getPortType().getQName().getNamespaceURI();
+                @SuppressWarnings("unchecked")
+                List<BindingOperation> list = binding.getBindingOperations();
+                for (BindingOperation bindingoperation : list) {
+                    if (bindingoperation.getOperation().isUndefined()) {
+                        // show warning if operation was deleted
+                        return true;
+                    }
+                    String name = bindingoperation.getOperation().getName();
+                    lstBindingOperations.add(ns + ";" + name);
+                }
+            }
 
-			for (Object obj : definition.getAllPortTypes().values()) {
-				PortType portType = (PortType) obj;
-				String ns = portType.getQName().getNamespaceURI();
-				@SuppressWarnings("unchecked")
-				List<Operation> list = portType.getOperations();
-				for (Operation operation : list) {
-					String name = operation.getName();
-					if (!lstBindingOperations.contains(ns + ";" + name)) {
-						// show warning if operation was added
-						return true;
-					}
-				}
-			}
-		} catch (NullPointerException npe) {
-			// Show warning if any object is null
-			return true;
-		}
-		return false;
-	}
+            for (Object obj : definition.getAllPortTypes().values()) {
+                PortType portType = (PortType) obj;
+                String ns = portType.getQName().getNamespaceURI();
+                @SuppressWarnings("unchecked")
+                List<Operation> list = portType.getOperations();
+                for (Operation operation : list) {
+                    String name = operation.getName();
+                    if (!lstBindingOperations.contains(ns + ";" + name)) {
+                        // show warning if operation was added
+                        return true;
+                    }
+                }
+            }
+        } catch (NullPointerException npe) {
+            // Show warning if any object is null
+            return true;
+        }
+        return false;
+    }
 
     private void saveModel() throws CoreException {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
         Definition definition = WSDLUtils.getDefinition(serviceItem);
-		if (needRefreshBinding(definition)) {
-			MessageDialog.openWarning(getSite().getShell(),
-					Messages.LocalWSDLEditor_refreshBindingTitle,
-					Messages.LocalWSDLEditor_refreshBindingMessage);
-		}
+        if (needRefreshBinding(definition)) {
+            MessageDialog.openWarning(getSite().getShell(), Messages.LocalWSDLEditor_refreshBindingTitle,
+                    Messages.LocalWSDLEditor_refreshBindingMessage);
+        }
 
         // changed for TDI-18005
         Map<String, String> portNameIdMap = new HashMap<String, String>();
@@ -265,7 +265,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             }
 
             @SuppressWarnings("unchecked")
-			List<Operation> list = portType.getOperations();
+            List<Operation> list = portType.getOperations();
             for (Operation operation : list) {
                 if (operation.isUndefined()) {
                     // means the operation has been removed already ,why ?
@@ -320,101 +320,100 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
         }
     }
-    
+
     @Override
     protected void createActions() {
-    	super.createActions();
-    	ActionRegistry registry = getActionRegistry();
-    	BaseSelectionAction action = new OpenInNewEditor(this) {
-    		@Override
-    		public void run() {
+        super.createActions();
+        ActionRegistry registry = getActionRegistry();
+        BaseSelectionAction action = new OpenInNewEditor(this) {
 
-    		    if (getSelectedObjects().size() > 0)
-    		    {
-    		      Object o = getSelectedObjects().get(0);
-    		      // should make this generic and be able to get the owner from a facade object
-    		      if (o instanceof WSDLBaseAdapter)
-    		      {
-    		        WSDLBaseAdapter baseAdapter = (WSDLBaseAdapter)o;
-    		        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    		        IEditorPart editorPart = workbenchWindow.getActivePage().getActiveEditor();
-    		        Object object = editorPart.getAdapter(org.eclipse.wst.wsdl.Definition.class);
-    		        if (object instanceof org.eclipse.wst.wsdl.Definition)
-    		        {
-    		          EObject eObject = (EObject)baseAdapter.getTarget();
-    		          OpenOnSelectionHelper openHelper = new OpenOnSelectionHelper((org.eclipse.wst.wsdl.Definition)object);
-    		          openHelper.openEditor(eObject);
-    		        }
-    		      }
-    		    }
-    		}
-    	};
-    	action.setSelectionProvider(getSelectionManager());
-	    registry.registerAction(action);
+            @Override
+            public void run() {
+
+                if (getSelectedObjects().size() > 0) {
+                    Object o = getSelectedObjects().get(0);
+                    // should make this generic and be able to get the owner from a facade object
+                    if (o instanceof WSDLBaseAdapter) {
+                        WSDLBaseAdapter baseAdapter = (WSDLBaseAdapter) o;
+                        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                        IEditorPart editorPart = workbenchWindow.getActivePage().getActiveEditor();
+                        Object object = editorPart.getAdapter(org.eclipse.wst.wsdl.Definition.class);
+                        if (object instanceof org.eclipse.wst.wsdl.Definition) {
+                            EObject eObject = (EObject) baseAdapter.getTarget();
+                            OpenOnSelectionHelper openHelper = new OpenOnSelectionHelper((org.eclipse.wst.wsdl.Definition) object);
+                            openHelper.openEditor(eObject);
+                        }
+                    }
+                }
+            }
+        };
+        action.setSelectionProvider(getSelectionManager());
+        registry.registerAction(action);
     }
 
     @Override
     protected void initializeGraphicalViewer() {
-    	super.initializeGraphicalViewer();
-    	MenuManager contextMenu = getGraphicalViewer().getContextMenu();
-    	if(isEditorInputReadOnly()){
-    		contextMenu.setVisible(false);
-    	}
+        super.initializeGraphicalViewer();
+        MenuManager contextMenu = getGraphicalViewer().getContextMenu();
+        if (isEditorInputReadOnly()) {
+            contextMenu.setVisible(false);
+        }
     }
-    
+
     @Override
     public boolean isFileReadOnly() {
-    	return super.isFileReadOnly() || isEditorInputReadOnly();
+        return super.isFileReadOnly() || isEditorInputReadOnly();
     }
-    
+
     @Override
-    public Object getAdapter(@SuppressWarnings("rawtypes") Class type) {
-    	if(type == IOpenExternalEditorHelper.class  && isEditorInputReadOnly()){
-    		return null;
-    	}
-    	return super.getAdapter(type);
+    public Object getAdapter(@SuppressWarnings("rawtypes")
+    Class type) {
+        if (type == IOpenExternalEditorHelper.class && isEditorInputReadOnly()) {
+            return null;
+        }
+        return super.getAdapter(type);
     }
-    
+
     @Override
     public void dispose() {
-    	//unlock item if necessary
-    	IEditorInput currentEditorInput=getEditorInput();
-    	if (currentEditorInput instanceof RepositoryEditorInput) {
-    		RepositoryEditorInput serviceEditorInput=(RepositoryEditorInput) currentEditorInput;
-    		Item currentItem = serviceEditorInput.getItem();
-			if(currentItem!=null) {
-    			//unlock item if no other editors open it.
-				boolean openItemInOtherEditor=false;
-    			IEditorReference[] editorRefs=getEditorSite().getPage().getEditorReferences();
-    			for (IEditorReference editorRef : editorRefs) {
-    				if(editorRef.getEditor(false)==this) {
-    					continue;
-    				}
-    				try {
-    					IEditorInput editorInput = editorRef.getEditorInput();
-    					if(editorInput instanceof RepositoryEditorInput) {
-    						Item item=((RepositoryEditorInput) editorInput).getItem();
-    						if(item==currentItem) {
-    							//open this item & not this one.
-    							openItemInOtherEditor=true;
-    						}
-    					}
-    				} catch (PartInitException e) {
-    					//ignore and compare others
-    				}
-    			}
-    			if(!openItemInOtherEditor) {
-    				try {
-    					DesignerPlugin.getDefault().getProxyRepositoryFactory().unlock(currentItem);
-    				} catch (Exception e) {
-    					ExceptionHandler.process(e);
-    				}
-    			}
-    			
-    		}
-    	}
-    	
-    	super.dispose();
+        // unlock item if necessary
+        IEditorInput currentEditorInput = getEditorInput();
+        if (currentEditorInput instanceof RepositoryEditorInput) {
+            RepositoryEditorInput serviceEditorInput = (RepositoryEditorInput) currentEditorInput;
+            Item currentItem = serviceEditorInput.getItem();
+            if (currentItem != null) {
+                // unlock item if no other editors open it.
+                boolean openItemInOtherEditor = false;
+                IEditorReference[] editorRefs = getEditorSite().getPage().getEditorReferences();
+                for (IEditorReference editorRef : editorRefs) {
+                    if (editorRef.getEditor(false) == this) {
+                        continue;
+                    }
+                    try {
+                        IEditorInput editorInput = editorRef.getEditorInput();
+                        if (editorInput instanceof RepositoryEditorInput) {
+                            Item item = ((RepositoryEditorInput) editorInput).getItem();
+                            if (item == currentItem) {
+                                // open this item & not this one.
+                                openItemInOtherEditor = true;
+                            }
+                        }
+                    } catch (PartInitException e) {
+                        // ignore and compare others
+                    }
+                }
+                if (!openItemInOtherEditor) {
+                    try {
+                        DesignerPlugin.getDefault().getProxyRepositoryFactory().unlock(currentItem);
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
+                }
+
+            }
+        }
+
+        super.dispose();
     }
 
 }

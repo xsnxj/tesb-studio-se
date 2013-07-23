@@ -30,7 +30,6 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.ui.ISVNProviderService;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -201,13 +200,6 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
             propertyIsDirty = false;
             firePropertyChange(IEditorPart.PROP_DIRTY);
 
-            if (GlobalServiceRegister.getDefault().isServiceRegistered(ICamelDesignerCoreService.class)) {
-                ICamelDesignerCoreService camelService = (ICamelDesignerCoreService) GlobalServiceRegister.getDefault()
-                        .getService(ICamelDesignerCoreService.class);
-                if (camelService.isInstanceofCamelRoutes(processEditorInput.getItem())) {
-                    RepositoryManager.refresh(camelService.getRoutes());
-                }
-            }
         }
         if (designerEditor != null && dirtyListener != null) {
             designerEditor.getProcess().getProperty().eAdapters().add(dirtyListener);
