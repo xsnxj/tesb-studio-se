@@ -58,7 +58,12 @@ Bundle-Name: org.talend.libraries.esb
 Bundle-SymbolicName: org.talend.libraries.esb
 Bundle-Version: 5.4.0.qualifier
 Created-By: Apache Maven Bundle Plugin
-Export-Package: org.apache.cxf,
+Export-Package: javax.ws.rs,
+ javax.ws.rs.client,
+ javax.ws.rs.container,
+ javax.ws.rs.core,
+ javax.ws.rs.ext,
+ org.apache.cxf,
  org.apache.cxf.annotations,
  org.apache.cxf.attachment,
  org.apache.cxf.binding,
@@ -267,4 +272,5 @@ Export-Package: org.apache.cxf,
  org.apache.cxf.wsdl.http,
  org.apache.cxf.wsdl11
 Require-Bundle: javax.wsdl;bundle-version="1.6.2",javax.xml
-Tool: Bnd-2.1.0.20130426-122213
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: Talend Inc.
