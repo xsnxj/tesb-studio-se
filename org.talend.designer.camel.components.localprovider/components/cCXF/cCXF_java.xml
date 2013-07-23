@@ -114,6 +114,18 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
+		<PARAMETER NAME="USE_AUTHORIZATION" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="25" READONLY="false"
+			SHOW_IF="(ENABLE_SECURITY == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (SECURITY_TYPE == 'SAML' )" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="ROLE_NAME" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="25" READONLY="false"
+			SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (ENABLE_SECURITY == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (SECURITY_TYPE == 'SAML' ) AND (USE_AUTHORIZATION == 'true' )" >
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
 		<PARAMETER NAME="ENABLE_SAM" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="26" GROUP="ESB_FEATURE" READONLY="false"
 			SHOW_IF="(DATAFORMAT == 'POJO') OR (DATAFORMAT == 'PAYLOAD') OR (DATAFORMAT == 'CXF_MESSAGE')">
@@ -154,7 +166,7 @@
 		<IMPORTS>
 
             <!-- spring -->
-            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.4.jar"
+            <IMPORT NAME="camel-spring" MODULE="camel-spring-2.11.2-SNAPSHOT.jar"
                 REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.3.RELEASE.jar"
@@ -184,14 +196,18 @@
                     MODULE="spring-expression-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
+            <IMPORT NAME="spring-asm"
+                    MODULE="spring-asm-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.2.3.RELEASE.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
-                    MODULE="spring-context-support-3.2.3.RELEASE.jar"
+	            	MODULE="spring-context-support-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-3.2.3.RELEASE.jar"
-                    REQUIRED="true" />
+	                REQUIRED="true" />
             <IMPORT NAME="spring-tx" 
-                    MODULE="spring-tx-3.2.3.RELEASE.jar"
+	            	MODULE="spring-tx-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-3.2.3.RELEASE.jar"
-                    REQUIRED="true" />
+	                REQUIRED="true" />
 
             <IMPORT NAME="org.eclipse.osgi"
                     MODULE="org.eclipse.osgi.jar"
@@ -203,7 +219,7 @@
 	                REQUIRED="true" />
 
 			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.10.4.jar"
+					MODULE="camel-core-2.11.2-SNAPSHOT.jar"
 					REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
@@ -219,10 +235,10 @@
                     REQUIRED="true" />
                     
 			<IMPORT NAME="talend-camel-cxf" 
-					MODULE="camel-cxf-alldep-2.10.4.jar"
+					MODULE="camel-cxf-alldep-2.11.2-SNAPSHOT.jar"
 					REQUIRED="true" />
             <IMPORT NAME="talend-camel-blueprint"
-            		MODULE="camel-blueprint-alldep-2.10.4.jar" 
+            		MODULE="camel-blueprint-alldep-2.11.2-SNAPSHOT.jar" 
                 	REQUIRED="true" />
 
 
