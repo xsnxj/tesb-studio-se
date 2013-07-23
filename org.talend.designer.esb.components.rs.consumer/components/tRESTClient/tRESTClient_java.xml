@@ -358,11 +358,6 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
-			<IMPORT NAME="spring-asm"
-					MODULE="${tesb-spring-asm}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-asm}"
-					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
 			<!-- SL for RS -->
 			<IMPORT NAME="locator"
