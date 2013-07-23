@@ -17,8 +17,8 @@ import java.io.IOException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.html.BrowserDynamicPartLocationListener;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.rcp.intro.starting.StartingBrowser;
 
 /**
