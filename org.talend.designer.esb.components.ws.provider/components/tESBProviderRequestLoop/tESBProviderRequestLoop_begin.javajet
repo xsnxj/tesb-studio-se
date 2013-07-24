@@ -67,7 +67,7 @@ try {
             if (request_<%=cid%> instanceof java.util.Map) {
                 java.util.Map<String, Object> esbRequest = (java.util.Map<String, Object>) request_<%=cid%>;
                 requestMessage_<%=cid%> = (org.dom4j.Document) esbRequest.get(ESBProviderCallback.REQUEST);
-                globalMap.put("esbHeaders", esbRequest.get(ESBProviderCallback.HEADERS));
+                globalMap.put("esbHeaders", esbRequest.get(ESBProviderCallback.HEADERS_SOAP));
             } else {
                 requestMessage_<%=cid%> = (org.dom4j.Document) request_<%=cid%>;
             }
