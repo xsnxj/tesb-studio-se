@@ -460,7 +460,6 @@ private boolean restTalendJobAlreadyStarted = false;
  */
 @javax.ws.rs.Path("/")
 @javax.ws.rs.Produces({"application/xml", "text/xml", "application/json", "text/plain", "application/octet-stream"})
-@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context
@@ -756,6 +755,7 @@ if (null != conns && !conns.isEmpty()) {
 
 		boolean formSupported = false;
 		boolean multipartSupported = false;
+		boolean noBodyRequest = "GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb); // || "OPTIONS".equals(httpVerb)
 
 		// All the parameters specified in the Schema Editor need to be handled.
 		Parameter bodyParameter = null;
@@ -883,6 +883,14 @@ if (null != conns && !conns.isEmpty()) {
 	@javax.ws.rs.Consumes("application/x-www-form-urlencoded")
 <% } else if (multipartSupported) { %>
 	@javax.ws.rs.Consumes({"multipart/form-data", "multipart/mixed", "multipart/related"})
+<% } else if (!noBodyRequest && null != bodyParameter) { %>
+	<% if ("org.dom4j.Document".equals(bodyParameter.getJavaType())) { %>
+		@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
+	<% } else if ("String".equals(bodyParameter.getJavaType())) { %>
+		@javax.ws.rs.Consumes({"text/plain", "application/xml", "text/xml", "application/json"})
+	<% } else if ("byte[]".equals(bodyParameter.getJavaType())) { %>
+		@javax.ws.rs.Consumes({"application/octet-stream"})
+	<% } %>
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
@@ -912,8 +920,7 @@ if (null != conns && !conns.isEmpty()) {
 				} %>
 				@<%=restParameterTypes.get(param.getParamType())%>("<%=param.getName()%>") <%= javaType%> <%=variableName%>
 		<%	} // loop thru jax-rs parameters %>
-		<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported || multipartSupported) && null != bodyParameter) {
+		<% if (!(noBodyRequest || formSupported || multipartSupported) && null != bodyParameter) {
 			if (paramCommaWritten) { %>, <% } %><%=bodyParameter.getJavaType()%> body
 		<% } %>
 			) {
@@ -953,8 +960,7 @@ if (null != conns && !conns.isEmpty()) {
 		request_<%=cid%>.put("VERB", "<%=httpVerb%>");
 		request_<%=cid%>.put("OPERATION", "<%=connName%>");
 		request_<%=cid%>.put("PATTERN", <%=uriPattern%>);
-	<% if (!("GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) // || "OPTIONS".equals(httpVerb)
-				|| formSupported || multipartSupported) && null != bodyParameter) { %>
+	<% if (!(noBodyRequest || formSupported || multipartSupported) && null != bodyParameter) { %>
 		request_<%=cid%>.put("BODY", body);
 	<% } %>
 
