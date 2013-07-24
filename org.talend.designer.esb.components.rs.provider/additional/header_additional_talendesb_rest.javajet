@@ -459,7 +459,7 @@ private boolean restTalendJobAlreadyStarted = false;
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
-@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json"})
+@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json", "text/plain", "application/octet-stream"})
 @javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
 public static class RestServiceProviderImpl4TalendJob {
 
