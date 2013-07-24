@@ -92,11 +92,11 @@
                     REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
 	            	MODULE="spring-context-support-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-3.2.3.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
 	                REQUIRED="true" />
             <IMPORT NAME="spring-tx" 
 	            	MODULE="spring-tx-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-3.2.3.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.3.RELEASE.jar"
 	                REQUIRED="true" />
 
             <IMPORT NAME="org.eclipse.osgi"
