@@ -10,13 +10,13 @@ Bundle-ClassPath: lib/cxf-rt-core-2.7.7-SNAPSHOT.jar,lib/cxf-api-2.7.7-S
  jar,lib/cxf-rt-transports-http-jetty-2.7.7-SNAPSHOT.jar,lib/cxf-rt-feat
  ures-clustering-2.7.7-SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.7-SN
  APSHOT.jar,lib/cxf-rt-core-2.7.7-20130724.065853-7.jar,lib/cxf-api-2.7.
- 7-20130724.065822-7.jar,lib/woodstox-core-asl-4.2.0.jar,lib/stax2-api-3
+ 7-20130725.071009-8.jar,lib/woodstox-core-asl-4.2.0.jar,lib/stax2-api-3
  .1.1.jar,lib/jaxb-impl-2.1.13.jar,lib/xmlschema-core-2.0.3.jar,lib/gero
  nimo-javamail_1.4_spec-1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-201307
  24.070309-7.jar,lib/asm-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-201307
- 24.065923-7.jar,lib/cxf-rt-databinding-jaxb-2.7.7-20130724.065912-7.jar
- ,lib/cxf-rt-bindings-xml-2.7.7-20130724.070146-7.jar,lib/cxf-rt-fronten
- d-simple-2.7.7-20130724.070239-7.jar,lib/cxf-rt-ws-addr-2.7.7-20130724.
+ 25.071135-8.jar,lib/cxf-rt-databinding-jaxb-2.7.7-20130725.071122-8.jar
+ ,lib/cxf-rt-bindings-xml-2.7.7-20130725.071442-8.jar,lib/cxf-rt-fronten
+ d-simple-2.7.7-20130725.071544-8.jar,lib/cxf-rt-ws-addr-2.7.7-20130724.
  070246-7.jar,lib/cxf-rt-transports-http-2.7.7-20130724.070212-7.jar,lib
  /cxf-rt-ws-security-2.7.7-20130724.070624-7.jar,lib/ehcache-core-2.5.1.
  jar,lib/wss4j-1.6.11.jar,lib/xmlsec-1.5.5.jar,lib/opensaml-2.5.1-1.jar,
