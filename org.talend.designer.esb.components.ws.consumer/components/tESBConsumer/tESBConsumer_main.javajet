@@ -128,17 +128,20 @@ if (inputConn != null) {
             <% } %>
 
             final java.util.List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-            <% if (authPropagate) { %>
-                java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("esbHeaders");
-                if (null != existingSoapHeaders_<%=cid%>) {
-                    for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
-                        if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
-                                && "Security".equals(existingHeader.getName().getLocalPart())) {
-                            soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
+            <% if (authPropagate) {
+                List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
+                if (!nodesProviderRequest.isEmpty()) { %>
+                    java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_" + ESBProviderCallback.HEADERS_SOAP);
+                    if (null != existingSoapHeaders_<%=cid%>) {
+                        for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
+                            if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
+                                    && "Security".equals(existingHeader.getName().getLocalPart())) {
+                                soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
+                            }
                         }
                     }
-                }
-            <% } %>
+            <%  }
+            } %>
             <% if (hasHeaders) { %>
                 final routines.system.Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
