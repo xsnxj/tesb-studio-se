@@ -116,5 +116,7 @@
 
 	<RETURNS>
 		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer" />
+        <RETURN NAME="HEADERS_SOAP" TYPE="java.util.Collection&lt;org.apache.cxf.headers.Header&gt;" AVAILABILITY="FLOW" />
+        <RETURN NAME="HEADERS_HTTP" TYPE="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" AVAILABILITY="FLOW" />
 	</RETURNS>
 </COMPONENT>
