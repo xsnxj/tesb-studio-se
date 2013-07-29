@@ -78,7 +78,7 @@ public final class CamelFeatureUtil {
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript", CAMEL_VERSION_RANGE);
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script", CAMEL_VERSION_RANGE);
 
-	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-optional", "[5,10)");
+	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http", "[5,10)");
 
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
