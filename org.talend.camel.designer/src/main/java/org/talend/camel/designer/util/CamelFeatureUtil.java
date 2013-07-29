@@ -29,7 +29,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.camel.designer.ui.editor.RouteProcess;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
@@ -132,26 +132,47 @@ public final class CamelFeatureUtil {
 
 	/**
 	 * 
-	 * @param evtValue
+	 * @param libraryName
 	 * @return
 	 */
-	private static Collection<FeatureModel> computeFeature(String evtValue) {
+	private static Collection<FeatureModel> computeFeature(String libraryName) {
 		if (camelFeaturesMap.isEmpty()) {
 			initMap();
 		}
-		return camelFeaturesMap.get(evtValue);
+		String nameWithoutVersion = getNameWithoutVersion(libraryName);
+		return camelFeaturesMap.get(nameWithoutVersion);
 	}
 
 	/**
 	 * 
-	 * @param lib
+	 * @param libraryName
 	 * @return
 	 */
-	private static Collection<BundleModel> computeBundle(String lib) {
+	private static Collection<BundleModel> computeBundle(String libraryName) {
 		if (camelBundlesMap.isEmpty()) {
 			initMap();
 		}
-		return camelBundlesMap.get(lib);
+		String nameWithoutVersion = getNameWithoutVersion(libraryName);
+		return camelBundlesMap.get(nameWithoutVersion);
+	}
+	
+	private static String getNameWithoutVersion(String libraryName){
+		if(libraryName == null || libraryName.isEmpty() || !libraryName.endsWith(".jar")){
+			return libraryName;
+		}
+		String interName = libraryName;
+		int lastIndexOf = interName.lastIndexOf("-");
+		while(lastIndexOf != -1){
+			try{
+				Integer.parseInt(interName.charAt(lastIndexOf+1)+"");
+				interName = interName.substring(0, lastIndexOf);
+				break;
+			}catch(Exception e){
+				interName = interName.substring(0, lastIndexOf);
+				lastIndexOf = interName.lastIndexOf("-");
+			}
+		}
+		return interName;
 	}
 
 	protected static ElementParameterType findElementParameterByName(
@@ -403,8 +424,6 @@ public final class CamelFeatureUtil {
 			try {
 				NodeList list = (NodeList) newXPath.evaluate("//FeatureMaps",
 						document, XPathConstants.NODESET);
-				String camelVersion = list.item(0).getAttributes()
-						.getNamedItem("CamelVersion").getNodeValue();
 				list = (NodeList) newXPath.evaluate("//FeatureMap/Feature",
 						document, XPathConstants.NODESET);
 
@@ -413,8 +432,6 @@ public final class CamelFeatureUtil {
 					Node node = list.item(index);
 					String hotLib = node.getParentNode().getAttributes()
 							.getNamedItem("HotLib").getNodeValue();
-					// Use version properties
-					hotLib = hotLib.replace("$version$", camelVersion);
 					Collection<FeatureModel> features = camelFeaturesMap
 							.get(hotLib);
 					if (features == null) {
@@ -436,7 +453,6 @@ public final class CamelFeatureUtil {
 					Node node = list.item(index);
 					String hotLib = node.getParentNode().getAttributes()
 							.getNamedItem("HotLib").getNodeValue();
-					hotLib = hotLib.replace("$version$", camelVersion);
 					Collection<BundleModel> bundles = camelBundlesMap.get(hotLib);
 					if (bundles == null) {
 						bundles = new HashSet<BundleModel>();
