@@ -6,7 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 51 third-party dependencies.
+Lists of 52 third-party dependencies.
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
      (BSD License) ASM Core (asm:asm:3.3.1 - http://asm.objectweb.org/asm/)
      (CDDL 1.0) (GPL2 w/ CPE) JAXB RI (com.sun.xml.bind:jaxb-impl:2.1.13 - https://jaxb.dev.java.net/)
@@ -23,6 +23,7 @@ Lists of 51 third-party dependencies.
      (Apache Software License - Version 2.0) Apache CXF Runtime JAX-WS Frontend (org.apache.cxf:cxf-rt-frontend-jaxws:2.7.7-SNAPSHOT - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime Simple Frontend (org.apache.cxf:cxf-rt-frontend-simple:2.7.7-SNAPSHOT - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF JAX-RS Extensions: Providers (org.apache.cxf:cxf-rt-rs-extension-providers:2.7.7-SNAPSHOT - http://cxf.apache.org)
+     (Apache Software License - Version 2.0) Apache CXF RS XML Security (org.apache.cxf:cxf-rt-rs-security-xml:2.7.7-SNAPSHOT - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime HTTP Transport (org.apache.cxf:cxf-rt-transports-http:2.7.7-SNAPSHOT - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime HTTP Jetty Transport (org.apache.cxf:cxf-rt-transports-http-jetty:2.7.7-SNAPSHOT - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime Local Transport (org.apache.cxf:cxf-rt-transports-local:2.7.7-SNAPSHOT - http://cxf.apache.org)
