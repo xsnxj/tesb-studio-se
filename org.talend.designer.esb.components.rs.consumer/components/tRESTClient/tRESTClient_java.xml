@@ -285,6 +285,7 @@
 					BundleID=""
 					REQUIRED="true" />
 
+
 			<!-- RS client -->
 			<IMPORT NAME="cxf-rt-frontend-jaxrs"
 					MODULE="cxf-rt-frontend-jaxrs-2.7.7-SNAPSHOT.jar"
@@ -322,6 +323,7 @@
 					BundleID=""
 					REQUIRED="true" />
 
+
 			<!-- ESB Features-->
 			<IMPORT NAME="spring-context"
 					MODULE="spring-context-3.2.3.RELEASE.jar"
@@ -352,14 +354,15 @@
 					MODULE="commons-logging-1.1.1.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.2.3.RELEASE.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
-			<!-- SL for RS -->
+
+			<!-- SL for RS (or SAML Token) -->
 			<IMPORT NAME="locator"
 					MODULE="locator-5.4.0-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.0-SNAPSHOT.jar"
@@ -374,7 +377,7 @@
 					MODULE="log4j-1.2.17.jar"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-features-clustering"
 					MODULE="cxf-rt-features-clustering-2.7.7-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7-SNAPSHOT.jar"
@@ -390,56 +393,66 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+
 			<IMPORT NAME="cxf-rt-ws-security"
 					MODULE="cxf-rt-ws-security-2.7.7-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.7-SNAPSHOT.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-bindings-soap"
 					MODULE="cxf-rt-bindings-soap-2.7.7-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.7-SNAPSHOT.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-databinding-jaxb"
 					MODULE="cxf-rt-databinding-jaxb-2.7.7-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.7-SNAPSHOT.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="ehcache-core"
 					MODULE="ehcache-core-2.5.1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="wss4j"
 					MODULE="wss4j-1.6.11.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.11.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="xmlsec"
 					MODULE="xmlsec-1.5.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.5.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="opensaml"
 					MODULE="opensaml-2.5.1-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/opensaml-2.5.1-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="openws"
 					MODULE="openws-1.4.2-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/openws-1.4.2-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="xmltooling"
 					MODULE="xmltooling-1.3.2-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmltooling-1.3.2-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="joda-time"
 					MODULE="joda-time-1.6.2.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/joda-time-1.6.2.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+
+
+			<!-- SAML Token for RS -->
+			<IMPORT NAME="cxf-rt-rs-security-xml"
+					MODULE="cxf-rt-rs-security-xml-2.7.7-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-security-xml-2.7.7-SNAPSHOT.jar"
+					BundleID=""
+					REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
+
 
 			<!-- SAM for RS -->
 			<IMPORT NAME="sam-agent"
