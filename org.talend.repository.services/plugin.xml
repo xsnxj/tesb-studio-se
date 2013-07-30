@@ -238,5 +238,16 @@
        </activeWhen>
     </handler>
  </extension>
+ <extension
+       point="org.talend.core.runtime.demoProjects_provider">
+    <demoProvider
+          descHtml="resources/demoprojects/esb_demos.html"
+          description="ESB Demos Project"
+          id="org.talend.demo.project.esb"
+          name="ESB_DEMOS"
+          order="20"
+          projectUrl="resources/demoprojects/ESB_DEMOS.zip">
+    </demoProvider>
+ </extension>
 
 </plugin>
