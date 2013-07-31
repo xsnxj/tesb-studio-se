@@ -97,7 +97,7 @@
 		<property name="bus" ref="cxf" />
 	</bean>
 
-#if ($useSecurityToken || $useServiceRegistry)
+#if ($useSecurityToken || $useSecurityToken || $useServiceRegistry)
 	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
 		<property name="contextName" value="karaf" />
 	</bean>
