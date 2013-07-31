@@ -31,12 +31,6 @@
          version="1.6.2.v201012040545" />
 
    <plugin
-         id="javax.mail"
-         download-size="0"
-         install-size="0"
-         version="1.4.0.v201005080615" />
-
-   <plugin
          id="org.apache.xml.resolver"
          download-size="0"
          install-size="0"
