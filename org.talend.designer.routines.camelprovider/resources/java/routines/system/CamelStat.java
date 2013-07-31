@@ -22,10 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 
 public class CamelStat implements Runnable {
@@ -48,11 +50,10 @@ public class CamelStat implements Runnable {
 			public Processor wrapProcessorInInterceptors(CamelContext context,
 					final ProcessorDefinition<?> node, final Processor target,
 					Processor nextTarget) throws Exception {
-				return new Processor() {
-					
-					public void process(Exchange arg0) throws Exception {
+				return new DelegateAsyncProcessor(target) {
+					public boolean process(Exchange exchange, AsyncCallback callback) {
 						CamelStat.this.addRowByTargetNode(node.getId());
-						target.process(arg0);
+						return super.process(exchange, callback);
 					}
 				};
 			}
