@@ -42,10 +42,7 @@
 				<property name="availableEndpointProperties">
 					<map>
 #foreach ($entry in $slCustomProps.entrySet())
-						<entry>
-							<key><value>${entry.key}</value></key>
-							<value>${entry.value}</value>
-						</entry>
+						<entry key="${entry.key}" value="${entry.value}" />
 #end
 					</map>
 				</property>
@@ -119,10 +116,7 @@
 		<argument>
 			<map>
 #foreach ($entry in $operation2job.entrySet())
-				<entry>
-					<key><value>${entry.key}</value></key>
-					<value>${entry.value}</value>
-				</entry>
+				<entry key="${entry.key}" value="${entry.value}" />
 #end
 			</map>
 		</argument>
@@ -139,6 +133,5 @@
 			<entry key="service.pid" value="${studioName}" />
 		</service-properties>
 	</service>
-
 
 </blueprint>
