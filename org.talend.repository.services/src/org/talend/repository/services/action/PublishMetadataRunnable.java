@@ -217,7 +217,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         final Set<String> paths = new HashSet<String>();
         final Set<QName> portTypes = new HashSet<QName>();
         final Set<QName> alreadyCreated = new HashSet<QName>();
-        for (Binding binding : (Collection<Binding>) wsdlDefinition.getBindings().values()) {
+        for (Binding binding : (Collection<Binding>) wsdlDefinition.getAllBindings().values()) {
             final QName portType = binding.getPortType().getQName();
             if (portTypes.add(portType)) {
                 for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
@@ -295,7 +295,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
             final Set<QName> portTypes = new HashSet<QName>();
             final Set<QName> alreadyCreated = new HashSet<QName>();
-            for (Binding binding : (Collection<Binding>) wsdlDefinition.getBindings().values()) {
+            for (Binding binding : (Collection<Binding>) wsdlDefinition.getAllBindings().values()) {
                 final QName portType = binding.getPortType().getQName();
                 if (portTypes.add(portType)) {
                     for (BindingOperation operation : (Collection<BindingOperation>) binding.getBindingOperations()) {
