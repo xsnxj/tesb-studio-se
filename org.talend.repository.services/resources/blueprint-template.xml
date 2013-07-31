@@ -97,7 +97,7 @@
 		<property name="bus" ref="cxf" />
 	</bean>
 
-#if ($useSecurityToken || $useSecurityToken || $useServiceRegistry)
+#if ($useSecurityToken || $useServiceRegistry)
 	<bean id="jaasUTValidator" class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
 		<property name="contextName" value="karaf" />
 	</bean>
@@ -126,7 +126,7 @@
 #end
 			</map>
 		</argument>
-#if ($useSecuritySAML || $useServiceRegistry)
+#if ($useSecurityToken || $useSecuritySAML || $useServiceRegistry)
         <argument type="org.apache.cxf.Bus" ref="cxf" />
 #end
 #if ($useSAM)
