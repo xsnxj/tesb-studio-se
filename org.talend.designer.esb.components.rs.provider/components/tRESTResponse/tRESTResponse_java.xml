@@ -68,7 +68,7 @@
 		<PARAMETER NAME="SCHEMA" FIELD="SCHEMA_TYPE"
 				REQUIRED="true" NUM_ROW="28" READONLY="true">
 			<TABLE READONLY="true">
-				<COLUMN NAME="body" TYPE="id_Document" READONLY="true" NULLABLE="true" />
+				<COLUMN NAME="body" TYPE="id_Document" READONLY="false" NULLABLE="true" />
 			</TABLE>
 		</PARAMETER>
 	</PARAMETERS>
