@@ -445,7 +445,32 @@ if (!httpRequestComponentsList.isEmpty()) {
 
 	INode node = httpRequestComponentsList.get(0);
 	String cid = node.getUniqueName();
+
+if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__")) && "SAML".equals(ElementParameterParser.getValue(node,"__AUTH_TYPE__"))) {
 %>
+public void setBus( org.apache.cxf.Bus bus) {
+	org.apache.cxf.resource.ResourceManager resourceManager =
+			bus.getExtension(org.apache.cxf.resource.ResourceManager.class);
+	if (resourceManager != null) {
+		resourceManager.addResourceResolver(new org.apache.cxf.resource.ClasspathResolver() {
+				public <T> T resolve(String resourceName, Class<T> resourceType) {
+					T resolve = super.resolve(resourceName, resourceType);
+					if (resolve == null) {
+						try {
+							java.net.URL url = new java.net.URL(resourceName);
+							if (resourceType.isInstance(url)) {
+								return resourceType.cast(url);
+							}
+						} catch (java.net.MalformedURLException e) {
+							// ignore
+						}
+					}
+					return null;
+				}
+			});
+	}
+}
+<% } %>
 
 private boolean runInTalendEsbRuntimeContainer = false;
 
