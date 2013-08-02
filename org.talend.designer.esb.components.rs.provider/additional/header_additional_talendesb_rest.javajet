@@ -453,6 +453,19 @@ public void setBus( org.apache.cxf.Bus bus) {
 			bus.getExtension(org.apache.cxf.resource.ResourceManager.class);
 	if (resourceManager != null) {
 		resourceManager.addResourceResolver(new org.apache.cxf.resource.ClasspathResolver() {
+				public java.io.InputStream getAsStream(String resourceName) {
+					java.io.InputStream is = super.getAsStream(resourceName);
+					if(is == null){
+						try {
+							java.net.URL url = new java.net.URL(
+									resourceName);
+							is = url.openStream();
+						} catch (java.lang.Exception e) {
+							//e.printStackTrace();
+						} 
+					}
+					return is;
+				}
 				public <T> T resolve(String resourceName, Class<T> resourceType) {
 					T resolve = super.resolve(resourceName, resourceType);
 					if (resolve == null) {
