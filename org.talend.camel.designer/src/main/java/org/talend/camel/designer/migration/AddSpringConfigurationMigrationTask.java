@@ -1,36 +1,19 @@
 package org.talend.camel.designer.migration;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.CamelSpringUtil;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
-import org.talend.core.model.properties.Item;
-import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 
 /**
  * used to set the default spring configuration content
  * when importing an old version route item
  */
 public class AddSpringConfigurationMigrationTask extends
-		AbstractItemMigrationTask {
-
-	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory
-			.getInstance();
-
-	@Override
-	public List<ERepositoryObjectType> getTypes() {
-		List<ERepositoryObjectType> toReturn = new ArrayList<ERepositoryObjectType>();
-		toReturn.add(CamelRepositoryNodeType.repositoryRoutesType);
-		return toReturn;
-	}
+		AbstractRouteItemMigrationTask{
 
 	public Date getOrder() {
 		GregorianCalendar gc = new GregorianCalendar(2012, 11, 17, 14, 00, 00);
@@ -38,12 +21,10 @@ public class AddSpringConfigurationMigrationTask extends
 	}
 
 	@Override
-	public ExecutionResult execute(Item item) {
+	public ExecutionResult execute(CamelProcessItem item) {
 
 		try {
-			if (item instanceof CamelProcessItem) {
-				addDefaultSpringContentFor((CamelProcessItem) item);
-			}
+			addDefaultSpringContentFor(item);
 			return ExecutionResult.SUCCESS_NO_ALERT;
 		} catch (Exception e) {
 			ExceptionHandler.process(e);
@@ -58,7 +39,7 @@ public class AddSpringConfigurationMigrationTask extends
 		if(springContent == null || "".equals(springContent.trim())){
 			String defaultContent = CamelSpringUtil.getDefaultContent(item);
 			item.setSpringContent(defaultContent);
+			saveItem(item);
 		}
-		FACTORY.save(item, true);
 	}
 }

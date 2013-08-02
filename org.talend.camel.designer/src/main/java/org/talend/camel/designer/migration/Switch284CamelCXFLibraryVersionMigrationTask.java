@@ -30,6 +30,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
  * @author
  * 
  */
+@Deprecated
 public class Switch284CamelCXFLibraryVersionMigrationTask extends
 		AbstractItemMigrationTask {
 

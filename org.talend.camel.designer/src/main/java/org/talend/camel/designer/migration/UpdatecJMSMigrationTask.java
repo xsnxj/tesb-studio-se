@@ -17,12 +17,9 @@ import java.util.GregorianCalendar;
 
 import org.eclipse.emf.common.util.EList;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -34,13 +31,16 @@ import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
  * @author LiXiaopeng
  * 
  */
-public class UpdatecJMSMigrationTask extends AbstractItemMigrationTask {
-
-    private static final ProxyRepositoryFactory REPO_FACTORY = ProxyRepositoryFactory.getInstance();
+public class UpdatecJMSMigrationTask extends AbstractRouteItemComponentMigrationTask {
 
     private static final TalendFileFactory FILE_FACTORY = TalendFileFactory.eINSTANCE;
 
-    /**
+    @Override
+	public String getComponentNameRegex() {
+		return "cJMS";
+	}
+
+	/**
      * 
      * Create a parameter of a node.
      * 
@@ -75,15 +75,9 @@ public class UpdatecJMSMigrationTask extends AbstractItemMigrationTask {
     }
 
     @Override
-    public ExecutionResult execute(Item item) {
-        try {
-            updateJMSComponent(item);
-            return ExecutionResult.SUCCESS_NO_ALERT;
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
-            return ExecutionResult.FAILURE;
-        }
-    }
+	protected boolean execute(NodeType node) throws Exception {
+		return updateJMSComponent(node);
+	}
 
     /**
      * 
@@ -126,55 +120,42 @@ public class UpdatecJMSMigrationTask extends AbstractItemMigrationTask {
         }
         return null;
     }
-
+    
     /**
      * Update cJMS, add cJMSConnectionFactory.
      * 
      * @param item
      * @throws PersistenceException
      */
-    private void updateJMSComponent(Item item) throws PersistenceException {
+    private boolean updateJMSComponent(NodeType currentNode) throws PersistenceException {
+		ElementParameterType oldConnectionFactoryParam = findElementParameterByName(
+				"CONNECTION_FACOTRY",
+				currentNode.getElementParameter());
+		if (oldConnectionFactoryParam != null) {
+			String connectionFacotryId = oldConnectionFactoryParam
+					.getValue();
+			if (connectionFacotryId != null) {
+				ElementParameterType newConnectionFactoryParam = createParamType(
+						EParameterFieldType.ROUTE_COMPONENT_TYPE
+								.getName(),
+						"CONNECTION_FACOTRY_CONFIGURATION", "");
 
-        ProcessType processType = getProcessType(item);
-        if (processType == null) {
-            return;
-        }
+				ElementParameterType idParam = createParamType(
+						EParameterFieldType.TECHNICAL.getName(),
+						"CONNECTION_FACOTRY_CONFIGURATION:ROUTE_COMPONENT_TYPE_ID",
+						connectionFacotryId.replace(
+								"cJMSConnectionFactory",
+								"cJMSConnectionFactory_"));
 
-        for (Object o : processType.getNode()) {
-            if (o instanceof NodeType) {
-                NodeType currentNode = (NodeType) o;
-                if ("cJMS".equals(currentNode.getComponentName())) {
-
-					ElementParameterType oldConnectionFactoryParam = findElementParameterByName(
-							"CONNECTION_FACOTRY",
-							currentNode.getElementParameter());
-					if (oldConnectionFactoryParam != null) {
-						String connectionFacotryId = oldConnectionFactoryParam
-								.getValue();
-						if (connectionFacotryId != null) {
-							ElementParameterType newConnectionFactoryParam = createParamType(
-									EParameterFieldType.ROUTE_COMPONENT_TYPE
-											.getName(),
-									"CONNECTION_FACOTRY_CONFIGURATION", "");
-
-							ElementParameterType idParam = createParamType(
-									EParameterFieldType.TECHNICAL.getName(),
-									"CONNECTION_FACOTRY_CONFIGURATION:ROUTE_COMPONENT_TYPE_ID",
-									connectionFacotryId.replace(
-											"cJMSConnectionFactory",
-											"cJMSConnectionFactory_"));
-
-							currentNode.getElementParameter().add(
-									newConnectionFactoryParam);
-							currentNode.getElementParameter().add(idParam);
-						}
-						currentNode.getElementParameter().remove(
-								oldConnectionFactoryParam);
-					}
-                }
-            }
-        }
-            REPO_FACTORY.save(item, true);
+				currentNode.getElementParameter().add(
+						newConnectionFactoryParam);
+				currentNode.getElementParameter().add(idParam);
+			}
+			currentNode.getElementParameter().remove(
+					oldConnectionFactoryParam);
+			return true;
+		}
+		return false;
     }
 
 }

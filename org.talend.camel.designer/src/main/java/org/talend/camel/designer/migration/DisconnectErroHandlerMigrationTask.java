@@ -10,14 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
-import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -30,24 +25,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
  * @author GLIU
  *
  */
-public class DisconnectErroHandlerMigrationTask extends AbstractItemMigrationTask {
-
-	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory
-			.getInstance();
-
-	@Override
-	public List<ERepositoryObjectType> getTypes() {
-		List<ERepositoryObjectType> toReturn = new ArrayList<ERepositoryObjectType>();
-		toReturn.add(CamelRepositoryNodeType.repositoryRoutesType);
-		return toReturn;
-	}
-
-	public ProcessType getProcessType(Item item) {
-		if (item instanceof ProcessItem) {
-			return ((ProcessItem) item).getProcess();
-		}
-		return null;
-	}
+public class DisconnectErroHandlerMigrationTask extends AbstractRouteItemMigrationTask {
 
 	public Date getOrder() {
 		GregorianCalendar gc = new GregorianCalendar(2012, 10, 8, 14, 27, 00);
@@ -55,7 +33,7 @@ public class DisconnectErroHandlerMigrationTask extends AbstractItemMigrationTas
 	}
 
 	@Override
-	public ExecutionResult execute(Item item) {
+	public ExecutionResult execute(CamelProcessItem item) {
 
 		try {
 			disconnectErrorHandler(item);
@@ -67,8 +45,8 @@ public class DisconnectErroHandlerMigrationTask extends AbstractItemMigrationTas
 
 	}
 
-	private void disconnectErrorHandler(Item item) throws PersistenceException {
-		ProcessType processType = getProcessType(item);
+	private void disconnectErrorHandler(CamelProcessItem item) throws PersistenceException {
+		ProcessType processType = item.getProcess();
 		
 		/*
 		 * find all cErrorHandler components first

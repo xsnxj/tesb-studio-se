@@ -1,80 +1,35 @@
 package org.talend.camel.designer.migration;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
-import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
-public class CBeanCTalendJobMigrationTask extends AbstractItemMigrationTask {
-
-	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory
-			.getInstance();
+public class CBeanCTalendJobMigrationTask extends AbstractRouteItemComponentMigrationTask {
 
 	@Override
-	public List<ERepositoryObjectType> getTypes() {
-		List<ERepositoryObjectType> toReturn = new ArrayList<ERepositoryObjectType>();
-		toReturn.add(CamelRepositoryNodeType.repositoryRoutesType);
-		return toReturn;
+	public String getComponentNameRegex() {
+		return "cBean|cTalendJob";
 	}
 
-	public ProcessType getProcessType(Item item) {
-		if (item instanceof ProcessItem) {
-			return ((ProcessItem) item).getProcess();
-		}
-		return null;
-	}
-
+	
 	public Date getOrder() {
 		GregorianCalendar gc = new GregorianCalendar(2012, 9, 18, 14, 00, 00);
 		return gc.getTime();
 	}
 
 	@Override
-	public ExecutionResult execute(Item item) {
-
-		try {
-			cBeancTalendJob(item);
-			return ExecutionResult.SUCCESS_NO_ALERT;
-		} catch (Exception e) {
-			ExceptionHandler.process(e);
-			return ExecutionResult.FAILURE;
+	protected boolean execute(NodeType node) throws Exception {
+		if(node.getComponentName().equals("cBean")) {
+			return migrateCBean(node);
 		}
-
+		return migrateCTalendJob(node);
 	}
-
-	private void cBeancTalendJob(Item item) throws PersistenceException {
-		ProcessType processType = getProcessType(item);
-		for (Object o : processType.getNode()) {
-			if (o instanceof NodeType) {
-				NodeType currentNode = (NodeType) o;
-				String componentName = currentNode.getComponentName();
-				if ("cBean".equals(componentName)) {
-					migrateCBean(currentNode);
-				} else if ("cTalendJob".equals(componentName)) {
-					migrateCTalendJob(currentNode);
-				}
-			}
-		}
-
-		FACTORY.save(item, true);
-
-	}
-
-	private void migrateCBean(NodeType currentNode) {
+	
+	private boolean migrateCBean(NodeType currentNode) {
 		EList elementParameter = currentNode.getElementParameter();
 		boolean isNewElement = false;
 		for (Object obj : elementParameter) {
@@ -89,7 +44,7 @@ public class CBeanCTalendJobMigrationTask extends AbstractItemMigrationTask {
 			}
 		}
 		if (isNewElement) {
-			return;
+			return false;
 		}
 
 		ElementParameterType fromClass = TalendFileFactory.eINSTANCE
@@ -103,10 +58,10 @@ public class CBeanCTalendJobMigrationTask extends AbstractItemMigrationTask {
 		fromRegistry.setName("FROM_REGISTRY");
 		fromRegistry.setValue("false");
 		elementParameter.add(fromRegistry);
-
+		return true;
 	}
 
-	private void migrateCTalendJob(NodeType currentNode) {
+	private boolean migrateCTalendJob(NodeType currentNode) {
 		EList elementParameter = currentNode.getElementParameter();
 		boolean isNewElement = false;
 		for (Object obj : elementParameter) {
@@ -122,7 +77,7 @@ public class CBeanCTalendJobMigrationTask extends AbstractItemMigrationTask {
 			}
 		}
 		if (isNewElement) {
-			return;
+			return false;
 		}
 
 		ElementParameterType fromExternal = TalendFileFactory.eINSTANCE
@@ -136,5 +91,7 @@ public class CBeanCTalendJobMigrationTask extends AbstractItemMigrationTask {
 		fromRepository.setName("FROM_REPOSITORY_JOB");
 		fromRepository.setValue("false");
 		elementParameter.add(fromRepository);
+		return true;
 	}
+
 }
