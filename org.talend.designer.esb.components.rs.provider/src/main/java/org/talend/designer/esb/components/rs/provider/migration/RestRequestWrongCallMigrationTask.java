@@ -19,7 +19,7 @@ import java.util.Iterator;
 import org.eclipse.emf.common.util.EList;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
+import org.talend.core.model.migration.AbstractJobMigrationTask;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -28,7 +28,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.MetadataType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
-public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask{
+public class RestRequestWrongCallMigrationTask extends AbstractJobMigrationTask{
 
 	private static final String httpMethod = "method";
 
@@ -49,9 +49,9 @@ public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask
 		return ExecutionResult.SUCCESS_NO_ALERT;
 	}
 
-	private void addMoreWrongCallInfo(Item item)
-			throws PersistenceException {
+	private void addMoreWrongCallInfo(Item item) throws PersistenceException {
 		if (item instanceof ProcessItem) {
+			boolean needSave = false;
 			for (Object o : ((ProcessItem) item).getProcess().getNode()) {
 				if (o instanceof NodeType) {
 					NodeType currentNode = (NodeType) o;
@@ -61,12 +61,15 @@ public class RestRequestWrongCallMigrationTask extends AbstractItemMigrationTask
 							MetadataType metadataType = (MetadataType) iterator.next();
 							if ("WRONG_CALLS".equals(metadataType.getConnector())) {
 								addColumn(metadataType.getColumn(), httpMethod);
+								needSave = true;
 							}
 						}
 					}
 				}
 			}
-			FACTORY.save(item, true);
+			if(needSave) {
+				FACTORY.save(item, true);
+			}
 		}
 	}
 
