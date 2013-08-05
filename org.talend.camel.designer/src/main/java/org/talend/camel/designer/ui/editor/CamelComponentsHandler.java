@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.talend.core.model.components.ComponentCategory;
@@ -25,23 +25,25 @@ import org.talend.core.model.components.IComponentsHandler;
  */
 public class CamelComponentsHandler implements IComponentsHandler {
 
+	private List<IComponent> camelComponents = new ArrayList<IComponent>();
+	
     /*
      * (non-Javadoc)
      * 
      * @see org.talend.core.model.components.IComponentsHandler#filterComponents(java.util.List)
      */
     public List<IComponent> filterComponents(List<IComponent> allComponents) {
-        if (allComponents != null && allComponents.size() > 0) {
-            Iterator<IComponent> componentsIterator = allComponents.iterator();
-            while (componentsIterator.hasNext()) {
-                IComponent component = componentsIterator.next();
-                String compType = component.getPaletteType();
-                if (compType != null && !ComponentCategory.CATEGORY_4_CAMEL.getName().equals(compType)) {
-                    componentsIterator.remove();
-                }
-            }
-        }
-        return allComponents;
+    	if(allComponents == null || allComponents.isEmpty() || !camelComponents.isEmpty()){
+    		return camelComponents;
+    	}
+		String categoryName = extractComponentsCategory().getName();
+		for (IComponent component : allComponents) {
+			String compType = component.getPaletteType();
+			if (compType != null && categoryName.equals(compType)) {
+				camelComponents.add(component);
+			}
+		}
+        return camelComponents;
     }
 
     /*

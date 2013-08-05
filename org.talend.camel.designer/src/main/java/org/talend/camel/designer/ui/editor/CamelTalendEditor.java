@@ -23,7 +23,9 @@ import org.talend.designer.core.ui.editor.process.Process;
  */
 public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJobEditor {
 
-    public CamelTalendEditor() {
+    private static CamelComponentsHandler CAMEL_COMPONENTS_HANDLER;
+
+	public CamelTalendEditor() {
         this(false);
 
     }
@@ -64,6 +66,11 @@ public class CamelTalendEditor extends AbstractTalendEditor implements ITalendJo
      */
     @Override
     protected IComponentsHandler initComponentsHandler() {
-        return new CamelComponentsHandler();
+    	if(CAMEL_COMPONENTS_HANDLER == null){
+	    	synchronized (CamelTalendEditor.class) {
+	    		CAMEL_COMPONENTS_HANDLER = new CamelComponentsHandler();
+			}
+    	}
+        return CAMEL_COMPONENTS_HANDLER;
     }
 }
