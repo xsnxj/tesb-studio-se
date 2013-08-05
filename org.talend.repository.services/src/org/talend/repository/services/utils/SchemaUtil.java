@@ -33,12 +33,11 @@ public class SchemaUtil {
     public SchemaUtil(Definition wsdlDefinition) {
         if (null != wsdlDefinition.getTypes()) {
             init(wsdlDefinition.getTypes());
-        } else {
-            for (Collection<Import> wsdlImports : (Collection<Collection<Import>>) wsdlDefinition.getImports().values()) {
-                for (Import wsdlImport : wsdlImports) {
-                    if (null != wsdlImport.getDefinition().getTypes()) {
-                        init(wsdlImport.getDefinition().getTypes());
-                    }
+        }
+        for (Collection<Import> wsdlImports : (Collection<Collection<Import>>) wsdlDefinition.getImports().values()) {
+            for (Import wsdlImport : wsdlImports) {
+                if (null != wsdlImport.getDefinition().getTypes()) {
+                    init(wsdlImport.getDefinition().getTypes());
                 }
             }
         }
