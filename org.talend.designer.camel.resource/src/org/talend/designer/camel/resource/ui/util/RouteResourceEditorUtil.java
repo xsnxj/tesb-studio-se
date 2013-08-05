@@ -170,7 +170,8 @@ public class RouteResourceEditorUtil {
 		if(item == null){
 			return false;
 		}
-		if(ERepositoryStatus.LOCK_BY_OTHER.equals(repFactory.getStatus(item))){
+		ERepositoryStatus status = repFactory.getStatus(item);
+		if(ERepositoryStatus.LOCK_BY_OTHER.equals(status) || ERepositoryStatus.DELETED.equals(status)){
 			return true;
 		}
 		
