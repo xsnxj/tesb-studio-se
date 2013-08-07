@@ -205,7 +205,7 @@ if (inputConn != null) {
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
-                <% if (useAuth && !useSR) { %>
+                <% if (useAuth && !useSR && !("SAML".equals(authType) && authPropagate)) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
@@ -276,9 +276,11 @@ if (inputConn != null) {
                                         put("role", "");
                                     <% } %>
                                 <% } %>
-                                put("esbSecurity", "<%=authType%>");
-                                put("username", <%=username%>);
-                                put("password", <%=password%>);
+                                <% if (!("SAML".equals(authType) && authPropagate)) { %>
+                                    put("esbSecurity", "<%=authType%>");
+                                    put("username", <%=username%>);
+                                    put("password", <%=password%>);
+                                <% } %>
                             <% } %>
 
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
