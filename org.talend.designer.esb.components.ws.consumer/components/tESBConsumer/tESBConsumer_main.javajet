@@ -42,7 +42,7 @@ if(!isStudioEEVersion){
 	useSR = false;
 }
 Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) && !useSR;
-Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"));
+Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__")) && !useSR;
 
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
 Boolean authPropagate = Boolean.valueOf(ElementParameterParser.getValue(node, "__AUTH_PROPAGATE__"));
