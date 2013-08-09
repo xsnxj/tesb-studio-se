@@ -65,6 +65,16 @@ try {
             java.util.Map<String, Object> request_<%=cid%> = (java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
             globalMap.put("<%=cid%>_" + ESBProviderCallback.HEADERS_SOAP, request_<%=cid%>.get(ESBProviderCallback.HEADERS_SOAP));
             globalMap.put("<%=cid%>_" + ESBProviderCallback.HEADERS_HTTP, request_<%=cid%>.get(ESBProviderCallback.HEADERS_HTTP));
+            java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) request_<%=cid%>.get(ESBProviderCallback.HEADERS_HTTP);
+            if (null != existingSoapHeaders_<%=cid%>) {
+                for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
+                    if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
+                            && "Security".equals(existingHeader.getName().getLocalPart())) {
+                        globalMap.put("<%=cid%>_SAML_TOKEN", existingHeader.getObject());
+                        break;
+                    }
+                }
+            }
             org.dom4j.Document requestMessage_<%=cid%> = (org.dom4j.Document) request_<%=cid%>.get(ESBProviderCallback.REQUEST);
 
 <% if (!isOneWay) { %>
