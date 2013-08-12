@@ -150,7 +150,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
 
         endpointInfo.put("useSL", useLocator /*&& !useRegistry*/); //$NON-NLS-1$
-        endpointInfo.put("useSAM", useMonitor); //$NON-NLS-1$
+        endpointInfo.put("useSAM", useMonitor && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useSecurityToken", useSecurityToken && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$

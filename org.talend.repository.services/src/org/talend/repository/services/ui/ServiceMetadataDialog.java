@@ -63,7 +63,6 @@ public class ServiceMetadataDialog extends Dialog {
             authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
             useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
             logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));            
-
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
                     slCustomProperties.put(prop.getKey().substring(SL_CUSTOM_PROP_PREFIX.length()),
@@ -126,7 +125,7 @@ public class ServiceMetadataDialog extends Dialog {
 							&& (securitySAML /* || securityBasic */));
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
-//					slCheck.setEnabled(!useServiceRegistry);
+					samCheck.setEnabled(!useServiceRegistry);
 //					customPropertiesTable.setEditable(useSL
 //							&& !useServiceRegistry);
 				}
@@ -138,6 +137,7 @@ public class ServiceMetadataDialog extends Dialog {
 
         samCheck.setText(Messages.ServiceMetadataDialog_useSAMBtnText);
         samCheck.setSelection(useSAM);
+        samCheck.setEnabled(!useServiceRegistry);        
         samCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 useSAM = samCheck.getSelection();
