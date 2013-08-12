@@ -20,10 +20,15 @@
                <instanceof
                      value="org.talend.repository.model.ProjectRepositoryNode">
                </instanceof>
-               <test
-                     forcePluginActivation="true"
-                     property="org.talend.repository.node.isRoutesTopNode">
-               </test>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.isRoutesTopNode">
+                  </test>
+               </and>
             </or>
          </triggerPoints>
          <possibleChildren>
@@ -134,10 +139,15 @@
                <instanceof
                      value="org.talend.repository.model.ProjectRepositoryNode">
                </instanceof>
-               <test
-                     forcePluginActivation="true"
-                     property="org.talend.repository.node.isRouteResourceNode">
-               </test>
+               <and>
+                  <instanceof
+                        value="org.talend.repository.model.RepositoryNode">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.talend.repository.node.isRouteResourceNode">
+                  </test>
+               </and>
             </or>
          </triggerPoints>
          <possibleChildren>
