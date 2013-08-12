@@ -110,18 +110,25 @@
          <instanceof
                value="org.talend.repository.model.ProjectRepositoryNode">
          </instanceof>
-         <test
-               forcePluginActivation="true"
-               property="org.talend.repository.node.isServicesNode">
-         </test>
-         <test
-               forcePluginActivation="true"
-               property="org.talend.repository.node.isServicesPortNode">
-         </test>
-         <test
-               forcePluginActivation="true"
-               property="org.talend.repository.node.isServicesOperationNode">
-         </test>
+         <and>
+            <instanceof
+                  value="org.talend.repository.model.RepositoryNode">
+            </instanceof>
+            <or>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isServicesNode">
+               </test>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isServicesPortNode">
+               </test>
+               <test
+                     forcePluginActivation="true"
+                     property="org.talend.repository.node.isServicesOperationNode">
+               </test>
+            </or>
+         </and>
       </or>
 			</triggerPoints>
 			<possibleChildren>
