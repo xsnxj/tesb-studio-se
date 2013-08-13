@@ -32,15 +32,12 @@ String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
 String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
 
 Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
-Boolean useSR = Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
+//if no a EE version then useSR should be false
+boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+Boolean useSR = isStudioEEVersion && Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
 Boolean useAuthorization = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
 String authorizationRole = ElementParameterParser.getValue(node, "__ROLE__");
 
-//if no a EE version then useSR should be false
-boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-if(!isStudioEEVersion){
-	useSR = false;
-}
 Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) && !useSR;
 Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__")) && !useSR;
 
@@ -128,18 +125,11 @@ if (inputConn != null) {
             <% } %>
 
             final java.util.List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-            <% if (authPropagate) {
-                List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
+            <% if (authPropagate) { %>
+                final Object securityToken_<%=cid%>;
+                <% List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
                 if (!nodesProviderRequest.isEmpty()) { %>
-                    java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_" + ESBProviderCallback.HEADERS_SOAP);
-                    if (null != existingSoapHeaders_<%=cid%>) {
-                        for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
-                            if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
-                                    && "Security".equals(existingHeader.getName().getLocalPart())) {
-                                soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(existingHeader.getName(), existingHeader.getObject()));
-                            }
-                        }
-                    }
+                    securityToken_<%=cid%> = globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_SECURITY_TOKEN");
             <%  }
             } %>
             <% if (hasHeaders) { %>
@@ -272,20 +262,19 @@ if (inputConn != null) {
                                     put("useAuthorization", <%=useAuthorization%>);
                                     <% if (useAuthorization) { %>
                                         put("role", <%=authorizationRole%>);
-                                    <% } else { %>
-                                        put("role", "");
                                     <% } %>
                                 <% } %>
-                                <% if (!("SAML".equals(authType) && authPropagate)) { %>
-                                    put("esbSecurity", "<%=authType%>");
-                                    put("username", <%=username%>);
-                                    put("password", <%=password%>);
+                                put("esbSecurity", "<%=authType%>");
+                                put("username", <%=username%>);
+                                put("password", <%=password%>);
                                 <% } %>
-                            <% } %>
 
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }
+                            <% if (authPropagate) { %>
+                                put("securityToken", securityToken_<%=cid%>);
+                            <% } %>
                         }};
 
                         public String getEndpointUri() {

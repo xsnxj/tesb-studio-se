@@ -122,14 +122,14 @@
         </PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME"
-                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND ((AUTH_TYPE != 'SAML') OR (AUTH_PROPAGATE == 'false')))
+                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
                          OR
                          ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD"
-				SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND ((AUTH_TYPE != 'SAML') OR (AUTH_PROPAGATE == 'false')))
+				SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
 				         OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
@@ -368,8 +368,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.11.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.11.jar"
+					MODULE="wss4j-1.6.12-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12-SNAPSHOT.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlsec"
