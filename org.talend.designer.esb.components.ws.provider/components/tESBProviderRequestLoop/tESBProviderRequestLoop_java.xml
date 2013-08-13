@@ -196,8 +196,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.11.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.11.jar"
+					MODULE="wss4j-1.6.12-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12-SNAPSHOT.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlsec"

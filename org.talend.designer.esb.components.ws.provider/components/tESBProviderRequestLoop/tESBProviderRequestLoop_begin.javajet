@@ -68,10 +68,13 @@ try {
             java.util.Collection<org.apache.cxf.headers.Header> existingSoapHeaders_<%=cid%> = (java.util.Collection<org.apache.cxf.headers.Header>) request_<%=cid%>.get(ESBProviderCallback.HEADERS_SOAP);
             if (null != existingSoapHeaders_<%=cid%>) {
                 for (org.apache.cxf.headers.Header existingHeader : existingSoapHeaders_<%=cid%>) {
-                    if ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd".equals(existingHeader.getName().getNamespaceURI())
-                            && "Security".equals(existingHeader.getName().getLocalPart())) {
-                        globalMap.put("<%=cid%>_SAML_TOKEN", existingHeader.getObject());
-                        break;
+                    if (org.apache.ws.security.WSConstants.WSSE_NS.equals(existingHeader.getName().getNamespaceURI())
+                            && org.apache.ws.security.WSConstants.WSSE_LN.equals(existingHeader.getName().getLocalPart())) {
+                        org.w3c.dom.NodeList nl = ((org.w3c.dom.Element) existingHeader.getObject()).getElementsByTagNameNS(org.apache.ws.security.WSConstants.SAML2_NS, org.apache.ws.security.WSConstants.ASSERTION_LN);
+                        if (nl.getLength() > 0) {
+                            globalMap.put("<%=cid%>_SECURITY_TOKEN", nl.item(0));
+                            break;
+                        }
                     }
                 }
             }
