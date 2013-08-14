@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -33,6 +34,7 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -146,6 +148,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
         FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(), getServiceVersion());
         feature.setConfigName(getServiceName());
         feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
+
+        ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+        String useCorrelation=connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
+        if("true".equals(useCorrelation)) {
+        	feature.addPolicyCorrelationIdFeature();
+        }
 
         try {
             String directoryName = serviceManager.getRootFolderName(tempFolder);
@@ -267,17 +275,18 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public String getTmpFolderPath() {
-        File tmpExportFolder = null;
         try {
-            tmpExportFolder = File.createTempFile("service", null); //$NON-NLS-1$
+        	File tmpExportFolder = File.createTempFile("service", null); //$NON-NLS-1$
             if (tmpExportFolder.exists() && tmpExportFolder.isFile()) {
                 tmpExportFolder.delete();
                 tmpExportFolder.mkdirs();
             }
             tmpExportFolder.deleteOnExit();
+    		return tmpExportFolder.getAbsolutePath();
         } catch (IOException e) {
+        	ExceptionHandler.process(e);
+        	return null;
         }
-        return tmpExportFolder.getAbsolutePath();
     }
 
 }

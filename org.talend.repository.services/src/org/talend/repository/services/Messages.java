@@ -89,6 +89,7 @@ public class Messages extends NLS {
 	public static String ServiceMetadataDialog_useSLBtnTExt;
 	public static String ServiceMetadataDialog_useSRBtnText;
 	public static String ServiceMetadataDialog_logMessages;	
+	public static String ServiceMetadataDialog_useBusinessCorrelation;
 
 	public static String LocalWSDLEditor_refreshBindingMessage;
 	public static String LocalWSDLEditor_refreshBindingTitle;

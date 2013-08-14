@@ -37,6 +37,7 @@ public class ServiceMetadataDialog extends Dialog {
     public static final String USE_SL = "UseSL"; //$NON-NLS-1$
     public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_"; //$NON-NLS-1$
     public static final String LOG_MESSAGES = "LogMessages"; //$NON-NLS-1$    
+    public static final String USE_BUSINESS_CORRELATION = "useBusinessCorrelation"; //$NON-NLS-1$    
 
     private final ServiceItem serviceItem;
     private final ServiceConnection serviceConnection;
@@ -49,6 +50,7 @@ public class ServiceMetadataDialog extends Dialog {
 	private boolean securitySAML;
 	private boolean authorization;	
 	private boolean logMessages;	
+	private boolean useBusinessCorrelation;
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
         super(parentShell);
@@ -62,7 +64,8 @@ public class ServiceMetadataDialog extends Dialog {
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
             authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
             useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
-            logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));            
+            logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));       
+            useBusinessCorrelation = Boolean.valueOf(props.get(USE_BUSINESS_CORRELATION));
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
                     slCustomProperties.put(prop.getKey().substring(SL_CUSTOM_PROP_PREFIX.length()),
@@ -156,6 +159,15 @@ public class ServiceMetadataDialog extends Dialog {
 
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
         customPropertiesTable.setEditable(useSL /*&& !useServiceRegistry*/);
+        
+        final Button correlationCheck = new Button(samSlGroup, SWT.CHECK);
+        correlationCheck.setText(Messages.ServiceMetadataDialog_useBusinessCorrelation);
+        correlationCheck.setSelection(useBusinessCorrelation);
+        correlationCheck.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	useBusinessCorrelation = correlationCheck.getSelection();
+            }
+        });
 
         securityGroup.setText(Messages.ServiceMetadataDialog_securityGroupTitle);
         securityGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -264,7 +276,8 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
             props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
             props.put(USE_SERVICE_REGISTRY, Boolean.toString(getUseServiceRegistry()));            
-            props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));            
+            props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));
+            props.put(USE_BUSINESS_CORRELATION, Boolean.toString(useBusinessCorrelation));
 
             if (isUseSL()) {
                 slCustomProperties = new HashMap<String, String>(customPropertiesTable

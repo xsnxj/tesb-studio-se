@@ -52,7 +52,7 @@
 #if ($logMessages)
 			<bean class="org.apache.cxf.feature.LoggingFeature" />
 #end
-#if ($useSecurityToken || $useSecuritySAML)
+#if ($useSecurityToken || $useSecuritySAML || $useBusinessCorrelation)
 			<p:policies xmlns:p="http://cxf.apache.org/policy">
 				<wsp:Policy xmlns:wsp="http://www.w3.org/ns/ws-policy">
 #if ($useSecurityToken && $useSecuritySAML)
@@ -60,22 +60,39 @@
 					<wsp:ExactlyOne>
 						<wsp:All>
 							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+#if ($useBusinessCorrelation)
+							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+#end
 						</wsp:All>
 						<wsp:All>
 							<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+#if ($useBusinessCorrelation)
+							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+#end
 						</wsp:All>
 					</wsp:ExactlyOne>
 #else
 					<wsp:ExactlyOne>
 						<wsp:All>
 							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+#if ($useBusinessCorrelation)
+							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+#end
 						</wsp:All>
 						<wsp:All>
 							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+#if ($useBusinessCorrelation)
+							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+#end
 						</wsp:All>
 					</wsp:ExactlyOne>
 #end
-#elseif ($useSecurityToken)
+#end
+#if ($useBusinessCorrelation)
+					<wsp:All>
+						<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+#end
+#if ($useSecurityToken)
 					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 #elseif ($useSecuritySAML)
 #if ($useAuthorization)
@@ -83,6 +100,10 @@
 #else
 					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
 #end
+#end
+
+#if ($useBusinessCorrelation)
+					</wsp:All>
 #end
 				</wsp:Policy>
 			</p:policies>
@@ -120,7 +141,7 @@
 #end
 			</map>
 		</argument>
-#if ($useSecurityToken || $useSecuritySAML || $useServiceRegistry)
+#if ($useSecurityToken || $useSecuritySAML || $useServiceRegistry || $useBusinessCorrelation)
         <argument type="org.apache.cxf.Bus" ref="cxf" />
 #end
 #if ($useSAM)

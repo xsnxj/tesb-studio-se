@@ -148,6 +148,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useAuthorization = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
+        boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
 
         endpointInfo.put("useSL", useLocator /*&& !useRegistry*/); //$NON-NLS-1$
         endpointInfo.put("useSAM", useMonitor && !useRegistry); //$NON-NLS-1$
@@ -156,6 +157,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
         endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
+        endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
         if (useLocator /*&& !useRegistry*/) {
