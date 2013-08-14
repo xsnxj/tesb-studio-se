@@ -493,10 +493,6 @@
                     MODULE="ehcache-core-2.5.1.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
-            <IMPORT NAME="wss4j"
-                    MODULE="wss4j-1.6.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.11.jar"
-                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="xmlsec"
                     MODULE="xmlsec-1.5.5.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.5.jar"
