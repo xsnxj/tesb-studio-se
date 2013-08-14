@@ -51,6 +51,9 @@ String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT
 
 Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
 
+boolean useBusinessCorrelation = "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
+String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
+
 IConnection inputConn = null;
 List<? extends IConnection> incomingConnections = node.getIncomingConnections();
 if (incomingConnections != null && !incomingConnections.isEmpty()) {
@@ -132,6 +135,14 @@ if (inputConn != null) {
                     securityToken_<%=cid%> = globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_SECURITY_TOKEN");
             <%  }
             } %>
+            <%
+               if(useBusinessCorrelation && (!correlationValue.matches("\"?\\s*\"?"/*empty content with quote as optional.*/))){
+                     %>soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(
+                 		new javax.xml.namespace.QName("http://www.talend.com/esb/sam/correlationId/v1","correlationId")
+                     	,<%=correlationValue%>
+                     	,new org.apache.cxf.jaxb.JAXBDataBinding(String.class)));<%
+               }
+            %>
             <% if (hasHeaders) { %>
                 final routines.system.Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
