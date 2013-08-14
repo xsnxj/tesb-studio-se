@@ -10,36 +10,36 @@ Bundle-ClassPath: lib/cxf-rt-core-2.7.7-SNAPSHOT.jar,lib/cxf-api-2.7.7-S
  jar,lib/cxf-rt-transports-http-jetty-2.7.7-SNAPSHOT.jar,lib/cxf-rt-feat
  ures-clustering-2.7.7-SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.7-SN
  APSHOT.jar,lib/cxf-rt-rs-security-xml-2.7.7-SNAPSHOT.jar,lib/cxf-rt-cor
- e-2.7.7-20130813.064055-24.jar,lib/cxf-api-2.7.7-20130813.064029-24.jar
+ e-2.7.7-20130814.063305-25.jar,lib/cxf-api-2.7.7-20130814.100259-26.jar
  ,lib/woodstox-core-asl-4.2.0.jar,lib/stax2-api-3.1.1.jar,lib/jaxb-impl-
  2.1.13.jar,lib/xmlschema-core-2.0.3.jar,lib/geronimo-javamail_1.4_spec-
- 1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-20130813.064424-24.jar,lib/as
- m-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-20130813.064121-24.jar,lib/c
- xf-rt-databinding-jaxb-2.7.7-20130813.064112-24.jar,lib/cxf-rt-bindings
- -xml-2.7.7-20130813.064324-24.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
- 0813.064406-24.jar,lib/cxf-rt-ws-addr-2.7.7-20130813.064413-24.jar,lib/
- cxf-rt-transports-http-2.7.7-20130813.064348-24.jar,lib/cxf-rt-ws-secur
- ity-2.7.7-20130813.064717-24.jar,lib/ehcache-core-2.5.1.jar,lib/wss4j-1
- .6.12-20130808.141553-1.jar,lib/xmlsec-1.5.5.jar,lib/opensaml-2.5.1-1.j
- ar,lib/openws-1.4.2-1.jar,lib/xmltooling-1.3.2-1.jar,lib/joda-time-1.6.
- 2.jar,lib/cxf-rt-ws-policy-2.7.7-20130813.064339-24.jar,lib/neethi-3.0.
- 2.jar,lib/cxf-rt-frontend-jaxrs-2.7.7-20130813.064517-24.jar,lib/javax.
- ws.rs-api-2.0-m10.jar,lib/cxf-rt-rs-extension-providers-2.7.7-20130813.
- 064727-24.jar,lib/jettison-1.3.4.jar,lib/stax-api-1.0.1.jar,lib/cxf-rt-
- rs-security-xml-2.7.7-20130813.064741-24.jar,lib/cxf-rt-transports-http
- -jetty-2.7.7-20130813.064357-24.jar,lib/jetty-server-8.1.7.v20120910.ja
- r,lib/jetty-continuation-8.1.7.v20120910.jar,lib/jetty-http-8.1.7.v2012
- 0910.jar,lib/jetty-io-8.1.7.v20120910.jar,lib/jetty-util-8.1.7.v2012091
- 0.jar,lib/jetty-security-8.1.7.v20120910.jar,lib/slf4j-api-1.7.5.jar,li
- b/geronimo-servlet_3.0_spec-1.0.jar,lib/slf4j-log4j12-1.7.5.jar,lib/spr
- ing-context-3.2.3.RELEASE.jar,lib/spring-aop-3.2.3.RELEASE.jar,lib/spri
- ng-beans-3.2.3.RELEASE.jar,lib/spring-core-3.2.3.RELEASE.jar,lib/spring
- -expression-3.2.3.RELEASE.jar,lib/locator-5.4.0-SNAPSHOT.jar,lib/zookee
- per-3.3.6.jar,lib/cxf-rt-features-clustering-2.7.7-20130813.064626-24.j
- ar,lib/sam-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0-SNAPSHOT.jar,l
- ib/cxf-rt-transports-local-2.7.7-20130813.064330-24.jar,lib/spring-cont
- ext-support-3.2.3.RELEASE.jar,lib/spring-jms-3.2.3.RELEASE.jar,lib/aopa
- lliance-1.0.jar,lib/spring-tx-3.2.3.RELEASE.jar
+ 1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-20130814.063513-25.jar,lib/as
+ m-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-20130814.100419-26.jar,lib/c
+ xf-rt-databinding-jaxb-2.7.7-20130814.100408-26.jar,lib/cxf-rt-bindings
+ -xml-2.7.7-20130814.100656-26.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
+ 0814.100754-26.jar,lib/cxf-rt-ws-addr-2.7.7-20130814.063505-25.jar,lib/
+ cxf-rt-transports-http-2.7.7-20130814.063452-25.jar,lib/cxf-rt-ws-secur
+ ity-2.7.7-20130814.063711-25.jar,lib/ehcache-core-2.5.1.jar,lib/wss4j-1
+ .6.12-SNAPSHOT.jar,lib/xmlsec-1.5.5.jar,lib/opensaml-2.5.1-1.jar,lib/op
+ enws-1.4.2-1.jar,lib/xmltooling-1.3.2-1.jar,lib/joda-time-1.6.2.jar,lib
+ /cxf-rt-ws-policy-2.7.7-20130814.063446-25.jar,lib/neethi-3.0.2.jar,lib
+ /cxf-rt-frontend-jaxrs-2.7.7-20130814.063551-25.jar,lib/javax.ws.rs-api
+ -2.0-m10.jar,lib/cxf-rt-rs-extension-providers-2.7.7-20130814.063715-25
+ .jar,lib/jettison-1.3.4.jar,lib/stax-api-1.0.1.jar,lib/cxf-rt-rs-securi
+ ty-xml-2.7.7-20130814.063725-25.jar,lib/cxf-rt-transports-http-jetty-2.
+ 7.7-20130814.063457-25.jar,lib/jetty-server-8.1.7.v20120910.jar,lib/jet
+ ty-continuation-8.1.7.v20120910.jar,lib/jetty-http-8.1.7.v20120910.jar,
+ lib/jetty-io-8.1.7.v20120910.jar,lib/jetty-util-8.1.7.v20120910.jar,lib
+ /jetty-security-8.1.7.v20120910.jar,lib/slf4j-api-1.7.5.jar,lib/geronim
+ o-servlet_3.0_spec-1.0.jar,lib/slf4j-log4j12-1.7.5.jar,lib/spring-conte
+ xt-3.2.3.RELEASE.jar,lib/spring-aop-3.2.3.RELEASE.jar,lib/spring-beans-
+ 3.2.3.RELEASE.jar,lib/spring-core-3.2.3.RELEASE.jar,lib/spring-expressi
+ on-3.2.3.RELEASE.jar,lib/locator-5.4.0-SNAPSHOT.jar,lib/zookeeper-3.3.6
+ .jar,lib/cxf-rt-features-clustering-2.7.7-20130814.063639-25.jar,lib/sa
+ m-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0-SNAPSHOT.jar,lib/cxf-rt
+ -transports-local-2.7.7-20130814.063439-25.jar,lib/spring-context-suppo
+ rt-3.2.3.RELEASE.jar,lib/spring-jms-3.2.3.RELEASE.jar,lib/aopalliance-1
+ .0.jar,lib/spring-tx-3.2.3.RELEASE.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: org.talend.libraries.esb
 Bundle-SymbolicName: org.talend.libraries.esb
@@ -51,19 +51,19 @@ Export-Package: javax.ws.rs;version="2.0.0.m10",javax.ws.rs.client;versi
  xf;version="2.7.7.SNAPSHOT",org.apache.cxf.annotations;version="2.7.7.S
  NAPSHOT",org.apache.cxf.attachment;version="2.7.7.SNAPSHOT",org.apache.
  cxf.binding;version="2.7.7.SNAPSHOT",org.apache.cxf.binding.soap;versio
- n="2.7.7.SNAPSHOT",org.apache.cxf.binding.soap.blueprint;version="2.7.7
- .SNAPSHOT",org.apache.cxf.binding.soap.interceptor;version="2.7.7.SNAPS
- HOT",org.apache.cxf.binding.soap.jms.interceptor;version="2.7.7.SNAPSHO
- T",org.apache.cxf.binding.soap.model;version="2.7.7.SNAPSHOT",org.apach
- e.cxf.binding.soap.saaj;version="2.7.7.SNAPSHOT",org.apache.cxf.binding
- .soap.spring;version="2.7.7.SNAPSHOT",org.apache.cxf.binding.soap.tcp;v
- ersion="2.7.7.SNAPSHOT",org.apache.cxf.binding.soap.tcp.frames;version=
- "2.7.7.SNAPSHOT",org.apache.cxf.binding.soap.wsdl.extensions;version="2
- .7.7.SNAPSHOT",org.apache.cxf.binding.soap.wsdl11;version="2.7.7.SNAPSH
- OT",org.apache.cxf.binding.xml;version="2.7.7.SNAPSHOT",org.apache.cxf.
- binding.xml.interceptor;version="2.7.7.SNAPSHOT",org.apache.cxf.binding
- .xml.wsdl11;version="2.7.7.SNAPSHOT",org.apache.cxf.bindings.xformat;ve
- rsion="2.7.7.SNAPSHOT",org.apache.cxf.bus;version="2.7.7.SNAPSHOT",org.
+ n="3.0.0.SNAPSHOT",org.apache.cxf.binding.soap.blueprint;version="3.0.0
+ .SNAPSHOT",org.apache.cxf.binding.soap.interceptor;version="3.0.0.SNAPS
+ HOT",org.apache.cxf.binding.soap.jms.interceptor;version="3.0.0.SNAPSHO
+ T",org.apache.cxf.binding.soap.model;version="3.0.0.SNAPSHOT",org.apach
+ e.cxf.binding.soap.saaj;version="3.0.0.SNAPSHOT",org.apache.cxf.binding
+ .soap.spring;version="3.0.0.SNAPSHOT",org.apache.cxf.binding.soap.tcp;v
+ ersion="3.0.0.SNAPSHOT",org.apache.cxf.binding.soap.tcp.frames;version=
+ "3.0.0.SNAPSHOT",org.apache.cxf.binding.soap.wsdl.extensions;version="3
+ .0.0.SNAPSHOT",org.apache.cxf.binding.soap.wsdl11;version="3.0.0.SNAPSH
+ OT",org.apache.cxf.binding.xml;version="3.0.0.SNAPSHOT",org.apache.cxf.
+ binding.xml.interceptor;version="3.0.0.SNAPSHOT",org.apache.cxf.binding
+ .xml.wsdl11;version="3.0.0.SNAPSHOT",org.apache.cxf.bindings.xformat;ve
+ rsion="3.0.0.SNAPSHOT",org.apache.cxf.bus;version="2.7.7.SNAPSHOT",org.
  apache.cxf.bus.blueprint;version="2.7.7.SNAPSHOT",org.apache.cxf.bus.ex
  tension;version="2.7.7.SNAPSHOT",org.apache.cxf.bus.managers;version="2
  .7.7.SNAPSHOT",org.apache.cxf.bus.osgi;version="2.7.7.SNAPSHOT",org.apa
@@ -90,19 +90,19 @@ Export-Package: javax.ws.rs;version="2.0.0.m10",javax.ws.rs.client;versi
  .7.7.SNAPSHOT",org.apache.cxf.databinding.source.mime;version="2.7.7.SN
  APSHOT",org.apache.cxf.databinding.stax;version="2.7.7.SNAPSHOT",org.ap
  ache.cxf.endpoint;version="2.7.7.SNAPSHOT",org.apache.cxf.endpoint.dyna
- mic;version="2.7.7.SNAPSHOT",org.apache.cxf.extension;version="2.7.7.SN
+ mic;version="3.0.0.SNAPSHOT",org.apache.cxf.extension;version="2.7.7.SN
  APSHOT",org.apache.cxf.feature;version="2.7.7.SNAPSHOT",org.apache.cxf.
  feature.transform;version="2.7.7.SNAPSHOT",org.apache.cxf.feature.valid
- ation;version="2.7.7.SNAPSHOT",org.apache.cxf.frontend;version="2.7.7.S
- NAPSHOT",org.apache.cxf.frontend.blueprint;version="2.7.7.SNAPSHOT",org
- .apache.cxf.frontend.spring;version="2.7.7.SNAPSHOT",org.apache.cxf.hea
+ ation;version="2.7.7.SNAPSHOT",org.apache.cxf.frontend;version="3.0.0.S
+ NAPSHOT",org.apache.cxf.frontend.blueprint;version="3.0.0.SNAPSHOT",org
+ .apache.cxf.frontend.spring;version="3.0.0.SNAPSHOT",org.apache.cxf.hea
  ders;version="2.7.7.SNAPSHOT",org.apache.cxf.helpers;version="2.7.7.SNA
  PSHOT",org.apache.cxf.interceptor;version="2.7.7.SNAPSHOT",org.apache.c
  xf.interceptor.security;version="2.7.7.SNAPSHOT",org.apache.cxf.interce
  ptor.transform;version="2.7.7.SNAPSHOT",org.apache.cxf.internal;version
  ="5.4.0.qualifier",org.apache.cxf.io;version="2.7.7.SNAPSHOT",org.apach
- e.cxf.jaxb;version="2.7.7.SNAPSHOT",org.apache.cxf.jaxb.attachment;vers
- ion="2.7.7.SNAPSHOT",org.apache.cxf.jaxb.io;version="2.7.7.SNAPSHOT",or
+ e.cxf.jaxb;version="3.0.0.SNAPSHOT",org.apache.cxf.jaxb.attachment;vers
+ ion="3.0.0.SNAPSHOT",org.apache.cxf.jaxb.io;version="3.0.0.SNAPSHOT",or
  g.apache.cxf.jaxrs;version="2.7.7.SNAPSHOT",org.apache.cxf.jaxrs.bluepr
  int;version="2.7.7.SNAPSHOT",org.apache.cxf.jaxrs.client;version="2.7.7
  .SNAPSHOT",org.apache.cxf.jaxrs.client.spec;version="2.7.7.SNAPSHOT",or
@@ -154,7 +154,7 @@ Export-Package: javax.ws.rs;version="2.0.0.m10",javax.ws.rs.client;versi
  T",org.apache.cxf.service;version="2.7.7.SNAPSHOT",org.apache.cxf.servi
  ce.factory;version="2.7.7.SNAPSHOT",org.apache.cxf.service.invoker;vers
  ion="2.7.7.SNAPSHOT",org.apache.cxf.service.model;version="2.7.7.SNAPSH
- OT",org.apache.cxf.simple;version="2.7.7.SNAPSHOT",org.apache.cxf.staxu
+ OT",org.apache.cxf.simple;version="3.0.0.SNAPSHOT",org.apache.cxf.staxu
  tils;version="2.7.7.SNAPSHOT",org.apache.cxf.staxutils.transform;versio
  n="2.7.7.SNAPSHOT",org.apache.cxf.test;version="2.7.7.SNAPSHOT",org.apa
  che.cxf.transport;version="2.7.7.SNAPSHOT",org.apache.cxf.transport.com
@@ -308,7 +308,7 @@ Import-Package: bsh;resolution:=optional,com.fasterxml.jackson.databind;
  f;resolution:=optional;version="[2.7,3)",org.apache.cxf.aegis;resolutio
  n:=optional,org.apache.cxf.aegis.type;resolution:=optional,org.apache.c
  xf.binding;resolution:=optional;version="[2.7,3)",org.apache.cxf.bindin
- g.soap.model;resolution:=optional;version="[2.7,3)",org.apache.cxf.busl
+ g.soap.model;resolution:=optional;version="[3.0,4)",org.apache.cxf.busl
  ifecycle;resolution:=optional;version="[2.7,3)",org.apache.cxf.clusteri
  ng;resolution:=optional;version="[2.7,3)",org.apache.cxf.configuration.
  security;resolution:=optional;version="[2.7,3)",org.apache.cxf.endpoint
