@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<COMPONENT>
+
+	<HEADER AUTHOR="Talend" COMPATIBILITY="ALL" PLATEFORM="ALL"
+		RELEASE_DATE="20130311A" SERIAL="" STARTABLE="true" STATUS="ALPHA"
+		VERSION="0.1">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MAX_INPUT="1" MAX_OUTPUT="1"
+			MIN_INPUT="0" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<!-- USE EXIST ENDPOINT(Provider) -->
+		<PARAMETER NAME="SELECT_FROM_EXISTING" FIELD="RADIO" NUM_ROW="1" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="INPUT_ENDPOINT_NAME" FIELD="RADIO" NUM_ROW="1"	SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="EXIST_ENDPOINT" FIELD="ROUTE_COMPONENT_TYPE" NUM_ROW="4" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (SELECT_FROM_EXISTING == 'true')">
+			<ITEMS>
+				<ITEM NAME="cDirectVM" VALUE="cDirectVM" FILTER="#LINK@CONNECTOR.IN.ANY == '0'"></ITEM>
+			</ITEMS>
+		</PARAMETER>
+		
+		<PARAMETER NAME="ENDPOINT_NAME" FIELD="TEXT"
+			NUM_ROW="4" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0') OR (INPUT_ENDPOINT_NAME == 'true') ">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
+		
+		<PARAMETER NAME="BLOCK" FIELD="CHECK"
+			NUM_ROW="12" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="TIMEOUT" FIELD="TEXT"
+			NUM_ROW="18" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (BLOCK == 'true') ">
+			<DEFAULT>30000</DEFAULT>
+		</PARAMETER>
+		
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+
+			<!-- spring -->
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.11.2-SNAPSHOT.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.2.3.RELEASE.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.2.3.RELEASE.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.2.3.RELEASE.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.2.3.RELEASE.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-expression" MODULE="spring-expression-3.2.3.RELEASE.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+            <IMPORT NAME="spring-context-support" 
+                    MODULE="spring-context-support-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+            <IMPORT NAME="spring-tx" 
+                    MODULE="spring-tx-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.3.RELEASE.jar"
+				REQUIRED="true" />
+
+			<IMPORT NAME="org.eclipse.osgi" MODULE="org.eclipse.osgi.jar"
+				UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-osgi-core" MODULE="spring-osgi-core-1.2.1.jar"
+				UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+				REQUIRED="true" />
+
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.11.2-SNAPSHOT.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.15.jar"
+				UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+				REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j12" MODULE="slf4j-log4j12-1.7.5.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+				REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
+</COMPONENT>
