@@ -73,8 +73,10 @@ try {
                         org.w3c.dom.NodeList nl = ((org.w3c.dom.Element) existingHeader.getObject()).getElementsByTagNameNS(org.apache.ws.security.WSConstants.SAML2_NS, org.apache.ws.security.WSConstants.ASSERTION_LN);
                         if (nl.getLength() > 0) {
                             globalMap.put("<%=cid%>_SECURITY_TOKEN", nl.item(0));
-                            break;
                         }
+                    }else if("{http://www.talend.com/esb/sam/correlationId/v1}correlationId".equals(existingHeader.getName().toString())){
+						String correlationId=(String) existingHeader.getObject();
+						globalMap.put("<%=cid%>_"+ "CORRELATION_ID",correlationId);
                     }
                 }
             }
