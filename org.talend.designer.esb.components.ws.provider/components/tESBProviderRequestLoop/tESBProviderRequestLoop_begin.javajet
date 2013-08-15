@@ -75,8 +75,11 @@ try {
                             globalMap.put("<%=cid%>_SECURITY_TOKEN", nl.item(0));
                         }
                     }else if("{http://www.talend.com/esb/sam/correlationId/v1}correlationId".equals(existingHeader.getName().toString())){
-						String correlationId=(String) existingHeader.getObject();
-						globalMap.put("<%=cid%>_"+ "CORRELATION_ID",correlationId);
+						Object correlationId = existingHeader.getObject();
+						if (correlationId instanceof org.w3c.dom.Node) {
+							correlationId = ((org.w3c.dom.Node)correlationId).getTextContent();
+						} 
+						globalMap.put("<%=cid%>_"+ "CORRELATION_ID", correlationId.toString());
                     }
                 }
             }
