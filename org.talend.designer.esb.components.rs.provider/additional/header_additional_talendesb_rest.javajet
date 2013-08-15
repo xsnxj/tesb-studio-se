@@ -457,12 +457,11 @@ public void setBus( org.apache.cxf.Bus bus) {
 					java.io.InputStream is = super.getAsStream(resourceName);
 					if(is == null){
 						try {
-							java.net.URL url = new java.net.URL(
-									resourceName);
+							java.net.URL url = new java.net.URL(resourceName);
 							is = url.openStream();
 						} catch (java.lang.Exception e) {
 							//e.printStackTrace();
-						} 
+						}
 					}
 					return is;
 				}
@@ -606,6 +605,21 @@ public static class RestServiceProviderImpl4TalendJob {
 		}
 	}
 
+	final class ArrayHelper {
+		public String codeGenArray(String[] array) {
+			String out = "";
+			if (null != array) {
+				for (String item : array) {
+					if (!out.isEmpty()) {
+						out += ", ";
+					}
+					out += "\"" + item + "\"";
+				}
+			}
+			return "{ " + out + " }";
+		}
+	}
+
 	/**
 	* JAXRS Parameter Representation
 	*/
@@ -692,15 +706,24 @@ final String SCHEMA_FIELD_NAME_4_REQUEST_BODY = "body";
 final String javaType4UndeclaredParameter = JavaTypesManager.STRING.getId(); // == "id_String"
 final String javaTypeWhole4UndeclaredParameter = JavaTypesManager.getTypeToGenerate(JavaTypesManager.STRING, true);
 
-final Map<String, String> restParameterTypes = new HashMap<String, String>() {{
-		put("PATH", "javax.ws.rs.PathParam");
-		put("FORM", "javax.ws.rs.FormParam");
-		put("QUERY", "javax.ws.rs.QueryParam");
-		put("HEADER", "javax.ws.rs.HeaderParam");
-		put("MATRIX", "javax.ws.rs.MatrixParam");
-		put("MULTIPART", "org.apache.cxf.jaxrs.ext.multipart.Multipart");
+final Map<String, String[]> contentTypes = new HashMap<String, String[]>() {{
+		put("XML", new String[] { "application/xml", "text/xml" });
+		put("JSON", new String[] { "application/json" });
+		put("XML-JSON", new String[] { "application/xml", "text/xml", "application/json" });
+		put("FORM", new String[] { "application/x-www-form-urlencoded" });
+		put("MULTIPART", new String[] { "multipart/form-data", "multipart/mixed", "multipart/related" });
+		put("HTML", new String[] { "text/html" });
+		put("ANY", new String[] { "*/*" });
 	}};
 
+final Map<String, String> restParameterTypes = new HashMap<String, String>() {{
+		put("PATH", "javax.ws.rs.PathParam");
+		put("MATRIX", "javax.ws.rs.MatrixParam");
+		put("QUERY", "javax.ws.rs.QueryParam");
+		put("HEADER", "javax.ws.rs.HeaderParam");
+		put("FORM", "javax.ws.rs.FormParam");
+		put("MULTIPART", "org.apache.cxf.jaxrs.ext.multipart.Multipart");
+	}};
 
 final Set<String> supportedTypes4Params = new HashSet<String>(Arrays.asList(
 		// string
@@ -768,6 +791,7 @@ final Set<String> supportedTypes4Part = new HashSet<String>(Arrays.asList(
 
 List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
+	ArrayHelper arrayHelper = new ArrayHelper();
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
 	for (IConnection conn : conns) {
 		if (!conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
@@ -777,6 +801,8 @@ if (null != conns && !conns.isEmpty()) {
 		String connName = conn.getName();
 		String httpVerb = null;
 		String uriPattern = null;
+		String consumes = null;
+		String produces = null;
 
 		boolean foundMapping = false;
 		for (Map<String, String> mapping : mappings) {
@@ -785,14 +811,24 @@ if (null != conns && !conns.isEmpty()) {
 				foundMapping = true;
 				httpVerb = mapping.get("HTTP_VERB");
 				uriPattern = mapping.get("URI_PATTERN");
+				consumes = mapping.get("CONSUMES");
+				produces = mapping.get("PRODUCES");
 			}
 		}
 		if (!foundMapping) {
 			continue;
 		}
 
-		boolean formSupported = false;
-		boolean multipartSupported = false;
+		if (null == consumes) {
+			consumes = "";
+		}
+		if (null == produces) {
+			produces = "";
+		}
+
+
+		boolean formSupported = "FORM".equals(consumes);
+		boolean multipartSupported = "MULTIPART".equals(consumes);
 		boolean noBodyRequest = "GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb); // || "OPTIONS".equals(httpVerb)
 
 		// All the parameters specified in the Schema Editor need to be handled.
@@ -890,14 +926,14 @@ if (null != conns && !conns.isEmpty()) {
 					if (multipartSupported) {
 						continue; // ignore this parameter (earlier multipart parameter won)
 					}
- 					formSupported = true;
+// 					formSupported = true;
 				} else if ("MULTIPART".equals(restParameterType)) {
 					// having at least one multipart parameter means request multiparts are supported
 					if (formSupported) {
 						continue; // ignore this parameter (earlier form parameter won)
 					}
+//					multipartSupported = true;
 					supportedTypes = supportedTypes4Part;
-					multipartSupported = true;
 				}
 
 				// schema parameter name
@@ -917,18 +953,25 @@ if (null != conns && !conns.isEmpty()) {
 <% if (null != uriPattern) { %>
 	@javax.ws.rs.Path(<%=uriPattern%>)
 <% } %>
-<% if (formSupported) { %>
-	@javax.ws.rs.Consumes("application/x-www-form-urlencoded")
-<% } else if (multipartSupported) { %>
-	@javax.ws.rs.Consumes({"multipart/form-data", "multipart/mixed", "multipart/related"})
-<% } else if (!noBodyRequest && null != bodyParameter) { %>
-	<% if ("org.dom4j.Document".equals(bodyParameter.getJavaType())) { %>
-		@javax.ws.rs.Consumes({"application/xml", "text/xml", "application/json"})
-	<% } else if ("String".equals(bodyParameter.getJavaType())) { %>
-		@javax.ws.rs.Consumes({"text/plain", "application/xml", "text/xml", "application/json"})
-	<% } else if ("byte[]".equals(bodyParameter.getJavaType())) { %>
-		@javax.ws.rs.Consumes({"application/octet-stream"})
-	<% } %>
+<%
+if (!noBodyRequest) {
+	String consumesContentTypes = null;
+	if (contentTypes.containsKey(consumes)) {
+		consumesContentTypes = arrayHelper.codeGenArray(contentTypes.get(consumes));
+	} else if (null != bodyParameter) {
+		if ("org.dom4j.Document".equals(bodyParameter.getJavaType())) {
+			consumesContentTypes = arrayHelper.codeGenArray(contentTypes.get("XML-JSON"));
+		} else if ("String".equals(bodyParameter.getJavaType())) {
+			consumesContentTypes = arrayHelper.codeGenArray(new String[] {"text/plain", "application/xml", "text/xml", "application/json"});
+		} else if ("byte[]".equals(bodyParameter.getJavaType())) {
+			consumesContentTypes = arrayHelper.codeGenArray(new String[] {"application/octet-stream"});
+		}
+	}
+	if (null != consumesContentTypes) { %>	@javax.ws.rs.Consumes(<%=consumesContentTypes%>)<% }
+}
+if (contentTypes.containsKey(produces)) {
+	String producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));
+%>	@javax.ws.rs.Produces(<%=producesContentTypes%>)
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
