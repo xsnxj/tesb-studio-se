@@ -136,18 +136,16 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
 
         EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
-        if (!isStudioEEVersion()) {
-            additionalInfo.put(ServiceMetadataDialog.USE_SERVICE_REGISTRY, Boolean.toString(false));
-            additionalInfo.put(ServiceMetadataDialog.AUTHORIZATION, Boolean.toString(false));
-        }
+        boolean isStudioEEVersion = isStudioEEVersion();
 
         boolean useMonitor = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useLocator = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
-        boolean useRegistry = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
+        boolean useRegistry = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)):false;
         boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
-        boolean useAuthorization = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
+        boolean useAuthorization = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION)):false;
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
+        boolean wsdlSchemaValidation = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION)):false;
         boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
 
         endpointInfo.put("useSL", useLocator /*&& !useRegistry*/); //$NON-NLS-1$
@@ -157,6 +155,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
         endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
+        endpointInfo.put("useWsdlSchemaValidation", wsdlSchemaValidation); //$NON-NLS-1$
         endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();

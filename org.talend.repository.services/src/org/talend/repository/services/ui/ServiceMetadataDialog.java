@@ -37,6 +37,7 @@ public class ServiceMetadataDialog extends Dialog {
     public static final String USE_SL = "UseSL"; //$NON-NLS-1$
     public static final String SL_CUSTOM_PROP_PREFIX = "slCustomProperty_"; //$NON-NLS-1$
     public static final String LOG_MESSAGES = "LogMessages"; //$NON-NLS-1$    
+    public static final String WSDL_SCHEMA_VALIDATION = "WsdlSchemaValidation"; //$NON-NLS-1$    
     public static final String USE_BUSINESS_CORRELATION = "useBusinessCorrelation"; //$NON-NLS-1$    
 
     private final ServiceItem serviceItem;
@@ -50,6 +51,7 @@ public class ServiceMetadataDialog extends Dialog {
 	private boolean securitySAML;
 	private boolean authorization;	
 	private boolean logMessages;	
+	private boolean wsdlSchemaValidation;	
 	private boolean useBusinessCorrelation;
 
     public ServiceMetadataDialog(IShellProvider parentShell, ServiceItem serviceItem, ServiceConnection serviceConnection) {
@@ -64,7 +66,8 @@ public class ServiceMetadataDialog extends Dialog {
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
             authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
             useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
-            logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));       
+            logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));            
+            wsdlSchemaValidation = Boolean.valueOf(props.get(WSDL_SCHEMA_VALIDATION));            
             useBusinessCorrelation = Boolean.valueOf(props.get(USE_BUSINESS_CORRELATION));
             for (Map.Entry<String, String> prop : props.entrySet()) {
                 if (prop.getKey().startsWith(SL_CUSTOM_PROP_PREFIX)) {
@@ -98,6 +101,22 @@ public class ServiceMetadataDialog extends Dialog {
         }
         
         Group samSlGroup = new Group(container, SWT.NONE);        
+        Button schemaValidationCheck = null ;
+        if(isStudioEEVersion()){
+        	schemaValidationCheck = new Button(samSlGroup, SWT.CHECK);
+            schemaValidationCheck.setText("Use WSDL Schema Validation");
+            schemaValidationCheck.setSelection(wsdlSchemaValidation);
+            schemaValidationCheck.setEnabled(!useServiceRegistry);        
+            schemaValidationCheck.addSelectionListener(new SelectionAdapter() {
+            	public void widgetSelected(SelectionEvent e) {
+            		wsdlSchemaValidation = ((Button)e.widget).getSelection();
+            	}
+            });
+        }else{
+        	wsdlSchemaValidation = false;
+        }
+        final Button tmpSchemaValidationCheck = schemaValidationCheck;
+        
         final Button samCheck = new Button(samSlGroup, SWT.CHECK);        
         final Button slCheck = new Button(samSlGroup, SWT.CHECK);       
         final Group securityGroup = new Group(container, SWT.NONE);        
@@ -116,11 +135,6 @@ public class ServiceMetadataDialog extends Dialog {
 		if (isStudioEEVersion()) {
 			useSRCheck.setText(Messages.ServiceMetadataDialog_useSRBtnText);
 			useSRCheck.setSelection(useServiceRegistry);
-			if (!isStudioEEVersion()) {
-				useSRCheck.setSelection(false);
-				useSRCheck.setVisible(false);
-				useServiceRegistry = false;
-			}
 			useSRCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					useServiceRegistry = useSRCheck.getSelection();
@@ -129,6 +143,9 @@ public class ServiceMetadataDialog extends Dialog {
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
 					samCheck.setEnabled(!useServiceRegistry);
+					if(tmpSchemaValidationCheck != null){
+						tmpSchemaValidationCheck.setEnabled(!useServiceRegistry);
+					}
 //					customPropertiesTable.setEditable(useSL
 //							&& !useServiceRegistry);
 				}
@@ -259,6 +276,10 @@ public class ServiceMetadataDialog extends Dialog {
         return logMessages;
     }
     
+    private boolean isWsdlSchemaValidation() {
+		return wsdlSchemaValidation;
+	}
+    
     private boolean isStudioEEVersion() {
     	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
     }
@@ -276,7 +297,8 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
             props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
             props.put(USE_SERVICE_REGISTRY, Boolean.toString(getUseServiceRegistry()));            
-            props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));
+            props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));            
+            props.put(WSDL_SCHEMA_VALIDATION, Boolean.toString(isWsdlSchemaValidation()));            
             props.put(USE_BUSINESS_CORRELATION, Boolean.toString(useBusinessCorrelation));
 
             if (isUseSL()) {

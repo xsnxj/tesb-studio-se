@@ -15,6 +15,9 @@
 			address="${address}"
 			wsdlLocation="classpath:/${wsdlLocation}">
 		<jaxws:properties>
+#if($useWsdlSchemaValidation && !$useServiceRegistry)
+			<entry key="schema-validation-enabled" value="true" />
+#end
 #if ($useSecurityToken || $useServiceRegistry)
 			<entry key="ws-security.ut.validator" value-ref="jaasUTValidator" />
 #end
