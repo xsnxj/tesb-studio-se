@@ -117,6 +117,7 @@ public class ServiceMetadataDialog extends Dialog {
         }
         final Button tmpSchemaValidationCheck = schemaValidationCheck;
         
+        final Button correlationCheck = new Button(samSlGroup, SWT.CHECK);
         final Button samCheck = new Button(samSlGroup, SWT.CHECK);        
         final Button slCheck = new Button(samSlGroup, SWT.CHECK);       
         final Group securityGroup = new Group(container, SWT.NONE);        
@@ -143,6 +144,7 @@ public class ServiceMetadataDialog extends Dialog {
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
 					samCheck.setEnabled(!useServiceRegistry);
+					correlationCheck.setEnabled(!useServiceRegistry);
 					if(tmpSchemaValidationCheck != null){
 						tmpSchemaValidationCheck.setEnabled(!useServiceRegistry);
 					}
@@ -177,8 +179,8 @@ public class ServiceMetadataDialog extends Dialog {
         customPropertiesTable = new ServiceMetadataCustomPropertiesTable(samSlGroup, slCustomProperties);
         customPropertiesTable.setEditable(useSL /*&& !useServiceRegistry*/);
         
-        final Button correlationCheck = new Button(samSlGroup, SWT.CHECK);
         correlationCheck.setText(Messages.ServiceMetadataDialog_useBusinessCorrelation);
+    	correlationCheck.setEnabled(!useServiceRegistry);
         correlationCheck.setSelection(useBusinessCorrelation);
         correlationCheck.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

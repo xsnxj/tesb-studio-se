@@ -25,8 +25,10 @@ public class FeaturesModel extends BaseModel {
 	public static final String NAME_SUFFIX = "-feature";
 
 	public static final String ESB_FEATURE_VERSION_RANGE = "[5,6)";
-    private static final FeatureModel ESB_JOB_CONTROLLER_FEATURE = new FeatureModel("talend-job-controller", ESB_FEATURE_VERSION_RANGE);
-    private final String name;
+
+	private static final FeatureModel ESB_JOB_CONTROLLER_FEATURE = new FeatureModel("talend-job-controller", ESB_FEATURE_VERSION_RANGE);
+
+	private final String name;
 
 	private String configName;
 
@@ -44,10 +46,6 @@ public class FeaturesModel extends BaseModel {
 		addFeature(ESB_JOB_CONTROLLER_FEATURE);
 	}
 	
-	public void addPolicyCorrelationIdFeature() {
-		addFeature(new FeatureModel("tesb-policy-correlationid", ESB_FEATURE_VERSION_RANGE));
-	}
-
 	public void setConfigName(String configName) {
 		this.configName = configName;
 	}

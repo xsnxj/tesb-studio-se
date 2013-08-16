@@ -156,7 +156,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
         endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
         endpointInfo.put("useWsdlSchemaValidation", wsdlSchemaValidation); //$NON-NLS-1$
-        endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation); //$NON-NLS-1$
+        endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation && !useRegistry); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
         if (useLocator /*&& !useRegistry*/) {

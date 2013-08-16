@@ -26,6 +26,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.models.BundleModel;
+import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
@@ -150,9 +151,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
         feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
 
         ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
-        String useCorrelation=connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
-        if("true".equals(useCorrelation)) {
-        	feature.addPolicyCorrelationIdFeature();
+        String useRegistry = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_SERVICE_REGISTRY);
+        if(!"true".equals(useRegistry)) {
+	        String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
+	        if("true".equals(useCorrelation)) {
+	        	feature.addFeature(new FeatureModel("tesb-policy-correlationid", FeaturesModel.ESB_FEATURE_VERSION_RANGE));
+	        }
         }
 
         try {
