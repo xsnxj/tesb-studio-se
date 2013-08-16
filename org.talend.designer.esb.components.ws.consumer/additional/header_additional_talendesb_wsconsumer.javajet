@@ -4,7 +4,7 @@
         java.util.Vector
 
         org.talend.designer.codegen.config.CodeGeneratorArgument
-
+		org.talend.core.model.process.ElementParameterParser
         org.talend.core.model.process.INode
         org.talend.core.model.process.IProcess
     "
@@ -18,7 +18,22 @@ IProcess process = (IProcess) v.get(0);
 boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 
-if (actAsConsumer) { %>
+if (actAsConsumer) { 
+	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+	boolean useCorrelationId = false;
+	for(INode node : process.getNodesOfType("tESBConsumer")) {
+		if(isStudioEEVersion && "true".equals(ElementParameterParser.getValue(node, "__USE_SR__"))){
+			continue;
+		}
+		if("true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"))) {
+			useCorrelationId = true;
+			%>
+	private final static javax.xml.namespace.QName correlationIdQName = new javax.xml.namespace.QName("http://www.talend.com/esb/sam/correlationId/v1","correlationId");
+			<%
+			break;
+		}
+	}
+%>
     @SuppressWarnings("serial")
     public static class GenericFaultInfoException extends org.apache.cxf.frontend.FaultInfoException {
 
@@ -73,6 +88,9 @@ if (actAsConsumer) { %>
 
         private boolean logMessages;
 
+<%if(useCorrelationId) {%>
+		private java.util.Map<?, ?> responseContext;
+<%}%>
         private java.util.Collection<org.apache.cxf.headers.Header> soapHeaders;
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
@@ -155,6 +173,33 @@ if (actAsConsumer) { %>
         public void setSoapHeaders(java.util.Collection<org.apache.cxf.headers.Header> soapHeaders) {
             this.soapHeaders = soapHeaders;
         }
+
+<%if(useCorrelationId) {%>
+		
+		public String getCorrelationId() {
+			return getCorrelationId(responseContext);
+		}
+
+		public static String getCorrelationId(java.util.Map<?, ?> responseContext){
+			List<?> responseSoapHeadersList = (List<?>) responseContext.get(org.apache.cxf.headers.Header.HEADER_LIST);
+			if(responseSoapHeadersList!=null) {
+				for (Object responseSoapHeades : responseSoapHeadersList) {
+					org.apache.cxf.headers.Header soapHeader=(org.apache.cxf.headers.Header) responseSoapHeades;
+					if(correlationIdQName.equals(soapHeader.getName())){
+						Object correlationId = soapHeader.getObject();
+						if(correlationId == null) {
+							return null;
+						}
+						if(correlationId instanceof org.w3c.dom.Node) {
+							correlationId = ((org.w3c.dom.Element)correlationId).getTextContent();
+						}
+						return correlationId.toString();
+					}
+				}
+			}
+			return null;
+		}
+<%}%>
 
         public org.dom4j.Document invoke(org.dom4j.Document doc) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
@@ -266,6 +311,9 @@ if (actAsConsumer) { %>
             try {
                 Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource(doc));
                 if (results != null && results.length > 0) {
+<%if(useCorrelationId) {%>
+					responseContext = client.getResponseContext();
+<%}%>
                     return sourceToDocument((javax.xml.transform.Source) results[0]);
                 }
             } catch (GenericFaultInfoException e) {

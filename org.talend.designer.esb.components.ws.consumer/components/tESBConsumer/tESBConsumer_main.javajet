@@ -51,7 +51,7 @@ String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT
 
 Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
 
-boolean useBusinessCorrelation = "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
+boolean useBusinessCorrelation = (!useSR) && "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
 String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
 
 IConnection inputConn = null;
@@ -127,7 +127,7 @@ if (inputConn != null) {
                 <% } %>
             <% } %>
 
-            final java.util.List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
+            final List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
             <% if (authPropagate) { %>
                 final Object securityToken_<%=cid%>;
                 <% List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
@@ -138,7 +138,7 @@ if (inputConn != null) {
             <%
                if(useBusinessCorrelation && (!correlationValue.matches("\"?\\s*\"?"/*empty content with quote as optional.*/))){
                      %>soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(
-                 		new javax.xml.namespace.QName("http://www.talend.com/esb/sam/correlationId/v1","correlationId")
+                		correlationIdQName
                      	,<%=correlationValue%>
                      	,new org.apache.cxf.jaxb.JAXBDataBinding(String.class)));<%
                }
@@ -233,7 +233,9 @@ if (inputConn != null) {
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-
+<%if(useBusinessCorrelation) {%>
+                globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationId());
+<%}%>
             } else {
                 ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
                     new ESBEndpointInfo() {
@@ -285,7 +287,13 @@ if (inputConn != null) {
                             }
                             <% if (authPropagate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
-                            <% } %>
+                            <% }
+                               boolean enhancedResponse = false;
+                               enhancedResponse |= useBusinessCorrelation;
+                               if (enhancedResponse) {%>
+                                put("enhancedResponse", true);
+                               <%}
+                            %>
                         }};
 
                         public String getEndpointUri() {
@@ -304,7 +312,17 @@ if (inputConn != null) {
                 );
 
                 Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
-                responseDoc_<%=cid%> = (org.dom4j.Document) consumer_<%=cid%>.invoke(request_<%=cid%>);
+                Object consumerResponse_<%=cid%> = consumer_<%=cid%>.invoke(request_<%=cid%>);
+				if(consumerResponse_<%=cid%> instanceof java.util.Map) {
+					java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
+					responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
+<%if(useBusinessCorrelation){%>
+					java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
+					globalMap.put("<%=cid%>_CORRELATION_ID", GenericConsumer.getCorrelationId(responseContext_<%=cid%>));
+<%}%>
+				}else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
+					responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
+				}
             }
             <% if (null != connResponse) {
                 String connResponseName = connResponse.getName(); %>
