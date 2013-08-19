@@ -57,10 +57,6 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 
-    private static boolean isStudioEEVersion() {
-        return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
-    }
-
     @SuppressWarnings("unchecked")
 	public void createBlueprint(File outputFile, Map<ServicePort, Map<String, String>> ports,
             ServiceConnection serviceConnection, IFile wsdl, String studioServiceName)
