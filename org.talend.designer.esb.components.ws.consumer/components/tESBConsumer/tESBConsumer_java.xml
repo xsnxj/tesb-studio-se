@@ -523,6 +523,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.7-SNAPSHOT.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+            <IMPORT NAME="correlationid-policy"
+                    MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 		</IMPORTS>
 	</CODEGENERATION>
 
