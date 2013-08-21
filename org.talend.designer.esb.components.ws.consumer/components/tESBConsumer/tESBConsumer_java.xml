@@ -90,16 +90,6 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		
-		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="42"
-				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false') ">
-			<DEFAULT>false</DEFAULT>
-		</PARAMETER>	
-		
-		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="43"
-				GROUP="ESB" SHOW_IF="(USE_BUSINESS_CORRELATION == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
-			<DEFAULT>""</DEFAULT>
-		</PARAMETER>
-		
 		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="44"
 				GROUP="ESB" SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
 			<DEFAULT>false</DEFAULT>
@@ -155,6 +145,16 @@
 
 		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="47"
 				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')) OR (USE_SR == 'true'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="52"
+				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false') ">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>	
+		
+		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="53"
+				GROUP="ESB" SHOW_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
@@ -527,7 +527,7 @@
                     MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
 		</IMPORTS>
 	</CODEGENERATION>
 

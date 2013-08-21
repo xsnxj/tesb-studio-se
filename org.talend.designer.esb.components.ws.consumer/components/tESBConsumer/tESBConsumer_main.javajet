@@ -134,16 +134,7 @@ if (inputConn != null) {
                 if (!nodesProviderRequest.isEmpty()) { %>
                     securityToken_<%=cid%> = globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_SECURITY_TOKEN");
             <%  }
-            } %>
-            <%
-               if(useBusinessCorrelation && (!correlationValue.matches("\"?\\s*\"?"/*empty content with quote as optional.*/))){
-                     %>soapHeaders_<%=cid%>.add(new org.apache.cxf.headers.Header(
-                		correlationIdQName
-                     	,<%=correlationValue%>
-                     	,new org.apache.cxf.jaxb.JAXBDataBinding(String.class)));<%
-               }
-            %>
-            <% if (hasHeaders) { %>
+            } if (hasHeaders) { %>
                 final routines.system.Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
                     javax.xml.transform.dom.DOMResult result = new javax.xml.transform.dom.DOMResult();
@@ -233,7 +224,7 @@ if (inputConn != null) {
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-<%if(useBusinessCorrelation) {%>
+<%if(useBusinessCorrelation || useSR) {%>
                 globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationId());
 <%}%>
             } else {
@@ -288,11 +279,12 @@ if (inputConn != null) {
                             <% if (authPropagate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
-                               boolean enhancedResponse = false;
-                               enhancedResponse |= useBusinessCorrelation;
-                               if (enhancedResponse) {%>
-                                put("enhancedResponse", true);
-                               <%}
+                            if(useBusinessCorrelation || useSR) {
+                            	%>
+                            put("CorrelationIDCallbackHandler",new EsbJobCorrelationCallbackHandler(<%=correlationValue%>));
+                            put("enhancedResponse", true);
+                            	<%
+                            }
                             %>
                         }};
 
@@ -316,7 +308,7 @@ if (inputConn != null) {
 				if(consumerResponse_<%=cid%> instanceof java.util.Map) {
 					java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
 					responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
-<%if(useBusinessCorrelation){%>
+<%if(useBusinessCorrelation || useSR){%>
 					java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
 					globalMap.put("<%=cid%>_CORRELATION_ID", GenericConsumer.getCorrelationId(responseContext_<%=cid%>));
 <%}%>

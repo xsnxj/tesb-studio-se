@@ -17,21 +17,31 @@ IProcess process = (IProcess) v.get(0);
 
 boolean actAsProvider = !process.getNodesOfType("tESBProviderRequest").isEmpty();
 boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
-
+boolean useCorrelationId = false;
 if (actAsConsumer) { 
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-	boolean useCorrelationId = false;
 	for(INode node : process.getNodesOfType("tESBConsumer")) {
 		if(isStudioEEVersion && "true".equals(ElementParameterParser.getValue(node, "__USE_SR__"))){
-			continue;
+			useCorrelationId = true;
+			break;
 		}
 		if("true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"))) {
 			useCorrelationId = true;
-			%>
-	private final static javax.xml.namespace.QName correlationIdQName = new javax.xml.namespace.QName("http://www.talend.com/esb/sam/correlationId/v1","correlationId");
-			<%
 			break;
 		}
+	}
+	if(useCorrelationIdlationIDFeature) {
+		%>
+		private static class EsbJobCorrelationCallbackHandler implements org.talend.esb.correlation.CorrelationIDCallbackHandler {
+			private final String correlationId;
+			public EsbJobCorrelationCallbackHandler(final String correlationId) {
+				this.correlationId = correlationId;
+			}
+			public String getCorrelationId() {
+				return correlationId;
+			};
+		}
+		<%
 	}
 %>
     @SuppressWarnings("serial")
@@ -185,7 +195,7 @@ if (actAsConsumer) {
 			if(responseSoapHeadersList!=null) {
 				for (Object responseSoapHeades : responseSoapHeadersList) {
 					org.apache.cxf.headers.Header soapHeader=(org.apache.cxf.headers.Header) responseSoapHeades;
-					if(correlationIdQName.equals(soapHeader.getName())){
+					if(org.talend.esb.correlation.impl.CorrelationIDPolicyBuilder.CORRELATION_ID_SCHEMA.equals(soapHeader.getName())){
 						Object correlationId = soapHeader.getObject();
 						if(correlationId == null) {
 							return null;
