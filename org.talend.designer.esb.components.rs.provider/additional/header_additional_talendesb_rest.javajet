@@ -1061,28 +1061,33 @@ if (contentTypes.containsKey(produces)) {
 		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
 
 <% if (multipartSupported) { %>
-		java.util.Map<String, String> attachmentFilenames = new java.util.HashMap<String, String>();
+		java.util.Map<String, String> attachmentFilenames_<%=cid%> = new java.util.HashMap<String, String>();
 
-		java.util.Map<String, java.util.Map<String, java.util.List<String>>> attachmentHeaders =
+		java.util.Map<String, java.util.Map<String, java.util.List<String>>> attachmentHeaders_<%=cid%> =
 			new java.util.HashMap<String, java.util.Map<String, java.util.List<String>>>();
 <%		for (Parameter param : parameters.values()) {
 			if ("MULTIPART".equals(param.getParamType())) {
 				String partName = param.getVariableName(); %>
 				org.apache.cxf.jaxrs.ext.multipart.Attachment att_<%=partName%>_<%=cid%> = getFirstMatchingPart(messageContext, "<%=partName%>");
 				if (att_<%=partName%>_<%=cid%> != null) {
-					attachmentHeaders.put("<%=partName%>", att_<%=partName%>_<%=cid%>.getHeaders());
+					attachmentHeaders_<%=cid%>.put("<%=partName%>", att_<%=partName%>_<%=cid%>.getHeaders());
 					if (null != att_<%=partName%>_<%=cid%>.getContentDisposition()) {
 						String filename = att_<%=partName%>_<%=cid%>.getContentDisposition().getParameter("filename");
 						if (null != filename) {
-							attachmentFilenames.put("<%=partName%>", filename);
+							attachmentFilenames_<%=cid%>.put("<%=partName%>", filename);
 						}
 					}
 				}
 <%			}
 		} // loop thru jax-rs parameters %>
- 		request_<%=cid%>.put("ATTACHMENT_HEADERS", attachmentHeaders);
- 		request_<%=cid%>.put("ATTACHMENT_FILENAMES", attachmentFilenames);
+ 		request_<%=cid%>.put("ATTACHMENT_HEADERS", attachmentHeaders_<%=cid%>);
+ 		request_<%=cid%>.put("ATTACHMENT_FILENAMES", attachmentFilenames_<%=cid%>);
 <% } %>
+
+ 		javax.ws.rs.core.SecurityContext securityContext_<%=cid%> = messageContext.getSecurityContext();
+		if (null != securityContext_<%=cid%> && null != securityContext_<%=cid%>.getUserPrincipal()) {
+			request_<%=cid%>.put("PRINCIPAL_NAME", securityContext_<%=cid%>.getUserPrincipal().getName());
+		}
 
 		return processRequest(request_<%=cid%>);
 	}

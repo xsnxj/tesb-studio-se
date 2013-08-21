@@ -140,3 +140,5 @@ if (null != metadatas && 0 < metadatas.size()) {
 
 		globalMap.put("<%=cid%>_ATTACHMENT_HEADERS", requestMessage_<%=cid%>.get("ATTACHMENT_HEADERS"));
 		globalMap.put("<%=cid%>_ATTACHMENT_FILENAMES", requestMessage_<%=cid%>.get("ATTACHMENT_FILENAMES"));
+
+		globalMap.put("<%=cid%>_PRINCIPAL_NAME", (String) requestMessage_<%=cid%>.get("PRINCIPAL_NAME"));

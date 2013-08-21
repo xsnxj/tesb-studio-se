@@ -162,6 +162,7 @@
 		<RETURN AVAILABILITY="FLOW" NAME="HTTP_METHOD" TYPE="id_String" />
 		<RETURN AVAILABILITY="FLOW" NAME="ATTACHMENT_HEADERS" TYPE="java.util.Map&lt;String, java.util.Map&lt;String, java.util.List&lt;String&gt;&gt;&gt;" />
 		<RETURN AVAILABILITY="FLOW" NAME="ATTACHMENT_FILENAMES" TYPE="java.util.Map&lt;String, String&gt;" />
+		<RETURN AVAILABILITY="FLOW" NAME="PRINCIPAL_NAME" TYPE="id_String" />
 	</RETURNS>
 
 </COMPONENT>
