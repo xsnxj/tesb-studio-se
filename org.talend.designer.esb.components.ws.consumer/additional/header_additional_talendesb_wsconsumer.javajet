@@ -20,7 +20,7 @@ boolean actAsConsumer = !process.getNodesOfType("tESBConsumer").isEmpty();
 boolean useCorrelationId = false;
 if (actAsConsumer) { 
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-	for(INode node : process.getNodesOfType("tESBConsumer")) {
+	for (INode node : process.getNodesOfType("tESBConsumer")) {
 		if(isStudioEEVersion && "true".equals(ElementParameterParser.getValue(node, "__USE_SR__"))){
 			useCorrelationId = true;
 			break;
@@ -30,7 +30,7 @@ if (actAsConsumer) {
 			break;
 		}
 	}
-	if(useCorrelationIdlationIDFeature) {
+	if (useCorrelationId) {
 		%>
 		private static class EsbJobCorrelationCallbackHandler implements org.talend.esb.correlation.CorrelationIDCallbackHandler {
 			private final String correlationId;
