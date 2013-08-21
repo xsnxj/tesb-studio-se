@@ -222,10 +222,15 @@ try {
 	webClient_<%=cid%>.path(<%=ElementParameterParser.getValue(node,"__PATH__")%>);
 
 	// set connection properties
-	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
-	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
 	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
 	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__FOLLOW_REDIRECTS__"))) { %>
+		conduit_<%=cid%>.getClient().setAutoRedirect(true);
+		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.relative.uri", true);
+		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.same.host.only", <%=!Boolean.valueOf(ElementParameterParser.getValue(node,"__REDIRECT_NON_SAME_HOST__"))%>);
+	<% } %>
 	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
 		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
 		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
@@ -260,9 +265,8 @@ try {
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
 			outInterceptor.setStsClient(createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
 					<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>, <%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>));
-			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getOutInterceptors().add(outInterceptor);
-			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getOutInterceptors().add(
-					new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
+			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
+			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
 		}
 	<% } %>
 
