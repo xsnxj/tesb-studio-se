@@ -46,7 +46,6 @@ if ("CUSTOM".equals(selectedStatusCode)) { %>
 		Integer restProviderStatusCode_<%=cid%> = <%= selectedStatusCode%>;
 <% } %>
 
-		String contentTypeHeader_<%=cid%> = null;
 		Object restProviderResponse_<%=cid%> = null;
 <%
 IMetadataColumn column = conn.getMetadataTable().getColumn("string");
@@ -57,28 +56,16 @@ if (null != column && "id_String".equals(column.getTalendType())) { %>
 
 column = conn.getMetadataTable().getColumn("body");
 if (null != column) {
-	if ("id_Document".equals(column.getTalendType())) {
-%>
+	if ("id_Document".equals(column.getTalendType())) { %>
 		if (null != <%=conn.getName()%>.body) {
 			restProviderResponse_<%=cid%> = <%=conn.getName()%>.body.getDocument();
 		}
 <%	} else { %>
 		restProviderResponse_<%=cid%> = <%=conn.getName()%>.body;
-		if (null != restProviderResponse_<%=cid%>) {
-			<% if ("id_String".equals(column.getTalendType())) { %>
-				contentTypeHeader_<%=cid%> = "text/plain";
-			<% } %>
-			<% if ("id_byte[]".equals(column.getTalendType())) { %>
-				contentTypeHeader_<%=cid%> = "application/octet-stream";
-			<% } %>
-		}
 <%	}
 } %>
 
 		java.util.Map<String, String> restProviderResponseHeaders_<%=cid%> = new java.util.TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-		if (null != contentTypeHeader_<%=cid%>) {
-			restProviderResponseHeaders_<%=cid%>.put("Content-Type", contentTypeHeader_<%=cid%>);
-		}
 <%
 List<Map<String, String>> headers = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node,"__RESPONSE_HEADERS__");
 for (Map<String, String> header : headers) { %>
