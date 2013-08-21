@@ -10,14 +10,14 @@ Bundle-ClassPath: lib/cxf-rt-core-2.7.7-SNAPSHOT.jar,lib/cxf-api-2.7.7-S
  jar,lib/cxf-rt-transports-http-jetty-2.7.7-SNAPSHOT.jar,lib/cxf-rt-feat
  ures-clustering-2.7.7-SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.7-SN
  APSHOT.jar,lib/cxf-rt-rs-security-xml-2.7.7-SNAPSHOT.jar,lib/cxf-rt-cor
- e-2.7.7-20130820.070530-29.jar,lib/cxf-api-2.7.7-20130820.070457-29.jar
+ e-2.7.7-20130820.070530-29.jar,lib/cxf-api-2.7.7-20130821.064337-30.jar
  ,lib/woodstox-core-asl-4.2.0.jar,lib/stax2-api-3.1.1.jar,lib/jaxb-impl-
  2.1.13.jar,lib/xmlschema-core-2.0.3.jar,lib/geronimo-javamail_1.4_spec-
  1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-20130820.070931-29.jar,lib/as
  m-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-20130820.070601-29.jar,lib/c
- xf-rt-databinding-jaxb-2.7.7-20130820.070550-29.jar,lib/cxf-rt-bindings
- -xml-2.7.7-20130820.070822-29.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
- 0820.070911-29.jar,lib/cxf-rt-ws-addr-2.7.7-20130820.070918-29.jar,lib/
+ xf-rt-databinding-jaxb-2.7.7-20130821.064428-30.jar,lib/cxf-rt-bindings
+ -xml-2.7.7-20130821.064652-30.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
+ 0821.064737-30.jar,lib/cxf-rt-ws-addr-2.7.7-20130820.070918-29.jar,lib/
  cxf-rt-transports-http-2.7.7-20130820.070855-29.jar,lib/cxf-rt-ws-secur
  ity-2.7.7-20130820.071314-29.jar,lib/ehcache-core-2.5.1.jar,lib/wss4j-1
  .6.12-20130808.141553-1.jar,lib/xmlsec-1.5.5.jar,lib/opensaml-2.5.1-1.j
