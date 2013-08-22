@@ -49,6 +49,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.swt.formtools.LabelledFileField;
 import org.talend.core.model.properties.PropertiesFactory;
@@ -203,8 +204,8 @@ public class OpenWSDLPage extends WizardPage {
         IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
             public void run(final IProgressMonitor monitor) throws CoreException {
+            	IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                 try {
-                    IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                     item.setConnection(ServicesFactory.eINSTANCE.createServiceConnection());
                     if (creation) {
                         item.getProperty().setId(factory.getNextId());
@@ -258,13 +259,23 @@ public class OpenWSDLPage extends WizardPage {
                     factory.save(item);
                     ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
 
-                } catch (CoreException e) {
-                    throw e;
-                } catch (InvocationTargetException e) {
-                    throw getCoreException("WDSL creation failed", e.getCause());
                 } catch (Exception e) {
-                    throw getCoreException("WDSL creation failed", e);
-                }
+                	//delete the node if any exception during the creation
+                	try{
+                		factory.save(item);
+						factory.deleteObjectPhysical(repositoryNode.getObject());
+					} catch (PersistenceException e1) {
+						e1.printStackTrace();
+					}
+                	//throw the exception
+                	if(e instanceof CoreException){
+                		throw (CoreException)e;
+                	}
+                	if(e instanceof InvocationTargetException){
+                		throw getCoreException("WDSL creation failed", e.getCause()); 
+                	}
+                	throw getCoreException("WDSL creation failed", e);
+                } 
             }
         };
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
