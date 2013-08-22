@@ -261,12 +261,14 @@ public class OpenWSDLPage extends WizardPage {
 
                 } catch (Exception e) {
                 	//delete the node if any exception during the creation
-                	try{
-                		factory.save(item);
-						factory.deleteObjectPhysical(repositoryNode.getObject());
-					} catch (PersistenceException e1) {
-						e1.printStackTrace();
-					}
+                	if(creation){
+	                	try{
+	                		factory.save(item);
+							factory.deleteObjectPhysical(repositoryNode.getObject());
+						} catch (PersistenceException e1) {
+							e1.printStackTrace();
+						}
+                	}
                 	//throw the exception
                 	if(e instanceof CoreException){
                 		throw (CoreException)e;
