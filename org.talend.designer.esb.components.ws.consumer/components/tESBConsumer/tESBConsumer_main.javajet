@@ -148,7 +148,7 @@ if (inputConn != null) {
                     }
                 }
             <% } %>
-            
+
             if (null == this.registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
@@ -169,18 +169,16 @@ if (inputConn != null) {
                         new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
 
                 <% if (useSl) { %>
-// disable SL (java.lang.RuntimeException: Could not find conduit initiator for address: locator:// and transport: http://schemas.xmlsoap.org/soap/http)
-// Cause: client.getConduit()
-//                    genericConsumer_<%=cid%>.setAddress("locator://");
-//
-//                    // if (!inOSGi) {
-//                    genericConsumer_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-//                    // }
-//                    org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
-//                    if (null != slCustomProps_<%=cid%> && !slCustomProps_<%=cid%>.isEmpty()) {
-//                        featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
-//                    }
-//                    esbFeatures_<%=cid%>.add(featureSL_<%=cid%>);
+                    genericConsumer_<%=cid%>.setAddress("locator://");
+
+                    // if (!inOSGi) {
+                    genericConsumer_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    // }
+                    org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+                    if (null != slCustomProps_<%=cid%> && !slCustomProps_<%=cid%>.isEmpty()) {
+                        featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+                    }
+                    esbFeatures_<%=cid%>.add(featureSL_<%=cid%>);
                 <% } %>
                 <% if (useSAM) { %>
                     // if (null == eventFeature) {
