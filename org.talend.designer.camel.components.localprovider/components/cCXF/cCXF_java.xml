@@ -442,8 +442,8 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.0-SNAPSHOT.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="zookeeper"
-                    MODULE="zookeeper-3.3.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
+                    MODULE="zookeeper-3.4.5.jar" 
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.4.5.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.17.jar"
