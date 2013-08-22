@@ -24,14 +24,13 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
 import org.talend.core.IESBService;
 import org.talend.core.model.general.Project;
@@ -51,7 +50,6 @@ import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
-import org.talend.designer.core.ui.editor.ProcessEditorInput;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.repository.ProjectManager;
@@ -269,20 +267,20 @@ public class ESBService implements IESBService {
             List<? extends INode> nodelist = process.getGraphicalNodes();
             for (INode node : nodelist) {
                 if (node.getComponent().getName().equals("tESBProviderRequest")) {
-                    repositoryChange(selectNode, node);
+                    repositoryChange(selectNode, node, process);
+                    break;
                 }
             }
             try {
-                processItem.setProcess(process.saveXmlFile());
-            } catch (IOException e1) {
-                ExceptionHandler.process(e1);
-            }
-
-            try {
-                factory.save(processItem);
+            	if(!foundInOpen){
+            		processItem.setProcess(process.saveXmlFile());
+            		factory.save(processItem);
+            	}
             } catch (PersistenceException e) {
                 ExceptionHandler.process(e);
-            }
+            } catch (IOException e) {
+            	ExceptionHandler.process(e);
+			}
         }
 
         // ProcessType process = item.getProcess();
@@ -360,18 +358,23 @@ public class ESBService implements IESBService {
                 String portName = "";
                 EList<ServicePort> portList = serConn.getServicePort();
                 ServiceOperation operation = null;
-                out: for (ServicePort port : portList) {
-                    if (port.getId().equals(ids[1])) {
-                        portName = port.getName();
-                        // node.getElementParameter("PORT")
-                        EList<ServiceOperation> opeList = port.getServiceOperation();
-                        for (ServiceOperation ope : opeList) {
-                            if (ope.getId().equals(ids[2])) {
-                                operation = ope;
-                                break out;
-                            }
-                        }
+                for (ServicePort port : portList) {
+                    if (!port.getId().equals(ids[1])) {
+                    	continue;
                     }
+                    portName = port.getName();
+                    EList<ServiceOperation> opeList = port.getServiceOperation();
+                    for (ServiceOperation ope : opeList) {
+                    	if (ope.getId().equals(ids[2])) {
+                    		operation = ope;
+                    		break;
+                    	}
+                    }
+                    break;
+                }
+                
+                if(operation == null){
+                	return;
                 }
 
                 RepositoryNode topParent = getServicesTopNode(selectNode);
@@ -379,38 +382,27 @@ public class ESBService implements IESBService {
 
                 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
-                if (operation.getReferenceJobId() != null) {
-                    changeOtherJobSchemaValue(factory, operation, serConn, selectNode);
-                    MessageDialog.openWarning(new Shell(), "warning",
-                            "This other job which based on the Operation will be unset!");
+
+                IProcess2 process = (IProcess2) RepositoryPlugin.getDefault().getDesignerCoreService().getCurrentProcess();
+                Item jobItem = process.getProperty().getItem();
+                String jobID = jobItem.getProperty().getId();
+                String jobName = jobItem.getProperty().getLabel();
+                
+                if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals(jobID)) {
+                	changeOtherJobSchemaValue(factory, operation, serConn, selectNode);
+                	MessageDialog.openWarning(new Shell(), Messages.ESBService_DisconnectWarningTitle,
+                			Messages.ESBService_DisconnectWarningMsg);
                 }
 
-                IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-                IEditorInput input = activeEditor.getEditorInput();
-                if (input instanceof ProcessEditorInput) {
-                    Item jobItem = ((ProcessEditorInput) input).getItem();
-                    String jobID = jobItem.getProperty().getId();
-                    String jobName = jobItem.getProperty().getLabel();
+                operation.setReferenceJobId(jobID);
+                operation.setLabel(operation.getName() + '-' + jobName);
 
-                    operation.setReferenceJobId(jobID);
-                    operation.setLabel(operation.getName() + '-' + jobName);
-
-                    IFile wsdlPath = WSDLUtils.getWsdlFile(selectNode);
-                    Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
-                            operation.getName(), portName);
-                    CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
-
-                    try {
-                        factory.save(jobItem);
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        factory.save(servicesItem);
-                    } catch (PersistenceException e) {
-                        ExceptionHandler.process(e);
-                    }
-                }
+                IFile wsdlPath = WSDLUtils.getWsdlFile(selectNode);
+                Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
+                		operation.getName(), portName);
+                CreateNewJobAction.setProviderRequestComponentConfiguration(node, serviceParameters);
+                
+                factory.save(servicesItem);
             } catch (PersistenceException e) {
                 ExceptionHandler.process(e);
             } catch (CoreException e) {
@@ -420,7 +412,7 @@ public class ESBService implements IESBService {
         }
     }
 
-    private void repositoryChange(RepositoryNode repNode, INode node) {
+    private void repositoryChange(RepositoryNode repNode, INode node, IProcess2 process) {
         IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
         ConnectionItem connectionItem = (ConnectionItem) repNode.getObject().getProperty().getItem();
         if (param != null) {
@@ -431,7 +423,12 @@ public class ESBService implements IESBService {
             ((OperationRepositoryObject) repNode.getObject()).getId();
             ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, null, param.getName()
                     + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
-            command2.execute();
+            IEditorPart editor = process.getEditor();
+            if(editor == null){
+            	command2.execute();
+            }else{
+            	((AbstractMultiPageTalendEditor)editor).getTalendEditor().getCommandStack().execute(command2);
+            }
         }
     }
 

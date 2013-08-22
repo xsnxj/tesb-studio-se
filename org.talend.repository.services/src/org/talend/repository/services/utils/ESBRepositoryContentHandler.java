@@ -30,6 +30,7 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryTypeProcessor;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
@@ -215,5 +216,15 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         }
         computePropertyMaxInformationLevel(property);
     }
+
+	@Override
+	public IRepositoryTypeProcessor getRepositoryTypeProcessor(
+			String repositoryType) {
+		if("SERVICES:OPERATION".equals(repositoryType)){
+			return new ServiceOperationRepositoryTypeProcessor(repositoryType);
+		}
+		return super.getRepositoryTypeProcessor(repositoryType);
+	}
+
 
 }

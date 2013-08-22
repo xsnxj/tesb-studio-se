@@ -38,7 +38,6 @@ import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.RepositoryManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
@@ -57,6 +56,7 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.IESBConstant;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -266,6 +266,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 parameter.setValue(property.getValue());
             }
         }
+        IElementParameter param = providerRequestComponent.getElementParameter(IESBConstant.PROPERTY);
+        param.getChildParameters().get(IESBConstant.PROPERTY_TYPE).setValue(EmfComponent.REPOSITORY);
     }
 
     private void repositoryChange(RepositoryNode nodeOperation, Node nodeProviderRequest) {

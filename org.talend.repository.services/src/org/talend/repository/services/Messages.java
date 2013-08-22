@@ -94,6 +94,9 @@ public class Messages extends NLS {
 	public static String LocalWSDLEditor_refreshBindingMessage;
 	public static String LocalWSDLEditor_refreshBindingTitle;
 	
+	public static String ESBService_DisconnectWarningTitle;
+	public static String ESBService_DisconnectWarningMsg;
+	
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
