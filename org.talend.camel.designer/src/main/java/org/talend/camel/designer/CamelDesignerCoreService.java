@@ -39,6 +39,9 @@ import org.talend.camel.designer.ui.bean.CreateCamelBean;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.utils.generation.JavaUtils;
+import org.talend.core.model.components.ComponentCategory;
+import org.talend.core.model.process.IConnection;
+import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ReferenceFileItem;
@@ -242,6 +245,14 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 		}
 		return null;
 
+	}
+
+	public boolean isRouteBuilderNode(INode node) {
+		return ComponentCategory.CATEGORY_4_CAMEL.getName().equals(node.getProcess().getComponentsType());
+	}
+	
+	public boolean canCreateNodeOnLink(IConnection connection, INode node) {
+       return true;
 	}
 
 }
