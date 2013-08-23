@@ -10,24 +10,24 @@ Bundle-ClassPath: lib/cxf-rt-core-2.7.7-SNAPSHOT.jar,lib/cxf-api-2.7.7-S
  jar,lib/cxf-rt-transports-http-jetty-2.7.7-SNAPSHOT.jar,lib/cxf-rt-feat
  ures-clustering-2.7.7-SNAPSHOT.jar,lib/cxf-rt-transports-local-2.7.7-SN
  APSHOT.jar,lib/cxf-rt-rs-security-xml-2.7.7-SNAPSHOT.jar,lib/cxf-rt-cor
- e-2.7.7-20130822.071344-31.jar,lib/cxf-api-2.7.7-20130822.071312-31.jar
+ e-2.7.7-20130823.065326-32.jar,lib/cxf-api-2.7.7-20130823.065305-32.jar
  ,lib/woodstox-core-asl-4.2.0.jar,lib/stax2-api-3.1.1.jar,lib/jaxb-impl-
  2.1.13.jar,lib/xmlschema-core-2.0.3.jar,lib/geronimo-javamail_1.4_spec-
- 1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-20130822.071727-31.jar,lib/as
- m-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-20130822.071411-31.jar,lib/c
- xf-rt-databinding-jaxb-2.7.7-20130822.071402-31.jar,lib/cxf-rt-bindings
- -xml-2.7.7-20130822.071621-31.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
- 0822.071706-31.jar,lib/cxf-rt-ws-addr-2.7.7-20130822.071714-31.jar,lib/
- cxf-rt-transports-http-2.7.7-20130822.071649-31.jar,lib/cxf-rt-ws-secur
- ity-2.7.7-20130822.072057-31.jar,lib/ehcache-core-2.5.1.jar,lib/wss4j-1
+ 1.7.1.jar,lib/cxf-rt-frontend-jaxws-2.7.7-20130823.065621-32.jar,lib/as
+ m-3.3.1.jar,lib/cxf-rt-bindings-soap-2.7.7-20130823.065345-32.jar,lib/c
+ xf-rt-databinding-jaxb-2.7.7-20130823.065338-32.jar,lib/cxf-rt-bindings
+ -xml-2.7.7-20130823.065530-32.jar,lib/cxf-rt-frontend-simple-2.7.7-2013
+ 0823.065606-32.jar,lib/cxf-rt-ws-addr-2.7.7-20130823.065611-32.jar,lib/
+ cxf-rt-transports-http-2.7.7-20130823.065551-32.jar,lib/cxf-rt-ws-secur
+ ity-2.7.7-20130823.065832-32.jar,lib/ehcache-core-2.5.1.jar,lib/wss4j-1
  .6.12-20130808.141553-1.jar,lib/xmlsec-1.5.5.jar,lib/opensaml-2.5.1-1.j
  ar,lib/openws-1.4.2-1.jar,lib/xmltooling-1.3.2-1.jar,lib/joda-time-1.6.
- 2.jar,lib/cxf-rt-ws-policy-2.7.7-20130822.071639-31.jar,lib/neethi-3.0.
- 2.jar,lib/cxf-rt-frontend-jaxrs-2.7.7-20130822.071831-31.jar,lib/javax.
- ws.rs-api-2.0-m10.jar,lib/cxf-rt-rs-extension-providers-2.7.7-20130822.
- 072106-31.jar,lib/jettison-1.3.4.jar,lib/stax-api-1.0.1.jar,lib/cxf-rt-
- rs-security-xml-2.7.7-20130822.072124-31.jar,lib/cxf-rt-transports-http
- -jetty-2.7.7-20130822.071658-31.jar,lib/jetty-server-8.1.12.v20130726.j
+ 2.jar,lib/cxf-rt-ws-policy-2.7.7-20130823.065545-32.jar,lib/neethi-3.0.
+ 2.jar,lib/cxf-rt-frontend-jaxrs-2.7.7-20130823.065709-32.jar,lib/javax.
+ ws.rs-api-2.0-m10.jar,lib/cxf-rt-rs-extension-providers-2.7.7-20130823.
+ 065838-32.jar,lib/jettison-1.3.4.jar,lib/stax-api-1.0.1.jar,lib/cxf-rt-
+ rs-security-xml-2.7.7-20130823.065847-32.jar,lib/cxf-rt-transports-http
+ -jetty-2.7.7-20130823.065600-32.jar,lib/jetty-server-8.1.12.v20130726.j
  ar,lib/jetty-continuation-8.1.12.v20130726.jar,lib/jetty-http-8.1.12.v2
  0130726.jar,lib/jetty-io-8.1.12.v20130726.jar,lib/jetty-util-8.1.12.v20
  130726.jar,lib/jetty-security-8.1.12.v20130726.jar,lib/slf4j-api-1.7.5.
@@ -35,9 +35,9 @@ Bundle-ClassPath: lib/cxf-rt-core-2.7.7-SNAPSHOT.jar,lib/cxf-api-2.7.7-S
  ib/spring-context-3.2.3.RELEASE.jar,lib/spring-aop-3.2.3.RELEASE.jar,li
  b/spring-beans-3.2.3.RELEASE.jar,lib/spring-core-3.2.3.RELEASE.jar,lib/
  spring-expression-3.2.3.RELEASE.jar,lib/locator-5.4.0-SNAPSHOT.jar,lib/
- zookeeper-3.4.5.jar,lib/cxf-rt-features-clustering-2.7.7-20130822.07195
- 8-31.jar,lib/sam-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0-SNAPSHOT
- .jar,lib/cxf-rt-transports-local-2.7.7-20130822.071628-31.jar,lib/corre
+ zookeeper-3.4.5.jar,lib/cxf-rt-features-clustering-2.7.7-20130823.06575
+ 5-32.jar,lib/sam-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0-SNAPSHOT
+ .jar,lib/cxf-rt-transports-local-2.7.7-20130823.065536-32.jar,lib/corre
  lationid-policy-5.4.0-SNAPSHOT.jar,lib/spring-context-support-3.2.3.REL
  EASE.jar,lib/spring-jms-3.2.3.RELEASE.jar,lib/aopalliance-1.0.jar,lib/s
  pring-tx-3.2.3.RELEASE.jar
