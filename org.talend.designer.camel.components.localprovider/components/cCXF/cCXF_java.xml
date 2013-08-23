@@ -443,7 +443,7 @@
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="zookeeper"
                     MODULE="zookeeper-3.4.5.jar" 
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.4.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.zookeeper/lib/zookeeper-3.4.5.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.17.jar"
