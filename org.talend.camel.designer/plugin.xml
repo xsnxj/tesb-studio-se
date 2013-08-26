@@ -134,6 +134,9 @@
          <actionSet
                id="org.talend.repository.localprovider.actionSet">
          </actionSet>
+         <actionSet
+               id="org.talend.repository.items.importexport.actionSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
@@ -402,5 +405,25 @@
                  id="org.talend.designer.core.ui.editor.nodes.OpenTalendJobRefAction"
                  label="%openRefJob">
            </CustomAction>
+        </extension>
+        <extension
+              point="org.talend.repository.items.importexport.handler">
+           <importProvider
+                 class="org.talend.camel.designer.ui.view.handler.RouteImportHandler"
+                 id="org.talend.camel.designer.importProvider.routes"
+                 name="Routes importer"
+                 priority="NORMAL">
+              <repType
+                    type="ROUTES"></repType>
+           </importProvider>
+           <importProvider
+                 class="org.talend.camel.designer.ui.view.handler.BeanImportHandler"
+                 id="org.talend.camel.designer.importProvider.bean"
+                 name="Bean importer"
+                 priority="NORMAL">
+              <repType
+                    type="BEANS">
+              </repType>
+           </importProvider>
         </extension>
 </plugin>

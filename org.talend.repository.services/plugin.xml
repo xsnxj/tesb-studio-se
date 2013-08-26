@@ -256,5 +256,17 @@
           projectUrl="resources/demoprojects/ESB_DEMOS.zip">
     </demoProvider>
  </extension>
+ <extension
+       point="org.talend.repository.items.importexport.handler">
+    <importProvider
+          class="org.talend.repository.services.ui.viewer.handler.ServiceImportHandler"
+          id="org.talend.repository.services.importProvider"
+          name="Service importer"
+          priority="NORMAL">
+       <repType
+             type="SERVICES">
+       </repType>
+    </importProvider>
+ </extension>
 
 </plugin>

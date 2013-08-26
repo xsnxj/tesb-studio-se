@@ -77,5 +77,16 @@
             priority="normal">
       </check>
    </extension>
+   <extension
+         point="org.talend.repository.items.importexport.handler">
+      <importProvider
+            class="org.talend.designer.camel.resource.handler.RouteResourceImportHandler"
+            id="org.talend.designer.camel.resource.importProvider.resources"
+            name="Resources importer"
+            priority="NORMAL">
+         <repType
+               type="ROUTE_RESOURCES"></repType>
+      </importProvider>
+   </extension>
 
 </plugin>
