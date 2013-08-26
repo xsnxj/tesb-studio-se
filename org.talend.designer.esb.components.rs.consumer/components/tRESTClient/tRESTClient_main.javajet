@@ -59,10 +59,16 @@ if (contentType == null) {
 }
 
 boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"));
+boolean useAuthz = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTHZ__"));
 String authType = ElementParameterParser.getValue(node,"__AUTH_TYPE__");
 
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
 boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
+
+boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+if (!isStudioEEVersion){
+	useAuthz=false;
+}
 %>
 
 try {
@@ -259,7 +265,7 @@ try {
 		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=ElementParameterParser.getValue(node,"__AUTH_BEARER_TOKEN__")%>);
 	<% } %>
 
-	<% if (useAuth && "SAML".equals(authType)) { %>
+	<% if (useAuth && "SAML".equals(authType) && !useAuthz) { %>
 		if (null != stsProps) {
 			// set SAML Token authentication
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
@@ -268,6 +274,25 @@ try {
 			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
 			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
 		}
+	<% } %>
+
+	<% if (useAuth && "SAML".equals(authType) && useAuthz) { %>
+	if (null != stsProps) {
+	 		STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
+			org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
+					<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>, <%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
+		   org.w3c.dom.Document doc = org.apache.cxf.helpers.DOMUtils.createDocument();
+         org.w3c.dom.Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
+         claimsElement.setAttributeNS(null, "Dialect", "http://schemas.xmlsoap.org/ws/2005/05/identity");
+         org.w3c.dom.Element claimType = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimType");
+         claimType.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
+	 claimsElement.appendChild(claimType);
+	 stsClient.setClaims(claimsElement);
+	 outInterceptor.setStsClient(stsClient);
+	 clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
+	 clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
+	     
+	 }
 	<% } %>
 
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
