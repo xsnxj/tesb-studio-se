@@ -55,61 +55,36 @@
 #if ($logMessages)
 			<bean class="org.apache.cxf.feature.LoggingFeature" />
 #end
-#if ($useSecurityToken || $useSecuritySAML || $useBusinessCorrelation)
-			<p:policies xmlns:p="http://cxf.apache.org/policy">
-				<wsp:Policy xmlns:wsp="http://www.w3.org/ns/ws-policy">
+#if ($useSecurityToken || $useSecuritySAML)
+            <p:policies xmlns:p="http://cxf.apache.org/policy">
+                <wsp:Policy xmlns:wsp="http://www.w3.org/ns/ws-policy">
 #if ($useSecurityToken && $useSecuritySAML)
+                    <wsp:ExactlyOne>
+                        <wsp:All>
+                            <wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+                        </wsp:All>
+                        <wsp:All>
 #if ($useAuthorization)
-					<wsp:ExactlyOne>
-						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
-#if ($useBusinessCorrelation)
-							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
-#end
-						</wsp:All>
-						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
-#if ($useBusinessCorrelation)
-							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
-#end
-						</wsp:All>
-					</wsp:ExactlyOne>
+                            <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
 #else
-					<wsp:ExactlyOne>
-						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
-#if ($useBusinessCorrelation)
-							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
+                            <wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
 #end
-						</wsp:All>
-						<wsp:All>
-							<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
-#if ($useBusinessCorrelation)
-							<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
-#end
-						</wsp:All>
-					</wsp:ExactlyOne>
-#end
-#end
-#if ($useBusinessCorrelation)
-					<wsp:All>
-						<wsp:PolicyReference URI="org.talend.esb.job.correlation.id.policy" />
-#end
-#if ($useSecurityToken)
-					<wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
+                        </wsp:All>
+                    </wsp:ExactlyOne>
+#elseif ($useSecurityToken)
+                    <wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 #elseif ($useSecuritySAML)
 #if ($useAuthorization)
-					<wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+                    <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
 #else
-					<wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+                    <wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
 #end
 #end
-
+                </wsp:Policy>
+            </p:policies>
+#end
 #if ($useBusinessCorrelation)
-					</wsp:All>
-#end
-				</wsp:Policy>
-			</p:policies>
+            <bean class="org.talend.esb.policy.correlation.feature.CorrelationIDFeature" />
 #end
 		</jaxws:features>
 	</jaxws:endpoint>
