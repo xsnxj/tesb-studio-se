@@ -199,14 +199,15 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
             }
         }
+        Map<String, String> additionalInfo = serviceConnection.getAdditionalInfo().map();
         // blueprint
         File blueprint = new File(temp, FileConstants.BLUEPRINT_FOLDER_NAME);
         blueprint.mkdirs();
-        serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, serviceConnection, serviceWsdl,
+        serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl,
                 getServiceName());
         String jarName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File jar = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), jarName);
-        FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion()), temp, jar);
+        FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion(), additionalInfo), temp, jar);
         FilesUtils.removeFolder(temp, true);
         return jar;
     }

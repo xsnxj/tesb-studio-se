@@ -33,13 +33,11 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EMap;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -59,7 +57,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
     @SuppressWarnings("unchecked")
 	public void createBlueprint(File outputFile, Map<ServicePort, Map<String, String>> ports,
-            ServiceConnection serviceConnection, IFile wsdl, String studioServiceName)
+			Map<String, String> additionalInfo, IFile wsdl, String studioServiceName)
                     throws IOException, CoreException {
 
         // TODO: support multiport!!!
@@ -131,11 +129,10 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         }
         endpointInfo.put("operation2job", operation2job); //$NON-NLS-1$
 
-        EMap<String, String> additionalInfo = serviceConnection.getAdditionalInfo();
         boolean isStudioEEVersion = isStudioEEVersion();
 
-        boolean useMonitor = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
-        boolean useLocator = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useRegistry = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)):false;
         boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
@@ -144,8 +141,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean wsdlSchemaValidation = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION)):false;
         boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
 
-        endpointInfo.put("useSL", useLocator /*&& !useRegistry*/); //$NON-NLS-1$
-        endpointInfo.put("useSAM", useMonitor && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useSL", useSL /*&& !useRegistry*/); //$NON-NLS-1$
+        endpointInfo.put("useSAM", useSAM && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useSecurityToken", useSecurityToken && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
@@ -155,7 +152,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation && !useRegistry); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
-        if (useLocator /*&& !useRegistry*/) {
+        if (useSL /*&& !useRegistry*/) {
             for (Map.Entry<String, String> prop : additionalInfo.entrySet()) {
                 if (prop.getKey().startsWith(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX)) {
                     slCustomProperties.put(prop.getKey().substring(ServiceMetadataDialog.SL_CUSTOM_PROP_PREFIX.length()),
@@ -169,7 +166,11 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                 new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_BLUEPRINT)));
     }
 
-    public Manifest getManifest(String artefactName, String serviceVersion) {
+    public Manifest getManifest(String artefactName, String serviceVersion, Map<String, String> additionalInfo) {
+        boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+        boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
+
         Manifest manifest = new Manifest();
         Attributes a = manifest.getMainAttributes();
         a.put(Attributes.Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
@@ -187,15 +188,12 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         + ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
                         + ",org.apache.ws.security.validate" //$NON-NLS-1$
                         + ",org.apache.cxf.management.counters" //$NON-NLS-1$
+                        + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
         );
         a.put(new Attributes.Name("Require-Bundle"), //$NON-NLS-1$
                 "org.apache.cxf.bundle" //$NON-NLS-1$
-                        + ",org.springframework.beans" //$NON-NLS-1$
-                        + ",org.springframework.context" //$NON-NLS-1$
-                        + ",org.springframework.osgi.core" //$NON-NLS-1$
-                        + ",locator" //$NON-NLS-1$
-                        + ",sam-agent" //$NON-NLS-1$
-                        + ",sam-common" //$NON-NLS-1$
+                        + (useSL ? ",locator" : "") //$NON-NLS-1$
+                        + (useSAM ? ",sam-agent" : "") //$NON-NLS-1$
         );
         return manifest;
     }
