@@ -59,7 +59,7 @@ if (contentType == null) {
 }
 
 boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"));
-boolean useAuthz = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTHZ__"));
+boolean useAuthorization = Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTHORIZATION__"));
 String authType = ElementParameterParser.getValue(node,"__AUTH_TYPE__");
 
 boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
@@ -67,7 +67,7 @@ boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SE
 
 boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 if (!isStudioEEVersion){
-	useAuthz=false;
+	useAuthorization=false;
 }
 %>
 
@@ -265,7 +265,7 @@ try {
 		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=ElementParameterParser.getValue(node,"__AUTH_BEARER_TOKEN__")%>);
 	<% } %>
 
-	<% if (useAuth && "SAML".equals(authType) && !useAuthz) { %>
+	<% if (useAuth && "SAML".equals(authType) && !useAuthorization) { %>
 		if (null != stsProps) {
 			// set SAML Token authentication
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
@@ -276,7 +276,7 @@ try {
 		}
 	<% } %>
 
-	<% if (useAuth && "SAML".equals(authType) && useAuthz) { %>
+	<% if (useAuth && "SAML".equals(authType) && useAuthorization) { %>
 	if (null != stsProps) {
 	 		STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
 			org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
