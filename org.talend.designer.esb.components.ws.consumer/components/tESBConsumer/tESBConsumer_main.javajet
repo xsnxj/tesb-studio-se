@@ -42,7 +42,7 @@ Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE
 Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__")) && !useSR;
 
 String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
-Boolean authPropagate = Boolean.valueOf(ElementParameterParser.getValue(node, "__AUTH_PROPAGATE__"));
+boolean authPropagate = "SAML".equals(authType) && Boolean.valueOf(ElementParameterParser.getValue(node, "__AUTH_PROPAGATE__"));
 String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
 String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
 
@@ -195,7 +195,7 @@ if (inputConn != null) {
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
-                <% if (useAuth && !useSR && !("SAML".equals(authType) && authPropagate)) { %>
+                <% if (useAuth && !useSR) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
