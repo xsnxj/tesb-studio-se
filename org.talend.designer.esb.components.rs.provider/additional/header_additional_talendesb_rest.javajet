@@ -965,6 +965,8 @@ if (!noBodyRequest) {
 			consumesContentTypes = arrayHelper.codeGenArray(new String[] {"text/plain", "application/xml", "text/xml", "application/json"});
 		} else if ("byte[]".equals(bodyParameter.getJavaType())) {
 			consumesContentTypes = arrayHelper.codeGenArray(new String[] {"application/octet-stream"});
+		} else {
+			consumesContentTypes = arrayHelper.codeGenArray(contentTypes.get("ANY"));
 		}
 	}
 	if (null != consumesContentTypes) { %>	@javax.ws.rs.Consumes(<%=consumesContentTypes%>)<% }
