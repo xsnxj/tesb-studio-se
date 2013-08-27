@@ -119,7 +119,7 @@
 #end
 			</map>
 		</argument>
-#if ($useSecurityToken || $useSecuritySAML || $useServiceRegistry || $useBusinessCorrelation)
+#if ($useSecurityToken || $useSecuritySAML)
         <argument type="org.apache.cxf.Bus" ref="cxf" />
 #end
 #if ($useSAM)
