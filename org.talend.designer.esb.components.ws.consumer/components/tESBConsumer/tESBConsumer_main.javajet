@@ -51,7 +51,7 @@ String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT
 
 Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
 
-boolean useBusinessCorrelation = (!useSR) && "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
+boolean useBusinessCorrelation = useSR || "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
 String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
 
 IConnection inputConn = null;
@@ -222,7 +222,7 @@ if (inputConn != null) {
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-<%if(useBusinessCorrelation || useSR) {%>
+<%if(useBusinessCorrelation) {%>
                 globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationId());
 <%}%>
             } else {
@@ -277,9 +277,9 @@ if (inputConn != null) {
                             <% if (authPropagate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
-                            if(useBusinessCorrelation || useSR) {
+                            if(useBusinessCorrelation) {
                             	%>
-                            put("CorrelationIDCallbackHandler",new EsbJobCorrelationCallbackHandler(<%=correlationValue%>));
+                            put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, new EsbJobCorrelationCallbackHandler(<%=correlationValue%>));
                             put("enhancedResponse", true);
                             	<%
                             }
@@ -306,7 +306,7 @@ if (inputConn != null) {
 				if(consumerResponse_<%=cid%> instanceof java.util.Map) {
 					java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
 					responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
-<%if(useBusinessCorrelation || useSR){%>
+<%if(useBusinessCorrelation){%>
 					java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
 					globalMap.put("<%=cid%>_CORRELATION_ID", GenericConsumer.getCorrelationId(responseContext_<%=cid%>));
 <%}%>
