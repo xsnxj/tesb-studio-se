@@ -241,7 +241,7 @@ if (inputConn != null) {
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
 <%if(useBusinessCorrelation) {%>
-                globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationId());
+                globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
 <%}%>
             } else {
                 ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
@@ -318,16 +318,16 @@ if (inputConn != null) {
 
                 Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
                 Object consumerResponse_<%=cid%> = consumer_<%=cid%>.invoke(request_<%=cid%>);
-				if(consumerResponse_<%=cid%> instanceof java.util.Map) {
-					java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
-					responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
+                if(consumerResponse_<%=cid%> instanceof java.util.Map) {
+                    java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
+                    responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
 <%if(useBusinessCorrelation){%>
-					java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
-					globalMap.put("<%=cid%>_CORRELATION_ID", GenericConsumer.getCorrelationId(responseContext_<%=cid%>));
+                    java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
+                    globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
 <%}%>
-				}else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
-					responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
-				}
+                }else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
+                    responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
+                }
             }
             <% if (null != connResponse) {
                 String connResponseName = connResponse.getName(); %>
