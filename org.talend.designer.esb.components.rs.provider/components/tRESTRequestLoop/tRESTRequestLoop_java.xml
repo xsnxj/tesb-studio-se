@@ -245,8 +245,8 @@
 					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
-					MODULE="zookeeper-3.4.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.zookeeper/lib/zookeeper-3.4.5.jar"
+					MODULE="zookeeper-3.3.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.zookeeper/lib/zookeeper-3.3.6.jar"
 					BundleID="org.apache.hadoop.zookeeper"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"

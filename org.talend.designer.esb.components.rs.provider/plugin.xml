@@ -49,5 +49,10 @@
           name="REST Response Schema">
     </generator>
  </extension>
-
+ <extension
+       point="org.talend.designer.core.check_nodes">
+    <checknodes
+          class="org.talend.designer.esb.components.rs.provider.validation.CheckMultiRestRequestNodes">
+    </checknodes>
+ </extension>
 </plugin>
