@@ -13,5 +13,10 @@
 			id="org.talend.designer.esb.components.ws.provider.ESBJetFileProvider"
 			class="org.talend.designer.esb.components.ws.provider.ESBJetFileProvider" />
 	</extension>
-
+ <extension
+       point="org.talend.designer.core.check_nodes">
+    <checknodes
+          class="org.talend.designer.esb.components.ws.provider.validation.CheckESBProviderNodes">
+    </checknodes>
+ </extension>
 </plugin>
