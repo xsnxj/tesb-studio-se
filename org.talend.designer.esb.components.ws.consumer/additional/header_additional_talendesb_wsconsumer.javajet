@@ -33,16 +33,6 @@ if (actAsConsumer) {
 	if (useCorrelationId) {
 		%>
 		private final static javax.xml.namespace.QName CORRELATION_ID_SCHEMA = new javax.xml.namespace.QName("http://www.talend.com/esb/sam/correlationId/v1","correlationId");
-
-		private static class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
-			private final String correlationId;
-			public EsbJobCorrelationCallbackHandler(final String correlationId) {
-				this.correlationId = correlationId;
-			}
-			public String getCorrelationId() {
-				return correlationId;
-			};
-		}
 		<%
 	}
 %>
@@ -104,6 +94,8 @@ if (actAsConsumer) {
 		private java.util.Map<?, ?> responseContext;
 <%}%>
         private java.util.Collection<org.apache.cxf.headers.Header> soapHeaders;
+
+        private Object correlationIDCallbackHandler;
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
@@ -186,6 +178,10 @@ if (actAsConsumer) {
             this.soapHeaders = soapHeaders;
         }
 
+        public void setCorrelationIDCallbackHandler(Object correlationIDCallbackHandler) {
+            this.correlationIDCallbackHandler = correlationIDCallbackHandler;
+        }
+
 <%if(useCorrelationId) {%>
 		
 		public String getCorrelationId() {
@@ -266,6 +262,9 @@ if (actAsConsumer) {
             }
             if (logMessages) {
                 clientFactory.getFeatures().add(new org.apache.cxf.feature.LoggingFeature());
+            }
+            if (null != correlationIDCallbackHandler) {
+                clientFactory.getProperties(true).put("correlation-id.callback-handler", correlationIDCallbackHandler);
             }
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();

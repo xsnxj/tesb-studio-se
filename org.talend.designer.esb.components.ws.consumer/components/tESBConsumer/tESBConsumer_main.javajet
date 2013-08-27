@@ -126,6 +126,20 @@ if (inputConn != null) {
                     <% } %>
                 <% } %>
             <% } %>
+            <%if(useBusinessCorrelation) {%>
+                class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
+                    private String correlationId;
+                    public EsbJobCorrelationCallbackHandler(final String correlationId) {
+                        if (null != correlationId && correlationId.length() > 0) {
+                            this.correlationId = correlationId;
+                        }
+                    }
+                    public String getCorrelationId() {
+                        return correlationId;
+                    };
+                }
+                final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=correlationValue%>);
+            <% } %>
 
             final List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
             <% if (authPropagate) { %>
@@ -192,6 +206,10 @@ if (inputConn != null) {
                         featureSAM_<%=cid%>.setHandler(ciHandler);
                     }
                     esbFeatures_<%=cid%>.add(featureSAM_<%=cid%>);
+                <% } %>
+                <%if(useBusinessCorrelation) {%>
+                    esbFeatures_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+                    genericConsumer_<%=cid%>.setCorrelationIDCallbackHandler(correlationIDCallbackHandler);
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
@@ -277,13 +295,10 @@ if (inputConn != null) {
                             <% if (authPropagate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
-                            if(useBusinessCorrelation) {
-                            	%>
-                            put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, new EsbJobCorrelationCallbackHandler(<%=correlationValue%>));
-                            put("enhancedResponse", true);
-                            	<%
-                            }
-                            %>
+                            if(useBusinessCorrelation) { %>
+                                put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, correlationIDCallbackHandler);
+                                put("enhancedResponse", true);
+                            <% } %>
                         }};
 
                         public String getEndpointUri() {
