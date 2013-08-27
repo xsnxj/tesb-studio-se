@@ -73,16 +73,12 @@ try {
                         org.w3c.dom.NodeList nl = ((org.w3c.dom.Element) existingHeader.getObject()).getElementsByTagNameNS(org.apache.ws.security.WSConstants.SAML2_NS, org.apache.ws.security.WSConstants.ASSERTION_LN);
                         if (nl.getLength() > 0) {
                             globalMap.put("<%=cid%>_SECURITY_TOKEN", nl.item(0));
+                            break;
                         }
-                    }else if("{http://www.talend.com/esb/sam/correlationId/v1}correlationId".equals(existingHeader.getName().toString())){
-						Object correlationId = existingHeader.getObject();
-						if (correlationId instanceof org.w3c.dom.Node) {
-							correlationId = ((org.w3c.dom.Node)correlationId).getTextContent();
-						} 
-						globalMap.put("<%=cid%>_"+ "CORRELATION_ID", correlationId.toString());
                     }
                 }
             }
+            globalMap.put("<%=cid%>_"+ "CORRELATION_ID", request_<%=cid%>.get("CorrelationID"));
             org.dom4j.Document requestMessage_<%=cid%> = (org.dom4j.Document) request_<%=cid%>.get(ESBProviderCallback.REQUEST);
 
 <% if (!isOneWay) { %>
