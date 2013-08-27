@@ -23,6 +23,15 @@
                            breaks="5.1.1"
                            version="5.1.2"
 			beforeLogon="false" />
+		<projecttask
+	        beforeLogon="false"
+	        breaks="5.3.2"
+	        class="org.talend.designer.esb.components.rs.provider.migration.RestRequestFormContentTypeMigrationTask"
+	        description="Change the default Content-Type for FORM paramter type"
+	        id="org.talend.designer.esb.webservice.RestRequestFormContentTypeMigrationTask"
+	        name="RestRequestFormContentTypeMigrationTask"
+	        version="5.4.0">
+  		</projecttask>
 	</extension>
 
 	<extension point="org.eclipse.ui.preferencePages">
