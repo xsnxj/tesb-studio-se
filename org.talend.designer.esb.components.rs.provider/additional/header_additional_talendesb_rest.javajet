@@ -922,17 +922,13 @@ if (null != conns && !conns.isEmpty()) {
 
 				Set<String> supportedTypes = supportedTypes4Params;
 				if ("FORM".equals(restParameterType)) {
-					// having at least one form parameter means form submissions are supported
 					if (multipartSupported) {
-						continue; // ignore this parameter (earlier multipart parameter won)
+						continue; // ignore this parameter (as current rest service method configured as form supported)
 					}
-// 					formSupported = true;
 				} else if ("MULTIPART".equals(restParameterType)) {
-					// having at least one multipart parameter means request multiparts are supported
 					if (formSupported) {
-						continue; // ignore this parameter (earlier form parameter won)
+						continue; // ignore this parameter (as current rest service method configured as miltipart supported)
 					}
-//					multipartSupported = true;
 					supportedTypes = supportedTypes4Part;
 				}
 
