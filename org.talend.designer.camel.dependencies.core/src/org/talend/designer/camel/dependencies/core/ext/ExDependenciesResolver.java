@@ -76,6 +76,9 @@ public class ExDependenciesResolver {
 				continue;
 			}
 			NodeType n = (NodeType) o;
+			if(!isActivate(n)){
+				continue;
+			}
 			String uniqueName = ""; //$NON-NLS-1$
 			for (Object obj : n.getElementParameter()) {
 				ElementParameterType cpType = (ElementParameterType) obj;
@@ -226,6 +229,16 @@ public class ExDependenciesResolver {
 
 		exRequireBundles = null;
 	}
+	
+    private boolean isActivate(NodeType node) {
+        for (Object obj : node.getElementParameter()) {
+            ElementParameterType cpType = (ElementParameterType) obj;
+            if ("ACTIVATE".equals(cpType.getName())) {
+                return Boolean.parseBoolean(cpType.getValue());
+            }
+        }
+        return true;
+    }
 
 	/**
 	 * special for ROUTE_WHEN connection case
