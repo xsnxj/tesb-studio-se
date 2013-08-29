@@ -829,7 +829,7 @@ if (null != conns && !conns.isEmpty()) {
 
 		boolean formSupported = "FORM".equals(consumes);
 		boolean multipartSupported = "MULTIPART".equals(consumes);
-		boolean noBodyRequest = "GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb); // || "OPTIONS".equals(httpVerb)
+		boolean noBodyRequest = "GET".equals(httpVerb) || "DELETE".equals(httpVerb) || "HEAD".equals(httpVerb) || "OPTIONS".equals(httpVerb);
 
 		// All the parameters specified in the Schema Editor need to be handled.
 		Parameter bodyParameter = null;
