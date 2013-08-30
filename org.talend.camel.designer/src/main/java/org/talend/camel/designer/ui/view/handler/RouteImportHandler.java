@@ -18,14 +18,14 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.emf.TalendXMIResource;
 import org.talend.repository.items.importexport.handlers.HandlerUtil;
-import org.talend.repository.items.importexport.handlers.imports.AbstractImportHandler;
+import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
 import org.talend.repository.items.importexport.handlers.model.ItemRecord;
 import org.talend.repository.items.importexport.manager.ResourcesManager;
 
 /**
  * DOC ggu class global comment. Detailled comment
  */
-public class RouteImportHandler extends AbstractImportHandler {
+public class RouteImportHandler extends ImportRepTypeHandler {
 
     /**
      * DOC ggu RouteImportHandler constructor comment.
@@ -38,7 +38,7 @@ public class RouteImportHandler extends AbstractImportHandler {
      * (non-Javadoc)
      * 
      * @see
-     * org.talend.repository.items.importexport.handlers.imports.AbstractImportHandler#createItemResource(org.eclipse
+     * org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler#createItemResource(org.eclipse
      * .emf.common.util.URI)
      */
     @Override
@@ -51,7 +51,7 @@ public class RouteImportHandler extends AbstractImportHandler {
      * (non-Javadoc)
      * 
      * @see
-     * org.talend.repository.items.importexport.handlers.imports.AbstractImportHandler#copyReferenceFiles(org.talend
+     * org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler#copyReferenceFiles(org.talend
      * .repository.items.importexport.ui.wizard.imports.managers.ResourcesManager,
      * org.talend.repository.items.importexport.ui.wizard.imports.models.ItemRecord)
      */

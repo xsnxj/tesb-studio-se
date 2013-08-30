@@ -12,19 +12,18 @@
 // ============================================================================
 package org.talend.camel.designer.ui.view.handler;
 
-import org.talend.repository.items.importexport.handlers.imports.AbstractImportHandler;
-
+import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
 
 /**
- * DOC ggu  class global comment. Detailled comment
+ * DOC ggu class global comment. Detailled comment
  */
-public class BeanImportHandler extends AbstractImportHandler {
+public class BeanImportHandler extends ImportRepTypeHandler {
 
     /**
      * DOC ggu BeanImportHandler constructor comment.
      */
     public BeanImportHandler() {
-        // TODO Auto-generated constructor stub
+        super();
     }
 
 }

@@ -12,12 +12,12 @@
 // ============================================================================
 package org.talend.designer.camel.resource.handler;
 
-import org.talend.repository.items.importexport.handlers.imports.AbstractImportHandler;
+import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
 
 /**
  * DOC ggu class global comment. Detailled comment
  */
-public class RouteResourceImportHandler extends AbstractImportHandler {
+public class RouteResourceImportHandler extends ImportRepTypeHandler {
 
     /**
      * DOC ggu RouteResourceImportHandler constructor comment.
