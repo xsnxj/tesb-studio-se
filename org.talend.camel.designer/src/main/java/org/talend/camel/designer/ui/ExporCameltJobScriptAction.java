@@ -39,7 +39,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ExporCameltJobScriptAction extends AContextualAction {
 
-    protected static final String EXPORTJOBSCRIPTS = Messages.getString("ExportJobScriptAction.actionLabel"); //$NON-NLS-1$
+    protected static final String EXPORTJOBSCRIPTS = Messages.getString("ExportJobScriptAction.buildRoute"); //$NON-NLS-1$
 
     /*
      * (non-Javadoc)
