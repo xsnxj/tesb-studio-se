@@ -271,7 +271,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         GridLayout layout = new GridLayout();
         optionsGroup.setLayout(layout);
         optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-        optionsGroup.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.ExportType")); //$NON-NLS-1$
+        optionsGroup.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.BuildType")); //$NON-NLS-1$
         optionsGroup.setFont(parent.getFont());
 
         optionsGroup.setLayout(new GridLayout(1, true));
@@ -281,7 +281,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         left.setLayout(new GridLayout(3, false));
 
         Label label = new Label(left, SWT.NONE);
-        label.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.ExportyLabel")); //$NON-NLS-1$
+        label.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.BuildLabel")); //$NON-NLS-1$
 
         exportTypeCombo = new Combo(left, SWT.PUSH);
         GridData gd = new GridData();
@@ -514,7 +514,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     @Override
-	public boolean isAddMavenScript() {
+    public boolean isAddMavenScript() {
         if (addBSButton != null) {
             return addBSButton.getSelection();
         }
@@ -765,8 +765,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             String[] directoryNames = new String[1];
             String destinationValue = manager.getDestinationPath();
             if (destinationValue != null) {
-            	IPath path=Path.fromOSString(destinationValue);
-            	destinationValue = path.removeLastSegments(1).toOSString();
+                IPath path = Path.fromOSString(destinationValue);
+                destinationValue = path.removeLastSegments(1).toOSString();
             }
             directoryNames[0] = destinationValue;
 
