@@ -95,13 +95,24 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
+
+		<PARAMETER NAME="ENABLE_CORRELATION" FIELD="CHECK" REQUIRED="true" NUM_ROW="24" 
+			SHOW_IF="(ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false') OR (DATAFORMAT == 'RAW') OR ( DATAFORMAT == 'CXF_MESSAGE')" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="25" 
+			SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (((IS_STUDIO_EE_VERSION == 'true') AND (((ENABLE_REGISTRY == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))) OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true'))" >
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
 		<PARAMETER NAME="ENABLE_SECURITY" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="26" SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
+			NUM_ROW="28" SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 			((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="SECURITY_TYPE" FIELD="CLOSED_LIST" NUM_ROW="26"
+		<PARAMETER NAME="SECURITY_TYPE" FIELD="CLOSED_LIST" NUM_ROW="28"
 			SHOW_IF="(ENABLE_SECURITY == 'true') AND 
 			((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 			((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
@@ -113,37 +124,37 @@
 			</ITEMS>
 		</PARAMETER>
 		
-	 	<PARAMETER NAME="AUTHENTICATION_LABEL" FIELD="LABEL" NUM_ROW="25"
+	 	<PARAMETER NAME="AUTHENTICATION_LABEL" FIELD="LABEL" NUM_ROW="27"
         	SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')"> 
                  <DEFAULT>Authentication:</DEFAULT> 
         </PARAMETER> 
 		
-		<PARAMETER NAME="USERNAME" FIELD="TEXT" NUM_ROW="26"
+		<PARAMETER NAME="USERNAME" FIELD="TEXT" NUM_ROW="28"
 			REQUIRED="true" SHOW_IF="(((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) OR (ENABLE_SECURITY == 'true'))
 			  AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND   ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="PASSWORD" FIELD="TEXT" NUM_ROW="26"
+		<PARAMETER NAME="PASSWORD" FIELD="TEXT" NUM_ROW="28"
 			REQUIRED="true" SHOW_IF="(((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) OR (ENABLE_SECURITY == 'true'))
 			  AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND  ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		
 		<PARAMETER NAME="USE_AUTHORIZATION" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="27" READONLY="false"
+			NUM_ROW="30" READONLY="false"
 			SHOW_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML' ) AND
 					((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 					(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'false')" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		
-		<PARAMETER NAME="AUTHORIZATION_LABEL" FIELD="LABEL" NUM_ROW="27"  
+		<PARAMETER NAME="AUTHORIZATION_LABEL" FIELD="LABEL" NUM_ROW="30"  
 			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')">
 			<DEFAULT>Authorization:</DEFAULT>
 		</PARAMETER>
 		
 		<PARAMETER NAME="ROLE_NAME" FIELD="TEXT" REQUIRED="true"
-			NUM_ROW="28" READONLY="false"
+			NUM_ROW="32" READONLY="false"
 			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND 
 					((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 					((ENABLE_REGISTRY == 'true') OR 
@@ -437,6 +448,10 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
                     REQUIRED="true" />
 
+            <IMPORT NAME="correlationid"
+                    MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
             <IMPORT NAME="locator"
                     MODULE="locator-5.4.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.0-SNAPSHOT.jar"
