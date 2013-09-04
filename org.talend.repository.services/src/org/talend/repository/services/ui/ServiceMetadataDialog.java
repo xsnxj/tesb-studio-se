@@ -32,6 +32,7 @@ public class ServiceMetadataDialog extends Dialog {
     public static final String SECURITY_BASIC = "Security.Basic"; //$NON-NLS-1$
     public static final String SECURITY_SAML = "Security.SAML"; //$NON-NLS-1$
     public static final String AUTHORIZATION = "Authorization";     //$NON-NLS-1$
+    public static final String ENCRYPTION = "Encryption";     //$NON-NLS-1$    
     public static final String USE_SERVICE_REGISTRY = "UseServiceRegisrty";     //$NON-NLS-1$
     public static final String USE_SAM = "UseSAM"; //$NON-NLS-1$
     public static final String USE_SL = "UseSL"; //$NON-NLS-1$
@@ -50,6 +51,7 @@ public class ServiceMetadataDialog extends Dialog {
     private boolean securityBasic;
 	private boolean securitySAML;
 	private boolean authorization;	
+	private boolean encryption;	
 	private boolean logMessages;	
 	private boolean wsdlSchemaValidation;	
 	private boolean useBusinessCorrelation;
@@ -64,7 +66,8 @@ public class ServiceMetadataDialog extends Dialog {
             useSL = Boolean.valueOf(props.get(USE_SL));
             securitySAML = Boolean.valueOf(props.get(SECURITY_SAML));
             securityBasic = Boolean.valueOf(props.get(SECURITY_BASIC));
-            authorization = Boolean.valueOf(props.get(AUTHORIZATION));  
+            authorization = Boolean.valueOf(props.get(AUTHORIZATION));
+            encryption = Boolean.valueOf(props.get(ENCRYPTION));            
             useServiceRegistry = Boolean.valueOf(props.get(USE_SERVICE_REGISTRY));
             logMessages = Boolean.valueOf(props.get(LOG_MESSAGES));            
             wsdlSchemaValidation = Boolean.valueOf(props.get(WSDL_SCHEMA_VALIDATION));            
@@ -126,11 +129,15 @@ public class ServiceMetadataDialog extends Dialog {
         final Button logMessagesCheck = new Button(container, SWT.CHECK);        
         
         final Button authorizationCheck;
+        final Button encryptCheck;
         if (isStudioEEVersion()) {
         	authorizationCheck = new Button(securityGroup, SWT.CHECK);
+        	encryptCheck = new Button(securityGroup, SWT.CHECK);        	
         } else {
         	authorizationCheck = null;        	
         	authorization = false;
+        	encryptCheck = null;
+        	encryption = false;
         }
         
 		if (isStudioEEVersion()) {
@@ -140,6 +147,8 @@ public class ServiceMetadataDialog extends Dialog {
 				public void widgetSelected(SelectionEvent e) {
 					useServiceRegistry = useSRCheck.getSelection();
 					authorizationCheck.setEnabled(!useServiceRegistry
+							&& (securitySAML /* || securityBasic */));
+					encryptCheck.setEnabled(!useServiceRegistry
 							&& (securitySAML /* || securityBasic */));
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
@@ -202,7 +211,6 @@ public class ServiceMetadataDialog extends Dialog {
             }
         });
 
-
         samlCheck.setText(Messages.ServiceMetadataDialog_samlBtnText);
         samlCheck.setSelection(securitySAML);
     	samlCheck.setEnabled(!useServiceRegistry);        
@@ -211,6 +219,7 @@ public class ServiceMetadataDialog extends Dialog {
                 securitySAML = samlCheck.getSelection();
                 if (isStudioEEVersion()) {
                 	authorizationCheck.setEnabled(securitySAML /*|| securityBasic*/);
+                	encryptCheck.setEnabled(securitySAML /*|| securityBasic*/);                	
                 }
             }
         });
@@ -230,7 +239,23 @@ public class ServiceMetadataDialog extends Dialog {
 					authorization = authorizationCheck.getSelection();
 				}
 			});
+			
+			encryptCheck.setText(Messages.ServiceMetadataDialog_encryptionBtnText);
+			encryptCheck.setSelection(encryption);
+			if (!isStudioEEVersion()) {
+				encryptCheck.setSelection(false);
+				encryptCheck.setVisible(false);
+				encryption = false;
+			}
+			encryptCheck.setEnabled(!useServiceRegistry
+					&& (securitySAML /* || securityBasic */));
+			encryptCheck.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					encryption = encryptCheck.getSelection();
+				}
+			});		
 		}
+		
 
         logMessagesCheck.setText(Messages.ServiceMetadataDialog_logMessages);
         logMessagesCheck.setSelection(logMessages);
@@ -270,6 +295,10 @@ public class ServiceMetadataDialog extends Dialog {
         return authorization;
     }
 
+    private boolean getEncryption() {
+        return encryption;
+    }
+    
     private boolean getUseServiceRegistry() {
         return useServiceRegistry;
     }
@@ -298,6 +327,7 @@ public class ServiceMetadataDialog extends Dialog {
             props.put(SECURITY_BASIC, Boolean.toString(getSecurityBasic()));
             props.put(SECURITY_SAML, Boolean.toString(getSecuritySAML()));
             props.put(AUTHORIZATION, Boolean.toString(getAuthorization()));            
+            props.put(ENCRYPTION, Boolean.toString(getEncryption()));            
             props.put(USE_SERVICE_REGISTRY, Boolean.toString(getUseServiceRegistry()));            
             props.put(LOG_MESSAGES, Boolean.toString(isLogMessages()));            
             props.put(WSDL_SCHEMA_VALIDATION, Boolean.toString(isWsdlSchemaValidation()));            

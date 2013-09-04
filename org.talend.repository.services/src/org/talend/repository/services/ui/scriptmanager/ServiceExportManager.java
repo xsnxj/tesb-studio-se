@@ -137,6 +137,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useAuthorization = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION)):false;
+        boolean useEncryption = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION)):false;        
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
         boolean wsdlSchemaValidation = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION)):false;
         boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
@@ -146,6 +147,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("useSecurityToken", useSecurityToken && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
         endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useEncryption", useEncryption && useSecuritySAML && !useRegistry); //$NON-NLS-1$        
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
         endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
         endpointInfo.put("useWsdlSchemaValidation", wsdlSchemaValidation); //$NON-NLS-1$

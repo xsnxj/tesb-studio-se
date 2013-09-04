@@ -79,6 +79,7 @@ public class Messages extends NLS {
 	public static String WSDLFileIsReadOnly_Message;
 
 	public static String ServiceMetadataDialog_authorizationBtnText;
+	public static String ServiceMetadataDialog_encryptionBtnText;	
 	public static String ServiceMetadataDialog_dialogReadonlyTitle;
 	public static String ServiceMetadataDialog_dialogTitle;
 	public static String ServiceMetadataDialog_samlBtnText;
