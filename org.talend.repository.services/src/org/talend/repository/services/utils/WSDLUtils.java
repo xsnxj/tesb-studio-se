@@ -102,7 +102,8 @@ public class WSDLUtils {
                     if (null == bindingOperation) {
                         throw getCoreException("Operation '" + operationName + "' not found in binding", null);
                     }
-                    map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput()) ? ONE_WAY : REQUEST_RESPONSE);
+                    map.put(COMMUNICATION_STYLE,
+                        (null == bindingOperation.getBindingOutput() && bindingOperation.getBindingFaults().isEmpty()) ? ONE_WAY : REQUEST_RESPONSE);
 
                     String faults = null;
                     for (Object fault : bindingOperation.getBindingFaults().keySet()) {
