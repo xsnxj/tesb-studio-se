@@ -408,29 +408,29 @@
         </extension>
         <extension
               point="org.talend.repository.items.importexport.handler">
-           <importProvider
+           <importItemsProvider
                  id="org.talend.camel.designer.importProvider.routes"
                  name="Routes importer"
                  priority="NORMAL">
-              <handler
+              <importItemsHandler
                     class="org.talend.camel.designer.ui.view.handler.RouteImportHandler">
                  <parameter
                        name="type"
                        value="ROUTES">
                  </parameter>
-              </handler>
-           </importProvider>
-           <importProvider
+              </importItemsHandler>
+           </importItemsProvider>
+           <importItemsProvider
                  id="org.talend.camel.designer.importProvider.bean"
                  name="Bean importer"
                  priority="NORMAL">
-              <handler
+              <importItemsHandler
                     class="org.talend.camel.designer.ui.view.handler.BeanImportHandler">
                  <parameter
                        name="type"
                        value="BEANS">
                  </parameter>
-              </handler>
-           </importProvider>
+              </importItemsHandler>
+           </importItemsProvider>
         </extension>
 </plugin>

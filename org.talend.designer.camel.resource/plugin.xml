@@ -79,18 +79,18 @@
    </extension>
    <extension
          point="org.talend.repository.items.importexport.handler">
-      <importProvider
+      <importItemsProvider
             id="org.talend.designer.camel.resource.importProvider.resources"
             name="Resources importer"
             priority="NORMAL">
-         <handler
+         <importItemsHandler
                class="org.talend.designer.camel.resource.handler.RouteResourceImportHandler">
             <parameter
                   name="type"
                   value="ROUTE_RESOURCES">
             </parameter>
-         </handler>
-      </importProvider>
+         </importItemsHandler>
+      </importItemsProvider>
    </extension>
 
 </plugin>
