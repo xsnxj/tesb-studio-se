@@ -126,7 +126,7 @@
 			<DEFAULT>false</DEFAULT>
 		
 		</PARAMETER>
-		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="50" 
+		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="55" 
 				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')) OR (USE_SR == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
@@ -146,8 +146,15 @@
 				DYNAMIC_SETTINGS="true" SHOW="true" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-
-
+		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="71"
+				DYNAMIC_SETTINGS="true" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false') ">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="72"
+				DYNAMIC_SETTINGS="true" SHOW_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		
 		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="99">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
@@ -536,11 +543,19 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			
+			<!-- CorrelationID -->
+            <IMPORT NAME="correlationid-policy"
+                    MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
+                    BundleID=""
+                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
 		</IMPORTS>
 	</CODEGENERATION>
 
 	<RETURNS>
 		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
 		<RETURN NAME="HEADERS" TYPE="java.util.Map&lt;String,java.util.List&lt;String&gt;&gt;" AVAILABILITY="FLOW" />
+		<RETURN NAME="CORRELATION_ID" TYPE="id_String" AVAILABILITY="FLOW" />
 	</RETURNS>
 </COMPONENT>
