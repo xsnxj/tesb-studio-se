@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.PluginChecker;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -312,7 +313,8 @@ public class ServiceMetadataDialog extends Dialog {
 	}
     
     private boolean isStudioEEVersion() {
-    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
+//    	return org.talend.core.PluginChecker.isPluginLoaded("org.talend.commandline"); //$NON-NLS-1$
+    	return PluginChecker.isTIS();
     }
 
     /* (non-Javadoc)
