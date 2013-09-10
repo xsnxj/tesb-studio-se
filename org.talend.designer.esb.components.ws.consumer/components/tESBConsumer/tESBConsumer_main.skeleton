@@ -1,0 +1,200 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.talend.core.model.process.IConnection;
+import org.talend.core.model.process.INode;
+import org.talend.designer.codegen.config.NodeParamsHelper;
+
+public class CLASS
+{
+ 	private INode node;
+ 	private IConnection inputConn;
+ 	private IConnection connResponse;
+ 	private IConnection connFault;
+ 	private List<IConnection> dataOutputs;
+ 	private Map<String, Object> props = new HashMap<String, Object>();
+ 	private NodeParamsHelper helper;
+ 	
+ 	//code generation options:
+ 	String cid;
+ 	String processName;
+ 	String serviceNS;
+ 	String serviceName;
+ 	String portNS;
+ 	String portName;
+ 	String methodNS;
+ 	String method;
+ 	boolean useAuth;
+ 	boolean useSR;
+ 	boolean useAuthorization;
+ 	String authorizationRole;
+ 	boolean useSl;
+ 	boolean useSAM;
+ 	String authType;
+ 	boolean authPropagate;
+ 	String username;
+ 	String password;
+ 	boolean useSAML;
+ 	boolean useXKMS;
+ 	String connTimeout;
+ 	String receiveTimeout;
+ 	boolean logMessages;
+ 	boolean useBusinessCorrelation;
+ 	String correlationValue;
+ 	boolean hasHeaders;
+ 	
+    @SuppressWarnings("unchecked")
+    private <T> T getProp(String key) {
+        try {
+            return (T) props.get(key);
+        } catch (Throwable e) {
+            //ignore exception when not get property.
+            e.printStackTrace();
+            return null;
+        }
+    }
+ 
+	private void setNode(INode node){
+		this.node=node;
+		helper = new NodeParamsHelper(node);
+	}
+	
+	private <T> T getObjectParam(String key) {
+	    return helper.getObjectParam(key);
+	}
+	
+	private String getStringParam(String key) {
+	    return helper.getStringParam(key);
+	}
+	
+	private boolean getBoolParam(String key) {
+	    return helper.getBoolParam(key);
+	}
+	
+	private boolean getVisibleBoolParam(String key) {
+	    return helper.getVisibleBoolParam(key);
+	}
+	
+	private List<Entry<String, String>> getPropertiesPram(String key){
+        return helper.getPropertiesPram(key);
+    }
+	   
+	public void initOptions(INode node) {
+	    setNode(node);
+	    
+	    initConnections();
+	    if(inputConn == null) {
+	        return;
+	    }
+	    initProps();
+	}
+	
+	private void initConnections() {
+	    initInputConnection();
+	    if(inputConn == null) {
+	        return;
+	    }
+	    initOutputConnections();
+	}
+	
+	private void initInputConnection() {
+	    List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+	    if (incomingConnections != null) {
+	        for (IConnection conn : incomingConnections) {
+	            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+	                inputConn = conn;
+	                break;
+	            }
+	        }
+	    }
+	}
+	
+	private void initOutputConnections() {
+	    List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+	    dataOutputs = new ArrayList<IConnection>();
+	    if (conns != null) {
+	        for (IConnection conn : conns) {
+	            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+	                dataOutputs.add(conn);
+	            }
+	        }
+	    }
+	    
+	    List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+	    List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+	    if (connsResponse.size() == 1) {
+	        connResponse = connsResponse.get(0);
+	    }
+	    if (connsFault.size() == 1) {
+	        connFault = connsFault.get(0);
+	    }
+	}
+	
+	private void initProps() {
+	    cid = node.getUniqueName();
+	    processName = node.getProcess().getName();
+	    serviceNS = getStringParam("__SERVICE_NS__");
+	    serviceName = getStringParam("__SERVICE_NAME__");
+	    portNS = getStringParam("__PORT_NS__");
+	    portName = getStringParam("__PORT_NAME__");
+	    
+	    methodNS = ElementParameterParser.getValue(node, "__METHOD_NS__");
+	    if (methodNS == null || "".equals(methodNS)) {
+	        methodNS = serviceNS;
+	    }
+	    String methodTemp = getStringParam("__METHOD__");
+	    method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
+
+	    
+	    authType = getStringParam("__AUTH_TYPE__");
+	    username = getStringParam("__AUTH_USERNAME__");
+	    password = getStringParam("__AUTH_PASSWORD__");
+	    authorizationRole = getStringParam("__ROLE__");
+	    correlationValue = getStringParam("__CORRELATION_VALUE__");
+
+	    logMessages = getBoolParam("__LOG_MESSAGES__");
+	    connTimeout = getStringParam("__CONNECTION_TIMEOUT__");
+	    receiveTimeout = getStringParam("__RECEIVE_TIMEOUT__");
+	    
+	    //use getVisibleBoolParam to return false if the controller of this parameter is not visible.
+	    useSR = getVisibleBoolParam("__USE_SR__");
+
+	    useSl = getVisibleBoolParam("__SERVICE_LOCATOR__");
+	    useSAM = getVisibleBoolParam("__SERVICE_ACTIVITY_MONITOR__");
+	    useAuth = getVisibleBoolParam("__NEED_AUTH__");
+	    useBusinessCorrelation = useSR || getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
+
+	    //saml features
+	    useSAML = useAuth && "SAML".equals(authType);
+	    useAuthorization = getVisibleBoolParam("__NEED_AUTHORIZATION__");
+	    authPropagate = getVisibleBoolParam("__AUTH_PROPAGATE__");
+	    useXKMS = getVisibleBoolParam("__NEED_ENCRYPTION__");
+
+	    //init headers
+	    if(inputConn != null) {
+	        for (IMetadataColumn connColumn : inputConn.getMetadataTable().getListColumns()) {
+	            if ("headers".equals(connColumn.getLabel())) {
+	                hasHeaders = true;
+	                break;
+	            }
+	        }
+	    }
+	}
+	
+	private List<Entry<String, String>> getSLProperties(){
+	   return getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+	}
+
+	private List<Entry<String, String>> getSAMProperties(){
+	    return getPropertiesPram("__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+	}
+	
+	public String generate(CodeGeneratorArgument argument)
+   	{
+   		//initOptions(..)
+     	return "";
+   	}
+}

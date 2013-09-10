@@ -10,91 +10,21 @@
         java.util.List
         java.util.Map
 "
+    skeleton="tESBConsumer_main.skeleton"
 %>
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
-String cid = node.getUniqueName();
+initOptions(node);
 
 String projectName = codeGenArgument.getCurrentProjectName();
-String processName = node.getProcess().getName();
 
-String serviceNS = ElementParameterParser.getValue(node, "__SERVICE_NS__");
-String serviceName = ElementParameterParser.getValue(node, "__SERVICE_NAME__");
-String portNS = ElementParameterParser.getValue(node, "__PORT_NS__");
-String portName = ElementParameterParser.getValue(node, "__PORT_NAME__");
-
-String methodNS = ElementParameterParser.getValue(node, "__METHOD_NS__");
-if (methodNS == null || "".equals(methodNS)) {
-    methodNS = serviceNS;
-}
-String methodTemp = ElementParameterParser.getValue(node, "__METHOD__");
-String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
-
-Boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTH__"));
-//if no a EE version then useSR should be false
-boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-Boolean useSR = isStudioEEVersion && Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"));
-Boolean useAuthorization = Boolean.valueOf(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"));
-String authorizationRole = ElementParameterParser.getValue(node, "__ROLE__");
-
-Boolean useSl = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__")) && !useSR;
-Boolean useSAM = Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__")) && !useSR;
-
-String authType = ElementParameterParser.getValue(node, "__AUTH_TYPE__");
-boolean authPropagate = "SAML".equals(authType) && Boolean.valueOf(ElementParameterParser.getValue(node, "__AUTH_PROPAGATE__"));
-String username = ElementParameterParser.getValue(node, "__AUTH_USERNAME__");
-String password = ElementParameterParser.getValue(node, "__AUTH_PASSWORD__");
-
-String connTimeout = ElementParameterParser.getValue(node, "__CONNECTION_TIMEOUT__");
-String receiveTimeout = ElementParameterParser.getValue(node, "__RECEIVE_TIMEOUT__");
-
-Boolean logMessages = Boolean.valueOf(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"));
-
-boolean useBusinessCorrelation = useSR || "true".equals(ElementParameterParser.getValue(node, "__USE_BUSINESS_CORRELATION__"));
-String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
-
-IConnection inputConn = null;
-List<? extends IConnection> incomingConnections = node.getIncomingConnections();
-if (incomingConnections != null && !incomingConnections.isEmpty()) {
-    for (IConnection conn : incomingConnections) {
-        if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-            inputConn = conn;
-            break;
-        }
-    }
-}
 if (inputConn != null) {
-    List<? extends IConnection> conns = node.getOutgoingSortedConnections();
-    if (conns != null && conns.size() > 0) {
-        for (int i = 0; i < conns.size(); i++) {
-            IConnection conn = conns.get(i);
-            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-    %>
-        <%=conn.getName()%> = null;
-    <%
-            }
-        }
-    }
-
-    List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
-    List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-    IConnection connResponse = null;
-    IConnection connFault = null;
-    if (connsResponse.size() == 1) {
-        connResponse = connsResponse.get(0);
-    }
-    if (connsFault.size() == 1) {
-        connFault = connsFault.get(0);
-    }
-
-    boolean hasHeaders = false;
-    for (IMetadataColumn connColumn : inputConn.getMetadataTable().getListColumns()) {
-        if ("headers".equals(connColumn.getLabel())) {
-            hasHeaders = true;
-            break;
-        }
-    }
+	for (IConnection conn : dataOutputs){
+%>
+		<%=conn.getName()%> = null;
+<%
+	}
 %>
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
@@ -108,21 +38,18 @@ if (inputConn != null) {
             <% if (useSl) { %>
                 final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                 <%
-                List<Map<String, String>> customProperties = (List<Map<String,String>>)
-                        ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
-                for (int k = 0; k < customProperties.size(); k++) { %>
-                    slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
-                <% }
+                for(Entry<String, String> prop : getSLProperties()) {
+                    %>slCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);<%
+                }
             } %>
 
             java.util.Map<String, String> customProps_<%=cid%> = null;
-            <% if (Boolean.valueOf(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
-                List<Map<String, String>> customProperties = (List<Map<String,String>>)
-                        ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
+            <% if (useSAM) {
+                List<Entry<String, String>> customProperties = getSAMProperties();
                 if (!customProperties.isEmpty()) { %>
                     customProps_<%=cid%> = new java.util.HashMap<String, String>();
-                    <% for (int k = 0; k < customProperties.size(); k++) { %>
-                    customProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+                    <% for (Entry<String, String> prop : customProperties) { %>
+                    customProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
                     <% } %>
                 <% } %>
             <% } %>
@@ -168,13 +95,13 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
                 genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
                 genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=methodNS%>", "<%=method%>"));
-                genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__"))%>);
-                <% String soapAction=ElementParameterParser.getValue(node, "__SOAP_ACTION__");
+                genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(getStringParam("__COMMUNICATION_STYLE__"))%>);
+                <% String soapAction=getStringParam("__SOAP_ACTION__");
                     if(soapAction != null && (!soapAction.matches("\\s*"))) { %>
                         genericConsumer_<%=cid%>.setSoapAction("<%=soapAction%>");
                 <%  } %>
 
-                genericConsumer_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
+                genericConsumer_<%=cid%>.setAddress(<%=getStringParam("__ESB_ENDPOINT__")%>);
                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
@@ -218,21 +145,21 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
                 <% } %>
-                <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_PROXY__"))) { %>
-                    genericConsumer_<%=cid%>.setProxyServer(<%=ElementParameterParser.getValue(node, "__PROXY_HOST__")%>);
-                    genericConsumer_<%=cid%>.setProxyPort(<%=ElementParameterParser.getValue(node, "__PROXY_PORT__")%>);
-                    genericConsumer_<%=cid%>.setProxyUsername(<%=ElementParameterParser.getValue(node, "__PROXY_USERNAME__")%>);
-                    genericConsumer_<%=cid%>.setProxyPassword(<%=ElementParameterParser.getValue(node, "__PROXY_PASSWORD__")%>);
+                <% if (getBoolParam("__USE_PROXY__")) { %>
+                    genericConsumer_<%=cid%>.setProxyServer(<%=getStringParam("__PROXY_HOST__")%>);
+                    genericConsumer_<%=cid%>.setProxyPort(<%=getStringParam("__PROXY_PORT__")%>);
+                    genericConsumer_<%=cid%>.setProxyUsername(<%=getStringParam("__PROXY_USERNAME__")%>);
+                    genericConsumer_<%=cid%>.setProxyPassword(<%=getStringParam("__PROXY_PASSWORD__")%>);
                 <% } %>
-                genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000));
-                genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000));
+                genericConsumer_<%=cid%>.setConnectionTimeout(<%=connTimeout%> * 1000L);
+                genericConsumer_<%=cid%>.setReceiveTimeout(<%=receiveTimeout%> * 1000L);
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
-                <% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_SSL_TO_TRUSTSERVER__"))) { %>
+                <% if (getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) { %>
                     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-                    System.setProperty("javax.net.ssl.trustStore", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
-                    System.setProperty("javax.net.ssl.trustStorePassword", <%=ElementParameterParser.getValue(node, "__SSL_TRUSTSERVER_PASSWORD__")%>);
+                    System.setProperty("javax.net.ssl.trustStore", <%=getStringParam("__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
+                    System.setProperty("javax.net.ssl.trustStorePassword", <%=getStringParam("__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
@@ -254,34 +181,36 @@ if (inputConn != null) {
                             put("serviceName", serviceName_<%=cid%>.toString());
                             put("defaultOperationName", "<%=method%>");
                             put("defaultOperationNameSpace", "");
-                            put("soapAction", "<%=ElementParameterParser.getValue(node, "__SOAP_ACTION__")%>");
+                            put("soapAction", "<%=getStringParam("__SOAP_ACTION__")%>");
                             if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                                 put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                             }
-                            put("publishedEndpointUrl", <%=ElementParameterParser.getValue(node, "__ESB_ENDPOINT__")%>);
-                            put("COMMUNICATION_STYLE", "<%=ElementParameterParser.getValue(node, "__COMMUNICATION_STYLE__")%>");
+                            put("publishedEndpointUrl", <%=getStringParam("__ESB_ENDPOINT__")%>);
+                            put("COMMUNICATION_STYLE", "<%=getStringParam("__COMMUNICATION_STYLE__")%>");
 
                             put("logMessages", <%=logMessages%>);
 
                             // use Service Locator
                             put("useServiceLocator", <%=useSl%>);
                             <% if (useSl) { %>
-                                put("LocatorSelectionStrategy", "<%=ElementParameterParser.getValue(node, "__SERVICE_LOCATOR_STRATEGY__")%>");
+                                put("LocatorSelectionStrategy", "<%=getStringParam("__SERVICE_LOCATOR_STRATEGY__")%>");
                                 put("SL-PROPS", slCustomProps_<%=cid%>);
                             <% } %>
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
 
                             <% if (useSR) { %>
-                                put("useServiceRegistry", <%=Boolean.valueOf(ElementParameterParser.getValue(node, "__USE_SR__"))%>);
+                                put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
                                 put("role", <%=authorizationRole%>);
                             <% } else if (useAuth) { %>
-                                <% if ("SAML".equals(authType) && isStudioEEVersion) { %>
+                                <% if (useSAML) { %>
                                     put("useAuthorization", <%=useAuthorization%>);
                                     <% if (useAuthorization) { %>
                                         put("role", <%=authorizationRole%>);
+                                    <% }if (useXKMS) { %>
+                                        put("enableXKMS", "true");
                                     <% } %>
                                 <% } %>
                                 put("esbSecurity", "<%=authType%>");
@@ -422,7 +351,7 @@ if (inputConn != null) {
             <% } %>
         }
     } catch (Exception e_<%=cid%>){
-        <% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+        <% if (getBoolParam("__DIE_ON_ERROR__")) { %>
             throw(e_<%=cid%>);
         <% } else { %>
             new TalendException(e_<%=cid%>,currentComponent,globalMap).printStackTrace();
