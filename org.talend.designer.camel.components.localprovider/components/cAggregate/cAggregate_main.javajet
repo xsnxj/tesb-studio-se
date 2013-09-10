@@ -15,6 +15,11 @@ imports="
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	
+	if("correlation".equals(language)){
+		language = "simple";
+		expression = "\"${in.header.CamelCxfMessage[CorrelationID]}\", String.class";
+	}
+	
 	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	
 	boolean useAggregationStrategy = true;

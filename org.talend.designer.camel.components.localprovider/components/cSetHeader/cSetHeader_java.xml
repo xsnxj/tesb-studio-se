@@ -44,6 +44,7 @@
 						<ITEM NAME="BEAN"       VALUE="bean" />
 						<ITEM NAME="NONE"       VALUE="none" />
 						<ITEM NAME="CONSTANT"   VALUE="constant" />
+						<ITEM NAME="CORRELATION"   VALUE="correlation" />
 						<ITEM NAME="EL"         VALUE="el" />
 						<ITEM NAME="GROOVY"     VALUE="groovy" />
 						<ITEM NAME="HEADER"     VALUE="header" />
@@ -63,7 +64,7 @@
 						<ITEM NAME="XQUERY"     VALUE="xquery" />
 					</ITEMS>
 				</ITEM>
-				<ITEM NAME="EXPRESSION" VALUE="&quot;HeaderValue&quot;" />	
+				<ITEM NAME="EXPRESSION" VALUE="&quot;HeaderValue&quot;" READONLY_IF="VALUES.LANGUAGE == 'CORRELATION'"/>	
 			</ITEMS>
 		</PARAMETER>
     	<PARAMETER NAME="USE_NAMESPACES" FIELD="CHECK"

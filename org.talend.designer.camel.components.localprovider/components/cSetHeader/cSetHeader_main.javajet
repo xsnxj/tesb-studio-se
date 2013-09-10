@@ -25,7 +25,11 @@ imports="
 		 			String headerName = headersMap.get("NAME");
 		 			String headerLanguage = headersMap.get("LANGUAGE");
 		 			String headerExpression = headersMap.get("EXPRESSION");
-		 			if("bean".equals(headerLanguage)){
+		 			if("correlation".equals(headerLanguage)){
+%>
+						.setHeader(<%=headerName%>).simple("${in.header.CamelCxfMessage[CorrelationID]}", String.class)
+
+<%		 			}else if("bean".equals(headerLanguage)){
 %>
 						.setHeader(<%=headerName%>).method(<%=headerExpression%>)
 <%
