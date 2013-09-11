@@ -50,8 +50,8 @@
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="apache-camel"
-					MODULE="camel-core-2.11.2-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cMessagingEndpoint/camel-core-2.11.2-SNAPSHOT.jar"
+					MODULE="camel-core-2.12.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cMessagingEndpoint/camel-core-2.12.0.jar"
 					REQUIRED="true"
 					BundleID="org.apache.camel.camel-core"/>
 			<IMPORT NAME="dom4j"

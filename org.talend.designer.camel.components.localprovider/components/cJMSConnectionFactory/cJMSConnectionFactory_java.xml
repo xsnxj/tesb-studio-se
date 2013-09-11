@@ -165,9 +165,13 @@
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xstream-1.4.3.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.1.13.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
+                    REQUIRED="true" />
             <!-- spring -->
             <IMPORT NAME="camel-spring" 
-            		MODULE="camel-spring-2.11.2-SNAPSHOT.jar"
+            		MODULE="camel-spring-2.12.0.jar"
                 	REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.3.RELEASE.jar"
@@ -208,7 +212,7 @@
 	                REQUIRED="true" />
 
 			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.11.2-SNAPSHOT.jar"
+					MODULE="camel-core-2.12.0.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="spring-jms" 
 					MODULE="spring-jms-3.2.3.RELEASE.jar"
@@ -240,7 +244,7 @@
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.8-SNAPSHOT.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="camel-jms-alldep" 
-					MODULE="camel-jms-alldep-2.11.2-SNAPSHOT.jar"
+					MODULE="camel-jms-alldep-2.12.0.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="jms" 
 					MODULE="jms.jar"
@@ -254,10 +258,10 @@
 					MODULE="commons-pool-1.6.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
-			<IMPORT NAME="jndi" 
+<!--			<IMPORT NAME="jndi" 
 					MODULE="jndi.jar"
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jndi.jar"
-					REQUIRED="true" />
+					REQUIRED="true" /> -->
 		</IMPORTS>
 	</CODEGENERATION>
 

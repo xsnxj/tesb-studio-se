@@ -99,9 +99,13 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-
+		
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.1.13.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
+                    REQUIRED="true" />
 			<!-- spring -->
-			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.11.2-SNAPSHOT.jar"
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.12.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="spring-context" MODULE="spring-context-3.2.3.RELEASE.jar"
 				UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.3.RELEASE.jar"
@@ -134,7 +138,7 @@
 				UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
 				REQUIRED="true" />
 
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.11.2-SNAPSHOT.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.12.0.jar"
 				REQUIRED="true" />
 			<IMPORT NAME="log4j" MODULE="log4j-1.2.15.jar"
 				UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"

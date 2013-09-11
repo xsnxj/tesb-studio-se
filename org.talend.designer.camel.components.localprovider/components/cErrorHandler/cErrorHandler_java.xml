@@ -128,7 +128,7 @@ COMPATIBILITY="ALL"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
                     REQUIRED="true" />
 
-			<IMPORT NAME="apache-camel" MODULE="camel-core-2.11.2-SNAPSHOT.jar"
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.12.0.jar"
 				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
