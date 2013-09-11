@@ -69,6 +69,8 @@ boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 if (!isStudioEEVersion){
 	useAuthorization=false;
 }
+boolean useBusinessCorrelation = Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_BUSINESS_CORRELATION__"));
+
 %>
 
 try {
@@ -175,6 +177,17 @@ try {
 		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
 	<% } %>
 
+	<% if (useBusinessCorrelation) { %>
+		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
+			new org.talend.esb.policy.correlation.CorrelationIDCallbackHandler() {
+				@Override
+				public String getCorrelationId() {
+					return <%=ElementParameterParser.getValue(node,"__CORRELATION_VALUE__")%>;
+				}	
+			});
+		features_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+	<% } %>
+	
 	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
 
 
