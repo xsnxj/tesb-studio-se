@@ -64,10 +64,6 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <IMPORT NAME="jaxb-impl"
-                    MODULE="jaxb-impl-2.1.13.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
-                    REQUIRED="true" />
             <!-- spring -->
             <IMPORT NAME="camel-spring" 
             		MODULE="camel-spring-2.12.0.jar"
