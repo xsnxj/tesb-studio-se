@@ -34,7 +34,8 @@ public class CLASS
  	boolean useSl;
  	boolean useSAM;
  	String authType;
- 	boolean authPropagate;
+ 	boolean authPropagateUP;
+ 	boolean authPropagateCertificate;
  	String username;
  	String password;
  	boolean useSAML;
@@ -45,6 +46,7 @@ public class CLASS
  	boolean useBusinessCorrelation;
  	String correlationValue;
  	boolean hasHeaders;
+ 	String alias;
  	
     @SuppressWarnings("unchecked")
     private <T> T getProp(String key) {
@@ -150,6 +152,7 @@ public class CLASS
 
 	    
 	    authType = getStringParam("__AUTH_TYPE__");
+	    alias = getStringParam("_AUTH_ALIAS");
 	    username = getStringParam("__AUTH_USERNAME__");
 	    password = getStringParam("__AUTH_PASSWORD__");
 	    authorizationRole = getStringParam("__ROLE__");
@@ -168,9 +171,11 @@ public class CLASS
 	    useBusinessCorrelation = useSR || getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
 
 	    //saml features
-	    useSAML = useAuth && "SAML".equals(authType);
+	    useSAML = useAuth && authType.startsWith("SAML");//SAML,SAML_UP,SAML_CERT.
 	    useAuthorization = getVisibleBoolParam("__NEED_AUTHORIZATION__");
-	    authPropagate = getVisibleBoolParam("__AUTH_PROPAGATE__");
+	    //authPropagate = getVisibleBoolParam("__AUTH_PROPAGATE__");
+	    authPropagateUP = useSAML && authType.equals("SAML_UP");
+	    authPropagateCertificate = useSAML && authType.equals("SAML_CERT");
 	    useXKMS = getVisibleBoolParam("__NEED_ENCRYPTION__");
 
 	    //init headers

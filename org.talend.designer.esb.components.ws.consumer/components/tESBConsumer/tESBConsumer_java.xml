@@ -95,34 +95,34 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="46"
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="45"
 				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="46"
+		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="45"
 				GROUP="ESB" SHOW_IF="(NEED_AUTH == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
 			<ITEMS DEFAULT="SECURITY_SAML">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
 				<ITEM NAME="SECURITY_DIGEST" VALUE="DIGEST" />
 				<ITEM NAME="SECURITY_TOKEN" VALUE="TOKEN" />
 				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
+				<ITEM NAME="SECURITY_SAML_UP" VALUE="SAML_UP"/>
+				<ITEM NAME="SECURITY_SAML_CERT" VALUE="SAML_CERT"/>
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="45"  SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
 			<DEFAULT>Authentication:</DEFAULT>
 		</PARAMETER>
-
-
-        <PARAMETER NAME="AUTH_PROPAGATE" FIELD="CHECK" REQUIRED="true" NUM_ROW="46"
-                GROUP="ESB" REPOSITORY_VALUE="AUTH_PROPAGATE"
-                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND (AUTH_TYPE == 'SAML'))
+		<PARAMETER NAME="AUTH_ALIAS" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_ALIAS"
+                SHOW_IF="(((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
                          OR
-                         ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
+                         ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))) AND (AUTH_TYPE == 'SECURITY_SAML_CERT')">
+			<DEFAULT>"alias"</DEFAULT>
+		</PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME"
-                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
+                SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')) AND (AUTH_TYPE != 'SECURITY_SAML_CERT'))
                          OR
                          ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"username"</DEFAULT>
@@ -135,7 +135,9 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" NUM_ROW="47"
-				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND 
+				((AUTH_TYPE == 'SECURITY_SAML') OR (AUTH_TYPE == 'SECURITY_SAML_UP') OR (AUTH_TYPE == 'SECURITY_SAML_CERT')) AND
+				(USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
@@ -144,12 +146,16 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="48"
-				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')) OR (USE_SR == 'true'))">
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND
+				((AUTH_TYPE == 'SECURITY_SAML') OR (AUTH_TYPE == 'SECURITY_SAML_UP') OR (AUTH_TYPE == 'SECURITY_SAML_CERT'))) OR
+				(USE_SR == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		
 		<PARAMETER NAME="NEED_ENCRYPTION" FIELD="CHECK" NUM_ROW="49"
-				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND 
+				((AUTH_TYPE == 'SECURITY_SAML') OR (AUTH_TYPE == 'SECURITY_SAML_UP') OR (AUTH_TYPE == 'SECURITY_SAML_CERT')) AND 
+				(USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		
@@ -383,8 +389,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.12-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12-SNAPSHOT.jar"
+					MODULE="wss4j-1.6.12.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlsec"

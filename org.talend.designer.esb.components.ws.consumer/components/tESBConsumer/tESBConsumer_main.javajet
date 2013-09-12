@@ -69,7 +69,7 @@ if (inputConn != null) {
             <% } %>
 
             final List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-            <% if (authPropagate) { %>
+            <% if (authPropagateUP) { %>
                 final Object securityToken_<%=cid%>;
                 <% List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
                 if (!nodesProviderRequest.isEmpty()) { %>
@@ -140,7 +140,7 @@ if (inputConn != null) {
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
-                <% if (useAuth && !useSR) { %>
+                <% if (useAuth) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
@@ -221,7 +221,7 @@ if (inputConn != null) {
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }
-                            <% if (authPropagate) { %>
+                            <% if (authPropagateUP) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
                             if(useBusinessCorrelation) { %>
