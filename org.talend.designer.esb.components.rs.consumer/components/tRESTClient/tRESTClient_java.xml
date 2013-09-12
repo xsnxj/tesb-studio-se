@@ -438,8 +438,8 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.12-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12-SNAPSHOT.jar"
+					MODULE="wss4j-1.6.12.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="xmlsec"
