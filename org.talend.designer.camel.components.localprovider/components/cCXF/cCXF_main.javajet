@@ -51,7 +51,7 @@ imports="
 			.from(<%=endpointVar%>)
 <%
 		}else{
-			if("true".equals(useRegistry) || "true".equals(useCorrelation)){
+			if(("true".equals(useRegistry) || "true".equals(useCorrelation)) && !"".equals(correlationValue) && !"\"\"".equals(correlationValue)){
 %>
 				.setHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID).simple(<%=correlationValue%>)
 <%
