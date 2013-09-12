@@ -72,6 +72,10 @@ public class CLASS
 	    return helper.getStringParam(key);
 	}
 	
+	private String getVisibleStringParam(String key) {
+	    return helper.getVisibleStringParam(key);
+	}
+	
 	private boolean getBoolParam(String key) {
 	    return helper.getBoolParam(key);
 	}
@@ -171,11 +175,12 @@ public class CLASS
 	    useBusinessCorrelation = useSR || getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
 
 	    //saml features
-	    useSAML = useAuth && authType.startsWith("SAML");//SAML,SAML_UP,SAML_CERT.
+	    useSAML = useAuth && authType.equals("SAML");
 	    useAuthorization = getVisibleBoolParam("__NEED_AUTHORIZATION__");
-	    //authPropagate = getVisibleBoolParam("__AUTH_PROPAGATE__");
-	    authPropagateUP = useSAML && authType.equals("SAML_UP");
-	    authPropagateCertificate = useSAML && authType.equals("SAML_CERT");
+	    String authPropatateType = getVisibleStringParam("__PROPAGATE_TYPE__");
+	    authPropagateUP = authPropatateType.equals("U_P");
+	    authPropagateCertificate = authPropatateType.equals("CERT");
+
 	    useXKMS = getVisibleBoolParam("__NEED_ENCRYPTION__");
 
 	    //init headers
