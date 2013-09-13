@@ -224,6 +224,9 @@ if (inputConn != null) {
                             <% if (authPropagateUP) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
+                            if (authPropagateCertificate) { %>
+                                put("alias", <%=alias%>);
+                            <% }
                             if(useBusinessCorrelation) { %>
                                 put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, correlationIDCallbackHandler);
                                 put("enhancedResponse", true);
