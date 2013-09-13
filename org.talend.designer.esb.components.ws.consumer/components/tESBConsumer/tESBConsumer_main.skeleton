@@ -156,7 +156,7 @@ public class CLASS
 
 	    
 	    authType = getStringParam("__AUTH_TYPE__");
-	    alias = getStringParam("_AUTH_ALIAS_");
+	    alias = getStringParam("__AUTH_ALIAS__");
 	    username = getStringParam("__AUTH_USERNAME__");
 	    password = getStringParam("__AUTH_PASSWORD__");
 	    authorizationRole = getStringParam("__ROLE__");
