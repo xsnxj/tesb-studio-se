@@ -549,7 +549,7 @@
             		MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
                     BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
+                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
