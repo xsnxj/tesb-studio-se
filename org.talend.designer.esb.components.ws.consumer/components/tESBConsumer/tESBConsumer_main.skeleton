@@ -172,7 +172,7 @@ public class CLASS
 	    useSl = getVisibleBoolParam("__SERVICE_LOCATOR__");
 	    useSAM = getVisibleBoolParam("__SERVICE_ACTIVITY_MONITOR__");
 	    useAuth = getVisibleBoolParam("__NEED_AUTH__");
-	    useBusinessCorrelation = useSR || getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
+	    useBusinessCorrelation = getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
 
 	    //saml features
 	    useSAML = useAuth && authType.equals("SAML");

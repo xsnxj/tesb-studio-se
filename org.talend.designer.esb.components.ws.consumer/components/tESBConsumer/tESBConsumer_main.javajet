@@ -53,7 +53,7 @@ if (inputConn != null) {
                     <% } %>
                 <% } %>
             <% } %>
-            <%if(useBusinessCorrelation) {%>
+            <%if(useBusinessCorrelation || useSR) {%>
                 class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
                     private String correlationId;
                     public EsbJobCorrelationCallbackHandler(final String correlationId) {
@@ -136,6 +136,8 @@ if (inputConn != null) {
                 <% } %>
                 <%if(useBusinessCorrelation) {%>
                     esbFeatures_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+                <% } %>
+                <%if(useBusinessCorrelation || useSR) {%>
                     genericConsumer_<%=cid%>.setCorrelationIDCallbackHandler(correlationIDCallbackHandler);
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
