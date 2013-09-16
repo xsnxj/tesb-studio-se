@@ -90,7 +90,7 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		
-		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="43"
+		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="39"
 				GROUP="ESB" SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -98,6 +98,11 @@
 		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="44"
 				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
 			<DEFAULT>Authentication:</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_PROPAGATE" FIELD="CHECK" REQUIRED="true" NUM_ROW="46" 
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_PROPAGATE" 
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
+			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="44"
 				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
@@ -114,8 +119,8 @@
 		</PARAMETER>
 		<PARAMETER NAME="PROPAGATE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="44"
 				GROUP="ESB" SHOW_IF="((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SAML'))
-					OR
-					((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+					AND
+					((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
 			<ITEMS DEFAULT="PROPAGATE_NONE">
 				<ITEM NAME="PROPAGATE_NONE" VALUE="NONE"/>
 				<ITEM NAME="PROPAGATE_U_P" VALUE="U_P" />
@@ -127,20 +132,16 @@
                 				((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
                 			) AND
                 			((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_U_P'))
-                		 ) OR
-                         (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
-                         	(PROPAGATE_TYPE == 'PROPAGATE_U_P')
-                         )">
+                		 ) AND
+                         (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
 		</PARAMETER>
 		<PARAMETER NAME="PROPAGATE_CERT_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="45"
                 SHOW_IF="(	(	(NEED_AUTH == 'true') AND 
                 				((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
                 			) AND
                 			((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
-                		 ) OR
-                         (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
-                         	(PROPAGATE_TYPE == 'PROPAGATE_CERT')
-                         )">
+                		 ) AND
+                         (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_ALIAS" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
 				GROUP="ESB" REPOSITORY_VALUE="AUTH_ALIAS"
@@ -150,7 +151,7 @@
                 			((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
                 		 ) OR
                          (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
-                         	(PROPAGATE_TYPE == 'PROPAGATE_CERT')
+                         	(AUTH_PROPAGATE == 'true')
                          )">
 			<DEFAULT>"alias"</DEFAULT>
 		</PARAMETER>
@@ -161,9 +162,7 @@
                 			) AND
                 			((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE != 'PROPAGATE_CERT'))
                 		 ) OR
-                         (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
-                         	(PROPAGATE_TYPE != 'PROPAGATE_CERT')
-                         )">
+                         (((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')))">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"

@@ -177,9 +177,15 @@ public class CLASS
 	    //saml features
 	    useSAML = useAuth && authType.equals("SAML");
 	    useAuthorization = getVisibleBoolParam("__NEED_AUTHORIZATION__");
-	    String authPropatateType = getVisibleStringParam("__PROPAGATE_TYPE__");
-	    authPropagateUP = authPropatateType.equals("U_P");
-	    authPropagateCertificate = authPropatateType.equals("CERT");
+	    if(useSR) {
+	    	boolean usePropatate = getVisibleBoolParam("__AUTH_PROPAGATE__");
+	    	authPropagateUP = usePropatate;
+	    	authPropagateCertificate = usePropatate;
+	    }else {
+    	    String authPropatateType = getVisibleStringParam("__PROPAGATE_TYPE__");
+    	    authPropagateUP = authPropatateType.equals("U_P");
+    	    authPropagateCertificate = authPropatateType.equals("CERT");
+	    }
 
 	    useXKMS = getVisibleBoolParam("__NEED_ENCRYPTION__");
 
