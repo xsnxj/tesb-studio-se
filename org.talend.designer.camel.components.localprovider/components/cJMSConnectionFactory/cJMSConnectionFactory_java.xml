@@ -248,12 +248,11 @@
 					REQUIRED="true" />
 			<IMPORT NAME="jms" 
 					MODULE="jms.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jms.jar"
 					REQUIRED="true" />
-			<IMPORT NAME="jta" 
-					MODULE="jta.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jta.jar"
-					REQUIRED="true" />
+            <IMPORT NAME="jta"
+                    MODULE="jta.jar"
+                    UrlPath="platform:/base/plugins/javax.transaction_1.1.1.v201105210645.jar"
+                    REQUIRED="true" />
 			<IMPORT NAME="common-pool" 
 					MODULE="commons-pool-1.6.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
