@@ -15,7 +15,6 @@ public class CLASS
  	private IConnection connResponse;
  	private IConnection connFault;
  	private List<IConnection> dataOutputs;
- 	private Map<String, Object> props = new HashMap<String, Object>();
  	private NodeParamsHelper helper;
  	
  	//code generation options:
@@ -48,20 +47,14 @@ public class CLASS
  	boolean hasHeaders;
  	String alias;
  	
-    @SuppressWarnings("unchecked")
-    private <T> T getProp(String key) {
-        try {
-            return (T) props.get(key);
-        } catch (Throwable e) {
-            //ignore exception when not get property.
-            e.printStackTrace();
-            return null;
-        }
-    }
  
 	private void setNode(INode node){
 		this.node=node;
 		helper = new NodeParamsHelper(node);
+		inputConn = null;
+		connFault = null;
+		connResponse = null;
+		dataOutputs = null;
 	}
 	
 	private <T> T getObjectParam(String key) {
