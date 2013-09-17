@@ -180,7 +180,7 @@ try {
 	<% if (useBusinessCorrelation) { %>
 		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
 			new org.talend.esb.policy.correlation.CorrelationIDCallbackHandler() {
-				@Override
+				
 				public String getCorrelationId() {
 					return <%=ElementParameterParser.getValue(node,"__CORRELATION_VALUE__")%>;
 				}	
