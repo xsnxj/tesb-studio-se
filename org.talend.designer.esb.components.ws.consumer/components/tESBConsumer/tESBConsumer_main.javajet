@@ -69,7 +69,7 @@ if (inputConn != null) {
             <% } %>
 
             final List<org.apache.cxf.headers.Header> soapHeaders_<%=cid%> = new java.util.ArrayList<org.apache.cxf.headers.Header>();
-            <% if (authPropagateUP) { %>
+            <% if (authPropagateUP || authPropagateCertificate) { %>
                 final Object securityToken_<%=cid%>;
                 <% List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
                 if (!nodesProviderRequest.isEmpty()) { %>
@@ -223,7 +223,7 @@ if (inputConn != null) {
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }
-                            <% if (authPropagateUP) { %>
+                            <% if (authPropagateUP || authPropagateCertificate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
                             if (authPropagateCertificate) { %>
