@@ -278,13 +278,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.3.jar"
+					MODULE="${tesb-wsdl4j}"
 					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.1.13.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
@@ -374,7 +369,7 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="${tesb-commons-logging}"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
@@ -397,7 +392,7 @@
 					BundleID="org.apache.hadoop.zookeeper"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"
-					MODULE="log4j-1.2.17.jar"
+					MODULE="${tesb-log4j}"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
@@ -489,7 +484,7 @@
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
-					MODULE="commons-lang-2.6.jar"
+					MODULE="${tesb-commons-lang}"
 					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
@@ -499,7 +494,7 @@
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="xml-resolver"
-					MODULE="xml-resolver-1.2.jar"
+					MODULE="${tesb-xml-resolver}"
 					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
