@@ -212,7 +212,7 @@ if (inputConn != null) {
                                     <% if (useAuthorization) { %>
                                         put("role", <%=authorizationRole%>);
                                     <% }if (useXKMS) { %>
-                                        put("enableXKMS", "true");
+                                        put("enableXKMS", <%=useXKMS%>);
                                     <% } %>
                                 <% } %>
                                 put("esbSecurity", "<%=authType%>");
