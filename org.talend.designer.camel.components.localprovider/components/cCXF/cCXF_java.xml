@@ -344,10 +344,6 @@
                     MODULE="wsdl4j-1.6.3.jar"
                     UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="jaxb-impl"
-                    MODULE="jaxb-impl-2.1.13.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
-                    REQUIRED="true" />
             <IMPORT NAME="xmlschema-core"
                     MODULE="xmlschema-core-2.0.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
