@@ -236,12 +236,12 @@
                     REQUIRED="true" />
 			
 			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-5.8-SNAPSHOT.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-5.8-SNAPSHOT.jar"
+					MODULE="activemq-all-5.7.0.jar" 
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-5.7.0.jar"
 					REQUIRED_IF="MQ_TYPE == 'ACTIVEMQ'" />
 			<IMPORT NAME="activemq-pool" 
-					MODULE="activemq-pool-5.8-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.8-SNAPSHOT.jar"
+					MODULE="activemq-pool-5.7.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.7.0.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="camel-jms-alldep" 
 					MODULE="camel-jms-alldep-2.12.0.jar"
