@@ -131,27 +131,39 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
         boolean isStudioEEVersion = isStudioEEVersion();
 
-        boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
-        boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useRegistry = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)):false;
-        boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
-        boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
-        boolean useAuthorization = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION)):false;
-        boolean useEncryption = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION)):false;        
+        boolean useSL =
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+        boolean useSAM = !useRegistry &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+        boolean useSecurityToken = !useRegistry &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
+        boolean useSecuritySAML = !useRegistry &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
+        boolean useAuthorization = !useRegistry &&
+        		isStudioEEVersion &&
+        		useSecuritySAML &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
+        boolean useEncryption =!useRegistry &&
+        		isStudioEEVersion &&
+        		useSecuritySAML &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
-        boolean wsdlSchemaValidation = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION)):false;
-        boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
+        boolean wsdlSchemaValidation = isStudioEEVersion &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION));
+        boolean useBusinessCorrelation = !useRegistry &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
 
-        endpointInfo.put("useSL", useSL /*&& !useRegistry*/); //$NON-NLS-1$
-        endpointInfo.put("useSAM", useSAM && !useRegistry); //$NON-NLS-1$
-        endpointInfo.put("useSecurityToken", useSecurityToken && !useRegistry); //$NON-NLS-1$
-        endpointInfo.put("useSecuritySAML", useSecuritySAML && !useRegistry); //$NON-NLS-1$
-        endpointInfo.put("useAuthorization", useAuthorization && useSecuritySAML && !useRegistry); //$NON-NLS-1$
-        endpointInfo.put("useEncryption", useEncryption && useSecuritySAML && !useRegistry); //$NON-NLS-1$        
+        endpointInfo.put("useSL", useSL); //$NON-NLS-1$
+        endpointInfo.put("useSAM", useSAM); //$NON-NLS-1$
+        endpointInfo.put("useSecurityToken", useSecurityToken); //$NON-NLS-1$
+        endpointInfo.put("useSecuritySAML", useSecuritySAML); //$NON-NLS-1$
+        endpointInfo.put("useAuthorization", useAuthorization ); //$NON-NLS-1$
+        endpointInfo.put("useEncryption", useEncryption); //$NON-NLS-1$
         endpointInfo.put("useServiceRegistry", useRegistry); //$NON-NLS-1$
         endpointInfo.put("logMessages", logMessages); //$NON-NLS-1$
         endpointInfo.put("useWsdlSchemaValidation", wsdlSchemaValidation); //$NON-NLS-1$
-        endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation && !useRegistry); //$NON-NLS-1$
+        endpointInfo.put("useBusinessCorrelation", useBusinessCorrelation); //$NON-NLS-1$
 
         Map<String, String> slCustomProperties = new HashMap<String, String>();
         if (useSL /*&& !useRegistry*/) {

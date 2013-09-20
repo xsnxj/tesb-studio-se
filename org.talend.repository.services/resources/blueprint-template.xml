@@ -6,8 +6,12 @@
         ext:proxy-method="classes" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" />
 #end
 
+#if ($useEncryption || $useServiceRegistry)
+    <reference id="cryptoProvider" interface="org.apache.ws.security.components.crypto.Crypto" filter="(type=service-crypto)" />
+#end
+
 	<jaxws:endpoint xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
-	        id="service"
+	        id="${service}"
 			implementor="#genericServiceProvider"
 			xmlns:tns="${namespace}"
 			serviceName="tns:${service}"
@@ -21,13 +25,25 @@
 #if ($useSecurityToken || $useServiceRegistry)
 			<entry key="ws-security.ut.validator" value-ref="jaasUTValidator" />
 #end
+
 #if ($useSecuritySAML || $useServiceRegistry)
 #[[
 			<entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
-			<entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
 			<entry key="ws-security.callback-handler" value-ref="callback" />
 ]]#
+#if ($useEncryption)
+#[[
+            <entry key="ws-security.signature.crypto" value-ref="cryptoProvider" />
+            <entry key="ws-security.encryption.crypto" value-ref="cryptoProvider" />
+            <entry key="ws-security.encryption.username" value="$service{ws-security.signature.username}"/>
+]]#
+#else
+#[[
+            <entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
+]]#
 #end
+#end
+
 #if ($useAuthorization || $useServiceRegistry)
 #[[
 			<entry key="tesb.pdp.address" value="$service{tesb.pdp.address}" />
