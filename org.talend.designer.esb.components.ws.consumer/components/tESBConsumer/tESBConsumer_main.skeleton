@@ -38,7 +38,7 @@ public class CLASS
  	String username;
  	String password;
  	boolean useSAML;
- 	boolean useXKMS;
+ 	boolean useCrypto;
  	String connTimeout;
  	String receiveTimeout;
  	boolean logMessages;
@@ -180,7 +180,7 @@ public class CLASS
     	    authPropagateCertificate = authPropatateType.equals("CERT");
 	    }
 
-	    useXKMS = getVisibleBoolParam("__NEED_ENCRYPTION__");
+	    useCrypto = getVisibleBoolParam("__NEED_ENCRYPTION__");
 
 	    //init headers
 	    if(inputConn != null) {
