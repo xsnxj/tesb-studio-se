@@ -496,7 +496,6 @@ private boolean restTalendJobAlreadyStarted = false;
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
-@javax.ws.rs.Produces({"application/xml", "text/xml", "application/json", "text/plain", "application/octet-stream"})
 public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context
@@ -789,7 +788,7 @@ final Set<String> supportedTypes4Part = new HashSet<String>(Arrays.asList(
 		Parameter.JAVA_TYPE_DOCUMENT_ID
 	));
 
-List<? extends IConnection> conns = process.getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
+List<? extends IConnection> conns = node.getOutgoingSortedConnections();
 if (null != conns && !conns.isEmpty()) {
 	ArrayHelper arrayHelper = new ArrayHelper();
 	List<Map<String, String>> mappings = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__SCHEMAS__");
@@ -965,7 +964,8 @@ if (!noBodyRequest) {
 			consumesContentTypes = arrayHelper.codeGenArray(contentTypes.get("ANY"));
 		}
 	}
-	if (null != consumesContentTypes) { %>	@javax.ws.rs.Consumes(<%=consumesContentTypes%>)<% }
+	if (null != consumesContentTypes) { %>	@javax.ws.rs.Consumes(<%=consumesContentTypes%>)
+<% }
 }
 if (contentTypes.containsKey(produces)) {
 	String producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));

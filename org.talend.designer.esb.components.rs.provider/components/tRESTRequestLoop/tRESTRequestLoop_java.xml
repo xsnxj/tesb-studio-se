@@ -28,35 +28,6 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-		<!-- rest service endpoint -->
-		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
-			<DEFAULT>"http://localhost:8088/"</DEFAULT>
-		</PARAMETER>
-
-		<PARAMETER NAME="SCHEMAS" FIELD="TABLE" NUM_ROW="10" REQUIRED="true" NB_LINES="5">
-			<ITEMS>
-				<ITEM NAME="SCHEMA" FIELD="SCHEMA_TYPE" />
-				<ITEM NAME="HTTP_VERB" FIELD="CLOSED_LIST">
-					<ITEMS DEFAULT="GET">
-						<ITEM NAME="GET" VALUE="GET" />
-						<ITEM NAME="POST" VALUE="POST" />
-						<ITEM NAME="PUT" VALUE="PUT" />
-						<ITEM NAME="DELETE" VALUE="DELETE" />
-					</ITEMS>
-				</ITEM>
-				<ITEM NAME="URI_PATTERN" FIELD="TEXT" VALUE='"/"'/>
-			</ITEMS>
-		</PARAMETER>
-
-		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="110"
-				DYNAMIC_SETTINGS="true" SHOW="true" >
-			<DEFAULT>false</DEFAULT>
-		</PARAMETER>
-		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="115"
-				DYNAMIC_SETTINGS="true" SHOW="true" >
-			<DEFAULT>false</DEFAULT>
-		</PARAMETER>
-
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
@@ -381,7 +352,7 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-			<!-- CorrelationID -->		
+			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
             		MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
