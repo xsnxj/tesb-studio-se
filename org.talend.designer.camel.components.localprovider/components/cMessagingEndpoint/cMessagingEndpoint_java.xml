@@ -416,6 +416,69 @@
 			<IMPORT MODULE="camel-xstream-alldep-2.12.0.jar" NAME="talend-camel-xstream"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
 
+			<IMPORT MODULE="geronimo-activation_1.1_spec-1.1.jar" NAME="geronimo-activation_1.1_spec-1.1.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['ATOM']) OR (HOTLIBS.LIBPATH IN ['RSS'])" />
+			<IMPORT MODULE="geronimo-javamail_1.4_spec-1.7.1.jar" NAME="geronimo-javamail_1.4_spec-1.7.1.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['ATOM']) OR (HOTLIBS.LIBPATH IN ['RSS'])" />
+			<IMPORT MODULE="geronimo-stax-api_1.0_spec-1.0.1.jar" NAME="geronimo-stax-api_1.0_spec-1.0.1.jar"
+							UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/geronimo-stax-api_1.0_spec-1.0.1.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['RSS']) OR (HOTLIBS.LIBPATH IN ['ATOM']) OR (HOTLIBS.LIBPATH IN ['JCR'])" />
+			<IMPORT MODULE="mail-1.4.7.jar" NAME="mail-1.4.7.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['AWS']) OR (HOTLIBS.LIBPATH IN ['MAIL'])" />
+			<IMPORT MODULE="activation-1.1.jar" NAME="activation-1.1.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['AWS']" />
+			<IMPORT MODULE="geronimo-jpa_2.0_spec-1.1.jar" NAME="geronimo-jpa_2.0_spec-1.1.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['BAM']" />
+			<IMPORT MODULE="javax.el-2.2.4.jar" NAME="javax.el-2.2.4.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['BEAN-VALIDATOR']" />
+			<IMPORT MODULE="validation-api-1.1.0.Final.jar" NAME="validation-api-1.1.0.Final.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['BEAN-VALIDATOR']" />
+			<IMPORT MODULE="javax.el-api-2.2.4.jar" NAME="javax.el-api-2.2.4.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['BEAN-VALIDATOR']" />
+			<IMPORT MODULE="xml-apis-1.4.01.jar" NAME="xml-apis-1.4.01.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['XMLSECURITY']) OR (HOTLIBS.LIBPATH IN ['CACHE'])" />
+			<IMPORT MODULE="stax-api-1.0.1.jar" NAME="stax-api-1.0.1.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['XSTREAM']) OR (HOTLIBS.LIBPATH IN ['XMLBEANS']) OR (HOTLIBS.LIBPATH IN ['CASTOR'])" />
+			<IMPORT MODULE="javax.servlet-2.5.0.v201103041518.jar" NAME="javax.servlet-2.5.0.v201103041518.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['COMETD']) OR (HOTLIBS.LIBPATH IN ['JETTY'])" />
+			<IMPORT MODULE="jsr305-1.3.9.jar" NAME="jsr305-1.3.9.jar"
+							UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jsr305-1.3.9.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['GAE']" />
+			<IMPORT MODULE="appengine-api-1.0-sdk-1.8.2.jar" NAME="appengine-api-1.0-sdk-1.8.2.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['GAE']" />
+			<IMPORT MODULE="javax.inject-1.jar" NAME="javax.inject-1.jar"
+							UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/javax.inject-1.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['GUICE']" />
+			<IMPORT NAME="geronimo-servlet_2.5_spec-1.2.jar" MODULE="geronimo-servlet_2.5_spec-1.2.jar"
+								REQUIRED_IF="(HOTLIBS.LIBPATH IN ['HTTP4']) OR (HOTLIBS.LIBPATH IN ['HTTP']) OR (HOTLIBS.LIBPATH IN ['JETTY'])" />
+			<IMPORT MODULE="jini-ext-2.1.jar" NAME="jini-ext-2.1.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['JAVASPACE']" />
+			<IMPORT MODULE="rome-1.0.jar" NAME="rome-1.0.jar"
+							REQUIRED_IF="(HOTLIBS.LIBPATH IN ['JCR']) OR (HOTLIBS.LIBPATH IN ['RSS'])" />
+			<IMPORT MODULE="jcr-2.0.jar" NAME="jcr-2.0.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['JCR']" />
+			<IMPORT MODULE="xpp3-1.1.3.4.O.jar" NAME="xpp3-1.1.3.4.0.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['JIBX']" />
+			<IMPORT MODULE="juel-2.1.3.jar" NAME="juel-2.1.3.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['JUEL']" />
+			<IMPORT MODULE="geronimo-el_1.0_spec-1.0.1.jar" NAME="geronimo-el_1.0_spec-1.0.1.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['JUEL']" />
+			<IMPORT MODULE="xsdlib-2013.2.jar" NAME="xsdlib-2013.2.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['MSV']" />
+			<IMPORT MODULE="msv-20050913.jar" NAME="msv-20050913.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['MSV']" />
+			<IMPORT MODULE="Saxon-HE-9.5.0.2.jar" NAME="Saxon-HE-9.5.0.2.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['SAXON']" />
+			<IMPORT MODULE="org.apache.servicemix.bundles.jain-sip-ri-1.2.154_2.jar" NAME="org.apache.servicemix.bundles.jain-sip-ri-1.2.154_2.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['SIP']" />
+			<IMPORT MODULE="org.apache.servicemix.specs.jain-sip-api-1.2-2.2.0.jar" NAME="org.apache.servicemix.specs.jain-sip-api-1.2-2.2.0.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['SIP']" />
+			<IMPORT MODULE="jain-sip-api-1.2.jar" NAME="jain-sip-api-1.2.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['SIP']" />
+			<IMPORT MODULE="xmlsec-1.5.5.jar" NAME="xmlsec-1.5.5.jar"
+							REQUIRED_IF="HOTLIBS.LIBPATH IN ['XMLSECURITY']" />
+
+
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.7-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.7-SNAPSHOT.jar"

@@ -138,6 +138,9 @@
 			<IMPORT NAME="talend-camel-mail" 
 					MODULE="camel-mail-alldep-2.12.0.jar"
 					REQUIRED="true" />
+			<IMPORT NAME="mail-1.4.7.jar" 
+					MODULE="mail-1.4.7.jar"
+					REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
