@@ -262,7 +262,7 @@
 		<Feature version="[2,10)">camel-talendjob</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="activemq-all">
-		<Feature version="[5,10)">activemq-client</Feature>
+		<Feature version="[5,10)">activemq</Feature>
 	</FeatureMap>
 </FeatureMaps>
 	
