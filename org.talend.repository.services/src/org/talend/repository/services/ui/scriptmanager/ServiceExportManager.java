@@ -131,7 +131,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
         boolean isStudioEEVersion = isStudioEEVersion();
 
-        boolean useRegistry = isStudioEEVersion?Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY)):false;
+        boolean useRegistry = isStudioEEVersion &&
+        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
         boolean useSL =
         		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
         boolean useSAM = !useRegistry &&
@@ -181,6 +182,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public Manifest getManifest(String artefactName, String serviceVersion, Map<String, String> additionalInfo) {
+        boolean useRegistry = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
         boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
         boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
@@ -209,8 +211,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         + (useSL ? ",org.talend.esb.servicelocator.cxf" : "") //$NON-NLS-1$
                         + (useSAM ? ",org.talend.esb.sam.agent.feature" : "") //$NON-NLS-1$
                         + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
-                        + (useSecuritySAML ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
-                        + (useEncryption ? ",org.apache.ws.security.components.crypto" : "") //$NON-NLS-1$
+                        + (useSecuritySAML || useRegistry ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
+                        + (useEncryption || useRegistry ? ",org.apache.ws.security.components.crypto" : "") //$NON-NLS-1$
         );
         return manifest;
     }
