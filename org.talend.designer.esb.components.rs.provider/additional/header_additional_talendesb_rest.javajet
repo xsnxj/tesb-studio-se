@@ -1086,6 +1086,7 @@ if (contentTypes.containsKey(produces)) {
 		if (null != securityContext_<%=cid%> && null != securityContext_<%=cid%>.getUserPrincipal()) {
 			request_<%=cid%>.put("PRINCIPAL_NAME", securityContext_<%=cid%>.getUserPrincipal().getName());
 		}
+		request_<%=cid%>.put("CorrelationID", messageContext.get("CorrelationID"));
 
 		return processRequest(request_<%=cid%>);
 	}
