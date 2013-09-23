@@ -181,9 +181,13 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public Manifest getManifest(String artefactName, String serviceVersion, Map<String, String> additionalInfo) {
+        boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
         boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
         boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
+        boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
+        boolean useEncryption = useSecuritySAML
+        		&& Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
 
         Manifest manifest = new Manifest();
         Attributes a = manifest.getMainAttributes();
@@ -195,19 +199,18 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
                 IBrandingService.class);
         a.put(new Attributes.Name("Created-By"), brandingService.getFullProductName() + " ("
-                + brandingService.getAcronym() + "_"
-                + RepositoryPlugin.getDefault().getBundle().getVersion().toString() + ")");
+                + brandingService.getAcronym() + '_'
+                + RepositoryPlugin.getDefault().getBundle().getVersion().toString() + ')');
         a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
                 "javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
                         + ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
-                        + ",org.apache.ws.security.validate" //$NON-NLS-1$
-                        + ",org.apache.cxf.management.counters" //$NON-NLS-1$
+                        + ",org.apache.cxf,org.apache.cxf.management.counters" //$NON-NLS-1$
+                        + (logMessages ? ",org.apache.cxf.feature" : "") //$NON-NLS-1$
+                        + (useSL ? ",org.talend.esb.servicelocator.cxf" : "") //$NON-NLS-1$
+                        + (useSAM ? ",org.talend.esb.sam.agent.feature" : "") //$NON-NLS-1$
                         + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
-        );
-        a.put(new Attributes.Name("Require-Bundle"), //$NON-NLS-1$
-                "org.apache.cxf.bundle" //$NON-NLS-1$
-                        + (useSL ? ",locator" : "") //$NON-NLS-1$
-                        + (useSAM ? ",sam-agent" : "") //$NON-NLS-1$
+                        + (useSecuritySAML ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
+                        + (useEncryption ? ",org.apache.ws.security.components.crypto" : "") //$NON-NLS-1$
         );
         return manifest;
     }

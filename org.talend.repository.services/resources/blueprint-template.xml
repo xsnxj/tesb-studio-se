@@ -81,9 +81,17 @@
                         </wsp:All>
                         <wsp:All>
 #if ($useAuthorization)
+#if ($useEncryption)
+                            <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.crypto.policy" />
+#else
                             <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+#end
+#else
+#if ($useEncryption)
+                            <wsp:PolicyReference URI="org.talend.esb.job.saml.crypto.policy" />
 #else
                             <wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+#end
 #end
                         </wsp:All>
                     </wsp:ExactlyOne>
@@ -91,9 +99,17 @@
                     <wsp:PolicyReference URI="org.talend.esb.job.token.policy" />
 #elseif ($useSecuritySAML)
 #if ($useAuthorization)
+#if ($useEncryption)
+                    <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.crypto.policy" />
+#else
                     <wsp:PolicyReference URI="org.talend.esb.job.saml.authz.policy" />
+#end
+#else
+#if ($useEncryption)
+                    <wsp:PolicyReference URI="org.talend.esb.job.saml.crypto.policy" />
 #else
                     <wsp:PolicyReference URI="org.talend.esb.job.saml.policy" />
+#end
 #end
 #end
                 </wsp:Policy>
