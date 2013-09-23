@@ -374,6 +374,9 @@ try {
 			}
 
 			globalMap.put("<%=cid%>_HEADERS", webClient_<%=cid%>.getResponse().getHeaders());
+			<% if (useBusinessCorrelation) { %>
+			globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID"));
+			<% } %>
 		<% } %>
 
 	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
@@ -395,6 +398,9 @@ try {
 			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
 
 			globalMap.put("<%=cid%>_HEADERS", ex_<%=cid%>.getResponse().getHeaders());
+			<% if (useBusinessCorrelation) { %>
+			globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID"));
+			<% } %>
 		<% } else { %>
 			throw ex_<%=cid%>;
 		<% } %>
