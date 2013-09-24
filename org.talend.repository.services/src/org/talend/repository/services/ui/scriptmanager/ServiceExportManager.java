@@ -187,6 +187,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean useSL = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
         boolean useSAM = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useBusinessCorrelation =  Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
+        boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useEncryption = useSecuritySAML
         		&& Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
@@ -211,6 +212,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         + (useSL ? ",org.talend.esb.servicelocator.cxf" : "") //$NON-NLS-1$
                         + (useSAM ? ",org.talend.esb.sam.agent.feature" : "") //$NON-NLS-1$
                         + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
+                        + (useSecurityToken || useRegistry ? ",org.apache.ws.security.validate" : "") //$NON-NLS-1$
                         + (useSecuritySAML || useRegistry ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
                         + (useEncryption || useRegistry ? ",org.apache.ws.security.components.crypto" : "") //$NON-NLS-1$
         );
