@@ -178,13 +178,20 @@ try {
 	<% } %>
 
 	<% if (useBusinessCorrelation) { %>
+	   class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
+                    private String correlationId;
+                    public EsbJobCorrelationCallbackHandler(final String correlationId) {
+                        if (null != correlationId && correlationId.length() > 0) {
+                            this.correlationId = correlationId;
+                        }
+                    }
+                    public String getCorrelationId() {
+                        return correlationId;
+                    };
+                }
+        final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=ElementParameterParser.getValue(node,"__CORRELATION_VALUE__")%>);
 		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
-			new org.talend.esb.policy.correlation.CorrelationIDCallbackHandler() {
-				
-				public String getCorrelationId() {
-					return <%=ElementParameterParser.getValue(node,"__CORRELATION_VALUE__")%>;
-				}	
-			});
+			correlationIDCallbackHandler);
 		features_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
 	<% } %>
 	
@@ -375,7 +382,9 @@ try {
 
 			globalMap.put("<%=cid%>_HEADERS", webClient_<%=cid%>.getResponse().getHeaders());
 			<% if (useBusinessCorrelation) { %>
-			globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID"));
+			if (null != webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID")){
+				globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID").get(0));
+			}
 			<% } %>
 		<% } %>
 
@@ -399,7 +408,9 @@ try {
 
 			globalMap.put("<%=cid%>_HEADERS", ex_<%=cid%>.getResponse().getHeaders());
 			<% if (useBusinessCorrelation) { %>
-			globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID"));
+			if (null != webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID")){
+				globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID").get(0));
+			}
 			<% } %>
 		<% } else { %>
 			throw ex_<%=cid%>;
