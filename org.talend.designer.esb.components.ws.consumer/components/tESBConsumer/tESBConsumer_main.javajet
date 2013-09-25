@@ -205,7 +205,9 @@ if (inputConn != null) {
                                 put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
-                                put("role", <%=authorizationRole%>);
+                                <% if (!authorizationRole.isEmpty() && !"\"\"".equals(authorizationRole)) { %>
+                                    put("role", <%=authorizationRole%>);
+                                <% } %>
                                 <% if (useCrypto) { %>
                                     put("useCrypto", <%=useCrypto%>);
                                 <% } %>
