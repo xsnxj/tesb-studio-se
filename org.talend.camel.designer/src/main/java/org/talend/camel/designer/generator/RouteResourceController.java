@@ -526,18 +526,21 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if (processParam == null || processParam.getFieldType() != EParameterFieldType.ROUTE_RESOURCE_TYPE) {
             return;
         }
+        IElementParameter jobNameParam = processParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
+        final String strJobId = (String) jobNameParam.getValue();
+        if(strJobId == null){
+        	return;
+        }
+        
         // for version type
         List<String> versionNameList = new ArrayList<String>();
         List<String> versionValueList = new ArrayList<String>();
         versionNameList.add(RelationshipItemBuilder.LATEST_VERSION);
         versionValueList.add(RelationshipItemBuilder.LATEST_VERSION);
 
-        IElementParameter jobNameParam = processParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
-
         Item item = null;
         StringBuffer labels = new StringBuffer("");
         List<IRepositoryViewObject> allVersion = new ArrayList<IRepositoryViewObject>();
-        final String strJobId = (String) jobNameParam.getValue();
         String[] strJobIds = strJobId.split(COMMA);
         for (int i = 0; i < strJobIds.length; i++) {
             String id = strJobIds[i];
