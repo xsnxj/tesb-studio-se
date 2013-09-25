@@ -219,7 +219,7 @@
 					MODULE="log4j-1.2.17.jar"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-features-clustering"
 					MODULE="cxf-rt-features-clustering-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
