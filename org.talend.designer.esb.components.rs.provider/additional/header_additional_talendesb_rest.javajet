@@ -1261,8 +1261,8 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 
-			final java.util.List<org.apache.cxf.feature.AbstractFeature> features =
-					new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+			final java.util.List<org.apache.cxf.feature.Feature> features =
+					new java.util.ArrayList<org.apache.cxf.feature.Feature>();
 
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
 				sf.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
