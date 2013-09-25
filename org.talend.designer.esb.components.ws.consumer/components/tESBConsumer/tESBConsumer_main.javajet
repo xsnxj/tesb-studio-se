@@ -206,6 +206,9 @@ if (inputConn != null) {
                                 put("username", <%=username%>);
                                 put("password", <%=password%>);
                                 put("role", <%=authorizationRole%>);
+                                <% if (useCrypto) { %>
+                                    put("useCrypto", <%=useCrypto%>);
+                                <% } %>
                             <% } else if (useAuth) { %>
                                 <% if (useSAML) { %>
                                     put("useAuthorization", <%=useAuthorization%>);
