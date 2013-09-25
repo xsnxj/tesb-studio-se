@@ -103,8 +103,8 @@ try {
 		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
 	<% } %>
 
-	final java.util.List<org.apache.cxf.feature.AbstractFeature> features_<%=cid%> =
-			new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
+			new java.util.ArrayList<org.apache.cxf.feature.Feature>();
 
 	<% if (isSLEnable || isSAMEnable) { %>
 		boolean inOSGi = false;
