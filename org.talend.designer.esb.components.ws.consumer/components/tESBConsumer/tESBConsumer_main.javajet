@@ -106,8 +106,8 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
 
-                java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures_<%=cid%> =
-                        new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+                java.util.Collection<org.apache.cxf.feature.Feature> esbFeatures_<%=cid%> =
+                        new java.util.ArrayList<org.apache.cxf.feature.Feature>();
 
                 <% if (useSl) { %>
                     genericConsumer_<%=cid%>.setAddress("locator://");
@@ -211,7 +211,6 @@ if (inputConn != null) {
                                 <% } %>
                             <% } else if (useAuth) { %>
                                 <% if (useSAML) { %>
-                                    put("useAuthorization", <%=useAuthorization%>);
                                     <% if (useAuthorization) { %>
                                         put("role", <%=authorizationRole%>);
                                     <% }if (useCrypto) { %>

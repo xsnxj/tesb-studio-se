@@ -56,7 +56,7 @@ if (actAsConsumer) {
         private String address;
         private String wsdlURL;
 
-        private java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures;
+        private java.util.Collection<org.apache.cxf.feature.Feature> esbFeatures;
         private org.apache.cxf.Bus bus;
 
         private String authType;
@@ -108,7 +108,7 @@ if (actAsConsumer) {
         }
 
         public void setEsbFeatures(
-                java.util.Collection<org.apache.cxf.feature.AbstractFeature> esbFeatures) {
+                java.util.Collection<org.apache.cxf.feature.Feature> esbFeatures) {
             this.esbFeatures = esbFeatures;
         }
 
