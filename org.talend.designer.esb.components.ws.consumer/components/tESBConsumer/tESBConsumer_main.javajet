@@ -169,7 +169,7 @@ if (inputConn != null) {
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-<%if(useBusinessCorrelation) {%>
+<%if(useBusinessCorrelation || useSR) {%>
                 globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
 <%}%>
             } else {
@@ -229,7 +229,7 @@ if (inputConn != null) {
                             if (authPropagateCertificate) { %>
                                 put("alias", <%=alias%>);
                             <% }
-                            if(useBusinessCorrelation) { %>
+                            if(useBusinessCorrelation || useSR) { %>
                                 put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, correlationIDCallbackHandler);
                                 put("enhancedResponse", true);
                             <% } %>
@@ -255,7 +255,7 @@ if (inputConn != null) {
                 if(consumerResponse_<%=cid%> instanceof java.util.Map) {
                     java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
                     responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
-<%if(useBusinessCorrelation){%>
+<%if(useBusinessCorrelation || useSR){%>
                     java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
                     globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
 <%}%>
