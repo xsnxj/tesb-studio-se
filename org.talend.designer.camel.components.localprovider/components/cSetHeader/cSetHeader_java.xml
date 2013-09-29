@@ -91,9 +91,9 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.12.0.jar"
+			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.12.1.jar"
 							REQUIRED_IF="VALUES.LANGUAGE IN ['groovy']" />
-			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.12.0.jar"
+			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.12.1.jar"
 							REQUIRED_IF="VALUES.LANGUAGE IN ['javaScript']" />
 		</IMPORTS>
 	</CODEGENERATION>

@@ -201,7 +201,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-alldep-2.12.0.jar"
+			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-alldep-2.12.1.jar"
 				REQUIRED_IF="REPOSITORY == 'HAWTDB' " />
 		</IMPORTS>
 	</CODEGENERATION>
