@@ -260,11 +260,13 @@ if (inputConn != null) {
                     java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
                     responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
 <%if(useBusinessCorrelation || useSR){%>
-                    java.util.Map<?,?> responseContext_<%=cid%> = (java.util.Map<?,?>)responseMap_<%=cid%>.get(org.apache.cxf.endpoint.Client.RESPONSE_CONTEXT);
                     globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
 <%}%>
-                }else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
+                } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
                     responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
+                } else {
+                    throw new RuntimeException(
+                            "Incompatible consumer response: " + consumerResponse_<%=cid%>.getClass().getName());
                 }
             }
             <% if (null != connResponse) {
