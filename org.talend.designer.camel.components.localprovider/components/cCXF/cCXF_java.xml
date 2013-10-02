@@ -251,9 +251,6 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="jaxb-impl-2.2.6.jar" 
-					MODULE="jaxb-impl-2.2.6.jar"
-					REQUIRED="true" />
             <!-- spring -->
             <IMPORT NAME="camel-spring" MODULE="camel-spring-2.12.1.jar"
                 REQUIRED="true" />
