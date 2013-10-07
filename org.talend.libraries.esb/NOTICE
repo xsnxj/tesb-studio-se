@@ -6,7 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 52 third-party dependencies.
+Lists of 51 third-party dependencies.
      (Public Domain) AOP alliance (aopalliance:aopalliance:1.0 - http://aopalliance.sourceforge.net)
      (BSD License) ASM Core (asm:asm:3.3.1 - http://asm.objectweb.org/asm/)
      (CDDL 1.1) (GPL2 w/ CPE) javax.ws.rs-api (javax.ws.rs:javax.ws.rs-api:2.0-m10 - http://jax-rs-spec.java.net)
@@ -29,7 +29,6 @@ Lists of 52 third-party dependencies.
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Addressing (org.apache.cxf:cxf-rt-ws-addr:2.7.7 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Policy (org.apache.cxf:cxf-rt-ws-policy:2.7.7 - http://cxf.apache.org)
      (Apache Software License - Version 2.0) Apache CXF Runtime WS Security (org.apache.cxf:cxf-rt-ws-security:2.7.7 - http://cxf.apache.org)
-     (Apache Software License - Version 2.0) JavaMail 1.4 (org.apache.geronimo.specs:geronimo-javamail_1.4_spec:1.7.1 - http://geronimo.apache.org/maven/specs/geronimo-javamail_1.4_spec/1.7.1)
      (Apache Software License - Version 2.0) Servlet 3.0 (org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0 - http://geronimo.apache.org/maven/specs/geronimo-servlet_3.0_spec/1.0)
      (Apache Software License - Version 2.0) Apache Neethi (org.apache.neethi:neethi:3.0.2 - http://ws.apache.org/neethi/)
      (Apache Software License - Version 2.0) Apache XML Security for Java (org.apache.santuario:xmlsec:1.5.5 - http://santuario.apache.org/)
