@@ -287,11 +287,6 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-			<IMPORT NAME="geronimo-javamail_1.4_spec"
-					MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
-					BundleID=""
-					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
