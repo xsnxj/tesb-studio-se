@@ -98,6 +98,10 @@
                     MODULE="spring-core-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="spring-expression"
                     MODULE="spring-expression-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
