@@ -158,7 +158,6 @@
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 			<IMPORT NAME="xpp3" 
 					MODULE="xpp3-1.1.4c.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-1.1.4c.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 			<IMPORT NAME="xstream" 
 					MODULE="xstream-1.4.3.jar"
