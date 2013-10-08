@@ -102,7 +102,6 @@
 					REQUIRED="true" />
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-xml"
