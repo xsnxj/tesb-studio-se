@@ -314,9 +314,15 @@
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
 
-			<IMPORT NAME="talend-camel-cxf" 
-					MODULE="camel-cxf-alldep-2.12.1.jar"
-					REQUIRED="true" />
+            <!-- camel-cxf -->
+            <IMPORT NAME="camel-cxf"
+                    MODULE="camel-cxf-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.12.1.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="camel-cxf-transport"
+                    MODULE="camel-cxf-transport-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.12.1.jar"
+                    REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.7.jar"

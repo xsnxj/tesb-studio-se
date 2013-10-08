@@ -300,8 +300,15 @@
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CRYPTO']" />
 			<IMPORT MODULE="camel-csv-alldep-2.12.1.jar" NAME="talend-camel-csv"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CSV']" />
-			<IMPORT MODULE="camel-cxf-alldep-2.12.1.jar" NAME="talend-camel-cxf"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
+            <!-- camel-cxf -->
+            <IMPORT NAME="camel-cxf"
+                    MODULE="camel-cxf-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.12.1.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
+            <IMPORT NAME="camel-cxf-transport"
+                    MODULE="camel-cxf-transport-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.12.1.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
 			<IMPORT MODULE="camel-dns-alldep-2.12.1.jar" NAME="talend-camel-dns"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['DNS']" />
 			<IMPORT MODULE="camel-dozer-alldep-2.12.1.jar" NAME="talend-camel-dozer"
