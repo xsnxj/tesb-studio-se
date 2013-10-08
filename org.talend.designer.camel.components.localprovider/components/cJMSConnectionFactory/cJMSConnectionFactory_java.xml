@@ -236,7 +236,7 @@
                     MODULE="jta.jar"
                     UrlPath="platform:/base/plugins/javax.transaction_1.1.1.v201105210645.jar"
                     REQUIRED="true" />
-			<IMPORT NAME="common-pool" 
+			<IMPORT NAME="commons-pool" 
 					MODULE="commons-pool-1.6.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
