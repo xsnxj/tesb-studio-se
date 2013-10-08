@@ -313,9 +313,6 @@
 			<IMPORT NAME="talend-camel-cxf" 
 					MODULE="camel-cxf-alldep-2.12.1.jar"
 					REQUIRED="true" />
-            <IMPORT NAME="talend-camel-blueprint"
-            		MODULE="camel-blueprint-alldep-2.12.1.jar" 
-                	REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.7.jar"

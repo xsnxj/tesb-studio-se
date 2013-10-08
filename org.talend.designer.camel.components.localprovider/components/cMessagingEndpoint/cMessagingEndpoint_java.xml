@@ -287,7 +287,7 @@
 			<IMPORT MODULE="camel-bindy-alldep-2.12.1.jar" NAME="talend-camel-bindy"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BINDY']" />
 			<IMPORT MODULE="camel-blueprint-alldep-2.12.1.jar" NAME="talend-camel-blueprint"
-				REQUIRED_IF="(HOTLIBS.LIBPATH IN ['BLUEPRINT']) OR (HOTLIBS.LIBPATH IN ['CXF'])" />
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BLUEPRINT']" />
 			<IMPORT MODULE="camel-cache-alldep-2.12.1.jar" NAME="talend-camel-cache"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CACHE']" />
 			<IMPORT MODULE="camel-castor-alldep-2.12.1.jar" NAME="talend-camel-castor"
