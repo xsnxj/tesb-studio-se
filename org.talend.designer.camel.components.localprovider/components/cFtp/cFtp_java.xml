@@ -65,10 +65,32 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <!-- spring -->
-            <IMPORT NAME="camel-spring" 
-            		MODULE="camel-spring-2.12.1.jar"
-                	REQUIRED="true" />
+            <!-- camel-core -->
+            <IMPORT NAME="camel-core"
+                    MODULE="camel-core-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.12.1.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-log4j12"
+                    MODULE="slf4j-log4j12-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.2.6.jar"
+                    REQUIRED="true" />
+
+            <!-- camel-spring -->
+            <IMPORT NAME="camel-spring"
+                    MODULE="camel-spring-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.12.1.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.3.RELEASE.jar"
@@ -90,45 +112,21 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
-	            	MODULE="spring-context-support-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
-	                REQUIRED="true" />
-            <IMPORT NAME="spring-tx" 
-	            	MODULE="spring-tx-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.3.RELEASE.jar"
-	                REQUIRED="true" />
-
+                    MODULE="spring-context-support-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core"
+                    MODULE="spring-osgi-core-1.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="org.eclipse.osgi"
                     MODULE="org.eclipse.osgi.jar"
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core" 
-		            MODULE="spring-osgi-core-1.2.1.jar"
-		            UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
-	                REQUIRED="true" />
 
-			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.12.1.jar"
-					REQUIRED="true" />
 			<IMPORT NAME="talend-camel-ftp" 
 					MODULE="camel-ftp-alldep-2.12.1.jar"
 					REQUIRED="true" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
-                    REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 

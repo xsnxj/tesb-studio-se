@@ -148,26 +148,32 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="httpclient" 
-					MODULE="httpclient-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.1.jar" 
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-			<IMPORT NAME="httpcore" 
-					MODULE="httpcore-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-			<IMPORT NAME="xpp3" 
-					MODULE="xpp3-1.1.4c.jar"
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-			<IMPORT NAME="xstream" 
-					MODULE="xstream-1.4.3.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xstream-1.4.3.jar"
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+            <!-- camel-core -->
+            <IMPORT NAME="camel-core"
+                    MODULE="camel-core-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.12.1.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-log4j12"
+                    MODULE="slf4j-log4j12-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="jaxb-impl"
+                    MODULE="jaxb-impl-2.2.6.jar"
+                    REQUIRED="true" />
 
-            <!-- spring -->
-            <IMPORT NAME="camel-spring" 
-            		MODULE="camel-spring-2.12.1.jar"
-                	REQUIRED="true" />
+            <!-- camel-spring -->
+            <IMPORT NAME="camel-spring"
+                    MODULE="camel-spring-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.12.1.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.3.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.3.RELEASE.jar"
@@ -189,58 +195,40 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
-	            	MODULE="spring-context-support-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
-	                REQUIRED="true" />
-            <IMPORT NAME="spring-tx" 
-	            	MODULE="spring-tx-3.2.3.RELEASE.jar"
-	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.3.RELEASE.jar"
-	                REQUIRED="true" />
-
+                    MODULE="spring-context-support-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.3.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core"
+                    MODULE="spring-osgi-core-1.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+                    REQUIRED="true" />
             <IMPORT NAME="org.eclipse.osgi"
                     MODULE="org.eclipse.osgi.jar"
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core" 
-		            MODULE="spring-osgi-core-1.2.1.jar"
-		            UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
-	                REQUIRED="true" />
 
-			<IMPORT NAME="apache-camel" 
-					MODULE="camel-core-2.12.1.jar"
-					REQUIRED="true" />
-			<IMPORT NAME="spring-jms" 
-					MODULE="spring-jms-3.2.3.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-jms-3.2.3.RELEASE.jar"
-					REQUIRED="true" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+            <!-- camel-jms -->
+            <IMPORT NAME="camel-jms"
+                    MODULE="camel-jms-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-2.12.1.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+            <IMPORT NAME="spring-jms"
+                    MODULE="spring-jms-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-jms-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
-                    REQUIRED_IF="MQ_TYPE != 'ACTIVEMQ'" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+            <IMPORT NAME="spring-tx"
+                    MODULE="spring-tx-3.2.3.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.3.RELEASE.jar"
                     REQUIRED="true" />
-			
+
 			<IMPORT NAME="activemq" 
 					MODULE="activemq-all-5.7.0.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-5.7.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-all-5.7.0.jar"
 					REQUIRED_IF="MQ_TYPE == 'ACTIVEMQ'" />
 			<IMPORT NAME="activemq-pool" 
 					MODULE="activemq-pool-5.7.0.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.7.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-pool-5.7.0.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
-			<IMPORT NAME="camel-jms-alldep" 
-					MODULE="camel-jms-alldep-2.12.1.jar"
-					REQUIRED="true" />
 			<IMPORT NAME="jms" 
 					MODULE="jms.jar"
 					REQUIRED="true" />
@@ -256,6 +244,22 @@
 					MODULE="jndi.jar"
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jndi.jar"
 					REQUIRED="true" /> -->
+
+            <IMPORT NAME="httpclient" 
+                    MODULE="httpclient-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.1.jar" 
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+            <IMPORT NAME="httpcore" 
+                    MODULE="httpcore-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+            <IMPORT NAME="xpp3" 
+                    MODULE="xpp3-1.1.4c.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+            <IMPORT NAME="xstream" 
+                    MODULE="xstream-1.4.3.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/xstream-1.4.3.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
