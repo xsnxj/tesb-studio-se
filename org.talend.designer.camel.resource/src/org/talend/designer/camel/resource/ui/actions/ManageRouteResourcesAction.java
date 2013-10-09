@@ -19,6 +19,7 @@ import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.RouteResourceActivator;
@@ -82,6 +83,7 @@ public class ManageRouteResourcesAction extends AContextualAction {
 		ManageRouteResourceDialog dlg = new ManageRouteResourceDialog(
 				getWorkbenchWindow().getShell(), selectedRouteItem, readOnly);
 		dlg.open();
+		RelationshipItemBuilder.getInstance().addOrUpdateItem(selectedRouteItem);
 		
 		/*
 		 * if it's locked, then release this lock

@@ -25,5 +25,13 @@
          </resourceParameter>
       </component>
    </extension>
+   <extension
+         point="org.talend.core.runtime.itemRelationship">
+      <itemHandler
+            class="org.talend.designer.camel.resource.handlers.ESBResourcesItemRelationshipHandler"
+            id="org.talend.designer.camel.resource.itemHandler.resourceType"
+            name="Resource Type">
+      </itemHandler>
+   </extension>
 
 </plugin>
