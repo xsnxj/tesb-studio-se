@@ -37,7 +37,6 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.ERepositoryStatus;
@@ -222,16 +221,15 @@ public class AssignJobAction extends AbstractCreateAction {
         final Item item = repositoryObject.getProperty().getItem();
         // judge the job whether had T_ESB_PROVIDER_REQUEST
         ProcessItem processItem = (ProcessItem) item;
-        ProcessType processType = processItem.getProcess();
-        EList nodeList = processType.getNode();
-        boolean hadEsbRequestComponent = false;
-        for (Object obj : nodeList) {
+        NodeType providerNode = null;
+        for (Object obj : processItem.getProcess().getNode()) {
             NodeType node = (NodeType) obj;
             if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
-                hadEsbRequestComponent = true;
+                providerNode = node;
+                break;
             }
         }
-        if (!hadEsbRequestComponent) {
+        if (null == providerNode) {
             MessageDialog.openWarning(Display.getCurrent().getActiveShell(), Messages.AssignJobAction_WarningTitle,
                     Messages.AssignJobAction_WarningMessage);
             return false;
@@ -267,31 +265,13 @@ public class AssignJobAction extends AbstractCreateAction {
             Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                     ((OperationRepositoryObject) repositoryNode.getObject()).getName(), portName);
 
-            for (Object obj : nodeList) {
-                NodeType node = (NodeType) obj;
-                if (CreateNewJobAction.T_ESB_PROVIDER_REQUEST.equals(node.getComponentName())) {
-                    EList parameters = node.getElementParameter();
-                    for (Object paramObj : parameters) {
-                        ElementParameterType param = (ElementParameterType) paramObj;
-                        String name = param.getName();
-                        if (serviceParameters.containsKey(name)) {
-                            param.setValue(serviceParameters.get(name));
-                        }
-                    }
-                    break;
+            for (Object paramObj : providerNode.getElementParameter()) {
+                ElementParameterType param = (ElementParameterType) paramObj;
+                String name = param.getName();
+                if (serviceParameters.containsKey(name)) {
+                    param.setValue(serviceParameters.get(name));
                 }
             }
-
-            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-
-            try {
-                factory.save(processItem);
-            } catch (PersistenceException e) {
-                e.printStackTrace();
-            }
-
-            IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
-            boolean foundInOpen = false;
 
             IProcess2 process = null;
             IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -299,12 +279,12 @@ public class AssignJobAction extends AbstractCreateAction {
             List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
             for (IProcess2 processOpen : processes) {
                 if (processOpen.getProperty().getItem() == processItem) {
-                    foundInOpen = true;
                     process = processOpen;
                     break;
                 }
             }
-            if (!foundInOpen) {
+            if (process == null) {
+                IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
                 IProcess proc = service.getProcessFromProcessItem(processItem);
                 if (proc instanceof IProcess2) {
                     process = (IProcess2) proc;
@@ -319,19 +299,12 @@ public class AssignJobAction extends AbstractCreateAction {
                     }
                 }
                 processItem.setProcess(process.saveXmlFile());
-
-                try {
-                    factory.save(processItem);
-                } catch (PersistenceException e) {
-                    e.printStackTrace();
-                }
             }
 
-            try {
-                factory.save(serviceItem);
-            } catch (PersistenceException e) {
-                e.printStackTrace();
-            }
+            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+            factory.save(processItem);
+
+            factory.save(serviceItem);
             return true;
         } catch (Exception e) {
             ExceptionHandler.process(e);
