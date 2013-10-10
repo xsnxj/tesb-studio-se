@@ -346,8 +346,23 @@
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HAZELCAST']" />
 			<IMPORT MODULE="camel-hl7-alldep-2.12.1.jar" NAME="talend-camel-hl7"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HL7']" />
-			<IMPORT MODULE="camel-http-alldep-2.12.1.jar" NAME="talend-camel-http"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+            <!-- camel-http -->
+            <IMPORT NAME="camel-http"
+                    MODULE="camel-http-2.12.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.12.1.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+            <IMPORT NAME="geronimo-servlet_3.0_spec"
+                    MODULE="geronimo-servlet_3.0_spec-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+            <IMPORT NAME="commons-httpclient"
+                    MODULE="commons-httpclient-3.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+            <IMPORT NAME="commons-codec"
+                    MODULE="commons-codec-1.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
+                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
 			<IMPORT MODULE="camel-http4-alldep-2.12.1.jar" NAME="talend-camel-http4"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP4']" />
 			<IMPORT MODULE="camel-ibatis-alldep-2.12.1.jar" NAME="talend-camel-ibatis"
