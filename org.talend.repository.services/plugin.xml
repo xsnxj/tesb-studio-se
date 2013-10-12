@@ -249,7 +249,7 @@
        point="org.talend.core.runtime.demoProjects_provider">
     <demoProvider
           descHtml="resources/demoprojects/esb_demos.html"
-          description="ESB Demo"
+          description="%demo.description"
           icon="resources/demoprojects/product-icon-esb-16px.gif"
           id="org.talend.demo.project.esb"
           name="ESB_DEMOS"
