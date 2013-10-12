@@ -44,7 +44,7 @@ public abstract class CMessgingEndpointSwitchVersionTask extends AbstractRouteIt
 					String evtValue = evt.getValue();
 					String switchVersion = switchVersion(evtValue);
 					if(switchVersion!=null && !switchVersion.equals(evtValue)) {
-						evt.setValue(evtValue);
+						evt.setValue(switchVersion);
 						needSave = true;
 					}
 				}
