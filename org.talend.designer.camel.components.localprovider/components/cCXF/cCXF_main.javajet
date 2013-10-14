@@ -36,6 +36,9 @@ imports="
 	}
 	
 	String useCorrelation = ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__");
+	if("RAW".equals(formatType)){
+		useCorrelation = "false";
+	}
 	String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
 	
 	String endpointVar = "endpoint_" + node.getUniqueName();
