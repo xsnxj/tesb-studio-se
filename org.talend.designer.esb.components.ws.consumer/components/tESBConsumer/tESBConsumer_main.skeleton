@@ -6,6 +6,10 @@ import java.util.Map.Entry;
 
 import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.INode;
+import org.talend.core.model.process.IConnectionCategory;
+import org.talend.core.model.metadata.IMetadataColumn;
+import org.talend.designer.codegen.config.CodeGeneratorArgument;
+import org.talend.designer.codegen.config.NodeConnectionsHelper;
 import org.talend.designer.codegen.config.NodeParamsHelper;
 
 public class CLASS
@@ -46,15 +50,19 @@ public class CLASS
  	String correlationValue;
  	boolean hasHeaders;
  	String alias;
- 	
- 
-	private void setNode(INode node){
-		this.node=node;
-		helper = new NodeParamsHelper(node);
+
+ 	private void clearCache() {
+ 		node = null;
+ 		helper = null;
 		inputConn = null;
 		connFault = null;
 		connResponse = null;
 		dataOutputs = null;
+ 	}
+
+	private void setNode(INode node){
+		this.node=node;
+		helper = new NodeParamsHelper(node);
 	}
 	
 	private <T> T getObjectParam(String key) {
@@ -82,8 +90,9 @@ public class CLASS
     }
 	   
 	public void initOptions(INode node) {
+		clearCache();
 	    setNode(node);
-	    
+
 	    initConnections();
 	    if(inputConn == null) {
 	        return;
@@ -92,46 +101,13 @@ public class CLASS
 	}
 	
 	private void initConnections() {
-	    initInputConnection();
-	    if(inputConn == null) {
-	        return;
-	    }
-	    initOutputConnections();
+		NodeConnectionsHelper connections=new NodeConnectionsHelper(node, true);
+		inputConn = connections.getInputConn();
+		connResponse = connections.getOutputConnResponse();
+		connFault = connections.getOutputConnFault();
+		dataOutputs = connections.getDataOutputs();
 	}
-	
-	private void initInputConnection() {
-	    List<? extends IConnection> incomingConnections = node.getIncomingConnections();
-	    if (incomingConnections != null) {
-	        for (IConnection conn : incomingConnections) {
-	            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-	                inputConn = conn;
-	                break;
-	            }
-	        }
-	    }
-	}
-	
-	private void initOutputConnections() {
-	    List<? extends IConnection> conns = node.getOutgoingSortedConnections();
-	    dataOutputs = new ArrayList<IConnection>();
-	    if (conns != null) {
-	        for (IConnection conn : conns) {
-	            if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
-	                dataOutputs.add(conn);
-	            }
-	        }
-	    }
-	    
-	    List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
-	    List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
-	    if (connsResponse.size() == 1) {
-	        connResponse = connsResponse.get(0);
-	    }
-	    if (connsFault.size() == 1) {
-	        connFault = connsFault.get(0);
-	    }
-	}
-	
+
 	private void initProps() {
 	    cid = node.getUniqueName();
 	    processName = node.getProcess().getName();
@@ -140,7 +116,7 @@ public class CLASS
 	    portNS = getStringParam("__PORT_NS__");
 	    portName = getStringParam("__PORT_NAME__");
 	    
-	    methodNS = ElementParameterParser.getValue(node, "__METHOD_NS__");
+	    methodNS = getStringParam("__METHOD_NS__");
 	    if (methodNS == null || "".equals(methodNS)) {
 	        methodNS = serviceNS;
 	    }

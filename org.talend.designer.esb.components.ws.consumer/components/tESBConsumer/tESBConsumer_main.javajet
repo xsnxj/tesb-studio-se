@@ -1,15 +1,4 @@
 <%@ jet
-    imports="
-        org.talend.core.model.metadata.IMetadataColumn
-        org.talend.core.model.process.INode
-        org.talend.core.model.process.IConnection
-        org.talend.core.model.process.ElementParameterParser
-        org.talend.core.model.process.IConnectionCategory
-        org.talend.designer.codegen.config.CodeGeneratorArgument
-
-        java.util.List
-        java.util.Map
-"
     skeleton="tESBConsumer_main.skeleton"
 %>
 <%
@@ -153,8 +142,8 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setProxyUsername(<%=getStringParam("__PROXY_USERNAME__")%>);
                     genericConsumer_<%=cid%>.setProxyPassword(<%=getStringParam("__PROXY_PASSWORD__")%>);
                 <% } %>
-                genericConsumer_<%=cid%>.setConnectionTimeout(<%=connTimeout%> * 1000L);
-                genericConsumer_<%=cid%>.setReceiveTimeout(<%=receiveTimeout%> * 1000L);
+                genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
+                genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
@@ -370,3 +359,4 @@ if (inputConn != null) {
     }
 
 <% } %>
+<% clearCache(); %>
