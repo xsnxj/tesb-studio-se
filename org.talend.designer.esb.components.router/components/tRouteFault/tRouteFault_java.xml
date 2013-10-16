@@ -9,7 +9,7 @@
 			SCHEMA_AUTO_PROPAGATE="true"
 			STARTABLE="false"
 			DATA_AUTO_PROPAGATE="false"
-			HAS_CONDITIONAL_OUTPUTS="true" 
+			HAS_CONDITIONAL_OUTPUTS="true"
 			PARTITIONING="NONE"
 			>
 		<SIGNATURE />
@@ -21,13 +21,7 @@
 		<URL />
 	</DOCUMENTATION>
 	<CONNECTORS>
-		<CONNECTOR CTYPE="FLOW" MAX_INPUT="1" MAX_OUTPUT="0"/>
-<!-- 		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="1" />
-		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" />
-		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" />
-		<CONNECTOR CTYPE="COMPONENT_OK" />
-		<CONNECTOR CTYPE="COMPONENT_ERROR" />
-		<CONNECTOR CTYPE="RUN_IF" /> -->
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="1" />
 	</CONNECTORS>
 	<PARAMETERS>
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
@@ -36,13 +30,12 @@
 				<!-- <COLUMN NAME="__BODY__" TYPE="id_Document" READONLY="false" CUSTOM="true" /> -->
 			</TABLE>
 		</PARAMETER>
-		<PARAMETER NAME="VALUES" FIELD="TABLE" REQUIRED="true"
-			NUM_ROW="2" NB_LINES="5">
+		<PARAMETER NAME="VALUES" FIELD="TABLE" REQUIRED="true" NUM_ROW="2" NB_LINES="5">
 			<ITEMS BASED_ON_SCHEMA="true">
 				<ITEM NAME="TYPE" FIELD="CLOSED_LIST">
 					<ITEMS DEFAULT="HEADER">
 						<ITEM NAME="HEADER" VALUE="Header" />
-						<ITEM NAME="BODY" VALUE="Body" READONLY_IF="VALUES.TYPE == 'BODY'"/>
+						<ITEM NAME="BODY" VALUE="Body" READONLY_IF="VALUES.TYPE == 'BODY'" />
 						<ITEM NAME="PROPERTY" VALUE="Property" />
 						<ITEM NAME="SYSTEM" VALUE="System" />
 					</ITEMS>
@@ -50,8 +43,7 @@
 				<ITEM NAME="VALUE" />
 			</ITEMS>
 		</PARAMETER>
-		<PARAMETER NAME="NOTICE" FIELD="LABEL" REQUIRED="true"
-			NUM_ROW="3">
+		<PARAMETER NAME="NOTICE" FIELD="LABEL" REQUIRED="true" NUM_ROW="3">
 			<DEFAULT>The "Name" with "Body" type will be ignored</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
@@ -65,9 +57,9 @@
 					REQUIRED="true"
 					BundleID="org.apache.camel.camel-core" />
 			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar" 
+					MODULE="dom4j-1.6.1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
-					REQUIRED="true"/>
+					REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS>
