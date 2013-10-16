@@ -47,12 +47,10 @@
             </entry>
             <entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
 ]]#
-#if ($useEncryption)
-#[[
+#if ($useEncryption || $useServiceRegistry)
             <entry key="ws-security.encryption.crypto" value-ref="cryptoProvider" />
-            <entry key="ws-security.encryption.username" value="$service{ws-security.encryption.username}"/>
-]]#
-#end ## ($useEncryption)
+            <entry key="ws-security.encryption.username" value="{${namespace}}${service}"/>
+#end ## ($useEncryption || $useServiceRegistry)
 #end ## ($useSecuritySAML || $useServiceRegistry)
 #if ($useAuthorization || $useServiceRegistry)
 #[[
