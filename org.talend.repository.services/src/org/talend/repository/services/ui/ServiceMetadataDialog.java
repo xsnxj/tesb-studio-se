@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,12 +22,15 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.core.PluginChecker;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.designer.core.ui.dialog.HelpAvailableDialog;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.Messages;
 
-public class ServiceMetadataDialog extends Dialog {
+public class ServiceMetadataDialog extends HelpAvailableDialog {
+
+    private static final String HELP_CONTEXT_ID = "org.talend.help.esb_runtime";
 
     public static final String SECURITY_BASIC = "Security.Basic"; //$NON-NLS-1$
     public static final String SECURITY_SAML = "Security.SAML"; //$NON-NLS-1$
@@ -87,6 +89,11 @@ public class ServiceMetadataDialog extends Dialog {
         serviceItem = null;
         serviceConnection = null;
     }
+
+	@Override
+	protected String getHelpContextId() {
+		return HELP_CONTEXT_ID;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
