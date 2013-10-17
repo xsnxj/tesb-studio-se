@@ -241,6 +241,9 @@
             <contentExtension
                   pattern="org.talend.repository.viewer.root.content.refproject.content">
             </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.view.sorter.*">
+            </contentExtension>
          </includes>
       </perspectiveFilter>
       <perspectiveFilter
