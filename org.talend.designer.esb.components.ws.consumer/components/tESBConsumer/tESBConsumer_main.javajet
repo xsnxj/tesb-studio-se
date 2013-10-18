@@ -9,11 +9,11 @@ initOptions(node);
 String projectName = codeGenArgument.getCurrentProjectName();
 
 if (inputConn != null) {
-	for (IConnection conn : dataOutputs){
+    for (IConnection conn : dataOutputs) {
 %>
-		<%=conn.getName()%> = null;
+        <%=conn.getName()%> = null;
 <%
-	}
+    }
 %>
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
@@ -42,7 +42,7 @@ if (inputConn != null) {
                     <% } %>
                 <% } %>
             <% } %>
-            <%if(useBusinessCorrelation || useSR) {%>
+            <% if (useBusinessCorrelation || useSR) { %>
                 class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
                     private String correlationId;
                     public EsbJobCorrelationCallbackHandler(final String correlationId) {
@@ -63,7 +63,7 @@ if (inputConn != null) {
                 <% List<? extends INode> nodesProviderRequest = node.getProcess().getNodesOfType("tESBProviderRequest");
                 if (!nodesProviderRequest.isEmpty()) { %>
                     securityToken_<%=cid%> = globalMap.get("<%=nodesProviderRequest.iterator().next().getUniqueName()%>_SECURITY_TOKEN");
-            <%  }
+            <% }
             } if (hasHeaders) { %>
                 final routines.system.Document headersTalendDoc_<%=cid%> = <%=inputConn.getName()%>.headers;
                 if (null != headersTalendDoc_<%=cid%> && null != headersTalendDoc_<%=cid%>.getDocument()) {
@@ -123,10 +123,10 @@ if (inputConn != null) {
                     }
                     esbFeatures_<%=cid%>.add(featureSAM_<%=cid%>);
                 <% } %>
-                <%if(useBusinessCorrelation) {%>
+                <% if (useBusinessCorrelation) { %>
                     esbFeatures_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
                 <% } %>
-                <%if(useBusinessCorrelation || useSR) {%>
+                <% if(useBusinessCorrelation || useSR) { %>
                     genericConsumer_<%=cid%>.setCorrelationIDCallbackHandler(correlationIDCallbackHandler);
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
@@ -158,9 +158,9 @@ if (inputConn != null) {
                 }
 
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
-<%if(useBusinessCorrelation || useSR) {%>
-                globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
-<%}%>
+                <% if (useBusinessCorrelation || useSR) { %>
+                    globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
+                <% } %>
             } else {
                 ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
                     new ESBEndpointInfo() {
@@ -222,7 +222,7 @@ if (inputConn != null) {
                             if (authPropagateCertificate) { %>
                                 put("alias", <%=alias%>);
                             <% }
-                            if(useBusinessCorrelation || useSR) { %>
+                            if (useBusinessCorrelation || useSR) { %>
                                 put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, correlationIDCallbackHandler);
                                 put("enhancedResponse", true);
                             <% } %>
@@ -245,17 +245,20 @@ if (inputConn != null) {
 
                 Object request_<%=cid%> = wrapPayload(requestTalendDoc_<%=cid%>.getDocument(), customProps_<%=cid%>);
                 Object consumerResponse_<%=cid%> = consumer_<%=cid%>.invoke(request_<%=cid%>);
-                if(consumerResponse_<%=cid%> instanceof java.util.Map) {
-                    java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
-                    responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
-<%if(useBusinessCorrelation || useSR){%>
-                    globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
-<%}%>
-                } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
-                    responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
+                if (null == consumerResponse_<%=cid%>) {
+                    // one way call
                 } else {
-                    throw new RuntimeException(
-                            "Incompatible consumer response: " + consumerResponse_<%=cid%>.getClass().getName());
+                    if(consumerResponse_<%=cid%> instanceof java.util.Map) {
+                        java.util.Map<?,?> responseMap_<%=cid%> = (java.util.Map<?,?>)consumerResponse_<%=cid%>;
+                        responseDoc_<%=cid%> = (org.dom4j.Document) responseMap_<%=cid%>.get("payload");
+                        <% if (useBusinessCorrelation || useSR) { %>
+                            globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
+                        <% } %>
+                    } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
+                        responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
+                    } else {
+                        throw new RuntimeException("Incompatible consumer response: " + consumerResponse_<%=cid%>.getClass().getName());
+                    }
                 }
             }
             <% if (null != connResponse) {
