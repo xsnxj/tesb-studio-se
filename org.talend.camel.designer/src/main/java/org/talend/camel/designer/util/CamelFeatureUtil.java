@@ -164,7 +164,6 @@ public final class CamelFeatureUtil {
 		int lastIndexOf = interName.lastIndexOf("-");
 		while(lastIndexOf != -1){
 			try{
-				Integer.parseInt(interName.charAt(lastIndexOf+1)+"");
 				interName = interName.substring(0, lastIndexOf);
 				break;
 			}catch(Exception e){
