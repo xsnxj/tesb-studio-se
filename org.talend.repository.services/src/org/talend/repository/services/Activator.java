@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.talend.repository.utils.EsbConfigUtils;
 
 
 public class Activator extends AbstractUIPlugin {
@@ -86,15 +87,9 @@ public class Activator extends AbstractUIPlugin {
         // resolve plug-in ESB config folder URL into file protocol URL
         esbConfigsFolderUrl = FileLocator.toFileURL(esbConfigsFolderUrl);
 
-        // obtain Studio installation location URI
-
-        String eclipseHome = (String) System.getProperties().get("eclipse.home.location");
-        //Platform.getInstallLocation().getURL();
-
-        File eclipseEsbFolder=new File(new URL(eclipseHome).getPath(),"esb");
         // create ESB configuration folder under Studio instalation
         IFileSystem fileSystem = EFS.getLocalFileSystem();
-        IFileStore esbConfigsTargetFolder = fileSystem.getStore(eclipseEsbFolder.toURI());
+        IFileStore esbConfigsTargetFolder = fileSystem.getStore(EsbConfigUtils.getEclipseEsbFolder().toURI());
         esbConfigsTargetFolder = esbConfigsTargetFolder.mkdir(EFS.SHALLOW, null);
 
         // retrieve all ESB configuration files packed inside plug-in
