@@ -270,6 +270,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
                     MODULE="jaxb-impl-2.2.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jaxb-impl-2.2.6.jar"
                     REQUIRED="true" />
 
             <!-- camel-spring -->
@@ -436,6 +437,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
                     MODULE="javax.ws.rs-api-2.0-m10.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
                     MODULE="cxf-rt-rs-extension-providers-2.7.7.jar"

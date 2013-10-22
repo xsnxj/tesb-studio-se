@@ -123,6 +123,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
                     MODULE="jaxb-impl-2.2.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jaxb-impl-2.2.6.jar"
                     REQUIRED="true" />
 
             <!-- camel-spring -->

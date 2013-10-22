@@ -167,6 +167,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
                     MODULE="jaxb-impl-2.2.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jaxb-impl-2.2.6.jar"
                     REQUIRED="true" />
 
             <!-- camel-spring -->
@@ -235,6 +236,7 @@
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="jms" 
 					MODULE="jms.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jms.jar"
 					REQUIRED="true" />
             <IMPORT NAME="jta"
                     MODULE="jta.jar"
@@ -259,6 +261,7 @@
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
             <IMPORT NAME="xpp3" 
                     MODULE="xpp3-1.1.4c.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/xpp3-1.1.4c.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
             <IMPORT NAME="xstream" 
                     MODULE="xstream-1.4.3.jar"
