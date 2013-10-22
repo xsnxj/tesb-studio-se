@@ -19,12 +19,11 @@ Bundle-ClassPath: .,lib/cxf-rt-core-2.7.7.jar,lib/cxf-api-2.7.7.jar,lib/
  log4j12-1.7.5.jar,lib/spring-context-3.2.3.RELEASE.jar,lib/spring-aop-3
  .2.3.RELEASE.jar,lib/spring-beans-3.2.3.RELEASE.jar,lib/spring-core-3.2
  .3.RELEASE.jar,lib/spring-expression-3.2.3.RELEASE.jar,lib/locator-5.4.
- 0-SNAPSHOT.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clustering-2
- .7.7.jar,lib/sam-agent-5.4.0-SNAPSHOT.jar,lib/sam-common-5.4.0-SNAPSHOT
- .jar,lib/cxf-rt-transports-local-2.7.7.jar,lib/correlationid-policy-5.4
- .0-SNAPSHOT.jar,lib/spring-context-support-3.2.3.RELEASE.jar,lib/spring
- -jms-3.2.3.RELEASE.jar,lib/aopalliance-1.0.jar,lib/spring-tx-3.2.3.RELE
- ASE.jar
+ 0.jar,lib/zookeeper-3.3.6.jar,lib/cxf-rt-features-clustering-2.7.7.jar,
+ lib/sam-agent-5.4.0.jar,lib/sam-common-5.4.0.jar,lib/cxf-rt-transports-
+ local-2.7.7.jar,lib/correlationid-policy-5.4.0.jar,lib/spring-context-s
+ upport-3.2.3.RELEASE.jar,lib/spring-jms-3.2.3.RELEASE.jar,lib/aopallian
+ ce-1.0.jar,lib/spring-tx-3.2.3.RELEASE.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: org.talend.libraries.esb
 Bundle-SymbolicName: org.talend.libraries.esb
