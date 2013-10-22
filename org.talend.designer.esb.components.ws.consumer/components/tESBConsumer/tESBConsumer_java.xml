@@ -498,8 +498,8 @@
 
 			<!-- SL for WS -->
 			<IMPORT NAME="locator"
-					MODULE="locator-5.4.0-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.0-SNAPSHOT.jar"
+					MODULE="locator-5.4.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.0.jar"
 					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
@@ -524,18 +524,19 @@
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
 			<!-- SAM for WS -->
 			<IMPORT NAME="sam-agent"
-					MODULE="sam-agent-5.4.0-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.4.0-SNAPSHOT.jar"
+					MODULE="sam-agent-5.4.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.4.0.jar"
 					BundleID="sam-agent"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="sam-common"
-					MODULE="sam-common-5.4.0-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.4.0-SNAPSHOT.jar"
+					MODULE="sam-common-5.4.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.4.0.jar"
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
@@ -560,8 +561,8 @@
 
 			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
-					MODULE="correlationid-policy-5.4.0-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0-SNAPSHOT.jar"
+					MODULE="correlationid-policy-5.4.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.0.jar"
 					BundleID=""
 					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
 		</IMPORTS>
