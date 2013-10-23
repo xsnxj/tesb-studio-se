@@ -220,7 +220,10 @@ if (inputConn != null) {
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
                             if (authPropagateCertificate) { %>
-                                put("alias", <%=alias%>);
+                                String alias_<%=cid%> = <%=alias%>;
+                                if (null != alias_<%=cid%> && !"".equals(alias_<%=cid%>.trim())) {
+                                    put("alias", alias_<%=cid%>);
+                                }
                             <% }
                             if (useBusinessCorrelation || useSR) { %>
                                 put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, correlationIDCallbackHandler);
