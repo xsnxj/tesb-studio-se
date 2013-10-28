@@ -36,7 +36,7 @@
 	<FeatureMap HotLib="camel-csv-alldep">
 		<Feature version="[2,5)">camel-csv</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-cxf-alldep">
+	<FeatureMap HotLib="camel-cxf">
 		<Feature version="[2,5)">camel-cxf</Feature>
 		<Feature version="[2,5)">cxf</Feature>
 	</FeatureMap>
@@ -61,7 +61,7 @@
 	<FeatureMap HotLib="camel-ftp-alldep">
 		<Feature version="[2,5)">camel-ftp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-groovy-alldep">
+	<FeatureMap HotLib="camel-groovy">
 		<Feature version="[2,5)">camel-groovy</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-guice-alldep">
@@ -76,7 +76,7 @@
 	<FeatureMap HotLib="camel-hl7-alldep">
 		<Feature version="[2,5)">camel-hl7</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-http-alldep">
+	<FeatureMap HotLib="camel-http">
 		<Feature version="[2,5)">camel-http</Feature>
 		<Feature version="[2,5)">http</Feature>
 	</FeatureMap>
@@ -113,7 +113,7 @@
 	<FeatureMap HotLib="camel-jing-alldep">
 		<Feature version="[2,5)">camel-jing</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jms-alldep">
+	<FeatureMap HotLib="camel-jms">
 		<Feature version="[2,5)">camel-jms</Feature>
 		<Feature version="[2,5)">spring-jms</Feature>
 	</FeatureMap>
@@ -204,7 +204,7 @@
 	<FeatureMap HotLib="camel-scala-alldep">
 		<Feature version="[2,5)">camel-scala</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-script-alldep">
+	<FeatureMap HotLib="camel-script">
 		<Feature version="[2,5)">camel-script</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-servlet-alldep">
