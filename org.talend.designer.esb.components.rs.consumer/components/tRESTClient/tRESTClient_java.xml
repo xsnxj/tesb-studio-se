@@ -291,7 +291,7 @@
                     MODULE="mail.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
                     BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+                    REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
