@@ -38,10 +38,8 @@ if (actAsConsumer) {
         }
     }
 
-    static class GenericServiceClass {
-        public Object invoke(Object param) throws GenericFaultInfoException {
-            return null;
-        }
+    static interface GenericServiceClass {
+        Object invoke(Object param) throws GenericFaultInfoException;
     }
 
     static class GenericConsumer {
