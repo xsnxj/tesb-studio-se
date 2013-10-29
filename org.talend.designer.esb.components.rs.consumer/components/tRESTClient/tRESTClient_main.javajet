@@ -1,9 +1,50 @@
-<%@ jet skeleton="tRESTClient_main.skeleton"
+<%@ jet
+	imports="
+		java.util.ArrayList
+		java.util.Collections
+		java.util.HashMap
+		java.util.List
+		java.util.Map
+		java.util.Map.Entry
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.designer.codegen.config.NodeConnectionsHelper
+		org.talend.designer.codegen.config.NodeParamsHelper
+	"
 %>
 <%
-INode node = (INode) argument.getArgument();
-initOptions(node);
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode) codeGenArgument.getArgument();
 
+/*INIT PARAMETERS AND INDICATORS.*/
+NodeConnectionsHelper connsHelper=new NodeConnectionsHelper(node);
+IConnection inputConn = connsHelper.getInputConn();
+IConnection connResponse = connsHelper.getOutputConnResponse();
+IConnection connFault = connsHelper.getOutputConnFault();
+List<IConnection> dataOutputs = connsHelper.getDataOutputs();
+
+String cid = node.getUniqueName();
+
+NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+String method = paramsHelper.getStringParam("__METHOD__");
+String acceptType = paramsHelper.getStringParam("__ACCEPT_TYPE__");
+if(acceptType == null) {
+	acceptType = "application/xml";
+}
+String contentType = paramsHelper.getStringParam("__CONTENT_TYPE__");
+if(contentType == null) {
+	contentType = "application/xml";
+}
+boolean useAuth = paramsHelper.getBoolParam("__NEED_AUTH__");
+boolean useAuthorization = paramsHelper.getVisibleBoolParam("__NEED_AUTHORIZATION__");
+String authType = paramsHelper.getStringParam("__AUTH_TYPE__");
+boolean isSLEnable = paramsHelper.getBoolParam("__SERVICE_LOCATOR__");
+boolean isSAMEnable = paramsHelper.getBoolParam("__SERVICE_ACTIVITY_MONITOR__");
+boolean useBusinessCorrelation = paramsHelper.getBoolParam("__USE_BUSINESS_CORRELATION__");
+
+/*GENERATE CODE*/
 //clear connection row data
 for (IConnection conn : dataOutputs) {
 %>
@@ -29,7 +70,7 @@ try {
 	// expected response body
 	Object responseDoc_<%=cid%> = null;
 	<%
-		String convertResponseToDomProperty = getStringParam("__CONVERT_RESPONSE_TO_DOM__");
+		String convertResponseToDomProperty = paramsHelper.getStringParam("__CONVERT_RESPONSE_TO_DOM__");
 		boolean convertResponseToDom = convertResponseToDomProperty == null ? true : Boolean.valueOf(convertResponseToDomProperty);
 	%>
 	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertResponseToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
@@ -39,8 +80,8 @@ try {
 		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
 	<% if (useAuth && "BASIC".equals(authType)) { %>
 		// set BASIC auth
-		factoryBean_<%=cid%>.setUsername(<%=getStringParam("__AUTH_USERNAME__")%>);
-		factoryBean_<%=cid%>.setPassword(<%=getStringParam("__AUTH_PASSWORD__")%>);
+		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
+		factoryBean_<%=cid%>.setPassword(<%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
 	<% } %>
 
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
@@ -58,8 +99,8 @@ try {
 	<% if (isSLEnable) { %>
 		factoryBean_<%=cid%>.setAddress("locator://rest");
 		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
-			<%=getStringParam("__SERVICE_NAMESPACE__")%>,
-			<%=getStringParam("__SERVICE_NAME__")%>));
+			<%=paramsHelper.getStringParam("__SERVICE_NAMESPACE__")%>,
+			<%=paramsHelper.getStringParam("__SERVICE_NAME__")%>));
 
 		if (!inOSGi) {
 			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
@@ -67,7 +108,7 @@ try {
 
 		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
 				new org.talend.esb.servicelocator.cxf.LocatorFeature();
-		<% List<Entry<String, String>> customProperties = getSLProperties();
+		<% List<Entry<String, String>> customProperties = paramsHelper.getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
 		if (!customProperties.isEmpty()) { %>
 				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
 			<% for (Entry<String,String> prop : customProperties) { %>
@@ -78,7 +119,7 @@ try {
 
 		features_<%=cid%>.add(feature_<%=cid%>);
 	<% } else { %>
-		String url = <%=getStringParam("__URL__")%>;
+		String url = <%=paramsHelper.getStringParam("__URL__")%>;
 		// {baseUri}tRESTClient
 		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(url, "tRESTClient"));
 		factoryBean_<%=cid%>.setAddress(url);
@@ -97,7 +138,7 @@ try {
 		} else {
 			samEventFeature = (org.talend.esb.sam.agent.feature.EventFeature) eventFeature;
 		}
-		<% List<Entry<String, String>> samCustomProperties = getSAMProperties();
+		<% List<Entry<String, String>> samCustomProperties = paramsHelper.getPropertiesPram("__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__");
 		if (!samCustomProperties.isEmpty()) { %>
 			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
 			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
@@ -110,7 +151,7 @@ try {
 		features_<%=cid%>.add(samEventFeature);
 	<% } %>
 
-	<% if (getBoolParam("__LOG_MESSAGES__")) { %>
+	<% if (paramsHelper.getBoolParam("__LOG_MESSAGES__")) { %>
 		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
 	<% } %>
 
@@ -126,7 +167,7 @@ try {
                         return correlationId;
                     };
                 }
-        final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=getStringParam("__CORRELATION_VALUE__")%>);
+        final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=paramsHelper.getStringParam("__CORRELATION_VALUE__")%>);
 		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
 			correlationIDCallbackHandler);
 		features_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
@@ -163,7 +204,7 @@ try {
 		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
 		jsonProvider_<%=cid%>.setAttributesToElements(true);
 	<%
-		String wrapJsonResponseProperty = getStringParam("__WRAP_JSON_RESPONSE__");
+		String wrapJsonResponseProperty = paramsHelper.getStringParam("__WRAP_JSON_RESPONSE__");
 		boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
 	%>
 	<% if (wrapJsonResponse) { %>
@@ -172,7 +213,7 @@ try {
 	<% } %>
 	<%
 		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType))
-				? getBoolParam("__UNWRAP_JSON_REQUEST__") : false;
+				? paramsHelper.getBoolParam("__UNWRAP_JSON_REQUEST__") : false;
 	%>
 		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
@@ -182,23 +223,23 @@ try {
 	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
 
 	// set request path
-	webClient_<%=cid%>.path(<%=getStringParam("__PATH__")%>);
+	webClient_<%=cid%>.path(<%=paramsHelper.getStringParam("__PATH__")%>);
 
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
-	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
-	<% if (getBoolParam("__FOLLOW_REDIRECTS__")) { %>
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
+	<% if (paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")) { %>
 		conduit_<%=cid%>.getClient().setAutoRedirect(true);
 		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.relative.uri", true);
-		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.same.host.only", <%=!getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
+		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.same.host.only", <%=!paramsHelper.getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
 	<% } %>
-	<% if (getBoolParam("__USE_PROXY__")) { %>
-		conduit_<%=cid%>.getClient().setProxyServer(<%=getStringParam("__PROXY_HOST__")%>);
-		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=getStringParam("__PROXY_PORT__")%>));
-		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=getStringParam("__PROXY_USERNAME__")%>);
-		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=getStringParam("__PROXY_PASSWORD__")%>);
+	<% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=paramsHelper.getStringParam("__PROXY_PASSWORD__")%>);
 	<% } %>
 
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
@@ -211,7 +252,7 @@ try {
 		webClient_<%=cid%>.accept("<%=acceptType%>");
 	<% } %>
 
-	<% List<Map<String, String>> headers = getObjectParam("__HEADERS__"); %>
+	<% List<Map<String, String>> headers = paramsHelper.getObjectParam("__HEADERS__"); %>
 		// set optional query and header properties if any
 	<% for (Map<String, String> header : headers) { %>
 		webClient_<%=cid%>.header(<%=header.get("NAME")%>, <%=header.get("VALUE")%>);
@@ -219,7 +260,7 @@ try {
 
 	<% if (useAuth && "OAUTH2_BEARER".equals(authType)) { %>
 		// set oAuth2 bearer token
-		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=getStringParam("__AUTH_BEARER_TOKEN__")%>);
+		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=paramsHelper.getStringParam("__AUTH_BEARER_TOKEN__")%>);
 	<% } %>
 
 	<% if (useAuth && "SAML".equals(authType) && !useAuthorization) { %>
@@ -227,7 +268,7 @@ try {
 			// set SAML Token authentication
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
 			outInterceptor.setStsClient(createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
-					<%=getStringParam("__AUTH_USERNAME__")%>, <%=getStringParam("__AUTH_PASSWORD__")%>));
+					<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>));
 			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
 			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
 		}
@@ -237,12 +278,12 @@ try {
 	if (null != stsProps) {
 	 	STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
 		org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
-			<%=getStringParam("__AUTH_USERNAME__")%>, <%=getStringParam("__AUTH_PASSWORD__")%>);
+			<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
 					
 		org.w3c.dom.Document doc = org.apache.cxf.helpers.DOMUtils.createDocument();
         org.w3c.dom.Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
         claimsElement.setAttributeNS(null, "Dialect", "http://schemas.xmlsoap.org/ws/2005/05/identity");
-        String role = <%=getStringParam("__ROLE__")%>;
+        String role = <%=paramsHelper.getStringParam("__ROLE__")%>;
         if ("" != role && null != role){
         	org.w3c.dom.Element claimValueElement = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimValue");
         	claimValueElement.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
@@ -265,7 +306,7 @@ try {
 	<% } %>
 
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
-	<% List<Map<String, String>> queries = getObjectParam("__QUERY__");
+	<% List<Map<String, String>> queries = paramsHelper.getObjectParam("__QUERY__");
 		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
 		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
 		<% for (Map<String, String> query : queries) { %>
@@ -355,10 +396,9 @@ try {
 	}
 
 } catch(Exception e_<%=cid%>) {
-	<% if (getBoolParam( "__DIE_ON_ERROR__")) { %>
+	<% if (paramsHelper.getBoolParam( "__DIE_ON_ERROR__")) { %>
 		throw new TalendException(e_<%=cid%>, currentComponent, globalMap);
 	<% } else { %>
 		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
 	<% } %>
 }
-<% clearCache(); %>
