@@ -1,13 +1,101 @@
 <%@ jet
-    skeleton="tESBConsumer_main.skeleton"
+	imports="
+		java.util.ArrayList
+		java.util.HashMap
+		java.util.List
+		java.util.Map
+		java.util.Map.Entry
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.designer.codegen.config.NodeConnectionsHelper
+		org.talend.designer.codegen.config.NodeParamsHelper
+	"
 %>
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
-initOptions(node);
+/*INIT PARAMETERS AND INDICATORS.*/
+NodeConnectionsHelper connsHelper=new NodeConnectionsHelper(node, true);
+IConnection inputConn = connsHelper.getInputConn();
+if(inputConn == null) {
+	return "";//not generate any code if no input connection.
+}
+IConnection connResponse = connsHelper.getOutputConnResponse();
+IConnection connFault = connsHelper.getOutputConnFault();
+List<IConnection> dataOutputs = connsHelper.getDataOutputs();
 
 String projectName = codeGenArgument.getCurrentProjectName();
+String cid = node.getUniqueName();
+String processName = node.getProcess().getName();
 
+NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+String serviceNS = paramsHelper.getStringParam("__SERVICE_NS__");
+String serviceName = paramsHelper.getStringParam("__SERVICE_NAME__");
+String portNS = paramsHelper.getStringParam("__PORT_NS__");
+String portName = paramsHelper.getStringParam("__PORT_NAME__");
+
+String methodNS = paramsHelper.getStringParam("__METHOD_NS__");
+if (methodNS == null || "".equals(methodNS)) {
+    methodNS = serviceNS;
+}
+String methodTemp = paramsHelper.getStringParam("__METHOD__");
+String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTemp.indexOf("(")) : methodTemp;
+
+String authType = paramsHelper.getStringParam("__AUTH_TYPE__");
+String alias = paramsHelper.getStringParam("__AUTH_ALIAS__");
+String username = paramsHelper.getStringParam("__AUTH_USERNAME__");
+String password = paramsHelper.getStringParam("__AUTH_PASSWORD__");
+String authorizationRole = paramsHelper.getStringParam("__ROLE__");
+String correlationValue = paramsHelper.getStringParam("__CORRELATION_VALUE__");
+
+boolean logMessages = paramsHelper.getBoolParam("__LOG_MESSAGES__");
+String connTimeout = paramsHelper.getStringParam("__CONNECTION_TIMEOUT__");
+String receiveTimeout = paramsHelper.getStringParam("__RECEIVE_TIMEOUT__");
+
+//use paramsHelper.getVisibleBoolParam to return false if the controller of this parameter is not visible.
+boolean useSR = paramsHelper.getVisibleBoolParam("__USE_SR__");
+
+boolean useSl = paramsHelper.getVisibleBoolParam("__SERVICE_LOCATOR__");
+boolean useSAM = paramsHelper.getVisibleBoolParam("__SERVICE_ACTIVITY_MONITOR__");
+boolean useAuth = paramsHelper.getVisibleBoolParam("__NEED_AUTH__");
+boolean useBusinessCorrelation = paramsHelper.getVisibleBoolParam("__USE_BUSINESS_CORRELATION__");
+
+//saml features
+boolean useSAML = useAuth && authType.equals("SAML");
+boolean useAuthorization = paramsHelper.getVisibleBoolParam("__NEED_AUTHORIZATION__");
+
+boolean authPropagateUP = false;
+boolean authPropagateCertificate = false;
+if (useSR) {
+    if (paramsHelper.getVisibleBoolParam("__AUTH_PROPAGATE__")) {
+        authPropagateUP = true;
+        if (alias != null && !"".equals(alias.trim())) {
+            authPropagateCertificate = true;
+        }
+    }
+} else {
+    String authPropatateType = paramsHelper.getVisibleStringParam("__PROPAGATE_TYPE__");
+    authPropagateUP = authPropatateType.equals("U_P");
+    authPropagateCertificate = authPropatateType.equals("CERT");
+}
+
+boolean useCrypto = paramsHelper.getVisibleBoolParam("__NEED_ENCRYPTION__");
+
+//init headers
+boolean hasHeaders = false;
+if(inputConn != null) {
+    for (IMetadataColumn connColumn : inputConn.getMetadataTable().getListColumns()) {
+        if ("headers".equals(connColumn.getLabel())) {
+            hasHeaders = true;
+            break;
+        }
+    }
+}
+
+/*GENERATE CODE*/
 if (inputConn != null) {
     for (IConnection conn : dataOutputs) {
 %>
@@ -27,14 +115,14 @@ if (inputConn != null) {
             <% if (useSl) { %>
                 final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                 <%
-                for(Entry<String, String> prop : getSLProperties()) {
+                for(Entry<String, String> prop : paramsHelper.getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__")) {
                     %>slCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);<%
                 }
             } %>
 
             java.util.Map<String, String> customProps_<%=cid%> = null;
             <% if (useSAM) {
-                List<Entry<String, String>> customProperties = getSAMProperties();
+                List<Entry<String, String>> customProperties = paramsHelper.getPropertiesPram("__SERVICE_ACTIVITY_CUSTOM_PROPERTIES__");
                 if (!customProperties.isEmpty()) { %>
                     customProps_<%=cid%> = new java.util.HashMap<String, String>();
                     <% for (Entry<String, String> prop : customProperties) { %>
@@ -84,13 +172,13 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
                 genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
                 genericConsumer_<%=cid%>.setOperationQName(new javax.xml.namespace.QName("<%=methodNS%>", "<%=method%>"));
-                genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(getStringParam("__COMMUNICATION_STYLE__"))%>);
-                <% String soapAction=getStringParam("__SOAP_ACTION__");
+                genericConsumer_<%=cid%>.setIsRequestResponse(<%="request-response".equals(paramsHelper.getStringParam("__COMMUNICATION_STYLE__"))%>);
+                <% String soapAction=paramsHelper.getStringParam("__SOAP_ACTION__");
                     if(soapAction != null && (!soapAction.matches("\\s*"))) { %>
                         genericConsumer_<%=cid%>.setSoapAction("<%=soapAction%>");
                 <%  } %>
 
-                genericConsumer_<%=cid%>.setAddress(<%=getStringParam("__ESB_ENDPOINT__")%>);
+                genericConsumer_<%=cid%>.setAddress(<%=paramsHelper.getStringParam("__ESB_ENDPOINT__")%>);
                 if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                     genericConsumer_<%=cid%>.setWsdlURL("classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                 }
@@ -136,21 +224,21 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     genericConsumer_<%=cid%>.setPassword(<%=password%>);
                 <% } %>
-                <% if (getBoolParam("__USE_PROXY__")) { %>
-                    genericConsumer_<%=cid%>.setProxyServer(<%=getStringParam("__PROXY_HOST__")%>);
-                    genericConsumer_<%=cid%>.setProxyPort(<%=getStringParam("__PROXY_PORT__")%>);
-                    genericConsumer_<%=cid%>.setProxyUsername(<%=getStringParam("__PROXY_USERNAME__")%>);
-                    genericConsumer_<%=cid%>.setProxyPassword(<%=getStringParam("__PROXY_PASSWORD__")%>);
+                <% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+                    genericConsumer_<%=cid%>.setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
+                    genericConsumer_<%=cid%>.setProxyPort(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>);
+                    genericConsumer_<%=cid%>.setProxyUsername(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
+                    genericConsumer_<%=cid%>.setProxyPassword(<%=paramsHelper.getStringParam("__PROXY_PASSWORD__")%>);
                 <% } %>
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
-                <% if (getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) { %>
+                <% if (paramsHelper.getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) { %>
                     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-                    System.setProperty("javax.net.ssl.trustStore", <%=getStringParam("__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
-                    System.setProperty("javax.net.ssl.trustStorePassword", <%=getStringParam("__SSL_TRUSTSERVER_PASSWORD__")%>);
+                    System.setProperty("javax.net.ssl.trustStore", <%=paramsHelper.getStringParam("__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
+                    System.setProperty("javax.net.ssl.trustStorePassword", <%=paramsHelper.getStringParam("__SSL_TRUSTSERVER_PASSWORD__")%>);
                 <% } %>
 
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
@@ -172,19 +260,19 @@ if (inputConn != null) {
                             put("serviceName", serviceName_<%=cid%>.toString());
                             put("defaultOperationName", "<%=method%>");
                             put("defaultOperationNameSpace", "");
-                            put("soapAction", "<%=getStringParam("__SOAP_ACTION__")%>");
+                            put("soapAction", "<%=paramsHelper.getStringParam("__SOAP_ACTION__")%>");
                             if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                                 put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
                             }
-                            put("publishedEndpointUrl", <%=getStringParam("__ESB_ENDPOINT__")%>);
-                            put("COMMUNICATION_STYLE", "<%=getStringParam("__COMMUNICATION_STYLE__")%>");
+                            put("publishedEndpointUrl", <%=paramsHelper.getStringParam("__ESB_ENDPOINT__")%>);
+                            put("COMMUNICATION_STYLE", "<%=paramsHelper.getStringParam("__COMMUNICATION_STYLE__")%>");
 
                             put("logMessages", <%=logMessages%>);
 
                             // use Service Locator
                             put("useServiceLocator", <%=useSl%>);
                             <% if (useSl) { %>
-                                put("LocatorSelectionStrategy", "<%=getStringParam("__SERVICE_LOCATOR_STRATEGY__")%>");
+                                put("LocatorSelectionStrategy", "<%=paramsHelper.getStringParam("__SERVICE_LOCATOR_STRATEGY__")%>");
                                 put("SL-PROPS", slCustomProps_<%=cid%>);
                             <% } %>
                             // use Service Activity Monitor
@@ -357,7 +445,7 @@ if (inputConn != null) {
             <% } %>
         }
     } catch (Exception e_<%=cid%>){
-        <% if (getBoolParam("__DIE_ON_ERROR__")) { %>
+        <% if (paramsHelper.getBoolParam("__DIE_ON_ERROR__")) { %>
             throw(e_<%=cid%>);
         <% } else { %>
             new TalendException(e_<%=cid%>,currentComponent,globalMap).printStackTrace();
@@ -365,4 +453,3 @@ if (inputConn != null) {
     }
 
 <% } %>
-<% clearCache(); %>
