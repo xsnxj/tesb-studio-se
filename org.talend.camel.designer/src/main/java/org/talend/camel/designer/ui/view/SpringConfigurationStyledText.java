@@ -241,14 +241,16 @@ public class SpringConfigurationStyledText extends StyledText implements
 		redoItem.setData('r');
 		
 		new MenuItem(m, SWT.SEPARATOR);
-		MenuItem commentItem = new MenuItem(m, SWT.NONE);
-		commentItem.setText("&Comment\tCtrl+SHIFT+/");
-		commentItem.setEnabled(isCommentAvailable());
-		commentItem.setData('/');
-		MenuItem uncommentItem = new MenuItem(m, SWT.NONE);
-		uncommentItem.setText("&Uncomment\tCtrl+SHIFT+/");
-		uncommentItem.setEnabled(selectionIsCommented());
-		uncommentItem.setData('/');
+		MenuItem commentItem = null;
+		if(isCommentAvailable()){
+			commentItem = new MenuItem(m, SWT.NONE);
+			commentItem.setText("&Comment\tCtrl+Shift+/");
+			commentItem.setData('/');
+		}else if(selectionIsCommented()){
+			commentItem = new MenuItem(m, SWT.NONE);
+			commentItem.setText("&Uncomment\tCtrl+Shift+/");
+			commentItem.setData('/');
+		}
 		
 		setMenu(m);
 		
@@ -292,8 +294,9 @@ public class SpringConfigurationStyledText extends StyledText implements
 		selectAllItem.addSelectionListener(listener);
 		undoItem.addSelectionListener(listener);
 		redoItem.addSelectionListener(listener);
-		commentItem.addSelectionListener(listener);
-		uncommentItem.addSelectionListener(listener);
+		if(commentItem!=null){
+			commentItem.addSelectionListener(listener);
+		}
 	}
 	
 	public void modifyText(ExtendedModifyEvent event) {
