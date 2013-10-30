@@ -3,6 +3,7 @@ package org.talend.camel.designer.ui.view;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
@@ -306,8 +307,98 @@ public class SpringConfigurationStyledText extends StyledText implements
 		 * update the styles
 		 */
 		updateStyledRanges(event);
+		
+		/*
+		 * auto completion
+		 */
+		int start = event.start;
+		int length = event.length;
+		String textRange = getTextRange(start, length);
+		String previousChar = null;
+		if(start-1>0){
+			previousChar = getTextRange(start-1, 1);
+		}
+		
+		if("/".equals(textRange) && "<".equals(previousChar)){
+			if(!isCommentBlock(start-1)){
+				String openedTag = searchNearestOpenedTag(start-2);
+				if(openedTag != null && !openedTag.isEmpty()){
+					replaceTextRange(start+length, 0 , openedTag);
+					setSelection(start + event.length + openedTag.length());
+				}
+			}
+		}
+	}
+	
+	private String searchNearestOpenedTag(int lastOffset) {
+		Stack<String> closeTagStack = new Stack<String>();
+		boolean hasSingleEndTag = false;
+		for (int i = lastOffset; i >= 0; i--) {
+			String currentChar = getText(i, i);
+			if (isCommentBlock(i)) {
+				continue;
+			}
+			if (">".equals(currentChar)) {
+				if (hasSingleEndTag) {
+					return null;
+				}
+				if (i > 0 && "/".equals(getText(i - 1, i - 1))) {
+					hasSingleEndTag = true;
+					i--;
+				}
+				continue;
+			}
+			if ("<".equals(currentChar)) {
+				if (hasSingleEndTag) {
+					hasSingleEndTag = false;
+					continue;
+				}
+				String nextChar = getText(i + 1, i + 1);
+				if ("/".equals(nextChar)) {
+					String searchTagName = searchTagName(i + 2, lastOffset);
+					if(!searchTagName.isEmpty()){
+						closeTagStack.push(searchTagName);
+					}
+					continue;
+				}
+				String currentTagName = searchTagName(i + 1, lastOffset);
+				if (closeTagStack.isEmpty()) {
+					return currentTagName.isEmpty()?null:currentTagName+">";
+				} else {
+					String pop = closeTagStack.pop();
+					if (!currentTagName.equals(pop)) {
+						return null;
+					}
+				}
+			}
+
+		}
+		return null;
 	}
 
+	private String searchTagName(int startOffset, int lastOffset) {
+		StringBuffer tagNameSB = new StringBuffer();
+		for (int j = startOffset; j < lastOffset; j++) {
+			String closeTagName = getText(j, j);
+			if ("<".equals(closeTagName)) {
+				return null;
+			}
+			if (Character.isWhitespace(closeTagName.charAt(0)) || ">".equals(closeTagName)) {
+				break;
+			}
+			tagNameSB.append(closeTagName);
+		}
+		return tagNameSB.toString().trim();
+	}
+
+	private boolean isCommentBlock(int offset){
+		StyleRange[] styleRanges = getStyleRanges(offset, 1);
+		if(styleRanges != null && styleRanges.length>0 && commentRGB.equals(styleRanges[0].foreground.getRGB())){
+				return true;
+		}
+		return false;
+	}
+	
 	protected void commentEventHandler() {
 		Point selectionRange = getSelectionRange();
 		String selectionText = getSelectionText();
