@@ -16,6 +16,7 @@ import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -69,6 +70,9 @@ public class SpringConfigurationStyledText extends StyledText implements
 
 	//key words of xml
 	private String[] fgKeywords = { "<?", "xml", "?>" };
+	
+	private static final String COMMENT_START_TAG = "<!--";
+	private static final String COMMENT_END_TAG = "-->";
 
 	//xml content scanner
 	private XmlScanner scanner = new XmlScanner();
@@ -184,6 +188,13 @@ public class SpringConfigurationStyledText extends StyledText implements
 			default:
 				break;
 			}
+		}else if((e.stateMask & SWT.CTRL) >0 && (e.stateMask & SWT.SHIFT) > 0){
+			switch (e.keyCode) {
+			case '?':
+			case '/':
+				commentEventHandler();
+				break;
+			}
 		}
 	}
 
@@ -228,6 +239,16 @@ public class SpringConfigurationStyledText extends StyledText implements
 		redoItem.setEnabled(redoStack.size()>0);
 		redoItem.setData('r');
 		
+		new MenuItem(m, SWT.SEPARATOR);
+		MenuItem commentItem = new MenuItem(m, SWT.NONE);
+		commentItem.setText("&Comment\tCtrl+SHIFT+/");
+		commentItem.setEnabled(isCommentAvailable());
+		commentItem.setData('/');
+		MenuItem uncommentItem = new MenuItem(m, SWT.NONE);
+		uncommentItem.setText("&Uncomment\tCtrl+SHIFT+/");
+		uncommentItem.setEnabled(selectionIsCommented());
+		uncommentItem.setData('/');
+		
 		setMenu(m);
 		
 		SelectionAdapter listener = new SelectionAdapter() {
@@ -256,6 +277,9 @@ public class SpringConfigurationStyledText extends StyledText implements
 				case 'r':
 					redo();
 					break;
+				case '/':
+					commentEventHandler();
+					break;
 				default:
 					break;
 				}
@@ -267,7 +291,8 @@ public class SpringConfigurationStyledText extends StyledText implements
 		selectAllItem.addSelectionListener(listener);
 		undoItem.addSelectionListener(listener);
 		redoItem.addSelectionListener(listener);
-		
+		commentItem.addSelectionListener(listener);
+		uncommentItem.addSelectionListener(listener);
 	}
 	
 	public void modifyText(ExtendedModifyEvent event) {
@@ -283,6 +308,43 @@ public class SpringConfigurationStyledText extends StyledText implements
 		updateStyledRanges(event);
 	}
 
+	protected void commentEventHandler() {
+		Point selectionRange = getSelectionRange();
+		String selectionText = getSelectionText();
+		if (selectionIsCommented()) {
+			int commentStartIndex = selectionText.indexOf(COMMENT_START_TAG);
+			int commentEndIndex = selectionText.lastIndexOf(COMMENT_END_TAG);
+			String afterReplacedText = selectionText.substring(0, commentStartIndex);
+			afterReplacedText += selectionText.substring(commentStartIndex
+					+ COMMENT_START_TAG.length(), commentEndIndex);
+			replaceTextRange(selectionRange.x,
+					selectionRange.y, afterReplacedText);
+		} else if(selectionText.trim().length()>0) {
+			replaceTextRange(selectionRange.x,
+					selectionRange.y, COMMENT_START_TAG + selectionText
+					+ COMMENT_END_TAG);
+		}
+	}
+	
+	protected boolean selectionIsCommented(){
+		String selectionText = getSelectionText();
+		String trimedSelection = selectionText.trim();
+		if (trimedSelection.length() >= COMMENT_END_TAG.length()
+				+ COMMENT_START_TAG.length()
+				&& trimedSelection.startsWith(COMMENT_START_TAG)
+				&& trimedSelection.endsWith(COMMENT_END_TAG)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isCommentAvailable(){
+		if(selectionIsCommented()){
+			return false;
+		}
+		return getSelectionText().trim().length()>0;
+	}
+	
 	private void updateStyledRanges(ExtendedModifyEvent event) {
 		StyledText st = (StyledText) event.widget;
 		int start = event.start;

@@ -10,6 +10,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-
+	   <bean id="jmxEventNotifier" class="org.apache.camel.management.JmxNotificationEventNotifier" >
+	   			<property name="source" value="${RouteItemName}" />
+	   			<property name="ignoreCamelContextEvents" value="true" />
+	   			<property name="ignoreRouteEvents" value="true" />
+	   			<property name="ignoreServiceEvents" value="true" />
+	   </bean>
 
 </beans>
