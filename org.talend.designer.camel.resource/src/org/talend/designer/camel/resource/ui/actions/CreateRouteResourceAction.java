@@ -43,80 +43,71 @@ import org.talend.repository.ui.actions.AContextualAction;
  * @author xpli
  * 
  */
-public class CreateRouteResourceAction extends AContextualAction implements
-		ITreeContextualAction {
+public class CreateRouteResourceAction extends AContextualAction implements ITreeContextualAction {
 
-	public CreateRouteResourceAction() {
-		setText(Messages.getString("CreateRouteResourceAction.Title")); //$NON-NLS-1$
-		this.setImageDescriptor(RouteResourceActivator
-				.createImageDesc("icons/create-route-resource.png"));
-	}
+    public CreateRouteResourceAction() {
+        setText(Messages.getString("CreateRouteResourceAction.Title")); //$NON-NLS-1$
+        this.setImageDescriptor(RouteResourceActivator.createImageDesc("icons/create-route-resource.png"));
+    }
 
-	@Override
-	protected void doRun() {
+    @Override
+    protected void doRun() {
 
-		IRepositoryNode node = null;
-		NewRouteResourceWizard wizard = null;
-		ISelection selection = getSelection();
-		if (selection == null) {
-			return;
-		}
-		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		node = (IRepositoryNode) obj;
-		IRepositoryService service = DesignerPlugin.getDefault()
-				.getRepositoryService();
-		IPath path = service.getRepositoryPath((RepositoryNode) node);
-		if (RepositoryConstants.isSystemFolder(path.toString())) {
-			// Not allowed to create in system folder.
-			return;
-		}
+        IRepositoryNode node = null;
+        NewRouteResourceWizard wizard = null;
+        ISelection selection = getSelection();
+        if (selection == null) {
+            return;
+        }
+        Object obj = ((IStructuredSelection) selection).getFirstElement();
+        node = (IRepositoryNode) obj;
+        IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
+        IPath path = service.getRepositoryPath(node);
+        if (RepositoryConstants.isSystemFolder(path.toString())) {
+            // Not allowed to create in system folder.
+            return;
+        }
 
-		wizard = new NewRouteResourceWizard(path);
+        wizard = new NewRouteResourceWizard(path);
 
-		WizardDialog dlg = new WizardDialog(Display.getCurrent()
-				.getActiveShell(), wizard);
-		int open = dlg.open();
-		if (open == Window.OK) {
-			RouteResourceItem item = wizard.getItem();
-			IWorkbenchPage page = getActivePage();
-			RouteResourceEditorUtil.openEditor(page, null, item);
-		}
-	}
+        WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), wizard);
+        int open = dlg.open();
+        if (open == Window.OK) {
+            RouteResourceItem item = wizard.getItem();
+            IWorkbenchPage page = getActivePage();
+            RouteResourceEditorUtil.openEditor(page, null, item);
+        }
+    }
 
-	public void init(TreeViewer viewer, IStructuredSelection selection) {
-		boolean canWork = !selection.isEmpty() && selection.size() == 1;
-		IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-		if (factory.isUserReadOnlyOnCurrentProject()) {
-			canWork = false;
-		}
-		if (canWork) {
-			Object o = selection.getFirstElement();
-			RepositoryNode node = (RepositoryNode) o;
-			switch (node.getType()) {
-			case SIMPLE_FOLDER:
-			case SYSTEM_FOLDER:
-				ERepositoryObjectType nodeType = (ERepositoryObjectType) node
-						.getProperties(EProperties.CONTENT_TYPE);
-				if (nodeType != CamelRepositoryNodeType.repositoryRouteResourceType) {
-					canWork = false;
-				}
-				if (node.getObject() != null
-						&& node.getObject().getProperty().getItem().getState()
-								.isDeleted()) {
-					canWork = false;
-				}
-				break;
-			default:
-				canWork = false;
-			}
-			if (canWork
-					&& !ProjectManager.getInstance().isInCurrentMainProject(
-							node)) {
-				canWork = false;
-			}
-		}
-		setEnabled(canWork);
-	}
-
+    @Override
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = !selection.isEmpty() && selection.size() == 1;
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        if (factory.isUserReadOnlyOnCurrentProject()) {
+            canWork = false;
+        }
+        if (canWork) {
+            Object o = selection.getFirstElement();
+            RepositoryNode node = (RepositoryNode) o;
+            switch (node.getType()) {
+            case SIMPLE_FOLDER:
+            case SYSTEM_FOLDER:
+                ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
+                if (nodeType != CamelRepositoryNodeType.repositoryRouteResourceType) {
+                    canWork = false;
+                }
+                if (node.getObject() != null && node.getObject().isDeleted()) {
+                    canWork = false;
+                }
+                break;
+            default:
+                canWork = false;
+            }
+            if (canWork && !ProjectManager.getInstance().isInCurrentMainProject(node)) {
+                canWork = false;
+            }
+        }
+        setEnabled(canWork);
+    }
 
 }
