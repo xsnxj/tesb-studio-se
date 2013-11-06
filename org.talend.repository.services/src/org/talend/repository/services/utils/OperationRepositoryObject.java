@@ -31,6 +31,10 @@ public class OperationRepositoryObject implements IRepositoryViewObject {
     protected final IRepositoryViewObject viewObject;
 
     protected ServiceOperation serviceOperation;
+    
+    protected ERepositoryStatus infoStatus;
+    
+    protected String errorTooltip;
 
     public IRepositoryViewObject getViewObject() {
         return this.viewObject;
@@ -105,9 +109,13 @@ public class OperationRepositoryObject implements IRepositoryViewObject {
      * @see org.talend.core.model.repository.IRepositoryViewObject#getDescription()
      */
     public String getDescription() {
-        return viewObject.getDescription();
+        return this.errorTooltip == null?viewObject.getDescription():this.errorTooltip;
     }
 
+    public void setDescription(String description){
+    	this.errorTooltip = description;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -206,9 +214,14 @@ public class OperationRepositoryObject implements IRepositoryViewObject {
      * @see org.talend.core.model.repository.IRepositoryViewObject#getInformationStatus()
      */
     public ERepositoryStatus getInformationStatus() {
-        return viewObject.getInformationStatus();
+        return this.infoStatus==null?viewObject.getInformationStatus():infoStatus;
     }
 
+    
+    public void setInformationStatus(ERepositoryStatus infoStatus) {
+		this.infoStatus = infoStatus;
+	}
+    
     /*
      * (non-Javadoc)
      * 

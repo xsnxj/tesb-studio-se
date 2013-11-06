@@ -109,10 +109,16 @@ public class AssignJobAction extends AbstractCreateAction {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        ERepositoryStatus status = proxyFactory.getStatus(node.getObject());
+        IRepositoryViewObject repositoryViewObject = node.getObject();
+        ERepositoryStatus status = proxyFactory.getStatus(repositoryViewObject);
         if (!status.isEditable() && !status.isPotentiallyEditable()) {
             setEnabled(false);
         } else {
+        	//not enabled if the operation doesn't define in binding
+        	if(!WSDLUtils.isOperationInBinding(node)){
+        		setEnabled(false);
+        		return;
+        	}
             setEnabled(true);
         }
     }

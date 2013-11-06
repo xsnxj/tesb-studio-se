@@ -93,7 +93,6 @@ public class Messages extends NLS {
 	public static String ServiceMetadataDialog_useBusinessCorrelation;
 
 	public static String LocalWSDLEditor_refreshBindingMessage;
-	public static String LocalWSDLEditor_refreshBindingTitle;
 	
 	public static String ESBService_DisconnectWarningTitle;
 	public static String ESBService_DisconnectWarningMsg;

@@ -323,17 +323,19 @@ public class OpenWSDLPage extends WizardPage {
             port.setId(factory.getNextId());
             port.setName(portType.getQName().getLocalPart());
             for (Operation operation : (Collection<Operation>) portType.getOperations()) {
+            	String operationName = operation.getName();
                 ServiceOperation serviceOperation = ServicesFactory.eINSTANCE.createServiceOperation();
                 serviceOperation.setId(factory.getNextId());
                 RepositoryNode operationNode = new RepositoryNode(new RepositoryViewObject(serviceItem.getProperty()),
                         serviceRepositoryNode, ENodeType.REPOSITORY_ELEMENT);
                 operationNode.setProperties(EProperties.LABEL, serviceItem.getProperty().getLabel());
                 operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
-                serviceOperation.setName(operation.getName());
+				serviceOperation.setName(operationName);
                 if (operation.getDocumentationElement() != null) {
                     serviceOperation.setDocumentation(operation.getDocumentationElement().getTextContent());
                 }
-                serviceOperation.setLabel(operation.getName());
+                serviceOperation.setLabel(operationName);
+                serviceOperation.setInBinding(WSDLUtils.isOperationInBinding(definition, port.getName(), operationName));
                 port.getServiceOperation().add(serviceOperation);
             }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);

@@ -18,9 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -37,7 +39,9 @@ import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.ProjectManager;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -303,4 +307,50 @@ public class WSDLUtils {
         return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
     }
 
+    
+    public static boolean isOperationInBinding(Definition definition, String portTypeName, String operationName)
+    				throws CoreException {
+    	Collection<?> services = definition.getServices().values();
+    	for (Object s : services) {
+    		Service service = (Service) s;
+    		Collection<?> ports = service.getPorts().values();
+    		for (Object p : ports) {
+    			Port port = (Port) p;
+    			Binding binding = port.getBinding();
+    			if (binding == null) {
+    				continue;
+    			}
+    			PortType portType = binding.getPortType();
+    			if (portType == null
+    					|| !portTypeName.equals(portType.getQName()
+    							.getLocalPart())) {
+    				continue;
+    			}
+    			List<?> bindingOperations = binding.getBindingOperations();
+    			for (Object o : bindingOperations) {
+    				BindingOperation bo = (BindingOperation) o;
+    				if (operationName.equals(bo.getName())) {
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+	public static boolean isOperationInBinding(
+			ServiceItem serviceItem, String portTypeName, String operationName)
+			throws CoreException {
+		return isOperationInBinding(getDefinition(serviceItem), portTypeName, operationName);
+	}
+	
+	public static boolean isOperationInBinding(RepositoryNode operationNode){
+		assert operationNode != null;
+		IRepositoryViewObject object = operationNode.getObject();
+		if(object == null || !(object instanceof OperationRepositoryObject)){
+			return false;
+		}
+		return ERepositoryStatus.ERROR != ((OperationRepositoryObject)object).getInformationStatus();
+	}
+    
 }

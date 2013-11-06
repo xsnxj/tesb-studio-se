@@ -24,6 +24,7 @@ import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.utils.WSDLUtils;
 
 public class OpenJobAction extends EditProcess {
 
@@ -67,6 +68,11 @@ public class OpenJobAction extends EditProcess {
         if (!currentNodeType.equals(nodeType)) {
             setEnabled(false);
             return;
+        }
+        //not enabled if the operation doesn't define in binding
+        if(!WSDLUtils.isOperationInBinding(node)){
+        	setEnabled(false);
+        	return;
         }
         this.setText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
@@ -113,6 +119,10 @@ public class OpenJobAction extends EditProcess {
     public Class getClassForDoubleClick() {
         try {
             RepositoryNode repositoryNode = super.getCurrentRepositoryNode();
+            //not enabled if the operation doesn't define in binding
+            if(!WSDLUtils.isOperationInBinding(repositoryNode)){
+            	return Object.class;
+            }
             return (getReferenceJobId(repositoryNode) != null) ? ServiceOperation.class : Object.class;
         } catch (Exception e) {
             // do nothing just return default

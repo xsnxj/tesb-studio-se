@@ -33,6 +33,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryTypeProcessor;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.utils.XmiResourceManager;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -43,6 +44,7 @@ import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
+import org.talend.repository.services.Messages;
 
 /**
  * DOC hwang class global comment. Detailled comment
@@ -157,6 +159,13 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
                             ENodeType.REPOSITORY_ELEMENT);
                     operationNode.setProperties(EProperties.LABEL, operation.getLabel());
                     operationNode.setProperties(EProperties.CONTENT_TYPE, ERepositoryObjectType.SERVICESOPERATION);
+                    if(!operation.isInBinding()){
+                    	operationRepositoryObject.setInformationStatus(ERepositoryStatus.ERROR);
+                    	operationRepositoryObject.setDescription(Messages.LocalWSDLEditor_refreshBindingMessage);
+                    }else{
+                    	operationRepositoryObject.setInformationStatus(null);
+                    	operationRepositoryObject.setDescription(null);
+                    }
                     portNode.getChildren().add(operationNode);
                 }
             }

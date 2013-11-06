@@ -14,18 +14,13 @@ package org.talend.repository.services.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -172,61 +167,10 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static boolean needRefreshBinding(Definition definition) {
-        Set<QName> portTypes = new HashSet<QName>();
-        for (Object obj : definition.getAllBindings().values()) {
-            Binding binding = (Binding) obj;
-            PortType portType = binding.getPortType();
-            if (null == portType || portType.isUndefined()) {
-                // show warning if Port missing Binding or Binding missing PortType
-                return true;
-            }
-            portTypes.add(portType.getQName());
-            Set<String> operations = new HashSet<String>();
-            List<BindingOperation> bindingOperations = binding.getBindingOperations();
-            for (BindingOperation bindingOperation : bindingOperations) {
-                Operation operation = bindingOperation.getOperation();
-                if (operation.isUndefined()) {
-                    // show warning if operation was deleted
-                    return true;
-                }
-                if (((operation.getInput() != null) != (bindingOperation.getBindingInput() != null))
-                    || ((operation.getOutput() != null) != (bindingOperation.getBindingOutput() != null))
-                    || ((operation.getFaults().isEmpty()) != (bindingOperation.getBindingFaults().isEmpty()))) {
-                    // show warning if messages are differ
-                    return true;
-                }
-                String name = bindingOperation.getOperation().getName();
-                operations.add(name);
-            }
-            List<Operation> portTypeOperations = portType.getOperations();
-            for (Operation operation : portTypeOperations) {
-                if (operations.add(operation.getName())) {
-                    // show warning if operation was added
-                    return true;
-                }
-            }
-        }
-
-        for (Object obj : definition.getAllPortTypes().values()) {
-            PortType portType = (PortType) obj;
-            if (portTypes.add(portType.getQName())) {
-                // show warning if no Binding for PortType
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void saveModel() throws CoreException {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 
         Definition definition = WSDLUtils.getDefinition(serviceItem);
-        if (needRefreshBinding(definition)) {
-            MessageDialog.openWarning(getSite().getShell(), Messages.LocalWSDLEditor_refreshBindingTitle,
-                    Messages.LocalWSDLEditor_refreshBindingMessage);
-        }
 
         // changed for TDI-18005
         Map<String, String> portNameIdMap = new HashMap<String, String>();
@@ -327,6 +271,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                 if (!hasAssignedjob) {
                     serviceOperation.setLabel(operation.getName());
                 }
+                serviceOperation.setInBinding(WSDLUtils.isOperationInBinding(definition, portName, operation.getName()));
                 port.getServiceOperation().add(serviceOperation);
             }
             ((ServiceConnection) serviceItem.getConnection()).getServicePort().add(port);
