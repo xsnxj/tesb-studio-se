@@ -26,15 +26,7 @@ imports="
 
 	String useLogEIP = ElementParameterParser.getValue(node, "__USE_LOGEIP__");
 	if("true".equals(useLogEIP)){
-		boolean customLoggingCategory = "true".equals(ElementParameterParser.getValue(node, "__CUSTOM_LOGGING_CATEGORY__"));
-		String logName;
-		if(customLoggingCategory) {
-			logName = ElementParameterParser.getValue(node, "__LOGGING_CATEGORY__");
-		}else {
-			logName = "\"+" + codeGenArgument.getCurrentProjectName().toLowerCase()
-				+ "." + node.getProcess().getName().toLowerCase() + "." + cid + "+\"";
-		}
-
+		String logName = ElementParameterParser.getValue(node, "__LOGGING_CATEGORY__");
 		String level = ElementParameterParser.getValue(node, "__LEVEL_TYPE__");
 		String message = ElementParameterParser.getValue(node, "__MESSAGE__");
 %>
