@@ -309,6 +309,15 @@
                 name="AddPropagateHeaderTocTalendJobMigrationTask"
                 version="5.3.0">
           </projecttask>
+          <projecttask
+                   beforeLogon="false"
+                   breaks="5.2.0"
+                   class="org.talend.camel.designer.migration.CLogLoggingCategoryMigrationTask"
+                   description="CLogLoggingCategoryMigrationTask"
+                   id="org.talend.camel.designer.CLogLoggingCategoryMigrationTask"
+                   name="cLogLoggingCategoryMigrationTask"
+                   version="5.4.1">
+          </projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">
