@@ -97,6 +97,8 @@ public class Messages extends NLS {
 	public static String ESBService_DisconnectWarningTitle;
 	public static String ESBService_DisconnectWarningMsg;
 	
+	public static String RESTRequestReconnectionValidation_WarningMsg;
+	
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

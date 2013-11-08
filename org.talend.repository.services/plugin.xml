@@ -272,5 +272,11 @@
        </importItemsHandler>
     </importItemsProvider>
  </extension>
+ <extension
+       point="org.talend.designer.core.connection_validator">
+    <validator
+          class="org.talend.repository.services.ui.validate.RESTRequestReconnectionValidation">
+    </validator>
+ </extension>
 
 </plugin>
