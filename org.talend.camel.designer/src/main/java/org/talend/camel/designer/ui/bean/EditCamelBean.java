@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.camel.designer.ui.bean;
 
+import java.util.HashSet;
 import java.util.Properties;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +28,7 @@ import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.CorePlugin;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
@@ -56,6 +58,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.BEAN_ICON));
     }
 
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         super.init(viewer, selection);
         boolean canWork = !selection.isEmpty() && selection.size() == 1;
@@ -81,6 +84,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
      * 
      * @see org.eclipse.jface.action.Action#run()
      */
+    @Override
     protected void doRun() {
         if (repositoryNode == null) {
             repositoryNode = (RepositoryNode) ((IStructuredSelection) getSelection()).getFirstElement();
@@ -89,6 +93,8 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         try {
             openBeanEditor(beanItem, false);
             refresh(repositoryNode);
+            CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
+            CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<String>(), null);
         } catch (PartInitException e) {
             MessageBoxExceptionHandler.process(e);
         } catch (SystemException e) {
