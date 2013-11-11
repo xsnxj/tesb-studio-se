@@ -90,9 +90,10 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 
+    @Override
     public IRepositoryNode getProcessNode() {
-        ERepositoryObjectType repositoryNodeType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
-                ERepositoryObjectType.class, CamelRepositoryNodeType.ROUTES);
+        ERepositoryObjectType repositoryNodeType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
+                CamelRepositoryNodeType.ROUTES);
         IRepositoryNode repositoryNode = ProjectRepositoryNode.getInstance().getRootRepositoryNode(repositoryNodeType);
 
         return repositoryNode;
@@ -119,7 +120,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
             ItemCacheManager.clearCache();
 
             IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
-            IPath path = service.getRepositoryPath((RepositoryNode) node);
+            IPath path = service.getRepositoryPath(node);
             if (RepositoryConstants.isSystemFolder(path.toString())) {
                 // Not allowed to create in system folder.
                 return;
@@ -161,6 +162,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
      * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
      * org.eclipse.jface.viewers.IStructuredSelection)
      */
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = !selection.isEmpty() && selection.size() == 1;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
@@ -177,7 +179,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
                 if (nodeType != CamelRepositoryNodeType.repositoryRoutesType) {
                     canWork = false;
                 }
-                if (node.getObject() != null && node.getObject().getProperty().getItem().getState().isDeleted()) {
+                if (node.getObject() != null && node.getObject().isDeleted()) {
                     canWork = false;
                 }
                 break;
@@ -194,6 +196,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
     /*
      * only use for creating a process in the intro by url
      */
+    @Override
     public void run(IIntroSite site, Properties params) {
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         if (factory.isUserReadOnlyOnCurrentProject()) {
