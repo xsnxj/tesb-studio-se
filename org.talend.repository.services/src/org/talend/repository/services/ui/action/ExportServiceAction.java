@@ -10,7 +10,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +26,6 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
@@ -46,6 +43,7 @@ import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
+import org.talend.repository.utils.EmfModelUtils;
 import org.talend.utils.io.FilesUtils;
 
 public class ExportServiceAction implements IRunnableWithProgress {
@@ -208,25 +206,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
         }
         
         //add talend-data-mapper feature
-        boolean hastHMapComponent = false;
         for(RepositoryNode node: nodes){
         	ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
-        	ProcessType process = processItem.getProcess();
-        	EList components = process.getNode();
-        	Iterator iterator = components.iterator();
-        	while(iterator.hasNext()){
-        		Object next = iterator.next();
-        		if(next instanceof NodeType && THMAP_COMPONENT_NAME.equals(((NodeType)next).getComponentName())){
-        			hastHMapComponent = true;
-        			break;
-        		}
-        	}
-        	if(hastHMapComponent){
+        	if(null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)){
+        		features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
         		break;
         	}
-        }
-        if(hastHMapComponent){
-        	features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
         }
         
 	}
