@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +22,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
@@ -46,7 +50,9 @@ import org.talend.utils.io.FilesUtils;
 
 public class ExportServiceAction implements IRunnableWithProgress {
 
-    protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
+    private static final String THMAP_COMPONENT_NAME = "tHMap";
+
+	protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
 
     protected Map<ExportChoice, Object> exportChoiceMap;
 
@@ -150,41 +156,80 @@ public class ExportServiceAction implements IRunnableWithProgress {
         feature.setConfigName(getServiceName());
         feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
 
-        ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+
+        try {
+        	addRequiredFeatures(feature);
+        	
+        	exportJobsBundle(monitor, feature);
+        	
+        	// control bundle
+        	addControlBundle(feature);
+
+        	processFeature(feature);
+
+        	processFinalResult(destinationPath);
+        } catch (Exception e) {
+        	throw new InvocationTargetException(e);
+        } finally {
+        	clean();
+        }
+    }
+
+	private void addControlBundle(FeaturesModel feature) throws IOException,
+			CoreException {
+		final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
+		File contrilBundle = generateControlBundle(getGroupId(), artefactName);
+		feature.addBundle(new BundleModel(getGroupId(), artefactName, getServiceVersion(), contrilBundle));
+	}
+
+	private void exportJobsBundle(IProgressMonitor monitor,
+			FeaturesModel feature) throws InvocationTargetException,
+			InterruptedException {
+		String directoryName = serviceManager.getRootFolderName(tempFolder);
+		for (RepositoryNode node : nodes) {
+			JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
+					getServiceVersion());
+			JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
+					getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
+			job.run(monitor);
+			feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(manager.getDestinationPath())));
+		}
+	}
+
+	private void addRequiredFeatures(FeaturesModel features) {
+		//add correlation feature
+		ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
         String useRegistry = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_SERVICE_REGISTRY);
         if(!"true".equals(useRegistry)) {
 	        String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
 	        if("true".equals(useCorrelation)) {
-	        	feature.addFeature(new FeatureModel("tesb-policy-correlationid", FeaturesModel.ESB_FEATURE_VERSION_RANGE));
+	        	features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
 	        }
         }
-
-        try {
-            String directoryName = serviceManager.getRootFolderName(tempFolder);
-            for (RepositoryNode node : nodes) {
-                JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
-                        getServiceVersion());
-                JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
-                        getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
-                job.run(monitor);
-                feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(manager.getDestinationPath())));
-            }
-            try {
-                // control bundle
-                final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-                File contrilBundle = generateControlBundle(getGroupId(), artefactName);
-                feature.addBundle(new BundleModel(getGroupId(), artefactName, getServiceVersion(), contrilBundle));
-
-                processFeature(feature);
-
-                processFinalResult(destinationPath);
-            } catch (Exception e) {
-                throw new InvocationTargetException(e);
-            }
-        } finally {
-            clean();
+        
+        //add talend-data-mapper feature
+        boolean hastHMapComponent = false;
+        for(RepositoryNode node: nodes){
+        	ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
+        	ProcessType process = processItem.getProcess();
+        	EList components = process.getNode();
+        	Iterator iterator = components.iterator();
+        	while(iterator.hasNext()){
+        		Object next = iterator.next();
+        		if(next instanceof NodeType && THMAP_COMPONENT_NAME.equals(((NodeType)next).getComponentName())){
+        			hastHMapComponent = true;
+        			break;
+        		}
+        	}
+        	if(hastHMapComponent){
+        		break;
+        	}
         }
-    }
+        if(hastHMapComponent){
+        	features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
+        }
+        
+	}
 
     private File generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
         File temp = new File(tempFolder, "control-bundle"); //$NON-NLS-1$
