@@ -365,16 +365,23 @@ if (inputConn != null) {
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
         } catch (org.apache.cxf.binding.soap.SoapFault e_<%=cid%>) {
-            <% if (null != connFault) {
+        	
+        	String faultCode_<%=cid%> = e_<%=cid%>.getFaultCode().toString();
+        	String faultReason_<%=cid%> = e_<%=cid%>.getReason();
+        	String faultActor_<%=cid%> = e_<%=cid%>.getRole();
+        	String faultNode_<%=cid%> = e_<%=cid%>.getNode();
+        	Integer statusCode_<%=cid%> = (Integer) e_<%=cid%>.getStatusCode();
+        
+        	<% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
-                <%=connFaultName%>.faultCode = e_<%=cid%>.getFaultCode().toString();
+                <%=connFaultName%>.faultCode = faultCode_<%=cid%>;
 
-                <%=connFaultName%>.faultString = e_<%=cid%>.getReason();
-                <%=connFaultName%>.faultActor = e_<%=cid%>.getRole();
-                <%=connFaultName%>.faultNode = e_<%=cid%>.getNode();
+                <%=connFaultName%>.faultString = faultReason_<%=cid%>;
+                <%=connFaultName%>.faultActor = faultActor_<%=cid%>;
+                <%=connFaultName%>.faultNode = faultNode_<%=cid%>;
 
                 if (null != e_<%=cid%>.getDetail() && null != e_<%=cid%>.getDetail().getFirstChild()) {
                     javax.xml.transform.Source faultSource_<%=cid%> =
@@ -383,6 +390,16 @@ if (inputConn != null) {
                     <%=connFaultName%>.faultDetail.setDocument(GenericConsumer.sourceToDocument(faultSource_<%=cid%>));
                 }
             <% } else { %>
+            	StringBuffer sb = new StringBuffer();
+        		sb.append(statusCode_<%=cid%> + " ");
+        		sb.append(faultCode_<%=cid%> + " ");
+        		sb.append(faultReason_<%=cid%> + " ");
+        		sb.append(faultActor_<%=cid%> + " ");
+        		sb.append(faultNode_<%=cid%>);
+        		String errorDescription = sb.toString();
+        		errorDescription  = errorDescription.replaceAll("null", "");
+        		
+        	    System.err.println(errorDescription);
                 e_<%=cid%>.printStackTrace(System.err);
             <% } %>
         } catch (GenericFaultInfoException e_<%=cid%>) {
@@ -399,9 +416,26 @@ if (inputConn != null) {
                 System.err.println(e_<%=cid%>.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
             <% } %>
         } catch (javax.xml.ws.soap.SOAPFaultException e_<%=cid%>) {
+        		
+        		javax.xml.soap.SOAPFault soapFault_<%=cid%> = e_<%=cid%>.getFault();
+        		
+        		String faultCode_<%=cid%> = soapFault_<%=cid%>.getFaultCodeAsQName().toString();
+                String faultString_<%=cid%> = soapFault_<%=cid%>.getFaultString();
+                String faultActor_<%=cid%> = soapFault_<%=cid%>.getFaultActor();
+
+                String faultNode_<%=cid%> = null;
+                String faultRole_<%=cid%> = null;
+                
+                if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault_<%=cid%>.getNamespaceURI())) {
+                    // SOAP 1.2
+                    try {
+                        faultNode_<%=cid%> = soapFault_<%=cid%>.getFaultNode();
+                        faultRole_<%=cid%> = soapFault_<%=cid%>.getFaultRole();
+                    } catch (java.lang.UnsupportedOperationException uoe_<%=cid%>) { }
+                }
+        
             <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
-                javax.xml.soap.SOAPFault soapFault_<%=cid%> = e_<%=cid%>.getFault();
                 org.dom4j.Document faultDoc_<%=cid%> = null;
                 if (null != soapFault_<%=cid%>.getDetail() && null != soapFault_<%=cid%>.getDetail().getFirstChild()) {
                     try {
@@ -420,20 +454,13 @@ if (inputConn != null) {
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
-                <%=connFaultName%>.faultCode = soapFault_<%=cid%>.getFaultCodeAsQName().toString();
-                <%=connFaultName%>.faultString = soapFault_<%=cid%>.getFaultString();
-                <%=connFaultName%>.faultActor = soapFault_<%=cid%>.getFaultActor();
+                <%=connFaultName%>.faultCode = faultCode_<%=cid%>;
+                <%=connFaultName%>.faultString = faultString_<%=cid%>;
+                <%=connFaultName%>.faultActor = faultActor_<%=cid%>;
 
-                <%=connFaultName%>.faultNode = null;
-                <%=connFaultName%>.faultRole = null;
-                if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault_<%=cid%>.getNamespaceURI())) {
-                    // SOAP 1.2
-                    try {
-                        <%=connFaultName%>.faultNode = soapFault_<%=cid%>.getFaultNode();
-                        <%=connFaultName%>.faultRole = soapFault_<%=cid%>.getFaultRole();
-                    } catch (java.lang.UnsupportedOperationException uoe_<%=cid%>) { }
-                }
-
+                <%=connFaultName%>.faultNode = faultNode_<%=cid%>;
+                <%=connFaultName%>.faultRole = faultRole_<%=cid%>;
+                
                 routines.system.Document faultTalendDoc_<%=cid%> = null;
                 if (null != faultDoc_<%=cid%>) {
                     faultTalendDoc_<%=cid%> = new routines.system.Document();
@@ -441,7 +468,18 @@ if (inputConn != null) {
                 }
                 <%=connFaultName%>.faultDetail = faultTalendDoc_<%=cid%>;
             <% } else { %>
-                e_<%=cid%>.printStackTrace();
+            	StringBuffer sb = new StringBuffer();
+        		sb.append(faultCode_<%=cid%> + " ");
+        		sb.append(faultString_<%=cid%> + " ");
+        		sb.append(faultActor_<%=cid%> + " ");
+        		sb.append(faultRole_<%=cid%> + " ");
+        		sb.append(faultNode_<%=cid%>);
+        		
+        		String errorDescription = sb.toString();
+        		errorDescription  = errorDescription.replaceAll("null", "");
+        		
+        	    System.err.println(errorDescription);
+                e_<%=cid%>.printStackTrace(System.err);
             <% } %>
         }
     } catch (Exception e_<%=cid%>){
