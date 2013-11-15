@@ -7,6 +7,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.core.convert.IProcessConvertService;
 import org.talend.designer.core.convert.ProcessConverterType;
+import org.talend.repository.model.RepositoryNode;
 
 public class RouteProcessConvertServiceImpl implements IProcessConvertService {
 
@@ -73,6 +74,16 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
      */
     public ProcessConverterType getConverterType() {
         return ProcessConverterType.CONVERTER_FOR_ROUTE;
+    }
+
+    public Item convertFromProcess(Item item, IRepositoryViewObject repViewObject, RepositoryNode targetNode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Item convertToProcess(Item item, IRepositoryViewObject repViewObject, RepositoryNode targetNode) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
