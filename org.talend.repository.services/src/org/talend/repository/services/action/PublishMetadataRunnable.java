@@ -245,7 +245,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return paths;
     }
 
-    private void addParamsToPath(final QName portType, Operation oper, Message msg, final Set<String> paths,
+    private static void addParamsToPath(final QName portType, Operation oper, Message msg, final Set<String> paths,
             final Set<QName> alreadyCreated) throws URISyntaxException {
         if (msg != null) {
             QName parameterFromMessage = getParameterFromMessage(msg);
@@ -286,7 +286,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             populationUtil = new XSDPopulationUtil2();
             for (XmlSchema schema : schemaUtil.getSchemas()) {
                 File file = initFileContent(schema);
-                fileToSchemaMap.put(schema.getTargetNamespace(), file);
+                String ns = schema.getTargetNamespace();
+                fileToSchemaMap.put(ns != null ? ns : "", file);
                 populationUtil.addSchema(file.getPath());
             }
 

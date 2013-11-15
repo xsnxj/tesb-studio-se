@@ -22,11 +22,13 @@ public class FolderNameUtil {
 					+ operation, "The arguments can't be empty, please check");
 		}
 		StringBuilder builder = new StringBuilder(replaceAllLimited(new URI(namespace).getRawSchemeSpecificPart()));
-		while (builder.charAt(0) == '/') {
-			builder.deleteCharAt(0);
-		}
-		if (builder.charAt(builder.length() - 1) != '/') {
-			builder.append('/');
+		if (builder.length() > 0) {
+			while (builder.charAt(0) == '/') {
+				builder.deleteCharAt(0);
+			}
+			if (builder.charAt(builder.length() - 1) != '/') {
+				builder.append('/');
+			}
 		}
 		builder.append(portType).append('/').append(operation);
 		return builder.toString();
