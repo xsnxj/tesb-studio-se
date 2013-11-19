@@ -301,7 +301,7 @@ if (actAsConsumer) {
     }
 
  	private java.util.HashMap<String, Object> collectErrorDetails(Object error) {
-		java.util.Map<String, Object> errorDetailsMap = new java.util.HashMap<String, Object>();
+		java.util.HashMap<String, Object> errorDetailsMap = new java.util.HashMap<String, Object>();
 		if (error instanceof org.apache.cxf.binding.soap.SoapFault){
 		   org.apache.cxf.binding.soap.SoapFault soapFault = (org.apache.cxf.binding.soap.SoapFault) error;
 		   errorDetailsMap.put("Fault Code: ",soapFault.getFaultCode().toString());
@@ -315,6 +315,11 @@ if (actAsConsumer) {
            errorDetailsMap.put("Fault Doc", GenericConsumer.sourceToDocument(faultSource));
            }catch(Exception e){}
         }
+		}
+		if (error instanceof GenericFaultInfoException){
+			GenericFaultInfoException genericFaultException = (GenericFaultInfoException) error;
+			errorDetailsMap.put("Fault String: ", genericFaultException.getMessage());
+			errorDetailsMap.put("Fault Doc", (org.dom4j.Document) genericFaultException.getFaultInfo());
 		}
 		if (error instanceof javax.xml.ws.soap.SOAPFaultException){
 			javax.xml.ws.soap.SOAPFaultException soapFaultException = (javax.xml.ws.soap.SOAPFaultException) error;

@@ -364,7 +364,7 @@ if (inputConn != null) {
                 }
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
-        } catch (org.apache.cxf.binding.soap.SoapFault e_<%=cid%>) {
+        } catch (Exception e_<%=cid%>) {
         	java.util.HashMap<String, Object> errorDetailsMap_<%=cid%> = collectErrorDetails(e_<%=cid%>);
         	<% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
@@ -378,41 +378,11 @@ if (inputConn != null) {
      				<%=connFaultName%>.faultString = (String) errorDetailsMap_<%=cid%>.get("Fault Reason: ");
      				<%=connFaultName%>.faultDetail = new routines.system.Document();
      				<%=connFaultName%>.faultDetail.setDocument((org.dom4j.tree.DefaultDocument) errorDetailsMap_<%=cid%>.get("Fault Doc"));
+     				<%=connFaultName%>.faultString = (String) errorDetailsMap_<%=cid%>.get("Fault String: ");
          <% } else { %>
          		 printErrorDetails(errorDetailsMap_<%=cid%>);
               	 e_<%=cid%>.printStackTrace(System.err);
          <% } %>
-        } catch (GenericFaultInfoException e_<%=cid%>) {
-            <% if (null != connFault) {
-                String connFaultName = connFault.getName(); %>
-                if (<%=connFaultName%> == null) {
-                    <%=connFaultName%> = new <%=connFaultName%>Struct();
-                }
-                <%=connFaultName%>.faultString = e_<%=cid%>.getMessage();
-
-                <%=connFaultName%>.faultDetail = new routines.system.Document();
-                <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) e_<%=cid%>.getFaultInfo());
-            <% } else { %>
-                System.err.println(e_<%=cid%>.getMessage() + ": " + ((org.dom4j.Document) e_<%=cid%>.getFaultInfo()).asXML());
-            <% } %>
-        } catch (javax.xml.ws.soap.SOAPFaultException e_<%=cid%>) {
-         	java.util.HashMap<String, Object> errorDetailsMap_<%=cid%> = collectErrorDetails(e_<%=cid%>);
-        		<% if (null != connFault) {
-                String connFaultName = connFault.getName(); %>
-                if (<%=connFaultName%> == null) {
-                    <%=connFaultName%> = new <%=connFaultName%>Struct();
-                }
-               <%=connFaultName%>.faultCode = (String) errorDetailsMap_<%=cid%>.get("Fault Code: ");
-               <%=connFaultName%>.faultActor = (String) errorDetailsMap_<%=cid%>.get("Fault Actor: ");
-     				<%=connFaultName%>.faultNode = (String) errorDetailsMap_<%=cid%>.get("Fault Node: ");
-     				<%=connFaultName%>.faultRole = (String) errorDetailsMap_<%=cid%>.get("Fault Role: ");
-     				<%=connFaultName%>.faultDetail = new routines.system.Document();
-     				<%=connFaultName%>.faultDetail.setDocument((org.dom4j.tree.DefaultDocument) errorDetailsMap_<%=cid%>.get("Fault Doc"));
-			     	<%=connFaultName%>.faultString = (String) errorDetailsMap_<%=cid%>.get("Fault String: ");
-              <% } else { %>
-            	 printErrorDetails(errorDetailsMap_<%=cid%>);
-                e_<%=cid%>.printStackTrace(System.err);
-            <% } %>
         }
     } catch (Exception e_<%=cid%>){
         <% if (paramsHelper.getBoolParam("__DIE_ON_ERROR__")) { %>
