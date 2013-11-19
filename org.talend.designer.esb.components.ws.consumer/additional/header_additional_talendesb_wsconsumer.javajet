@@ -300,6 +300,71 @@ if (actAsConsumer) {
 
     }
 
+ 	private java.util.HashMap<String, Object> collectErrorDetails(Object error) {
+		java.util.Map<String, Object> errorDetailsMap = new java.util.HashMap<String, Object>();
+		if (error instanceof org.apache.cxf.binding.soap.SoapFault){
+		   org.apache.cxf.binding.soap.SoapFault soapFault = (org.apache.cxf.binding.soap.SoapFault) error;
+		   errorDetailsMap.put("Fault Code: ",soapFault.getFaultCode().toString());
+        	errorDetailsMap.put("Fault Reason: ", soapFault.getReason());
+        	errorDetailsMap.put("Fault Role: ", soapFault.getRole());
+        	errorDetailsMap.put("Fault Node: ", soapFault.getNode());
+        	if (null != soapFault.getDetail() && null != soapFault.getDetail().getFirstChild()) {
+        	try{
+           javax.xml.transform.Source faultSource =
+                        new javax.xml.transform.dom.DOMSource(soapFault.getDetail().getFirstChild());
+           errorDetailsMap.put("Fault Doc", GenericConsumer.sourceToDocument(faultSource));
+           }catch(Exception e){}
+        }
+		}
+		if (error instanceof javax.xml.ws.soap.SOAPFaultException){
+			javax.xml.ws.soap.SOAPFaultException soapFaultException = (javax.xml.ws.soap.SOAPFaultException) error;
+			javax.xml.soap.SOAPFault soapFault = soapFaultException.getFault();
+			errorDetailsMap.put("Fault Code: ", soapFault.getFaultCodeAsQName().toString());
+        	errorDetailsMap.put("Fault Actor: ", soapFault.getFaultActor());
+        	errorDetailsMap.put("Fault String: ", soapFault.getFaultString());
+         if (javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(soapFault.getNamespaceURI())) {
+               // SOAP 1.2
+               try {
+               	errorDetailsMap.put("Fault Role: ", soapFault.getFaultRole());
+        				errorDetailsMap.put("Fault Node: ", soapFault.getFaultNode());
+               } catch (java.lang.UnsupportedOperationException uoe) { }
+         }
+			org.dom4j.Document faultDoc = null;
+         if (null != soapFault.getDetail() && null != soapFault.getDetail().getFirstChild()) {
+            try {
+              	javax.xml.transform.Source faultSource =
+                      				 new javax.xml.transform.dom.DOMSource(soapFault.getDetail().getFirstChild());
+              	org.dom4j.io.DocumentResult result = new org.dom4j.io.DocumentResult();
+              	javax.xml.transform.TransformerFactory.newInstance()
+												.newTransformer().transform(faultSource, result);
+              	faultDoc = result.getDocument();
+               } catch (Exception e1) {
+                  e1.printStackTrace();
+               }
+         }
+         routines.system.Document faultTalendDoc = null;
+         if (null != faultDoc) {
+            faultTalendDoc = new routines.system.Document();
+            faultTalendDoc.setDocument(faultDoc);
+         }
+         errorDetailsMap.put("Fault Doc", faultTalendDoc);        
+		}
+		
+		return errorDetailsMap;
+	}
+	
+	private void printErrorDetails(java.util.HashMap<String, Object> errorDetailsMap){
+		java.lang.StringBuffer sb = new java.lang.StringBuffer();
+		java.util.Iterator iterator = errorDetailsMap.entrySet().iterator();
+		while (iterator.hasNext()){
+			java.util.Map.Entry entry = (java.util.Map.Entry) iterator.next();
+			if (!(entry.getKey()).equals("Fault Doc") && (java.lang.String)entry.getValue() != null && entry.getValue() instanceof java.lang.String)
+				sb.append(entry.getKey() + " "+ (java.lang.String) entry.getValue() + " ");
+		}
+      String errorDescription = sb.toString();
+      System.err.println(errorDescription);
+	}
+
 <% } // end if (actAsConsumer) %>
 
 <% if (actAsProvider || actAsConsumer) {%>
@@ -312,3 +377,6 @@ if (actAsConsumer) {
         return outputWrapped;
     }
 <% } %>
+ 
+
+
