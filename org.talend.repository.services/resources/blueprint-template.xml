@@ -52,11 +52,7 @@
             <entry key="ws-security.encryption.username" value="useReqSigCert"/>
 #end ## ($useEncryption || $useServiceRegistry)
 #end ## ($useSecuritySAML || $useServiceRegistry)
-#if ($useAuthorization || $useServiceRegistry)
-#[[
-            <entry key="tesb.pdp.address" value="$service{tesb.pdp.address}" />
-]]#
-#end ## ($useAuthorization || $useServiceRegistry)
+
             <entry key="use.service.registry" value="${useServiceRegistry}" />
         </jaxws:properties>
         <jaxws:features>
