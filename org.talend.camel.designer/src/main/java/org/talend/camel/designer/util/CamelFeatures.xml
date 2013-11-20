@@ -264,7 +264,7 @@
     <FeatureMap HotLib="activemq-all">
 		<Feature version="[5,10)">activemq</Feature>
 	</FeatureMap>
-    <FeatureMap HotLib="odt-camel">
+    <FeatureMap HotLib="tdm-camel">
 		<Feature version="[5,10)">talend-data-mapper</Feature>
 	</FeatureMap>	
 </FeatureMaps>
