@@ -238,27 +238,27 @@
 
 		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="10"
 				SHOW="true">
-			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx"</DEFAULT>
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
 				SHOW="false" REPOSITORY_VALUE="ENDPOINT">
-			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx?WSDL"</DEFAULT>
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx?WSDL"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
 				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
-			<DEFAULT>http://litwinconsulting.com/webservices/</DEFAULT>
+			<DEFAULT>http://www.webserviceX.NET</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
 				SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
-			<DEFAULT>Weather</DEFAULT>
+			<DEFAULT>GlobalWeather</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
 				SHOW="false" REPOSITORY_VALUE="PORT_NS">
-			<DEFAULT>http://litwinconsulting.com/webservices/</DEFAULT>
+			<DEFAULT>http://www.webserviceX.NE</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
 				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
-			<DEFAULT>WeatherSoap</DEFAULT>
+			<DEFAULT>GlobalWeatherSoap</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="METHOD_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
 				SHOW="false" REPOSITORY_VALUE="METHOD_NS">
@@ -266,11 +266,11 @@
 		</PARAMETER>
 		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
 				SHOW="false" REPOSITORY_VALUE="METHOD">
-			<DEFAULT>GetWeather(GetWeather):string</DEFAULT>
+			<DEFAULT>GetWeather(GetWeather):GetWeatherResponse</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SOAP_ACTION" FIELD="TEXT" REQUIRED="true" NUM_ROW="66"
 				SHOW="false" REPOSITORY_VALUE="SOAP_ACTION">
-			<DEFAULT>http://litwinconsulting.com/webservices/GetWeather</DEFAULT>
+			<DEFAULT>http://www.webserviceX.NET/GetWeather</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="COMMUNICATION_STYLE" FIELD="TEXT" REQUIRED="true" NUM_ROW="67"
 				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
