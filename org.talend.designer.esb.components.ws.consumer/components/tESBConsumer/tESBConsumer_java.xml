@@ -517,16 +517,6 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-			<IMPORT NAME="cxf-rt-frontend-jaxrs"
-					MODULE="cxf-rt-frontend-jaxrs-2.7.7.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.7.jar"
-					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="javax.ws.rs-api-2.0-m10.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
-					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
 			<!-- SAM for WS -->
 			<IMPORT NAME="sam-agent"
