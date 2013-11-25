@@ -130,6 +130,10 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     if (null == selectTables) {
                         return;
                     }
+                    // all selected
+                    if (xmlObjs.equals(selectTables)) {
+                        selectTables = Collections.emptyList();
+                    }
                 } else {
                     selectTables = Collections.emptyList();
                 }
@@ -388,7 +392,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         Property connectionProperty = null;
         XmlFileConnectionItem connectionItem = null;
 
-        if (selectItems.size() > 0) {
+        if (!selectItems.isEmpty()) {
             boolean needRewrite = false;
             for (XmlFileConnectionItem item : selectItems) {
                 connectionProperty = item.getProperty();
