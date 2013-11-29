@@ -365,24 +365,31 @@ if (inputConn != null) {
                 <%=connResponseName%>.payload = responseTalendDoc_<%=cid%>;
             <% } %>
         } catch (Exception e_<%=cid%>) {
-        	java.util.HashMap<String, Object> errorDetailsMap_<%=cid%> = collectErrorDetails(e_<%=cid%>);
-        	<% if (null != connFault) {
+            java.util.Map<String, Object> faultInfo_<%=cid%> = collectFaultInfo(e_<%=cid%>);
+            if (null == faultInfo_<%=cid%>) {
+                throw e_<%=cid%>; // non fault exception
+            }
+            <% if (null != connFault) {
                 String connFaultName = connFault.getName(); %>
                 if (<%=connFaultName%> == null) {
                     <%=connFaultName%> = new <%=connFaultName%>Struct();
                 }
-               <%=connFaultName%>.faultCode = (String) errorDetailsMap_<%=cid%>.get("Fault Code: ");
-               <%=connFaultName%>.faultActor = (String) errorDetailsMap_<%=cid%>.get("Fault Actor: ");
-     				<%=connFaultName%>.faultNode = (String) errorDetailsMap_<%=cid%>.get("Fault Node: ");
-     				<%=connFaultName%>.faultRole = (String) errorDetailsMap_<%=cid%>.get("Fault Role: ");
-     				<%=connFaultName%>.faultString = (String) errorDetailsMap_<%=cid%>.get("Fault Reason: ");
-     				<%=connFaultName%>.faultDetail = new routines.system.Document();
-     				<%=connFaultName%>.faultDetail.setDocument((org.dom4j.tree.DefaultDocument) errorDetailsMap_<%=cid%>.get("Fault Doc"));
-     				<%=connFaultName%>.faultString = (String) errorDetailsMap_<%=cid%>.get("Fault String: ");
-         <% } else { %>
-         		 printErrorDetails(errorDetailsMap_<%=cid%>);
-              	 e_<%=cid%>.printStackTrace(System.err);
-         <% } %>
+
+                <%=connFaultName%>.faultCode = (String) faultInfo_<%=cid%>.get("faultCode");
+                <%=connFaultName%>.faultString = (String) faultInfo_<%=cid%>.get("faultString");
+                <%=connFaultName%>.faultActor = (String) faultInfo_<%=cid%>.get("faultActor");
+                <%=connFaultName%>.faultNode = (String) faultInfo_<%=cid%>.get("faultNode");
+                <%=connFaultName%>.faultRole = (String) faultInfo_<%=cid%>.get("faultRole");
+
+                if (null != faultInfo_<%=cid%>.get("faultDetail")) {
+                    <%=connFaultName%>.faultDetail = new routines.system.Document();
+                    <%=connFaultName%>.faultDetail.setDocument((org.dom4j.Document) faultInfo_<%=cid%>.get("faultDetail"));
+                }
+
+            <% } else { %>
+                printFaultInfo(faultInfo_<%=cid%>);
+                e_<%=cid%>.printStackTrace(System.err);
+            <% } %>
         }
     } catch (Exception e_<%=cid%>){
         <% if (paramsHelper.getBoolParam("__DIE_ON_ERROR__")) { %>
