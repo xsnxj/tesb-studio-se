@@ -230,6 +230,22 @@
                   attributeValue="true">
             </predicate>
          </importPackage>
+         <importPackage
+               optional="true"
+               packageName="org.apache.cxf.service.model">
+            <predicate
+                  attributeName="ENABLE_REGISTRY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               optional="true"
+               packageName="org.apache.cxf.endpoint">
+            <predicate
+                  attributeName="ENABLE_REGISTRY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
