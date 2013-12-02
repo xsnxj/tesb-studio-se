@@ -56,8 +56,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     @SuppressWarnings("unchecked")
-	public void createBlueprint(File outputFile, Map<ServicePort, Map<String, String>> ports,
-			Map<String, String> additionalInfo, IFile wsdl, String studioServiceName)
+    public void createBlueprint(File outputFile, Map<ServicePort, Map<String, String>> ports,
+            Map<String, String> additionalInfo, IFile wsdl, String studioServiceName)
                     throws IOException, CoreException {
 
         // TODO: support multiport!!!
@@ -87,11 +87,11 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             URI uri = new URI(endpointAddress);
                             endpointAddress = uri.getPath();
                             if(endpointAddress==null) {
-                            	endpointAddress = uri.getRawSchemeSpecificPart();
-                            	int interrogationMark=endpointAddress.indexOf('?');
-                            	if(interrogationMark>0) {
-                            		endpointAddress=endpointAddress.substring(0, interrogationMark);
-                            	}
+                                endpointAddress = uri.getRawSchemeSpecificPart();
+                                int interrogationMark=endpointAddress.indexOf('?');
+                                if(interrogationMark>0) {
+                                    endpointAddress=endpointAddress.substring(0, interrogationMark);
+                                }
                             }
 
                             if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
@@ -132,28 +132,28 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean isStudioEEVersion = isStudioEEVersion();
 
         boolean useRegistry = isStudioEEVersion &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SERVICE_REGISTRY));
         boolean useSL =
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SL));
         boolean useSAM = !useRegistry &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_SAM));
         boolean useSecurityToken = !useRegistry &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = !useRegistry &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useAuthorization = !useRegistry &&
-        		isStudioEEVersion &&
-        		useSecuritySAML &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
+                isStudioEEVersion &&
+                useSecuritySAML &&
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.AUTHORIZATION));
         boolean useEncryption =!useRegistry &&
-        		isStudioEEVersion &&
-        		useSecuritySAML &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
+                isStudioEEVersion &&
+                useSecuritySAML &&
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
         boolean logMessages = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.LOG_MESSAGES));
         boolean wsdlSchemaValidation = isStudioEEVersion &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.WSDL_SCHEMA_VALIDATION));
         boolean useBusinessCorrelation = !useRegistry &&
-        		Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
+                Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION));
 
         endpointInfo.put("useSL", useSL); //$NON-NLS-1$
         endpointInfo.put("useSAM", useSAM); //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         boolean useSecurityToken = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_BASIC));
         boolean useSecuritySAML = Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.SECURITY_SAML));
         boolean useEncryption = useSecuritySAML
-        		&& Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
+                && Boolean.valueOf(additionalInfo.get(ServiceMetadataDialog.ENCRYPTION));
 
         Manifest manifest = new Manifest();
         Attributes a = manifest.getMainAttributes();
@@ -214,7 +214,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
                         + (useSecurityToken || useRegistry ? ",org.apache.ws.security.validate" : "") //$NON-NLS-1$
                         + (useSecuritySAML || useRegistry ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
-                        + (useEncryption || useRegistry ? ",org.apache.ws.security.components.crypto" : "") //$NON-NLS-1$
+                        + (useEncryption || useRegistry ? ",org.apache.cxf.xkms.crypto" : "") //$NON-NLS-1$
         );
         return manifest;
     }
