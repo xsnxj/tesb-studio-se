@@ -230,6 +230,20 @@
                   attributeValue="true">
             </predicate>
          </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.service.model">
+            <predicate
+                  attributeName="ENABLE_REGISTRY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+         <importPackage
+               packageName="org.apache.cxf.endpoint">
+            <predicate
+                  attributeName="ENABLE_REGISTRY"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
@@ -567,12 +581,6 @@
       <requireBundle
             bundleName="org.apache.camel.camel-core">
       </requireBundle>
-      <component
-            componentName="componentName">
-         <requireBundle
-               bundleName="bundleName">
-         </requireBundle>
-      </component>
    </extension>
    <extension
          point="org.talend.core.runtime.service">
