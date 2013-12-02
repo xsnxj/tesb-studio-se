@@ -6,7 +6,8 @@
 #end ## ($useSAM)
 
 #if ($useEncryption || $useServiceRegistry)
-    <reference id="cryptoProvider" interface="org.apache.ws.security.components.crypto.Crypto" filter="(type=service-crypto)" />
+    <reference id="xkmsCryptoProviderFactory" interface="org.apache.cxf.xkms.crypto.CryptoProviderFactory" />
+    <bean id="cryptoProvider" factory-ref="xkmsCryptoProviderFactory" factory-method="create" />
 #end ## ($useEncryption || $useServiceRegistry)
 
 #if ($useSecuritySAML || $useServiceRegistry)
