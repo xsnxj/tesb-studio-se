@@ -62,17 +62,6 @@ public final class CamelFeatureUtil {
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
 	private static final String CAMEL_VERSION_RANGE = "[2,5)";
-	private static final String SPRING_VERSION_RANGE = "[3,5)";
-
-	@SuppressWarnings("serial")
-	private static final Collection<FeatureModel> DEFAULT_FEATURES = new ArrayList<FeatureModel>() {{
-		add(new FeatureModel("camel", CAMEL_VERSION_RANGE));
-		add(new FeatureModel("camel-core", CAMEL_VERSION_RANGE));
-		add(new FeatureModel("camel-blueprint", CAMEL_VERSION_RANGE));
-		add(new FeatureModel("spring", SPRING_VERSION_RANGE));
-		add(new FeatureModel("spring-tx", SPRING_VERSION_RANGE));
-		add(new FeatureModel("camel-spring", CAMEL_VERSION_RANGE));
-	}};
 
 	private static final FeatureModel FEATURE_CAMEL_GROOVY = new FeatureModel("camel-groovy", CAMEL_VERSION_RANGE);
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript", CAMEL_VERSION_RANGE);
@@ -227,8 +216,7 @@ public final class CamelFeatureUtil {
 	private static Collection<FeatureModel> getFeaturesOfRoute(
 			Collection<String> neededLibraries, ProcessType processType) {
 
-		Collection<FeatureModel> features = new HashSet<FeatureModel>(DEFAULT_FEATURES);
-
+		Collection<FeatureModel> features = new HashSet<FeatureModel>();
 		for (String lib : neededLibraries) {
 			Collection<FeatureModel> featureModel = computeFeature(lib);
 			if (featureModel != null) {

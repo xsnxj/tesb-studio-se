@@ -30,8 +30,6 @@ public class FeaturesModel extends BaseModel {
 	
 	public static final String TALEND_DATA_MAPPER_FEATURE_NAME = "talend-data-mapper";
 
-	private static final FeatureModel ESB_JOB_CONTROLLER_FEATURE = new FeatureModel("talend-job-controller", ESB_FEATURE_VERSION_RANGE);
-
 	private final String name;
 
 	private String configName;
@@ -46,10 +44,8 @@ public class FeaturesModel extends BaseModel {
 	public FeaturesModel(String groupId, String namePrefix, String version) {
 		super(groupId, namePrefix + NAME_SUFFIX, version);
 		name = namePrefix;
-        // <feature version='[5,6)'>talend-job-controller</feature>
-		addFeature(ESB_JOB_CONTROLLER_FEATURE);
 	}
-	
+
 	public void setConfigName(String configName) {
 		this.configName = configName;
 	}
