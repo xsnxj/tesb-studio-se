@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FeatureMaps CamelVersion="2.10.4">
+<FeatureMaps CamelVersion="2.10.7">
 	<FeatureMap HotLib="camel-amqp-alldep-$version$.jar">
 		<Feature version="[2,5)">camel-amqp</Feature>
 	</FeatureMap>
