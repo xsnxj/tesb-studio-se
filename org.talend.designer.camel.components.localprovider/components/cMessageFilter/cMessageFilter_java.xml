@@ -77,9 +77,9 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.10.4.jar"
+			<IMPORT NAME="talend-camel-groovy" MODULE="camel-groovy-alldep-2.10.7.jar"
 							REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
-			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.10.4.jar"
+			<IMPORT NAME="talend-camel-script" MODULE="camel-script-alldep-2.10.7.jar"
 							REQUIRED_IF=" LANGUAGES == 'JAVASCRIPT'" />
 		</IMPORTS>
 	</CODEGENERATION>
