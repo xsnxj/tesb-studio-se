@@ -58,7 +58,6 @@ import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
 
-import com.sun.corba.se.spi.orb.StringPair;
 
 /**
  * @author Xiaopeng Li
@@ -316,13 +315,14 @@ public class RouteComponentController extends AbstractElementPropertySectionCont
             return false;
         }
         for (Object itemValue : listItemsValue) {
-            if (itemValue instanceof StringPair) {
-                StringPair pair = (StringPair) itemValue;
-                if (pair.getFirst().equals(n.getComponent().getName())) {
-                    if (pair.getSecond() == null) {
+			if (itemValue instanceof String[] && ((String[]) itemValue).length == 2) {
+				String componentName = ((String[]) itemValue)[0];
+				String attributeFilterExpression = ((String[]) itemValue)[1];
+				if (componentName != null && componentName.equals(n.getComponent().getName())) {
+					if (attributeFilterExpression == null) {
                         return true;
                     }
-                    if (Expression.evaluate(pair.getSecond(), n.getElementParameters())) {
+					if (Expression.evaluate(attributeFilterExpression, n.getElementParameters())) {
                         return true;
                     }
                 }
