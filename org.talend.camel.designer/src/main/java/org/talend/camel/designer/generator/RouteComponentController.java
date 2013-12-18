@@ -58,8 +58,6 @@ import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
 
-import com.sun.corba.se.spi.orb.StringPair;
-
 /**
  * @author Xiaopeng Li
  * 
