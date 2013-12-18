@@ -249,13 +249,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="${tesb-wsdl4j}"
+					MODULE="wsdl4j-1.6.3.jar"
 					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-impl"
-					MODULE="${tesb-jaxb-impl}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
@@ -263,11 +258,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-			<IMPORT NAME="geronimo-javamail_1.4_spec"
-					MODULE="${tesb-geronimo-javamail_1.4_spec}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-geronimo-javamail_1.4_spec}"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="geronimo-java_1.4_spec"
+                    MODULE="mail.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+                    BundleID=""
+                    REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
@@ -289,6 +284,7 @@
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
+					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-xml"
 					MODULE="cxf-rt-bindings-xml-2.7.7.jar"
@@ -343,22 +339,18 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="commons-logging"
-					MODULE="${tesb-commons-logging}"
+					MODULE="commons-logging-1.1.1.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.2.4.RELEASE.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
-			<IMPORT NAME="spring-asm"
-					MODULE="${tesb-spring-asm}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-asm}"
-					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
-			<!-- SL for RS -->
+
+			<!-- SL for RS (or SAML Token) -->
 			<IMPORT NAME="locator"
 					MODULE="locator-5.3.2-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.2-SNAPSHOT.jar"
@@ -370,10 +362,10 @@
 					BundleID="org.apache.hadoop.zookeeper"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"
-					MODULE="${tesb-log4j}"
+					MODULE="log4j-1.2.17.jar"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-features-clustering"
 					MODULE="cxf-rt-features-clustering-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
@@ -389,56 +381,66 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+
 			<IMPORT NAME="cxf-rt-ws-security"
 					MODULE="cxf-rt-ws-security-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.7.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-bindings-soap"
 					MODULE="cxf-rt-bindings-soap-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.7.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-databinding-jaxb"
 					MODULE="cxf-rt-databinding-jaxb-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.7.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="ehcache-core"
 					MODULE="ehcache-core-2.5.1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="wss4j"
 					MODULE="wss4j-1.6.12.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="xmlsec"
 					MODULE="xmlsec-1.5.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.5.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="opensaml"
 					MODULE="opensaml-2.5.1-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/opensaml-2.5.1-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="openws"
 					MODULE="openws-1.4.2-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/openws-1.4.2-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="xmltooling"
 					MODULE="xmltooling-1.3.2-1.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmltooling-1.3.2-1.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="joda-time"
 					MODULE="joda-time-1.6.2.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/joda-time-1.6.2.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+
+
+			<!-- SAML Token for RS -->
+			<IMPORT NAME="cxf-rt-rs-security-xml"
+					MODULE="cxf-rt-rs-security-xml-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-security-xml-2.7.7.jar"
+					BundleID=""
+					REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
+
 
 			<!-- SAM for RS -->
 			<IMPORT NAME="sam-agent"
@@ -452,7 +454,7 @@
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
-					MODULE="${tesb-commons-lang}"
+					MODULE="commons-lang-2.6.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
@@ -462,7 +464,7 @@
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="xml-resolver"
-					MODULE="${tesb-xml-resolver}"
+					MODULE="xml-resolver-1.2.jar"
 					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
