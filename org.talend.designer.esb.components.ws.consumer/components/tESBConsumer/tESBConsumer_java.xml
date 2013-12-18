@@ -287,13 +287,8 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="${tesb-wsdl4j}"
+					MODULE="wsdl4j-1.6.3.jar"
 					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
-					BundleID=""
-					REQUIRED="true" />
-			<IMPORT NAME="jaxb-impl"
-					MODULE="${tesb-jaxb-impl}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
@@ -301,11 +296,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-			<IMPORT NAME="geronimo-javamail_1.4_spec"
-					MODULE="${tesb-geronimo-javamail_1.4_spec}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-geronimo-javamail_1.4_spec}"
-					BundleID=""
-					REQUIRED="true" />
+            <IMPORT NAME="geronimo-java_1.4_spec"
+                    MODULE="mail.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
@@ -324,7 +319,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xml-resolver"
-					MODULE="${tesb-xml-resolver}"
+					MODULE="xml-resolver-1.2.jar"
 					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
 					BundleID=""
 					REQUIRED="true" />
@@ -404,7 +399,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-logging"
-					MODULE="${tesb-commons-logging}"
+					MODULE="commons-logging-1.1.1.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
 					REQUIRED="true" />
@@ -446,18 +441,13 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="commons-logging"
-					MODULE="${tesb-commons-logging}"
+					MODULE="commons-logging-1.1.1.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-expression"
 					MODULE="spring-expression-3.2.4.RELEASE.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
-					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
-			<IMPORT NAME="spring-asm"
-					MODULE="${tesb-spring-asm}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-asm}"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
@@ -473,7 +463,7 @@
 					BundleID="org.apache.hadoop.zookeeper"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"
-					MODULE="${tesb-log4j}"
+					MODULE="log4j-1.2.17.jar"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
@@ -481,16 +471,6 @@
 					MODULE="cxf-rt-features-clustering-2.7.7.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
 					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-			<IMPORT NAME="cxf-rt-frontend-jaxrs"
-					MODULE="cxf-rt-frontend-jaxrs-2.7.7.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.7.jar"
-					BundleID=""
-					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="javax.ws.rs-api-2.0-m10.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
-					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
 			<!-- SAM for WS -->
@@ -505,7 +485,7 @@
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
-					MODULE="${tesb-commons-lang}"
+					MODULE="commons-lang-2.6.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
@@ -516,7 +496,6 @@
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-transports-local"
