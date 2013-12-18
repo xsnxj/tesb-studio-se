@@ -341,20 +341,21 @@ public class RouteComponentController extends
 			return false;
 		}
 		for (Object itemValue : listItemsValue) {
-			if(itemValue instanceof StringPair) {
-				StringPair pair=(StringPair) itemValue;
-				if(pair.getFirst().equals(n.getComponent().getName())){
-					if(pair.getSecond()==null) {
-						return true;
-					}
-					if(Expression.evaluate(pair.getSecond(), n.getElementParameters())){
-						return true;
-					}
-				}
-			}else {
-					return n.getComponent().getName().equals(String.valueOf(itemValue));
-			}
-		}
+			if (itemValue instanceof String[] && ((String[]) itemValue).length == 2) {
+				String componentName = ((String[]) itemValue)[0];
+				String attributeFilterExpression = ((String[]) itemValue)[1];
+				if (componentName != null && componentName.equals(n.getComponent().getName())) {
+					if (attributeFilterExpression == null) {
+                        return true;
+                    }
+					if (Expression.evaluate(attributeFilterExpression, n.getElementParameters())) {
+                        return true;
+                    }
+                }
+            } else {
+                return n.getComponent().getName().equals(String.valueOf(itemValue));
+            }
+        }
 		return false;
 	}
 
