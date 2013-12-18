@@ -35,13 +35,13 @@ public class WSDLHelper {
 	private WSDLHelper() {
 	}
 
-	public static Definition load(String wsdlLocation) throws InvocationTargetException, WSDLException {
+	public static Definition load(String wsdlLocation, String filenamePrefix) throws InvocationTargetException, WSDLException {
         WSDLFactory wsdlFactory = WSDLFactory.newInstance();
         WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
 
         newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
         newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-        return newWSDLReader.readWSDL(new InMemoryWSDLLocator(new WSDLLoader().load(wsdlLocation, "wsdl%d.wsdl")));
+        return newWSDLReader.readWSDL(new InMemoryWSDLLocator(new WSDLLoader().load(wsdlLocation, filenamePrefix + "%d.wsdl")));
 	}
 
 	private static class InMemoryWSDLLocator implements WSDLLocator {

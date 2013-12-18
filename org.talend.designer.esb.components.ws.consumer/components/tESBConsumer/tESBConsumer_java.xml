@@ -35,49 +35,59 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-		<!--
-		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1" REPOSITORY_VALUE="WEBSERVICE" />
+		<!-- <PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1" 
+			REPOSITORY_VALUE="WEBSERVICE" /> <PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" 
+			FIELD="CHECK" SHOW="false" REQUIRED="true" NUM_ROW="1" /> -->
 
-		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true" NUM_ROW="1" />
-		-->
+		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL"
+			NUM_ROW="10" />
 
-		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
-
-		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
+		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="20">
 			<DEFAULT>30</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
+		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="20">
 			<DEFAULT>60</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
+		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true"
+			NUM_ROW="28">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
-				<!--COLUMN NAME="headers" TYPE="id_Document" READONLY="true" /-->
+				<!--COLUMN NAME="headers" TYPE="id_Document" READONLY="true" / -->
 			</TABLE>
 		</PARAMETER>
-		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
+		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE"
+			NUM_ROW="29" CONTEXT="RESPONSE">
 			<TABLE READONLY="true">
 				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
-		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30" CONTEXT="FAULT">
+		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30"
+			CONTEXT="FAULT">
 			<TABLE READONLY="true">
-				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024" READONLY="true" />
-				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true" />
-				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024" READONLY="true" />
-				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024" READONLY="true" />
-				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024"
+					READONLY="true" />
+				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024"
+					READONLY="true" />
+				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024"
+					READONLY="true" />
+				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024"
+					READONLY="true" />
+				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024"
+					READONLY="true" />
 				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true" />
 			</TABLE>
 		</PARAMETER>
 
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="40"
-				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')" >
+			GROUP="ESB" DYNAMIC_SETTINGS="true"
+			SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SERVICE_LOCATOR_STRATEGY" FIELD="CLOSED_LIST" NUM_ROW="40"
-				GROUP="ESB" SHOW="false">
+		<PARAMETER NAME="SERVICE_LOCATOR_STRATEGY" FIELD="CLOSED_LIST"
+			NUM_ROW="40" GROUP="ESB" SHOW="false">
 			<ITEMS DEFAULT="SERVICE_LOCATOR_STRATEGY_DEFAULT">
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_DEFAULT" VALUE="Default" />
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_EVEN_DISTRIBUTION" VALUE="EvenDistribution" />
@@ -85,22 +95,24 @@
 			</ITEMS>
 		</PARAMETER>
 
-		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="41"
-				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true">
+		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK"
+			NUM_ROW="41" GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW="true">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="43"
-				GROUP="ESB" SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
+		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="43" GROUP="ESB" SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="45"
-				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="45" GROUP="ESB"
+			SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="45"
-				GROUP="ESB" SHOW_IF="(NEED_AUTH == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+			GROUP="ESB"
+			SHOW_IF="(NEED_AUTH == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
 			<ITEMS DEFAULT="SECURITY_SAML">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
 				<ITEM NAME="SECURITY_DIGEST" VALUE="DIGEST" />
@@ -108,64 +120,70 @@
 				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
 			</ITEMS>
 		</PARAMETER>
-		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="44"  SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
+		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL"
+			NUM_ROW="44" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
 			<DEFAULT>Authentication:</DEFAULT>
 		</PARAMETER>
 
 
-		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
-				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME" SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="45" GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME"
+			SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="45"
-				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD" SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="45" GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD"
+			SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))) OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" NUM_ROW="46"
-				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+			GROUP="ESB"
+			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="46"  SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
+		<PARAMETER NAME="AUTH_LABEL" GROUP="ESB" FIELD="LABEL"
+			NUM_ROW="46" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
 			<DEFAULT>Authorization:</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="47"
-				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')) OR (USE_SR == 'true'))">
+		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="47" GROUP="ESB"
+			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')) OR (USE_SR == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="56"
-				REPOSITORY_VALUE="USE_PROXY">
+		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="56" REPOSITORY_VALUE="USE_PROXY">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_HOST" FIELD="TEXT" NUM_ROW="57"
-				 REPOSITORY_VALUE="PROXY_HOST" SHOW_IF="USE_PROXY == 'true'">
+			REPOSITORY_VALUE="PROXY_HOST" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>"61.163.92.4"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_PORT" FIELD="TEXT" NUM_ROW="58"
-				REPOSITORY_VALUE="PROXY_PORT" SHOW_IF="USE_PROXY == 'true'">
+			REPOSITORY_VALUE="PROXY_PORT" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>8080</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_USERNAME" FIELD="TEXT" NUM_ROW="59"
-				REPOSITORY_VALUE="PROXY_USERNAME" SHOW_IF="USE_PROXY == 'true'">
+			REPOSITORY_VALUE="PROXY_USERNAME" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_PASSWORD" FIELD="TEXT" NUM_ROW="60"
-				REPOSITORY_VALUE="PROXY_PASSWORD" SHOW_IF="USE_PROXY == 'true'">
+			REPOSITORY_VALUE="PROXY_PASSWORD" SHOW_IF="USE_PROXY == 'true'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
+		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK"
+			REQUIRED="true" NUM_ROW="61">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SSL_TRUSTSERVER_TRUSTSTORE" FIELD="TEXT" NUM_ROW="61"
-				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+		<PARAMETER NAME="SSL_TRUSTSERVER_TRUSTSTORE" FIELD="TEXT"
+			NUM_ROW="61" SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
 			<DEFAULT>"C:/clientTrustStore.trustStore"</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SSL_TRUSTSERVER_PASSWORD" FIELD="TEXT" NUM_ROW="61"
-				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+		<PARAMETER NAME="SSL_TRUSTSERVER_PASSWORD" FIELD="TEXT"
+			NUM_ROW="61" SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 
@@ -173,44 +191,44 @@
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="10"
-				SHOW="true">
-			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx"</DEFAULT>
+		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="10" SHOW="true">
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx"</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
-				SHOW="false" REPOSITORY_VALUE="ENDPOINT">
-			<DEFAULT>"http://www.deeptraining.com/webservices/weather.asmx?WSDL"</DEFAULT>
+		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="62" SHOW="false" REPOSITORY_VALUE="ENDPOINT">
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx?WSDL"</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
-				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
-			<DEFAULT>http://litwinconsulting.com/webservices/</DEFAULT>
+		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="63" SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
+			<DEFAULT>http://www.webserviceX.NET</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
-				SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
-			<DEFAULT>Weather</DEFAULT>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="63" SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
+			<DEFAULT>GlobalWeather</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
-				SHOW="false" REPOSITORY_VALUE="PORT_NS">
-			<DEFAULT>http://litwinconsulting.com/webservices/</DEFAULT>
+		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="64" SHOW="false" REPOSITORY_VALUE="PORT_NS">
+			<DEFAULT>http://www.webserviceX.NET</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
-				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
-			<DEFAULT>WeatherSoap</DEFAULT>
+		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="64" SHOW="false" REPOSITORY_VALUE="PORT_NAME">
+			<DEFAULT>GlobalWeatherSoap</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="METHOD_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
-				SHOW="false" REPOSITORY_VALUE="METHOD_NS">
+		<PARAMETER NAME="METHOD_NS" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="65" SHOW="false" REPOSITORY_VALUE="METHOD_NS">
 			<DEFAULT></DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
-				SHOW="false" REPOSITORY_VALUE="METHOD">
-			<DEFAULT>GetWeather(GetWeather):string</DEFAULT>
+		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="65" SHOW="false" REPOSITORY_VALUE="METHOD">
+			<DEFAULT>GetWeather(GetWeather):GetWeatherResponse</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="SOAP_ACTION" FIELD="TEXT" REQUIRED="true" NUM_ROW="66"
-				SHOW="false" REPOSITORY_VALUE="SOAP_ACTION">
-			<DEFAULT>http://litwinconsulting.com/webservices/GetWeather</DEFAULT>
+		<PARAMETER NAME="SOAP_ACTION" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="66" SHOW="false" REPOSITORY_VALUE="SOAP_ACTION">
+			<DEFAULT>http://www.webserviceX.NET/GetWeather</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="COMMUNICATION_STYLE" FIELD="TEXT" REQUIRED="true" NUM_ROW="67"
-				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
+		<PARAMETER NAME="COMMUNICATION_STYLE" FIELD="TEXT" REQUIRED="true"
+			NUM_ROW="67" SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
 			<DEFAULT>request-response</DEFAULT>
 		</PARAMETER>
 	</PARAMETERS>
@@ -249,13 +267,13 @@
 
 			<!-- CXF Core -->
 			<IMPORT NAME="cxf-rt-core"
-					MODULE="cxf-rt-core-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.5.jar"
+					MODULE="cxf-rt-core-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-api"
-					MODULE="cxf-api-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.5.jar"
+					MODULE="cxf-api-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="woodstox-core-asl"
@@ -269,13 +287,13 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
-					MODULE="wsdl4j-1.6.3.jar"
+					MODULE="${tesb-wsdl4j}"
 					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="jaxb-impl"
-					MODULE="jaxb-impl-2.1.13.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.1.13.jar"
+					MODULE="${tesb-jaxb-impl}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
@@ -283,11 +301,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
 					BundleID=""
 					REQUIRED="true" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="geronimo-javamail_1.4_spec"
+					MODULE="${tesb-geronimo-javamail_1.4_spec}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-geronimo-javamail_1.4_spec}"
+					BundleID=""
+					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.5.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
@@ -301,12 +319,12 @@
 
 			<!-- WS client -->
 			<IMPORT NAME="cxf-rt-frontend-jaxws"
-					MODULE="cxf-rt-frontend-jaxws-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.5.jar"
+					MODULE="cxf-rt-frontend-jaxws-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xml-resolver"
-					MODULE="xml-resolver-1.2.jar"
+					MODULE="${tesb-xml-resolver}"
 					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
 					BundleID=""
 					REQUIRED="true" />
@@ -316,38 +334,38 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-soap"
-					MODULE="cxf-rt-bindings-soap-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.5.jar"
+					MODULE="cxf-rt-bindings-soap-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-databinding-jaxb"
-					MODULE="cxf-rt-databinding-jaxb-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.5.jar"
+					MODULE="cxf-rt-databinding-jaxb-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-xml"
-					MODULE="cxf-rt-bindings-xml-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.5.jar"
+					MODULE="cxf-rt-bindings-xml-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-frontend-simple"
-					MODULE="cxf-rt-frontend-simple-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.5.jar"
+					MODULE="cxf-rt-frontend-simple-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-ws-addr"
-					MODULE="cxf-rt-ws-addr-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.5.jar"
+					MODULE="cxf-rt-ws-addr-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-transports-http"
-					MODULE="cxf-rt-transports-http-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.5.jar"
+					MODULE="cxf-rt-transports-http-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-ws-security"
-					MODULE="cxf-rt-ws-security-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.5.jar"
+					MODULE="cxf-rt-ws-security-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="ehcache-core"
@@ -356,13 +374,13 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="wss4j"
-					MODULE="wss4j-1.6.10.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.10.jar"
+					MODULE="wss4j-1.6.12.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.12.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlsec"
-					MODULE="xmlsec-1.5.4.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.4.jar"
+					MODULE="xmlsec-1.5.5.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.5.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="opensaml"
@@ -386,13 +404,13 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="${tesb-commons-logging}"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-ws-policy"
-					MODULE="cxf-rt-ws-policy-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.5.jar"
+					MODULE="cxf-rt-ws-policy-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.7.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="neethi"
@@ -403,13 +421,13 @@
 
 			<!-- ESB Features-->
 			<IMPORT NAME="spring-context"
-					MODULE="spring-context-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.0.7.RELEASE.jar"
+					MODULE="spring-context-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-aop"
-					MODULE="spring-aop-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.0.7.RELEASE.jar"
+					MODULE="spring-aop-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="aopalliance"
@@ -418,35 +436,35 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-beans"
-					MODULE="spring-beans-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.0.7.RELEASE.jar"
+					MODULE="spring-beans-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-core"
-					MODULE="spring-core-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.0.7.RELEASE.jar"
+					MODULE="spring-core-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="commons-logging"
-					MODULE="commons-logging-1.1.1.jar"
+					MODULE="${tesb-commons-logging}"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-expression"
-					MODULE="spring-expression-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.0.7.RELEASE.jar"
+					MODULE="spring-expression-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 			<IMPORT NAME="spring-asm"
-					MODULE="spring-asm-3.0.7.RELEASE.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-asm-3.0.7.RELEASE.jar"
+					MODULE="${tesb-spring-asm}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-asm}"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
 			<!-- SL for WS -->
 			<IMPORT NAME="locator"
-					MODULE="locator-5.3.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.1.jar"
+					MODULE="locator-5.3.2-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.2-SNAPSHOT.jar"
 					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
@@ -455,18 +473,18 @@
 					BundleID="org.apache.hadoop.zookeeper"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"
-					MODULE="log4j-1.2.17.jar"
+					MODULE="${tesb-log4j}"
 					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="cxf-rt-features-clustering"
-					MODULE="cxf-rt-features-clustering-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.5.jar"
+					MODULE="cxf-rt-features-clustering-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="cxf-rt-frontend-jaxrs"
-					MODULE="cxf-rt-frontend-jaxrs-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.5.jar"
+					MODULE="cxf-rt-frontend-jaxrs-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.7.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="javax.ws.rs-api"
@@ -477,23 +495,23 @@
 
 			<!-- SAM for WS -->
 			<IMPORT NAME="sam-agent"
-					MODULE="sam-agent-5.3.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.1.jar"
+					MODULE="sam-agent-5.3.2-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.3.2-SNAPSHOT.jar"
 					BundleID="sam-agent"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="sam-common"
-					MODULE="sam-common-5.3.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.1.jar"
+					MODULE="sam-common-5.3.2-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.3.2-SNAPSHOT.jar"
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
-					MODULE="commons-lang-2.6.jar"
+					MODULE="${tesb-commons-lang}"
 					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-frontend-jaxrs"
-					MODULE="cxf-rt-frontend-jaxrs-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.5.jar"
+					MODULE="cxf-rt-frontend-jaxrs-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.7.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="javax.ws.rs-api"
@@ -502,8 +520,8 @@
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-transports-local"
-					MODULE="cxf-rt-transports-local-2.7.5.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.5.jar"
+					MODULE="cxf-rt-transports-local-2.7.7.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.7.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 		</IMPORTS>

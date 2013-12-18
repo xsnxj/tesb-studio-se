@@ -18,11 +18,10 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -135,8 +134,8 @@ public class WebServiceUI extends WizardPage {
     private String currentPortName;
 
     private Definition definition;
-    
-    private boolean hasRpcOperation = false;    
+
+    private boolean hasRpcOperation = false;
 
     public WebServiceUI(WebServiceComponent webServiceComponent) {
         super("WebServiceUI"); //$NON-NLS-1$
@@ -339,44 +338,32 @@ public class WebServiceUI extends WizardPage {
      * Gets WSDL as ZLIB-compressed and Base64-encoded String.
      * Use ZipStream -> InflaterStream -> Base64Stream to read.
      * @return WSDL as String object. Or null in case errors/not possible to create object.
+     * @throws IOException 
      */
-	private String getWSDL() throws WSDLException {
+	private String getWSDL() throws WSDLException, IOException {
     	ByteArrayOutputStream wsdlOs = new ByteArrayOutputStream();
         OutputStream os = compressAndEncode(wsdlOs);
-        ZipOutputStream zipOs=new ZipOutputStream(os);
+        ZipOutputStream zipOs = new ZipOutputStream(os);
         try {
         	ZipEntry zipEntry = new ZipEntry("main.wsdl");
 			zipOs.putNextEntry(zipEntry);
             WSDLFactory.newInstance().newWSDLWriter().writeWSDL(definition, zipOs);
-            appendImportDifinitions(definition,zipOs);
-        } catch (IOException e) {
-			e.printStackTrace();
+            appendImportDifinitions(definition, zipOs);
 		} finally {
             if (null != zipOs) {
-                try {
-                	zipOs.close();
-                } catch (IOException e) {
-                    // ignore
-                }
+                zipOs.close();
             }
         }
         return new String(wsdlOs.toByteArray());
     }
-    
+
     @SuppressWarnings("unchecked")
-	private void appendImportDifinitions(Definition definition,ZipOutputStream zipOs) {
-    	Map<? , Vector<Import>> imports=definition.getImports();
-        for (Vector<Import> vector : imports.values()) {
+	private static void appendImportDifinitions(Definition definition, ZipOutputStream zipOs) throws IOException, WSDLException {
+        for (Collection<Import> vector : (Collection<Collection<Import>>)definition.getImports().values()) {
 			for (Import impt : vector) {
-				try {
-					zipOs.putNextEntry(new ZipEntry(impt.getLocationURI()));
-					WSDLFactory.newInstance().newWSDLWriter().writeWSDL(impt.getDefinition(), zipOs);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (WSDLException e) {
-					e.printStackTrace();
-				}
-				appendImportDifinitions(impt.getDefinition(),zipOs);
+				zipOs.putNextEntry(new ZipEntry(impt.getLocationURI()));
+				WSDLFactory.newInstance().newWSDLWriter().writeWSDL(impt.getDefinition(), zipOs);
+				appendImportDifinitions(impt.getDefinition(), zipOs);
 			}
 		}
     }
@@ -577,7 +564,7 @@ public class WebServiceUI extends WizardPage {
 			useSSL();
 		}
 
-        definition = WSDLHelper.load(getRealWsdlLocation());
+        definition = WSDLHelper.load(getRealWsdlLocation(), webServiceComponent.getUniqueName());
 
         hasRpcOperation = false;
 		List<Function> functionsAvailable = new ArrayList<Function>();
@@ -661,7 +648,7 @@ public class WebServiceUI extends WizardPage {
         String wsdlString;
         try {
             wsdlString = getWSDL();
-        } catch (WSDLException e) {
+        } catch (Exception e) {
             setErrorMessage("Unable to create wsdl content: " + e.getMessage());
             return false;
         }
