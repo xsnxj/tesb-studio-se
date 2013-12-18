@@ -448,10 +448,6 @@
                     MODULE="xmlschema-core-2.0.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
-            <IMPORT NAME="geronimo-javamail_1.4_spec"
-                    MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
-                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
                     MODULE="cxf-rt-frontend-jaxws-2.7.5.jar"
