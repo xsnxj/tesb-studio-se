@@ -309,9 +309,6 @@ interface ESBProviderCallbackTalendJobInner extends ESBProviderCallback {
 
 public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProviderCallbackTalendJobInner {
 
-	private final String TNS = ESBProvider_<%=cid%>.class.getAnnotation(
-			javax.xml.ws.WebServiceProvider.class).targetNamespace();
-
 	private ESBProviderCallback esbProviderCallback;
 	private java.util.Map<String, String> customProperty;
 
@@ -362,23 +359,24 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {
 
 		try {
-			javax.xml.soap.SOAPFactory soapFactory = javax.xml.soap.SOAPFactory.newInstance();
-			javax.xml.soap.SOAPFault soapFault = soapFactory.createFault(
-					faultString, new javax.xml.namespace.QName(TNS, "businessFault"));
+            org.apache.cxf.binding.soap.SoapFault soapFault = new org.apache.cxf.binding.soap.SoapFault(
+                faultString, new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
 			if (null != faultDetail) {
-				// System.out.println("business fault details: " + faultDoc.asXML());
-				// A special version of DOMWriter that does not write xmlns:foo attributes
-				org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
-					protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
-						// Do nothing
-					}
-				};
+				// wrap details
+				org.dom4j.Element rootElement = faultDetail.getRootElement();
+                org.dom4j.tree.DefaultElement newRootElement = new org.dom4j.tree.DefaultElement("details");
+                faultDetail.setRootElement(newRootElement);
+                newRootElement.add(rootElement);
+                // A special version of DOMWriter that does not write xmlns:foo attributes
+                org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
+                    protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
+                        // Do nothing
+                    }
+                };
 				org.w3c.dom.Document faultDetailDom = writer.write(faultDetail);
-				soapFault.addDetail().appendChild(
-						soapFault.getOwnerDocument().importNode(
-								faultDetailDom.getDocumentElement(), true));
+				soapFault.setDetail(faultDetailDom.getDocumentElement());
 			}
-			doSendResponse(wrapOutput(new javax.xml.ws.soap.SOAPFaultException(soapFault)));
+			doSendResponse(wrapOutput(soapFault));
 		} catch (Exception e) {
 			this.sendFault(e);
 		}
