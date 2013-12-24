@@ -41,6 +41,10 @@ imports="
 	boolean ignoreInvalidKey = "true".equals(ElementParameterParser.getValue(node, "__IGNORE_INVALID_KEY__"));
 	boolean groupExchange = "true".equals(ElementParameterParser.getValue(node, "__GROUP_EXCHANGES__"));
 	
+	if(groupExchange){
+		useAggregationStrategy = false;
+	}
+	
 	boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();

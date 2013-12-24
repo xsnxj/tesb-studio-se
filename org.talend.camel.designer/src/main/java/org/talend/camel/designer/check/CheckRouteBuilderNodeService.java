@@ -35,20 +35,49 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 		//End TESB-7698
 		
 		checkIncomingConnections(node);
-		checkErroHandler(node);
-		checkIntercept(node);
-		checkHttp(node);
+		checkSpecialComponent(node);
 		return;
+	}
+
+	private void checkIncomingConnections(Node node) {
+		//all route component can have only one incoming connection
+		List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+		if(incomingConnections.size()>1){
+			Problems.add(ProblemStatus.ERROR, (Element) node,
+					CamelDesignerMessages.getString("CheckRouteBuilderNodeService_incomingConnectionsError")); //$NON-NLS-1$
+		}
+	}
+
+	private void checkSpecialComponent(Node node) {
+		String componentName = node.getComponent().getName();
+		if("cErrorHandler".equals(componentName)){
+			checkErroHandler(node);
+		}else if("cIntercept".equals(componentName)){
+			checkIntercept(node);
+		}else if("cHttp".equals(componentName)){
+			checkHttp(node);
+		}else if("cAggregate".equals(componentName)){
+			checkAggregate(node);
+		}
+	}
+
+	private void checkAggregate(Node node) {
+		IElementParameter aggregationStrategy = node.getElementParameter("AGGREGATION_STRATEGY");
+		IElementParameter groupExchanges = node.getElementParameter("GROUP_EXCHANGES");
+		if("true".equals(groupExchanges.getValue().toString())){
+			return;
+		}
+		Object value = aggregationStrategy.getValue();
+		if(value == null || "".equals(value.toString().trim())){
+			Problems.add(ProblemStatus.ERROR, (Element) node,
+					CamelDesignerMessages.getString("CheckRouteBuilderNodeService_aggregationStrategyError", aggregationStrategy.getDisplayName())); //$NON-NLS-1$
+		}
 	}
 
 	private void checkHttp(Node node) {
 		/*
 		 * for cHttp, only SERVER case can be worked as a start node
 		 */
-		String componentName = node.getComponent().getName();
-		if(!"cHttp".equals(componentName)){
-			return;
-		}
 		List<? extends IConnection> incomingConnections = node.getIncomingConnections();
 		IElementParameter elementParameter = node.getElementParameter("CLIENT");
 		if("true".equals(elementParameter.getValue().toString())&& incomingConnections.size()<= 0){
@@ -62,10 +91,6 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 		 * for intercept, the ROUTE and ROUTE_WHEN connections
 		 * can't be exist at the same time.
 		 */
-		String componentName = node.getComponent().getName();
-		if(!"cIntercept".equals(componentName)){
-			return;
-		}
 		List<? extends IConnection> outgoingConnections = node.getOutgoingConnections();
 		if(outgoingConnections!=null && outgoingConnections.size()>1){
 			Problems.add(ProblemStatus.ERROR, (Element) node,
@@ -73,20 +98,7 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 		}
 	}
 
-	private void checkIncomingConnections(Node node) {
-		//all route component can have only one incoming connection
-		List<? extends IConnection> incomingConnections = node.getIncomingConnections();
-		if(incomingConnections.size()>1){
-			Problems.add(ProblemStatus.ERROR, (Element) node,
-					CamelDesignerMessages.getString("CheckRouteBuilderNodeService_incomingConnectionsError")); //$NON-NLS-1$
-		}
-	}
-
 	private void checkErroHandler(Node node) {
-		String componentName = node.getComponent().getName();
-		if (!componentName.equals("cErrorHandler")) { //$NON-NLS-1$
-			return;
-		}
 		List<? extends IConnection> outgoingConnections = node
 				.getOutgoingConnections();
 		// if no output connection, then it's ok
@@ -98,7 +110,7 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 				.getIncomingConnections();
 		if (incomingConnections == null || incomingConnections.size() == 0) {
 			Problems.add(ProblemStatus.ERROR, (Element) node,
-					MessageFormat.format(CamelDesignerMessages.getString("CheckRouteBuilderNodeService_errorHandlerCantBeStart"),componentName)); //$NON-NLS-1$
+					MessageFormat.format(CamelDesignerMessages.getString("CheckRouteBuilderNodeService_errorHandlerCantBeStart"),node.getComponent().getName())); //$NON-NLS-1$
 		}
 	}
 
