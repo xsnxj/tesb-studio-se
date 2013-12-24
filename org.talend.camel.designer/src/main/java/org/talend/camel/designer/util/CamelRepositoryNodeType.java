@@ -12,6 +12,9 @@
 // ============================================================================
 package org.talend.camel.designer.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.talend.core.model.repository.ERepositoryObjectType;
 
 /**
@@ -33,4 +36,11 @@ public interface CamelRepositoryNodeType {
 
 	ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
 			.valueOf(ERepositoryObjectType.class, ROUTE_RESOURCES);
+	
+	//repository type and folder name Map
+	Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>(){{
+		put(repositoryBeansType, "Bean");
+		put(repositoryRouteResourceType, "Resource");
+		put(repositoryRoutesType, "Route");
+	}};
 }

@@ -51,14 +51,14 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         return false;
     }
 
-    public boolean isRepObjType(ERepositoryObjectType type) {
-        boolean isCamelType = false;
-        if (type == CamelRepositoryNodeType.repositoryRoutesType || type == CamelRepositoryNodeType.repositoryBeansType
-                || type == CamelRepositoryNodeType.repositoryRouteResourceType) {
-            isCamelType = true;
-        }
-        return isCamelType;
-    }
+	public boolean isRepObjType(ERepositoryObjectType type) {
+		for (ERepositoryObjectType tmp : CamelRepositoryNodeType.AllRouteRespositoryTypes.keySet()) {
+			if (type == tmp) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     @Override
     public ERepositoryObjectType getProcessType() {

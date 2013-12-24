@@ -70,6 +70,9 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 		return new CreateCamelProcess(isToolbar);
 	}
 
+	public String getDeleteFolderName(ERepositoryObjectType type){
+		return CamelRepositoryNodeType.AllRouteRespositoryTypes.get(type);
+	}
 	/*
 	 * (non-Jsdoc)
 	 * 
@@ -88,6 +91,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	public ERepositoryObjectType getBeansType() {
 		return CamelRepositoryNodeType.repositoryBeansType;
+	}
+	
+	public ERepositoryObjectType getResourcesType() {
+		return CamelRepositoryNodeType.repositoryRouteResourceType;
 	}
 
 	public ProcessType getCamelProcessType(Item item) {
@@ -113,7 +120,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 	}
 
 	public boolean isInstanceofCamel(Item item) {
-		if (item instanceof BeanItem || item instanceof CamelProcessItem) {
+		if (item instanceof BeanItem || item instanceof CamelProcessItem || item instanceof RouteResourceItem) {
 			return true;
 		}
 		return false;
@@ -121,15 +128,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
 	public ITalendSynchronizer createCamelJavaSynchronizer() {
 		return new CamelJavaRoutesSychronizer();
-	}
-
-	public boolean isCamelRepObjType(ERepositoryObjectType type) {
-		boolean isCamelType = false;
-		if (type == CamelRepositoryNodeType.repositoryRoutesType
-				|| type == CamelRepositoryNodeType.repositoryBeansType) {
-			isCamelType = true;
-		}
-		return isCamelType;
 	}
 
 	public boolean isCamelMulitPageEditor(IEditorPart editor) {
