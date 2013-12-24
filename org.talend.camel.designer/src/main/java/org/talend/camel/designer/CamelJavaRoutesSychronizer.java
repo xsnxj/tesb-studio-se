@@ -74,6 +74,14 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
         }
     }
 
+    public void syncAllBeansForLogOn() throws SystemException {
+        for (IRepositoryViewObject routine : getBeans()) {
+            BeanItem beanItem = (BeanItem) routine.getProperty().getItem();
+            // syncRoutine(routineItem, true);
+            syncBean(beanItem, true, true);
+        }
+    }
+
     /*
      * (non-Jsdoc)
      * 
