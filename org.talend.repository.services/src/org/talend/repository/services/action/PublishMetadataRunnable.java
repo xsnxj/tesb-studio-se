@@ -422,7 +422,11 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         connection.setFileContent(byteArray.getInnerContent());
 
         // don't put any XSD directly inside the xml connection but put zip file
-        connection.setXmlFilePath(zip.getName());
+        // Use xsd schema file name + zip file name as xml file path in case we need get the root schema of xml
+        // connection after.
+        String schemaFileName = schemaFile.getName();
+        schemaFileName = schemaFileName.substring(0, schemaFileName.lastIndexOf(".")); //$NON-NLS-1$
+        connection.setXmlFilePath(schemaFileName.concat("_").concat(zip.getName())); //$NON-NLS-1$
 
         try {
             String filePath = schemaFile.getPath(); // name of xsd file needed
