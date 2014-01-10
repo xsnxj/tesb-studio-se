@@ -383,8 +383,8 @@
                     REQUIRED="true" />
 
             <IMPORT NAME="locator"
-                    MODULE="locator-5.3.2-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.2-SNAPSHOT.jar"
+                    MODULE="locator-5.3.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.3.2.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="zookeeper"
                     MODULE="zookeeper-3.3.6.jar"
