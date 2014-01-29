@@ -33,7 +33,7 @@ if (actAsConsumer) {
             }
         }
 
-        public Object getFaultInfo() {
+        public org.dom4j.Document getFaultInfo() {
             return faultInfo;
         }
     }
@@ -300,13 +300,14 @@ if (actAsConsumer) {
 
     }
 
-    private java.util.Map<String, Object> collectFaultInfo(Exception error) {
+    private static java.util.Map<String, Object> collectFaultInfo(Exception error) {
         String faultString = null;
         String faultActor = null;
         String faultCode = null;
         String faultRole = null;
         String faultNode = null;
         org.dom4j.Document faultDetail = null;
+        org.w3c.dom.Element faultDomDetail = null;
 
         if (error instanceof org.apache.cxf.binding.soap.SoapFault) {
             org.apache.cxf.binding.soap.SoapFault cxfSoapFault = (org.apache.cxf.binding.soap.SoapFault) error;
@@ -315,21 +316,12 @@ if (actAsConsumer) {
             faultCode = cxfSoapFault.getFaultCode().toString();
             faultRole = cxfSoapFault.getRole();
             faultNode = cxfSoapFault.getNode();
-
-            if (null != cxfSoapFault.getDetail() && null != cxfSoapFault.getDetail().getFirstChild()) {
-                try {
-                    javax.xml.transform.Source faultSource = new javax.xml.transform.dom.DOMSource(
-                            cxfSoapFault.getDetail().getFirstChild());
-                    faultDetail = GenericConsumer.sourceToDocument(faultSource);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            faultDomDetail = cxfSoapFault.getDetail();
         } else if (error instanceof GenericFaultInfoException) {
             GenericFaultInfoException genericFault = (GenericFaultInfoException) error;
 
             faultString = genericFault.getMessage();
-            faultDetail = (org.dom4j.Document) genericFault.getFaultInfo();
+            faultDetail = genericFault.getFaultInfo();
         } else if (error instanceof javax.xml.ws.soap.SOAPFaultException) {
             javax.xml.soap.SOAPFault wsSoapFault = ((javax.xml.ws.soap.SOAPFaultException) error).getFault();
 
@@ -345,18 +337,7 @@ if (actAsConsumer) {
                 } catch (java.lang.UnsupportedOperationException uoe) { }
             }
 
-            if (null != wsSoapFault.getDetail() && null != wsSoapFault.getDetail().getFirstChild()) {
-                try {
-                    javax.xml.transform.Source faultSource = new javax.xml.transform.dom.DOMSource(
-                            wsSoapFault.getDetail().getFirstChild());
-                    org.dom4j.io.DocumentResult result = new org.dom4j.io.DocumentResult();
-                    javax.xml.transform.TransformerFactory.newInstance()
-                            .newTransformer().transform(faultSource, result);
-                    faultDetail = result.getDocument();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            faultDomDetail = wsSoapFault.getDetail();
         } else {
             return null;
         }
@@ -367,6 +348,18 @@ if (actAsConsumer) {
         faultInfo.put("faultCode", faultCode);
         faultInfo.put("faultRole", faultRole);
         faultInfo.put("faultNode", faultNode);
+        if (null != faultDomDetail) {
+            org.w3c.dom.NodeList nl = faultDomDetail.getElementsByTagName("*");
+            if (nl.getLength() > 0) {
+                try {
+                    javax.xml.transform.Source faultSource = new javax.xml.transform.dom.DOMSource(
+                            nl.item(0));
+                    faultDetail = GenericConsumer.sourceToDocument(faultSource);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         faultInfo.put("faultDetail", faultDetail);
         return faultInfo;
     }
