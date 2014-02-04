@@ -168,6 +168,7 @@ if (actAsConsumer) {
 
         public org.dom4j.Document invoke(org.dom4j.Document doc) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
+            clientFactory.setDataBinding(new org.apache.cxf.databinding.source.SourceDataBinding());
             clientFactory.getServiceFactory().getServiceConfigurations().add(0, new org.apache.cxf.service.factory.AbstractServiceConfiguration() {
                 @Override
                 public Boolean isOperation(java.lang.reflect.Method method) {
@@ -225,7 +226,6 @@ if (actAsConsumer) {
             }
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();
-            client.getEndpoint().getService().setDataBinding(new org.apache.cxf.databinding.source.SourceDataBinding());
 
             org.apache.cxf.transport.http.HTTPConduit conduit = (org.apache.cxf.transport.http.HTTPConduit) client.getConduit();
             if ("BASIC".equals(authType)) {
@@ -277,7 +277,7 @@ if (actAsConsumer) {
             }
 
             try {
-                Object[] results = client.invoke(operationQName, new org.dom4j.io.DocumentSource(doc));
+                Object[] results = client.invoke(operationQName, new javax.xml.transform.dom.DOMSource(new org.dom4j.io.DOMWriter().write(doc)));
                 correlationID = (String) client.getResponseContext().get("CorrelationID");
                 if (results != null && results.length > 0) {
                     return sourceToDocument((javax.xml.transform.Source) results[0]);
