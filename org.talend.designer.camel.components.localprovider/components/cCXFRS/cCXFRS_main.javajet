@@ -14,12 +14,7 @@ imports="
 	INode node = (INode)codeGenArgument.getArgument();
 	String cid = node.getUniqueName();
 
-	IElementParameter param = node.getElementParameter("LABEL");
-	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
-		cid = (String)param.getValue() +'_'+ cid;
-	}
-
-	String uriRef = "uriMap.get(\"" + cid + "\")";
+	String endpointVar = "endpoint_" + cid;
 
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
 
@@ -27,15 +22,11 @@ imports="
 	String responseClass = "*/*".equals(acceptType) ? "String.class" : "org.w3c.dom.Document.class";
 	String contentType = paramsHelper.getVisibleStringParam("__CONTENT_TYPE__");
 
-	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-	
-	String useRegistry = "false";
-	
 	String useCorrelation = ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__");
-
 	String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
-	
-	String endpointVar = "endpoint_" + node.getUniqueName();
+
+	//boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		IConnection iConnection = conns.get(0);
@@ -73,7 +64,7 @@ imports="
 					inMessage.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, "<%=contentType%>");
 <% } %>
 				}
-			}).to("cxfrs://" + <%=ElementParameterParser.getValue(node, "__URL__")%> + "?loggingFeatureEnabled=true")
+			}).to(<%=endpointVar%>)
 <%
 		}
 	} else {
