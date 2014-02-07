@@ -241,7 +241,7 @@ public final class CamelFeatureUtil {
 			if (o instanceof NodeType) {
 				NodeType currentNode = (NodeType) o;
 				String componentName = currentNode.getComponentName();
-				if ("cCXF".equals(componentName)) {
+				if ("cCXF".equals(componentName) || "cCXFRS".equals(componentName)) {
 					handleCXFcase(features, currentNode);
 				}else if("cLoop".equals(componentName)){
 					handleLoopCase(features, currentNode);
