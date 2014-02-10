@@ -63,6 +63,12 @@ imports="
 <% if (!contentType.isEmpty()) { %>
 					inMessage.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, "<%=contentType%>");
 <% } %>
+<% if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))) {
+		if("BASIC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) { %>
+					inMessage.setHeader("Authorization", "Basic " + org.apache.cxf.common.util.Base64Utility.encode((<%=ElementParameterParser.getValue(node, "__USERNAME__")%> + ':' + <%=ElementParameterParser.getValue(node, "__PASSWORD__")%>).getBytes()));
+<%		}
+	}
+%>
 				}
 			}).to(<%=endpointVar%>)
 <%
