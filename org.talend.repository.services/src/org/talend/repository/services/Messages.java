@@ -97,6 +97,8 @@ public class Messages extends NLS {
 	public static String ESBService_DisconnectWarningTitle;
 	public static String ESBService_DisconnectWarningMsg;
 	
+	public static String ESBService_cannotGenerateItem;
+	
 	public static String RESTRequestReconnectionValidation_WarningMsg;
 	
     static {

@@ -14,11 +14,17 @@ package org.talend.repository.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
@@ -29,11 +35,14 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.CorePlugin;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
 import org.talend.core.model.general.Project;
+import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
@@ -42,10 +51,15 @@ import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.repository.RepositoryContentManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
+import org.talend.core.utils.KeywordsValidator;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
@@ -56,8 +70,12 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.EProperties;
+import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.ProjectRepositoryNode;
+import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.action.CreateNewJobAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -755,5 +773,271 @@ public class ESBService implements IESBService {
             return true;
         }
         return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.IESBService#copyDataServiceRelateJob(org.talend.repository.model.RepositoryNode)
+     */
+    @Override
+    public void copyDataServiceRelateJob(Item newItem) {
+        if (newItem != null) {
+            if (newItem instanceof ServiceItem) {
+                ServiceItem serviceItem = (ServiceItem) newItem;
+                ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+                List<ServicePort> ports = serviceConnection.getServicePort();
+                for (ServicePort port : ports) {
+                    List<ServiceOperation> operations = port.getServiceOperation();
+                    for (ServiceOperation operation : operations) {
+                        String referenceJobId = operation.getReferenceJobId();
+                        if (referenceJobId != null && !referenceJobId.equals("")) {
+                            IRepositoryViewObject jobObj = null;
+                            try {
+                                jobObj = ProxyRepositoryFactory.getInstance().getLastVersion(referenceJobId);
+                            } catch (PersistenceException e) {
+                                ExceptionHandler.process(e);
+                            }
+                            if (jobObj == null) {
+                                continue;
+                            }
+                            ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
+                            String initNameValue = "Copy_of_" + processItem.getProperty().getLabel();
+                            final IPath path = RepositoryNodeUtilities.getPath(processItem.getProperty().getId());
+                            String jobNameValue = null;
+
+                            try {
+                                jobNameValue = getDuplicateName(RepositoryNodeUtilities.getRepositoryNode(jobObj), initNameValue);
+                            } catch (BusinessException e) {
+                                jobNameValue = ""; //$NON-NLS-1$
+                            }
+
+                            Item newProcessItem = copyJobForService(processItem, path, jobNameValue);
+
+                            String operationLabel = operation.getLabel();
+                            if (operationLabel.contains("-")) {
+                                String[] array = operationLabel.split("-");
+                                operation.setLabel(array[0] + "-" + jobNameValue);
+                            }
+                            operation.setReferenceJobId(newProcessItem.getProperty().getId());
+                            try {
+                                ProxyRepositoryFactory.getInstance().save(serviceItem);
+                            } catch (PersistenceException e) {
+                                ExceptionHandler.process(e);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private Item copyJobForService(final Item item, final IPath path, final String newName) {
+        try {
+            final Item newItem = ProxyRepositoryFactory.getInstance().copy(item, path, newName);
+            if (newItem instanceof ConnectionItem) {
+                Connection connection = ((ConnectionItem) newItem).getConnection();
+                if (connection != null) {
+                    connection.setLabel(newName);
+                    connection.setName(newName);
+                    connection.getSupplierDependency().clear();
+                }
+            }
+            ProxyRepositoryFactory.getInstance().save(newItem);
+            return newItem;
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
+        } catch (BusinessException e) {
+            ExceptionHandler.process(e);
+        }
+        return null;
+    }
+
+    public String getDuplicateName(RepositoryNode node, String value) throws BusinessException {
+
+        if (validJobName(node, value) == null) {
+            return value;
+        } else {
+            char j = 'a';
+            String temp = value;
+            while (validJobName(node, temp) != null) {
+                if (j > 'z') {
+                    throw new BusinessException(Messages.ESBService_cannotGenerateItem); //$NON-NLS-1$
+                }
+                temp = value + "_" + (j++) + ""; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            return temp;
+        }
+    }
+
+    private String validJobName(RepositoryNode node, String itemName) {
+        if (!isValid(node, itemName)) {
+            return "DuplicateAction.NameFormatError";
+        }
+        IRepositoryService service = (IRepositoryService) GlobalServiceRegister.getDefault().getService(IRepositoryService.class);
+        IProxyRepositoryFactory repositoryFactory = service.getProxyRepositoryFactory();
+        if (itemName.length() == 0) {
+            return "DuplicateAction.NameEmptyError"; //$NON-NLS-1$
+        } else if (!Pattern.matches(RepositoryConstants.getPattern(ESBRepositoryNodeType.SERVICES), itemName)) {
+            /*
+             * maybe Messages.getString("PropertiesWizardPage.KeywordsError")
+             */
+            return "DuplicateAction.NameFormatError"; //$NON-NLS-1$
+        } else {
+            try {
+                Item testNewItem = createNewItem(node);
+                if (testNewItem != null) {
+                    if (!repositoryFactory.isNameAvailable(testNewItem, itemName)) {
+                        return "DuplicateAction.ItemExistsError"; //$NON-NLS-1$
+                    }
+                }
+            } catch (PersistenceException e) {
+                return "DuplicateAction.ItemExistsError"; //$NON-NLS-1$
+            }
+            // see bug 0004157: Using specific name for (main) tream
+            if (isKeyword(itemName, node)) {
+                return "DuplicateAction.KeywordsError"; //$NON-NLS-1$
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isValid(RepositoryNode node, String str) {
+        String namePattern = "^\\w+$";
+        Object contentType = node.getContentType();
+        if (contentType == null) {
+            contentType = node.getProperties(EProperties.CONTENT_TYPE);
+        }
+        if (contentType != null && contentType instanceof ERepositoryObjectType) {
+            String tmp = ((ERepositoryObjectType) contentType).getNamePattern();
+            if (tmp != null) {
+                namePattern = tmp;
+            }
+        }
+        Pattern pattern = Pattern.compile(namePattern);
+        return pattern.matcher(str).matches();
+    }
+
+    public static boolean isValid(String str) {
+        Pattern pattern = Pattern.compile("^\\w+$");
+        ;
+        return pattern.matcher(str).matches();
+    }
+
+    private Item createNewItem(RepositoryNode sourceNode) {
+
+        ERepositoryObjectType repositoryType = sourceNode.getObjectType();
+
+        Item item = null;
+        if (repositoryType != null) {
+            if (repositoryType != null) {
+                if (repositoryType == ERepositoryObjectType.BUSINESS_PROCESS) {
+                    item = PropertiesFactory.eINSTANCE.createBusinessProcessItem();
+                } else if (repositoryType == ERepositoryObjectType.CONTEXT) {
+                    item = PropertiesFactory.eINSTANCE.createContextItem();
+                } else if (repositoryType == ERepositoryObjectType.DOCUMENTATION) {
+                    item = PropertiesFactory.eINSTANCE.createDocumentationItem();
+                } else if (repositoryType == ERepositoryObjectType.JOBLET) {
+                    item = PropertiesFactory.eINSTANCE.createJobletProcessItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_CONNECTIONS) {
+                    item = PropertiesFactory.eINSTANCE.createDatabaseConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_DELIMITED) {
+                    item = PropertiesFactory.eINSTANCE.createDelimitedFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_EBCDIC) {
+                    item = PropertiesFactory.eINSTANCE.createEbcdicConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_EXCEL) {
+                    item = PropertiesFactory.eINSTANCE.createExcelFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_HL7) {
+                    item = PropertiesFactory.eINSTANCE.createHL7ConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_LDIF) {
+                    item = PropertiesFactory.eINSTANCE.createLdifFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_POSITIONAL) {
+                    item = PropertiesFactory.eINSTANCE.createPositionalFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_LINKRULES) {
+                    item = PropertiesFactory.eINSTANCE.createLinkRulesItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_REGEXP) {
+                    item = PropertiesFactory.eINSTANCE.createRegExFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_RULES) {
+                    item = PropertiesFactory.eINSTANCE.createRulesItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_XML) {
+                    item = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_GENERIC_SCHEMA) {
+                    item = PropertiesFactory.eINSTANCE.createGenericSchemaConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_LDAP_SCHEMA) {
+                    item = PropertiesFactory.eINSTANCE.createLDAPSchemaConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_MDMCONNECTION) {
+                    item = PropertiesFactory.eINSTANCE.createMDMConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_SALESFORCE_SCHEMA) {
+                    item = PropertiesFactory.eINSTANCE.createSalesforceSchemaConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_SAPCONNECTIONS) {
+                    item = PropertiesFactory.eINSTANCE.createSAPConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_WSDL_SCHEMA) {
+                    item = PropertiesFactory.eINSTANCE.createWSDLSchemaConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.PROCESS) {
+                    item = PropertiesFactory.eINSTANCE.createProcessItem();
+                } else if (repositoryType == ERepositoryObjectType.ROUTINES) {
+                    item = PropertiesFactory.eINSTANCE.createRoutineItem();
+                } else if (repositoryType == ERepositoryObjectType.PIG_UDF) {
+                    item = PropertiesFactory.eINSTANCE.createPigudfItem();
+                } else if (repositoryType == ERepositoryObjectType.JOB_SCRIPT) {
+                    item = PropertiesFactory.eINSTANCE.createJobScriptItem();
+                } else if (repositoryType == ERepositoryObjectType.SNIPPETS) {
+                    item = PropertiesFactory.eINSTANCE.createSnippetItem();
+                } else if (repositoryType == ERepositoryObjectType.SQLPATTERNS) {
+                    item = PropertiesFactory.eINSTANCE.createSQLPatternItem();
+                } else if (repositoryType == ERepositoryObjectType.SVG_BUSINESS_PROCESS) {
+                    item = PropertiesFactory.eINSTANCE.createSVGBusinessProcessItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_EDIFACT) {
+                    item = PropertiesFactory.eINSTANCE.createEDIFACTConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_VALIDATION_RULES) {
+                    item = PropertiesFactory.eINSTANCE.createValidationRulesConnectionItem();
+                } else if (repositoryType == ERepositoryObjectType.METADATA_HEADER_FOOTER) {
+                    item = PropertiesFactory.eINSTANCE.createHeaderFooterConnectionItem();
+                }
+                if (item == null) {
+                    for (IRepositoryContentHandler handler : RepositoryContentManager.getHandlers()) {
+                        item = handler.createNewItem(repositoryType);
+                        if (item != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (item != null) {
+            Property property = PropertiesFactory.eINSTANCE.createProperty();
+            item.setProperty(property);
+        }
+        return item;
+    }
+
+    private boolean isKeyword(String itemName, RepositoryNode sourceNode) {
+        ERepositoryObjectType itemType = sourceNode.getObjectType();
+        ERepositoryObjectType[] types = { ERepositoryObjectType.PROCESS, ERepositoryObjectType.ROUTINES,
+                ERepositoryObjectType.JOBS, ERepositoryObjectType.JOBLET, ERepositoryObjectType.JOBLETS,
+                ERepositoryObjectType.JOB_SCRIPT };
+        List<ERepositoryObjectType> arraysList = Arrays.asList(types);
+        List<ERepositoryObjectType> typeList = new ArrayList<ERepositoryObjectType>();
+        addExtensionRepositoryNodes(typeList);
+        typeList.addAll(arraysList);
+        if (typeList.contains(itemType)) {
+            return KeywordsValidator.isKeyword(itemName);
+        }
+        return false;
+    }
+
+    private void addExtensionRepositoryNodes(List<ERepositoryObjectType> arraysList) {
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        IConfigurationElement[] configurationElements = registry
+                .getConfigurationElementsFor("org.talend.core.repository.repository_node_provider");
+        for (IConfigurationElement element : configurationElements) {
+            String type = element.getAttribute("type");
+            ERepositoryObjectType repositoryNodeType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, type);
+            if (repositoryNodeType != null) {
+                arraysList.add(repositoryNodeType);
+            }
+        }
     }
 }
