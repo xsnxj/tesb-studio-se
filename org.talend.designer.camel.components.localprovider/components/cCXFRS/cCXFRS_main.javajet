@@ -22,32 +22,14 @@ imports="
 	String responseClass = "*/*".equals(acceptType) ? "String.class" : "org.w3c.dom.Document.class";
 	String contentType = paramsHelper.getVisibleStringParam("__CONTENT_TYPE__");
 
-	String useCorrelation = ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__");
-	String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
-
 	//boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 
 	List< ? extends IConnection> conns = node.getIncomingConnections();
-	if(conns.size()>0) {
-		IConnection iConnection = conns.get(0);
-		INode source = iConnection.getSource();
-		if ("cErrorHandler".equals(source
-				.getComponent().getName())
-				&& source.getIncomingConnections()
-						.size() < 1){
+	if(conns.isEmpty()) {
 %>
-			.from(<%=endpointVar%>).removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
+		from(<%=endpointVar%>).removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
 <%
-		}else{
-			if("true".equals(useCorrelation)){
-				if(!"".equals(correlationValue) && !"\"\"".equals(correlationValue)){
-%>					
-					.setHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID).simple(<%=correlationValue%>)
-<%				}else{
-%>
-					.removeHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID)
-<%				}
-			}
+	} else {
 %>
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
@@ -71,11 +53,6 @@ imports="
 %>
 				}
 			}).to(<%=endpointVar%>)
-<%
-		}
-	} else {
-%>
-		from(<%=endpointVar%>).removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
 <%
 	}
 %>
