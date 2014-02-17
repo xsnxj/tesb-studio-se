@@ -246,6 +246,18 @@
          </importPackage>
       </component>
       <component
+            componentName="cCXFRS">
+         <importPackage
+               maxVersion="6.0.0"
+               minVersion="2.0.0"
+               packageName="org.talend.esb.sam.agent.feature">
+            <predicate
+                  attributeName="ENABLE_SAM"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
+      </component>
+      <component
             componentName="cHttp">
          <importPackage
                packageName="org.apache.camel.component.http">
