@@ -256,6 +256,21 @@
                   attributeValue="true">
             </predicate>
          </importPackage>
+         <importPackage
+               packageName="org.talend.esb.authorization.xacml.rt.pep">
+            <predicate
+                  attributeName="ENABLE_SECURITY"
+                  attributeValue="true">
+            </predicate>
+            <predicate
+                  attributeName="SECURITY_TYPE"
+                  attributeValue="SAML">
+            </predicate>
+            <predicate
+                  attributeName="NEED_AUTHORIZATION"
+                  attributeValue="true">
+            </predicate>
+         </importPackage>
       </component>
       <component
             componentName="cHttp">
