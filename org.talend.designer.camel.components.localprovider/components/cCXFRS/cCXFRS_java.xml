@@ -415,6 +415,11 @@
                     MODULE="cxf-rt-features-clustering-2.7.7.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.7.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
+            <!-- Security -->
+            <IMPORT NAME="esb-security"
+                    MODULE="esb-security-5.4.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/esb-security-5.4.1.jar"
+                    REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
