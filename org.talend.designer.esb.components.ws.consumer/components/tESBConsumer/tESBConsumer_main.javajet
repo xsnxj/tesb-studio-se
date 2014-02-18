@@ -167,7 +167,7 @@ if (inputConn != null) {
                 }
             <% } %>
 
-            if (null == this.registry) {
+            if (null == <%=codeGenArgument.getJobName() %>.this.registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
                 genericConsumer_<%=cid%>.setPortQName(portName_<%=cid%>);
@@ -250,7 +250,7 @@ if (inputConn != null) {
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
                 <% } %>
             } else {
-                ESBConsumer consumer_<%=cid%> = this.registry.createConsumer(
+                ESBConsumer consumer_<%=cid%> = <%=codeGenArgument.getJobName() %>.this.registry.createConsumer(
                     new ESBEndpointInfo() {
 
                         @SuppressWarnings("serial")
