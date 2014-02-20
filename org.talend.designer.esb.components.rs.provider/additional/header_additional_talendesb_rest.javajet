@@ -1308,6 +1308,10 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				features.add(samEventFeature);
 			<% } %>
 
+            <% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_BUSINESS_CORRELATION__"))) { %>
+                features.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+            <% } %>
+
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
 				features.add(new org.apache.cxf.feature.LoggingFeature());
 			<% } %>
