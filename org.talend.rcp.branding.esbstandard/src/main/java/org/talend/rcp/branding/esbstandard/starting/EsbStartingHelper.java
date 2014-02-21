@@ -26,7 +26,7 @@ import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
 import org.talend.rcp.branding.esbstandard.Activator;
 import org.talend.rcp.branding.esbstandard.i18n.Messages;
-import org.talend.rcp.intro.starting.StartingConstants;
+import org.talend.core.ui.branding.StartingConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
