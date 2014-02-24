@@ -259,6 +259,10 @@
                     MODULE="xmlschema-core-2.0.3.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.0.3.jar"
                     REQUIRED="true" />
+            <IMPORT NAME="geronimo-java_1.4_spec"
+                    MODULE="mail.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+                    REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
                     MODULE="cxf-rt-frontend-jaxws-2.7.7.jar"
