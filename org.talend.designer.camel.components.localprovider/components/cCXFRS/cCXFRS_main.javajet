@@ -35,6 +35,7 @@ imports="
 	if (node.getIncomingConnections().isEmpty()) {
 %>
 		from(endpoint(uriMap.get("<%=uri%>"))).removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
+		.filter(header(org.apache.cxf.message.Message.HTTP_REQUEST_METHOD).isEqualTo("GET")).removeHeader(org.apache.camel.Exchange.CONTENT_TYPE)
 <%
 	} else {
 %>
