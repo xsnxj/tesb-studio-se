@@ -41,7 +41,7 @@ public class CamelPerspectiveFactory implements IPerspectiveFactory {
         //String modulesViewId = "org.talend.designer.codegen.perlmodule.ModulesView"; //$NON-NLS-1$
         // String ecosystemViewId = "org.talend.designer.components.ecosystem.ui.views.EcosystemView"; //$NON-NLS-1$
         //String schedulerViewId = "org.talend.scheduler.views.Scheduler"; //$NON-NLS-1$
-        //        String contextsViewId = "org.talend.designer.core.ui.views.ContextsView"; //$NON-NLS-1$
+        String contextsViewId = "org.talend.designer.core.ui.views.ContextsView"; //$NON-NLS-1$
         String gefPaletteViewId = "org.eclipse.gef.ui.palette_view"; //$NON-NLS-1$
         String jobSettingsViewId = "org.talend.designer.core.ui.views.jobsettings.JobSettingsView"; //$NON-NLS-1$
         // String jobHierarchyViewId = "org.talend.designer.core.ui.hierarchy.JobHierarchyViewPart"; //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class CamelPerspectiveFactory implements IPerspectiveFactory {
                 IPageLayout.ID_EDITOR_AREA);
         // bottomLayout.addView(propertyId);
         bottomLayout.addView(jobSettingsViewId);
-        // bottomLayout.addView(contextsViewId);
+        bottomLayout.addView(contextsViewId);
         
         //ADDED for TESB-7887 By GangLiu
         bottomLayout.addView(springView);
