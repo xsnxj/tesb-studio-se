@@ -286,6 +286,7 @@ try {
 					claimType.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
 					claimsElement.appendChild(claimType);
 				}
+				stsClient.setClaims(claimsElement);
 			<% } %>
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
 			outInterceptor.setStsClient(stsClient);
