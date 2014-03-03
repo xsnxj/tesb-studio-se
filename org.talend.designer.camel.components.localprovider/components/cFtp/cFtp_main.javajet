@@ -30,20 +30,9 @@ imports="
     
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		IConnection iConnection = conns.get(0);
-		INode source = iConnection.getSource();
-		if ("cErrorHandler".equals(source
-				.getComponent().getName())
-				&& source.getIncomingConnections()
-						.size() < 1){
-%>
-			.from(<%=endpointVar%>)
-<%
-		}else{
 %>
 			.to(<%=endpointVar%>)
 <%
-		}
 	} else {
 %>
 		from(<%=endpointVar%>)
