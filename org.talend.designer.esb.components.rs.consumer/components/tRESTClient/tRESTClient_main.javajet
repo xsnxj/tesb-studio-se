@@ -10,6 +10,32 @@
 		java.util.Map
 "
 %>
+
+@javax.ws.rs.Produces({"application/xml", "application/*+xml", "text/xml", "application/json" })
+@javax.ws.rs.Consumes({"application/xml", "application/*+xml", "text/xml", "application/json" })
+class RestClientDOM4JProvider extends org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider {
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+} 
+
 <%
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
@@ -169,28 +195,9 @@ try {
 
 
 	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
-	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
-		// workaround for https://jira.talendforge.org/browse/TESB-7276
-		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
-											java.lang.reflect.Type type,
-											java.lang.annotation.Annotation[] anns,
-											javax.ws.rs.core.MediaType mt,
-											javax.ws.rs.core.MultivaluedMap<String, String> headers,
-											java.io.InputStream is)
-				throws IOException, javax.ws.rs.WebApplicationException {
-			String contentLength = headers.getFirst("Content-Length");
-			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
-				&& Integer.valueOf(contentLength) <= 0) {
-				try {
-					return org.dom4j.DocumentHelper.parseText("<root/>");
-				} catch (org.dom4j.DocumentException e_<%=cid%>) {
-					e_<%=cid%>.printStackTrace();
-				}
-				return null;
-			}
-			return super.readFrom(cls, type, anns, mt, headers, is);
-		}
-	});
+	
+	providers_<%=cid%>.add(new RestClientDOM4JProvider());
+	
 	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
 			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
