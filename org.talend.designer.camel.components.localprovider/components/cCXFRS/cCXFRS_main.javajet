@@ -38,15 +38,8 @@ imports="
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
 					org.apache.camel.Message inMessage = exchange.getIn();
-					String camelHttpQuery = (String) inMessage.getHeader(org.apache.camel.Exchange.HTTP_QUERY);
-					if (null != camelHttpQuery) {
-						java.util.Map<String, String> httpQuery = new java.util.HashMap<String, String>();
-						for (String rawQuery : camelHttpQuery.split("&")) {
-							String[] query = rawQuery.split("=");
-							httpQuery.put(query[0], query[1]);
-						}
-						inMessage.setHeader("http", httpQuery);
-					}
+					inMessage.setHeader("http_query",
+						org.apache.cxf.jaxrs.utils.JAXRSUtils.getStructuredParams((String) inMessage.getHeader(org.apache.camel.Exchange.HTTP_QUERY), "&", false, false));
 				}
 			})
 <%
