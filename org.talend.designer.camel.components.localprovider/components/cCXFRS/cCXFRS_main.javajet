@@ -34,7 +34,7 @@ imports="
 
 	if (node.getIncomingConnections().isEmpty()) {
 %>
-		from(endpoint(uriMap.get("<%=uri%>"))).removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
+		from(uriMap.get("<%=uri%>"))
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
 					org.apache.camel.Message inMessage = exchange.getIn();
@@ -44,23 +44,22 @@ imports="
 			})
 <%
 	} else {
+		String path = ElementParameterParser.getValue(node, "__PATH__");
+		if (path.startsWith("\"")) {
+			path = "constant(" + path + ")";
+		}
 %>
-		.process(new org.apache.camel.Processor() {
-				public void process(org.apache.camel.Exchange exchange) throws Exception {
-					exchange.setPattern(org.apache.camel.ExchangePattern.InOut);
-					org.apache.camel.Message inMessage = exchange.getIn();
-					inMessage.setHeader(org.apache.camel.Exchange.HTTP_PATH, <%=ElementParameterParser.getValue(node, "__PATH__")%>);
-					inMessage.setHeader(org.apache.camel.Exchange.HTTP_METHOD, "<%=ElementParameterParser.getValue(node, "__HTTP_METHOD__")%>");
+		.setHeader(org.apache.camel.Exchange.HTTP_PATH, <%=path%>)
+		.setHeader(org.apache.camel.Exchange.HTTP_METHOD, constant("<%=ElementParameterParser.getValue(node, "__HTTP_METHOD__")%>"))
 <% if (!acceptType.isEmpty()) { %>
-					
-					inMessage.setHeader(org.apache.camel.Exchange.ACCEPT_CONTENT_TYPE, "<%=acceptType%>");
-					inMessage.setHeader(org.apache.camel.component.cxf.CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, <%=responseClass%>);
+		.setHeader(org.apache.camel.Exchange.ACCEPT_CONTENT_TYPE, constant("<%=acceptType%>"))
+		.setHeader(org.apache.camel.component.cxf.CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, constant(<%=responseClass%>))
 <% } %>
 <% if (!contentType.isEmpty()) { %>
-					inMessage.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, "<%=contentType%>");
+		.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, constant("<%=contentType%>"))
 <% } %>
-				}
-			}).to(endpoint(uriMap.get("<%=uri%>")))
+
+		.inOut(uriMap.get("<%=uri%>"))
 <%
 	}
 %>
