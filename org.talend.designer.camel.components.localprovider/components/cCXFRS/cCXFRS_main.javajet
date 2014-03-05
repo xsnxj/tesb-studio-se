@@ -44,12 +44,8 @@ imports="
 			})
 <%
 	} else {
-		String path = ElementParameterParser.getValue(node, "__PATH__");
-		if (path.startsWith("\"")) {
-			path = "constant(" + path + ")";
-		}
 %>
-		.setHeader(org.apache.camel.Exchange.HTTP_PATH, <%=path%>)
+		.setHeader(org.apache.camel.Exchange.HTTP_PATH, <%=ElementParameterParser.getValue(node, "__PATH__")%>)
 		.setHeader(org.apache.camel.Exchange.HTTP_METHOD, constant("<%=ElementParameterParser.getValue(node, "__HTTP_METHOD__")%>"))
 <% if (!acceptType.isEmpty()) { %>
 		.setHeader(org.apache.camel.Exchange.ACCEPT_CONTENT_TYPE, constant("<%=acceptType%>"))
