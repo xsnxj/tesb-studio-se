@@ -253,20 +253,20 @@
 		<IMPORTS>
             <!-- camel-core -->
             <IMPORT NAME="camel-core"
-                    MODULE="camel-core-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.12.1.jar"
+                    MODULE="camel-core-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13-SNAPSHOT.jar"
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    MODULE="slf4j-api-1.7.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-1.7.5.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+                    MODULE="slf4j-log4j12-1.7.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.6.jar"
                     REQUIRED="true" />
             <IMPORT NAME="jaxb-impl"
                     MODULE="jaxb-impl-2.2.6.jar"
@@ -275,8 +275,8 @@
 
             <!-- camel-spring -->
             <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.12.1.jar"
+                    MODULE="camel-spring-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.13-SNAPSHOT.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.4.RELEASE.jar"
@@ -317,12 +317,12 @@
 
             <!-- camel-cxf -->
             <IMPORT NAME="camel-cxf"
-                    MODULE="camel-cxf-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.12.1.jar"
+                    MODULE="camel-cxf-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.13-SNAPSHOT.jar"
                     REQUIRED="true" />
             <IMPORT NAME="camel-cxf-transport"
-                    MODULE="camel-cxf-transport-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.12.1.jar"
+                    MODULE="camel-cxf-transport-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.13-SNAPSHOT.jar"
                     REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-core"

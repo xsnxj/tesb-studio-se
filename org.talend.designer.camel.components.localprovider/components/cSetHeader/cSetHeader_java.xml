@@ -93,17 +93,17 @@
 		<IMPORTS>
             <!-- camel-groovy -->
             <IMPORT NAME="camel-groovy"
-                    MODULE="camel-groovy-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.12.1.jar"
+                    MODULE="camel-groovy-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13-SNAPSHOT.jar"
                     REQUIRED_IF="VALUES.LANGUAGE IN ['groovy']" />
             <IMPORT NAME="groovy-all"
-                    MODULE="groovy-all-2.1.7.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.1.7.jar"
+                    MODULE="groovy-all-2.1.9.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.1.9.jar"
                     REQUIRED_IF="VALUES.LANGUAGE IN ['groovy']" />
             <!-- camel-script -->
             <IMPORT NAME="camel-script"
-                    MODULE="camel-script-2.12.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.12.1.jar"
+                    MODULE="camel-script-2.13-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.13-SNAPSHOT.jar"
                     REQUIRED_IF="VALUES.LANGUAGE IN ['javaScript']" />
 		</IMPORTS>
 	</CODEGENERATION>

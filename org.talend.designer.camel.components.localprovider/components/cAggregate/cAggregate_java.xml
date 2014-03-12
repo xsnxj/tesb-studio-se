@@ -201,8 +201,8 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-alldep-2.12.1.jar"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hawtdb-alldep-2.12.1.jar"
+			<IMPORT NAME="hawtdb" MODULE="camel-hawtdb-alldep-2.13-SNAPSHOT.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hawtdb-alldep-2.13-SNAPSHOT.jar"
 				REQUIRED_IF="REPOSITORY == 'HAWTDB' " />
 		</IMPORTS>
 	</CODEGENERATION>
