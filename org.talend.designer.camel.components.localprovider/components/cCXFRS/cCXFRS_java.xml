@@ -515,8 +515,8 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="neethi"
-                    MODULE="neethi-3.0.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.2.jar"
+                    MODULE="neethi-3.0.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.3.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
