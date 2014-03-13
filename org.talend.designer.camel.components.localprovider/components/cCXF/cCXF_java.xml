@@ -510,8 +510,8 @@
                     REQUIRED_IF="ENABLE_SL == 'true'" />
 
             <IMPORT NAME="correlationid"
-                    MODULE="correlationid-policy-5.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.1.jar"
+                    MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>

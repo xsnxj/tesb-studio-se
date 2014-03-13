@@ -455,13 +455,13 @@
 
             <!-- SAM for RS -->
             <IMPORT NAME="sam-agent"
-                    MODULE="sam-agent-5.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.4.1.jar"
+                    MODULE="sam-agent-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.6.0-SNAPSHOT.jar"
                     BundleID="sam-agent"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="sam-common"
-                    MODULE="sam-common-5.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.4.1.jar"
+                    MODULE="sam-common-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.6.0-SNAPSHOT.jar"
                     BundleID="sam-common"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="commons-lang"
@@ -521,13 +521,13 @@
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
             <IMPORT NAME="correlationid"
-                    MODULE="correlationid-policy-5.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.1.jar"
+                    MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
             <!-- Security -->
             <IMPORT NAME="esb-security"
-                    MODULE="esb-security-5.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/esb-security-5.4.1.jar"
+                    MODULE="esb-security-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/esb-security-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
 		</IMPORTS>
 	</CODEGENERATION>
