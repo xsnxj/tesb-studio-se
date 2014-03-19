@@ -928,81 +928,13 @@ public class ESBService implements IESBService {
 
     private Item createNewItem(RepositoryNode sourceNode) {
 
-        ERepositoryObjectType repositoryType = sourceNode.getObjectType();
+    	ERepositoryObjectType repositoryType = sourceNode.getObjectType();
 
         Item item = null;
         if (repositoryType != null) {
             if (repositoryType != null) {
-                if (repositoryType == ERepositoryObjectType.BUSINESS_PROCESS) {
-                    item = PropertiesFactory.eINSTANCE.createBusinessProcessItem();
-                } else if (repositoryType == ERepositoryObjectType.CONTEXT) {
-                    item = PropertiesFactory.eINSTANCE.createContextItem();
-                } else if (repositoryType == ERepositoryObjectType.DOCUMENTATION) {
-                    item = PropertiesFactory.eINSTANCE.createDocumentationItem();
-                } else if (repositoryType == ERepositoryObjectType.JOBLET) {
-                    item = PropertiesFactory.eINSTANCE.createJobletProcessItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_CONNECTIONS) {
-                    item = PropertiesFactory.eINSTANCE.createDatabaseConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_DELIMITED) {
-                    item = PropertiesFactory.eINSTANCE.createDelimitedFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_EBCDIC) {
-                    item = PropertiesFactory.eINSTANCE.createEbcdicConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_EXCEL) {
-                    item = PropertiesFactory.eINSTANCE.createExcelFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_HL7) {
-                    item = PropertiesFactory.eINSTANCE.createHL7ConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_LDIF) {
-                    item = PropertiesFactory.eINSTANCE.createLdifFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_POSITIONAL) {
-                    item = PropertiesFactory.eINSTANCE.createPositionalFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_LINKRULES) {
-                    item = PropertiesFactory.eINSTANCE.createLinkRulesItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_REGEXP) {
-                    item = PropertiesFactory.eINSTANCE.createRegExFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_RULES) {
-                    item = PropertiesFactory.eINSTANCE.createRulesItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_FILE_XML) {
-                    item = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_GENERIC_SCHEMA) {
-                    item = PropertiesFactory.eINSTANCE.createGenericSchemaConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_LDAP_SCHEMA) {
-                    item = PropertiesFactory.eINSTANCE.createLDAPSchemaConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_MDMCONNECTION) {
-                    item = PropertiesFactory.eINSTANCE.createMDMConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_SALESFORCE_SCHEMA) {
-                    item = PropertiesFactory.eINSTANCE.createSalesforceSchemaConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_SAPCONNECTIONS) {
-                    item = PropertiesFactory.eINSTANCE.createSAPConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_WSDL_SCHEMA) {
-                    item = PropertiesFactory.eINSTANCE.createWSDLSchemaConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.PROCESS) {
+                if (repositoryType == ERepositoryObjectType.PROCESS) {
                     item = PropertiesFactory.eINSTANCE.createProcessItem();
-                } else if (repositoryType == ERepositoryObjectType.ROUTINES) {
-                    item = PropertiesFactory.eINSTANCE.createRoutineItem();
-                } else if (repositoryType == ERepositoryObjectType.PIG_UDF) {
-                    item = PropertiesFactory.eINSTANCE.createPigudfItem();
-                } else if (repositoryType == ERepositoryObjectType.JOB_SCRIPT) {
-                    item = PropertiesFactory.eINSTANCE.createJobScriptItem();
-                } else if (repositoryType == ERepositoryObjectType.SNIPPETS) {
-                    item = PropertiesFactory.eINSTANCE.createSnippetItem();
-                } else if (repositoryType == ERepositoryObjectType.SQLPATTERNS) {
-                    item = PropertiesFactory.eINSTANCE.createSQLPatternItem();
-                } else if (repositoryType == ERepositoryObjectType.SVG_BUSINESS_PROCESS) {
-                    item = PropertiesFactory.eINSTANCE.createSVGBusinessProcessItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_EDIFACT) {
-                    item = PropertiesFactory.eINSTANCE.createEDIFACTConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_VALIDATION_RULES) {
-                    item = PropertiesFactory.eINSTANCE.createValidationRulesConnectionItem();
-                } else if (repositoryType == ERepositoryObjectType.METADATA_HEADER_FOOTER) {
-                    item = PropertiesFactory.eINSTANCE.createHeaderFooterConnectionItem();
-                }
-                if (item == null) {
-                    for (IRepositoryContentHandler handler : RepositoryContentManager.getHandlers()) {
-                        item = handler.createNewItem(repositoryType);
-                        if (item != null) {
-                            break;
-                        }
-                    }
                 }
             }
         }
