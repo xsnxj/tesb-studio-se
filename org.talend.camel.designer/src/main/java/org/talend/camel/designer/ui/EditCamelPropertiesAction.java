@@ -13,18 +13,31 @@
 package org.talend.camel.designer.ui;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
+import org.talend.camel.designer.ui.wizards.EditRoutePropertiesWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.EditPropertiesAction;
+import org.talend.repository.ui.wizards.PropertiesWizard;
 
 /**
  * smallet class global comment. Detailled comment <br/>
@@ -42,7 +55,13 @@ public class EditCamelPropertiesAction extends EditPropertiesAction {
     }
 
     protected void doRun() {
-        super.doRun();
+        IWizard wizard = createWizard();
+        if (wizard == null) {
+            return;
+        } else {
+            WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), wizard);
+            dlg.open();
+        }
     }
 
     /**
@@ -102,6 +121,28 @@ public class EditCamelPropertiesAction extends EditPropertiesAction {
             }
         }
         setEnabled(canWork);
+    }
+
+    public IWizard createWizard() {
+        ISelection selection = getSelection();
+        Object obj = ((IStructuredSelection) selection).getFirstElement();
+        RepositoryNode node = (RepositoryNode) obj;
+
+        IRepositoryViewObject object = node.getObject();
+        if (getNeededVersion() != null && !object.getVersion().equals(getNeededVersion())) {
+            try {
+                object = ProxyRepositoryFactory.getInstance().getSpecificVersion(
+                        new Project(ProjectManager.getInstance().getProject(object.getProperty().getItem())),
+                        object.getProperty().getId(), getNeededVersion(), false);
+            } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
+            }
+        }
+        IPath path = RepositoryNodeUtilities.getPath(node);
+        String originalName = object.getLabel();
+        PropertiesWizard wizard = new EditRoutePropertiesWizard(object, path, getNeededVersion() == null);
+        // wizard.setProcessConverter(new MapRedProcessConverter(object));
+        return wizard;
     }
 
 }
