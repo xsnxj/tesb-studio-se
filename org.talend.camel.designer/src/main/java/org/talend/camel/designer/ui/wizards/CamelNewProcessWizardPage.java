@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
@@ -23,12 +25,15 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IProxyRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
@@ -129,5 +134,53 @@ public class CamelNewProcessWizardPage extends PropertiesWizardPage {
 		}
 		return isValid;
 	}
+	
+	 @Override
+	    protected List<IRepositoryViewObject> loadRepViewObjectWithOtherTypes() throws PersistenceException {
+	        List<IRepositoryViewObject> list = new ArrayList<IRepositoryViewObject>();
+
+	        // List for m/r process
+	        ERepositoryObjectType mrRepObjType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "PROCESS_MR");//$NON-NLS-1$
+	        if (mrRepObjType != null) {
+	            if (GlobalServiceRegister.getDefault().isServiceRegistered(IProxyRepositoryService.class)) {
+	                IProxyRepositoryService service = (IProxyRepositoryService) GlobalServiceRegister.getDefault().getService(
+	                        IProxyRepositoryService.class);
+
+	                List<IRepositoryViewObject> mrList = service.getProxyRepositoryFactory().getAll(mrRepObjType, true, false);
+	                if (mrList != null && mrList.size() > 0) {
+	                    list.addAll(mrList);
+	                }
+	            }
+	        }
+
+	        // List for routine
+	        if (ERepositoryObjectType.ROUTINES != null) {
+	            if (GlobalServiceRegister.getDefault().isServiceRegistered(IProxyRepositoryService.class)) {
+	                IProxyRepositoryService service = (IProxyRepositoryService) GlobalServiceRegister.getDefault().getService(
+	                        IProxyRepositoryService.class);
+
+	                List<IRepositoryViewObject> mrList = service.getProxyRepositoryFactory().getAll(ERepositoryObjectType.ROUTINES,
+	                        true, false);
+	                if (mrList != null && mrList.size() > 0) {
+	                    list.addAll(mrList);
+	                }
+	            }
+	        }
+
+	        // List for common process
+	        if (ERepositoryObjectType.PROCESS != null) {
+	            if (GlobalServiceRegister.getDefault().isServiceRegistered(IProxyRepositoryService.class)) {
+	                IProxyRepositoryService service = (IProxyRepositoryService) GlobalServiceRegister.getDefault().getService(
+	                        IProxyRepositoryService.class);
+
+	                List<IRepositoryViewObject> mrList = service.getProxyRepositoryFactory().getAll(ERepositoryObjectType.PROCESS,
+	                        true, false);
+	                if (mrList != null && mrList.size() > 0) {
+	                    list.addAll(mrList);
+	                }
+	            }
+	        }
+	        return list;
+	    }
 
 }
