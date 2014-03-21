@@ -142,8 +142,8 @@
 		<IMPORTS>
             <!-- camel-core -->
             <IMPORT NAME="camel-core"
-                    MODULE="camel-core-2.13-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13-SNAPSHOT.jar"
+                    MODULE="camel-core-2.13.0.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13.0.jar"
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
@@ -164,8 +164,8 @@
 
             <!-- camel-spring -->
             <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-2.13-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.13-SNAPSHOT.jar"
+                    MODULE="camel-spring-2.13.0.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.13.0.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.4.RELEASE.jar"
@@ -205,14 +205,14 @@
                     REQUIRED="true" />
 
             <IMPORT NAME="talend-camel-jetty"
-                    MODULE="camel-jetty-alldep-2.13-SNAPSHOT.jar" 
-                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-2.13-SNAPSHOT.jar"
+                    MODULE="camel-jetty-alldep-2.13.0.jar" 
+                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-2.13.0.jar"
                     REQUIRED_IF="SERVER=='true'" />
 
             <!-- camel-http -->
             <IMPORT NAME="camel-http"
-                    MODULE="camel-http-2.13-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.13-SNAPSHOT.jar"
+                    MODULE="camel-http-2.13.0.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.13.0.jar"
                     REQUIRED="true" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"

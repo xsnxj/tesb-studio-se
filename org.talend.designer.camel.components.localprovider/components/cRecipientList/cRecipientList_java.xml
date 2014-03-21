@@ -150,8 +150,8 @@
 		<IMPORTS>
             <!-- camel-groovy -->
             <IMPORT NAME="camel-groovy"
-                    MODULE="camel-groovy-2.13-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13-SNAPSHOT.jar"
+                    MODULE="camel-groovy-2.13.0.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13.0.jar"
                     REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
             <IMPORT NAME="groovy-all"
                     MODULE="groovy-all-2.1.9.jar"
@@ -159,8 +159,8 @@
                     REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
             <!-- camel-script -->
             <IMPORT NAME="camel-script"
-                    MODULE="camel-script-2.13-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.13-SNAPSHOT.jar"
+                    MODULE="camel-script-2.13.0.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.13.0.jar"
                 REQUIRED_IF=" LANGUAGES == 'JAVASCRIPT'" />
 		</IMPORTS>
 	</CODEGENERATION>
