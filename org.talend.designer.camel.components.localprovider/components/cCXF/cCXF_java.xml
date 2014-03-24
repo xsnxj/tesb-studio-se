@@ -334,12 +334,12 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.11-SNAPSHOT.jar"
                     REQUIRED="true" />
             <IMPORT NAME="woodstox-core-asl"
-                    MODULE="woodstox-core-asl-4.2.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.0.jar"
+                    MODULE="woodstox-core-asl-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="stax2-api"
-                    MODULE="stax2-api-3.1.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.1.jar"
+                    MODULE="stax2-api-3.1.4.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.4.jar"
                     REQUIRED="true" />
             <IMPORT NAME="wsdl4j"
                     MODULE="wsdl4j-1.6.3.jar"
