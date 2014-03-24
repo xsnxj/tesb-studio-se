@@ -27,10 +27,10 @@ imports="
 	/*
 	 * change to use label + unique to make it unique but readable
 	 */
-	IElementParameter param = node.getElementParameter("LABEL");
-	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
-		uri = (String)param.getValue()+'_'+uri;
-	}
+//	IElementParameter param = node.getElementParameter("LABEL");
+//	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+//		uri = (String)param.getValue()+'_'+uri;
+//	}
 
 	if (node.getIncomingConnections().isEmpty()) {
 %>

@@ -36,10 +36,10 @@ imports="
 	/*
    	 * change to use label + unique to make it unique but readable
    	 */
-	IElementParameter param = consumerNode.getElementParameter("LABEL");
-	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
-		cid = (String)param.getValue()+"_"+cid;	
-	}
+//	IElementParameter param = consumerNode.getElementParameter("LABEL");
+//	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+//		cid = (String)param.getValue()+"_"+cid;	
+//	}
 	
 	
 	
