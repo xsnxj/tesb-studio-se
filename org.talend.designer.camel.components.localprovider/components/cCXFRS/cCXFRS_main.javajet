@@ -20,17 +20,7 @@ imports="
 	String responseClass = "*/*".equals(acceptType) ? "String.class" : "org.w3c.dom.Document.class";
 	String contentType = paramsHelper.getVisibleStringParam("__CONTENT_TYPE__");
 
-	//boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-
 	String uri = cid;
-	// http://jira.talendforge.org/browse/TESB-5241
-	/*
-	 * change to use label + unique to make it unique but readable
-	 */
-//	IElementParameter param = node.getElementParameter("LABEL");
-//	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
-//		uri = (String)param.getValue()+'_'+uri;
-//	}
 
 	if (node.getIncomingConnections().isEmpty()) {
 %>
@@ -53,6 +43,13 @@ imports="
 <% } %>
 <% if (!contentType.isEmpty()) { %>
 		.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, constant("<%=contentType%>"))
+<% } %>
+<% if (paramsHelper.getBoolParam("__ENABLE_CORRELATION__")) { %>
+		.process(new org.apache.camel.Processor() {
+				public void process(org.apache.camel.Exchange exchange) throws Exception {
+					correlationIDCallbackHandler_<%=cid%>.setCorrelationId(simple(<%=paramsHelper.getVisibleStringParam("__CORRELATION_VALUE__")%>).evaluate(exchange, String.class));
+				}
+			})
 <% } %>
 
 		.inOut(uriMap.get("<%=uri%>"))
