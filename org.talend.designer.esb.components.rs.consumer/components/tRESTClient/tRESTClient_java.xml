@@ -519,8 +519,8 @@
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-transports-local"
-					MODULE="cxf-rt-transports-local-2.7.11-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.11-SNAPSHOT.jar"
+					MODULE="${tesb-cxf-rt-transports-local}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-local}"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-ws-addr"
