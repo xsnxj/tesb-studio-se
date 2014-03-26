@@ -549,11 +549,6 @@
 					MODULE="javax.ws.rs-api-2.0-m10.jar"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-			<IMPORT NAME="cxf-rt-transports-local"
-					MODULE="${tesb-cxf-rt-transports-local}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-local}"
-					BundleID=""
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
 			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
