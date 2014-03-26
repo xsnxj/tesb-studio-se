@@ -518,11 +518,6 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.11-SNAPSHOT.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-			<IMPORT NAME="cxf-rt-transports-local"
-					MODULE="${tesb-cxf-rt-transports-local}"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-local}"
-					BundleID=""
-					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-ws-addr"
 					MODULE="cxf-rt-ws-addr-2.7.11-SNAPSHOT.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.11-SNAPSHOT.jar"
