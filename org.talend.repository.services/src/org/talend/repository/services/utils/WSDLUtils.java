@@ -93,6 +93,12 @@ public class WSDLUtils {
             Service service = (Service) serviceObject;
             for (Object portObject : service.getPorts().values()) {
                 Port port = (Port) portObject;
+                try {
+                	port.getBinding().getPortType().getQName().getLocalPart();
+                }
+                catch (NullPointerException npe) {
+                	throw getCoreException("WSDL is not consistent. Can not find portType operation description for current service.", npe);
+                }
                 if (portTypeName.equals(port.getBinding().getPortType().getQName().getLocalPart())) {
                     final String targetNs = wsdl.getTargetNamespace();
                     map.put(SERVICE_NAME, service.getQName().getLocalPart());
