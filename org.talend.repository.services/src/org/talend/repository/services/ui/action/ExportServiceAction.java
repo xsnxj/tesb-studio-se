@@ -24,7 +24,6 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.publish.core.models.BundleModel;
@@ -111,7 +110,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
                         if(jobNode==null) {
                         	continue;
                         }
-                        operations.put(operationName, JavaResourcesHelper.getJobClassName(jobNode));
+                        String jobName = jobNode.getObject().getLabel();
+                        operations.put(operationName, jobName);
                         nodes.add(jobNode);
                     }
                 }
