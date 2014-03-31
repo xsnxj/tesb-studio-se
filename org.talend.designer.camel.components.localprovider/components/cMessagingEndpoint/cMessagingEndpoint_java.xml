@@ -80,10 +80,12 @@
 						<ITEM NAME="HAZELCAST" VALUE="HAZELCAST"/>
 						<ITEM NAME="HBASE" VALUE="HBASE"/>
 						<ITEM NAME="HDFS" VALUE="HDFS"/>
+						<ITEM NAME="HDFS2" VALUE="HDFS2"/>
 						<ITEM NAME="HL7" VALUE="HL7"/>
 						<ITEM NAME="HTTP" VALUE="HTTP"/>
 						<ITEM NAME="HTTP4" VALUE="HTTP4"/>
 						<ITEM NAME="IBATIS" VALUE="IBATIS"/>
+						<ITEM NAME="INFINISPAN" VALUE="INFINISPAN"/>
 						<ITEM NAME="IRC" VALUE="IRC"/>
 						<ITEM NAME="JACKSON" VALUE="JACKSON"/>
 						<ITEM NAME="JASYPT" VALUE="JASYPT"/>
@@ -92,6 +94,7 @@
 						<ITEM NAME="JCR" VALUE="JCR"/>
 						<ITEM NAME="JDBC" VALUE="JDBC"/>
 						<ITEM NAME="JETTY" VALUE="JETTY"/>
+						<ITEM NAME="JGROUPS" VALUE="JGROUPS"/>
 						<ITEM NAME="JIBX" VALUE="JIBX"/>
 						<ITEM NAME="JING" VALUE="JING"/>
 						<ITEM NAME="JMS" VALUE="JMS"/>
@@ -102,6 +105,7 @@
 						<ITEM NAME="JT400" VALUE="JT400"/>
 						<ITEM NAME="JUEL" VALUE="JUEL"/>
 						<ITEM NAME="JXPATH" VALUE="JXPATH"/>
+						<ITEM NAME="KAFKA" VALUE="KAFKA"/>
 						<ITEM NAME="KESTREL" VALUE="KESTREL"/>
 						<ITEM NAME="KRATI" VALUE="KRATI"/>
 						<ITEM NAME="LDAP" VALUE="LDAP"/>
@@ -119,6 +123,7 @@
 						<ITEM NAME="NETTY" VALUE="NETTY"/>
 						<ITEM NAME="NETTY-HTTP" VALUE="NETTY-HTTP"/>
 						<ITEM NAME="OGNL" VALUE="OGNL"/>
+						<ITEM NAME="OPTAPLANNER" VALUE="OPTAPLANNER"/>
 						<ITEM NAME="PAXLOGGING" VALUE="PAXLOGGING"/>
 						<ITEM NAME="PRINTER" VALUE="PRINTER"/>
 						<ITEM NAME="PROTOBUF" VALUE="PROTOBUF"/>
@@ -143,6 +148,7 @@
 						<ITEM NAME="SNMP" VALUE="SNMP"/>
 						<ITEM NAME="SOAP" VALUE="SOAP"/>
 						<ITEM NAME="SOLR" VALUE="SOLR"/>
+						<ITEM NAME="SPLUNK" VALUE="SPLUNK"/>
 						<ITEM NAME="SPRING-BATCH" VALUE="SPRING-BATCH"/>
 						<ITEM NAME="SPRING-INTEGRATION" VALUE="SPRING-INTEGRATION"/>
 						<ITEM NAME="SPRING-LDAP" VALUE="SPRING-LDAP"/>
@@ -624,6 +630,22 @@
 				NAME="talend-camel-hdfs"	
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs-alldep-2.13.0.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HDFS']" />
+			<IMPORT MODULE="camel-hdfs2-alldep-2.13.0.jar" 
+				NAME="talend-camel-hdfs2"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs2-alldep-2.13.0.jar"
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HDFS2']" />
+			<IMPORT MODULE="camel-infinispan-alldep-2.13.0.jar" 
+				NAME="talend-camel-infinispan"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-infinispan-alldep-2.13.0.jar"
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['INFINISPAN']" />
+			<IMPORT MODULE="camel-jgroups-alldep-2.13.0.jar" 
+				NAME="talend-camel-jgroups"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jgroups-alldep-2.13.0.jar"
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JGROUPS']" />
+			<IMPORT MODULE="camel-kafka-alldep-2.13.0.jar" 
+				NAME="talend-camel-kafka"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.13.0.jar"
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['KAFKA']" />
 			<IMPORT MODULE="camel-krati-alldep-2.13.0.jar" 
 				NAME="talend-camel-krati"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-krati-alldep-2.13.0.jar"	
@@ -640,6 +662,10 @@
 				NAME="talend-camel-mqtt"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-2.13.0.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MQTT']" />
+			<IMPORT MODULE="camel-optaplanner-alldep-2.13.0.jar" 
+				NAME="talend-camel-optaplanner"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-optaplanner-alldep-2.13.0.jar"	
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['OPTAPLANNER']" />
 			<IMPORT MODULE="camel-sjms-alldep-2.13.0.jar" 
 				NAME="talend-camel-sjms"	
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sjms-alldep-2.13.0.jar"
@@ -648,6 +674,10 @@
 				NAME="talend-camel-solr"	
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-solr-alldep-2.13.0.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SOLR']" />
+			<IMPORT MODULE="camel-splunk-alldep-2.13.0.jar" 
+				NAME="talend-camel-splunk"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-splunk-alldep-2.13.0.jar"
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPLUNK']" />
 			<IMPORT MODULE="camel-spring-batch-alldep-2.13.0.jar" 
 				NAME="talend-camel-spring-batch"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-batch-alldep-2.13.0.jar"	
