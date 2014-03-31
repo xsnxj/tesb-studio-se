@@ -1253,6 +1253,13 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
+			
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__CONVERT_VALUES_TO_STRING__"))) { %>
+				jsonProvider.setConvertTypesToStrings(true);
+			<% } 
+			   else { %>
+			    jsonProvider.setConvertTypesToStrings(false);
+			<% } %>
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
 			sf.setTransportId("http://cxf.apache.org/transports/http");
