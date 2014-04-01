@@ -1254,7 +1254,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				jsonProvider.setWrapperName("root");
 			<% } %>
 			
-			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__CONVERT_VALUES_TO_STRING__"))) { %>
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__CONVERT_JSON_VALUES_TO_STRING__"))) { %>
 				jsonProvider.setConvertTypesToStrings(true);
 			<% } 
 			   else { %>
