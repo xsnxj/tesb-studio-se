@@ -53,6 +53,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.impl.PropertyImpl;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -63,6 +64,9 @@ import org.talend.core.utils.KeywordsValidator;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.EmfComponent;
+import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -819,6 +823,10 @@ public class ESBService implements IESBService {
                                 String[] array = operationLabel.split("-");
                                 operation.setLabel(array[0] + "-" + jobNameValue);
                             }
+                            //update nodes in newProcessItem
+                            ProcessType process = updateNodesInNewProcessItem(newProcessItem, serviceItem, port,
+									operation);
+                            
                             operation.setReferenceJobId(newProcessItem.getProperty().getId());
                             try {
                                 ProxyRepositoryFactory.getInstance().save(serviceItem);
@@ -832,6 +840,47 @@ public class ESBService implements IESBService {
         }
 
     }
+
+	/**
+	 * To fix [TESB-6072], tESBProviderRequest_x in job need to be update to binding to the new service. 
+	 * @param newProcessItem The cloned job process item.
+	 * @param serviceItem The cloned service item.
+	 * @param port
+	 * @param operation
+	 * @return
+	 */
+	private ProcessType updateNodesInNewProcessItem(Item newProcessItem, ServiceItem serviceItem, ServicePort port,
+			ServiceOperation operation) {
+		ProcessType process = ((ProcessItem) newProcessItem).getProcess();
+		for (Object o : process.getNode()) {
+			if (o instanceof NodeType) {
+				NodeType node = (NodeType) o;
+				if(node.getComponentName().equals("tESBProviderRequest")) {
+					EList<?> elementParameter = node.getElementParameter();
+					for (Object param : elementParameter) {
+						ElementParameterType paramType = (ElementParameterType) param;
+						if(paramType.getName().equals("PROPERTY:REPOSITORY_PROPERTY_TYPE")) {
+							//value is SERVICE_ID - PORT_ID - OPERATION_ID
+							StringBuilder sb = new StringBuilder(serviceItem.getProperty().getId());
+							sb.append(" - ");
+							sb.append(port.getId());
+							sb.append(" - ");
+							sb.append(operation.getId());
+							paramType.setValue(sb.toString());
+							
+						}
+					}
+				}
+			}
+		}
+		try {
+			ProxyRepositoryFactory
+			.getInstance().save(newProcessItem, true);
+		} catch (PersistenceException e1) {
+			ExceptionHandler.process(e1);
+		}
+		return process;
+	}
 
     private Item copyJobForService(final Item item, final IPath path, final String newName) {
         try {
