@@ -266,6 +266,25 @@
 	</FeatureMap>
     <FeatureMap HotLib="tdm-camel">
 		<Feature version="[5,10)">talend-data-mapper</Feature>
-	</FeatureMap>	
+	</FeatureMap>
+	<FeatureMap HotLib="camel-splunk-alldep">
+		<Feature version="[2,5)">camel-splunk</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-optaplanner-alldep">
+		<Feature version="[2,5)">camel-optaplanner</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-kafka-alldep">
+		<Feature version="[2,5)">camel-kafka</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-jgroups-alldep">
+		<Feature version="[2,5)">camel-jgroups</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-infinispan-alldep">
+		<Feature version="[2,5)">camel-infinispan</Feature>
+	</FeatureMap>
+	<FeatureMap HotLib="camel-hdfs2-alldep">
+		<Feature version="[2,5)">camel-hdfs2</Feature>
+	</FeatureMap>
+	
 </FeatureMaps>
 	
