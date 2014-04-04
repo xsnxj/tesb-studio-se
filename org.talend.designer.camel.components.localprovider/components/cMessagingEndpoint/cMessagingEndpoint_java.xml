@@ -67,6 +67,7 @@
 						<ITEM NAME="ELASTICSEARCH" VALUE="ELASTICSEARCH"/>
 						<ITEM NAME="EVENTADMIN" VALUE="EVENTADMIN"/>
 						<ITEM NAME="EXEC" VALUE="EXEC"/>
+							<ITEM NAME="FACEBOOK" VALUE="FACEBOOK"/>						
 						<ITEM NAME="FLATPACK" VALUE="FLATPACK"/>
 						<ITEM NAME="FOP" VALUE="FOP"/>
 						<ITEM NAME="FREEMARKER" VALUE="FREEMARKER"/>
@@ -136,6 +137,7 @@
 						<ITEM NAME="ROUTEBOX" VALUE="ROUTEBOX"/>
 						<ITEM NAME="RSS" VALUE="RSS"/>
 						<ITEM NAME="RUBY" VALUE="RUBY"/>
+							<ITEM NAME="SALESFORCE" VALUE="SALESFORCE"/>							
 						<ITEM NAME="SAP-NETWEAVER" VALUE="SAP-NETWEAVER"/>
 						<ITEM NAME="SAXON" VALUE="SAXON"/>
 						<ITEM NAME="SCALA" VALUE="SCALA"/>
@@ -164,6 +166,7 @@
 						<ITEM NAME="TAGSOUP" VALUE="TAGSOUP"/>
 						<ITEM NAME="TWITTER" VALUE="TWITTER"/>
 						<ITEM NAME="VELOCITY" VALUE="VELOCITY"/>
+							<ITEM NAME="VERTX" VALUE="VERTX"/>
 						<ITEM NAME="WEATHER" VALUE="WEATHER"/>
 						<ITEM NAME="WEBSOCKET" VALUE="WEBSOCKET"/>
 						<ITEM NAME="XMLBEANS" VALUE="XMLBEANS"/>
@@ -759,7 +762,19 @@
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-yammer-alldep-2.13.0.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['YAMMER']" />
 
-
+			<IMPORT MODULE="camel-facebook-alldep-2.13.0.jar" 
+				NAME="talend-camel-facebook"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-facebook-alldep-2.13.0.jar"	
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FACEBOOK']" />
+			<IMPORT MODULE="camel-salesforce-alldep-2.13.0.jar" 
+				NAME="talend-camel-salesforce"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-salesforce-alldep-2.13.0.jar"	
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SALESFORCE']" />
+			<IMPORT MODULE="camel-vertx-alldep-2.13.0.jar" 
+				NAME="talend-camel-vertx"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-vertx-alldep-2.13.0.jar"	
+				REQUIRED_IF="HOTLIBS.LIBPATH IN ['VERTX']" />
+				
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.11-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11-SNAPSHOT.jar"
