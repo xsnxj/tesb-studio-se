@@ -285,6 +285,53 @@
 	<FeatureMap HotLib="camel-hdfs2-alldep">
 		<Feature version="[2,5)">camel-hdfs2</Feature>
 	</FeatureMap>
-	
+    <FeatureMap HotLib="camel-base64-alldep">
+        <Feature version="[2,5)">camel-base64</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-beanio-alldep">
+        <Feature version="[2,5)">camel-beanio</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-facebook-alldep">
+        <Feature version="[2,5)">camel-facebook</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-gson-alldep">
+        <Feature version="[2,5)">camel-gson</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-jsonpath-alldep">
+        <Feature version="[2,5)">camel-jsonpath</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-leveldb-alldep">
+        <Feature version="[2,5)">camel-leveldb</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-rx-alldep">
+        <Feature version="[2,5)">camel-rx</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-salesforce-alldep">
+        <Feature version="[2,5)">camel-salesforce</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-servletlistener-alldep">
+        <Feature version="[2,5)">camel-servletlistener</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-spring-javaconfig-alldep">
+        <Feature version="[2,5)">camel-spring-javaconfig</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-spring-security-alldep">
+        <Feature version="[2,5)">camel-spring-security</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-urlrewrite-alldep">
+        <Feature version="[2,5)">camel-urlrewrite</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-vertx-alldep">
+        <Feature version="[2,5)">camel-vertx</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-xmljson-alldep">
+        <Feature version="[2,5)">camel-xmljson</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-xmlrpc-alldep">
+        <Feature version="[2,5)">camel-xmlrpc</Feature>
+    </FeatureMap>
+    <FeatureMap HotLib="camel-zipfile-alldep">
+        <Feature version="[2,5)">camel-zipfile</Feature>
+    </FeatureMap>
 </FeatureMaps>
 	
