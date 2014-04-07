@@ -75,8 +75,8 @@ public final class CamelFeatureUtil {
 	private static final Map<String, Collection<FeatureModel>> camelFeaturesMap =
 			new HashMap<String, Collection<FeatureModel>>();
 
-	private static final Map<String, Collection<BundleModel>> camelBundlesMap =
-			new HashMap<String, Collection<BundleModel>>();
+//	private static final Map<String, Collection<BundleModel>> camelBundlesMap =
+//			new HashMap<String, Collection<BundleModel>>();
 
 
 	private static final String JAVA_SCRIPT = "javaScript";
@@ -137,28 +137,28 @@ public final class CamelFeatureUtil {
 	 * @param libraryName
 	 * @return
 	 */
-	private static Collection<BundleModel> computeBundle(String libraryName) {
-		if (camelBundlesMap.isEmpty()) {
-			initMap();
-		}
-		String nameWithoutVersion = getNameWithoutVersion(libraryName);
-		return camelBundlesMap.get(nameWithoutVersion);
-	}
-	
+//	private static Collection<BundleModel> computeBundle(String libraryName) {
+//		if (camelBundlesMap.isEmpty()) {
+//			initMap();
+//		}
+//		String nameWithoutVersion = getNameWithoutVersion(libraryName);
+//		return camelBundlesMap.get(nameWithoutVersion);
+//	}
+
 	private static String getNameWithoutVersion(String libraryName){
 		if(libraryName == null || libraryName.isEmpty() || !libraryName.endsWith(".jar")){
 			return libraryName;
 		}
 		String interName = libraryName;
-		int lastIndexOf = interName.lastIndexOf("-");
+		int lastIndexOf = interName.lastIndexOf('-');
 		while(lastIndexOf != -1){
 			try{
-				Integer.parseInt(interName.charAt(lastIndexOf+1)+"");
+				Integer.parseInt(Character.toString(interName.charAt(lastIndexOf+1)));
 				interName = interName.substring(0, lastIndexOf);
 				break;
 			}catch(Exception e){
 				interName = interName.substring(0, lastIndexOf);
-				lastIndexOf = interName.lastIndexOf("-");
+				lastIndexOf = interName.lastIndexOf('-');
 			}
 		}
 		return interName;
@@ -196,17 +196,17 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @return
 	 */
-	private static Collection<BundleModel> getBundlesOfRoute(
-			Collection<String> neededLibraries) {
-		Collection<BundleModel> bundles = new HashSet<BundleModel>();
-		for (String lib : neededLibraries) {
-			Collection<BundleModel> model = computeBundle(lib);
-			if (model != null) {
-				bundles.addAll(model);
-			}
-		}
-		return bundles;
-	}
+//	private static Collection<BundleModel> getBundlesOfRoute(
+//			Collection<String> neededLibraries) {
+//		Collection<BundleModel> bundles = new HashSet<BundleModel>();
+//		for (String lib : neededLibraries) {
+//			Collection<BundleModel> model = computeBundle(lib);
+//			if (model != null) {
+//				bundles.addAll(model);
+//			}
+//		}
+//		return bundles;
+//	}
 
 	/**
 	 * 
@@ -433,27 +433,27 @@ public final class CamelFeatureUtil {
 					features.add(new FeatureModel(featureName,
 							featureVersion));
 				}
-				list = (NodeList) newXPath.evaluate("//FeatureMap/Bundle",
-						document, XPathConstants.NODESET);
-
-				for (int index = 0; index < list.getLength(); index++) {
-
-					Node node = list.item(index);
-					String hotLib = node.getParentNode().getAttributes()
-							.getNamedItem("HotLib").getNodeValue();
-					Collection<BundleModel> bundles = camelBundlesMap.get(hotLib);
-					if (bundles == null) {
-						bundles = new HashSet<BundleModel>();
-						camelBundlesMap.put(hotLib, bundles);
-					}
-
-					String version = node.getAttributes()
-							.getNamedItem("version").getNodeValue();
-					String groupId = node.getAttributes()
-							.getNamedItem("groupId").getNodeValue();
-					String name = node.getFirstChild().getNodeValue();
-					bundles.add(new BundleModel(groupId, name, version));
-				}
+//				list = (NodeList) newXPath.evaluate("//FeatureMap/Bundle",
+//						document, XPathConstants.NODESET);
+//
+//				for (int index = 0; index < list.getLength(); index++) {
+//
+//					Node node = list.item(index);
+//					String hotLib = node.getParentNode().getAttributes()
+//							.getNamedItem("HotLib").getNodeValue();
+//					Collection<BundleModel> bundles = camelBundlesMap.get(hotLib);
+//					if (bundles == null) {
+//						bundles = new HashSet<BundleModel>();
+//						camelBundlesMap.put(hotLib, bundles);
+//					}
+//
+//					String version = node.getAttributes()
+//							.getNamedItem("version").getNodeValue();
+//					String groupId = node.getAttributes()
+//							.getNamedItem("groupId").getNodeValue();
+//					String name = node.getFirstChild().getNodeValue();
+//					bundles.add(new BundleModel(groupId, name, version));
+//				}
 			} finally {
 				input.close();
 			}
@@ -491,10 +491,10 @@ public final class CamelFeatureUtil {
 			featuresModel.addFeature(model);
 		}
 
-		Collection<BundleModel> bundles = getBundlesOfRoute(neededLibraries);
-		for (BundleModel model : bundles) {
-			featuresModel.addBundle(model);
-		}
+//		Collection<BundleModel> bundles = getBundlesOfRoute(neededLibraries);
+//		for (BundleModel model : bundles) {
+//			featuresModel.addBundle(model);
+//		}
 
 		process.dispose();
 
