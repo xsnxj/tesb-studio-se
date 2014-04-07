@@ -399,8 +399,8 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="wss4j"
-                    MODULE="wss4j-1.6.14.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.14.jar"
+                    MODULE="wss4j-1.6.16-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.16-SNAPSHOT.jar"
                     REQUIRED="true" />
             <IMPORT NAME="xmlsec"
                     MODULE="xmlsec-1.5.6.jar"
