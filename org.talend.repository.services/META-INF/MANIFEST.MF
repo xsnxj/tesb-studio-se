@@ -27,7 +27,8 @@ Require-Bundle: org.apache.commons.collections,
  javax.wsdl;bundle-version="1.6.2",
  org.apache.commons.lang,
  org.talend.libraries.dom4j-jaxen,
- org.eclipse.wst.wsdl
+ org.eclipse.wst.wsdl,
+ org.talend.metadata.managment
 Import-Package: org.talend.repository.ui.wizards.metadata.connection,
  org.talend.utils.wsdl
 Bundle-ActivationPolicy: lazy
