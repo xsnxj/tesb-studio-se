@@ -18,6 +18,7 @@ import org.eclipse.emf.common.util.EList;
 import org.talend.camel.designer.model.ExportKarBundleModel;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -32,7 +33,6 @@ public class KarFileGenerator {
 
         Property routeProperty = routerNode.getObject().getProperty();
         String itemName = routeProperty.getDisplayName();
-        String projectName = routerNode.getObject().getProjectLabel().toLowerCase();
 
         // Create the parent file if not exist
         File destFile = new File(destination).getAbsoluteFile();
@@ -43,7 +43,7 @@ public class KarFileGenerator {
         ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("repository/").append(projectName).append('/').append(itemName).append('/');
+        sb.append("repository/").append(JavaResourcesHelper.getProjectFolderName(routeProperty.getItem())).append('/').append(itemName).append('/');
         /*
          * Bundle File path: repository/[projectName]/[itemName]/[itemName]-bundle
          * /[itemVersion]/[itemName]-bundle-[itemVersion].jar
