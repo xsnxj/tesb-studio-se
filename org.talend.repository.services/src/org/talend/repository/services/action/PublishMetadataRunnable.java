@@ -60,8 +60,10 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.data.list.UniqueStringGenerator;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
+import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MappingTypeRetriever;
 import org.talend.core.model.metadata.MetadataTalendType;
+import org.talend.core.model.metadata.builder.ConvertionHelper;
 import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
 import org.talend.core.model.metadata.builder.connection.MetadataColumn;
 import org.talend.core.model.metadata.builder.connection.MetadataTable;
@@ -73,6 +75,7 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.cwm.helper.ConnectionHelper;
@@ -129,10 +132,6 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     selectTables = runnable.getSelectTables();
                     if (null == selectTables) {
                         return;
-                    }
-                    // all selected
-                    if (xmlObjs.equals(selectTables)) {
-                        selectTables = Collections.emptyList();
                     }
                 } else {
                     selectTables = Collections.emptyList();
@@ -391,15 +390,28 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         XmlFileConnection connection = null;
         Property connectionProperty = null;
         XmlFileConnectionItem connectionItem = null;
+        String oldConnectionId = null;
+        String oldTableId = null;
+        IMetadataTable oldMetadataTable = null;
+        Map<String, String> oldTableMap = null;
 
         if (!selectItems.isEmpty()) {
             boolean needRewrite = false;
             for (XmlFileConnectionItem item : selectItems) {
                 connectionProperty = item.getProperty();
                 if (connectionProperty.getLabel().equals(name)) {
+                    oldConnectionId = connectionProperty.getId();
                     connectionItem = item;
                     connection = (XmlFileConnection) connectionItem.getConnection();
                     needRewrite = true;
+                    Set<MetadataTable> tables = ConnectionHelper.getTables(connection);
+                    MetadataTable oldTable = null;
+                    if (tables.size() > 0) {
+                        oldTable = tables.toArray(new MetadataTable[0])[0];
+                        oldTableId = oldTable.getId();
+                        oldMetadataTable = ConvertionHelper.convert(oldTable);
+                    }
+                    oldTableMap = RepositoryUpdateManager.getOldTableIdAndNameMap(connectionItem, oldTable, false);
                     break;
                 }
             }
@@ -466,7 +478,11 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             loopElementFound = false;
             if (ConnectionHelper.getTables(connection).isEmpty()) {
                 MetadataTable table = ConnectionFactory.eINSTANCE.createMetadataTable();
-                table.setId(ProxyRepositoryFactory.getInstance().getNextId());
+                if (oldTableId != null) {
+                    table.setId(oldTableId);
+                } else {
+                    table.setId(ProxyRepositoryFactory.getInstance().getNextId());
+                }
                 RecordFile record = (RecordFile) ConnectionHelper.getPackage(connection.getName(), connection, RecordFile.class);
                 if (record != null) { // hywang
                     PackageHelper.addMetadataTable(table, record);
@@ -503,13 +519,35 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             IPath path = new Path(folderPath);
             factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
                                                         // existing in the same path
+            if (oldConnectionId != null) {
+                connectionItem.getProperty().setId(oldConnectionId);
+                factory.save(connectionItem);
+            }
+
+            propagateSchemaChange(oldMetadataTable, oldTableMap, connection, connectionItem);
 
             ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         }
+    }
+
+    private void propagateSchemaChange(final IMetadataTable oldMetaTable, final Map<String, String> oldTableMap,
+            final XmlFileConnection connection, final XmlFileConnectionItem connectionItem) {
+        if (oldMetaTable == null) {
+            return;
+        }
+
+        Display.getDefault().syncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                MetadataTable newTable = ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0];
+                RepositoryUpdateManager.updateSingleSchema(connectionItem, newTable, oldMetaTable, oldTableMap);
+            }
+        });
     }
 
     private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) {
