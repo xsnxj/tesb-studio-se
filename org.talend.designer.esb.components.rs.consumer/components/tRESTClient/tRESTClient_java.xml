@@ -397,8 +397,8 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-features-clustering"
-					MODULE="cxf-rt-features-clustering-2.7.11-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11-SNAPSHOT.jar"
+					MODULE="cxf-rt-features-clustering-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="cxf-rt-ws-policy"
@@ -519,8 +519,8 @@
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-transports-local"
-					MODULE="cxf-rt-transports-local-2.7.11-SNAPSHOT.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.11-SNAPSHOT.jar"
+					MODULE="cxf-rt-transports-local-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-local-2.7.11.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-ws-addr"
