@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.commons.emf.TalendXMIResource;
 import org.talend.repository.items.importexport.handlers.HandlerUtil;
 import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
-import org.talend.repository.items.importexport.handlers.model.ItemRecord;
+import org.talend.repository.items.importexport.handlers.model.ImportItem;
 import org.talend.repository.items.importexport.manager.ResourcesManager;
 
 /**
@@ -56,7 +56,7 @@ public class RouteImportHandler extends ImportRepTypeHandler {
      * org.talend.repository.items.importexport.ui.wizard.imports.models.ItemRecord)
      */
     @Override
-    protected boolean copyReferenceFiles(ResourcesManager resManager, ItemRecord selectedItemRecord) throws IOException {
+    protected boolean copyReferenceFiles(ResourcesManager resManager, ImportItem selectedItemRecord) throws IOException {
         HandlerUtil.copyScreenshotFile(resManager, selectedItemRecord);
         return super.copyReferenceFiles(resManager, selectedItemRecord);
     }
