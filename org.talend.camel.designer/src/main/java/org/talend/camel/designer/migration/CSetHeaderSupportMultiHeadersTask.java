@@ -123,6 +123,7 @@ public class CSetHeaderSupportMultiHeadersTask extends
 		ElementParameterType newParameter = TalendFileFactory.eINSTANCE
 				.createElementParameterType();
 		newParameter.setName("VALUES");
+		newParameter.setField("TABLE");
 		newParameter.getElementValue().add(newNameValue);
 		newParameter.getElementValue().add(newLanguageValue);
 		newParameter.getElementValue().add(newExpressionValue);
