@@ -1,9 +1,10 @@
 package org.talend.camel.designer.migration;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
@@ -25,12 +26,53 @@ public class CSetHeaderSupportMultiHeadersTask extends
 
 	@Override
 	protected boolean execute(NodeType node) throws Exception {
+		List<?> parameters = node.getElementParameter(); 
+		List<ElementParameterType> valuesParams = getValuesParams(parameters); 
+		if(!valuesParams.isEmpty()) { 
+			return updateValuesParams(parameters, valuesParams); 
+		}
 		cSetHeaderMigrate(node);
 		return true;
 	}
 
+	/**
+	 * Update values params due to duplicated or no attribute field="TABLE".
+	 * Shouldn't happened for normail case but in order to fix [TESB-13416] still do a workaround.
+	 *
+	 * @param parameters the parameters
+	 * @param valuesParams the values params, can't be empty
+	 * @return true, if needs save
+	 */
+	private boolean updateValuesParams(List<?> parameters, List<ElementParameterType> valuesParams) {
+		ElementParameterType keep = null;
+		if(valuesParams.size() == 1) {
+			keep = valuesParams.get(0);
+			if ("TABLE".equals(keep.getField())) {
+				return false;
+			}
+		}else {
+			// duplicated params
+			for (ElementParameterType valuesParam : valuesParams) {
+				if ("TABLE".equals(valuesParam.getField())) {
+					keep = valuesParam;
+					break;
+				}
+			}
+
+			if(keep == null) {
+				keep = valuesParams.remove(0);
+			}else {
+				valuesParams.remove(keep);
+			}
+			parameters.removeAll(valuesParams);
+		}
+		keep.setField("TABLE");
+		return true;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void cSetHeaderMigrate(NodeType currentNode) throws PersistenceException {
-		EList parameters = currentNode.getElementParameter();
+		List parameters = currentNode.getElementParameter();
 		String headerName = null;
 		String useBean = null;
 		String expression = null;
