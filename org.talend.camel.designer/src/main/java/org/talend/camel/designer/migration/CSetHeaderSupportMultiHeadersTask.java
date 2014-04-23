@@ -36,6 +36,23 @@ public class CSetHeaderSupportMultiHeadersTask extends
 	}
 
 	/**
+	 * Gets all elementParameter with attribute name={@link #STRING_VALUES} .
+	 *
+	 * @param parameters the parameters
+	 * @return the values params
+	 */
+	private List<ElementParameterType> getValuesParams(List<?> parameters) {
+		List<ElementParameterType> valuesParams = new ArrayList<ElementParameterType>();
+		for (Object tmp : parameters) {
+			ElementParameterType param = (ElementParameterType) tmp;
+			if ("VALUES".equals(param.getName())) {
+				valuesParams.add(param);
+			}
+		}
+		return valuesParams;
+	}
+
+	/**
 	 * Update values params due to duplicated or no attribute field="TABLE".
 	 * Shouldn't happened for normail case but in order to fix [TESB-13416] still do a workaround.
 	 *
