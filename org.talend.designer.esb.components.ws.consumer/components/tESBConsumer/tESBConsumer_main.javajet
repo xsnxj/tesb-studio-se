@@ -259,7 +259,7 @@ if (inputConn != null) {
                             put("portName", portName_<%=cid%>.toString());
                             put("serviceName", serviceName_<%=cid%>.toString());
                             put("defaultOperationName", "<%=method%>");
-                            put("defaultOperationNameSpace", "");
+                            put("operationNamespace", "<%=methodNS%>");
                             put("soapAction", "<%=paramsHelper.getStringParam("__SOAP_ACTION__")%>");
                             if (null != getClass().getResourceAsStream("wsdl/<%=cid%>.wsdl")) {
                                 put("wsdlURL", "classpath:/" + this.getClass().getPackage().getName().replace(".", "/") + "/wsdl/<%=cid%>.wsdl");
