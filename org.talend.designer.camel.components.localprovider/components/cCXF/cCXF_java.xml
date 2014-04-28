@@ -494,8 +494,8 @@
                     REQUIRED="true" />
 
             <IMPORT NAME="locator"
-                    MODULE="locator-5.4.2-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.2-SNAPSHOT.jar"
+                    MODULE="locator-5.4.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.2.jar"
                     REQUIRED_IF="(ENABLE_SL == 'true') OR ((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')))" />
             <IMPORT NAME="zookeeper"
                     MODULE="zookeeper-3.3.6.jar"
@@ -511,8 +511,8 @@
                     REQUIRED_IF="ENABLE_SL == 'true'" />
 
             <IMPORT NAME="correlationid"
-                    MODULE="correlationid-policy-5.4.2-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.2-SNAPSHOT.jar"
+                    MODULE="correlationid-policy-5.4.2.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.2.jar"
                     REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>
