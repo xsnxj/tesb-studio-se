@@ -13,23 +13,45 @@
 package org.talend.designer.publish.core.models;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class BundleModel extends BaseModel {
 
-	private final File jarFile;
+	private final File file;
+    private Map<File, String> artifacts;
 
 	public BundleModel(String groupId, String artifactId, String version) {
 		this(groupId, artifactId, version, null);
 	}
 
-	public BundleModel(String groupId, String artifactId, String version, File jarFile) {
+	public BundleModel(String groupId, String artifactId, String version, File file) {
 		super(groupId, artifactId, version);
-		this.jarFile = jarFile;
+		this.file = file;
 	}
 
-	public File getJarFile() {
-		return jarFile;
+	public File getFile() {
+		return file;
 	}
 
+    public String getExtension() {
+        String filename = file.getName();
+        return filename.substring(filename.lastIndexOf('.') + 1);
+    }
+
+    public void addArtifact(File file, String suffix) {
+        if (null == artifacts) {
+            artifacts = new HashMap<File, String>();
+        }
+        artifacts.put(file, suffix);
+    }
+
+    public Map<File, String> getArtifacts() {
+        if (null == artifacts) {
+            return Collections.emptyMap();
+        }
+        return artifacts;
+    }
 }
