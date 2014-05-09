@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
@@ -51,7 +50,6 @@ import org.talend.resource.IExportServiceScriptResourcesService;
  * DOC x class global comment. Detailled comment <br/>
  * 
  */
-@SuppressWarnings("restriction")
 public class ServiceExportWSWizardPage extends WizardPage {
 
     private String serviceName;
@@ -134,8 +132,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         return FileConstants.KAR_FILE_SUFFIX;
     }
 
-
-	public void createControl(Composite parent) {
+    public void createControl(Composite parent) {
         setControl(parent);
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -175,8 +172,8 @@ public class ServiceExportWSWizardPage extends WizardPage {
         GridLayout layout = new GridLayout();
         optionsGroup.setLayout(layout);
 
-        
-        optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
+        // optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
+        optionsGroup.setText(org.talend.repository.i18n.Messages.getString("IDEWorkbenchMessages.WizardExportPage_options")); //$NON-NLS-1$
         optionsGroup.setFont(parent.getFont());
 
         createBSGroup(optionsGroup);
@@ -255,7 +252,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
     public void finish() {
         String destination = destinationText.getText().trim();
         if (!"".equals(destination)) {
-        	IPath path=Path.fromOSString(destination);
+            IPath path = Path.fromOSString(destination);
             getDialogSettings().put(getClass().getName(), path.removeLastSegments(1).toOSString());
         }
     }

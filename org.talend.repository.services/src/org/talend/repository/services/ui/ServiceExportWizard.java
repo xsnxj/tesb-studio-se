@@ -27,9 +27,10 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.process.IContext;
+import org.talend.core.prefs.IDEWorkbenchPlugin;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.model.RepositoryNode;
@@ -88,7 +89,9 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
         }
 
         setWindowTitle(Messages.ServiceExportWizard_Wizard_Title);
-        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
+        //        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
+                "$nl$/icons/full/wizban/exportzip_wiz.png")); //$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 
@@ -98,23 +101,25 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
     @Override
     public boolean performFinish() {
         final String destinationValue = mainPage.getDestinationValue();
-        //TESB-7319: add confirm dialog
-        if(new File(destinationValue).exists()){
-        	boolean openQuestion = MessageDialog.openQuestion(getShell(), Messages.ServiceExportWizard_destinationExistTitle, Messages.ServiceExportWizard_destinationExistMessage);
-        	if(!openQuestion){
-        		return false;
-        	}
+        // TESB-7319: add confirm dialog
+        if (new File(destinationValue).exists()) {
+            boolean openQuestion = MessageDialog.openQuestion(getShell(), Messages.ServiceExportWizard_destinationExistTitle,
+                    Messages.ServiceExportWizard_destinationExistMessage);
+            if (!openQuestion) {
+                return false;
+            }
         }
-        //END TESB-7319
-        
+        // END TESB-7319
+
         Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
         try {
-            for (Iterator<?> iterator = selection.iterator(); iterator.hasNext(); ) {
+            for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
                 RepositoryNode node = (RepositoryNode) iterator.next();
                 if (mainPage.isAddMavenScript()) {
                     ServiceExportWithMavenManager mavenManager = new ServiceExportWithMavenManager(exportChoiceMap,
                             IContext.DEFAULT, JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-                    IRunnableWithProgress action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, node, destinationValue);
+                    IRunnableWithProgress action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, node,
+                            destinationValue);
                     getContainer().run(false, true, action);
                 } else {
                     IRunnableWithProgress action = new ExportServiceAction(exportChoiceMap, node, destinationValue);
