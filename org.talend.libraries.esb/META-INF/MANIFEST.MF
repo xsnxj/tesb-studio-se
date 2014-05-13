@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Version: 5.4.2.qualifier
+Bundle-Version: 5.5.0.qualifier
 Bundle-SymbolicName: org.talend.libraries.esb;singleton:=true
 Bundle-ActivationPolicy: lazy
