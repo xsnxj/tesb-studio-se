@@ -46,10 +46,10 @@
 		</PARAMETER>
 		<PARAMETER NAME="WSDL_FILE" FIELD="FILE" NUM_ROW="6"
 			REQUIRED="false" GROUP="SERVICE"
-			SHOW_IF="(SERVICE_TYPE == 'WSDLURL')  AND (WSDL_TYPE == 'FILE')">
+			SHOW_IF="(SERVICE_TYPE == 'WSDLURL') AND (WSDL_TYPE == 'FILE')">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="WSDL_FILE_REPO" FIELD="ROUTE_RESOURCE_TYPE" REPOSITORY_VALUE="ROUTER_RESOURCES"   NUM_ROW="6"
+		<PARAMETER NAME="WSDL_FILE_REPO" FIELD="ROUTE_RESOURCE_TYPE" REPOSITORY_VALUE="ROUTER_RESOURCES" NUM_ROW="6"
 			REQUIRED="false" GROUP="SERVICE"
 			SHOW_IF="(SERVICE_TYPE == 'WSDLURL') AND (WSDL_TYPE == 'REPO')">
 			<DEFAULT>""</DEFAULT>
@@ -90,27 +90,27 @@
 			<DEFAULT>"{http://www.talend.com}PortName"</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="ENABLE_REGISTRY" FIELD="CHECK" REQUIRED="true" NUM_ROW="23" 
+		<PARAMETER NAME="ENABLE_REGISTRY" FIELD="CHECK" REQUIRED="true" NUM_ROW="23"
 			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
 
-		<PARAMETER NAME="ENABLE_CORRELATION" FIELD="CHECK" REQUIRED="true" NUM_ROW="24" 
+		<PARAMETER NAME="ENABLE_CORRELATION" FIELD="CHECK" REQUIRED="true" NUM_ROW="24"
 			SHOW_IF=" (DATAFORMAT != 'RAW') AND ((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false') OR ( DATAFORMAT == 'CXF_MESSAGE'))" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
-		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="25" 
+
+		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="25"
 			SHOW_IF="(DATAFORMAT != 'RAW') AND ((#LINK@CONNECTOR.IN.ANY &gt; '0') AND (((IS_STUDIO_EE_VERSION == 'true') AND (((ENABLE_REGISTRY == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))) OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')))" >
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
-		<PARAMETER NAME="CORRELATION_VALUE_TOOLTIP" FIELD="LABEL" NUM_ROW="25" 
+
+		<PARAMETER NAME="CORRELATION_VALUE_TOOLTIP" FIELD="LABEL" NUM_ROW="25"
 			SHOW_IF="(DATAFORMAT != 'RAW') AND ((#LINK@CONNECTOR.IN.ANY &gt; '0') AND (((IS_STUDIO_EE_VERSION == 'true') AND (((ENABLE_REGISTRY == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))) OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')))" >
 			<DEFAULT>(Simple Expression is Available)</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="ENABLE_SECURITY" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="28" SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 			((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))" >
@@ -118,24 +118,24 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="SECURITY_TYPE" FIELD="CLOSED_LIST" NUM_ROW="28"
-			SHOW_IF="(ENABLE_SECURITY == 'true') AND 
+			SHOW_IF="(ENABLE_SECURITY == 'true') AND
 			((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 			((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
 			<ITEMS DEFAULT="USER">
 				<ITEM NAME="USER" VALUE="USER" />
 				<ITEM NAME="SAML" VALUE="SAML" />
 				<ITEM NAME="BASIC" VALUE="BASIC" />
-				<ITEM NAME="DIGEST" VALUE="DIGEST" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'"/> 
+				<ITEM NAME="DIGEST" VALUE="DIGEST" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'"/>
 			</ITEMS>
 		</PARAMETER>
-		
-	 	<PARAMETER NAME="AUTHENTICATION_LABEL" FIELD="LABEL" NUM_ROW="28"
-        	SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))"> 
-                 <DEFAULT>Authentication:</DEFAULT> 
-        </PARAMETER> 
-		
+
+		<PARAMETER NAME="AUTHENTICATION_LABEL" FIELD="LABEL" NUM_ROW="28"
+			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))">
+			<DEFAULT>Authentication:</DEFAULT>
+		</PARAMETER>
+
 		<PARAMETER NAME="SAML_SECURITY_TYPES" FIELD="CLOSED_LIST" NUM_ROW="28"
-			SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))  AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false')) 
+			SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))
 			AND ((ENABLE_SECURITY == 'true') AND (SECURITY_TYPE=='SAML')) ">
 			<ITEMS DEFAULT="NO_PROPAGATE">
 				<ITEM NAME="NO_PROPAGATE" VALUE="NO_PROPAGATE" />
@@ -143,32 +143,32 @@
 				<ITEM NAME="PROPAGATE_AP" VALUE="PROPAGATE_AP" />
 			</ITEMS>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="PROPAGATE_UP_LABEL" FIELD="LABEL" NUM_ROW="29"
-        	SHOW_IF="(SAML_SECURITY_TYPES == 'PROPAGATE_UP' ) AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (
-			((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) 
+			SHOW_IF="(SAML_SECURITY_TYPES == 'PROPAGATE_UP' ) AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (
+			((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))
 			OR (
 			(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE=='SAML') AND	((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))
-			)) ">  
-                 <DEFAULT></DEFAULT> 
-        </PARAMETER> 
-        
-        <PARAMETER NAME="PROPAGATE_AP_LABEL" FIELD="LABEL" NUM_ROW="29"
-        	SHOW_IF="(SAML_SECURITY_TYPES == 'PROPAGATE_AP' ) AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (
-			((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) 
+			)) ">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PROPAGATE_AP_LABEL" FIELD="LABEL" NUM_ROW="29"
+			SHOW_IF="(SAML_SECURITY_TYPES == 'PROPAGATE_AP' ) AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND (
+			((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))
 			OR (
 			(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE=='SAML') AND	((ENABLE_REGISTRY == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))
-			)) "> 
-                 <DEFAULT></DEFAULT> 
-        </PARAMETER> 
-        
-        <PARAMETER NAME="USE_PROPAGATE_CREDENTIAL" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="30" 
+			)) ">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_PROPAGATE_CREDENTIAL" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="30"
 			SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
-					(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true')  AND (#LINK@CONNECTOR.IN.ANY &gt; '0')" >
+					(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="ALIASNAME" FIELD="TEXT" NUM_ROW="30"
 			REQUIRED="true" SHOW_IF="((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
 					(
@@ -177,19 +177,19 @@
 					)" >
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="USERNAME" FIELD="TEXT" NUM_ROW="30"
 			REQUIRED="true" SHOW_IF="(
 			((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) OR ((ENABLE_SECURITY == 'true') AND ((SECURITY_TYPE != 'SAML') OR (SAML_SECURITY_TYPES != 'PROPAGATE_AP')) ))
-			  AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND   ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
+			 AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PASSWORD" FIELD="PASSWORD" NUM_ROW="30"
 			REQUIRED="true" SHOW_IF="(((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) OR (ENABLE_SECURITY == 'true'))
-			  AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND  ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
+			 AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) ">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="USE_AUTHORIZATION" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="31" READONLY="false"
 			SHOW_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML' ) AND
@@ -197,27 +197,27 @@
 					(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'false')" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
-		<PARAMETER NAME="AUTHORIZATION_LABEL" FIELD="LABEL" NUM_ROW="31"  
+
+		<PARAMETER NAME="AUTHORIZATION_LABEL" FIELD="LABEL" NUM_ROW="31"
 			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD'))">
 			<DEFAULT>Authorization:</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="ROLE_NAME" FIELD="TEXT" REQUIRED="true"
 			NUM_ROW="32" READONLY="false"
-			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND 
+			SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0') AND
 					((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')) AND
-					((ENABLE_REGISTRY == 'true') OR 
-						((ENABLE_SECURITY == 'true')  AND (SECURITY_TYPE == 'SAML' ) AND (USE_AUTHORIZATION == 'true' )))" >
+					((ENABLE_REGISTRY == 'true') OR
+						((ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML' ) AND (USE_AUTHORIZATION == 'true' )))" >
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="ENABLE_SAM" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="35" GROUP="ESB_FEATURE" READONLY="false"
 			SHOW_IF=" (DATAFORMAT == 'CXF_MESSAGE') OR (((IS_STUDIO_EE_VERSION == 'false') OR (ENABLE_REGISTRY == 'false')) AND (DATAFORMAT != 'RAW'))" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
+
 
 		<PARAMETER NAME="ENABLE_SAM_MESSAGE" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="40" GROUP="ESB_FEATURE" READONLY="true" SHOW_IF="DATAFORMAT == 'RAW'">
@@ -251,269 +251,269 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <!-- camel-core -->
-            <IMPORT NAME="camel-core"
-                    MODULE="camel-core-2.12.3.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.12.3.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.6.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jaxb-impl"
-                    MODULE="jaxb-impl-2.2.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jaxb-impl-2.2.6.jar"
-                    REQUIRED="true" />
+			<!-- camel-core -->
+			<IMPORT NAME="camel-core"
+					MODULE="camel-core-2.12.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.12.3.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="log4j"
+					MODULE="log4j-1.2.15.jar"
+					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j-api"
+					MODULE="slf4j-api-1.7.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j12"
+					MODULE="slf4j-log4j12-1.7.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.6.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jaxb-impl"
+					MODULE="jaxb-impl-2.2.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/jaxb-impl-2.2.6.jar"
+					REQUIRED="true" />
 
-            <!-- camel-spring -->
-            <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-2.12.3.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.12.3.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context"
-                    MODULE="spring-context-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-aop"
-                    MODULE="spring-aop-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-beans"
-                    MODULE="spring-beans-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-core"
-                    MODULE="spring-core-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-expression"
-                    MODULE="spring-expression-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context-support" 
-                    MODULE="spring-context-support-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core"
-                    MODULE="spring-osgi-core-1.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="org.eclipse.osgi"
-                    MODULE="org.eclipse.osgi.jar"
-                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
-                    REQUIRED="true" />
+			<!-- camel-spring -->
+			<IMPORT NAME="camel-spring"
+					MODULE="camel-spring-2.12.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.12.3.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-context"
+					MODULE="spring-context-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-aop"
+					MODULE="spring-aop-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-beans"
+					MODULE="spring-beans-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-core"
+					MODULE="spring-core-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-expression"
+					MODULE="spring-expression-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-context-support"
+					MODULE="spring-context-support-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-osgi-core"
+					MODULE="spring-osgi-core-1.2.1.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="org.eclipse.osgi"
+					MODULE="org.eclipse.osgi.jar"
+					UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
+					REQUIRED="true" />
 
-            <!-- camel-cxf -->
-            <IMPORT NAME="camel-cxf"
-                    MODULE="camel-cxf-2.12.3.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.12.3.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="camel-cxf-transport"
-                    MODULE="camel-cxf-transport-2.12.3.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.12.3.jar"
-                    REQUIRED="true" />
+			<!-- camel-cxf -->
+			<IMPORT NAME="camel-cxf"
+					MODULE="camel-cxf-2.12.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.12.3.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="camel-cxf-transport"
+					MODULE="camel-cxf-transport-2.12.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.12.3.jar"
+					REQUIRED="true" />
 
-            <IMPORT NAME="cxf-rt-core"
-                    MODULE="cxf-rt-core-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-api"
-                    MODULE="cxf-api-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="woodstox-core-asl"
-                    MODULE="woodstox-core-asl-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="stax2-api"
-                    MODULE="stax2-api-3.1.4.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.4.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="wsdl4j"
-                    MODULE="wsdl4j-1.6.3.jar"
-                    UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="xmlschema-core"
-                    MODULE="xmlschema-core-2.1.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.1.0.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
-                    REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-core"
+					MODULE="cxf-rt-core-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-api"
+					MODULE="cxf-api-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-api-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="woodstox-core-asl-4.2.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="stax2-api"
+					MODULE="stax2-api-3.1.4.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.4.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.3.jar"
+					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="xmlschema-core"
+					MODULE="xmlschema-core-2.1.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.1.0.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-java_1.4_spec"
+					MODULE="mail.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+					REQUIRED="true" />
 
-            <IMPORT NAME="cxf-rt-frontend-jaxws"
-                    MODULE="cxf-rt-frontend-jaxws-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="xml-resolver"
-                    MODULE="xml-resolver-1.2.jar"
-                    UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="asm"
-                    MODULE="asm-3.3.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/asm-3.3.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-bindings-soap"
-                    MODULE="cxf-rt-bindings-soap-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-databinding-jaxb"
-                    MODULE="cxf-rt-databinding-jaxb-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-bindings-xml"
-                    MODULE="cxf-rt-bindings-xml-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-frontend-simple"
-                    MODULE="cxf-rt-frontend-simple-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-ws-addr"
-                    MODULE="cxf-rt-ws-addr-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-transports-http"
-                    MODULE="cxf-rt-transports-http-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-ws-security"
-                    MODULE="cxf-rt-ws-security-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="ehcache-core"
-                    MODULE="ehcache-core-2.5.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="wss4j"
-                    MODULE="wss4j-1.6.15.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.15.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="xmlsec"
-                    MODULE="xmlsec-1.5.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.6.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="opensaml"
-                    MODULE="opensaml-2.6.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/opensaml-2.6.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="openws"
-                    MODULE="openws-1.5.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/openws-1.5.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="xmltooling"
-                    MODULE="xmltooling-1.4.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmltooling-1.4.1.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="joda-time"
-                    MODULE="joda-time-2.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/joda-time-2.2.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-ws-policy"
-                    MODULE="cxf-rt-ws-policy-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="neethi"
-                    MODULE="neethi-3.0.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.3.jar"
-                    REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-frontend-jaxws"
+					MODULE="cxf-rt-frontend-jaxws-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="xml-resolver"
+					MODULE="xml-resolver-1.2.jar"
+					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="asm"
+					MODULE="asm-3.3.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/asm-3.3.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-bindings-soap"
+					MODULE="cxf-rt-bindings-soap-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-databinding-jaxb"
+					MODULE="cxf-rt-databinding-jaxb-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-bindings-xml"
+					MODULE="cxf-rt-bindings-xml-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-xml-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-frontend-simple"
+					MODULE="cxf-rt-frontend-simple-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-addr"
+					MODULE="cxf-rt-ws-addr-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-transports-http"
+					MODULE="cxf-rt-transports-http-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-security"
+					MODULE="cxf-rt-ws-security-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-security-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="ehcache-core"
+					MODULE="ehcache-core-2.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/ehcache-core-2.5.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="wss4j"
+					MODULE="wss4j-1.6.15.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/wss4j-1.6.15.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="xmlsec"
+					MODULE="xmlsec-1.5.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlsec-1.5.6.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="opensaml"
+					MODULE="opensaml-2.6.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/opensaml-2.6.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="openws"
+					MODULE="openws-1.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/openws-1.5.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="xmltooling"
+					MODULE="xmltooling-1.4.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmltooling-1.4.1.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="joda-time"
+					MODULE="joda-time-2.2.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/joda-time-2.2.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-policy"
+					MODULE="cxf-rt-ws-policy-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="neethi"
+					MODULE="neethi-3.0.3.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.3.jar"
+					REQUIRED="true" />
 
-            <IMPORT NAME="cxf-rt-frontend-jaxrs"
-                    MODULE="cxf-rt-frontend-jaxrs-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="javax.ws.rs-api"
-                    MODULE="javax.ws.rs-api-2.0-m10.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="cxf-rt-rs-extension-providers"
-                    MODULE="cxf-rt-rs-extension-providers-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-extension-providers-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jettison"
-                    MODULE="jettison-1.3.4.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jettison-1.3.4.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="stax-api"
-                    MODULE="stax-api-1.0.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax-api-1.0.1.jar"
-                    REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-frontend-jaxrs"
+					MODULE="cxf-rt-frontend-jaxrs-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="javax.ws.rs-api"
+					MODULE="javax.ws.rs-api-2.0-m10.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-rs-extension-providers"
+					MODULE="cxf-rt-rs-extension-providers-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-extension-providers-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jettison"
+					MODULE="jettison-1.3.4.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jettison-1.3.4.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="stax-api"
+					MODULE="stax-api-1.0.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax-api-1.0.1.jar"
+					REQUIRED="true" />
 
-            <IMPORT NAME="cxf-rt-transports-http-jetty"
-                    MODULE="cxf-rt-transports-http-jetty-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-jetty-2.7.11.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-server"
-                    MODULE="jetty-server-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-server-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-continuation"
-                    MODULE="jetty-continuation-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-continuation-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-http"
-                    MODULE="jetty-http-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-http-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-io"
-                    MODULE="jetty-io-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-io-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-util"
-                    MODULE="jetty-util-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-util-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jetty-security"
-                    MODULE="jetty-security-8.1.14.v20131031.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.14.v20131031.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="geronimo-servlet_3.0_spec"
-                    MODULE="geronimo-servlet_3.0_spec-1.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
-                    REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-transports-http-jetty"
+					MODULE="cxf-rt-transports-http-jetty-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-transports-http-jetty-2.7.11.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-server"
+					MODULE="jetty-server-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-server-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-continuation"
+					MODULE="jetty-continuation-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-continuation-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-http"
+					MODULE="jetty-http-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-http-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-io"
+					MODULE="jetty-io-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-io-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-util"
+					MODULE="jetty-util-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-util-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-security"
+					MODULE="jetty-security-8.1.14.v20131031.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.14.v20131031.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j-api"
+					MODULE="slf4j-api-1.7.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-servlet_3.0_spec"
+					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
+					REQUIRED="true" />
 
-            <IMPORT NAME="locator"
-                    MODULE="locator-5.4.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.4.2.jar"
-                    REQUIRED_IF="(ENABLE_SL == 'true') OR ((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')))" />
-            <IMPORT NAME="zookeeper"
-                    MODULE="zookeeper-3.3.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
-                    REQUIRED_IF="ENABLE_SL == 'true'" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.17.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED_IF="ENABLE_SL == 'true'" />
-            <IMPORT NAME="cxf-rt-features-clustering"
-                    MODULE="cxf-rt-features-clustering-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11.jar"
-                    REQUIRED_IF="ENABLE_SL == 'true'" />
+			<IMPORT NAME="locator"
+					MODULE="locator-5.5.0-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.5.0-SNAPSHOT.jar"
+					REQUIRED_IF="(ENABLE_SL == 'true') OR ((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')))" />
+			<IMPORT NAME="zookeeper"
+					MODULE="zookeeper-3.3.6.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
+					REQUIRED_IF="ENABLE_SL == 'true'" />
+			<IMPORT NAME="log4j"
+					MODULE="log4j-1.2.17.jar"
+					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+					REQUIRED_IF="ENABLE_SL == 'true'" />
+			<IMPORT NAME="cxf-rt-features-clustering"
+					MODULE="cxf-rt-features-clustering-2.7.11.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11.jar"
+					REQUIRED_IF="ENABLE_SL == 'true'" />
 
-            <IMPORT NAME="correlationid"
-                    MODULE="correlationid-policy-5.4.2.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.4.2.jar"
-                    REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
+			<IMPORT NAME="correlationid"
+					MODULE="correlationid-policy-5.5.0-SNAPSHOT.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.5.0-SNAPSHOT.jar"
+					REQUIRED_IF="((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
