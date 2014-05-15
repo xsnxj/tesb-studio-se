@@ -9,7 +9,6 @@
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnectionCategory
-		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 		org.talend.designer.codegen.config.NodeConnectionsHelper
 		org.talend.designer.codegen.config.NodeParamsHelper
@@ -82,11 +81,7 @@ try {
 	<% if (useAuth && "BASIC".equals(authType)) { %>
 		// set BASIC auth
 		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
-        <%
-        String passwordFieldName = "__AUTH_PASSWORD__";
-        %>
-        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>   
-		factoryBean_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+		factoryBean_<%=cid%>.setPassword(<%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
 	<% } %>
 
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
@@ -244,15 +239,7 @@ try {
 		conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
 		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
 		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
-        <%
-        String passwordFieldName = "__PROXY_PASSWORD__";
-        %>
-        <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
-        	final String decryptedPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
-        <%} else {%>
-        	final String decryptedPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
-        <%}%>		
-		conduit_<%=cid%>.getProxyAuthorization().setPassword(decryptedPwd_<%=cid%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=paramsHelper.getStringParam("__PROXY_PASSWORD__")%>);
 	<% } %>
 
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
@@ -280,15 +267,8 @@ try {
 		if (null != stsProps) {
 			// set SAML Token authentication
 			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
-			
-            <%
-            String passwordFieldName = "__AUTH_PASSWORD__";
-            %>
-            
-            <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>			
-			
 			outInterceptor.setStsClient(createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
-					<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, decryptedPassword_<%=cid%>));
+					<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>));
 			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
 			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
 		}
@@ -297,15 +277,8 @@ try {
 	<% if (useAuth && "SAML".equals(authType) && useAuthorization) { %>
 	if (null != stsProps) {
 	 	STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
-	 	
-        <%
-        String passwordFieldName = "__AUTH_PASSWORD__";
-        %>
-        
-        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>	 	
-	 	
 		org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
-			<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, decryptedPassword_<%=cid%>);
+			<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
 					
 		org.w3c.dom.Document doc = org.apache.cxf.helpers.DOMUtils.createDocument();
         org.w3c.dom.Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
