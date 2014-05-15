@@ -9,6 +9,7 @@
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnectionCategory
 		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 		org.talend.designer.codegen.config.NodeConnectionsHelper
 		org.talend.designer.codegen.config.NodeParamsHelper
@@ -47,7 +48,6 @@ String method = methodTemp.indexOf("(") != -1 ? methodTemp.substring(0, methodTe
 String authType = paramsHelper.getStringParam("__AUTH_TYPE__");
 String alias = paramsHelper.getStringParam("__AUTH_ALIAS__");
 String username = paramsHelper.getStringParam("__AUTH_USERNAME__");
-String password = paramsHelper.getStringParam("__AUTH_PASSWORD__");
 String authorizationRole = paramsHelper.getStringParam("__ROLE__");
 String correlationValue = paramsHelper.getStringParam("__CORRELATION_VALUE__");
 
@@ -222,13 +222,31 @@ if (inputConn != null) {
                 <% if (useAuth) { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
-                    genericConsumer_<%=cid%>.setPassword(<%=password%>);
+                    
+                    <%
+                    String passwordFieldName = "__AUTH_PASSWORD__";
+                    %>
+                    
+                    <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>                       
+                    
+                    genericConsumer_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
                 <% } %>
                 <% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
                     genericConsumer_<%=cid%>.setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
                     genericConsumer_<%=cid%>.setProxyPort(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>);
                     genericConsumer_<%=cid%>.setProxyUsername(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
-                    genericConsumer_<%=cid%>.setProxyPassword(<%=paramsHelper.getStringParam("__PROXY_PASSWORD__")%>);
+                    
+                    <%
+                    String passwordFieldName = "__PROXY_PASSWORD__";
+                    %>
+                                    
+                    <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
+                    final String decryptedProxyPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
+                    <%} else {%>
+                    final String decryptedProxyPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
+                    <%}%>                                      
+                    
+                    genericConsumer_<%=cid%>.setProxyPassword(decryptedProxyPwd_<%=cid%>);
                 <% } %>
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
@@ -238,7 +256,18 @@ if (inputConn != null) {
                 <% if (paramsHelper.getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) { %>
                     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
                     System.setProperty("javax.net.ssl.trustStore", <%=paramsHelper.getStringParam("__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
-                    System.setProperty("javax.net.ssl.trustStorePassword", <%=paramsHelper.getStringParam("__SSL_TRUSTSERVER_PASSWORD__")%>);
+                    
+                    <%
+                    String passwordFieldName = "__SSL_TRUSTSERVER_PASSWORD__";
+                    %>
+                                    
+                    <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
+                    final String decryptedPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
+                    <%} else {%>
+                    final String decryptedPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
+                    <%}%>                        
+                    
+                    System.setProperty("javax.net.ssl.trustStorePassword", decryptedPwd_<%=cid%>);
                 <% } %>
 
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
@@ -278,10 +307,16 @@ if (inputConn != null) {
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
 
+                            <%
+                            String passwordFieldName = "__AUTH_PASSWORD__";
+                            %>
+                            
+                            <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>  
+
                             <% if (useSR) { %>
                                 put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
-                                put("password", <%=password%>);
+                                put("password", decryptedPassword_<%=cid%>);
                                 <% if (!authorizationRole.isEmpty() && !"\"\"".equals(authorizationRole)) { %>
                                     put("role", <%=authorizationRole%>);
                                 <% } %>
@@ -298,7 +333,7 @@ if (inputConn != null) {
                                 <% } %>
                                 put("esbSecurity", "<%=authType%>");
                                 put("username", <%=username%>);
-                                put("password", <%=password%>);
+                                put("password", decryptedPassword_<%=cid%>);
                                 <% } %>
 
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
