@@ -252,7 +252,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         initializeDialogUnits(parent);
         GridLayout layout = new GridLayout();
 
-        if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB)) {
+        if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
             SashForm sash = createExportTree(parent);
 
             pageComposite = new Group(sash, 0);
@@ -667,7 +667,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
                 // destination
                 String filterName = ".zip"; //$NON-NLS-1$
 
-                if (exportTypeCombo.getText().equals(CamelExportType.EXPORTTYPE_WSWAR)) {
+                if (CamelExportType.getTypeFromString(exportTypeCombo.getText()).equals(CamelExportType.EXPORTTYPE_WSWAR)) {
                     filterName = ".war"; //$NON-NLS-1$
                 } else {
                     filterName = ".zip"; //$NON-NLS-1$
@@ -845,10 +845,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     @Override
     protected Map<ExportChoice, Object> getExportChoiceMap() {
-        return getExportChoiceMap(exportTypeCombo.getText());
+        return getExportChoiceMap(CamelExportType.getTypeFromString(exportTypeCombo.getText()));
     }
 
-    protected Map<ExportChoice, Object> getExportChoiceMap(String exportType) {
+    protected Map<ExportChoice, Object> getExportChoiceMap(CamelExportType exportType) {
 
         if (CamelExportType.EXPORTTYPE_POJO.equals(exportType)) {
             return JavaCamelJobScriptsExportWSWizardPage.super.getExportChoiceMap();
