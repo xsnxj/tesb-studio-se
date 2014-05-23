@@ -18,6 +18,7 @@ public class BaseModel {
 	private final String groupId;
 	private final String artifactId;
 	private final String version;
+	private String packaging = "jar";
 
 	BaseModel(String groupId, String artifactId, String version) {
 		if(groupId == null || artifactId == null || version == null) {
@@ -27,7 +28,11 @@ public class BaseModel {
 		this.artifactId = artifactId;
 		this.version = version;
 	}
-
+	
+	BaseModel(String groupId, String artifactId, String version, String packaging) {
+		this(groupId, artifactId, version);
+		this.packaging = packaging;
+	}
 	public String getGroupId() {
 		return groupId;
 	}
@@ -40,8 +45,21 @@ public class BaseModel {
 		return version;
 	}
 
+	public String getPackaging() {
+		return packaging;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
+		if(obj == null){
+			return false;
+		}
+		if(obj == this){
+			return true;
+		}
+		if(obj.getClass() != getClass()){
+			return false;
+		}
 		if(obj instanceof BaseModel) {
 			BaseModel model = (BaseModel) obj;
 			return groupId.equals(model.getGroupId()) && artifactId.equals(model.getArtifactId());

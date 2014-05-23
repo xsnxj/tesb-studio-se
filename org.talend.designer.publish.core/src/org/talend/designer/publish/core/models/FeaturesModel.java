@@ -37,12 +37,14 @@ public class FeaturesModel extends BaseModel {
 	private Collection<String> subFeatures = new HashSet<String>();
 
 	private Collection<BundleModel> subBundles = new HashSet<BundleModel>();
+	
+	private Collection<IPaasMetadataModel> subMetadatas = new HashSet<IPaasMetadataModel>();
 
 	private String[] contextList = new String[] { "Default" };
 	private Map<String, Map<String, String>> contexts = new HashMap<String, Map<String, String>>();
 
 	public FeaturesModel(String groupId, String namePrefix, String version) {
-		super(groupId, namePrefix + NAME_SUFFIX, version);
+		super(groupId, namePrefix + NAME_SUFFIX, version, "pom");
 		name = namePrefix;
 	}
 
@@ -68,6 +70,10 @@ public class FeaturesModel extends BaseModel {
 		return subBundles;
 	}
 
+	public Collection<IPaasMetadataModel> getMetadatas() {
+		return subMetadatas;
+	}
+	
 	private void setContextList(String[] contextList) {
 		if (contextList != null) {
 			this.contextList = contextList;
@@ -160,6 +166,10 @@ public class FeaturesModel extends BaseModel {
 		sb.append("</features>");
 
 		return sb.toString();
+	}
+
+	public void addMetadata(IPaasMetadataModel metadataModel) {
+		subMetadatas.add(metadataModel);
 	}
 
 //	public static void main(String[] args) {
