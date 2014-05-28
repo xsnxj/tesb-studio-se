@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,7 +39,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.utils.VersionUtils;
+import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
+import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
+import org.talend.core.model.properties.ItemState;
+import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode;
@@ -106,8 +117,8 @@ public class WSDLUtils {
                     if (null == bindingOperation) {
                         throw getCoreException("Operation '" + operationName + "' not found in binding", null);
                     }
-                    map.put(COMMUNICATION_STYLE,
-                        (null == bindingOperation.getBindingOutput() && bindingOperation.getBindingFaults().isEmpty()) ? ONE_WAY : REQUEST_RESPONSE);
+                    map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput() && bindingOperation
+                            .getBindingFaults().isEmpty()) ? ONE_WAY : REQUEST_RESPONSE);
 
                     String faults = null;
                     for (Object fault : bindingOperation.getBindingFaults().keySet()) {
@@ -163,40 +174,40 @@ public class WSDLUtils {
         }
         IFile file = currentProject.getFolder(folder).getFile(
                 serviceItem.getProperty().getLabel() + '_' + serviceItem.getProperty().getVersion() + ".wsdl"); //$NON-NLS-1$
-//        if (!file.exists()) {
-//            // copy file to item
-//            IFile fileTemp = null;
-//            try {
-//                folder = "";
-//                if (!foldPath.equals("")) {
-//                    folder = "/" + foldPath;
-//                }
-//                fileTemp = currentProject.getFolder("services" + folder).getFile(
-//                        serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
-//                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
-//                if (!fileTemp.exists()) {
-//                    fileTemp.create(byteArrayInputStream, true, null);
-//                } else {
-//                    fileTemp.delete(true, null);
-//                    fileTemp.create(byteArrayInputStream, true, null);
-//                }
-//            } catch (CoreException e) {
-//                ExceptionHandler.process(e);
-//            }
-//            //
-//            ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
-//            ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-//            referenceFileItem.setContent(byteArray);
-//            referenceFileItem.setExtension("wsdl");
-//            serviceItem.getReferenceResources().add(referenceFileItem);
-//            referenceFileItem.getContent().setInnerContent(new byte[0]);
-//            IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-//            try {
-//                factory.save(serviceItem);
-//            } catch (PersistenceException e) {
-//                ExceptionHandler.process(e);
-//            }
-//        }
+        // if (!file.exists()) {
+        // // copy file to item
+        // IFile fileTemp = null;
+        // try {
+        // folder = "";
+        // if (!foldPath.equals("")) {
+        // folder = "/" + foldPath;
+        // }
+        // fileTemp = currentProject.getFolder("services" + folder).getFile(
+        // serviceItem.getProperty().getLabel() + "_" + serviceItem.getProperty().getVersion() + ".wsdl");
+        // ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+        // if (!fileTemp.exists()) {
+        // fileTemp.create(byteArrayInputStream, true, null);
+        // } else {
+        // fileTemp.delete(true, null);
+        // fileTemp.create(byteArrayInputStream, true, null);
+        // }
+        // } catch (CoreException e) {
+        // ExceptionHandler.process(e);
+        // }
+        // //
+        // ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();
+        // ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
+        // referenceFileItem.setContent(byteArray);
+        // referenceFileItem.setExtension("wsdl");
+        // serviceItem.getReferenceResources().add(referenceFileItem);
+        // referenceFileItem.getContent().setInnerContent(new byte[0]);
+        // IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        // try {
+        // factory.save(serviceItem);
+        // } catch (PersistenceException e) {
+        // ExceptionHandler.process(e);
+        // }
+        // }
         return file;
     }
 
@@ -204,18 +215,18 @@ public class WSDLUtils {
         return getDefinition(getWsdlFile(serviceItem));
     }
 
-//    public static Definition getDefinition(String pathToWsdl) throws CoreException {
-//        try {
-//            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
-//            WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
-//
-//            newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
-//            newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
-//            return newWSDLReader.readWSDL(pathToWsdl);
-//        } catch (WSDLException e) {
-//            throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
-//        }
-//    }
+    // public static Definition getDefinition(String pathToWsdl) throws CoreException {
+    // try {
+    // WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+    // WSDLReader newWSDLReader = wsdlFactory.newWSDLReader();
+    //
+    // newWSDLReader.setExtensionRegistry(wsdlFactory.newPopulatedExtensionRegistry());
+    // newWSDLReader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
+    // return newWSDLReader.readWSDL(pathToWsdl);
+    // } catch (WSDLException e) {
+    // throw new CoreException(StatusUtil.newStatus(IStatus.ERROR, e.getLocalizedMessage(), e));
+    // }
+    // }
 
     public static Definition getDefinition(IFile pathToWsdl) throws CoreException {
         try {
@@ -229,25 +240,26 @@ public class WSDLUtils {
             throw getCoreException(null, e);
         }
     }
-//    public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
-//        return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
-//    }
 
-//    /**
-//     * Validate WSDL file.
-//     * 
-//     * @param node
-//     * @throws CoreException
-//     */
-//    public static void validateWsdl(RepositoryNode node) throws CoreException {
-//        IFile wsdlFile = getWsdlFile(node);
-//        if (null == wsdlFile) {
-//            throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-//                    Messages.PublishMetadata_Exception_wsdl_not_found));
-//        }
-//        String wsdlPath = wsdlFile.getLocationURI().toString();
-//        validateWsdl(wsdlPath);
-//    }
+    // public static Definition getWsdlDefinition(RepositoryNode repositoryNode) throws CoreException {
+    // return getDefinition(getWsdlFile(repositoryNode).getLocation().toOSString());
+    // }
+
+    // /**
+    // * Validate WSDL file.
+    // *
+    // * @param node
+    // * @throws CoreException
+    // */
+    // public static void validateWsdl(RepositoryNode node) throws CoreException {
+    // IFile wsdlFile = getWsdlFile(node);
+    // if (null == wsdlFile) {
+    // throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+    // Messages.PublishMetadata_Exception_wsdl_not_found));
+    // }
+    // String wsdlPath = wsdlFile.getLocationURI().toString();
+    // validateWsdl(wsdlPath);
+    // }
 
     /**
      * Validate WSDL file.
@@ -307,50 +319,68 @@ public class WSDLUtils {
         return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
     }
 
-    
     public static boolean isOperationInBinding(Definition definition, String portTypeName, String operationName)
-    				throws CoreException {
-    	Collection<?> services = definition.getServices().values();
-    	for (Object s : services) {
-    		Service service = (Service) s;
-    		Collection<?> ports = service.getPorts().values();
-    		for (Object p : ports) {
-    			Port port = (Port) p;
-    			Binding binding = port.getBinding();
-    			if (binding == null) {
-    				continue;
-    			}
-    			PortType portType = binding.getPortType();
-    			if (portType == null
-    					|| !portTypeName.equals(portType.getQName()
-    							.getLocalPart())) {
-    				continue;
-    			}
-    			List<?> bindingOperations = binding.getBindingOperations();
-    			for (Object o : bindingOperations) {
-    				BindingOperation bo = (BindingOperation) o;
-    				if (operationName.equals(bo.getName())) {
-    					return true;
-    				}
-    			}
-    		}
-    	}
-    	return false;
+            throws CoreException {
+        Collection<?> services = definition.getServices().values();
+        for (Object s : services) {
+            Service service = (Service) s;
+            Collection<?> ports = service.getPorts().values();
+            for (Object p : ports) {
+                Port port = (Port) p;
+                Binding binding = port.getBinding();
+                if (binding == null) {
+                    continue;
+                }
+                PortType portType = binding.getPortType();
+                if (portType == null || !portTypeName.equals(portType.getQName().getLocalPart())) {
+                    continue;
+                }
+                List<?> bindingOperations = binding.getBindingOperations();
+                for (Object o : bindingOperations) {
+                    BindingOperation bo = (BindingOperation) o;
+                    if (operationName.equals(bo.getName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
-    
-	public static boolean isOperationInBinding(
-			ServiceItem serviceItem, String portTypeName, String operationName)
-			throws CoreException {
-		return isOperationInBinding(getDefinition(serviceItem), portTypeName, operationName);
-	}
-	
-	public static boolean isOperationInBinding(RepositoryNode operationNode){
-		assert operationNode != null;
-		IRepositoryViewObject object = operationNode.getObject();
-		if(object == null || !(object instanceof OperationRepositoryObject)){
-			return false;
-		}
-		return ERepositoryStatus.ERROR != ((OperationRepositoryObject)object).getInformationStatus();
-	}
-    
+
+    public static boolean isOperationInBinding(ServiceItem serviceItem, String portTypeName, String operationName)
+            throws CoreException {
+        return isOperationInBinding(getDefinition(serviceItem), portTypeName, operationName);
+    }
+
+    public static boolean isOperationInBinding(RepositoryNode operationNode) {
+        assert operationNode != null;
+        IRepositoryViewObject object = operationNode.getObject();
+        if (object == null || !(object instanceof OperationRepositoryObject)) {
+            return false;
+        }
+        return ERepositoryStatus.ERROR != ((OperationRepositoryObject) object).getInformationStatus();
+    }
+
+    public static boolean isNameValidInXmlFileConnection(QName parameter, String portTypeName, String operationName) {
+        try {
+            XmlFileConnectionItem item = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+            XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
+            Property property = PropertiesFactory.eINSTANCE.createProperty();
+            property.setId(ProxyRepositoryFactory.getInstance().getNextId());
+            property.setLabel(parameter.getLocalPart());
+            property.setVersion(VersionUtils.DEFAULT_VERSION);
+            //
+            ItemState itemState = PropertiesFactory.eINSTANCE.createItemState();
+            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName, operationName);
+            itemState.setPath(folderPath);
+            item.setConnection(connection);
+            item.setProperty(property);
+            item.setState(itemState);
+            return ProxyRepositoryFactory.getInstance().isNameAvailable(property.getItem(), parameter.getLocalPart());
+        } catch (PersistenceException e) {
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
 }
