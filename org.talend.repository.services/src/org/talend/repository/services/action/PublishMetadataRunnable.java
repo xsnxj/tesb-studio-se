@@ -415,7 +415,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     break;
                 }
             }
-            if (!needRewrite) {
+            if (!needRewrite && !WSDLUtils.isNameValidInXmlFileConnection(parameter, portTypeName, operationName)) {
                 return;
             }
         }
