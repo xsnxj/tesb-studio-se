@@ -26,10 +26,12 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.utils.RepositoryManagerHelper;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
@@ -56,14 +58,14 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
     @Override
     protected void init(RepositoryNode node) {
         // disable context menu action except service node
-        setEnabled(ESBRepositoryNodeType.SERVICES == node.getObjectType() && isLastVersion(node));
+        setEnabled(ESBRepositoryNodeType.SERVICES == node.getObjectType()
+                && (ERepositoryStatus.DELETED != ProxyRepositoryFactory.getInstance().getStatus(node.getObject()))
+                && isLastVersion(node));
 
         // anyway initialize for double-click
-        if (null != node.getObject()) {
-            Item item = node.getObject().getProperty().getItem();
-            if (item instanceof ServiceItem) {
-                serviceItem = (ServiceItem) item;
-            }
+        Item item = node.getObject().getProperty().getItem();
+        if (item instanceof ServiceItem) {
+            serviceItem = (ServiceItem) item;
         }
     }
 
