@@ -28,11 +28,12 @@ public class BaseModel {
 		this.artifactId = artifactId;
 		this.version = version;
 	}
-	
+
 	BaseModel(String groupId, String artifactId, String version, String packaging) {
 		this(groupId, artifactId, version);
 		this.packaging = packaging;
 	}
+
 	public String getGroupId() {
 		return groupId;
 	}

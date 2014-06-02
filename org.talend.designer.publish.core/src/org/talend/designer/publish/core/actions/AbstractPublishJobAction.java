@@ -17,7 +17,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.designer.publish.core.models.IPaasMetadataModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage.JobExportType;
@@ -54,7 +53,7 @@ public abstract class AbstractPublishJobAction implements IRunnableWithProgress 
         this.bundleVersion = bundleVersion;
     }
 
-    protected abstract void process(FeaturesModel featuresModel) throws IOException;
+    protected abstract void process(ProcessItem processItem, FeaturesModel featuresModel) throws IOException;
 
     public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         File tmpJob;
@@ -96,14 +95,10 @@ public abstract class AbstractPublishJobAction implements IRunnableWithProgress 
 
 			Collection<NodeType> tIPaasComponents = EmfModelUtils.getComponentsByName(processItem, "tIPaasInput", "tIPaasOutput");
 			if(!tIPaasComponents.isEmpty()){
-				IPaasMetadataModel metadataModel = new IPaasMetadataModel(processItem, featuresModel,
-						groupId, artifactName, artifactVersion);
-				featuresModel.addMetadata(metadataModel);
-				
 				addMissingBundles(featuresModel, ((JobJavaScriptOSGIForESBManager) manager).getExcludedModuleNeededs());
 			}
 
-			process(featuresModel);
+			process(processItem, featuresModel);
         } catch (IOException e) {
             throw new InvocationTargetException(e);
         } finally {
