@@ -1,5 +1,6 @@
 package org.talend.repository.services.ui.action;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,7 +11,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -19,22 +20,18 @@ import org.talend.repository.services.model.services.ServicePort;
 
 public class ContextNodeRetriever {
 
-	public static String[] getAllContext(RepositoryNode node) {
+	public static String[] getAllContext(IRepositoryNode node) {
 		return getContextsMap(node).keySet().toArray(new String[0]);
 	}
 
-	public static Map<String, Map<String, String>> getContextsMap(RepositoryNode node) {
-		try {
-			Item item = node.getObject().getProperty().getItem();
-			if (item instanceof ServiceItem) {
-				return getContextsMap((ServiceItem) item);
-			} else if (item instanceof ProcessItem) {
-				return getContextsMap((ProcessItem) item);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static Map<String, Map<String, String>> getContextsMap(IRepositoryNode node) {
+		Item item = node.getObject().getProperty().getItem();
+		if (item instanceof ServiceItem) {
+			return getContextsMap((ServiceItem) item);
+		} else if (item instanceof ProcessItem) {
+			return getContextsMap((ProcessItem) item);
 		}
-		return new HashMap<String, Map<String, String>>();
+		return Collections.emptyMap();
 	}
 
 	public static Map<String, Map<String, String>> getContextsMap(ServiceItem serviceItem) {
@@ -48,37 +45,12 @@ public class ContextNodeRetriever {
 				if (jobId == null) {
 					continue;
 				}
-				RepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
+				IRepositoryNode jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
 				if (jobNode == null) {
 					continue;
 				}
 				ProcessItem processItem = (ProcessItem) jobNode.getObject().getProperty().getItem();
-				ProcessType process = processItem.getProcess();
-				if (process == null) {
-					continue;
-				}
-				EList contexts = process.getContext();
-				if (contexts == null) {
-					continue;
-				}
-				Iterator iterator = contexts.iterator();
-				while (iterator.hasNext()) {
-					Object next = iterator.next();
-					if (!(next instanceof ContextType)) {
-						continue;
-					}
-					ContextType ct = (ContextType) next;
-					String name = ct.getName();
-					Map<String, String> contextParams = contextValues.get(name);
-					if (contextParams == null)	{
-						contextParams = new HashMap<String, String>();
-					}
-					contextValues.put(name, contextParams);
-					EList<ContextParameterType> params = ct.getContextParameter();
-					for (ContextParameterType param : params) {
-						contextParams.put(param.getName(), param.getValue());
-					}
-				}
+				contextValues.putAll(getContextsMap(processItem));
 			}
 		}
 		return contextValues;
