@@ -3,11 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Publish Upload
 Bundle-SymbolicName: org.talend.designer.publish.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.talend.designer.publish.core.models
+Export-Package: org.talend.designer.publish.core.models,
+ org.talend.designer.publish.core.actions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.lang,
- org.eclipse.emf.common.util,
- org.talend.core.model.metadata.types,
- org.talend.core.model.properties,
- org.talend.designer.core.model.utils.emf.talendfile,
- org.talend.repository.utils
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.jface,
+ org.talend.repository,
+ org.talend.core.runtime
