@@ -7,28 +7,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.eclipse.emf.common.util.EList;
 import org.talend.camel.designer.model.ExportKarBundleModel;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.utils.JavaResourcesHelper;
-import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
-import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.utils.JobContextUtils;
 
 public class KarFileGenerator {
 
-    public static boolean generateKarFile(Set<ExportKarBundleModel> bundleModels, RepositoryNode routerNode, String version,
+    public static boolean generateKarFile(Collection<ExportKarBundleModel> bundleModels, IRepositoryNode routerNode, String version,
             String destination) throws IOException {
 
         Property routeProperty = routerNode.getObject().getProperty();
@@ -89,7 +84,7 @@ public class KarFileGenerator {
 
             // add bundle dependencies
             BundleModel bundleModel = new BundleModel(groupId, displayName, p.getRepositoryVersion());
-            featuresModel.setContexts(getContextsMap(repositoryNode));
+            featuresModel.setContexts(JobContextUtils.getContextsMap((ProcessItem) routeProperty.getItem()));
 
             featuresModel.addBundle(bundleModel);
 
@@ -110,33 +105,6 @@ public class KarFileGenerator {
         output.flush();
         output.close();
         return true;
-    }
-
-    private static Map<String, Map<String, String>> getContextsMap(RepositoryNode node) {
-        Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
-        ProcessType process = ((ProcessItem) node.getObject().getProperty().getItem()).getProcess();
-        if (process != null) {
-            EList<?> context = process.getContext();
-            if (context != null) {
-                Iterator<?> iterator = context.iterator();
-                while (iterator.hasNext()) {
-                    Object next = iterator.next();
-                    if (!(next instanceof ContextType)) {
-                        continue;
-                    }
-                    ContextType ct = (ContextType) next;
-                    String name = ct.getName();
-                    HashMap<String, String> contextParams = new HashMap<String, String>();
-                    contextValues.put(name, contextParams);
-                    @SuppressWarnings("unchecked")
-					EList<ContextParameterType> params = ct.getContextParameter();
-                    for (ContextParameterType param : params) {
-                        contextParams.put(param.getName(), param.getValue());
-                    }
-                }
-            }
-        }
-        return contextValues;
     }
 
 }

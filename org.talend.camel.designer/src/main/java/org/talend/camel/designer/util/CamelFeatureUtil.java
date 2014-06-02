@@ -41,10 +41,9 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -91,7 +90,7 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @return
 	 */
-	private static boolean checkNode(RepositoryNode node) {
+	private static boolean checkNode(IRepositoryNode node) {
 		if (node == null) {
 			return false;
 		}
@@ -470,7 +469,7 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @param featuresModel
 	 */
-	public static void addFeatureAndBundles(RepositoryNode node,
+	public static void addFeatureAndBundles(IRepositoryNode node,
 			FeaturesModel featuresModel) {
 
 		if (!checkNode(node)) {
