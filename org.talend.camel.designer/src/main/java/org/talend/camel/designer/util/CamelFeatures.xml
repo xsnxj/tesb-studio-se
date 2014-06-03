@@ -117,6 +117,9 @@
 		<Feature version="[2,5)">camel-jms</Feature>
 		<Feature version="[2,5)">spring-jms</Feature>
 	</FeatureMap>
+	<FeatureMap HotLib="camel-mqtt-alldep">
+		<Feature version="[2,5)">camel-mqtt</Feature>
+	</FeatureMap>
 	<FeatureMap HotLib="camel-jmx-alldep">
 		<Feature version="[2,5)">camel-jmx</Feature>
 	</FeatureMap>
