@@ -504,8 +504,8 @@
 
 			<!-- SL for WS -->
 			<IMPORT NAME="locator"
-					MODULE="locator-5.5.0.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.5.0.jar"
+					MODULE="locator-5.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/locator-5.5.1.jar"
 					BundleID="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="zookeeper"
@@ -526,13 +526,13 @@
 
 			<!-- SAM for WS -->
 			<IMPORT NAME="sam-agent"
-					MODULE="sam-agent-5.5.0.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.5.0.jar"
+					MODULE="sam-agent-5.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.5.1.jar"
 					BundleID="sam-agent"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="sam-common"
-					MODULE="sam-common-5.5.0.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.5.0.jar"
+					MODULE="sam-common-5.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.5.1.jar"
 					BundleID="sam-common"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
@@ -557,8 +557,8 @@
 
 			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
-					MODULE="correlationid-policy-5.5.0.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.5.0.jar"
+					MODULE="correlationid-policy-5.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.5.1.jar"
 					BundleID=""
 					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
 		</IMPORTS>
