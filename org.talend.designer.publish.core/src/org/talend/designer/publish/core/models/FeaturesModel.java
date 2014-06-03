@@ -60,8 +60,8 @@ public class FeaturesModel extends BaseModel {
 		subFeatures.add(sb.toString());
 	}
 
-	public void addBundle(BundleModel model) {
-		subBundles.add(model);
+	public boolean addBundle(BundleModel model) {
+		return subBundles.add(model);
 	}
 
 	public Collection<BundleModel> getBundles() {
