@@ -54,12 +54,11 @@
 			<ITEM NAME="cJMSConnectionFactory" VALUE="cJMSConnectionFactory" FILTER="MQ_TYPE == 'AMQP'"></ITEM>
 			</ITEMS>
 		</PARAMETER>
-		<!--<PARAMETER NAME="CONNECTION_FACOTRY_LABEL" FIELD="TEXT"
-			READONLY="false" REQUIRED="true" NUM_ROW="6">
+
+		<!-- invisible param to add required library. -->
+		<PARAMETER NAME="LIBRARY" FIELD="TEXT" SHOW="false" NUM_ROW="0">
+			<DEFAULT>qpid-amqp-1-0-client-all-0.26.jar</DEFAULT>
 		</PARAMETER>
-		--><!--<PARAMETER NAME="CONNECTION_FACOTRY" FIELD="TEXT" SHOW_IF="false"
-			NUM_ROW="7">
-		</PARAMETER>-->
 
 	</PARAMETERS>
 
