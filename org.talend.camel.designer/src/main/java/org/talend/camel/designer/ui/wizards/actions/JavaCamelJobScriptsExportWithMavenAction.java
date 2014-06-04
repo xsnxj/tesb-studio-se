@@ -19,10 +19,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
-import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.repository.constants.FileConstants;
+import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -36,7 +36,7 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
 
     private String destinationPath;
 
-    public JavaCamelJobScriptsExportWithMavenAction(Map<ExportChoice, Object> exportChoiceMap, RepositoryNode routeNode,
+    public JavaCamelJobScriptsExportWithMavenAction(Map<ExportChoice, Object> exportChoiceMap, IRepositoryNode routeNode,
             String version, String destinationPath, boolean addStatisticsCode) {
         super(routeNode, version, destinationPath, addStatisticsCode);
         this.destinationPath = destinationPath;
@@ -48,31 +48,23 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction#run(org.eclipse.core.runtime.
-     * IProgressMonitor)
-     */
     @Override
-    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-        this.monitor = monitor;
-        try {
-            exportKarOsgiBundles();
-            processResults();
-            exportMavenResources();
-        } finally {
-            // remove generated files
-            FilesUtils.removeFolder(getTempDir(), true);
-        }
+    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+        super.processResults(featuresModel, monitor);
+
+        exportMavenResources(monitor);
     }
 
-    private void exportMavenResources() throws InvocationTargetException, InterruptedException {
+    private void exportMavenResources(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         scriptsManager.setMultiNodes(false);
         scriptsManager.setDestinationPath(destinationPath);
         JobExportAction action = new JobExportAction(Collections.singletonList(routeNode), version, bundleVersion,
                 scriptsManager, getTempDir(), "Route"); //$NON-NLS-1$
         action.run(monitor);
+    }
+
+    private static String getNodeBundleName(IRepositoryNode node, String v) {
+        return node.getObject().getProperty().getDisplayName() + '-' + v; 
     }
 
 }
