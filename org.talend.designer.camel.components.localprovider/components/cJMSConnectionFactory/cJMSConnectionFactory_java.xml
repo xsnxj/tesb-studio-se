@@ -25,12 +25,13 @@
 			<ITEMS DEFAULT="ACTIVEMQ">
 				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
 				<ITEM NAME="WMQ" VALUE="WebSphere MQ" />
+				<ITEM NAME="AMQP" VALUE="AMQP" />
 				<ITEM NAME="OTHER" VALUE="Other" />
 			</ITEMS>
 		</PARAMETER>
 
 		<PARAMETER NAME="USE_TRANSACTION" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="2">
+			NUM_ROW="2" SHOW_IF="MQ_TYPE != 'AMQP'">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
@@ -122,6 +123,12 @@
 			<ITEMS>
 				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
 			</ITEMS>
+		</PARAMETER>
+		
+		<!-- AMQP -->
+		<PARAMETER NAME="AMQP_BROKER_URI" FIELD="TEXT" NUM_ROW="4"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>"amqp://"</DEFAULT>
 		</PARAMETER>
 
 		<!-- Customized -->
@@ -229,7 +236,7 @@
 			<IMPORT NAME="activemq" 
 					MODULE="activemq-all-5.7.0.jar" 
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-all-5.7.0.jar"
-					REQUIRED_IF="MQ_TYPE == 'ACTIVEMQ'" />
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') OR (MQ_TYPE == 'AMQP')" />
 			<IMPORT NAME="activemq-pool" 
 					MODULE="activemq-pool-5.7.0.jar"
 					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-pool-5.7.0.jar"
@@ -255,6 +262,12 @@
                     MODULE="xstream-1.4.3.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/xstream-1.4.3.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+					
+			<IMPORT NAME="qpid-amqp-1-0-client-all" 
+                    MODULE="qpid-amqp-1-0-client-all-0.26.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/qpid-amqp-1-0-client-all-0.26.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+			
 		</IMPORTS>
 	</CODEGENERATION>
 
