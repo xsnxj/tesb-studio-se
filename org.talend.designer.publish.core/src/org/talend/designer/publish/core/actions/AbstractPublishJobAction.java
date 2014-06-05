@@ -65,7 +65,7 @@ public abstract class AbstractPublishJobAction implements IRunnableWithProgress 
         this.bundleVersion = bundleVersion;
     }
 
-    protected abstract void process(ProcessItem processItem, FeaturesModel featuresModel) throws IOException;
+    protected abstract void process(ProcessItem processItem, FeaturesModel featuresModel, IProgressMonitor monitor) throws IOException;
 
     public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         File tmpJob;
@@ -110,7 +110,7 @@ public abstract class AbstractPublishJobAction implements IRunnableWithProgress 
 				addMissingBundles(featuresModel, ((JobJavaScriptOSGIForESBManager) manager).getExcludedModuleNeededs());
 			}
 
-			process(processItem, featuresModel);
+			process(processItem, featuresModel, monitor);
         } catch (IOException e) {
             throw new InvocationTargetException(e);
         } finally {
