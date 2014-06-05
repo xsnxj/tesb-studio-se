@@ -17,6 +17,8 @@ public class ZipUtils {
 
     private static final String PREFIX = "repository/";
 
+    private static final byte[] buf = new byte[1024];
+
     public static ZipOutputStream generateZipFile(FeaturesModel featuresModel, File destination) throws IOException {
 
         // Create the parent file if not exist
@@ -47,29 +49,17 @@ public class ZipUtils {
          * Bundle File path: repository/[projectName]/[itemName]/[itemName]-bundle
          * /[itemVersion]/[itemName]-bundle-[itemVersion].jar
          */
-        byte[] buf = new byte[1024];
         for (BundleModel bundleModel : featuresModel.getBundles()) {
             // add bundle jar file
             File f = bundleModel.getFile();
             if (null == f) {
                 continue;
             }
-            entry = new ZipEntry(new StringBuilder(PREFIX)
+            addFile(output, f, new StringBuilder(PREFIX)
                 .append(bundleModel.getGroupId().replace('.', '/')).append('/')
                 .append(bundleModel.getArtifactId()).append('/')
                 .append(bundleModel.getVersion()).append('/')
                 .append(bundleModel.getArtifactId()).append('-').append(bundleModel.getVersion()).append(".jar").toString());
-            entry.setSize(f.length());
-            entry.setTime(f.lastModified());
-            output.putNextEntry(entry);
-
-            // write file content
-            int readLen = 0;
-            InputStream is = new BufferedInputStream(new FileInputStream(f));
-            while ((readLen = is.read(buf)) != -1) {
-                output.write(buf, 0, readLen);
-            }
-            is.close();
         }
 
         output.flush();
@@ -77,4 +67,22 @@ public class ZipUtils {
         return output;
     }
 
+    public static void addFile(ZipOutputStream output, File f, String location) throws IOException {
+        ZipEntry entry = new ZipEntry(location);
+        entry.setSize(f.length());
+        entry.setTime(f.lastModified());
+        output.putNextEntry(entry);
+
+        // write file content
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(f));
+            int readLen = 0;
+            while ((readLen = is.read(buf)) != -1) {
+                output.write(buf, 0, readLen);
+            }
+        } finally {
+            is.close();
+        }
+    }
 }
