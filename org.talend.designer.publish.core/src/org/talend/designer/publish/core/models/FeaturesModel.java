@@ -102,9 +102,7 @@ public class FeaturesModel extends BaseModel {
 	}
 
 	public String getContent() {
-		StringBuilder sb = new StringBuilder();
-		// add headers
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		StringBuilder sb = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<features name=\"").append(getArtifactId()).append("\" xmlns=\"http://karaf.apache.org/xmlns/features/v1.0.0\">\n");
 		sb.append("\t<feature name=\"");
 		sb.append(getArtifactId());

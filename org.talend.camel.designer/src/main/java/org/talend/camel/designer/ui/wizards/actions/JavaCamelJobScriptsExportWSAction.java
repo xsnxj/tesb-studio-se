@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -35,7 +34,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.designer.publish.core.utils.ZipUtils;
+import org.talend.designer.publish.core.utils.ZipModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
@@ -149,17 +148,14 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         // create kar file
-        ZipOutputStream output = null;
+        ZipModel output = null;
         try {
-            output = ZipUtils.generateZipFile(featuresModel, new File(destinationKar));
+            output = new ZipModel(featuresModel, new File(destinationKar));
         } catch (IOException e) {
             throw new InvocationTargetException(e);
         } finally {
             if (null != output) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                }
+                output.close();
             }
         }
     }

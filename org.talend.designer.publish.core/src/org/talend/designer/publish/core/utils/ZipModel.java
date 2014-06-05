@@ -13,20 +13,22 @@ import java.util.zip.ZipOutputStream;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 
-public class ZipUtils {
+public class ZipModel {
 
     private static final String PREFIX = "repository/";
 
-    private static final byte[] buf = new byte[1024];
+    private final ZipOutputStream output;
 
-    public static ZipOutputStream generateZipFile(FeaturesModel featuresModel, File destination) throws IOException {
+    private byte[] buf;
+
+    public ZipModel(FeaturesModel featuresModel, File destination) throws IOException {
 
         // Create the parent file if not exist
         File parentDestFile = destination.getParentFile();
         if (!parentDestFile.exists()) {
             parentDestFile.mkdirs();
         }
-        ZipOutputStream output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
+        output = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destination)));
 
         /*
          * feature file path: repository/[projectName]/[itemName]/[itemName]-feature
@@ -37,13 +39,7 @@ public class ZipUtils {
             .append(featuresModel.getArtifactId()).append('/')
             .append(featuresModel.getVersion()).append('/')
             .append(featuresModel.getArtifactId()).append('-').append(featuresModel.getVersion()).append(".xml").toString();
-        byte[] featureContent = featuresModel.getContent().getBytes();
-
-        ZipEntry entry = new ZipEntry(featurePrefix);
-        entry.setSize(featureContent.length);
-        entry.setTime(System.currentTimeMillis());
-        output.putNextEntry(entry);
-        output.write(featureContent);
+        add(featurePrefix, featuresModel.getContent().getBytes());
 
         /*
          * Bundle File path: repository/[projectName]/[itemName]/[itemName]-bundle
@@ -55,19 +51,20 @@ public class ZipUtils {
             if (null == f) {
                 continue;
             }
-            addFile(output, f, new StringBuilder(PREFIX)
+            add(new StringBuilder(PREFIX)
                 .append(bundleModel.getGroupId().replace('.', '/')).append('/')
                 .append(bundleModel.getArtifactId()).append('/')
                 .append(bundleModel.getVersion()).append('/')
-                .append(bundleModel.getArtifactId()).append('-').append(bundleModel.getVersion()).append(".jar").toString());
+                .append(bundleModel.getArtifactId()).append('-').append(bundleModel.getVersion()).append(".jar").toString(),
+                f);
         }
 
-        output.flush();
-
-        return output;
     }
 
-    public static void addFile(ZipOutputStream output, File f, String location) throws IOException {
+    public void add(String location, File f) throws IOException {
+        if (null == buf) {
+            buf = new byte[1024];
+        }
         ZipEntry entry = new ZipEntry(location);
         entry.setSize(f.length());
         entry.setTime(f.lastModified());
@@ -83,6 +80,26 @@ public class ZipUtils {
             }
         } finally {
             is.close();
+        }
+    }
+
+    public void add(String location, byte[] content) throws IOException {
+        ZipEntry entry = new ZipEntry(location);
+        entry.setSize(content.length);
+        entry.setTime(System.currentTimeMillis());
+        output.putNextEntry(entry);
+        output.write(content);
+    }
+
+    public void close() {
+        try {
+            output.flush();
+        } catch (IOException e) {
+        } finally {
+            try {
+                output.close();
+            } catch (IOException e) {
+            }
         }
     }
 }
