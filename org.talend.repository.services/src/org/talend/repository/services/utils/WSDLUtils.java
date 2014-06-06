@@ -52,7 +52,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -63,7 +62,6 @@ import org.talend.repository.services.model.services.ServicePort;
 /**
  * DOC ycbai class global comment. Detailled comment
  */
-@SuppressWarnings("restriction")
 public class WSDLUtils {
 
     public static final String SERVICE_NAME = "SERVICE_NAME"; //$NON-NLS-1$
@@ -358,7 +356,7 @@ public class WSDLUtils {
         return isOperationInBinding(getDefinition(serviceItem), portTypeName, operationName);
     }
 
-    public static boolean isOperationInBinding(RepositoryNode operationNode) {
+    public static boolean isOperationInBinding(IRepositoryNode operationNode) {
         assert operationNode != null;
         IRepositoryViewObject object = operationNode.getObject();
         if (object == null || !(object instanceof OperationRepositoryObject)) {

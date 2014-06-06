@@ -8,8 +8,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -28,26 +28,20 @@ import org.talend.repository.services.utils.WSDLUtils;
 
 public class OpenJobAction extends EditProcess {
 
-    private String createLabel = "Open Job";
-
-    private ERepositoryObjectType currentNodeType;
-
     private RepositoryNode jobNode;
 
     public OpenJobAction() {
         super();
 
-        this.setText(createLabel);
-        this.setToolTipText(createLabel);
-        currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
+        setText("Open Job");
+        setToolTipText("Open Job");
+        setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
     }
 
     public OpenJobAction(boolean isToolbar) {
         this();
-        setToolbar(isToolbar);
 
-        this.setText(createLabel);
-        this.setToolTipText(createLabel);
+        setToolbar(isToolbar);
     }
 
     /*
@@ -58,14 +52,13 @@ public class OpenJobAction extends EditProcess {
      */
     @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
-        List<RepositoryNode> nodes = selection.toList();
-        if (nodes == null || nodes.size() != 1) {
+        if (selection.size() != 1) {
             setEnabled(false);
             return;
         }
-        RepositoryNode node = nodes.iterator().next();
+        IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
-        if (!currentNodeType.equals(nodeType)) {
+        if (!ERepositoryObjectType.SERVICESOPERATION.equals(nodeType)) {
             setEnabled(false);
             return;
         }
@@ -74,8 +67,6 @@ public class OpenJobAction extends EditProcess {
         	setEnabled(false);
         	return;
         }
-        this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
         String jobId = getReferenceJobId(node);
         if (jobId == null) {
             setEnabled(false);

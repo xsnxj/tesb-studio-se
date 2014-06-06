@@ -8,9 +8,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
@@ -26,7 +24,6 @@ import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -393,29 +390,6 @@ public class AssignJobAction extends AbstractCreateAction {
                     + ":" + EParameterName.REPOSITORY_PROPERTY_TYPE.getName(), ""); //$NON-NLS-1$
             command2.execute();
         }
-    }
-
-    private boolean resetJobname(Item processItem, String jobNewName) {
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        boolean avaliable;
-        try {
-            avaliable = factory.isNameAvailable(processItem, jobNewName);
-            if (avaliable) {
-                Property property = processItem.getProperty();
-                property.setLabel(jobNewName);
-                return true;
-            } else {
-                MessageBox box = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_WARNING | SWT.OK);
-                box.setText("Jobname Error");
-                box.setMessage("Label" + " " + jobNewName + " " + "is already in use!");
-                if (box.open() == SWT.OK) {
-                    return false;
-                }
-            }
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        }
-        return false;
     }
 
 }
