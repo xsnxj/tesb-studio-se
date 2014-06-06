@@ -17,8 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import org.eclipse.emf.common.util.EList;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.migration.AbstractItemMigrationTask;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
@@ -63,13 +63,12 @@ public class ConsumerFaultResponseMigrationTask extends
 				if (o instanceof NodeType) {
 					NodeType currentNode = (NodeType) o;
 					if ("tESBConsumer".equals(currentNode.getComponentName())) {
-						EList metadata = currentNode.getMetadata();
-						Iterator iterator = metadata.iterator();
+						Iterator<?> iterator = currentNode.getMetadata().iterator();
 						while (iterator.hasNext()) {
 							MetadataType metadataType = (MetadataType) iterator
 									.next();
 							if ("FAULT".equals(metadataType.getConnector())) {
-								EList column = metadataType.getColumn();
+								EList<?> column = metadataType.getColumn();
 								addColumn(column, faultActor);
 								addColumn(column, faultCode);
 								addColumn(column, faultNode);
@@ -84,7 +83,7 @@ public class ConsumerFaultResponseMigrationTask extends
 	}
 
 	private void addColumn(EList column, String name) {
-		Iterator iterator = column.iterator();
+		Iterator<?> iterator = column.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
 			if (next instanceof ColumnType) {
