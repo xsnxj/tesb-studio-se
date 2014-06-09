@@ -434,7 +434,7 @@
            <importItemsProvider
                  id="org.talend.camel.designer.importProvider.bean"
                  name="Bean importer"
-                 priority="NORMAL">
+                 priority="HIGH">
               <importItemsHandler
                     class="org.talend.camel.designer.ui.view.handler.BeanImportHandler">
                  <parameter
