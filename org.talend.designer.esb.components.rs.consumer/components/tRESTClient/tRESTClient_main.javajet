@@ -39,7 +39,6 @@ if(contentType == null) {
 	contentType = "application/xml";
 }
 boolean useAuth = paramsHelper.getBoolParam("__NEED_AUTH__");
-boolean useAuthorization = paramsHelper.getVisibleBoolParam("__NEED_AUTHORIZATION__");
 String authType = paramsHelper.getStringParam("__AUTH_TYPE__");
 boolean isSLEnable = paramsHelper.getBoolParam("__SERVICE_LOCATOR__");
 boolean isSAMEnable = paramsHelper.getBoolParam("__SERVICE_ACTIVITY_MONITOR__");
@@ -283,41 +282,23 @@ try {
 	<% } %>
 
 	<% if (useAuth && "SAML".equals(authType)) { %>
-		if (null != stsProps) {
+		if (null != stsProperties) {
 			// set SAML Token authentication
-			
             <%
             String passwordFieldName = "__AUTH_PASSWORD__";
             %>
             
-            <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>   			
-			
-			org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
-				<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, decryptedPassword_<%=cid%>);
-			<% if (useAuthorization) { %>
-				org.w3c.dom.Document doc = org.apache.cxf.helpers.DOMUtils.createDocument();
-				org.w3c.dom.Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
-				claimsElement.setAttributeNS(null, "Dialect", "http://schemas.xmlsoap.org/ws/2005/05/identity");
-				String role = <%=paramsHelper.getStringParam("__ROLE__")%>;
-				if ("" != role && null != role){
-					org.w3c.dom.Element claimValueElement = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimValue");
-					claimValueElement.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
-				
-					org.w3c.dom.Element value = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "Value");
-					value.setTextContent(role);
-					claimValueElement.appendChild(value);
-					claimsElement.appendChild(claimValueElement);
-				}else{
-					org.w3c.dom.Element claimType = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimType");
-					claimType.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
-					claimsElement.appendChild(claimType);
-				}
-				stsClient.setClaims(claimsElement);
-			<% } %>
-			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
-			outInterceptor.setStsClient(stsClient);
-			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
-			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
+            <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+            java.util.Map<String, Object> securityProps = new java.util.HashMap<String, Object>(stsProperties);
+            securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
+            securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
+            org.apache.cxf.ws.security.trust.STSClient stsClient =
+                org.talend.esb.security.saml.STSClientUtils.createSTSClient(factoryBean_<%=cid%>.getBus(), securityProps);
+            <% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))) { %>
+                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE__")%>);
+            <% } %>
+            org.talend.esb.security.saml.SAMLRESTUtils.configureClient(factoryBean_<%=cid%>, stsClient);
 		}
 	<% } %>
 

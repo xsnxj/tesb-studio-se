@@ -463,15 +463,6 @@
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 
-
-			<!-- SAML Token for RS -->
-			<IMPORT NAME="cxf-rt-rs-security-xml"
-					MODULE="cxf-rt-rs-security-xml-2.7.11.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-security-xml-2.7.11.jar"
-					BundleID=""
-					REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
-
-
 			<!-- SAM for RS -->
 			<IMPORT NAME="sam-agent"
 					MODULE="sam-agent-5.6.0-SNAPSHOT.jar"
@@ -540,6 +531,17 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     BundleID=""
                     REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+
+            <!-- SAML Token for RS -->
+            <IMPORT NAME="cxf-rt-rs-security-xml"
+                    MODULE="cxf-rt-rs-security-xml-2.7.11.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-security-xml-2.7.11.jar"
+                    BundleID=""
+                    REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
+            <IMPORT NAME="security-common"
+                    MODULE="security-common-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/security-common-5.6.0-SNAPSHOT.jar"
+                    REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
