@@ -520,9 +520,9 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
             <!-- Security -->
-            <IMPORT NAME="esb-security"
-                    MODULE="esb-security-5.6.0-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/esb-security-5.6.0-SNAPSHOT.jar"
+            <IMPORT NAME="security-common"
+                    MODULE="security-common-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/security-common-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
 		</IMPORTS>
 	</CODEGENERATION>
