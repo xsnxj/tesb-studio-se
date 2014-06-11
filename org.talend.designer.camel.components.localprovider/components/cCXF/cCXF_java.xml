@@ -513,6 +513,12 @@
                     MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
+
+            <!-- Security -->
+            <IMPORT NAME="security-common"
+                    MODULE="security-common-5.6.0-SNAPSHOT.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/security-common-5.6.0-SNAPSHOT.jar"
+                    REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
