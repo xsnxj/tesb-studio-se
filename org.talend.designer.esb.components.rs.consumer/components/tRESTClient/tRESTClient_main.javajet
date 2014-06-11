@@ -290,7 +290,7 @@ try {
             
             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
-            java.util.Map<String, Object> securityProps = new java.util.HashMap<String, Object>(stsProperties);
+            java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
             securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
             securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
             org.apache.cxf.ws.security.trust.STSClient stsClient =
