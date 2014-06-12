@@ -39,12 +39,6 @@ imports="
                     .removeHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID)
 <%              }
             }
-
-            if ("PAYLOAD".equals(formatType)) {
-%>
-                .removeHeader(org.apache.camel.component.cxf.common.message.CxfConstants.OPERATION_NAME)
-<%
-            }
 %>
             .to(<%=endpointVar%>)
 <%
