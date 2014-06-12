@@ -36,7 +36,9 @@ public class Switch2102ReleaseCamelVersionTask extends
 			result = evtValue.replace("2.6.2", "2.7.0");
 		}
 		if (evtValue.startsWith("activemq-all") || evtValue.startsWith("activemq-pool")) {
-			result = evtValue.replaceAll("5.5.1", "5.7.0");
+			result = evtValue.replace("5.5.1", "5.10.0");
+			//activemq-pool already included in activemq-all.
+			result = result.replace("activemq-pool", "activemq-all");
 		}
 		return result;
 	}

@@ -234,13 +234,9 @@
                     REQUIRED="true" />
 
 			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-5.7.0.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-all-5.7.0.jar"
+					MODULE="activemq-all-5.10.0.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/activemq-all-5.10.0.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') OR (MQ_TYPE == 'AMQP')" />
-			<IMPORT NAME="activemq-pool" 
-					MODULE="activemq-pool-5.7.0.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-pool-5.7.0.jar"
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 			<IMPORT NAME="commons-pool" 
 					MODULE="commons-pool-1.6.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"

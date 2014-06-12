@@ -145,8 +145,8 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/qpid-amqp-1-0-client-all-0.26.jar"
              		REQUIRED="true"/>
    			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-5.7.0.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-all-5.7.0.jar"
+					MODULE="activemq-all-5.10.0.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/activemq-all-5.10.0.jar"
 					REQUIRED="true"/>
             <IMPORT NAME="camel-jms"
                     MODULE="camel-jms-2.13.0.jar"
