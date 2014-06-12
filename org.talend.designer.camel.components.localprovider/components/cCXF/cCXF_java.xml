@@ -364,7 +364,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="asm"
                     MODULE="asm-3.3.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/asm-3.3.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/asm-3.3.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-bindings-soap"
                     MODULE="cxf-rt-bindings-soap-2.7.11.jar"
@@ -441,6 +441,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
                     MODULE="javax.ws.rs-api-2.0-m10.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/javax.ws.rs-api-2.0-m10.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
                     MODULE="cxf-rt-rs-extension-providers-2.7.11.jar"
