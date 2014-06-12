@@ -52,8 +52,8 @@
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="apache-camel"
-					MODULE="camel-core-2.13.0.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cMessagingEndpoint/camel-core-2.13.0.jar"
+					MODULE="camel-core-2.13.1.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cMessagingEndpoint/camel-core-2.13.1.jar"
 					REQUIRED="true"
 					BundleID="org.apache.camel.camel-core" />
 			<IMPORT NAME="dom4j"

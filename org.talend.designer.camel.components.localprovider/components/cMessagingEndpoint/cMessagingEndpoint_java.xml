@@ -195,8 +195,8 @@
 		<IMPORTS>
             <!-- camel-core -->
             <IMPORT NAME="camel-core"
-                    MODULE="camel-core-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13.0.jar"
+                    MODULE="camel-core-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
@@ -217,8 +217,8 @@
 
             <!-- camel-spring -->
             <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.13.0.jar"
+                    MODULE="camel-spring-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-2.13.1.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-context"
                     MODULE="spring-context-3.2.4.RELEASE.jar"
@@ -283,109 +283,109 @@
                     UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
                     REQUIRED="true" />
 
-			<IMPORT MODULE="camel-amqp-alldep-2.13.0.jar" NAME="talend-camel-amqp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-amqp-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-amqp-alldep-2.13.1.jar" NAME="talend-camel-amqp"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-amqp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
-			<IMPORT MODULE="camel-atom-alldep-2.13.0.jar" NAME="talend-camel-atom"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-atom-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-atom-alldep-2.13.1.jar" NAME="talend-camel-atom"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-atom-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ATOM']" />
-			<IMPORT MODULE="camel-aws-alldep-2.13.0.jar" NAME="talend-camel-aws"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-aws-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-aws-alldep-2.13.1.jar" NAME="talend-camel-aws"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-aws-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AWS']" />
-			<IMPORT MODULE="camel-bam-alldep-2.13.0.jar" NAME="talend-camel-bam"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bam-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-bam-alldep-2.13.1.jar" NAME="talend-camel-bam"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bam-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BAM']" />
-			<IMPORT MODULE="camel-bean-validator-alldep-2.13.0.jar" NAME="talend-camel-bean-validator"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bean-validator-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-bean-validator-alldep-2.13.1.jar" NAME="talend-camel-bean-validator"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bean-validator-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BEAN-VALIDATOR']" />
-			<IMPORT MODULE="camel-bindy-alldep-2.13.0.jar" NAME="talend-camel-bindy"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bindy-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-bindy-alldep-2.13.1.jar" NAME="talend-camel-bindy"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-bindy-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BINDY']" />
-			<IMPORT MODULE="camel-blueprint-alldep-2.13.0.jar" NAME="talend-camel-blueprint"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-blueprint-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-blueprint-alldep-2.13.1.jar" NAME="talend-camel-blueprint"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-blueprint-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['BLUEPRINT']" />
-			<IMPORT MODULE="camel-cache-alldep-2.13.0.jar" NAME="talend-camel-cache"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cache-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-cache-alldep-2.13.1.jar" NAME="talend-camel-cache"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cache-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CACHE']" />
-			<IMPORT MODULE="camel-castor-alldep-2.13.0.jar" NAME="talend-camel-castor"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-castor-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-castor-alldep-2.13.1.jar" NAME="talend-camel-castor"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-castor-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CASTOR']" />
-			<IMPORT MODULE="camel-cometd-alldep-2.13.0.jar" NAME="talend-camel-cometd"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cometd-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-cometd-alldep-2.13.1.jar" NAME="talend-camel-cometd"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cometd-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['COMETD']" />
-			<IMPORT MODULE="camel-context-2.13.0.jar" NAME="talend-camel-context"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-context-2.13.0.jar"
+			<IMPORT MODULE="camel-context-2.13.1.jar" NAME="talend-camel-context"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-context-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CONTEXT']" />
-			<IMPORT MODULE="camel-crypto-alldep-2.13.0.jar" NAME="talend-camel-crypto"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-crypto-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-crypto-alldep-2.13.1.jar" NAME="talend-camel-crypto"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-crypto-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CRYPTO']" />
-			<IMPORT MODULE="camel-csv-alldep-2.13.0.jar" NAME="talend-camel-csv"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-csv-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-csv-alldep-2.13.1.jar" NAME="talend-camel-csv"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-csv-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CSV']" />
             <!-- camel-cxf -->
             <IMPORT NAME="camel-cxf"
-                    MODULE="camel-cxf-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.13.0.jar"
+                    MODULE="camel-cxf-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-2.13.1.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
             <IMPORT NAME="camel-cxf-transport"
-                    MODULE="camel-cxf-transport-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.13.0.jar"
+                    MODULE="camel-cxf-transport-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.13.1.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
-			<IMPORT MODULE="camel-dns-alldep-2.13.0.jar" NAME="talend-camel-dns"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-dns-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-dns-alldep-2.13.1.jar" NAME="talend-camel-dns"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-dns-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['DNS']" />
-			<IMPORT MODULE="camel-dozer-alldep-2.13.0.jar" NAME="talend-camel-dozer"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-dozer-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-dozer-alldep-2.13.1.jar" NAME="talend-camel-dozer"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-dozer-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['DOZER']" />
-			<IMPORT MODULE="camel-eclipse-2.13.0.jar" NAME="talend-camel-eclipse"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-eclipse-2.13.0.jar"
+			<IMPORT MODULE="camel-eclipse-2.13.1.jar" NAME="talend-camel-eclipse"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-eclipse-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ECLIPSE']" />
-			<IMPORT MODULE="camel-ejb-alldep-2.13.0.jar" NAME="talend-camel-ejb"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ejb-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ejb-alldep-2.13.1.jar" NAME="talend-camel-ejb"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ejb-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['EJB']" />
-			<IMPORT MODULE="camel-eventadmin-alldep-2.13.0.jar" NAME="talend-camel-eventadmin"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-eventadmin-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-eventadmin-alldep-2.13.1.jar" NAME="talend-camel-eventadmin"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-eventadmin-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['EVENTADMIN']" />
-			<IMPORT MODULE="camel-exec-alldep-2.13.0.jar" NAME="talend-camel-exec"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-exec-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-exec-alldep-2.13.1.jar" NAME="talend-camel-exec"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-exec-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['EXEC']" />
-			<IMPORT MODULE="camel-flatpack-alldep-2.13.0.jar" NAME="talend-camel-flatpack"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-flatpack-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-flatpack-alldep-2.13.1.jar" NAME="talend-camel-flatpack"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-flatpack-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FLATPACK']" />
-			<IMPORT MODULE="camel-freemarker-alldep-2.13.0.jar" NAME="talend-camel-freemarker"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-freemarker-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-freemarker-alldep-2.13.1.jar" NAME="talend-camel-freemarker"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-freemarker-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FREEMARKER']" />
-			<IMPORT MODULE="camel-ftp-alldep-2.13.0.jar" NAME="talend-camel-ftp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ftp-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ftp-alldep-2.13.1.jar" NAME="talend-camel-ftp"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ftp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FTP']" />
-			<IMPORT MODULE="camel-gae-alldep-2.13.0.jar" NAME="talend-camel-gae"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-gae-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-gae-alldep-2.13.1.jar" NAME="talend-camel-gae"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-gae-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['GAE']" />
             <!-- camel-groovy -->
             <IMPORT NAME="camel-groovy"
-                    MODULE="camel-groovy-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13.0.jar"
+                    MODULE="camel-groovy-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13.1.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
             <IMPORT NAME="groovy-all"
-                    MODULE="groovy-all-2.1.9.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.1.9.jar"
+                    MODULE="groovy-all-2.2.2.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.2.2.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
-			<IMPORT MODULE="camel-guice-alldep-2.13.0.jar" NAME="talend-camel-guice"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-guice-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-guice-alldep-2.13.1.jar" NAME="talend-camel-guice"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-guice-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['GUICE']" />
-			<IMPORT MODULE="camel-hawtdb-alldep-2.13.0.jar" NAME="talend-camel-hawtdb"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hawtdb-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-hawtdb-alldep-2.13.1.jar" NAME="talend-camel-hawtdb"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hawtdb-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HAWTDB']" />
-			<IMPORT MODULE="camel-hazelcast-alldep-2.13.0.jar" NAME="talend-camel-hazelcast"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hazelcast-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-hazelcast-alldep-2.13.1.jar" NAME="talend-camel-hazelcast"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hazelcast-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HAZELCAST']" />
-			<IMPORT MODULE="camel-hl7-alldep-2.13.0.jar" NAME="talend-camel-hl7"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hl7-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-hl7-alldep-2.13.1.jar" NAME="talend-camel-hl7"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hl7-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HL7']" />
             <!-- camel-http -->
             <IMPORT NAME="camel-http"
-                    MODULE="camel-http-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.13.0.jar"
+                    MODULE="camel-http-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.13.1.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"
@@ -399,46 +399,46 @@
                     MODULE="commons-codec-1.6.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
-			<IMPORT MODULE="camel-http4-alldep-2.13.0.jar" NAME="talend-camel-http4"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-http4-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-http4-alldep-2.13.1.jar" NAME="talend-camel-http4"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-http4-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP4']" />
-			<IMPORT MODULE="camel-ibatis-alldep-2.13.0.jar" NAME="talend-camel-ibatis"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ibatis-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ibatis-alldep-2.13.1.jar" NAME="talend-camel-ibatis"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ibatis-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['IBATIS']" />
-			<IMPORT MODULE="camel-irc-alldep-2.13.0.jar" NAME="talend-camel-irc"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-irc-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-irc-alldep-2.13.1.jar" NAME="talend-camel-irc"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-irc-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['IRC']" />
-			<IMPORT MODULE="camel-jackson-alldep-2.13.0.jar" NAME="talend-camel-jackson"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jackson-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jackson-alldep-2.13.1.jar" NAME="talend-camel-jackson"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jackson-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JACKSON']" />
-			<IMPORT MODULE="camel-jasypt-alldep-2.13.0.jar" NAME="talend-camel-jasypt"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jasypt-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jasypt-alldep-2.13.1.jar" NAME="talend-camel-jasypt"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jasypt-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JASYPT']" />
-			<IMPORT MODULE="camel-javaspace-alldep-2.13.0.jar" NAME="talend-camel-javaspace"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-javaspace-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-javaspace-alldep-2.13.1.jar" NAME="talend-camel-javaspace"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-javaspace-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JAVASPACE']" />
-			<IMPORT MODULE="camel-jaxb-alldep-2.13.0.jar" NAME="talend-camel-jaxb"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jaxb-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jaxb-alldep-2.13.1.jar" NAME="talend-camel-jaxb"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jaxb-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JAXB']" />
-			<IMPORT MODULE="camel-jcr-alldep-2.13.0.jar" NAME="talend-camel-jcr"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jcr-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jcr-alldep-2.13.1.jar" NAME="talend-camel-jcr"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jcr-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JCR']" />
-			<IMPORT MODULE="camel-jdbc-alldep-2.13.0.jar" NAME="talend-camel-jdbc"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jdbc-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jdbc-alldep-2.13.1.jar" NAME="talend-camel-jdbc"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jdbc-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" />
-			<IMPORT MODULE="camel-jetty-alldep-2.13.0.jar" NAME="talend-camel-jetty"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jetty-alldep-2.13.1.jar" NAME="talend-camel-jetty"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JETTY']" />
-			<IMPORT MODULE="camel-jibx-alldep-2.13.0.jar" NAME="talend-camel-jibx"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jibx-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jibx-alldep-2.13.1.jar" NAME="talend-camel-jibx"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jibx-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JIBX']" />
-			<IMPORT MODULE="camel-jing-alldep-2.13.0.jar" NAME="talend-camel-jing"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jing-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jing-alldep-2.13.1.jar" NAME="talend-camel-jing"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jing-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JING']" />
             <!-- camel-jms -->
             <IMPORT NAME="camel-jms"
-                    MODULE="camel-jms-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-2.13.0.jar"
+                    MODULE="camel-jms-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-2.13.1.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
             <IMPORT NAME="spring-jms"
                     MODULE="spring-jms-3.2.4.RELEASE.jar"
@@ -448,331 +448,331 @@
                     MODULE="spring-tx-3.2.4.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.4.RELEASE.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
-			<IMPORT MODULE="camel-jmx-alldep-2.13.0.jar" NAME="talend-camel-jmx"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jmx-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jmx-alldep-2.13.1.jar" NAME="talend-camel-jmx"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jmx-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMX']" />
-			<IMPORT MODULE="camel-josql-alldep-2.13.0.jar" NAME="talend-camel-josql"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-josql-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-josql-alldep-2.13.1.jar" NAME="talend-camel-josql"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-josql-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JOSQL']" />
-			<IMPORT MODULE="camel-jpa-alldep-2.13.0.jar" NAME="talend-camel-jpa"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jpa-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jpa-alldep-2.13.1.jar" NAME="talend-camel-jpa"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jpa-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JPA']" />
-			<IMPORT MODULE="camel-jsch-alldep-2.13.0.jar" NAME="talend-camel-jsch"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jsch-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jsch-alldep-2.13.1.jar" NAME="talend-camel-jsch"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jsch-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JSCH']" />
-			<IMPORT MODULE="camel-jt400-alldep-2.13.0.jar" NAME="talend-camel-jt400"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jt400-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jt400-alldep-2.13.1.jar" NAME="talend-camel-jt400"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jt400-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JT400']" />
-			<IMPORT MODULE="camel-juel-alldep-2.13.0.jar" NAME="talend-camel-juel"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-juel-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-juel-alldep-2.13.1.jar" NAME="talend-camel-juel"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-juel-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JUEL']" />
-			<IMPORT MODULE="camel-jxpath-alldep-2.13.0.jar" NAME="talend-camel-jxpath"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jxpath-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-jxpath-alldep-2.13.1.jar" NAME="talend-camel-jxpath"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jxpath-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JXPATH']" />
-			<IMPORT MODULE="camel-kestrel-alldep-2.13.0.jar" NAME="talend-camel-kestrel"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kestrel-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-kestrel-alldep-2.13.1.jar" NAME="talend-camel-kestrel"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kestrel-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['KESTREL']" />
-			<IMPORT MODULE="camel-ldap-alldep-2.13.0.jar" NAME="talend-camel-ldap"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ldap-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ldap-alldep-2.13.1.jar" NAME="talend-camel-ldap"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ldap-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['LDAP']" />
-			<IMPORT MODULE="camel-lucene-alldep-2.13.0.jar" NAME="talend-camel-lucene"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-lucene-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-lucene-alldep-2.13.1.jar" NAME="talend-camel-lucene"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-lucene-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['LUCENE']" />
-			<IMPORT MODULE="camel-mail-alldep-2.13.0.jar" NAME="talend-camel-mail"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mail-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-mail-alldep-2.13.1.jar" NAME="talend-camel-mail"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mail-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MAIL']" />
-			<IMPORT MODULE="camel-mina-alldep-2.13.0.jar" NAME="talend-camel-mina"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mina-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-mina-alldep-2.13.1.jar" NAME="talend-camel-mina"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mina-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MINA']" />
-			<IMPORT MODULE="camel-msv-alldep-2.13.0.jar" NAME="talend-camel-msv"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-msv-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-msv-alldep-2.13.1.jar" NAME="talend-camel-msv"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-msv-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MSV']" />
-			<IMPORT MODULE="camel-mvel-alldep-2.13.0.jar" NAME="talend-camel-mvel"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mvel-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-mvel-alldep-2.13.1.jar" NAME="talend-camel-mvel"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mvel-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MVEL']" />
-			<IMPORT MODULE="camel-mybatis-alldep-2.13.0.jar" NAME="talend-camel-mybatis"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mybatis-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-mybatis-alldep-2.13.1.jar" NAME="talend-camel-mybatis"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mybatis-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MYBATIS']" />
-			<IMPORT MODULE="camel-nagios-alldep-2.13.0.jar" NAME="talend-camel-nagios"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-nagios-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-nagios-alldep-2.13.1.jar" NAME="talend-camel-nagios"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-nagios-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['NAGIOS']" />
-			<IMPORT MODULE="camel-netty-alldep-2.13.0.jar" NAME="talend-camel-netty"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-netty-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-netty-alldep-2.13.1.jar" NAME="talend-camel-netty"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-netty-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['NETTY']" />
-			<IMPORT MODULE="camel-ognl-alldep-2.13.0.jar" NAME="talend-camel-ognl"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ognl-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ognl-alldep-2.13.1.jar" NAME="talend-camel-ognl"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ognl-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['OGNL']" />
-			<IMPORT MODULE="camel-paxlogging-alldep-2.13.0.jar" NAME="talend-camel-paxlogging"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-paxlogging-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-paxlogging-alldep-2.13.1.jar" NAME="talend-camel-paxlogging"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-paxlogging-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['PAXLOGGING']" />
-			<IMPORT MODULE="camel-printer-alldep-2.13.0.jar" NAME="talend-camel-printer"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-printer-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-printer-alldep-2.13.1.jar" NAME="talend-camel-printer"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-printer-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['PRINTER']" />
-			<IMPORT MODULE="camel-protobuf-alldep-2.13.0.jar" NAME="talend-camel-protobuf"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-protobuf-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-protobuf-alldep-2.13.1.jar" NAME="talend-camel-protobuf"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-protobuf-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['PROTOBUF']" />
-			<IMPORT MODULE="camel-quartz-alldep-2.13.0.jar" NAME="talend-camel-quartz"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quartz-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-quartz-alldep-2.13.1.jar" NAME="talend-camel-quartz"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quartz-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['QUARTZ']" />
-			<IMPORT MODULE="camel-quickfix-alldep-2.13.0.jar" NAME="talend-camel-quickfix"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quickfix-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-quickfix-alldep-2.13.1.jar" NAME="talend-camel-quickfix"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quickfix-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['QUICKFIX']" />
-			<IMPORT MODULE="camel-restlet-alldep-2.13.0.jar" NAME="talend-camel-restlet"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-restlet-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-restlet-alldep-2.13.1.jar" NAME="talend-camel-restlet"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-restlet-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['RESTLET']" />
-			<IMPORT MODULE="camel-rmi-alldep-2.13.0.jar" NAME="talend-camel-rmi"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rmi-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-rmi-alldep-2.13.1.jar" NAME="talend-camel-rmi"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rmi-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['RMI']" />
-			<IMPORT MODULE="camel-routebox-alldep-2.13.0.jar" NAME="talend-camel-routebox"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-routebox-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-routebox-alldep-2.13.1.jar" NAME="talend-camel-routebox"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-routebox-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ROUTEBOX']" />
-			<IMPORT MODULE="camel-rss-alldep-2.13.0.jar" NAME="talend-camel-rss"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rss-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-rss-alldep-2.13.1.jar" NAME="talend-camel-rss"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rss-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['RSS']" />
-			<IMPORT MODULE="camel-ruby-alldep-2.13.0.jar" NAME="talend-camel-ruby"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ruby-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-ruby-alldep-2.13.1.jar" NAME="talend-camel-ruby"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ruby-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['RUBY']" />
-			<IMPORT MODULE="camel-saxon-alldep-2.13.0.jar" NAME="talend-camel-saxon"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-saxon-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-saxon-alldep-2.13.1.jar" NAME="talend-camel-saxon"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-saxon-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SAXON']" />
-			<IMPORT MODULE="camel-scala-alldep-2.13.0.jar" NAME="talend-camel-scala"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-scala-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-scala-alldep-2.13.1.jar" NAME="talend-camel-scala"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-scala-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SCALA']" />
             <!-- camel-script -->
             <IMPORT NAME="camel-script"
-                    MODULE="camel-script-2.13.0.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.13.0.jar"
+                    MODULE="camel-script-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-2.13.1.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['SCRIPT']" />
-			<IMPORT MODULE="camel-servlet-alldep-2.13.0.jar" NAME="talend-camel-servlet"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-servlet-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-servlet-alldep-2.13.1.jar" NAME="talend-camel-servlet"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-servlet-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SERVLET']" />
-			<IMPORT MODULE="camel-shiro-alldep-2.13.0.jar" NAME="talend-camel-shiro"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-shiro-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-shiro-alldep-2.13.1.jar" NAME="talend-camel-shiro"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-shiro-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SHIRO']" />
-			<IMPORT MODULE="camel-sip-alldep-2.13.0.jar" NAME="talend-camel-sip"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sip-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-sip-alldep-2.13.1.jar" NAME="talend-camel-sip"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sip-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SIP']" />
-			<IMPORT MODULE="camel-smpp-alldep-2.13.0.jar" NAME="talend-camel-smpp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-smpp-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-smpp-alldep-2.13.1.jar" NAME="talend-camel-smpp"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-smpp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SMPP']" />
-			<IMPORT MODULE="camel-snmp-alldep-2.13.0.jar" NAME="talend-camel-snmp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-snmp-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-snmp-alldep-2.13.1.jar" NAME="talend-camel-snmp"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-snmp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SNMP']" />
-			<IMPORT MODULE="camel-soap-alldep-2.13.0.jar" NAME="talend-camel-soap"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-soap-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-soap-alldep-2.13.1.jar" NAME="talend-camel-soap"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-soap-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SOAP']" />
-			<IMPORT MODULE="camel-sql-alldep-2.13.0.jar" NAME="talend-camel-sql"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sql-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-sql-alldep-2.13.1.jar" NAME="talend-camel-sql"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sql-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SQL']" />
-			<IMPORT MODULE="camel-stream-alldep-2.13.0.jar" NAME="talend-camel-stream"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stream-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-stream-alldep-2.13.1.jar" NAME="talend-camel-stream"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stream-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['STREAM']" />
-			<IMPORT MODULE="camel-stringtemplate-alldep-2.13.0.jar" NAME="talend-camel-stringtemplate"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stringtemplate-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-stringtemplate-alldep-2.13.1.jar" NAME="talend-camel-stringtemplate"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stringtemplate-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['STRINGTEMPLATE']" />
-			<IMPORT MODULE="camel-syslog-alldep-2.13.0.jar" NAME="talend-camel-syslog"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-syslog-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-syslog-alldep-2.13.1.jar" NAME="talend-camel-syslog"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-syslog-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SYSLOG']" />
-			<IMPORT MODULE="camel-tagsoup-alldep-2.13.0.jar" NAME="talend-camel-tagsoup"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-tagsoup-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-tagsoup-alldep-2.13.1.jar" NAME="talend-camel-tagsoup"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-tagsoup-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['TAGSOUP']" />
-			<IMPORT MODULE="camel-velocity-alldep-2.13.0.jar" NAME="talend-camel-velocity"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-velocity-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-velocity-alldep-2.13.1.jar" NAME="talend-camel-velocity"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-velocity-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['VELOCITY']" />
-			<IMPORT MODULE="camel-xmlbeans-alldep-2.13.0.jar" NAME="talend-camel-xmlbeans"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmlbeans-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-xmlbeans-alldep-2.13.1.jar" NAME="talend-camel-xmlbeans"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmlbeans-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XMLBEANS']" />
-			<IMPORT MODULE="camel-xmlsecurity-alldep-2.13.0.jar" NAME="talend-camel-xmlsecurity"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmlsecurity-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-xmlsecurity-alldep-2.13.1.jar" NAME="talend-camel-xmlsecurity"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmlsecurity-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XMLSECURITY']" />
-			<IMPORT MODULE="camel-xmpp-alldep-2.13.0.jar" NAME="talend-camel-xmpp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmpp-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-xmpp-alldep-2.13.1.jar" NAME="talend-camel-xmpp"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmpp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XMPP']" />
-			<IMPORT MODULE="camel-xstream-alldep-2.13.0.jar" NAME="talend-camel-xstream"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xstream-alldep-2.13.0.jar"
+			<IMPORT MODULE="camel-xstream-alldep-2.13.1.jar" NAME="talend-camel-xstream"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xstream-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
 				
-			<!-- New From 2.13.0 -->
-			<IMPORT MODULE="camel-ahc-alldep-2.13.0.jar" 
+			<!-- New From 2.13.1 -->
+			<IMPORT MODULE="camel-ahc-alldep-2.13.1.jar" 
 				NAME="talend-camel-ahc"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ahc-alldep-2.13.0.jar" 
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ahc-alldep-2.13.1.jar" 
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AHC']" />
-			<IMPORT MODULE="camel-apns-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-apns-alldep-2.13.1.jar" 
 				NAME="talend-camel-apns"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-apns-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-apns-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['APNS']" />
-			<IMPORT MODULE="camel-avro-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-avro-alldep-2.13.1.jar" 
 				NAME="talend-camel-avro"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-avro-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-avro-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AVRO']" />
-			<IMPORT MODULE="camel-cmis-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-cmis-alldep-2.13.1.jar" 
 				NAME="talend-camel-cmis"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cmis-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-cmis-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['CMIS']" />
-			<IMPORT MODULE="camel-couchdb-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-couchdb-alldep-2.13.1.jar" 
 				NAME="talend-camel-couchdb"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-couchdb-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-couchdb-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['COUCHDB']" />
-			<IMPORT MODULE="camel-elasticsearch-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-elasticsearch-alldep-2.13.1.jar" 
 				NAME="talend-camel-elasticsearch"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-elasticsearch-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-elasticsearch-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ELASTICSEARCH']" />
-			<IMPORT MODULE="camel-fop-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-fop-alldep-2.13.1.jar" 
 				NAME="talend-camel-fop"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-fop-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-fop-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FOP']" />
-			<IMPORT MODULE="camel-guava-eventbus-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-guava-eventbus-alldep-2.13.1.jar" 
 				NAME="talend-camel-guava-eventbus"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-guava-eventbus-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-guava-eventbus-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['GUAVA-EVENTBUS']" />
-			<IMPORT MODULE="camel-hbase-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-hbase-alldep-2.13.1.jar" 
 				NAME="talend-camel-hbase"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hbase-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hbase-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HBASE']" />
-			<IMPORT MODULE="camel-hdfs-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-hdfs-alldep-2.13.1.jar" 
 				NAME="talend-camel-hdfs"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HDFS']" />
-			<IMPORT MODULE="camel-hdfs2-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-hdfs2-alldep-2.13.1.jar" 
 				NAME="talend-camel-hdfs2"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs2-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-hdfs2-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HDFS2']" />
-			<IMPORT MODULE="camel-infinispan-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-infinispan-alldep-2.13.1.jar" 
 				NAME="talend-camel-infinispan"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-infinispan-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-infinispan-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['INFINISPAN']" />
-			<IMPORT MODULE="camel-jgroups-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-jgroups-alldep-2.13.1.jar" 
 				NAME="talend-camel-jgroups"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jgroups-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jgroups-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JGROUPS']" />
-			<IMPORT MODULE="camel-kafka-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-kafka-alldep-2.13.1.jar" 
 				NAME="talend-camel-kafka"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['KAFKA']" />
-			<IMPORT MODULE="camel-krati-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-krati-alldep-2.13.1.jar" 
 				NAME="talend-camel-krati"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-krati-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-krati-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['KRATI']" />
-			<IMPORT MODULE="camel-mina2-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-mina2-alldep-2.13.1.jar" 
 				NAME="talend-camel-mina2"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mina2-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mina2-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MINA2']" />
-			<IMPORT MODULE="camel-mongodb-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-mongodb-alldep-2.13.1.jar" 
 				NAME="talend-camel-mongodb"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mongodb-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mongodb-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MONGODB']" />
-			<IMPORT MODULE="camel-mqtt-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-mqtt-alldep-2.13.1.jar" 
 				NAME="talend-camel-mqtt"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MQTT']" />
-			<IMPORT MODULE="camel-optaplanner-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-optaplanner-alldep-2.13.1.jar" 
 				NAME="talend-camel-optaplanner"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-optaplanner-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-optaplanner-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['OPTAPLANNER']" />
-			<IMPORT MODULE="camel-sjms-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-sjms-alldep-2.13.1.jar" 
 				NAME="talend-camel-sjms"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sjms-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sjms-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SJMS']" />
-			<IMPORT MODULE="camel-solr-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-solr-alldep-2.13.1.jar" 
 				NAME="talend-camel-solr"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-solr-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-solr-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SOLR']" />
-			<IMPORT MODULE="camel-splunk-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-splunk-alldep-2.13.1.jar" 
 				NAME="talend-camel-splunk"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-splunk-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-splunk-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPLUNK']" />
-			<IMPORT MODULE="camel-spring-batch-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-spring-batch-alldep-2.13.1.jar" 
 				NAME="talend-camel-spring-batch"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-batch-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-batch-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING-BATCH']" />
-			<IMPORT MODULE="camel-spring-integration-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-spring-integration-alldep-2.13.1.jar" 
 				NAME="talend-camel-spring-integration"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-integration-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-integration-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING-INTEGRATION']" />
-			<IMPORT MODULE="camel-spring-ldap-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-spring-ldap-alldep-2.13.1.jar" 
 				NAME="talend-camel-spring-ldap"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-ldap-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-ldap-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING-LDAP']" />
-			<IMPORT MODULE="camel-spring-redis-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-spring-redis-alldep-2.13.1.jar" 
 				NAME="talend-camel-spring-redis"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-redis-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-redis-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING-REDIS']" />
-			<IMPORT MODULE="camel-spring-ws-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-spring-ws-alldep-2.13.1.jar" 
 				NAME="talend-camel-spring-ws"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-ws-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-spring-ws-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SPRING-WS']" />
-			<IMPORT MODULE="camel-ssh-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-ssh-alldep-2.13.1.jar" 
 				NAME="talend-camel-ssh"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ssh-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ssh-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SSH']" />
-			<IMPORT MODULE="camel-stax-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-stax-alldep-2.13.1.jar" 
 				NAME="talend-camel-stax"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stax-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stax-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['STAX']" />
-			<IMPORT MODULE="camel-twitter-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-twitter-alldep-2.13.1.jar" 
 				NAME="talend-camel-twitter"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-twitter-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-twitter-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['TWITTER']" />
-			<IMPORT MODULE="camel-websocket-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-websocket-alldep-2.13.1.jar" 
 				NAME="talend-camel-websocket"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-websocket-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-websocket-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['WEBSOCKET']" />
-			<IMPORT MODULE="camel-zookeeper-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-zookeeper-alldep-2.13.1.jar" 
 				NAME="talend-camel-zookeeper"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-zookeeper-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-zookeeper-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ZOOKEEPER']" />
-			<IMPORT MODULE="camel-disruptor-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-disruptor-alldep-2.13.1.jar" 
 				NAME="talend-camel-disruptor"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-disruptor-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-disruptor-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['DISRUPTOR']" />
-			<IMPORT MODULE="camel-geocoder-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-geocoder-alldep-2.13.1.jar" 
 				NAME="talend-camel-geocoder"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-geocoder-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-geocoder-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['GEOCODER']" />
-			<IMPORT MODULE="camel-mustache-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-mustache-alldep-2.13.1.jar" 
 				NAME="talend-camel-mustache"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mustache-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mustache-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['MUSTACHE']" />
-			<IMPORT MODULE="camel-netty-http-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-netty-http-alldep-2.13.1.jar" 
 				NAME="talend-camel-netty-http"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-netty-http-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-netty-http-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['NETTY-HTTP']" />
-			<IMPORT MODULE="camel-quartz2-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-quartz2-alldep-2.13.1.jar" 
 				NAME="talend-camel-quartz2"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quartz2-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-quartz2-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['QUARTZ2']" />
-			<IMPORT MODULE="camel-rabbitmq-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-rabbitmq-alldep-2.13.1.jar" 
 				NAME="talend-camel-rabbitmq"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rabbitmq-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-rabbitmq-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['RABBITMQ']" />
-			<IMPORT MODULE="camel-sap-netweaver-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-sap-netweaver-alldep-2.13.1.jar" 
 				NAME="talend-camel-sap-netweaver"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sap-netweaver-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-sap-netweaver-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SAP-NETWEAVER']" />
-			<IMPORT MODULE="camel-stomp-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-stomp-alldep-2.13.1.jar" 
 				NAME="talend-camel-stomp"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stomp-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stomp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['STOMP']" />
-			<IMPORT MODULE="camel-weather-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-weather-alldep-2.13.1.jar" 
 				NAME="talend-camel-weather"	
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-weather-alldep-2.13.0.jar"
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-weather-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['WEATHER']" />
-			<IMPORT MODULE="camel-yammer-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-yammer-alldep-2.13.1.jar" 
 				NAME="talend-camel-yammer"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-yammer-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-yammer-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['YAMMER']" />
 
-			<IMPORT MODULE="camel-facebook-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-facebook-alldep-2.13.1.jar" 
 				NAME="talend-camel-facebook"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-facebook-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-facebook-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['FACEBOOK']" />
-			<IMPORT MODULE="camel-salesforce-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-salesforce-alldep-2.13.1.jar" 
 				NAME="talend-camel-salesforce"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-salesforce-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-salesforce-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SALESFORCE']" />
-			<IMPORT MODULE="camel-vertx-alldep-2.13.0.jar" 
+			<IMPORT MODULE="camel-vertx-alldep-2.13.1.jar" 
 				NAME="talend-camel-vertx"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-vertx-alldep-2.13.0.jar"	
+				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-vertx-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['VERTX']" />
 				
             <IMPORT NAME="cxf-rt-core"
