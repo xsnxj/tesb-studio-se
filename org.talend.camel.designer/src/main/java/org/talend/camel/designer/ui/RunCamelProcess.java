@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.ui;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -93,23 +91,13 @@ public class RunCamelProcess extends AContextualAction {
         setEnabled(canWork);
     }
 
-    /**
-     * Returns the launch configuration manager.
-     * 
-     * @return launch configuration manager
-     */
-    private LaunchConfigurationManager getLaunchConfigurationManager() {
-        return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-
-    }
-
     /*
      * (non-Javadoc)
      * 
      * @see org.talend.repository.ui.actions.AContextualView#getClassForDoubleClick()
      */
     @Override
-    public Class getClassForDoubleClick() {
+    public Class<?> getClassForDoubleClick() {
         return ProcessItem.class;
     }
 }
