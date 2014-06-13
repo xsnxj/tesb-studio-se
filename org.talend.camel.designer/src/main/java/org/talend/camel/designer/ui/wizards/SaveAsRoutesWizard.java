@@ -17,7 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
@@ -132,7 +132,7 @@ public class SaveAsRoutesWizard extends Wizard {
             ok = true;
 
         } catch (Exception e) {
-            MessageDialog.openError(getShell(), "Error", "Job could not be saved" + " : " + e.getMessage());
+            MessageDialog.openError(getShell(), "Error", "Job could not be saved: " + e.getMessage());
             ExceptionHandler.process(e);
         }
 
