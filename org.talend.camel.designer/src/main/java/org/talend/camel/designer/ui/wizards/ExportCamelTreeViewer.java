@@ -18,6 +18,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
+import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 
 /**
  * DOC achen class global comment. Detailled comment
@@ -40,7 +41,7 @@ public class ExportCamelTreeViewer extends ExportTreeViewer {
     //
     // private JobCamelScriptsExportWizardPage jobScriptExportWizardPage;
 
-    public ExportCamelTreeViewer(IStructuredSelection selection, JobCamelScriptsExportWizardPage jobScriptExportWizardPage) {
+    public ExportCamelTreeViewer(IStructuredSelection selection, JobScriptsExportWizardPage jobScriptExportWizardPage) {
         super(selection, jobScriptExportWizardPage);
         // this.selection = selection;
         // this.jobScriptExportWizardPage = jobScriptExportWizardPage;

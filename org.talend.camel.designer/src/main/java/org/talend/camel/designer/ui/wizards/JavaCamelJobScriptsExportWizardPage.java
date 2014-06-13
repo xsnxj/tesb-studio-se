@@ -12,14 +12,14 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards;
 
-import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
+import org.talend.core.repository.constants.FileConstants;
+import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
+import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
 /**
  * Page of the Job Scripts Export Wizard. <br/>
@@ -27,43 +27,10 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  * @referto WizardArchiveFileResourceExportPage1 $Id: JobScriptsExportWizardPage.java 1 2006-12-13 下午03:09:07 bqian
  * 
  */
-public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWizardPage {
+public abstract class JavaCamelJobScriptsExportWizardPage extends JobScriptsExportWizardPage {
 
     // dialog store id constants
-    public static final String STORE_SHELL_LAUNCHER_ID = "JavaJobScriptsExportWizardPage.STORE_SHELL_LAUNCHER_ID"; //$NON-NLS-1$
-
-    public static final String STORE_SYSTEM_ROUTINE_ID = "JavaJobScriptsExportWizardPage.STORE_SYSTEM_ROUTINE_ID"; //$NON-NLS-1$
-
-    public static final String STORE_USER_ROUTINE_ID = "JavaJobScriptsExportWizardPage.STORE_USER_ROUTINE_ID"; //$NON-NLS-1$
-
-    public static final String STORE_MODEL_ID = "JavaJobScriptsExportWizardPage.STORE_MODEL_ID"; //$NON-NLS-1$
-
-    public static final String STORE_JOB_ID = "JavaJobScriptsExportWizardPage.STORE_JOB_ID"; //$NON-NLS-1$
-
-    public static final String STORE_CONTEXT_ID = "JavaJobScriptsExportWizardPage.STORE_CONTEXT_ID"; //$NON-NLS-1$
-
-    public static final String APPLY_TO_CHILDREN_ID = "JavaJobScriptsExportWizardPage.APPLY_TO_CHILDREN_ID"; //$NON-NLS-1$
-
-    public static final String STORE_DEPENDENCIES_ID = "JavaJobScriptsExportWizardPage.STORE_DEPENDENCIES_ID"; //$NON-NLS-1$
-
-    // public static final String STORE_GENERATECODE_ID = "JavaJobScriptsExportWizardPage.STORE_GENERATECODE_ID";
-    // //$NON-NLS-1$
-
-    public static final String STORE_SOURCE_ID = "JavaJobScriptsExportWizardPage.STORE_SOURCE_ID"; //$NON-NLS-1$
-
     public static final String STORE_DESTINATION_NAMES_ID = "JavaJobScriptsExportWizardPage.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
-
-    public static final String EXTRACT_ZIP_FILE = "JavaJobScriptsExportWizardPage.EXTRACT_ZIP_FILE"; //$NON-NLS-1$
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#createJobScriptsManager()
-     */
-    @Override
-    public JobScriptsManager createJobScriptsManager() {
-        return null;
-    }
 
     /**
      * Create an instance of this class.
@@ -71,7 +38,7 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
      * @param selection the selection
      */
     public JavaCamelJobScriptsExportWizardPage(IStructuredSelection selection) {
-        super("JavaJobscriptsExportPage1", selection); //$NON-NLS-1$
+        super("JavaCamelJobScriptsExportWizardPage", selection); //$NON-NLS-1$
     }
 
     /**
@@ -89,16 +56,13 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
 
             directoryNames = addToHistory(directoryNames, getDestinationValue());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
-            settings.put(STORE_SHELL_LAUNCHER_ID, shellLauncherButton.getSelection());
-            settings.put(STORE_SYSTEM_ROUTINE_ID, true);
-            settings.put(STORE_USER_ROUTINE_ID, true);
-            settings.put(STORE_JOB_ID, jobItemButton.getSelection());
-            settings.put(STORE_SOURCE_ID, jobScriptButton.getSelection());
-            settings.put(STORE_CONTEXT_ID, contextButton.getSelection());
-            settings.put(APPLY_TO_CHILDREN_ID, applyToChildrenButton.getSelection());
-            settings.put(EXTRACT_ZIP_FILE, chkButton.getSelection());
             // settings.put(STORE_GENERATECODE_ID, genCodeButton.getSelection());
         }
+    }
+
+    @Override
+    protected ExportTreeViewer getExportTree() {
+        return new ExportCamelTreeViewer(selection, this);
     }
 
     /**
@@ -116,34 +80,20 @@ public class JavaCamelJobScriptsExportWizardPage extends JobCamelScriptsExportWi
                 }
             }
             setDefaultDestination();
+        }
+    }
 
-            shellLauncherButton.setSelection(settings.getBoolean(STORE_SHELL_LAUNCHER_ID));
-            // systemRoutineButton.setSelection(settings.getBoolean(STORE_SYSTEM_ROUTINE_ID));
-            // userRoutineButton.setSelection(settings.getBoolean(STORE_USER_ROUTINE_ID));
-            jobItemButton.setSelection(settings.getBoolean(STORE_JOB_ID));
-            jobScriptButton.setSelection(settings.getBoolean(STORE_SOURCE_ID));
-            contextButton.setSelection(settings.getBoolean(STORE_CONTEXT_ID));
-            applyToChildrenButton.setSelection(settings.getBoolean(APPLY_TO_CHILDREN_ID));
-            chkButton.setSelection(settings.getBoolean(EXTRACT_ZIP_FILE));
-            // genCodeButton.setSelection(settings.getBoolean(STORE_GENERATECODE_ID));
-        }
+    @Override
+    protected Map<ExportChoice, Object> getExportChoiceMap() {
+        Map<ExportChoice, Object> exportChoiceMap = super.getExportChoiceMap();
+        exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
+        exportChoiceMap.put(ExportChoice.needUserRoutine, true);
+        exportChoiceMap.put(ExportChoice.needDependencies, Boolean.TRUE);
+        return exportChoiceMap;
+    }
 
-        launcherCombo.setItems(manager.getLauncher());
-        if (manager.getLauncher().length > 0) {
-            launcherCombo.select(0);
-        }
-        if (getProcessItem() != null) {
-            try {
-                setProcessItem((ProcessItem) ProxyRepositoryFactory.getInstance()
-                        .getUptodateProperty(getProcessItem().getProperty()).getItem());
-            } catch (PersistenceException e) {
-                e.printStackTrace();
-            }
-            List<String> contextNames = getJobContexts(getProcessItem());
-            contextCombo.setItems(contextNames.toArray(new String[contextNames.size()]));
-            if (contextNames.size() > 0) {
-                contextCombo.select(0);
-            }
-        }
+    @Override
+    protected String getProcessType() {
+        return "Route";
     }
 }
