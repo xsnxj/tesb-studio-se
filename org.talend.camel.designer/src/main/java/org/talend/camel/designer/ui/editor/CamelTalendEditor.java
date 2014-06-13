@@ -33,7 +33,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
     @Override
     public void doSaveAs() {
-        SaveAsRoutesAction saveAsAction = new SaveAsRoutesAction(this);
+        SaveAsRoutesAction saveAsAction = new SaveAsRoutesAction(this.getParent());
         saveAsAction.run();
     }
 

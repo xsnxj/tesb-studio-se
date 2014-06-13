@@ -16,18 +16,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.wizards.SaveAsRoutesWizard;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.designer.core.ui.editor.AbstractTalendEditor;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.repository.editor.JobEditorInput;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 
 /**
  * DOC xtan class global comment. <br/>
@@ -42,9 +39,9 @@ public class SaveAsRoutesAction extends Action {
 
     @Override
     public void run() {
-        SaveAsRoutesWizard processWizard = new SaveAsRoutesWizard(editorPart);
+        SaveAsRoutesWizard processWizard = new SaveAsRoutesWizard((JobEditorInput) editorPart.getEditorInput());
 
-        WizardDialog dlg = new WizardDialog(Display.getCurrent().getActiveShell(), processWizard);
+        WizardDialog dlg = new WizardDialog(editorPart.getSite().getShell(), processWizard);
         if (dlg.open() == Window.OK) {
 
             try {
@@ -52,28 +49,24 @@ public class SaveAsRoutesAction extends Action {
                 // Set readonly to false since created routes will always be editable.
                 JobEditorInput newRoutesEditorInput = new CamelProcessEditorInput(processWizard.getProcess(), true, true, false);
 
-                IWorkbenchPage page = getActivePage();
+                IWorkbenchPage page = editorPart.getSite().getPage();
 
-                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(newRoutesEditorInput.getItem()
+                IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(newRoutesEditorInput.getItem()
                         .getProperty().getId(), false);
                 newRoutesEditorInput.setRepositoryNode(repositoryNode);
 
                 // close the old editor
-                page.closeEditor(((AbstractTalendEditor) this.editorPart).getParent(), false);
+                page.closeEditor(editorPart, false);
 
                 // open the new editor, because at the same time, there will update the routes view
                 page.openEditor(newRoutesEditorInput, CamelMultiPageTalendEditor.ID, true);
 
             } catch (Exception e) {
-                MessageDialog.openError(Display.getCurrent().getActiveShell(), "Error",
+                MessageDialog.openError(editorPart.getSite().getShell(), "Error",
                         "Routes could not be saved" + " : " + e.getMessage());
                 ExceptionHandler.process(e);
             }
         }
-    }
-
-    private IWorkbenchPage getActivePage() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
     }
 
 }

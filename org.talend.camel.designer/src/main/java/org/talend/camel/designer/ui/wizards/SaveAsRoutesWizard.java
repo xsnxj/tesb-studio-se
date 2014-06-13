@@ -15,7 +15,6 @@ package org.talend.camel.designer.ui.wizards;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
@@ -61,9 +60,9 @@ public class SaveAsRoutesWizard extends Wizard {
 
     private boolean isUpdate;
 
-    public SaveAsRoutesWizard(EditorPart editorPart) {
+    public SaveAsRoutesWizard(JobEditorInput jobEditorInput) {
 
-        this.jobEditorInput = (JobEditorInput) editorPart.getEditorInput();
+        this.jobEditorInput = jobEditorInput;
 
         RepositoryNode repositoryNode = jobEditorInput.getRepositoryNode();
         // see: RepositoryEditorInput.setRepositoryNode(IRepositoryNode repositoryNode)
