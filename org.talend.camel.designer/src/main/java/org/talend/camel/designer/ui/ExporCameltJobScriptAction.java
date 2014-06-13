@@ -25,7 +25,10 @@ import org.talend.camel.designer.ui.wizards.JobCamelScriptsExportWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.BinRepositoryNode;
+import org.talend.repository.model.ERepositoryStatus;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
@@ -39,39 +42,9 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class ExporCameltJobScriptAction extends AContextualAction {
 
-    protected static final String EXPORTJOBSCRIPTS = Messages.getString("ExportJobScriptAction.buildRoute"); //$NON-NLS-1$
+    private static final String EXPORTJOBSCRIPTS = Messages.getString("ExportJobScriptAction.buildRoute"); //$NON-NLS-1$
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = true;
-        if (selection.isEmpty()) {
-            setEnabled(false);
-            return;
-        }
-        List<RepositoryNode> nodes = (List<RepositoryNode>) selection.toList();
-        for (RepositoryNode node : nodes) {
-            if (node.getType() != ENodeType.REPOSITORY_ELEMENT
-                    || node.getProperties(EProperties.CONTENT_TYPE) != CamelRepositoryNodeType.repositoryRoutesType) {
-                canWork = false;
-                break;
-            }
-            RepositoryNode parent = node.getParent();
-            if (canWork && parent != null && parent instanceof BinRepositoryNode) {
-                canWork = false;
-                break;
-            }
-        }
-        setEnabled(canWork);
-    }
-
-    public boolean isVisible() {
-        return isEnabled();
-    }
+    private Shell shell;
 
     public ExporCameltJobScriptAction() {
         super();
@@ -80,14 +53,33 @@ public class ExporCameltJobScriptAction extends AContextualAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EXPORT_JOB_ICON));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
+     * org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        setEnabled(false);
+        if (selection.isEmpty() || selection.size() != 1) {
+            return;
+        }
+        IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
+        if (node.getType() == ENodeType.REPOSITORY_ELEMENT
+                && node.getProperties(EProperties.CONTENT_TYPE) == CamelRepositoryNodeType.repositoryRoutesType
+                && ERepositoryStatus.DELETED != ProxyRepositoryFactory.getInstance().getStatus(node.getObject())) {
+            shell = viewer.getTree().getShell();
+            setEnabled(true);
+        }
+    }
+
     protected void doRun() {
         JobCamelScriptsExportWizard processWizard = new JobCamelScriptsExportWizard();
         IWorkbench workbench = getWorkbench();
         processWizard.setWindowTitle(EXPORTJOBSCRIPTS);
         processWizard.init(workbench, (IStructuredSelection) this.getSelection());
 
-        Shell activeShell = Display.getCurrent().getActiveShell();
-        WizardDialog dialog = new WizardDialog(activeShell, processWizard);
+        WizardDialog dialog = new WizardDialog(shell, processWizard);
         workbench.saveAllEditors(true);
         dialog.setPageSize(830, 450);
         dialog.open();

@@ -188,8 +188,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     public static final String EXTRACT_ZIP_FILE = "JavaJobScriptsExportWizardPage.EXTRACT_ZIP_FILE"; //$NON-NLS-1$
 
-    protected String exportTypeFixed;
-
     private Map<String, List<ContextTypeDefinition>> ctxToTypeDefs = new HashMap<String, List<ContextTypeDefinition>>();
 
     private List<ContextTypeDefinition> currentCtxTypes;
@@ -198,10 +196,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
     public static final String PETALS_EXPORT_DESTINATIONS = "org.ow2.petals.esbexport.destinations"; //$NON-NLS-1$
 
-    public JavaCamelJobScriptsExportWSWizardPage(IStructuredSelection selection, String exportType) {
+    public JavaCamelJobScriptsExportWSWizardPage(IStructuredSelection selection) {
         super(selection);
-        // there assign the manager again
-        exportTypeFixed = exportType;
     }
 
     public CamelExportType getCurrentExportType() {
@@ -252,7 +248,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         initializeDialogUnits(parent);
         GridLayout layout = new GridLayout();
 
-        if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
+//        if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
             SashForm sash = createExportTree(parent);
 
             pageComposite = new Group(sash, 0);
@@ -261,13 +257,13 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             pageComposite.setFont(parent.getFont());
             setControl(sash);
             sash.setWeights(new int[] { 0, 1, 23 });
-        } else {
-            pageComposite = new Group(parent, 0);
-            pageComposite.setLayout(layout);
-            pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-            pageComposite.setFont(parent.getFont());
-            setControl(parent);
-        }
+//        } else {
+//            pageComposite = new Group(parent, 0);
+//            pageComposite.setLayout(layout);
+//            pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+//            pageComposite.setFont(parent.getFont());
+//            setControl(parent);
+//        }
         layout = new GridLayout();
         destinationNameFieldComposite = new Composite(pageComposite, SWT.NONE);
         GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -349,11 +345,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         // exportTypeCombo.add("JBI (JSR 208)");
 
         exportTypeCombo.setText(getCurrentExportType().label);
-        if (exportTypeFixed != null) {
-            left.setVisible(false);
-            optionsGroup.setVisible(false);
-            exportTypeCombo.setText(exportTypeFixed);
-        }
+//        if (exportTypeFixed != null) {
+//            left.setVisible(false);
+//            optionsGroup.setVisible(false);
+//            exportTypeCombo.setText(exportTypeFixed);
+//        }
 
         chkButton = new Button(left, SWT.CHECK);
         chkButton.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.extractZipFile")); //$NON-NLS-1$
