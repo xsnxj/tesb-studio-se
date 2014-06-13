@@ -39,18 +39,18 @@ import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.wizards.CamelNewProcessWizard;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.core.ui.images.OverlayImageProvider;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.action.CreateProcess;
-import org.talend.designer.runprocess.ItemCacheManager;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
@@ -59,7 +59,6 @@ import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.views.IRepositoryView;
 
 /**
@@ -76,18 +75,13 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         super();
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
-
         Image folderImg = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
         this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 
     public CreateCamelProcess(boolean isToolbar) {
-        super();
-        this.setText(CREATE_LABEL);
-        this.setToolTipText(CREATE_LABEL);
+        this();
         setToolbar(isToolbar);
-        Image folderImg = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
     }
 
     @Override
@@ -117,7 +111,6 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
             }
             Object obj = ((IStructuredSelection) selection).getFirstElement();
             node = (IRepositoryNode) obj;
-            ItemCacheManager.clearCache();
 
             IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
             IPath path = service.getRepositoryPath(node);
@@ -140,7 +133,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
                 // Set readonly to false since created job will always be editable.
                 fileEditorInput = new CamelProcessEditorInput(processWizard.getProcess(), false, true, false);
 
-                IRepositoryNode repositoryNode = RepositoryNodeUtilities.getRepositoryNode(fileEditorInput.getItem()
+                IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(fileEditorInput.getItem()
                         .getProperty().getId(), false);
                 fileEditorInput.setRepositoryNode(repositoryNode);
 
