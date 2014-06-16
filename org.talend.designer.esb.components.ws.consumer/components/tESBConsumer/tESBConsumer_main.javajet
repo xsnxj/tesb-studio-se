@@ -309,9 +309,13 @@ if (inputConn != null) {
 
                             <%
                             String passwordFieldName = "__AUTH_PASSWORD__";
+                            
+                            if(useSR || useAuth) {
                             %>
                             
                             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>  
+                            
+                            <%}%>
 
                             <% if (useSR) { %>
                                 put("useServiceRegistry", <%=useSR%>);
