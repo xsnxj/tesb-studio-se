@@ -519,7 +519,7 @@
             <IMPORT NAME="security-common"
                     MODULE="security-common-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/security-common-5.6.0-SNAPSHOT.jar"
-                    REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
+                    REQUIRED_IF="((ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')) OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
