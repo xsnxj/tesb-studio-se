@@ -50,7 +50,7 @@
 ]]#
 #if ($useEncryption || $useServiceRegistry)
             <entry key="ws-security.encryption.crypto" value-ref="cryptoProvider" />
-            <entry key="ws-security.encryption.username" value="useReqSigCert"/>
+            <entry key="ws-security.encryption.username" value="$service{ws-security.encryption.username}"/>
 #end ## ($useEncryption || $useServiceRegistry)
 #end ## ($useSecuritySAML || $useServiceRegistry)
 
