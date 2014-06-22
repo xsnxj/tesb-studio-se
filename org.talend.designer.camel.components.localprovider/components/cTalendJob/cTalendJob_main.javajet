@@ -1,0 +1,54 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.IProcess
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.process.IElementParameter
+    org.talend.core.model.properties.ProcessItem
+    org.talend.designer.runprocess.ItemCacheManager
+    org.talend.designer.runprocess.ProcessorUtilities
+    org.talend.core.CorePlugin
+    org.talend.designer.runprocess.IProcessor
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+    List< ? extends IConnection> conns = node.getIncomingConnections();
+    if(conns.size()>0) {
+        String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
+        if("true".equals(useJar)){
+            String typeName = ElementParameterParser.getValue(node, "__JOB__");
+            String context = ElementParameterParser.getValue(node, "__CONTEXT__");
+%>
+            .to("talend:"+<%=typeName%>+"?context="+<%=context%>)
+<%
+        }else{
+            String typeName = "";
+            String context = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue();
+            IElementParameter processIdparam = node.getElementParameter("PROCESS_TYPE_PROCESS");
+            String id = (String)processIdparam.getValue();
+            if(id != null){
+                String version = (String) node.getElementParameter("PROCESS_TYPE_VERSION").getValue();
+                ProcessItem processItem = ItemCacheManager.getProcessItem(id, version);
+                IProcess jobProcess = CorePlugin.getDefault().getDesignerCoreService().getProcessFromItem(processItem);
+                IProcessor jobProcessor = ProcessorUtilities.getProcessor(jobProcess,
+                        processItem.getProperty());
+                jobProcessor.setContext(ProcessorUtilities.getContext(jobProcess, context.toString()));
+                try{
+                    jobProcessor.initPath();
+                    typeName = jobProcessor.getTypeName();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+%>
+            .to("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>")
+<%
+        }
+    }
+%>

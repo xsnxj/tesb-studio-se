@@ -1,0 +1,150 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cContentEnricher</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.75.2"><link rel="home" href="bk-tos-esb-mediationcomponents-rg-fr..html" title="Composants Mediation Talend Open Studio for ESB"><link rel="up" href="ch-transformation.html" title="Chapitre&nbsp;7.&nbsp;Composants Transformation"><link rel="prev" href="ch-transformation.html" title="Chapitre&nbsp;7.&nbsp;Composants Transformation"><link rel="next" href="cConvertBodyTo.html" title="cConvertBodyTo"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cContentEnricher</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch-transformation.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><th width="60%" align="center">Chapitre&nbsp;7.&nbsp;Composants Transformation</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cConvertBodyTo.html">Suivant</a></td></tr></table><hr></div><div lang="fr" class="section" title="cContentEnricher"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cContentEnricher"></a>cContentEnricher</h2></div></div></div><div class="mediaobject"><img src="../images/cContentEnricher_icon32.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cContentEnricher"><div class="titlepage"><div><div><h3 class="title"><a name="d2667e19051"></a>Propri&eacute;t&eacute;s du cContentEnricher</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Transformation</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="emphasis"><strong>cContentEnricher</strong></span> est con&ccedil;u pour utiliser
+								un consommateur ou un producteur afin d'obtenir des donn&eacute;es
+								suppl&eacute;mentaires.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cContentEnricher</strong></span> vous permet d'utiliser un
+								consommateur ou un producteur pour obtenir des donn&eacute;es
+								suppl&eacute;mentaires.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Resource URI</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cette option fait r&eacute;f&eacute;rence &agrave; la destination du message si la case <span class="emphasis"><strong>using a producer</strong></span> est coch&eacute;e ; elle fait
+								r&eacute;f&eacute;rence &agrave; la source &agrave; partir de laquelle un message sera obtenu si
+								la case <span class="emphasis"><strong>using a consumer</strong></span> est
+								coch&eacute;e.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Using a producer</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour utiliser un producteur pour fournir des donn&eacute;es suppl&eacute;mentaires,
+								c'est-&agrave;-dire pour envoyer un message &agrave; l'URI d&eacute;finie.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Using a consumer</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour utiliser un consommateur pour obtenir des donn&eacute;es
+								suppl&eacute;mentaires, c'est-&agrave;-dire effectuer une requ&ecirc;te sur un message
+								depuis l'URI d&eacute;finie.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Use Aggregation Strategy</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour d&eacute;finir la strat&eacute;gie d'agr&eacute;gation pour assembler le message de
+								base et les donn&eacute;es suppl&eacute;mentaires.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Specify timeout</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cette zone appara&icirc;t lorsque la case <span class="emphasis"><em>Using a consumer</em></span>
+								est coch&eacute;e. Les options de d&eacute;lai avant suspension sont les suivantes
+								:</p>
+							<p><span class="emphasis"><strong>Wait until a message arrive</strong></span> : le composant attend un
+								message.</p>
+							<p><span class="emphasis"><strong>Immediately polls the message</strong></span> : le composant interroge
+								imm&eacute;diatement l'URI d&eacute;finie.</p>
+							<p><span class="emphasis"><strong>Waiting at most until the timeout triggers</strong></span> : cochez
+								cette case pour saisir un d&eacute;lai avant suspension en millisecondes.
+								Le composant attend le message uniquement durant une p&eacute;riode de
+								temps d&eacute;finie.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="emphasis"><strong>cContentEnricher</strong></span> vous permet d'utiliser un
+								consommateur ou un producteur pour obtenir des donn&eacute;es
+								suppl&eacute;mentaires.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="emphasis"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Recevoir des messages d'une liste d'URLs"><div class="titlepage"><div><div><h3 class="title"><a name="d2667e19261"></a>Sc&eacute;nario : Recevoir des messages d'une liste d'URLs</h3></div></div></div><p>Dans ce sc&eacute;nario, vous allez utiliser le composant Camel HTTP4 et le composant <span class="emphasis"><strong>cContentEnricher</strong></span> pour r&eacute;cup&eacute;rer des messages &agrave; partir d'une
+			liste d'URLs. Pour ce faire, vous devez construire deux sous-routes, une pour lire un
+			fichier avec une liste d'URLs et pour envoyer des messages dans le syst&egrave;me de fichiers
+			local, l'autre pour r&eacute;cup&eacute;rer les messages de ces URLs.</p><p>Dans cet exemple, vous allez prendre une liste d'URLs du serveur Tomcat local comme exemple.
+			Vous devez donc d&eacute;marrer Apache Tomcat avant d'ex&eacute;cuter la Route.</p><p>Un fichier .txt <code class="code">URLlist</code> est utilis&eacute; pour fournir la liste d'URLs, comme
+			ci-dessous.</p><pre class="programlisting">docs/introduction.html
+docs/setup.html</pre><div class="mediaobject"><img src="../images/use_case-ccontentenricher1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2667e19281"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>De la <span class="emphasis"><strong>Palette</strong></span>, glissez-d&eacute;posez un <span class="emphasis"><strong>cSplitter</strong></span>, un <span class="emphasis"><strong>cJavaDSLProcessor</strong></span>, un <span class="emphasis"><strong>cContentEnricher</strong></span>, deux <span class="emphasis"><strong>cFile</strong></span>, deux <span class="emphasis"><strong>cMessagingEndpoint</strong></span> et trois <span class="emphasis"><strong>cSetHeader</strong></span> dans l'espace de mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>Renommez les composants afin d'identifier leur r&ocirc;le dans la Route et reliez-les &agrave; l'aide
+						de liens <span class="emphasis"><strong>Row</strong></span> &gt;  <span class="emphasis"><strong>Route</strong></span>.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d2667e19318"></a>Configurer les composants</h4></div></div></div><div class="procedure" title="Proc&eacute;dure&nbsp;7.1.&nbsp;Configurer la premi&egrave;re sous-route"><a name="d2667e19321"></a><p class="title"><b>Proc&eacute;dure&nbsp;7.1.&nbsp;Configurer la premi&egrave;re sous-route</b></p><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="emphasis"><strong>URLlist</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher2.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, parcourez votre syst&egrave;me jusqu'au
+						fichier dans lequel la liste d'URLs est sauvegard&eacute;e.</p><p>Dans le champ <span class="emphasis"><strong>FileName</strong></span>, saisissez le nom du fichier
+							<span class="emphasis"><em>URLlist.txt</em></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le <span class="emphasis"><strong>cSplitter</strong></span> pour afficher sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher3.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="emphasis"><strong>Expression</strong></span>, saisissez le code
+							<code class="code">body(String.class).tokenize("\r\n")</code> pour diviser le message
+						de chaque ligne en sous-messages.</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>Ce code est valable uniquement sous Windows. Sous Unix, modifiez-le en
+								<code class="code">body(String.class).tokenize("\n")</code>, pour Mac, en
+								<code class="code">body(String.class).tokenize("\r")</code>.</p></div></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le <span class="emphasis"><strong>cJavaDSLProcessor</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher4.png"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans le champ <span class="emphasis"><strong>Code</strong></span>, saisissez le code
+							<code class="code">.log("splitterOutput: ${body}")</code> pour diviser le corps du
+						message.</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le <span class="emphasis"><strong>cContentEnricher</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher5.png"></div></li><li class="step" title="&Eacute;tape 8"><p>S&eacute;lectionnez l'option <span class="emphasis"><strong>using a producer</strong></span> pour utiliser un
+						producteur afin de fournit des donn&eacute;es suppl&eacute;mentaires et envoyer le message
+						&agrave; une URI d&eacute;finie.</p><p>Dans le champ <span class="emphasis"><strong>Resource URI</strong></span>, saisissez
+							<code class="code">"direct:fetchURL"</code>, o&ugrave; le message sera livr&eacute;. </p></li><li class="step" title="&Eacute;tape 9"><p>Double-cliquez sur le <span class="emphasis"><strong>setFileName</strong></span> pour afficher sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher6.png"></div></li><li class="step" title="&Eacute;tape 10"><p>Cliquez sur <span class="emphasis"><strong>[+]</strong></span> pour ajouter une ligne au
+						tableau <span class="emphasis"><strong>Headers</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Name</strong></span>, saisissez
+							<code class="code">org.apache.camel.Exchange.FILE_NAME</code> pour d&eacute;finir le nom du
+						fichier pour chaque message entrant.</p><p>S&eacute;lectionnez <span class="emphasis"><strong>Simple</strong></span> dans la liste <span class="emphasis"><strong>Language</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Value</strong></span>, saisissez
+							<code class="code">"${header.CamelHttpPath}"</code> pour obtenir le chemin de l'URI
+						du message entrant.</p></li><li class="step" title="&Eacute;tape 11"><p>Double-cliquez sur le <span class="emphasis"><strong>retrievedFiles</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher7.png"></div></li><li class="step" title="&Eacute;tape 12"><p>Dans le champ <span class="emphasis"><strong>Path</strong></span>, parcourez votre syst&egrave;me jusqu'au
+						fichier de destination dans lequel vos messages seront sauvegard&eacute;s.</p></li></ol></div><div class="procedure" title="Proc&eacute;dure&nbsp;7.2.&nbsp;Configurer la seconde sous-route"><a name="d2667e19490"></a><p class="title"><b>Proc&eacute;dure&nbsp;7.2.&nbsp;Configurer la seconde sous-route</b></p><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="emphasis"><strong>fetchURL</strong></span> pour afficher
+						sa vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher8.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez <span class="emphasis"><em>"direct:fetchURL"</em></span>, d&eacute;finie dans le composant <span class="emphasis"><strong>cContentEnricher</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant <span class="emphasis"><strong>setURI</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher9.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Cliquez sur <span class="emphasis"><strong>[+]</strong></span> pour ajouter une ligne au
+						tableau <span class="emphasis"><strong>Headers</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Name</strong></span>, saisissez
+							<code class="code">org.apache.camel.Exchange.HTTP_URI</code> pour d&eacute;finir l'URI HTTP
+						de chaque message.</p><p>S&eacute;lectionnez <span class="emphasis"><strong>Simple</strong></span> dans la liste <span class="emphasis"><strong>Language</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Value</strong></span>, saisissez
+							<code class="code">"http://localhost:8080"</code>, du serveur Tomcat local.</p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le composant <span class="emphasis"><strong>setPATH</strong></span> pour afficher sa
+						vue <span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher10.png"></div></li><li class="step" title="&Eacute;tape 6"><p>Cliquez sur <span class="emphasis"><strong>[+]</strong></span> pour ajouter une ligne au
+						tableau <span class="emphasis"><strong>Headers</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Name</strong></span>, saisissez
+							<code class="code">org.apache.camel.Exchange.HTTP_PATH</code> pour d&eacute;finir le chemin
+						HTTP de chaque message.</p><p>S&eacute;lectionnez <span class="emphasis"><strong>Simple</strong></span> dans la liste <span class="emphasis"><strong>Language</strong></span>.</p><p>Dans le champ <span class="emphasis"><strong>Value</strong></span>, saisissez <code class="code">"${body}"</code>,
+						divis&eacute; depuis le message original.</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le <span class="emphasis"><strong>http4Endpoint</strong></span> pour afficher sa vue
+							<span class="emphasis"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher11.png"></div></li><li class="step" title="&Eacute;tape 8"><p>Dans le champ <span class="emphasis"><strong>URI</strong></span>, saisissez <span class="emphasis"><em>"http4:localhost:8080"</em></span> pour consommer des ressources HTTP du
+						serveur Tomcat local.</p></li><li class="step" title="&Eacute;tape 9"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Advanced settings</strong></span>. Cliquez sur le
+						bouton <span class="inlinemediaobject"><img src="../images/plus_button.png"></span> au bas de la table <span class="emphasis"><strong>Dependencies</strong></span> pour y ajouter une ligne et s&eacute;lectionnez
+							<code class="code">http4</code> dans la liste d&eacute;roulante. Pour plus d'informations
+						concernant HTTP4, consultez le site Web <a class="link" href="http://camel.apache.org/http4.html" target="_top">http://camel.apache.org/http4.html</a> (en anglais).</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher13.png"></div></li></ol></div><p>Appuyez sur <span class="emphasis"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d2667e19655"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="emphasis"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique afin de visualiser le code g&eacute;n&eacute;r&eacute; </p><div class="mediaobject"><img src="../images/use_case-ccontentenricher12.png"></div><p>Comme affich&eacute; ci-dessus, une route est construite de <code class="code">URLlist</code> vers
+							<code class="code">retrievedFiles</code> via les m&eacute;thodes <code class="code">.split</code>,
+							<code class="code">.log</code>, <code class="code">.enrich</code> et <code class="code">.setHeader</code>.
+						L'autre route de messages est construite de <code class="code">fetchURL</code> vers
+							<code class="code">http4Endpoint</code> via deux <code class="code">.setHeader</code>. </p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="emphasis"><strong>F6</strong></span> pour ex&eacute;cuter la Route. </p><p>R&eacute;sultat : Le message divis&eacute; est affich&eacute; dans le console de la vue <span class="emphasis"><strong>Run</strong></span>.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher14.png"></div><p>Les messages de la liste d'URLs sont sauvegard&eacute;s dans le r&eacute;pertoire d&eacute;fini du syst&egrave;me de
+						fichiers local.</p><div class="mediaobject"><img src="../images/use_case-ccontentenricher15.png"></div></li></ol></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch-transformation.html">Pr&eacute;c&eacute;dent</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="ch-transformation.html">Niveau sup&eacute;rieur</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cConvertBodyTo.html">Suivant</a></td></tr><tr><td width="40%" align="left" valign="top">Chapitre&nbsp;7.&nbsp;Composants Transformation&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="bk-tos-esb-mediationcomponents-rg-fr..html">Sommaire</a></td><td width="40%" align="right" valign="top">&nbsp;cConvertBodyTo</td></tr></table></div></body></html>

@@ -1,0 +1,232 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		java.util.List
+		java.util.Map
+"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode) codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+
+
+IConnection inputConn = null;
+List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+if (incomingConnections != null && !incomingConnections.isEmpty()) {
+	for (IConnection conn : incomingConnections) {
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+			inputConn = conn;
+			break;
+		}
+	}
+}
+
+List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+if (conns != null && conns.size() > 0) {
+	for (int i = 0; i < conns.size(); i++) {
+		IConnection conn = conns.get(i);
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+%>
+	<%=conn.getName()%> = null;
+<%
+		}
+	}
+}
+
+List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+IConnection connResponse = (connsResponse.size() == 1) ? connsResponse.get(0) : null;
+IConnection connFault = (connsFault.size() == 1) ? connsFault.get(0) : null;
+
+
+String url = ElementParameterParser.getValue(node,"__URL__");
+
+String method = ElementParameterParser.getValue(node,"__METHOD__");
+
+String acceptType = ElementParameterParser.getValue(node,"__ACCEPT_TYPE__");
+if (acceptType == null) {
+	acceptType = "application/xml";
+}
+
+String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
+if (contentType == null) {
+	contentType = "application/xml";
+}
+%>
+
+try {
+	// request body
+	org.dom4j.Document requestDoc_<%=cid%> = null;
+	String requestString_<%=cid%> = null;
+	<% if (null != inputConn) { %>
+		if (null != <%=inputConn.getName()%>.body) {
+			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+		}
+		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
+	<% } %>
+
+	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
+
+	// expected response body
+	Object responseDoc_<%=cid%> = null;
+	<%
+		String convertResponseToDomProperty = ElementParameterParser.getValue(node,"__CONVERT_RESPONSE_TO_DOM__");
+		boolean convertResponseToDom = convertResponseToDomProperty == null ? true : Boolean.valueOf(convertResponseToDomProperty);
+	%>
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertResponseToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+
+	// create web client instance
+	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
+		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+	factoryBean_<%=cid%>.setAddress(<%=url%>);
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"))) { %>
+		factoryBean_<%=cid%>.setUsername(<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>);
+		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
+	<% } %>
+
+	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
+	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+	});
+	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
+			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
+	<%
+		String wrapJsonResponseProperty = ElementParameterParser.getValue(node,"__WRAP_JSON_RESPONSE__");
+		boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
+	%>
+	<% if (wrapJsonResponse) { %>
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
+	<% } %>
+	<%
+		String dropJsonRootProperty = ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__");
+		boolean dropJsonRoot = dropJsonRootProperty == null ? false : Boolean.valueOf(dropJsonRootProperty);
+	%>
+		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
+	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
+	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
+	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
+
+	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
+
+	// set connection properties
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+	<% } %>
+	// set Content-Type
+	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
+		webClient_<%=cid%>.type("<%=contentType%>");
+	<% } %>
+	// set Accept-Type
+	<% if (!acceptType.isEmpty()) { %>
+		webClient_<%=cid%>.accept("<%=acceptType%>");
+	<% } %>
+
+	// set optional query and header properties if any
+	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
+		for (Map<String, String> header : headers) { %>
+		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
+	<% } %>
+
+	// if FORM request then capture query parameters into Form, otherwise set them as queries
+	<% List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
+		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
+		<% for (Map<String, String> query : queries) { %>
+			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+		requestBody_<%=cid%> = form_<%=cid%>;
+	<% } else { %>
+		<% for (Map<String, String> query : queries) { %>
+			webClient_<%=cid%>.query(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+	<% } %>
+
+
+	try {
+
+		<% if ("GET".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
+		<% } else if ("POST".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else if ("PUT".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else { %>
+			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
+		<% } %>
+
+		<% if (null != connResponse) {
+			String connResponseName = connResponse.getName(); %>
+			if (<%=connResponseName%> == null) {
+				<%=connResponseName%> = new <%=connResponseName%>Struct();
+			}
+
+			<%=connResponseName%>.statusCode = webClient_<%=cid%>.getResponse().getStatus();
+			if (responseDoc_<%=cid%> != null) {
+				if (responseClass_<%=cid%> == String.class) {
+					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
+				} else {
+					Document responseTalendDoc_<%=cid%> = null;
+					if (null != responseDoc_<%=cid%>) {
+						responseTalendDoc_<%=cid%> = new Document();
+						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
+					}
+					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
+				}
+			}
+		<% } %>
+
+	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
+		<% if (null != connFault) {
+			String connFaultName = connFault.getName(); %>
+			if (<%=connFaultName%> == null) {
+				<%=connFaultName%> = new <%=connFaultName%>Struct();
+			}
+			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
+			<%=connFaultName%>.errorMessage = ex_<%=cid%>.getMessage();
+		<% } else { %>
+			System.out.println("error response: " + ex_<%=cid%>.getResponse().getStatus() + ":" + ex_<%=cid%>.getMessage());
+		<% } %>
+	}
+
+} catch(Exception e_<%=cid%>) {
+	<% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+		throw(e_<%=cid%>);
+	<% } else { %>
+		System.err.print(e_<%=cid%>.getMessage());
+	<% } %>
+}

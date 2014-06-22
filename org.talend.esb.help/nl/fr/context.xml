@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<contexts>
+   <context id="cBeanRegister">
+      <description>Le cBeanRegister vous permet d'enregistrer un bean Java dans le registre, à utiliser dans les échanges de messages.</description>
+      <topic href="guide/components/fr/cBeanRegister.html" label="cBeanRegister Component Documentation"/>
+   </context>
+   <context id="cConfig">
+      <description>Le cConfig manipule le contexte Camel comme requis par les Routes.</description>
+      <topic href="guide/components/fr/cConfig.html" label="cConfig Component Documentation"/>
+   </context>
+   <context id="cJMSConnectionFactory">
+      <description>Le cJMSConnectionFactory est utilisé pour spécifier la ConnectionFactory JMS à utiliser pour gérer les messages.</description>
+      <topic href="guide/components/fr/cJMSConnectionFactory.html" label="cJMSConnectionFactory Component Documentation"/>
+   </context>
+   <context id="cErrorHandler">
+      <description>Le cErrorHandler offre différentes stratégies de gestion des erreurs durant le traitement.</description>
+      <topic href="guide/components/fr/cErrorHandler.html" label="cErrorHandler Component Documentation"/>
+   </context>
+   <context id="cIntercept">
+      <description>Le cIntercept intercepte chaque message d'une sous-route et le redirige vers une autre sous-route sans modifier la sous-route originale. Cela peut être utile lors de tests pour simuler la gestion d'erreurs.</description>
+      <topic href="guide/components/fr/cIntercept.html" label="cIntercept Component Documentation"/>
+   </context>
+   <context id="cOnException">
+      <description>Le cOnException est conçu pour capturer les exceptions définies pour gérer les erreurs souhaitées.</description>
+      <topic href="guide/components/fr/cOnException.html" label="cOnException Component Documentation"/>
+   </context>
+   <context id="cTry">
+      <description>Le cTry est conçu pour construire des blocs Java Try/Catch/Finally pour gérer les exceptions.</description>
+      <topic href="guide/components/fr/cTry.html" label="cTry Component Documentation"/>
+   </context>
+   <context id="cCXF">
+      <description>Le cCXF est utilisé pour produire ou consommer des services Web.</description>
+      <topic href="guide/components/fr/cCXF.html" label="cCXF Component Documentation"/>
+   </context>
+   <context id="cDataset">
+      <description>Le cDataset vous permet de créer un ensemble de données ou de référencer un ensemble de données existant, afin d'envoyer ou recevoir des messages.</description>
+      <topic href="guide/components/fr/cDataset.html" label="cDataset Component Documentation"/>
+   </context>
+   <context id="cFile">
+      <description>Le cFile permet de faire traiter des fichiers par d'autres composants Camel ou de sauvegarder sur le disque des messages d'autres composants.</description>
+      <topic href="guide/components/fr/cFile.html" label="cFile Component Documentation"/>
+   </context>
+   <context id="cFtp">
+      <description>Le cFtp vous permet d'échanger des données à travers des systèmes de fichiers distants.</description>
+      <topic href="guide/components/fr/cFtp.html" label="cFtp Component Documentation"/>
+   </context>
+   <context id="cHttp">
+      <description>Le cHttp est conçu pour construire un endpoint client afin d'appeler des ressources HTTP externes à l'aide de Http.</description>
+      <topic href="guide/components/fr/cHttp.html" label="cHttp Component Documentation"/>
+   </context>
+   <context id="cJMS">
+      <description>Le cJMS est utilisé pour envoyer des messages vers ou pour consommer des messages depuis une file ou un sujet JMS.</description>
+      <topic href="guide/components/fr/cJMS.html" label="cJMS Component Documentation"/>
+   </context>
+   <context id="cMail">
+      <description>Envoie ou reçoit des e-mails dans une route.</description>
+      <topic href="guide/components/fr/cMail.html" label="cMail Component Documentation"/>
+   </context>
+   <context id="cMessagingEndpoint">
+      <description>Le cMessagingEndpoint envoie ou reçoit des messages.Utilise Camel Bean Binding pour lier des échanges de messages aux beans dans le Registry Camel. Egalement utilisé pour exposer et invoquer des POJOs (Plain Old Java Objects).</description>
+      <topic href="guide/components/fr/cMessagingEndpoint.html" label="cMessagingEndpoint Component Documentation"/>
+   </context>
+   <context id="cTimer">
+      <description>Le cTimer vous permet de planifier des échanges de messages.</description>
+      <topic href="guide/components/fr/cTimer.html" label="cTimer Component Documentation"/>
+   </context>
+   <context id="cLog">
+      <description>Le cLog est utilisé pour enregistrer des échanges de messages.</description>
+      <topic href="guide/components/fr/cLog.html" label="cLog Component Documentation"/>
+   </context>
+   <context id="cLoop">
+      <description>Le cLoop est utilisé pour traiter un ou des message(s) de manière répétitive.</description>
+      <topic href="guide/components/fr/cLoop.html" label="cLoop Component Documentation"/>
+   </context>
+   <context id="cStop">
+      <description>Le cStop stoppe la Route à laquelle il est connecté.</description>
+      <topic href="guide/components/fr/cStop.html" label="cStop Component Documentation"/>
+   </context>
+   <context id="cBean">
+      <description>Le cBean vous permet d'invoquer un bean stocké dans le nœud Code du Repository ou enregistré par un cBeanRegister.</description>
+      <topic href="guide/components/fr/cBean.html" label="cBean Component Documentation"/>
+   </context>
+   <context id="cDelayer">
+      <description>Le composant cDelayer vous permet de configurer un délai dans le routage de message.</description>
+      <topic href="guide/components/fr/cDelayer.html" label="cDelayer Component Documentation"/>
+   </context>
+   <context id="cExchangePattern">
+      <description>Le cExchangePattern vous permet de configurer le mode d'échange des messages.</description>
+      <topic href="guide/components/fr/cExchangePattern.html" label="cExchangePattern Component Documentation"/>
+   </context>
+   <context id="cJavaDSLProcessor">
+      <description>Le cJavaDSLProcessor est utilisable pour injecter rapidement du code à l'aide du DSL Java. Si le code de la classe interne devient plus complexe, il est conseillé de le refactoriser dans une classe séparée.</description>
+      <topic href="guide/components/fr/cJavaDSLProcessor.html" label="cJavaDSLProcessor Component Documentation"/>
+   </context>
+   <context id="cProcessor">
+      <description>Le cProcessor peut être utilisé pour remanier rapidement du code. Si le code dans la classe interne devient plus complexe, il est recommandé de le refactoriser dans une classe séparée.</description>
+      <topic href="guide/components/fr/cProcessor.html" label="cProcessor Component Documentation"/>
+   </context>
+   <context id="cTalendJob">
+      <description>Le cTalendJob vous permet d'appeler un Job d'intégration de données dans une route de médiation. Pour plus d'informations concernant la conception d'un Job et l'export d'un Job en tant que Bundle OSGI pour ESB, consultez le Guide Utilisateur de Talend Open Studio for ESB.</description>
+      <topic href="guide/components/fr/cTalendJob.html" label="cTalendJob Component Documentation"/>
+   </context>
+   <context id="cAggregate">
+      <description>Le cAggregate vous permet de combiner un certain nombre de messages en un seul message.</description>
+      <topic href="guide/components/fr/cAggregate.html" label="cAggregate Component Documentation"/>
+   </context>
+   <context id="cDynamicRouter">
+      <description>Le cDynamicRouter est utilisé pour router un message ou des messages vers différents endpoints selon des conditions spécifiées.</description>
+      <topic href="guide/components/fr/cDynamicRouter.html" label="cDynamicRouter Component Documentation"/>
+   </context>
+   <context id="cIdempotentConsumer">
+      <description>Le cIdempotentConsumer identifie les messages déjà envoyés au récepteur et les élimine. Les messages sont toujours envoyés par l'émetteur mais sont ignorés par le récepteur lors de la livraison.</description>
+      <topic href="guide/components/fr/cIdempotentConsumer.html" label="cIdempotentConsumer Component Documentation"/>
+   </context>
+   <context id="cLoadBalancer">
+      <description>Le cLoadBalancer vous permet de distribuer des messages à différents endpoints, à l'aide d'un ensemble de stratégies de répartition de charge.</description>
+      <topic href="guide/components/fr/cLoadBalancer.html" label="cLoadBalancer Component Documentation"/>
+   </context>
+   <context id="cMessageFilter">
+      <description>Utilisez le cMessageFilter pour supprimer des messages non souhaités d'un canal selon un critère défini.</description>
+      <topic href="guide/components/fr/cMessageFilter.html" label="cMessageFilter Component Documentation"/>
+   </context>
+   <context id="cMessageRouter">
+      <description>Le cMessageRouter créé différents canaux pour chaque type de message filtré, afin que les messages puissent ultérieurement être traités plus précisément dans chaque nouveau canal.</description>
+      <topic href="guide/components/fr/cMessageRouter.html" label="cMessageRouter Component Documentation"/>
+   </context>
+   <context id="cMulticast">
+      <description>Le cMulticast est utilisé pour router un ou plusieurs message(s) vers un certain nombre d'endpoints en une fois et le(s) traiter de différentes manières.</description>
+      <topic href="guide/components/fr/cMulticast.html" label="cMulticast Component Documentation"/>
+   </context>
+   <context id="cPipesAndFilters">
+      <description>Ce composant vous permet de diviser le routage d'un message en une série d'étapes de traitement indépendantes.</description>
+      <topic href="guide/components/fr/cPipesAndFilters.html" label="cPipesAndFilters Component Documentation"/>
+   </context>
+   <context id="cRecipientList">
+      <description>Le cRecipientList vous permet de router des messages vers un nombre de destinataires dynamiquement spécifiés.</description>
+      <topic href="guide/components/fr/cRecipientList.html" label="cRecipientList Component Documentation"/>
+   </context>
+   <context id="cRoutingSlip">
+      <description>Le cRoutingSlip est utilisé pour router consécutivement un ou des message(s) vers une série d'endpoints.</description>
+      <topic href="guide/components/fr/cRoutingSlip.html" label="cRoutingSlip Component Documentation"/>
+   </context>
+   <context id="cSplitter">
+      <description>Le cSplitter sépare des éléments multiples d'un message afin qu'ils puissent être gérés et traités différemment dans des routes individuelles.</description>
+      <topic href="guide/components/fr/cSplitter.html" label="cSplitter Component Documentation"/>
+   </context>
+   <context id="cThrottler">
+      <description>Le cThrottler vous permet de limiter le nombre de messages vers un endpoint spécifique afin d'empêcher cet endpoint d'être surchargé.</description>
+      <topic href="guide/components/fr/cThrottler.html" label="cThrottler Component Documentation"/>
+   </context>
+   <context id="cWireTap">
+      <description>Le cWireTap est utilisé pour router des messages vers un endpoint séparé en même temps qu'il est passé à sa dernière destination.</description>
+      <topic href="guide/components/fr/cWireTap.html" label="cWireTap Component Documentation"/>
+   </context>
+   <context id="cContentEnricher">
+      <description>Le cContentEnricher vous permet d'utiliser un consommateur ou un producteur pour obtenir des données supplémentaires.</description>
+      <topic href="guide/components/fr/cContentEnricher.html" label="cContentEnricher Component Documentation"/>
+   </context>
+   <context id="cConvertBodyTo">
+      <description>Le cConvertBodyTo est utilisé pour convertir le corps d'un message en un type d'une classe donnée.</description>
+      <topic href="guide/components/fr/cConvertBodyTo.html" label="cConvertBodyTo Component Documentation"/>
+   </context>
+   <context id="cSetBody">
+      <description>Le cSetBody est utilisé pour remplacer le contenu de chaque message qui lui est envoyé selon la valeur de l'expression.</description>
+      <topic href="guide/components/fr/cSetBody.html" label="cSetBody Component Documentation"/>
+   </context>
+   <context id="cSetHeader">
+      <description>Le composant cSetHeader est utilisé pour définir des en-tête ou personnaliser les en-tête par défaut, s'il y en a, dans chaque message qui lui est envoyé pour traitement subséquent du message.</description>
+      <topic href="guide/components/fr/cSetHeader.html" label="cSetHeader Component Documentation"/>
+   </context>
+</contexts>

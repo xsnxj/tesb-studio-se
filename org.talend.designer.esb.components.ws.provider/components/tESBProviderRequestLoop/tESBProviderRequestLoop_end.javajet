@@ -1,0 +1,59 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+	"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode) codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	cid = cid.replaceAll("_Loop", "");
+
+	Boolean keepListening = Boolean.valueOf(ElementParameterParser.getValue(node, "__KEEPLISTENING__"));
+%>
+		} catch (ESBJobInterruptedException e) {
+			// job interrupted from outside
+			break;
+		} catch (Throwable e) {
+			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFault(e);
+			globalMap.put("wsRequestReceivedAndResponseSentBack", true);
+		} finally {
+			// close DB connections
+			try {
+				java.util.Map<String, routines.system.TalendDataSource> talendDataSources = 
+					(java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
+				if (null != talendDataSources) {
+					for (routines.system.TalendDataSource talendDataSource : talendDataSources.values()) {
+						talendDataSource.close();
+					}
+				}
+			} catch (Throwable e) {
+			    e.printStackTrace(System.err);
+			}
+
+			// Exit from this loop is made by the configuring "Keep listening"
+			// parameter to false. Then we will have a break before.
+			if ("false".equals("<%=keepListening%>")) {
+				break;
+			}
+		}
+		nb_line_<%=cid%>++;
+		globalMap.put("<%=cid%>_NB_LINE", nb_line_<%=cid%>);
+	} // This is the end of the ESB Service Provider loop
+} finally {
+<% if (!keepListening) { %>
+	// for "keep listening" == false web service need a time to serve response
+	if (null == this.callback) {
+		// only for execution in Studio
+		Thread.currentThread();
+		Thread.sleep(500);
+	}
+<% } %>
+	// unsubscribe
+	if (null != handlerThread_<%=cid%>) {
+		// stop endpoint in case it was opened by job
+		handlerThread_<%=cid%>.stopEndpoint();
+	}
+}

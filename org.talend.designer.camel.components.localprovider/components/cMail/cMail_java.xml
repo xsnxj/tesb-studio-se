@@ -1,0 +1,126 @@
+<COMPONENT>
+
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
+			MAX_OUTPUT="1" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="PROTOCOLS" FIELD="CLOSED_LIST" NUM_ROW="1">
+			<ITEMS DEFAULT="smtp">
+				<ITEM NAME="smtp" VALUE="smtp" />
+				<ITEM NAME="pop3" VALUE="pop3" />
+				<ITEM NAME="imap" VALUE="imap" />
+				<ITEM NAME="smtps" VALUE="smtps" />
+				<ITEM NAME="pop3s" VALUE="pop3s" />
+				<ITEM NAME="imaps" VALUE="imaps" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="HOST" FIELD="TEXT" NUM_ROW="2">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PORT" FIELD="TEXT" NUM_ROW="2">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USERNAME" FIELD="TEXT" NUM_ROW="3">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PASSWORD" FIELD="TEXT" NUM_ROW="3">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="SUBJECT" FIELD="TEXT" NUM_ROW="4">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CONTENTTYPE" FIELD="TEXT" NUM_ROW="4">
+			<DEFAULT>"text/plain"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="FROM" FIELD="TEXT" NUM_ROW="5">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="TO" FIELD="TEXT" NUM_ROW="5">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="CC" FIELD="TEXT" NUM_ROW="6">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="BCC" FIELD="TEXT" NUM_ROW="6">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="ARGUMENTS" FIELD="TABLE" NUM_ROW="10"
+			NB_LINES="8">
+			<ITEMS>
+				<ITEM NAME="NAME" FIELD="TEXT">
+				</ITEM>
+				<ITEM NAME="VALUE" />
+			</ITEMS>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="camel-spring" MODULE="camel-spring-2.10.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="org.osgi.core" MODULE="org.osgi.core-4.2.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="camel-osgi" MODULE="camel-osgi-2.3.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="apache-camel" MODULE="camel-core-2.10.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-core" MODULE="spring-core-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="talend-camel-mail" MODULE="camel-mail-alldep-2.10.2.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-aop" MODULE="spring-aop-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-beans" MODULE="spring-beans-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context" MODULE="spring-context-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="spring-context-support" MODULE="spring-context-support-3.0.7.RELEASE.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-management" MODULE="commons-management-1.0.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="commons-logging" MODULE="commons-logging-1.1.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="log4j" MODULE="log4j-1.2.16.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j" MODULE="slf4j-api-1.6.1.jar" REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j" MODULE="slf4j-log4j12-1.6.1.jar"
+				REQUIRED="true" />
+			<IMPORT NAME="jsch" MODULE="jsch.jar" REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
+</COMPONENT>

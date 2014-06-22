@@ -1,0 +1,291 @@
+<COMPONENT>
+	<HEADER PLATEFORM="ALL"
+			SERIAL=""
+			VERSION="0.102"
+			STATUS="ALPHA"
+			COMPATIBILITY="ALL"
+			AUTHOR="ITOS"
+			RELEASE_DATE="20050320A"
+			SCHEMA_AUTO_PROPAGATE="true"
+			STARTABLE="true"
+			DATA_AUTO_PROPAGATE="false"
+			HAS_CONDITIONAL_OUTPUTS="true" >
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>ESB/REST</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="FLOW" MIN_INPUT="0" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1" />
+		<CONNECTOR NAME="FAULT" CTYPE="FLOW" LINE_STYLE="2" COLOR="cc0000" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" />
+		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="COMPONENT_OK" />
+		<CONNECTOR CTYPE="COMPONENT_ERROR" />
+		<CONNECTOR CTYPE="RUN_IF" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="77">
+			<TABLE READONLY="true">
+				<COLUMN NAME="body" TYPE="id_Document" READONLY="true" />
+				<COLUMN NAME="string" TYPE="id_String" LENGTH="4048" READONLY="true" />
+			</TABLE>
+		</PARAMETER>
+		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="78" CONTEXT="RESPONSE">
+			<TABLE READONLY="true">
+				<COLUMN NAME="statusCode" TYPE="id_Integer" READONLY="true" />
+				<COLUMN NAME="body" TYPE="id_Document" READONLY="true" />
+				<COLUMN NAME="string" TYPE="id_String" LENGTH="4048" READONLY="true" />
+			</TABLE>
+		</PARAMETER>
+		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="79" CONTEXT="FAULT">
+			<TABLE READONLY="true">
+				<COLUMN NAME="errorCode" TYPE="id_Integer" READONLY="true" />
+				<COLUMN NAME="errorMessage" TYPE="id_String" LENGTH="1024" READONLY="true" />
+			</TABLE>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="URL" FIELD="TEXT" REQUIRED="true" NUM_ROW="10">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="METHOD" FIELD="CLOSED_LIST" NUM_ROW="20">
+			<ITEMS DEFAULT="GET">
+				<ITEM NAME="GET" VALUE="GET" />
+				<ITEM NAME="POST" VALUE="POST" />
+				<ITEM NAME="PUT" VALUE="PUT" />
+				<ITEM NAME="DELETE" VALUE="DELETE" />
+			</ITEMS>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="CONTENT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="20"
+				SHOW_IF="(METHOD == 'POST') OR (METHOD == 'PUT')">
+			<ITEMS DEFAULT="XML">
+				<ITEM NAME="XML" VALUE="application/xml" />
+				<ITEM NAME="JSON" VALUE="application/json" />
+				<ITEM NAME="FORM" VALUE="application/x-www-form-urlencoded" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="ACCEPT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="20"
+				NOT_SHOW_IF="METHOD == 'DELETE'">
+			<ITEMS DEFAULT="XML">
+				<ITEM NAME="XML" VALUE="application/xml" />
+				<ITEM NAME="JSON" VALUE="application/json" />
+				<ITEM NAME="ANY" VALUE="*/*" />
+			</ITEMS>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="QUERY" FIELD="TABLE" NB_LINES="4" NUM_ROW="30">
+			<ITEMS>
+				<ITEM NAME="NAME" VALUE='""' />
+				<ITEM NAME="VALUE" VALUE='""' />
+			</ITEMS>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="40">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="40"
+				SHOW_IF="NEED_AUTH == 'true'">
+			<ITEMS DEFAULT="SECURITY_BASIC">
+				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
+				SHOW_IF="NEED_AUTH == 'true'">
+			<DEFAULT>"username"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_PASSWORD" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
+				SHOW_IF="NEED_AUTH == 'true'">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="99">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="false" NUM_ROW="5">
+			<DEFAULT>30</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="false" NUM_ROW="5">
+			<DEFAULT>60</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CONVERT_RESPONSE_TO_DOM" FIELD="CHECK" REQUIRED="true" NUM_ROW="11"
+				NOT_SHOW_IF="ACCEPT_TYPE == 'ANY'">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="UNWRAP_JSON_REQUEST" FIELD="CHECK" REQUIRED="true" NUM_ROW="15"
+				SHOW_IF="CONTENT_TYPE == 'JSON'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="WRAP_JSON_RESPONSE" FIELD="CHECK" REQUIRED="true" NUM_ROW="15"
+				SHOW_IF="ACCEPT_TYPE == 'JSON'">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="HEADERS" FIELD="TABLE" NB_LINES="4" NUM_ROW="20">
+			<ITEMS>
+				<ITEM NAME="NAME" VALUE='""'/>
+				<ITEM NAME="VALUE" VALUE='""'/>
+			</ITEMS>
+		</PARAMETER>
+
+		<!--PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SSL_TRUSTSERVER_TRUSTSTORE" FIELD="TEXT" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"C:/clientTrustStore.trustStore"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SSL_TRUSTSERVER_PASSWORD" FIELD="TEXT" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER-->
+
+		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="70">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_HOST" FIELD="TEXT" NUM_ROW="70"
+				SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>"61.163.92.4"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PORT" FIELD="TEXT" NUM_ROW="70"
+				SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>8080</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_USERNAME" FIELD="TEXT" NUM_ROW="70"
+				SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PASSWORD" FIELD="TEXT" NUM_ROW="70"
+				SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="javax.ws.rs-api"
+					MODULE="javax.ws.rs-api-2.0-m10.jar"
+					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
+					REQUIRED="true" />
+			<IMPORT NAME="jettison"
+					MODULE="jettison-1.3.3.jar"
+					BundleID="org.codehaus.jettison.jettison"
+					REQUIRED="true" />
+
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					BundleID="org.apache.servicemix.bundles.dom4j"
+					REQUIRED="true" />
+
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="cxf-bundle"
+					MODULE="cxf-bundle-2.7.3.jar"
+					BundleID="org.apache.cxf.bundle"
+					REQUIRED="true" />
+
+			<IMPORT NAME="neethi"
+					MODULE="neethi-3.0.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmlschema-core"
+					MODULE="xmlschema-core-2.0.3.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="geronimo-jaxws_2.2_spec"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="jaxb-api"
+					MODULE="jaxb-api-2.2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jaxb-impl"
+					MODULE="jaxb-impl-2.2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="stax2-api"
+					MODULE="stax2-api-3.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="woodstox-core-asl-4.1.4.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="spring-aop"
+					MODULE="spring-aop-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-asm"
+					MODULE="spring-asm-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-beans"
+					MODULE="spring-beans-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-context"
+					MODULE="spring-context-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-core"
+					MODULE="spring-core-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-expression"
+					MODULE="spring-expression-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="httpcore"
+					MODULE="httpcore-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpcore-nio"
+					MODULE="httpcore-nio-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpasyncclient"
+					MODULE="httpasyncclient-4.0-beta3.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpclient"
+					MODULE="httpclient-4.2.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS>
+		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
+	</RETURNS>
+</COMPONENT>

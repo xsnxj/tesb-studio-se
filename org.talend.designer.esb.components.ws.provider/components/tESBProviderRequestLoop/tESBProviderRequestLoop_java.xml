@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMPONENT>
+	<HEADER AUTHOR="ITOS" RELEASE_DATE="20100105A"
+			VERSION="0.100" STATUS="ALPHA"
+			COMPATIBILITY="ALL" PLATEFORM="ALL"
+			SERIAL="" STARTABLE="true"
+			SCHEMA_AUTO_PROPAGATE="false"
+			DATA_AUTO_PROPAGATE="false"
+			TECHNICAL="true">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Technical</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="1" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="COMPONENT_OK" COLOR="0000FF" />
+		<CONNECTOR CTYPE="COMPONENT_ERROR" COLOR="FF0000" />
+		<CONNECTOR CTYPE="RUN_IF" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="KEEPLISTENING" FIELD="CHECK" NUM_ROW="250"
+				SHOW="true" DYNAMIC_SETTINGS="true">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WSDL_LOCATION" FIELD="TEXT" REQUIRED="false" NUM_ROW="61"
+				SHOW="false" REPOSITORY_VALUE="WSDL_LOCATION">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="ENDPOINT_URI" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
+				SHOW="false" REPOSITORY_VALUE="ENDPOINT_URI">
+			<DEFAULT>/esb/provider</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
+			<DEFAULT>http://talend.org/esb/service/job</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
+			<DEFAULT>--DEFAULT--</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NS">
+			<DEFAULT>http://talend.org/esb/service/job</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
+			<DEFAULT>--DEFAULT--</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="OPERATION_NS" FIELD="TEXT" REQUIRED="false" NUM_ROW="65"
+				SHOW="false" REPOSITORY_VALUE="OPERATION_NS">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="OPERATION_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
+				SHOW="false" REPOSITORY_VALUE="OPERATION_NAME">
+			<DEFAULT>invoke</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="COMMUNICATION_STYLE" FIELD="TEXT" REQUIRED="false" NUM_ROW="66"
+				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					BundleID="org.apache.servicemix.bundles.dom4j"
+					REQUIRED="true" />
+
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="cxf-bundle"
+					MODULE="cxf-bundle-2.7.3.jar"
+					BundleID="org.apache.cxf.bundle"
+					REQUIRED="true" />
+
+			<IMPORT NAME="neethi"
+					MODULE="neethi-3.0.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmlschema-core"
+					MODULE="xmlschema-core-2.0.3.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="geronimo-jaxws_2.2_spec"
+					MODULE="geronimo-jaxws_2.2_spec-1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="jaxb-api"
+					MODULE="jaxb-api-2.2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jaxb-impl"
+					MODULE="jaxb-impl-2.2.6.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="stax2-api"
+					MODULE="stax2-api-3.1.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="woodstox-core-asl-4.1.4.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="jetty-continuation"
+					MODULE="jetty-continuation-8.1.7.v20120910.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-http"
+					MODULE="jetty-http-8.1.7.v20120910.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-io"
+					MODULE="jetty-io-8.1.7.v20120910.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-server"
+					MODULE="jetty-server-8.1.7.v20120910.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="jetty-util"
+					MODULE="jetty-util-8.1.7.v20120910.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="spring-aop"
+					MODULE="spring-aop-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-asm"
+					MODULE="spring-asm-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-beans"
+					MODULE="spring-beans-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-context"
+					MODULE="spring-context-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-core"
+					MODULE="spring-core-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="spring-expression"
+					MODULE="spring-expression-3.0.7.RELEASE.jar"
+					BundleID=""
+					REQUIRED="true" />
+
+			<IMPORT NAME="httpcore"
+					MODULE="httpcore-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpcore-nio"
+					MODULE="httpcore-nio-4.2.2.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpasyncclient"
+					MODULE="httpasyncclient-4.0-beta3.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="httpclient"
+					MODULE="httpclient-4.2.1.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="geronimo-servlet_3.0_spec"
+					MODULE="geronimo-servlet_3.0_spec-1.0.jar"
+					BundleID=""
+					REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS>
+		<RETURN AVAILABILITY="AFTER" NAME="NB_LINE" TYPE="id_Integer" />
+	</RETURNS>
+</COMPONENT>
