@@ -179,7 +179,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         String displayName = referencedJobNode.getObject().getProperty().getDisplayName();
         String filePath = getTempDir() + displayName + '-' + jobVersion + FileConstants.JAR_FILE_SUFFIX;
         if (processReferencedJob(filePath, referencedJobNode, jobVersion)) {
-            exportOsgiBundle(referencedJobNode, filePath, jobVersion, jobVersion, "Job");
+            exportOsgiBundle(referencedJobNode, filePath, jobVersion, jobVersion, "Job", true);
         }
 
     }
@@ -194,13 +194,20 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return null;
     }
 
-    protected void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType)
-            throws InvocationTargetException, InterruptedException {
+     protected void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType)
+             throws InvocationTargetException, InterruptedException {
+	exportOsgiBundle(node, filePath, version, bundleVersion, itemType, false);
+     }
+
+     //patch for TESB-12909
+     protected void exportOsgiBundle(RepositoryNode node, String filePath, String version, String bundleVersion, String itemType, boolean isRefJobBycTalendJob)
+             throws InvocationTargetException, InterruptedException {
         JobJavaScriptOSGIForESBManager talendJobManager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath);
+        talendJobManager.setIsRefJobByCTalendJob(isRefJobBycTalendJob);
         JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
                 getTempDir(), itemType);
         action.run(monitor);
