@@ -1,0 +1,329 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		java.util.List
+		java.util.Map
+"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode) codeGenArgument.getArgument();
+String cid = node.getUniqueName();
+
+
+IConnection inputConn = null;
+List<? extends IConnection> incomingConnections = node.getIncomingConnections();
+if (incomingConnections != null && !incomingConnections.isEmpty()) {
+	for (IConnection conn : incomingConnections) {
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+			inputConn = conn;
+			break;
+		}
+	}
+}
+
+List<? extends IConnection> conns = node.getOutgoingSortedConnections();
+if (conns != null && conns.size() > 0) {
+	for (int i = 0; i < conns.size(); i++) {
+		IConnection conn = conns.get(i);
+		if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+%>
+	<%=conn.getName()%> = null;
+<%
+		}
+	}
+}
+
+List<? extends IConnection> connsResponse = node.getOutgoingConnections("RESPONSE");
+List<? extends IConnection> connsFault = node.getOutgoingConnections("FAULT");
+IConnection connResponse = (connsResponse.size() == 1) ? connsResponse.get(0) : null;
+IConnection connFault = (connsFault.size() == 1) ? connsFault.get(0) : null;
+
+
+
+String method = ElementParameterParser.getValue(node,"__METHOD__");
+
+String acceptType = ElementParameterParser.getValue(node,"__ACCEPT_TYPE__");
+if (acceptType == null) {
+	acceptType = "application/xml";
+}
+
+String contentType = ElementParameterParser.getValue(node,"__CONTENT_TYPE__");
+if (contentType == null) {
+	contentType = "application/xml";
+}
+
+boolean isSLEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"));
+boolean isSAMEnable = Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"));
+%>
+
+try {
+	// request body
+	org.dom4j.Document requestDoc_<%=cid%> = null;
+	String requestString_<%=cid%> = null;
+	<% if (null != inputConn) { %>
+		if (null != <%=inputConn.getName()%>.body) {
+			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+		}
+		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
+	<% } %>
+
+	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
+
+	// expected response body
+	Object responseDoc_<%=cid%> = null;
+	<%
+		String convertResponseToDomProperty = ElementParameterParser.getValue(node,"__CONVERT_RESPONSE_TO_DOM__");
+		boolean convertResponseToDom = convertResponseToDomProperty == null ? true : Boolean.valueOf(convertResponseToDomProperty);
+	%>
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertResponseToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+
+	// create web client instance
+	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
+		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__"))) { %>
+		factoryBean_<%=cid%>.setUsername(<%=ElementParameterParser.getValue(node,"__AUTH_USERNAME__")%>);
+		factoryBean_<%=cid%>.setPassword(<%=ElementParameterParser.getValue(node,"__AUTH_PASSWORD__")%>);
+	<% } %>
+
+	final java.util.List<org.apache.cxf.feature.AbstractFeature> features_<%=cid%> =
+			new java.util.ArrayList<org.apache.cxf.feature.AbstractFeature>();
+
+	<% if (isSLEnable || isSAMEnable) { %>
+		boolean inOSGi = false;
+		try {
+			inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+		} catch (ClassNotFoundException e_<%=cid%>) {
+			; // ignore
+		}
+	<% } %>
+
+	<% if (isSLEnable) { %>
+		factoryBean_<%=cid%>.setAddress("locator://rest");
+		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
+			<%=ElementParameterParser.getValue(node,"__SERVICE_NAMESPACE__")%>,
+			<%=ElementParameterParser.getValue(node,"__SERVICE_NAME__")%>));
+
+		if (!inOSGi) {
+			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		}
+
+		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
+				new org.talend.esb.servicelocator.cxf.LocatorFeature();
+
+		<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
+				ElementParameterParser.getObjectValue(node, "__SERVICE_LOCATOR_CUSTOM_PROPERTIES__"); %>
+		<% if (!customProperties.isEmpty()) { %>
+				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (int k = 0; k < customProperties.size(); k++) { %>
+				slCustomProps_<%=cid%>.put(<%=customProperties.get(k).get("PROP_NAME")%>, <%=customProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+				feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+		<% } %>
+
+		features_<%=cid%>.add(feature_<%=cid%>);
+	<% } else { %>
+		String url = <%=ElementParameterParser.getValue(node,"__URL__")%>;
+		// {baseUri}tRESTClient
+		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(url, "tRESTClient"));
+		factoryBean_<%=cid%>.setAddress(url);
+	<% } %>
+
+	<% if (isSAMEnable) { %>
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature = null;
+		if (null == eventFeature) {
+			org.springframework.context.support.ClassPathXmlApplicationContext context = null;
+		//	if (inOSGi) {
+		//		context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-osgi.xml");
+		//	} else {
+				context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+		//	}
+			samEventFeature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		} else {
+			samEventFeature = (org.talend.esb.sam.agent.feature.EventFeature) eventFeature;
+		}
+		<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
+				ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
+		<% if (!samCustomProperties.isEmpty()) { %>
+			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (int k = 0; k < samCustomProperties.size(); k++) { %>
+				samCustomProps_<%=cid%>.put(<%=samCustomProperties.get(k).get("PROP_NAME")%>, <%=samCustomProperties.get(k).get("PROP_VALUE")%>);
+			<% } %>
+			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
+			samEventFeature.setHandler(ciHandler);
+		<% } %>
+		features_<%=cid%>.add(samEventFeature);
+	<% } %>
+
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
+		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
+	<% } %>
+
+	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
+
+
+	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
+	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e_<%=cid%>) {
+					e_<%=cid%>.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+	});
+	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
+			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
+	<%
+		String wrapJsonResponseProperty = ElementParameterParser.getValue(node,"__WRAP_JSON_RESPONSE__");
+		boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
+	%>
+	<% if (wrapJsonResponse) { %>
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
+	<% } %>
+	<%
+		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType))
+				? Boolean.valueOf(ElementParameterParser.getValue(node,"__UNWRAP_JSON_REQUEST__")) : false;
+	%>
+		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
+	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
+	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
+	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
+
+	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
+
+	// set request path
+	webClient_<%=cid%>.path(<%=ElementParameterParser.getValue(node,"__PATH__")%>);
+
+	// set connection properties
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> =
+	org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=ElementParameterParser.getValue(node,"__RECEIVE_TIMEOUT__")%> * 1000));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=ElementParameterParser.getValue(node,"__CONNECTION_TIMEOUT__")%> * 1000));
+	<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_PROXY__"))) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=ElementParameterParser.getValue(node,"__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=ElementParameterParser.getValue(node,"__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=ElementParameterParser.getValue(node,"__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=ElementParameterParser.getValue(node,"__PROXY_PASSWORD__")%>);
+	<% } %>
+
+	// set Content-Type
+	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
+		webClient_<%=cid%>.type("<%=contentType%>");
+	<% } %>
+	// set Accept-Type
+	<% if (!acceptType.isEmpty()) { %>
+		webClient_<%=cid%>.accept("<%=acceptType%>");
+	<% } %>
+
+	// set optional query and header properties if any
+	<% List<Map<String, String>> headers = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__HEADERS__");
+		for (Map<String, String> header : headers) { %>
+		webClient_<%=cid%>.header(<%=header.get("NAME") %> ,<%=header.get("VALUE") %>);
+	<% } %>
+
+	// if FORM request then capture query parameters into Form, otherwise set them as queries
+	<% List<Map<String, String>> queries = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUERY__");
+		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
+		<% for (Map<String, String> query : queries) { %>
+			form_<%=cid%>.set(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+		requestBody_<%=cid%> = form_<%=cid%>;
+	<% } else { %>
+		<% for (Map<String, String> query : queries) { %>
+			webClient_<%=cid%>.query(<%=query.get("NAME") %> ,<%=query.get("VALUE") %>);
+		<% } %>
+	<% } %>
+
+
+	try {
+		// start send request
+		<% if ("GET".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
+		<% } else if ("POST".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else if ("PUT".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else { %>
+			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
+		<% } %>
+
+
+		int webClientResponseStatus_<%=cid%> = webClient_<%=cid%>.getResponse().getStatus();
+		if (webClientResponseStatus_<%=cid%> >= 300) {
+			throw new javax.ws.rs.WebApplicationException(webClient_<%=cid%>.getResponse());
+		}
+
+		<% if (null != connResponse) {
+			String connResponseName = connResponse.getName(); %>
+			if (<%=connResponseName%> == null) {
+				<%=connResponseName%> = new <%=connResponseName%>Struct();
+			}
+
+			<%=connResponseName%>.statusCode = webClientResponseStatus_<%=cid%>;
+			if (responseDoc_<%=cid%> != null) {
+				if (responseClass_<%=cid%> == String.class) {
+					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
+				} else {
+					routines.system.Document responseTalendDoc_<%=cid%> = null;
+					if (null != responseDoc_<%=cid%>) {
+						responseTalendDoc_<%=cid%> = new routines.system.Document();
+						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
+					}
+					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
+				}
+			}
+		<% } %>
+
+	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
+		<% if (null != connFault) {
+			String connFaultName = connFault.getName(); %>
+			if (<%=connFaultName%> == null) {
+				<%=connFaultName%> = new <%=connFaultName%>Struct();
+			}
+			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
+
+			String errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
+			if (null == errorMessage_<%=cid%> || 0 == errorMessage_<%=cid%>.trim().length()) {
+				try {
+					errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
+				} catch (Exception exe_<%=cid%>) {
+					// ignore
+				}
+			}
+			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
+		<% } else { %>
+			throw ex_<%=cid%>;
+		<% } %>
+	}
+
+} catch(Exception e_<%=cid%>) {
+	<% if ("true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"))) { %>
+		throw new TalendException(e_<%=cid%>, currentComponent, globalMap);
+	<% } else { %>
+		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
+	<% } %>
+}

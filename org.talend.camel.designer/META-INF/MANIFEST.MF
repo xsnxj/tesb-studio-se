@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CAMEL Designer
+Bundle-SymbolicName: org.talend.camel.designer;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.talend.camel.designer.CamelDesignerPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.apache.commons.collections,
+ org.apache.commons.lang,
+ org.talend.camel.model,
+ org.talend.core,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.intro,
+ org.talend.repository,
+ org.talend.core.repository,
+ org.talend.designer.core,
+ org.eclipse.debug.ui,
+ org.talend.librariesmanager,
+ org.eclipse.gef,
+ org.talend.designer.codegen,
+ org.talend.libraries.apache,
+ org.talend.designer.camel.resource.core,
+ org.talend.resources,
+ org.talend.designer.publish.core,
+ org.talend.libraries.dom4j-jaxen
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.talend.camel.designer.dialog,
+ org.talend.camel.designer.model,
+ org.talend.camel.designer.ui.editor,
+ org.talend.camel.designer.ui.wizards,
+ org.talend.camel.designer.ui.wizards.actions,
+ org.talend.camel.designer.util
+Bundle-Vendor: .Talend SA.

@@ -1,0 +1,265 @@
+<COMPONENT>
+
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="false">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Context</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MAX_INPUT="0" MAX_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="MQ_TYPE" FIELD="CLOSED_LIST" NUM_ROW="2"
+			REQUIRED="true" READONLY="false">
+			<ITEMS DEFAULT="ACTIVEMQ">
+				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
+				<ITEM NAME="WMQ" VALUE="WebSphere MQ" />
+				<ITEM NAME="OTHER" VALUE="Other" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_TRANSACTION" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="2">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<!-- ActiveMQ -->
+		<PARAMETER NAME="AMQ_BROKER_URI" FIELD="TEXT" NUM_ROW="4"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>"vm://localhost?broker.persistent=false"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="IS_AMQ_HTTP_BROKER" FIELD="CHECK" NUM_ROW="6"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQ_POOL" FIELD="CHECK" NUM_ROW="8"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQ_POOL_MAX_CONNECTIONS" FIELD="TEXT"
+			NUM_ROW="9" SHOW_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL == 'true')">
+			<DEFAULT>1</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQ_POOL_MAX_ACTIVE" FIELD="TEXT"
+			NUM_ROW="10" SHOW_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL == 'true')">
+			<DEFAULT>500</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQ_POOL_IDLE_TIMEOUT" FIELD="TEXT"
+			NUM_ROW="11" SHOW_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL == 'true')">
+			<DEFAULT>30000</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQ_POOL_EXPIRY_TIMEOUT" FIELD="TEXT"
+			NUM_ROW="12" SHOW_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL == 'true')">
+			<DEFAULT>60000</DEFAULT>
+		</PARAMETER>
+
+		<!-- WebSphere MQ -->
+		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"localhost"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_PORT" FIELD="TEXT" NUM_ROW="8"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>1414</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_TRANSPORT_TYPE" FIELD="CLOSED_LIST"
+			NUM_ROW="9" REQUIRED="true" READONLY="false" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<ITEMS DEFAULT="CLIENT">
+				<ITEM NAME="BINDINGS" VALUE="0" />
+				<ITEM NAME="CLIENT" VALUE="1" />
+				<ITEM NAME="BINDINGS_CLIENT" VALUE="8" />
+				<!--<ITEM NAME="DIRECT_TCPIP" VALUE="2" /> <ITEM NAME="DIRECT_HTTP" VALUE="4"
+					/> -->
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_QUEUE_MANAGER" FIELD="TEXT" NUM_ROW="10"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>"mq.queue.manager"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_AUTH" FIELD="CHECK" REQUIRED="true"
+			NUM_ROW="11" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_USERNAME" FIELD="TEXT" NUM_ROW="12"
+			SHOW_IF="(MQ_TYPE == 'WMQ') AND (WMQ_AUTH == 'true')">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_PASSWORD" FIELD="PASSWORD" NUM_ROW="12"
+			SHOW_IF="(MQ_TYPE == 'WMQ') AND (WMQ_AUTH == 'true')">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar,com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_DRIVER_JAR" FIELD="TABLE" NUM_ROW="30"
+			NB_LINES="8" REPOSITORY_VALUE="DRIVER_JAR" SHOW_IF="MQ_TYPE == 'WMQ'">
+			<ITEMS>
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
+			</ITEMS>
+		</PARAMETER>
+
+		<!-- Customized -->
+		<PARAMETER NAME="OTHER_CODE" FIELD="MEMO_JAVA" REQUIRED="false"
+			NUM_ROW="7" NB_LINES="6" SHOW_IF="MQ_TYPE == 'OTHER'">
+			<DEFAULT>
+				/*
+				* Please specify "jmsConnectionFactory" here
+				*/
+				//jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
+			</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="OTHER_DRIVER_JAR" FIELD="TABLE" NUM_ROW="30"
+			NB_LINES="8" REPOSITORY_VALUE="DRIVER_JAR" SHOW_IF="MQ_TYPE == 'OTHER'">
+			<ITEMS>
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
+			</ITEMS>
+		</PARAMETER>
+
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="httpclient" 
+					MODULE="httpclient-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.1.jar" 
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="httpcore" 
+					MODULE="httpcore-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="xpp3" 
+					MODULE="xpp3-1.1.4c.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-1.1.4c.jar"
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+			<IMPORT NAME="xstream" 
+					MODULE="xstream-1.4.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xstream-1.4.3.jar"
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
+
+            <!-- spring -->
+            <IMPORT NAME="camel-spring" 
+            		MODULE="camel-spring-2.10.7.jar"
+                	REQUIRED="true" />
+            <IMPORT NAME="spring-context"
+                    MODULE="spring-context-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-aop"
+                    MODULE="spring-aop-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-beans"
+                    MODULE="spring-beans-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-core"
+                    MODULE="spring-core-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-expression"
+                    MODULE="spring-expression-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-context-support" 
+	            	MODULE="spring-context-support-3.2.4.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
+	                REQUIRED="true" />
+            <IMPORT NAME="spring-tx" 
+	            	MODULE="spring-tx-3.2.4.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.4.RELEASE.jar"
+	                REQUIRED="true" />
+
+            <IMPORT NAME="org.eclipse.osgi"
+                    MODULE="org.eclipse.osgi.jar"
+                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core" 
+		            MODULE="spring-osgi-core-1.2.1.jar"
+		            UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+	                REQUIRED="true" />
+
+			<IMPORT NAME="apache-camel" 
+					MODULE="camel-core-2.10.7.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="spring-jms" 
+					MODULE="spring-jms-3.2.4.RELEASE.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-jms-3.2.4.RELEASE.jar"
+					REQUIRED="true" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-log4j12"
+                    MODULE="slf4j-log4j12-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+                    REQUIRED_IF="MQ_TYPE != 'ACTIVEMQ'" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+                    REQUIRED="true" />
+			
+			<IMPORT NAME="activemq" 
+					MODULE="activemq-all-5.7.0.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/activemq-all-5.7.0.jar"
+					REQUIRED_IF="MQ_TYPE == 'ACTIVEMQ'" />
+			<IMPORT NAME="activemq-pool" 
+					MODULE="activemq-pool-5.7.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-pool-5.7.0.jar"
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
+			<IMPORT NAME="camel-jms-alldep" 
+					MODULE="camel-jms-alldep-2.10.7.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jms" 
+					MODULE="jms.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jms.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="jta" 
+					MODULE="jta.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jta.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="common-pool" 
+					MODULE="commons-pool-1.6.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
+					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
+			<IMPORT NAME="jndi" 
+					MODULE="jndi.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/jndi.jar"
+					REQUIRED="true" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
+</COMPONENT>

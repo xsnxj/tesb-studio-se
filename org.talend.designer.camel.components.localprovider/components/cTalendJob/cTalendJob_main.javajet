@@ -1,0 +1,22 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.IProcess
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.process.IElementParameter
+    org.talend.core.model.properties.ProcessItem
+    org.talend.designer.runprocess.ItemCacheManager
+    org.talend.designer.runprocess.ProcessorUtilities
+    org.talend.core.CorePlugin
+    org.talend.designer.runprocess.IProcessor
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+   	String cid = node.getUniqueName();
+%>
+   .to(endpoint_<%=cid%>)

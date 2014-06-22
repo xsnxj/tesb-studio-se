@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension point="org.talend.core.components_provider">
+		<ComponentsProvider
+			id="org.talend.esb.tooling.component.provider.ESBComponentsProvider"
+			class="org.talend.esb.tooling.component.provider.ESBComponentsProvider"
+			folderName="tesb" />
+	</extension>
+	<extension point="org.talend.designer.codegen.additional_jetfile">
+		<jetProvider
+			id="org.talend.esb.tooling.component.provider.ESBJetFileProvider"
+			class="org.talend.esb.tooling.component.provider.ESBJetFileProvider" />
+	</extension>
+
+	<extension point="org.talend.core.external_component">
+		<ExternalComponent
+			class="org.talend.designer.esb.webservice.WebServiceComponent" />
+	</extension>
+
+	<extension point="org.talend.core.migrationTask">
+		<projecttask
+			id="org.talend.designer.esb.webservice.ConsumerFaultResponseMigrationTask"
+			class="org.talend.designer.esb.webservice.migration.ConsumerFaultResponseMigrationTask"
+			name="ConsumerFaultResponseMigrationTask"
+			description="Add more fault response message migration task"
+			breaks="5.1.1"
+			version="5.1.2"
+			beforeLogon="false" />
+	</extension>
+
+</plugin>

@@ -1,0 +1,226 @@
+<COMPONENT>
+
+	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
+
+		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
+		STARTABLE="true">
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>Messaging</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="ROUTE" MIN_INPUT="0" MAX_INPUT="1"
+			MAX_OUTPUT="1" MIN_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_WHEN" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_OTHER" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_TRY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_CATCH" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_FINALLY" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR CTYPE="ROUTE_ENDBLOCK" MAX_INPUT="1" MAX_OUTPUT="0" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<PARAMETER NAME="URI" FIELD="TEXT" NUM_ROW="1">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CLIENT" FIELD="RADIO" NUM_ROW="3" REQUIRED="true">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVER" FIELD="RADIO" NUM_ROW="3" REQUIRED="true">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="DISABLE_STREAM" FIELD="CHECK" NUM_ROW="5" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SESSION_SUPPORT" FIELD="CHECK" NUM_ROW="7" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="CHUNKED" FIELD="CHECK" NUM_ROW="9" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="ENABLEJMX" FIELD="CHECK" NUM_ROW="11" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="MATCH_ON_URI_PREFIX" FIELD="CHECK" NUM_ROW="13" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="USE_CONTINUATION" FIELD="CHECK" NUM_ROW="15" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="TRACE_ENABLE" FIELD="CHECK" NUM_ROW="17" SHOW_IF="SERVER=='true'" GROUP="SERVER_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+
+		<PARAMETER NAME="METHOD" FIELD="CLOSED_LIST" NUM_ROW="5" SHOW_IF="CLIENT == 'true'" GROUP="CLIENT_GROUP">
+			<ITEMS DEFAULT="GET">
+				<ITEM NAME="GET" VALUE="GET" />
+				<ITEM NAME="POST" VALUE="POST" />
+				<ITEM NAME="PUT" VALUE="PUT" />
+				<ITEM NAME="DELETE" VALUE="DELETE" />
+				<ITEM NAME="HEAD" VALUE="HEAD" />
+				<ITEM NAME="OPTIONS" VALUE="OPTIONS" />
+				<ITEM NAME="TRACE" VALUE="TRACE" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="PLAIN_TEXT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="FORM_CONTENT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NO_CONTENT" FIELD="RADIO" NUM_ROW="6" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='POST') OR (METHOD=='PUT')))" GROUP="CLIENT_GROUP">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CONTENT_TYPE" FIELD="CLOSED_LIST" NUM_ROW="7" SHOW_IF="((CLIENT == 'true') AND ((((NO_CONTENT=='true') OR (PLAIN_TEXT=='true')) AND ((METHOD=='POST') OR (METHOD=='PUT')))))"
+						GROUP="CLIENT_GROUP">
+			<ITEMS DEFAULT="PLAIN">
+				<ITEM NAME="PLAIN" VALUE="text/plain" />
+				<ITEM NAME="HTML" VALUE="text/html" />
+				<ITEM NAME="XML" VALUE="text/xml" />
+				<ITEM NAME="APP_FORM" VALUE="application/x-www-form-urlencoded" />
+				<ITEM NAME="APP_XML" VALUE="application/xml" />
+				<ITEM NAME="APP_JSON" VALUE="application/json" />
+				<ITEM NAME="OTHER" VALUE="other" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="MANUAL_CONTENT_TYPE" FIELD="TEXT" NUM_ROW="7" SHOW_IF="((CLIENT == 'true') AND ((((METHOD=='POST') OR (METHOD=='PUT')) AND ((NO_CONTENT=='true') OR (PLAIN_TEXT =='true')) AND (CONTENT_TYPE.ITEM == 'OTHER'))))"
+						GROUP="CLIENT_GROUP">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PARAMETERS" FIELD="TABLE" NUM_ROW="8"
+			NB_LINES="8"  SHOW_IF="((CLIENT == 'true') AND ((METHOD=='DELETE') OR (METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))))"
+			GROUP="CLIENT_GROUP">
+			<ITEMS>
+				<ITEM NAME="KEY" FIELD="TEXT" />
+				<ITEM NAME="VALUE" FIELD="TEXT" />
+			</ITEMS>
+		</PARAMETER>
+
+<!-- 		<PARAMETER NAME="USE_URL_ENCODER" FIELD="CHECK" NUM_ROW="8"  SHOW_IF="(METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER> -->
+
+		<PARAMETER NAME="ENCODER_CHARSET" FIELD="TEXT" NUM_ROW="9" SHOW_IF="((CLIENT == 'true') AND ((METHOD=='DELETE') OR (METHOD=='GET') OR (METHOD=='HEAD') OR (((METHOD=='POST') OR (METHOD=='PUT')) AND (FORM_CONTENT=='true'))))"
+				GROUP="CLIENT_GROUP">
+			<DEFAULT>UTF-8</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="PLAIN_TEXT_CONTENT" FIELD="MEMO" NUM_ROW="10"  SHOW_IF="((CLIENT == 'true') AND (((METHOD=='POST') OR (METHOD=='PUT')) AND (PLAIN_TEXT=='true')))) " GROUP="CLIENT_GROUP">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="HEADERS" FIELD="TABLE" NUM_ROW="10"
+			NB_LINES="8">
+			<ITEMS>
+				<ITEM NAME="KEY" FIELD="TEXT" />
+				<ITEM NAME="VALUE" FIELD="TEXT" />
+			</ITEMS>
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+
+            <!-- spring -->
+            <IMPORT NAME="camel-spring" 
+            		MODULE="camel-spring-2.10.7.jar"
+                	REQUIRED="true" />
+            <IMPORT NAME="spring-context"
+                    MODULE="spring-context-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-aop"
+                    MODULE="spring-aop-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-beans"
+                    MODULE="spring-beans-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-core"
+                    MODULE="spring-core-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-expression"
+                    MODULE="spring-expression-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-context-support" 
+	            	MODULE="spring-context-support-3.2.4.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
+	                REQUIRED="true" />
+            <IMPORT NAME="spring-tx" 
+	            	MODULE="spring-tx-3.2.4.RELEASE.jar"
+	            	UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.4.RELEASE.jar"
+	                REQUIRED="true" />
+
+            <IMPORT NAME="org.eclipse.osgi"
+                    MODULE="org.eclipse.osgi.jar"
+                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="spring-osgi-core" 
+		            MODULE="spring-osgi-core-1.2.1.jar"
+		            UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-1.2.1.jar"
+	                REQUIRED="true" />
+
+			<IMPORT NAME="apache-camel" 
+					MODULE="camel-core-2.10.7.jar"
+					REQUIRED="true" />
+			<IMPORT NAME="talend-camel-http" 
+					MODULE="camel-http-alldep-2.10.7.jar"
+					REQUIRED="true" />
+            <IMPORT NAME="log4j"
+                    MODULE="log4j-1.2.15.jar"
+                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-api"
+                    MODULE="slf4j-api-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="slf4j-log4j12"
+                    MODULE="slf4j-log4j12-1.7.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-1.7.5.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="commons-logging"
+                    MODULE="commons-logging-1.1.1.jar"
+                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+                    REQUIRED="true" />
+
+			<IMPORT NAME="talend-camel-jetty"
+					MODULE="camel-jetty-alldep-2.10.7.jar" 
+					REQUIRED_IF="SERVER=='true'" />
+					
+			<IMPORT NAME="httpclient"
+					MODULE="commons-httpclient-3.1.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
+					REQUIRED="true" />
+					
+			<IMPORT NAME="commons-codec"
+					MODULE="commons-codec-1.6.jar" 
+					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
+					REQUIRED_IF="CLIENT=='true'" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS />
+</COMPONENT>

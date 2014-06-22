@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.talend.designer.camel.resource.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.talend.designer.camel.resource.core" id="org.talend.designer.camel.resource.RouteResourceCheck" name="Route Resource Check"/>
+      </appinfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="component" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="component">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="resourceParameter"/>
+         </sequence>
+         <attribute name="componentName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="resourceParameter">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="enablement"/>
+         </sequence>
+         <attribute name="parameterName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attribute">
+      <complexType>
+         <attribute name="parameterName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parameterValue" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="regularExpresson" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enablement">
+      <annotation>
+         <documentation>
+            This element is used to define the enablement for the extension.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="attribute"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <annotation>
+         <documentation>
+            This element represent a boolean AND operation on the result of evaluating its two sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="2" maxOccurs="unbounded">
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="attribute"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <annotation>
+         <documentation>
+            This element represent a boolean OR operation on the result of evaluating its two sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="2" maxOccurs="unbounded">
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="attribute"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <annotation>
+         <documentation>
+            This element represent a boolean NOT operation on the result of evaluating its sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="attribute"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>
