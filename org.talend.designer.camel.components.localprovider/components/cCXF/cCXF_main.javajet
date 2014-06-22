@@ -1,0 +1,64 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+    java.net.URLEncoder
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+   	String cid = node.getUniqueName();
+//  http://jira.talendforge.org/browse/TESB-5241
+   	/*
+   	 * change to use label + unique to make it unique but readable
+   	 */
+	IElementParameter param = node.getElementParameter("LABEL");
+	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+		cid = (String)param.getValue() +"_"+ cid;	
+	}
+	
+	
+	String uriRef = "uriMap.get(\"" + cid + "\")";
+	
+	String formatType = ElementParameterParser.getValue(node, "__DATAFORMAT__");
+	
+	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+	
+	String useRegistry = "false";
+	if(!"RAW".equals(formatType) && !"CXF_MESSAGE".equals(formatType) && isStudioEEVersion){
+		useRegistry = ElementParameterParser.getValue(node, "__ENABLE_REGISTRY__");
+	}
+	
+	String useCorrelation = ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__");
+	if("RAW".equals(formatType)){
+		useCorrelation = "false";
+	}
+	String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
+	
+	String endpointVar = "endpoint_" + node.getUniqueName();
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+			if("true".equals(useRegistry) || "true".equals(useCorrelation)){
+				if(!"".equals(correlationValue) && !"\"\"".equals(correlationValue)){
+%>					
+					.setHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID).simple(<%=correlationValue%>)
+<%				}else{
+%>
+					.removeHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID)
+<%				}
+			}
+%>
+			.to(<%=endpointVar%>)
+<%
+	} else {
+%>
+		from(<%=endpointVar%>)
+<%
+	}
+%>

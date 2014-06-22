@@ -1,0 +1,404 @@
+<%@ jet
+	imports="
+		java.util.ArrayList
+		java.util.Collections
+		java.util.HashMap
+		java.util.List
+		java.util.Map
+		java.util.Map.Entry
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.designer.codegen.config.NodeConnectionsHelper
+		org.talend.designer.codegen.config.NodeParamsHelper
+	"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+INode node = (INode) codeGenArgument.getArgument();
+
+/*INIT PARAMETERS AND INDICATORS.*/
+NodeConnectionsHelper connsHelper=new NodeConnectionsHelper(node);
+IConnection inputConn = connsHelper.getInputConn();
+IConnection connResponse = connsHelper.getOutputConnResponse();
+IConnection connFault = connsHelper.getOutputConnFault();
+List<IConnection> dataOutputs = connsHelper.getDataOutputs();
+
+String cid = node.getUniqueName();
+
+NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+String method = paramsHelper.getStringParam("__METHOD__");
+String acceptType = paramsHelper.getStringParam("__ACCEPT_TYPE__");
+if(acceptType == null) {
+	acceptType = "application/xml";
+}
+String contentType = paramsHelper.getStringParam("__CONTENT_TYPE__");
+if(contentType == null) {
+	contentType = "application/xml";
+}
+boolean useAuth = paramsHelper.getBoolParam("__NEED_AUTH__");
+boolean useAuthorization = paramsHelper.getVisibleBoolParam("__NEED_AUTHORIZATION__");
+String authType = paramsHelper.getStringParam("__AUTH_TYPE__");
+boolean isSLEnable = paramsHelper.getBoolParam("__SERVICE_LOCATOR__");
+boolean isSAMEnable = paramsHelper.getBoolParam("__SERVICE_ACTIVITY_MONITOR__");
+boolean useBusinessCorrelation = paramsHelper.getBoolParam("__USE_BUSINESS_CORRELATION__");
+
+/*GENERATE CODE*/
+//clear connection row data
+for (IConnection conn : dataOutputs) {
+%>
+	<%=conn.getName()%> = null;
+<%
+}
+
+%>
+
+try {
+	// request body
+	org.dom4j.Document requestDoc_<%=cid%> = null;
+	String requestString_<%=cid%> = null;
+	<% if (null != inputConn) { %>
+		if (null != <%=inputConn.getName()%>.body) {
+			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+		}
+		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
+	<% } %>
+
+	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
+
+	// expected response body
+	Object responseDoc_<%=cid%> = null;
+	<%
+		String convertResponseToDomProperty = paramsHelper.getStringParam("__CONVERT_RESPONSE_TO_DOM__");
+		boolean convertResponseToDom = convertResponseToDomProperty == null ? true : Boolean.valueOf(convertResponseToDomProperty);
+	%>
+	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertResponseToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+
+	// create web client instance
+	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
+		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+	<% if (useAuth && "BASIC".equals(authType)) { %>
+		// set BASIC auth
+		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
+		factoryBean_<%=cid%>.setPassword(<%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
+	<% } %>
+
+	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
+			new java.util.ArrayList<org.apache.cxf.feature.Feature>();
+
+	<% if (isSLEnable || isSAMEnable) { %>
+		boolean inOSGi = false;
+		try {
+			inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+		} catch (ClassNotFoundException e_<%=cid%>) {
+			; // ignore
+		}
+	<% } %>
+
+	<% if (isSLEnable) { %>
+		factoryBean_<%=cid%>.setAddress("locator://rest");
+		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
+			<%=paramsHelper.getStringParam("__SERVICE_NAMESPACE__")%>,
+			<%=paramsHelper.getStringParam("__SERVICE_NAME__")%>));
+
+		if (!inOSGi) {
+			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		}
+
+		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
+				new org.talend.esb.servicelocator.cxf.LocatorFeature();
+		<% List<Entry<String, String>> customProperties = paramsHelper.getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+		if (!customProperties.isEmpty()) { %>
+				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (Entry<String,String> prop : customProperties) { %>
+				slCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
+			<% } %>
+				feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+		<% } %>
+
+		features_<%=cid%>.add(feature_<%=cid%>);
+	<% } else { %>
+		String url = <%=paramsHelper.getStringParam("__URL__")%>;
+		// {baseUri}tRESTClient
+		factoryBean_<%=cid%>.setServiceName(new javax.xml.namespace.QName(url, "tRESTClient"));
+		factoryBean_<%=cid%>.setAddress(url);
+	<% } %>
+
+	<% if (isSAMEnable) { %>
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature = null;
+		if (null == eventFeature) {
+			org.springframework.context.support.ClassPathXmlApplicationContext context = null;
+		//	if (inOSGi) {
+		//		context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-osgi.xml");
+		//	} else {
+				context = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
+		//	}
+			samEventFeature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		} else {
+			samEventFeature = (org.talend.esb.sam.agent.feature.EventFeature) eventFeature;
+		}
+		<% List<Entry<String, String>> samCustomProperties = paramsHelper.getPropertiesPram("__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__");
+		if (!samCustomProperties.isEmpty()) { %>
+			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
+			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+			<% for (Entry<String,String> prop : samCustomProperties) { %>
+				samCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
+			<% } %>
+			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
+			samEventFeature.setHandler(ciHandler);
+		<% } %>
+		features_<%=cid%>.add(samEventFeature);
+	<% } %>
+
+	<% if (paramsHelper.getBoolParam("__LOG_MESSAGES__")) { %>
+		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
+	<% } %>
+
+	<% if (useBusinessCorrelation) { %>
+	   class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
+                    private String correlationId;
+                    public EsbJobCorrelationCallbackHandler(final String correlationId) {
+                        if (null != correlationId && correlationId.length() > 0) {
+                            this.correlationId = correlationId;
+                        }
+                    }
+                    public String getCorrelationId() {
+                        return correlationId;
+                    };
+                }
+        final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=paramsHelper.getStringParam("__CORRELATION_VALUE__")%>);
+		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
+			correlationIDCallbackHandler);
+		features_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+	<% } %>
+	
+	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
+
+
+	java.util.List<Object> providers_<%=cid%> = new java.util.ArrayList<Object>();
+	providers_<%=cid%>.add(new org.apache.cxf.jaxrs.provider.dom4j.DOM4JProvider() {
+		// workaround for https://jira.talendforge.org/browse/TESB-7276
+		public org.dom4j.Document readFrom(Class<org.dom4j.Document> cls,
+											java.lang.reflect.Type type,
+											java.lang.annotation.Annotation[] anns,
+											javax.ws.rs.core.MediaType mt,
+											javax.ws.rs.core.MultivaluedMap<String, String> headers,
+											java.io.InputStream is)
+				throws IOException, javax.ws.rs.WebApplicationException {
+			String contentLength = headers.getFirst("Content-Length");
+			if (!org.apache.cxf.common.util.StringUtils.isEmpty(contentLength)
+				&& Integer.valueOf(contentLength) <= 0) {
+				try {
+					return org.dom4j.DocumentHelper.parseText("<root/>");
+				} catch (org.dom4j.DocumentException e_<%=cid%>) {
+					e_<%=cid%>.printStackTrace();
+				}
+				return null;
+			}
+			return super.readFrom(cls, type, anns, mt, headers, is);
+		}
+	});
+	org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider_<%=cid%> =
+			new org.apache.cxf.jaxrs.provider.json.JSONProvider();
+		jsonProvider_<%=cid%>.setIgnoreNamespaces(true);
+		jsonProvider_<%=cid%>.setAttributesToElements(true);
+	<%
+		String wrapJsonResponseProperty = paramsHelper.getStringParam("__WRAP_JSON_RESPONSE__");
+		boolean wrapJsonResponse = wrapJsonResponseProperty == null ? true : Boolean.valueOf(wrapJsonResponseProperty);
+	%>
+	<% if (wrapJsonResponse) { %>
+		jsonProvider_<%=cid%>.setSupportUnwrapped(true);
+		jsonProvider_<%=cid%>.setWrapperName("root");
+	<% } %>
+	<%
+		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method)) && "application/json".equals(contentType))
+				? paramsHelper.getBoolParam("__UNWRAP_JSON_REQUEST__") : false;
+	%>
+		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
+	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
+	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
+	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
+
+	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
+
+	// set request path
+	webClient_<%=cid%>.path(<%=paramsHelper.getStringParam("__PATH__")%>);
+
+	// set connection properties
+	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
+	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
+	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
+	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
+	<% if (paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")) { %>
+		conduit_<%=cid%>.getClient().setAutoRedirect(true);
+		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.relative.uri", true);
+		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.same.host.only", <%=!paramsHelper.getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
+	<% } %>
+	<% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+		conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
+		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
+		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
+		conduit_<%=cid%>.getProxyAuthorization().setPassword(<%=paramsHelper.getStringParam("__PROXY_PASSWORD__")%>);
+	<% } %>
+
+	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>
+		// set Content-Type
+		webClient_<%=cid%>.type("<%=contentType%>");
+	<% } %>
+
+	<% if (!acceptType.isEmpty()) { %>
+		// set Accept-Type
+		webClient_<%=cid%>.accept("<%=acceptType%>");
+	<% } %>
+
+	<% List<Map<String, String>> headers = paramsHelper.getObjectParam("__HEADERS__"); %>
+		// set optional query and header properties if any
+	<% for (Map<String, String> header : headers) { %>
+		webClient_<%=cid%>.header(<%=header.get("NAME")%>, <%=header.get("VALUE")%>);
+	<% } %>
+
+	<% if (useAuth && "OAUTH2_BEARER".equals(authType)) { %>
+		// set oAuth2 bearer token
+		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=paramsHelper.getStringParam("__AUTH_BEARER_TOKEN__")%>);
+	<% } %>
+
+	<% if (useAuth && "SAML".equals(authType) && !useAuthorization) { %>
+		if (null != stsProps) {
+			// set SAML Token authentication
+			STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
+			outInterceptor.setStsClient(createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
+					<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>));
+			clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
+			clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
+		}
+	<% } %>
+
+	<% if (useAuth && "SAML".equals(authType) && useAuthorization) { %>
+	if (null != stsProps) {
+	 	STSRESTOutInterceptor outInterceptor = new STSRESTOutInterceptor();
+		org.apache.cxf.ws.security.trust.STSClient stsClient = createStsClient(factoryBean_<%=cid%>.getBus(), stsProps,
+			<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>, <%=paramsHelper.getStringParam("__AUTH_PASSWORD__")%>);
+					
+		org.w3c.dom.Document doc = org.apache.cxf.helpers.DOMUtils.createDocument();
+        org.w3c.dom.Element claimsElement = doc.createElementNS("http://docs.oasis-open.org/ws-sx/ws-trust/200512", "Claims");
+        claimsElement.setAttributeNS(null, "Dialect", "http://schemas.xmlsoap.org/ws/2005/05/identity");
+        String role = <%=paramsHelper.getStringParam("__ROLE__")%>;
+        if ("" != role && null != role){
+        	org.w3c.dom.Element claimValueElement = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimValue");
+        	claimValueElement.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
+        
+       		org.w3c.dom.Element value = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "Value");
+       		value.setTextContent(role);
+      		claimValueElement.appendChild(value);
+	        claimsElement.appendChild(claimValueElement);
+	    }else{
+	    	org.w3c.dom.Element claimType = doc.createElementNS("http://schemas.xmlsoap.org/ws/2005/05/identity", "ClaimType");
+         	claimType.setAttributeNS(null, "Uri", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role");
+	 		claimsElement.appendChild(claimType);
+	    }
+        stsClient.setClaims(claimsElement);
+	 	outInterceptor.setStsClient(stsClient);
+	 	clientConfig_<%=cid%>.getOutInterceptors().add(outInterceptor);
+	 	clientConfig_<%=cid%>.getOutInterceptors().add(new org.apache.cxf.rs.security.saml.SamlHeaderOutInterceptor());
+	     
+	 }
+	<% } %>
+
+	// if FORM request then capture query parameters into Form, otherwise set them as queries
+	<% List<Map<String, String>> queries = paramsHelper.getObjectParam("__QUERY__");
+		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>
+		org.apache.cxf.jaxrs.ext.form.Form form_<%=cid%> = new org.apache.cxf.jaxrs.ext.form.Form();
+		<% for (Map<String, String> query : queries) { %>
+			form_<%=cid%>.set(<%=query.get("NAME")%> ,<%=query.get("VALUE")%>);
+		<% } %>
+		requestBody_<%=cid%> = form_<%=cid%>;
+	<% } else { %>
+		<% for (Map<String, String> query : queries) { %>
+			webClient_<%=cid%>.query(<%=query.get("NAME")%> ,<%=query.get("VALUE")%>);
+		<% } %>
+	<% } %>
+
+
+	try {
+		// start send request
+		<% if ("GET".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
+		<% } else if ("POST".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else if ("PUT".equals(method)) { %>
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
+		<% } else { %>
+			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
+		<% } %>
+
+
+		int webClientResponseStatus_<%=cid%> = webClient_<%=cid%>.getResponse().getStatus();
+		if (webClientResponseStatus_<%=cid%> >= 300) {
+			throw new javax.ws.rs.WebApplicationException(webClient_<%=cid%>.getResponse());
+		}
+
+		<% if (null != connResponse) {
+			String connResponseName = connResponse.getName(); %>
+			if (<%=connResponseName%> == null) {
+				<%=connResponseName%> = new <%=connResponseName%>Struct();
+			}
+
+			<%=connResponseName%>.statusCode = webClientResponseStatus_<%=cid%>;
+			if (responseDoc_<%=cid%> != null) {
+				if (responseClass_<%=cid%> == String.class) {
+					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
+				} else {
+					routines.system.Document responseTalendDoc_<%=cid%> = null;
+					if (null != responseDoc_<%=cid%>) {
+						responseTalendDoc_<%=cid%> = new routines.system.Document();
+						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
+					}
+					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
+				}
+			}
+
+			globalMap.put("<%=cid%>_HEADERS", webClient_<%=cid%>.getResponse().getHeaders());
+			<% if (useBusinessCorrelation) { %>
+			if (null != webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID")){
+				globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID").get(0));
+			}
+			<% } %>
+		<% } %>
+
+	} catch (javax.ws.rs.WebApplicationException ex_<%=cid%>) {
+		<% if (null != connFault) {
+			String connFaultName = connFault.getName(); %>
+			if (<%=connFaultName%> == null) {
+				<%=connFaultName%> = new <%=connFaultName%>Struct();
+			}
+			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
+
+			String errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
+			if (null == errorMessage_<%=cid%> || 0 == errorMessage_<%=cid%>.trim().length()) {
+				try {
+					errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
+				} catch (Exception exe_<%=cid%>) {
+					// ignore
+				}
+			}
+			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
+
+			globalMap.put("<%=cid%>_HEADERS", ex_<%=cid%>.getResponse().getHeaders());
+			<% if (useBusinessCorrelation) { %>
+			if (null != webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID")){
+				globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID").get(0));
+			}
+			<% } %>
+		<% } else { %>
+			throw ex_<%=cid%>;
+		<% } %>
+	}
+
+} catch(Exception e_<%=cid%>) {
+	<% if (paramsHelper.getBoolParam( "__DIE_ON_ERROR__")) { %>
+		throw new TalendException(e_<%=cid%>, currentComponent, globalMap);
+	<% } else { %>
+		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
+	<% } %>
+}

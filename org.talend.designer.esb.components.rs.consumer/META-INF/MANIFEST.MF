@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.talend.designer.esb.components.rs.consumer;singleton:=true
+Bundle-Version: 5.4.2.qualifier
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Activator: org.talend.designer.esb.components.rs.consumer.Activator
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime
+ ,org.eclipse.ui
+ ,org.eclipse.ui.workbench
+ ,org.talend.core
+ ,org.talend.designer.codegen

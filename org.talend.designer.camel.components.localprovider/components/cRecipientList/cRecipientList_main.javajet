@@ -1,0 +1,80 @@
+<%@ jet skeleton="cRecipientList_main.skeleton"
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+" 
+%>
+
+
+<% 
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	setNode(node);
+	String cid = node.getUniqueName();
+	
+	String language = getSetting("__LANGUAGES__");
+	String expression = getSetting("__EXPRESSION__");
+	boolean useResultClassType = getBoolSetting("__USE_RESULT_CLASS_TYPE__");
+	String resultClassType = getSetting("__RESULT_CLASS_TYPE__");
+	boolean useNamespaces = getBoolSetting( "__USE_NAMESPACES__");
+
+	boolean useSpecifyDelimiter = getBoolSetting( "__USE_DELIMITER__");
+	String delimiter = getSetting( "__DELIMITER__");
+	
+	boolean useStrategy = getBoolSetting( "__USE_STRATEGY__");
+	String strategyRef = getSetting( "__STRATEGY_REF__");
+	
+	
+	boolean parallelProcessing = getBoolSetting( "__PARELLEL_PROCESS__");
+	boolean useExecutorService = parallelProcessing && getBoolSetting( "__USE_EXECUTOR_SERVICE__");
+	String executorService = getSetting( "__EXECUTOR_SERVICE__");
+	
+	
+	boolean stopOnException = getBoolSetting( "__STOP_ON_EXCEPTION__");
+	boolean  ignoreInvalid = getBoolSetting( "__IGNORE_INVALID__");
+	boolean streaming = getBoolSetting( "__STREAMING__");
+	String timeout = getSetting( "__TIMEOUT__");
+	boolean useTimeout = ((timeout!=null)&&(timeout.equals("\\s*\\d+\\s*")));
+	
+	boolean useOnPrepareProcessor = getBoolSetting("__USE_ON_PREPARE_PROCESSOR__");
+	String onPrepareProcessor = getSetting("__ON_PREPARE_PROCESSOR__");
+	
+	boolean shareUnitOfWork = getBoolSetting( "__SHARE_UNIT_OF_WORK__");
+	
+	
+	
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+			.recipientList(<%	if(useSpecifyDelimiter){%><%=delimiter%><%}		%>).
+<%	
+			//will return ExpressionClause instance, then wait for fill  expression
+			if(!"none".equals(language)){
+				%><%=language%>(<%
+			}
+			//then wait for fill expression
+				%><%=expression%><%
+			if("xpath".equals(language)){
+				if(useResultClassType){%>,<%=resultClassType%><%	}
+				if(useNamespaces){%>,<%=cid%>NSMap<%					}
+			}
+			if(!"none".equals(language)){
+				%>)<%//close expression bracket
+			}
+			//then append suffix settings.
+			if(useStrategy){%>.aggregationStrategyRef(<%=strategyRef%>)				<%}
+			if(parallelProcessing){%>.parallelProcessing()							<%}
+			if(useExecutorService){%>.executorService(<%=executorService%>)			<%}
+			if(stopOnException){%>.stopOnException()								<%}
+			if(ignoreInvalid){%>.ignoreInvalidEndpoints()							<%}
+			if(streaming){%>.streaming()											<%}
+			if(useTimeout){%>.timeout( <%=timeout%> )								<%}
+			if(useOnPrepareProcessor){%>.onPrepareRef(<%=onPrepareProcessor%>)		<%}
+			if(shareUnitOfWork){%>.shareUnitOfWork()								<%}
+			
+		
+	}//finish all suffix settings.
+%>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.talend.core.repositoryContextualsActions">
+      <Action
+            class="org.talend.designer.camel.dependencies.ui.actions.EditDependenciesContextualAction"
+            id="org.talend.designer.camel.dependencies.ui.EditDependencies"
+            isEditAction="false"
+            isPropertiesAction="false"
+            isReadAction="false"
+            level="11"
+            name="%EditDependencies">
+      </Action>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.talend.designer.camel.dependencies.ui.editor.RouterDependenciesEditor"
+            default="false"
+            extensions="osgi-dependencies"
+            icon="icons/dependencies.gif"
+            id="org.talend.designer.camel.dependencies.ui.dependenciesEditor"
+            name="Dependencies Editor">
+      </editor>
+   </extension>
+
+</plugin>
