@@ -1,0 +1,96 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cIdempotentConsumer</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch06.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cDynamicRouter.html" title="cDynamicRouter"><link rel="next" href="cLoadBalancer.html" title="cLoadBalancer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cIdempotentConsumer"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cIdempotentConsumer"></a>cIdempotentConsumer</h2></div></div></div><div class="mediaobject"><img src="../images/cIdempotentConsumer_icon32_white.png"></div><div class="section" title="cIdempotentConsumer properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8217"></a>cIdempotentConsumer properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Component
+								Family</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Routing</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Function</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIdempotentConsumer</strong></span> deduplicates messages and
+								thereby prevents the receiving message endpoint from receiving
+								duplicate messages. </p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Purpose</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIdempotentConsumer</strong></span> identifies messages that have
+								already been sent to the receiver and eliminates them. Messages are
+								still sent by the sender but are ignored by the receiver at the
+								delivery stage.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Repository Type</em></span></p>
+						</td><td valign="top"><p>Message identifiers need to be stored in a
+								repository. For new incoming messages, identifiers are checked
+								against the ones stored in the repository to identify and drop
+								duplicates. There are two ways to store them:</p><p>
+								<span class="bold"><strong>Memory</strong></span>: messages identifiers are
+								stored temporarily.</p>
+							<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Warning]" src="../images/warning.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p><span class="emphasis"><em>The in-memory storage mode can easily run out of
+										memory and does not work in a clustered
+										environment.</em></span></p></td></tr></table></div>
+							<p><span class="bold"><strong>File</strong></span>: messages identifiers are
+								stored in a file. Specify the path to this file in the <span class="bold"><strong>File store</strong></span> field. </p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>File store</em></span></p>
+						</td><td valign="top"><p>Specify the path and name of the file storing
+								messages identifiers.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Cache Size</em></span></p>
+						</td><td valign="top"><p>Type in the size of the cache, namely the number of message identifiers to store.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Use language</em></span></p>
+						</td><td valign="top"><p>Select this check box if you want to specify the
+								language used in the <span class="bold"><strong>Predicate</strong></span>
+								field to specify the identifier of the messages.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Expression</em></span></p>
+						</td><td valign="top"><p>Type in the expression to use to specify the
+								identifier of the messages.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top"><span class="italic">Eager</span></td><td valign="top"><p>Select this check box to detect duplicate messages
+								even when messages are currently in progress; clear it to detect
+								duplicates only when messages have successfully been
+								processed.</p>
+							<p>By default, this check box is selected.</p></td></tr><tr><td>&nbsp;</td><td valign="top"><span class="italic">SkipDuplicate</span></td><td valign="top"><p>Select this check box to drop duplicates; clear it to ignore duplicates so that all messages
+								will be continued.</p>
+							<p>By default, this check box is selected.</p></td></tr><tr><td valign="top"><p><span class="bold"><strong>Usage</strong></span></p>
+						</td><td colspan="2" valign="top"><p><span class="bold"><strong>cIdempotentConsumer</strong></span> is used as a middle component in
+								a Route.</p>
+						</td></tr><tr><td valign="top"><span class="bold"><strong>Connections</strong></span></td><td valign="top"><span class="italic">idemp</span></td><td valign="top">The <span class="bold"><strong>idemp</strong></span> link
+							retrieves messages deduplicated by the <span class="bold"><strong>cIdempotentConsumer</strong></span> component.</td></tr><tr><td valign="top">&nbsp;</td><td valign="top"><span class="italic">Route</span></td><td valign="top">As an optional link, the <span class="bold"><strong>Route</strong></span> link retrieves all messages from the message
+							sender.</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Deduplicating messages while routing them"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8421"></a>Scenario: Deduplicating messages while routing them</h3></div></div></div><p>In this scenario, duplicated messages are filtered and only the unique one is routed to the
+			destination.</p><p>Three XML files that have the same content, as shown below, are used in this use
+			case.</p><pre class="programlisting">&lt;people&gt;
+	&lt;person id="8"&gt;
+		&lt;firstName&gt;Ellen&lt;/firstName&gt;
+		&lt;lastName&gt;Ripley&lt;/lastName&gt;
+		&lt;city&gt;Washington&lt;/city&gt;
+	&lt;/person&gt;
+&lt;/people&gt;</pre><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8431"></a>Dropping and linking the components</h4></div></div></div><p>This use case requires one <span class="bold"><strong>cFile</strong></span> component, one
+					<span class="bold"><strong>cIdempotentComsumer</strong></span> component, and two
+					<span class="bold"><strong>cProcessor</strong></span> components.</p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer1.png"></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="bold"><strong>Palette</strong></span>, expand the <span class="bold"><strong>Messaging</strong></span> folder, select the <span class="bold"><strong>cFile</strong></span> component, and drop it onto the design
+						workspace as the message source component.</p></li><li class="step" title="Step 2"><p>Expand the <span class="bold"><strong>Routing</strong></span> folder, select the
+							<span class="bold"><strong>cIdempotentComsumer</strong></span> component and drop
+						it onto the design workspace as the message deduplicator.</p></li><li class="step" title="Step 3"><p>Expand the <span class="bold"><strong>Processor</strong></span> folder, drop two
+							<span class="bold"><strong>cProcessor</strong></span> components onto the design
+						workspace, one as the consumer for deduplicated messages and another for all
+						messages.</p></li><li class="step" title="Step 4"><p>Right-click the <span class="bold"><strong>cFile</strong></span> component, select
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the contextual menu and click the <span class="bold"><strong>cIdempotentComsumer</strong></span> component.</p></li><li class="step" title="Step 5"><p>Right-click the <span class="bold"><strong>cIdempotentComsumer</strong></span>
+						component, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>idemp</strong></span> from the contextual menu and click the
+							<span class="bold"><strong>cProcessor</strong></span> component on the top.</p></li><li class="step" title="Step 6"><p>Connect the <span class="bold"><strong>cIdempotentComsumer</strong></span> component
+						to the other <span class="bold"><strong>cProcessor</strong></span> component using a
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection. This optional connection will retrieve all
+						the messages coming from the source.</p></li><li class="step" title="Step 7"><p>Label the components to better identify their roles in the Route.</p></li></ol></div></div><div class="section" title="Configuring the components and connections"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8527"></a>Configuring the components and connections</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component, which
+						is labelled <span class="italic">Source</span>, to display its
+							<span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, specify the file path to the message source. </p><p>From the <span class="bold"><strong>Encoding</strong></span> list, select the encoding type of your source files, and leave all the other parameters as they are.</p></li><li class="step" title="Step 3"><p>Double-click the <span class="bold"><strong>cIdempotentComsumer</strong></span>
+						component, which is labelled <span class="italic">Deduplicator</span>, to display its <span class="bold"><strong>Basic
+							settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer3.png"></div></li><li class="step" title="Step 4"><p>From the <span class="bold"><strong>Repository Type</strong></span> list, select between <span class="bold"><strong>Memory</strong></span> and <span class="bold"><strong>File</strong></span> to specify where the message identifiers will be stored before the deduplication process. For this scenario, select <span class="bold"><strong>File</strong></span>.</p><p>In the <span class="bold"><strong>File store</strong></span> field, specify the location of the file storing message identifiers.</p><p>In the <span class="bold"><strong>Expression</strong></span> field, enter an expression to filter the messages. In this scenario, enter the following expression to filter the messages according to the <span class="emphasis"><em>person</em></span> node of the XML files: <code class="code">xpath("/people/person")</code>, and leave all the other parameters as they are. Alternatively, you can select the <span class="bold"><strong>Use language</strong></span> check box, select <span class="bold"><strong>XPath</strong></span> from the <span class="bold"><strong>Language</strong></span> list, and enter <code class="code">"/people/person"</code> in the <span class="bold"><strong>Predicate</strong></span> field.</p></li><li class="step" title="Step 5"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component
+						labelled <span class="italic">Unique</span> to display its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer4.png"></div></li><li class="step" title="Step 6"><p>In the <span class="bold"><strong>Code</strong></span> area, customize the code to
+						display the file name of the message that passes the deduplication:</p><pre class="programlisting">System.out.println("Message consumed on Unique: "+
+exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="Step 7"><p>Repeat these steps to configure the other <span class="bold"><strong>cProcessor</strong></span> component, which is labelled <span class="italic">All</span>, to display the file names of all the
+						messages coming from the source: </p><pre class="programlisting">System.out.println("Message consumed on All: "+
+exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="Step 8"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e8667"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to view the generated code.</p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer5.png"></div><p>In this partially shown piece of code, messages <code class="code">from</code> the <code class="code">Source</code>
+						are filtered according to the expression
+							<code class="code">xpath("/people/person")</code> and deduplicated by
+							<code class="code">cIdempotentConsumer_1</code>.</p></li><li class="step" title="Step 2"><p>Click the <span class="bold"><strong>Run</strong></span> view to display it and
+						click the <span class="bold"><strong>Run</strong></span> button to launch the
+						execution of your Route. You can also press <span class="bold"><strong>F6</strong></span> to execute it. </p><p>RESULT: When several files have the same content, only the first one is
+						routed to the receiving endpoint. </p><div class="mediaobject"><img src="../images/use_case_cidempotentconsumer6.png"></div></li></ol></div></div></div></div></body></html>

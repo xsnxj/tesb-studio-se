@@ -1,0 +1,88 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		java.util.List
+		java.util.Map
+		java.util.HashMap
+	"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode) codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	cid = cid.replaceAll("_Loop", "");
+
+	if (node.getProcess().getNodesOfType("tRESTRequestLoop").size() > 1) {
+	%>
+		if (true) {
+			throw new RuntimeException("cannot instantiate REST service: job contains more than one tRESTRequest component");
+		}
+	<%
+	}
+
+	List<? extends IConnection> conns = node.getProcess().getNodesOfType("tRESTRequestIn").get(0).getOutgoingSortedConnections();
+	boolean hasOutputConnection = false;
+	if (null != conns && !conns.isEmpty()) {
+		for (int i = 0; i < conns.size(); i++) {
+			IConnection connTemp = conns.get(i);
+			if (connTemp.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+				hasOutputConnection = true; %>
+					<%=connTemp.getName() %> = null;
+			<%
+			}
+		}
+	}
+	if (!hasOutputConnection) {
+	%>
+		if (true) {
+			throw new RuntimeException("cannot instantiate REST service: tRESTRequest component has no any output connections");
+		}
+	<%
+	}
+	%>
+
+	//*** external processor(s) initialization
+
+	// ESBProviderCallbackTalendJobInner providerCallback_<%=cid%>;
+	ESBProviderCallback providerCallback_<%=cid%>;
+	HandlerThread_<%=cid%> handlerThread_<%=cid%> = null;
+	//if (null == this.callback) {
+	final QueuedMessageHandlerImpl<java.util.Map<String, Object>> handler_<%=cid%> =
+		new QueuedMessageHandlerImpl<java.util.Map<String, Object>>();
+	handlerThread_<%=cid%> =
+		new HandlerThread_<%=cid%>(handler_<%=cid%>); //
+	handlerThread_<%=cid%>.start();
+	// providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(handler_<%=cid%>);
+	providerCallback_<%=cid%> = handler_<%=cid%>;
+	//	} else {
+	//		// providerCallback_<%=cid%> = new ESBProviderCallbackTalendJobWrapper_<%=cid%>(this.callback);
+	//		providerCallback_<%=cid%> = this.callback;
+	//	}
+	globalMap.put("esbHandler", providerCallback_<%=cid%>);
+
+	//*** external processor(s) initialization finish
+
+	int nb_line_<%=cid%> = 0;
+
+	try {
+		// This is a beginning of the REST provider request component cycle
+		globalMap.put("restRequestReceivedAndResponseSentBack", true);
+		while(true) {
+			try {
+				ESBProviderCallback esbHandler_<%=cid%> =
+					(ESBProviderCallback) globalMap.get("esbHandler");
+
+				if (!(Boolean) globalMap.get("restRequestReceivedAndResponseSentBack")) {
+					esbHandler_<%=cid%>.sendResponse(new java.util.HashMap<String, Object>());
+					globalMap.put("restRequestReceivedAndResponseSentBack", true);
+				}
+
+				java.util.Map<String, Object> requestMessage_<%=cid%> =
+					(java.util.Map<String, Object>) esbHandler_<%=cid%>.getRequest();
+
+				globalMap.put("restRequestReceivedAndResponseSentBack", false);

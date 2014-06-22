@@ -1,0 +1,97 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cPipesAndFilters</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch03.html" title="Chapter&nbsp;3.&nbsp;Messaging components"><link rel="prev" href="cMessagingEndpoint.html" title="cMessagingEndpoint"><link rel="next" href="cTalendJob.html" title="cTalendJob"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cPipesAndFilters"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cPipesAndFilters"></a>cPipesAndFilters</h2></div></div></div><div class="mediaobject"><img src="../images/cPipesAndFilters_icon32.png"></div><div class="section" title="cPipesAndFilters properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4608"></a>cPipesAndFilters properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>The <span class="bold"><strong>cPipesAndFilters</strong></span> component
+								divides message processing into a sequence of independent endpoint
+								instances, which can then be chained together. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>This component allows you to split message routing into a series
+								of independent processing stages. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>URI list</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Click the plus button to add new lines for URIs that identify
+								endpoints.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cPipesAndFilters</strong></span> is usually used
+								in the middle of a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Using cPipesAndFilters to process the task in sequence"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4714"></a>Scenario: Using cPipesAndFilters to process the task in sequence</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cPipesAndFilters</strong></span> component is
+			used so that messages sent from the sender endpoint undergo stage A and stage B. Upon
+			completion of both stages, the messages are routed to a file system, which is the
+			receiver endpoint for the messages.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters1.png"></div><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4725"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>From the <span class="bold"><strong>Messaging</strong></span> folder of the
+							<span class="bold"><strong>Palette</strong></span>, drop two <span class="bold"><strong>cFile</strong></span> components onto the design workspace, one as the
+						message sender and the other as the message receiver, and label them
+							<span class="italic">Sender</span> and <span class="italic">Receiver</span> respectively to better identify their roles in the
+						Route.</p></li><li class="step" title="Step 2"><p>From the <span class="bold"><strong>Messaging</strong></span> folder, drop one <span class="bold"><strong>cPipesAndFilters</strong></span> component onto the design
+						workspace, between the two <span class="bold"><strong>cFile</strong></span>
+						components.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Messaging</strong></span> folder, drop two
+							<span class="bold"><strong>cMessagingEndpoint</strong></span> components onto the
+						design workspace, one as the endpoint of stage A and the other as the
+						endpoint of stage B, and label them <span class="italic">Stage_A</span> and <span class="italic">Stage_B</span>
+						respectively to better identify their roles in the Route.</p></li><li class="step" title="Step 4"><p>From the <span class="bold"><strong>Processor</strong></span> folder, drop three
+							<span class="bold"><strong>cProcessor</strong></span> components onto the design
+						workspace to monitor messages received on the receiver, stage A and stage B
+						endpoints respectively, and label them <span class="italic">Monitor_Receiver</span>, <span class="italic">Monitor_stage_A</span>, and <span class="italic">Monitor_stage_B</span> respectively to better identify their roles
+						in the Route.</p></li><li class="step" title="Step 5"><p>Right-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Sender</span>, select <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> from the
+						contextual menu, and click the <span class="bold"><strong>cPipesAndFilters</strong></span> component.</p><p>Repeat this step to set up the rest <span class="bold"><strong>Row</strong></span> &gt;
+							<span class="bold"><strong>Route</strong></span> connections, as shown
+						above.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4818"></a>Configuring the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component labeled
+							<span class="italic">Sender</span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters2.png"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, fill in or browse to
+						the path to the folder that holds the source files.</p></li><li class="step" title="Step 3"><p>From the <span class="bold"><strong>Encoding</strong></span> list, select the
+						encoding type of your source files. Leave the other parameters as they
+						are.</p></li><li class="step" title="Step 4"><p>Repeat these steps to define the path to the output files and the output encoding type in
+						the <span class="bold"><strong>Basic settings</strong></span> view of the <span class="bold"><strong>cFile</strong></span> component labeled <span class="italic">Receiver</span>. </p></li><li class="step" title="Step 5"><p>Double-click the <span class="bold"><strong>cPipesAndFilters</strong></span>
+						component to open its <span class="bold"><strong>Basic settings</strong></span> view
+						in the <span class="bold"><strong>Component</strong></span> tab.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters4.png"></div></li><li class="step" title="Step 6"><p>Click the plus button to add two lines to the <span class="bold"><strong>URI list</strong></span>
+						table, and fill the first line with <code class="code">"direct:a"</code> and the second
+						line with <code class="code">"direct:b"</code> to define the URIs of stage A and stage B
+						that the messages will undergo.</p></li><li class="step" title="Step 7"><p>Double-click the <span class="bold"><strong>cMessagingEndpoint</strong></span> component labeled
+							<span class="italic">Stage_A</span> to configure the component in
+						its <span class="bold"><strong>Basic settings</strong></span> view and define the URI
+						of stage A.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters6.png"></div><p>Repeat this step to define the URI of stage B in the <span class="bold"><strong>Basic
+							settings</strong></span> view of the <span class="bold"><strong>cMessagingEndpoint</strong></span> component labeled <span class="italic">Stage_B</span>.</p></li><li class="step" title="Step 8"><p>Double-click the <span class="bold"><strong>cProcessor</strong></span> component
+						labeled <span class="italic">Monitor_Receiver</span> to open its
+							<span class="bold"><strong>Basic settings</strong></span> view, and customize the
+						code in the <span class="bold"><strong>Code</strong></span> area to display the file
+						names of the messages received on Receiver, as follows:</p><pre class="programlisting">System.out.println("Message sent to Receiver: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><p>Repeat this step to customize the code in the other two <span class="bold"><strong>cProcessor</strong></span> components to display the file names
+						of the messages received on stage A and stage B respectively:</p><pre class="programlisting">System.out.println("Message sent to stage A: "+
+exchange.getIn().getHeader("CamelFileName"));</pre><pre class="programlisting">System.out.println("Message sent to stage B: "+
+exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="Step 9"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4949"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p> Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the
+						design workspace to have a look at the generated code.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters10.png"></div><p>As shown in the code, messages sent <code class="code">from</code>
+						<code class="code">Sender</code> are redirected to endpoints identified by
+							<code class="code">direct:a</code> and <code class="code">direct:b</code> by
+							<code class="code">cPipesAndFilters_1</code> before being routed to
+							<code class="code">Receiver</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="bold"><strong>F6</strong></span> to run your Route.</p><p>RESULT: The message delivery goes through <span class="italic">stage A</span> and
+						then <span class="italic">stage B</span> before reaching <span class="italic">Receiver</span>.</p><div class="mediaobject"><img src="../images/use_case_cpipesandfilters11.png"></div></li></ol></div></div></div></div></body></html>
