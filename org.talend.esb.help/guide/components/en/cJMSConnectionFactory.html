@@ -1,0 +1,108 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cJMSConnectionFactory</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch01.html" title="Chapter&nbsp;1.&nbsp;Context components"><link rel="prev" href="cConfig.html" title="cConfig"><link rel="next" href="ch02.html" title="Chapter&nbsp;2.&nbsp;Exception components"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cJMSConnectionFactory"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cJMSConnectionFactory"></a>cJMSConnectionFactory </h2></div></div></div><div class="mediaobject"><img src="../images/cjmsconnectionfactory_icon32_white.png"></div><div class="section" title="cJMSConnectionFactory properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e610"></a>cJMSConnectionFactory properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Context</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cJMSConnectionFactory</strong></span> specifies the connection factory that can be used by multiple <span class="bold"><strong>cJMS</strong></span> components in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cJMSConnectionFactory</strong></span> is used to specify the JMS connection factory for message handling.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top"><span class="italic">MQ Server</span>
+						</td><td valign="top"><p>Select an MQ server from <span class="bold"><strong>ActiveMQ</strong></span>, <span class="bold"><strong>Customized</strong></span>,
+							or <span class="bold"><strong>WebSphere MQ</strong></span>.</p></td></tr><tr><td>&nbsp;</td><td valign="top"><p><span class="italic">Use Transaction</span></p>
+						</td><td valign="top"><p>Select this check box to enable local transaction in the current Route.</p></td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Broker URI</span>
+							</p>
+							<p>(for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">
+							<p>Type in the URI of the message broker. For intra-Route message handling, you can simply use the default URI <span class="italic">vm://localhost?broker.persistent=false</span>.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Use PooledConnectionFactory</span>
+							</p>
+							<p> (for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Select this check box to use PooledConnectionFactory.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Max Connections</span>
+							</p>
+							<p>(for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum number of connections of the PooledConnectionFactory. This field is available only when the <span class="bold"><strong>Use PooledConnectionFactory</strong></span>  check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Max Active</span>
+							</p>
+							<p>(for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum number of sessions per connection. This field is
+							available only when the <span class="bold"><strong>Use
+								PooledConnectionFactory</strong></span> check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Idle Timeout</span>
+							</p>
+							<p>(for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the maximum waiting time before the connection breaks. This field is available only when the <span class="bold"><strong>Use PooledConnectionFactory</strong></span>  check box is selected.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Expiry Timeout</span>
+							</p>
+							<p>(for <span class="bold"><strong>ActiveMQ</strong></span> only)</p>
+						</td><td valign="top">Specify the time before the connection breaks since it is used for the first time. This field is available only when the <span class="bold"><strong>Use PooledConnectionFactory</strong></span> check box is selected.</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p><span class="emphasis"><em>Codes</em></span>
+							</p>
+							<p>(for <span class="bold"><strong>Customized</strong></span> only)</p>
+						</td><td valign="top">
+							<p>Write a piece of code to specify the JMS connection factory to be used for message handling. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Dependencies</span>
+							</p>
+							<p>(for <span class="bold"><strong>Customized</strong></span> only)</p>
+						</td><td valign="top">Specify the library or libraries required by the JMS connection factory.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Host Name</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the name or IP address of the host on which the
+							IBM WebSphere MQ server is running.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Port</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the port of the IBM WebSphere MQ server, <span class="bold"><strong>1414</strong></span> by default.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Transport Type</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Select a type of message transport between the IBM WebSphere MQ server and the WebSphere MQ broker from <span class="bold"><strong>Bindings</strong></span>, <span class="bold"><strong>Bindings then Client</strong></span>, and <span class="bold"><strong>Client</strong></span>.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Queue Manager</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">Type in the name of the queue manager, or specify the
+							name of the IBM WebSphere MQ server to find a queue manager.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Authentication</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span> only)</p>
+						</td><td valign="top">On some operating systems, select this check box and
+							provide the username and password for the IBM WebSphere MQ server to
+							validate the access permission. This option is not required on
+							Windows.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p><span class="italic">Dependencies</span>
+							</p>
+							<p>(for <span class="bold"><strong>WebSphere MQ</strong></span>)</p>
+						</td><td valign="top">Specify additional libraries required by the IBM
+							WebSphere MQ broker, which are normally provided with the server
+							installer.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cJMSConnectionFactory</strong></span> cannot be added directly in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Related scenario:"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1002"></a>Related scenario: </h3></div></div></div><p>For a related scenario, see <a class="xref" href="cJMS.html#nwang-20111014-camel_components-cjms_s1" title="Scenario: Sending and receiving a message from a JMS queue">the section called &#8220;Scenario: Sending and receiving a message from a JMS queue&#8221;</a>.</p></div></div></body></html>

@@ -1,0 +1,87 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cRecipientList</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch06.html" title="Chapter&nbsp;6.&nbsp;Routing components"><link rel="prev" href="cMulticast.html" title="cMulticast"><link rel="next" href="cSplitter.html" title="cSplitter"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cRecipientList"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cRecipientList"></a>cRecipientList</h2></div></div></div><p>
+		<span class="inlinemediaobject"><img src="../images/cRecipientList_icon32.png"></span>
+	</p><div class="section" title="cRecipientList properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e14510"></a>cRecipientList properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Routing</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cRecipientList</strong></span> is designed to route
+								messages to a number of dynamically specified recipients.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cRecipientList</strong></span> allows you to route
+								messages to a number of dynamically specified recipients.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Language</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select the expression language from the drop-down list.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Expression</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Type in the expression that returns multiple endpoints.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Stop On Exception</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to stop processing immediately when an exception occurred.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Ignore Invalid Endpoints</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to ignore invalid endpoints.</p>
+						</td></tr><tr><td valign="top">
+							<p> </p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Parallel Processing</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Select this check box to send the message to the recipients
+								simultaneously.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>As a middle component, <span class="bold"><strong>cRecipientList</strong></span> allows you to
+								route messages to a number of dynamically specified
+								recipients.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Routing a message to multiple recipients"><div class="titlepage"><div><div><h3 class="title"><a name="d0e14696"></a>Scenario: Routing a message to multiple recipients</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cRecipientList</strong></span> component is used to
+			route a message to a list of recipients.</p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_1.png" align="middle"></div><p>To build the Route, do the following. </p><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14709"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Drag and drop the components from the <span class="bold"><strong>Palette</strong></span> onto the workspace: <span class="bold"><strong>cFile</strong></span>, <span class="bold"><strong>cSetHeader</strong></span>, <span class="bold"><strong>cRecipientList</strong></span>, two <span class="bold"><strong>cMessagingEndpoint</strong></span> and two <span class="bold"><strong>cProcessor</strong></span>. Change the label of the <span class="bold"><strong>cFile</strong></span> component to <span class="bold"><strong>Read_Input</strong></span>. Change the labels of the two <span class="bold"><strong>cMessagingEndpoint</strong></span> components to <span class="bold"><strong>Recipient_A</strong></span> and <span class="bold"><strong>Recipient_B</strong></span>. Change the labels of the two <span class="bold"><strong>cProcessor</strong></span> components to <span class="bold"><strong>Print_File_Name_A</strong></span> and <span class="bold"><strong>Print_File_Name_B</strong></span>.</p></li><li class="step" title="Step 2"><p>Link <span class="bold"><strong>Read_Input</strong></span> to <span class="bold"><strong>cSetHeader</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="step" title="Step 3"><p>Link <span class="bold"><strong>cSetHeader</strong></span> to <span class="bold"><strong>cRecipientList</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="step" title="Step 4"><p>Link <span class="bold"><strong>Recipient_A</strong></span> to <span class="bold"><strong>Print_File_Name_A</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="step" title="Step 5"><p>Link <span class="bold"><strong>Recipient_B</strong></span> to <span class="bold"><strong>Print_File_Name_B</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> connection.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14818"></a>Configuring the components</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click <span class="bold"><strong>cFile</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_2.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, type in the path to the source message, for example, <span class="italic">"E:/data/input"</span>. Keep other default settings unchanged.</p></li><li class="step" title="Step 3"><p>Double-click <span class="bold"><strong>cSetHeader</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_3.png" align="middle"></div></li><li class="step" title="Step 4"><p>In the <span class="bold"><strong>Header</strong></span> field, enter the header name, for example, <span class="italic">"ListOfRecipients"</span>. </p><p>In the <span class="bold"><strong>Language</strong></span> list, select <span class="italic">Constant</span>. </p><p>In the <span class="bold"><strong>Expression</strong></span> field, enter the endpoint URIs, for example, <span class="italic">"direct:a,direct:b"</span>. </p></li><li class="step" title="Step 5"><p>Double-click <span class="bold"><strong>cRecipientList</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_4.png" align="middle"></div></li><li class="step" title="Step 6"><p>In the <span class="bold"><strong>Language</strong></span> list, select <span class="bold"><strong>Header</strong></span>. </p><p>In the <span class="bold"><strong>Expression</strong></span> field, enter the name of the header that contains the recipients list, that is, <span class="italic">"ListOfRecipients"</span>. </p></li><li class="step" title="Step 7"><p>Double-click <span class="bold"><strong>Recipient_A</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab and define the URI of recipient A.</p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_5.png" align="middle"></div><p>Perform the same operation to <span class="bold"><strong>Recipient_B</strong></span> to define the URI of recipient B.</p></li><li class="step" title="Step 8"><p>Double-click <span class="bold"><strong>Print_File_Name_A</strong></span> to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab and enter the code below to print out the message received by <span class="bold"><strong>Recipient_A</strong></span>.</p><pre class="programlisting">System.out.println("Recipient_a just downloaded:"+exchange.getIn().getHeader("CamelFileName"));</pre><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_6.png" align="middle"></div><p>Perform the same operation to <span class="bold"><strong>Print_File_Name_B</strong></span> and type in the code below in its code box: </p><p>
+						</p><pre class="programlisting">System.out.println("Recipient_b just downloaded:"+exchange.getIn().getHeader("CamelFileName"));</pre><p>
+					</p></li><li class="step" title="Step 9"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e14974"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace to check the generated code.</p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_7.png" align="middle"></div><p>As shown above, the route gets the message from <code class="code">Read_Input</code>, and <code class="code">.setHeader("ListOfRecipients")</code> recipients using <code class="code">.constant("direct:a,direct:b")</code>. Then, <code class="code">cRecipientList_1</code> reads <code class="code">.header("ListOfRecipients")</code> and routes the message to the recipients included in it. </p></li><li class="step" title="Step 2"><p>Press <span class="bold"><strong>F6</strong></span> to execute the Route.</p><p>The message is sent to recipients included in the header.</p><div class="mediaobject" align="center"><img src="../images/use_case_crecipientlist_8.png" align="middle"></div></li></ol></div></div></div></div></body></html>

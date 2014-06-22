@@ -1,0 +1,128 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cOnException</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch02.html" title="Chapitre&nbsp;2.&nbsp;Composants Exception"><link rel="prev" href="cIntercept.html" title="cIntercept"><link rel="next" href="cTry.html" title="cTry"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cOnException"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cOnException"></a>cOnException</h2></div></div></div><div class="mediaobject"><img src="../images/cOnException_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cOnException"><div class="titlepage"><div><div><h3 class="title"><a name="d0e1903"></a>Propri&eacute;t&eacute;s du cOnException</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cOnException</strong></span> capture les exceptions
+								d&eacute;finies afin de d&eacute;clencher les actions souhait&eacute;es.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cOnException</strong></span> est con&ccedil;u pour capturer les exceptions
+								d&eacute;finies pour g&eacute;rer les erreurs souhait&eacute;es. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exceptions</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter autant de
+								lignes que n&eacute;cessaire dans la table pour d&eacute;finir les exceptions &agrave;
+								capturer.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Set a redelivering tries count</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour saisir le nombre maximal de tentatives de livraison dans le
+								champ <span class="bold"><strong>Maximum redelivering tries</strong></span>. </p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Non blocking asynchronous behavior</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour ne pas bloquer le comportement asynchrone.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Exception behavior</em></span>
+							</p>
+						</td><td valign="top">
+							<p><span class="bold"><strong>None</strong></span> : s&eacute;lectionnez cette option pour n'effectuer
+								aucune action sur la route originale.</p>
+							<p><span class="bold"><strong>Handle the exceptions</strong></span> : s&eacute;lectionnez cette option pour
+								g&eacute;rer les exceptions et rompre la boucle de traitement en cours afin
+								de g&eacute;rer l'exception s&eacute;par&eacute;ment.</p>
+							<p><span class="bold"><strong>Ignore the exceptions</strong></span> : s&eacute;lectionnez cette option pour
+								ignorer les exceptions et continuer le routage de la route
+								originale. </p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Route the original input body instead of the current
+									body</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cochez cette case pour router le message original au lieu du message courant, qui peut
+								&ecirc;tre chang&eacute; durant le routage.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cOnException</strong></span> est g&eacute;n&eacute;ralement utilis&eacute; comme un
+								composant standalone dans une sous-route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Utiliser le composant cOnException pour ignorer les exceptions et continuer le routage des messages"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2091"></a>Sc&eacute;nario : Utiliser le composant cOnException pour ignorer les exceptions et continuer le
+			routage des messages</h3></div></div></div><p>Dans ce sc&eacute;nario, un composant <span class="bold"><strong>cOnException</strong></span> est utilis&eacute;
+			pour ignorer une exception IO retourn&eacute;e par un bean Java afin que le message soit rout&eacute;
+			avec succ&egrave;s vers sa destination, malgr&eacute; l'exception.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_1.png" align="middle"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2102"></a>D&eacute;poser et relier les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Glissez-d&eacute;posez ces composants de la <span class="bold"><strong>Palette</strong></span> dans
+						l'espace de mod&eacute;lisation graphique : un <span class="bold"><strong>cOnException</strong></span>, un <span class="bold"><strong>cFile</strong></span>, un
+							<span class="bold"><strong>cBean</strong></span>et un <span class="bold"><strong>cProcessor</strong></span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez le <span class="bold"><strong>cFile</strong></span> au <span class="bold"><strong>cBean</strong></span> &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 3"><p>Reliez le <span class="bold"><strong>cBean</strong></span> au <span class="bold"><strong>cProcessor</strong></span> &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Renommez les composants comme vous le souhaitez pour mieux identifier leur r&ocirc;le dans la
+						Route.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2157"></a>Configurer les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="bold"><strong>cOnException</strong></span> nomm&eacute;
+							<span class="italic">Ignore_exception</span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_2.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter une ligne dans la
+						table <span class="bold"><strong>Exceptions</strong></span> et configurer l'exception
+						&agrave; capturer. Dans cet exemple, saisissez <code class="code">java.io.IOException</code>
+						pour g&eacute;rer les exceptions IO.</p><p>Dans la zone <span class="bold"><strong>Exception behavior</strong></span>,
+						s&eacute;lectionnez l'option <span class="bold"><strong>Ignore the exceptions</strong></span>
+						pour ignorer les exceptions et laisser continuer le routage du message.
+						Laissez les autres param&egrave;tres tels qu'ils sont.</p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant <span class="bold"><strong>cFile</strong></span> nomm&eacute; <span class="italic">Source</span>, pour ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_3.png" align="middle"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>Path</strong></span>, saisissez le chemin d'acc&egrave;s &agrave; la
+						source du message et laissez les autres param&egrave;tres tels qu'ils sont. </p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le composant <span class="bold"><strong>cBean</strong></span> nomm&eacute; <span class="italic">Throw_exception</span> pour ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span>.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans le champ <span class="bold"><strong>Bean class</strong></span>, saisissez le nom du bean pour
+						retourner une exception IO exception, <span class="italic">beans.throwIOException.class</span> dans ce sc&eacute;nario.</p><p>Notez que ce bean a d&eacute;j&agrave; &eacute;t&eacute; configur&eacute; dans le n&#339;ud <span class="bold"><strong>Code</strong></span>
+						de la vue <span class="bold"><strong>Repository</strong></span> et ressemble &agrave; ceci
+						:</p><pre class="programlisting">package beans;
+
+import java.io.IOException;
+
+import org.apache.camel.Exchange;
+
+
+public class throwIOException {
+
+    /**
+
+     * @throws IOException 
+     */
+    public static void helloExample(String message, Exchange exchange) throws IOException {
+        throw new IOException("An IOException has been caught");
+    }
+}</pre><p>Pour plus d'informations concernant la cr&eacute;ation et l'utilisation des Beans Java,
+                        consultez le <span class="emphasis"><em>Guide Utilisateur de Talend Open Studio for ESB</em></span>.</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le composant <span class="bold"><strong>cProcessor</strong></span> nomm&eacute;
+							<span class="italic">Monitor</span> pouur ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_5.png" align="middle"></div></li><li class="step" title="&Eacute;tape 8"><p>Dans la zone <span class="bold"><strong>Code</strong></span>, personnalisez le code pour afficher
+						le nom du fichier du message consomm&eacute; dans la console de la vue <span class="bold"><strong>Run</strong></span> :</p><pre class="programlisting">System.out.println("Message consumed: "+ 
+exchange.getIn().getHeader("CamelFileName")); </pre></li><li class="step" title="&Eacute;tape 9"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegardez votre Route.</p></li></ol></div></div><div class="section" title="Visualiser du code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2290"></a>Visualiser du code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_6.png" align="middle"></div><p>Comme affich&eacute; ci-dessus, <code class="code">Ignore_exception</code> g&egrave;re toute exception IO retourn&eacute;e
+						par <code class="code">.bean(beans.throwIOException.class)</code> invoqu&eacute; par le
+							<code class="code">cBean_1</code>, afin que les messages de l'(<code class="code">from</code>)
+						endpoint <code class="code">Source</code> puissent &ecirc;tre rout&eacute;s avec succ&egrave;s
+							(<code class="code">continued(true)</code>) malgr&eacute; l'exception. </p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="bold"><strong>F6</strong></span> pour ex&eacute;cuter la Route.</p><p>La route est ex&eacute;cut&eacute;e avec succ&egrave;s et les fichiers de la source sont bien rout&eacute;s vers leur
+						destination.</p><div class="mediaobject" align="center"><img src="../images/use_case_conexception_7.png" align="middle"></div></li><li class="step" title="&Eacute;tape 3"><p>Modifiez l'option de gestion des exception dans le composant <span class="bold"><strong>cOnException</strong></span> ou d&eacute;sactivez le composant et ex&eacute;cutez la Route
+						&agrave; nouveau.</p><p>L'exception retourn&eacute;e par le bean Java emp&ecirc;che les messages d'&ecirc;tre correctement
+						rout&eacute;s.</p></li></ol></div></div></div></div></body></html>

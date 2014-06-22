@@ -1,0 +1,76 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cLog</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch04.html" title="Chapter&nbsp;4.&nbsp;Miscellaneous components"><link rel="prev" href="ch04.html" title="Chapter&nbsp;4.&nbsp;Miscellaneous components"><link rel="next" href="cLoop.html" title="cLoop"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cLog"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cLog"></a>cLog </h2></div></div></div><div class="mediaobject"><img src="../images/clog_icon32_white.png"></div><div class="section" title="cLog properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8297"></a>cLog properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Miscellaneous</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cLog</strong></span> logs message exchanges to the underlying logging mechanism. Apache Camel provides the regular logger and the throughput logger. The default logger logs every exchange. The throughput logger logs exchanges on a group basis. By default regular logging is used. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cLog</strong></span> is used to log message exchanges.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="italic">Level</span>
+						</td><td valign="top">Select a logging level from <span class="bold"><strong>DEBUG</strong></span>, <span class="bold"><strong>ERROR</strong></span>, <span class="bold"><strong>INFO</strong></span>, <span class="bold"><strong>OFF</strong></span>, <span class="bold"><strong>TRACE</strong></span>, or <span class="bold"><strong>WARN</strong></span>.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Use default output log message</span>
+							</p>
+						</td><td valign="top">
+							<p>Select this option to use the default output log message provided by the underlying logging mechanism.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Options / None</span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">Select this option to take no action on the log message.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Options / Specifies a group size for throughput logging</span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">
+							<p>Select this option to use throughput logging and specify a group size for the throughput logging.</p>
+							<p><span class="bold"><strong>Size</strong></span>: Enter an integer that specifies a group size for throughput logging. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Options / Group message stats by time interval (in millis)</span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">
+							<p>Select this option to use throughput logging and group message statistics.</p>
+							<p><span class="bold"><strong>Interval</strong></span>: Specify the time interval (in milliseconds) by which the message statistics will be grouped. </p>
+							<p><span class="bold"><strong>Delay</strong></span>:  Set the initial delay (in milliseconds) for message statistics. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Options / Format the log output</span>
+							</p>
+							<p>(For default output log message only)</p>
+						</td><td valign="top">Select this option to format the log output. Click <span class="bold"><strong>[+]</strong></span> as many times as required to add arguments to the table. Then click the corresponding <span class="bold"><strong>value</strong></span> field and enter a value. See the site <a class="link" href="http://camel.apache.org/log.html" target="_top">http://camel.apache.org/log.html</a> for available options.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<p>
+								<span class="italic">Specify output log message</span>
+							</p>
+						</td><td valign="top">
+							<p>Select this option to specify the output log message.</p>
+							<p><span class="bold"><strong>Message</strong></span>: Use Simple language to construct a dynamic message which gets logged.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cLog</strong></span> is used as a middle or end component in a Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Related scenario:"><div class="titlepage"><div><div><h3 class="title"><a name="d0e8535"></a>Related scenario:</h3></div></div></div><p>For a related scenario, see <a class="xref" href="cMessageRouter.html#nwang-20120327-camel_components-cmessagerouter" title="Scenario: Routing messages according to a criterion">the section called &#8220;Scenario: Routing messages according to a criterion&#8221;</a>.</p></div></div></body></html>

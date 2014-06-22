@@ -1,0 +1,123 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cConvertBodyTo</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch07.html" title="Chapter&nbsp;7.&nbsp;Transformation components"><link rel="prev" href="cContentEnricher.html" title="cContentEnricher"><link rel="next" href="cSetBody.html" title="cSetBody"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="EN" class="section" title="cConvertBodyTo"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cConvertBodyTo"></a>cConvertBodyTo</h2></div></div></div><div class="mediaobject"><img src="../images/cconvertbodyto_icon32.png"></div><div class="section" title="cConvertBodyTo properties"><div class="titlepage"><div><div><h3 class="title"><a name="d0e16653"></a>cConvertBodyTo properties</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Component Family</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Transformation</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Function</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cConvertBodyTo</strong></span> converts the message
+								body to the given class type.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Purpose</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>
+								<span class="bold"><strong>cConvertBodyTo</strong></span> is used to convert
+								the message body to a given class type.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Target Class Name</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Enter the name of the class type that you want to convert the
+								message body to. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Usage</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p><span class="bold"><strong>cConvertBodyTo</strong></span> is used as a middle component in a
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Scenario: Converting the body of an XML file into an org.w3c.dom.Document.class"><div class="titlepage"><div><div><h3 class="title"><a name="components-cconvertbodyto-scenario_convert_xmlbody_to_domclass"></a>Scenario: Converting the body of an XML file into an org.w3c.dom.Document.class</h3></div></div></div><p>In this scenario, a <span class="bold"><strong>cConvertBodyTo</strong></span> component is used to
+			convert the body of an XML file into an org.w3c.dom.Document.class. Then a <span class="bold"><strong>cBean</strong></span> component imports the org.w3c.dom.Document class,
+			checks its contents and prints out the root element name and the content of each
+				<span class="bold"><strong>category</strong></span> element.</p><p>The XML file is as follows:</p><p>
+			</p><pre class="programlisting">&lt;bookstore&gt;
+    &lt;bookshelf&gt;
+        &lt;category&gt;Cooking&lt;/category&gt;
+        &lt;quantity&gt;100&lt;/quantity&gt;
+    &lt;/bookshelf&gt;
+    &lt;bookshelf&gt;
+        &lt;category&gt;Languages&lt;/category&gt;
+        &lt;quantity&gt;200&lt;/quantity&gt;
+    &lt;/bookshelf&gt;
+    &lt;bookshelf&gt;
+        &lt;category&gt;Arts&lt;/category&gt;
+        &lt;quantity&gt;300&lt;/quantity&gt;
+    &lt;/bookshelf&gt;
+    &lt;bookshelf&gt;
+        &lt;category&gt;Science&lt;/category&gt;
+        &lt;quantity&gt;400&lt;/quantity&gt;
+    &lt;/bookshelf&gt;
+&lt;/bookstore&gt;</pre><p>
+		</p><div class="section" title="Dropping and linking the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e16783"></a>Dropping and linking the components</h4></div></div></div><div class="procedure"><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_1.png" align="middle"></div><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Drag and drop the following components from the <span class="bold"><strong>Palette</strong></span>
+						onto the workspace: <span class="bold"><strong>cFile</strong></span>, <span class="bold"><strong>cConvertBodyTo</strong></span> and <span class="bold"><strong>cBean</strong></span>.</p></li><li class="step" title="Step 2"><p>Link <span class="bold"><strong>cFile</strong></span> to <span class="bold"><strong>cConvertBodyTo</strong></span> using a <span class="bold"><strong>Row</strong></span>
+						&gt; <span class="bold"><strong>Route</strong></span> connection.</p></li><li class="step" title="Step 3"><p>Link <span class="bold"><strong>cConvertBodyTo</strong></span> to <span class="bold"><strong>cBean</strong></span> using a <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>
+						connection.</p></li><li class="step" title="Step 4"><p>Label the components to better identify their functionality.</p></li></ol></div></div><div class="section" title="Configuring the components"><div class="titlepage"><div><div><h4 class="title"><a name="d0e16838"></a>Configuring the components </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Double-click the <span class="bold"><strong>cFile</strong></span> component, which is labelled
+							<span class="italic">Read_message</span>, to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_2.png" align="middle"></div></li><li class="step" title="Step 2"><p>In the <span class="bold"><strong>Path</strong></span> field, enter or browse to the
+						path to the source XML file. </p></li><li class="step" title="Step 3"><p>If the source file folder contains more than one file, enter the name of
+						the XML file of interest in the <span class="bold"><strong>FileName</strong></span>
+						field, and leave the other parameters as they are.</p></li><li class="step" title="Step 4"><p>Double-click the <span class="bold"><strong>cConvertBodyTo</strong></span> component, which is
+						labelled <span class="italic">Convert_message_body</span>, to open
+						its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_3.png" align="middle"></div></li><li class="step" title="Step 5"><p>In the <span class="bold"><strong>Target Class Name</strong></span> field, enter your target class
+						name, <span class="italic">org.w3c.dom.Document.class</span> in this
+						scenario.</p></li><li class="step" title="Step 6"><p>Double-click the <span class="bold"><strong>cBean</strong></span> component, which is labelled
+							<span class="italic">Print_content</span>, to open its <span class="bold"><strong>Basic settings</strong></span> view in the <span class="bold"><strong>Component</strong></span> tab. </p><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_4.png" align="middle"></div></li><li class="step" title="Step 7"><p>In the <span class="bold"><strong>Bean class</strong></span> field, enter the name of the bean to
+						be invoked, <span class="italic">beans.PrintConvertToBean.class</span> in this scenario.</p><p>Note that this bean has already been defined in the <span class="bold"><strong>Code</strong></span>
+						node of the <span class="bold"><strong>Repository</strong></span> and it looks like
+						this:</p><pre class="programlisting">package beans;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+public class PrintConvertToBean {
+
+	/**
+	 * print input message
+	 * @param message
+	 */
+	public static void helloExample(Document message) {
+		if (message == null) {
+			System.out.println("There's no message here!");
+			return;
+		}
+		Element rootElement = message.getDocumentElement();
+		if (rootElement == null) {
+			System.out.println("There's no root element here!");
+			return;
+		}
+		System.out.println("The root element name is:"
+				+ rootElement.getNodeName());
+		System.out.println("The book categories are:");
+		NodeList types = rootElement.getElementsByTagName("category");
+		for(int i = 0;i&lt;types.getLength();i++){
+			Element child = (Element) types.item(i);
+			System.out.println(child.getFirstChild().getNodeValue());
+		}
+	}
+}</pre><p>For more information about creating and using Java Beans, see <span class="bluebold">Talend Open Studio for ESB</span>
+						<span class="bold"><strong>User Guide</strong></span>. </p></li><li class="step" title="Step 8"><p>Press <span class="bold"><strong>Ctrl+S</strong></span> to save your Route.</p></li></ol></div></div><div class="section" title="Viewing code and executing the Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e16951"></a>Viewing code and executing the Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="Step 1"><p>Click the <span class="bold"><strong>Code</strong></span> tab at the bottom of the design workspace
+						to check the generated code.</p><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_6.png" align="middle"></div><p>As shown above, the message <code class="code">from</code> the endpoint <code class="code">Read_message</code> has
+						its body converted to <code class="code">org.w3c.dom.Document.class</code> by
+							<code class="code">cConvertBodyTo_1</code>. Then,
+							<code class="code">org.w3c.dom.Document.class</code> is processed by
+							<code class="code">.bean(beans.PrintConvertToBean.class)</code> invoked by
+							<code class="code">cBean_1</code>.</p></li><li class="step" title="Step 2"><p>Press <span class="bold"><strong>F6</strong></span> to execute the Route.</p><p>RESULT: The root element name and the contents of the <span class="bold"><strong>category</strong></span> elements are displayed.</p><div class="mediaobject" align="center"><img src="../images/use_case_cconvertbodyto_5.png" align="middle"></div></li></ol></div></div></div></div></body></html>

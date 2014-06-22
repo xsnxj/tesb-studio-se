@@ -1,0 +1,111 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cTry</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch02.html" title="Chapitre&nbsp;2.&nbsp;Composants Exception"><link rel="prev" href="cOnException.html" title="cOnException"><link rel="next" href="ch03.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cTry"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cTry"></a>cTry</h2></div></div></div><div class="mediaobject"><img src="../images/cTry_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cTry"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2348"></a>Propri&eacute;t&eacute;s du cTry</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Exception</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cTry</strong></span> permet de g&eacute;rer des exceptions Java,
+								en construisant des blocs Try/Catch/Finally.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cTry</strong></span> est con&ccedil;u pour construire des blocs Java
+								Try/Catch/Finally pour g&eacute;rer les exceptions.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cTry</strong></span> est g&eacute;n&eacute;ralement comme composant interm&eacute;diaire
+								dans une Route.</p>
+						</td></tr><tr><td rowspan="4" valign="top"><span class="bold"><strong>Connections</strong></span></td><td valign="top"><span class="emphasis"><em>Try</em></span></td><td valign="top"><p>S&eacute;lectionnez ce lien pour isoler la partie de votre Route pouvant g&eacute;n&eacute;rer une ou des
+								exception(s). </p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Quand le lien <span class="bold"><strong>Try</strong></span> est suivi par de multiples
+										composants, l'erreur de compilation suivante peut appara&icirc;tre
+										: "<code class="code">The method doCatch() is undefined for the type
+											ExpressionNode</code>". Si tel est le cas, utilisez un
+										composant <span class="bold"><strong>cJavaDSLProcessor</strong></span>
+										pour y mettre fin en saisissant le code
+											<code class="code">.endDoTry()</code>.</p></td></tr></table></div></td></tr><tr><td valign="top"><span class="emphasis"><em>Catch</em></span></td><td valign="top"><p>S&eacute;lectionnez ce lien pour capturer l'exception ou les exceptions.</p>
+							<p>Dans le champ <span class="bold"><strong>Exceptions</strong></span>,
+								saisissez l'exception &agrave; capturer.</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Ce lien peut &ecirc;tre utilis&eacute; uniquement lorsqu'un lien
+											<span class="bold"><strong>Try</strong></span> est utilis&eacute; pour
+										isoler une partie d'une Route pouvant g&eacute;n&eacute;rer une ou des
+										exception(s).</p></td></tr></table></div></td></tr><tr><td valign="top"><span class="emphasis"><em>Finally</em></span></td><td valign="top"><p>S&eacute;lectionnez ce lien pour ex&eacute;cuter les instructions finales sans tenir compte des exceptions
+								pouvant surgir dans le bloc Try et/ou dans le bloc Catch.</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Ce lien peut &ecirc;tre utilis&eacute; uniquement lorsqu'un lien
+											<span class="bold"><strong>Try</strong></span> est utilis&eacute; pour
+										isoler une partie d'une Route pouvant g&eacute;n&eacute;rer une ou des
+										erreur(s).</p></td></tr></table></div></td></tr><tr><td valign="top"><span class="emphasis"><em>Route</em></span></td><td valign="top">S&eacute;lectionnez ce lien pour router tous les messages de
+							l'&eacute;metteur vers l'endpoint suivant.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Utiliser un cTry pour construire des blocs Try/Catch/Finally afin de g&eacute;rer les exceptions"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2499"></a>Sc&eacute;nario : Utiliser un cTry pour construire des blocs Try/Catch/Finally afin de g&eacute;rer les
+			exceptions</h3></div></div></div><p>Dans ce sc&eacute;nario, le contenu de chaque fichier envoy&eacute; depuis l'&eacute;metteur du message vers le
+			r&eacute;cepteur est v&eacute;rifi&eacute; et, si un fichier ne r&eacute;pond pas aux conditions de contenu, une
+			exception est retourn&eacute;e et les informations correspondantes sont affich&eacute;es dans la
+			console.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_1.png" align="middle"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2507"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Du dossier <span class="bold"><strong>Messaging</strong></span> de la <span class="bold"><strong>Palette</strong></span>, d&eacute;posez deux composants <span class="bold"><strong>cFile</strong></span> dans l'espace de mod&eacute;lisation graphique, un
+						comme &eacute;metteur de messages et un comme r&eacute;cepteur de messages.</p></li><li class="step" title="&Eacute;tape 2"><p>Du dossier <span class="bold"><strong>Exception</strong></span>, d&eacute;posez un
+						composant <span class="bold"><strong>cTry</strong></span> dans l'espace de
+						mod&eacute;lisation graphique pour construire des blocs Try, Catch et
+						Finally.</p></li><li class="step" title="&Eacute;tape 3"><p>Du dossier <span class="bold"><strong>Processor</strong></span>, d&eacute;posez deux
+							<span class="bold"><strong>cProcessor</strong></span> dans l'espace de
+						mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 4"><p>Reliez le <span class="bold"><strong>cFile</strong></span> &eacute;metteur de messages au
+						composant <span class="bold"><strong>cTry</strong></span> &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Reliez le <span class="bold"><strong>cTry</strong></span> &agrave; l'un des <span class="bold"><strong>cProcessor</strong></span> &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Try</strong></span>. Ce
+						composant <span class="bold"><strong>cProcessor</strong></span> va retourner une
+						exception si un fichier provenant de cette connexion n'a pas le contenu
+						requis.</p></li><li class="step" title="&Eacute;tape 6"><p>Reliez le composant <span class="bold"><strong>cTry</strong></span> &agrave; l'autre
+						composant <span class="bold"><strong>cProcessor</strong></span> &agrave; l'aide d'un lien
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Catch</strong></span> pour retourner l'exception. Ce <span class="bold"><strong>cProcessor</strong></span> va afficher les informations relatives &agrave;
+						l'exception ainsi que le nom de fichier n'ayant pas le contenu
+						requis.</p></li><li class="step" title="&Eacute;tape 7"><p>Reliez le <span class="bold"><strong>cTry</strong></span> au composant <span class="bold"><strong>cFile</strong></span> r&eacute;cepteur, &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Finally</strong></span>.</p></li><li class="step" title="&Eacute;tape 8"><p>Renommez les composants selon leur r&ocirc;le dans la Route.</p></li></ol></div></div><div class="section" title="Configurer les composants et les connexions"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2610"></a>Configurer les composants et les connexions</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="bold"><strong>cFile</strong></span>
+						nomm&eacute; <span class="italic">Sender</span> pour ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_2.png" align="middle"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>Path</strong></span>, saisissez le chemin
+						d'acc&egrave;s au dossier contenant les fichiers source ou parcourez votre syst&egrave;me
+						jusqu'&agrave; ce dossier.</p></li><li class="step" title="&Eacute;tape 3"><p>Dans la liste <span class="bold"><strong>Encoding</strong></span>, s&eacute;lectionnez le
+						type d'encodage de vos fichiers source. Laissez les autres param&egrave;tres tels
+						qu'ils sont.</p></li><li class="step" title="&Eacute;tape 4"><p>R&eacute;p&eacute;tez ces &eacute;tapes pour d&eacute;finir le chemin d'acc&egrave;s au fichier de sortie
+						ainsi que le type d'encodage dans la vue <span class="bold"><strong>Basic
+							settings</strong></span> de l'autre composant <span class="bold"><strong>cFile</strong></span> nomm&eacute; <span class="italic">Receiver</span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le <span class="bold"><strong>cProcessor</strong></span> nomm&eacute;
+							<span class="italic">Throw_exception</span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span> et personnaliser le code
+						dans la zone <span class="bold"><strong>Code</strong></span>  afin de retourner une
+						exception et afficher les informations correspondantes si un fichier
+						provenant de la connexion <span class="bold"><strong>try</strong></span> ne r&eacute;pond pas
+						aux conditions de contenu, comme suit :</p><pre class="programlisting">String body = exchange.getIn().getBody(String.class);
+System.out.println("\nTrying: "+body);
+Exception e = new Exception("Only 'Talend Integration Solutions' is acceptable. Please check the file:");
+if(!"Talend Integration Solutions".equals(body)){
+	throw e;
+}else{
+    System.out.println("File is good.");
+}</pre></li><li class="step" title="&Eacute;tape 6"><p>Cliquez sur la connexion <span class="bold"><strong>catch</strong></span> puis sur
+						l'onglet <span class="bold"><strong>Component</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span> et saisissez dans le
+						champ <span class="bold"><strong>Expression</strong></span> une expression pour
+						sp&eacute;cifier le type d'exception &agrave; capturer.</p><p>Dans ce sc&eacute;nario, saisissez <code class="code">Exception.class</code> pour capturer
+						toute exception retourn&eacute;e.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le composant <span class="bold"><strong>cProcessor</strong></span> nomm&eacute; <span class="italic">Show_exception</span> pour ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span> et personnaliser le code dans la zone
+							<span class="bold"><strong>Code</strong></span> pour afficher les informations de
+						l'exception et le nom de fichier associ&eacute;, comme suit :</p><pre class="programlisting">System.out.println(exchange.getProperty("CamelExceptionCaught")+
+" " + exchange.getIn().getHeader("CamelFileName"));</pre></li><li class="step" title="&Eacute;tape 8"><p>Cliquez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						Route. </p></li></ol></div></div><div class="section" title="Visualiser du code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e2719"></a>Visualiser du code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique afin de visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_ctry_8.png"></div><p>Comme affich&eacute; ci-dessus, les messages sont rout&eacute;s de (<code class="code">from</code>)
+						l'&eacute;metteur vers (<code class="code">.to</code>) le r&eacute;cepteur. Les blocs
+							<code class="code">.doTry()</code>, <code class="code">.doCatch()</code> et
+							<code class="code">.doFinally()</code> sont construits par le <code class="code">cTry_1</code>.
+						Ainsi, lorsqu'un fichier ne r&eacute;pond pas aux conditions de contenu, une
+						exception est retourn&eacute;e et captur&eacute;e, avant que chaque fichier soit
+						finalement rout&eacute; vers le r&eacute;cepteur.</p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="bold"><strong>F6</strong></span> pour ex&eacute;cuter la
+						Route.</p><div class="mediaobject" align="center"><img src="../images/use_case_ctry_9.png" align="middle"></div><p>R&eacute;sultat : Lorsqu'un fichier ne r&eacute;pondant pas aux conditions de contenu
+						est d&eacute;tect&eacute;, une exception est retourn&eacute;e et les informations relatives &agrave;
+						l'exception sont affich&eacute;es dans la console. A part l'exception, tous les
+						fichiers de l'&eacute;metteur sont envoy&eacute;s au r&eacute;cepteur.</p></li></ol></div></div></div></div></body></html>

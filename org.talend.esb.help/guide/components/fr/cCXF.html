@@ -1,0 +1,200 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cCXF</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch03.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"><link rel="prev" href="cBean.html" title="cBean"><link rel="next" href="cFile.html" title="cFile"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cCXF"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cCXF"></a>cCXF</h2></div></div></div><div class="mediaobject"><img src="../images/ccxf_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cCXF"><div class="titlepage"><div><div><h3 class="title"><a name="d0e2974"></a>Propri&eacute;t&eacute;s du cCXF</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cCXF</strong></span> fournit l'int&eacute;gration avec Apache
+								CXF pour la connexion aux services JAX-WS. </p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cCXF</strong></span> est utilis&eacute; pour produire ou consommer un
+								service Web &agrave; partir d'un fichier WSDL ou d'une classe Java.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Address</em></span>
+							</p>
+						</td><td valign="top">
+							<p>URL de l'endpoint du service o&ugrave; le service Web est fourni.</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Type</em></span>
+							</p>
+						</td><td valign="top">
+							<p>S&eacute;lectionnez le type que vous souhaitez utiliser pour fournir le service Web entre
+									<span class="bold"><strong>wsdlURL</strong></span> et <span class="bold"><strong>serviceClass</strong></span>.</p>
+							<p><span class="bold"><strong>wsdlURL</strong></span> : S&eacute;lectionnez ce type pour fournir le service
+								Web &agrave; partir d'un fichier WSDL.</p>
+							<p><span class="bold"><strong>serviceClass</strong></span> : S&eacute;lectionnez ce type pour fournir le
+								service Web &agrave; partir d'une classe Java SEI (Service Endpoint
+								Interface).</p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/WSDL File</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Ce champ s'affiche lorsque le type de service <span class="bold"><strong>wsdlURL</strong></span>
+								est s&eacute;lectionn&eacute;. Parcourez votre syst&egrave;me ou saisissez le chemin
+								d'acc&egrave;s &agrave; votre fichier WSDL utilis&eacute; pour fournir le service Web. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Service Class</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Ce champ s'affiche lorsque le type de service <span class="bold"><strong>serviceClass</strong></span> est s&eacute;lectionn&eacute;. Saisissez le nom de la
+								classe du service &agrave; utiliser pour fournir le service Web. </p>
+						</td></tr><tr><td>
+							<p>&nbsp;</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>CXF Configuration/Dataformat</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Style d'&eacute;change des donn&eacute;es. <span class="bold"><strong>MESSAGE</strong></span>, <span class="bold"><strong>PAYLOAD</strong></span>, ou <span class="bold"><strong>POJO</strong></span>.</p>
+							<p><span class="bold"><strong>MESSAGE</strong></span> : message brut re&ccedil;u de la couche de transport. </p>
+							<p><span class="bold"><strong>PAYLOAD</strong></span> : charge utile du message (payload), contenu
+								de <code class="code">soap:body</code>. </p>
+							<p><span class="bold"><strong>POJOs</strong></span> : (Plain Old Java Objects) param&egrave;tres Java de la
+								m&eacute;thode invoqu&eacute;e sur le serveur cible. </p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Service</em></span>
+						</td><td valign="top">Cochez cette case pour sp&eacute;cifier le port du service. Cette option est
+							particuli&egrave;rement utile lorsqu'il y a des ports multiservice dans le WSDL
+							ou dans la classe du service.</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Service Name</em></span>
+						</td><td valign="top">Nom du service que ce service impl&eacute;mente. Il mappe vers
+								<code class="code">wsdl:service@name</code> au format
+								<code class="code">ns:SERVICE_NAME</code> o&ugrave; <code class="code">ns</code> est l'espace de
+							nommage du service. </td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>Port Name</em></span>
+						</td><td valign="top">Nom de l'endpoint que ce service impl&eacute;mente. Il mappe vers
+								<code class="code">wsdl:port@name</code>, au format <code class="code">ns:PORT_NAME</code> o&ugrave;
+								<code class="code">ns</code> est l'espace de nommage du service. </td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="emphasis"><em>ESB Features/Use Service Locator</em></span></td><td valign="top"><p>Maintient la disponibilit&eacute; du service pour r&eacute;pondre aux demandes et aux
+							accords de niveau de service (SLAs).</p>
+							<p>La table <span class="bold"><strong>Custom Properties</strong></span>
+								appara&icirc;t lorsque la case <span class="bold"><strong>Use Service
+									Locator</strong></span> est coch&eacute;e. Cliquez sur le bouton <span class="inlinemediaobject"><img src="../images/plus_button.png"></span> pour ajouter autant de propri&eacute;t&eacute;s que
+								n&eacute;cessaire dans la table. Saisissez le nom et la valeur de chaque
+								propri&eacute;t&eacute;, respectivement dans les champs <span class="bold"><strong>Property Name</strong></span> et <span class="bold"><strong>Property
+									Value</strong></span>, afin d'identifier le service. Pour plus
+								d'informations concernant 'installation et la configuration du
+								Service Locator, consultez le Guide <span class="emphasis"><em>Talend ESB Runtime
+									Configuration Guide</em></span> (en anglais).</p></td></tr><tr><td>&nbsp;</td><td valign="top"><span class="emphasis"><em>ESB Features/Use Service Activity Monitor
+							</em></span></td><td valign="top">
+							<p>Capture les &eacute;v&eacute;nements et stocke les informations pour faciliter les analyses en
+								profondeur de l'activit&eacute; des services ainsi que suivre et tracer des
+								messages via une transaction m&eacute;tier. Cette option peut &ecirc;tre utilis&eacute;e
+								pour analyser les temps de r&eacute;ponse des services, identifier les
+								mod&egrave;les de transport, identifier les messages en entr&eacute;e et en sortie
+								des services et analyser les causes &eacute;ventuelles de l'&eacute;chec des
+								appels du service, par exemple.</p>
+							<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="16pt"><img alt="[Note]" src="../images/note.png"></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Cette fonctionnalit&eacute; n'est pas support&eacute;e lorsque le mode de traitement utilis&eacute; est
+										<span class="bold"><strong>MESSAGE</strong></span>. Quand l'option
+										<span class="bold"><strong>MESSAGE</strong></span> est s&eacute;lectionn&eacute;e
+									dans le champ <span class="bold"><strong>Dataformat</strong></span>, la
+									case <span class="bold"><strong>Use Service Activity
+										Monitor</strong></span> est d&eacute;coch&eacute;e.</p></td></tr></table></div>
+						</td></tr><tr><td>
+							<span class="bold"><strong>Advanced settings</strong></span>
+						</td><td valign="top">
+							<span class="emphasis"><em>Arguments</em></span>
+						</td><td valign="top">Configurez les arguments facultatifs dans la table correspondante. Cliquez
+							sur le bouton <span class="bold"><strong>[+]</strong></span> autant de fois que
+							n&eacute;cessaire pour ajouter des arguments &agrave; la table. Cliquez ensuite sur le
+							champ <span class="bold"><strong>Value</strong></span> correspondant pour saisir
+							une valeur. Consultez le site <a class="link" href="http://camel.apache.org/cxf.html" target="_top">http://camel.apache.org/cxf.html</a> (en anglais) pour voir les
+							options d'URI disponibles.</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cCXF</strong></span> peut &ecirc;tre un composant de d&eacute;but, un
+								composant interm&eacute;diaire ou un composant de fin dans une
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>L'utilisation de plusieurs composants <span class="bold"><strong>cCXF</strong></span> ayant le
+								m&ecirc;me nom dans une route n'est pas support&eacute;e.</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario&nbsp;1 : Fournir un service Web via le cCXF depuis un fichier WSDL"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3336"></a>Sc&eacute;nario&nbsp;1 : Fournir un service Web via le cCXF depuis un fichier WSDL</h3></div></div></div><p>Dans ce sc&eacute;nario, un service Web est produit par un composant <span class="bold"><strong>cCXF</strong></span> &agrave; l'aide d'un fichier WSDL.</p><div class="mediaobject"><img src="../images/use_case_ccxf1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3347"></a>D&eacute;poser et relier les composants</h4></div></div></div><p>Ce sc&eacute;nario utilise un composant <span class="bold"><strong>cCXF</strong></span> et un <span class="bold"><strong>cProcessor</strong></span>.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="bold"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="bold"><strong>Messaging</strong></span>, s&eacute;lectionnez le composant <span class="bold"><strong>cCXF</strong></span> et d&eacute;posez-le dans l'espace de mod&eacute;lisation
+						graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>D&eacute;veloppez le dossier <span class="bold"><strong>Processor</strong></span>, s&eacute;lectionnez le
+						composant <span class="bold"><strong>cProcessor</strong></span> et d&eacute;posez-le dans
+						l'espace de mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 3"><p>Cliquez-droit sur le composant <span class="bold"><strong>cCXF</strong></span>, s&eacute;lectionnez
+							<span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> dans le menu contextuel et cliquez sur le composant
+							<span class="bold"><strong>cProcessor</strong></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Nommez le composant <span class="bold"><strong>cCXF</strong></span> afin de mieux identifier sa
+						fonctionnalit&eacute;.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3401"></a>Configurer les composants</h4></div></div></div><p>Dans ce sc&eacute;nario, le composant <span class="bold"><strong>cProcessor</strong></span> est utilis&eacute;
+				uniquement pour activer le <span class="bold"><strong>cCXF</strong></span>, pour qu'il
+				fonctionne comme un producteur de service. Il ne n&eacute;cessite donc aucune
+				configuration.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="bold"><strong>cCXF</strong></span> pour afficher sa
+						vue <span class="bold"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ccxf2.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>Address</strong></span>, saisissez l'URL de l'endpoint du
+						service pour le service Web &agrave; fournir, <span class="italic">http://192.168.0.212:8000/service.endpoint</span> dans cet
+						exemple.</p></li><li class="step" title="&Eacute;tape 3"><p>Dans la liste <span class="bold"><strong>Type</strong></span>, s&eacute;lectionnez <span class="bold"><strong>wsdlURL</strong></span> pour activer la production du service Web &agrave; partir
+						d'un fichier WSDL.</p></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>Wsdl File</strong></span>, parcourez votre syst&egrave;me ou
+						saisissez le chemin d'acc&egrave;s au fichier WSDL &agrave; utiliser. </p></li><li class="step" title="&Eacute;tape 5"><p>Dans la liste <span class="bold"><strong>Dataformat</strong></span>, s&eacute;lectionnez le mode <span class="bold"><strong>PAYLOAD</strong></span>.</p></li><li class="step" title="&Eacute;tape 6"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre route.</p></li></ol></div></div><div class="section" title="Visualiser du code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3464"></a>Visualiser du code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_ccxf3.png"></div><p>Comme affich&eacute; dans le code, le composant <span class="bold"><strong>cCXF</strong></span> nomm&eacute;
+							<span class="italic">WebService_producer</span> produit le
+						service Web &agrave; partir d'un fichier d'entr&eacute;e
+							<code class="code">airport_soap_route.wsdl</code> &agrave; l'aide de l'URL de l'endpoint
+							<code class="code">http://192.168.0.212:8000/service.endpoint</code>.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez sur la vue <span class="bold"><strong>Run</strong></span> pour l'afficher et cliquez sur le
+						bouton <span class="bold"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre
+						Route. Vous pouvez &eacute;galement appuyer sur <span class="bold"><strong>F6</strong></span>
+						pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Le service est d&eacute;marr&eacute; avec succ&egrave;s. Vous pouvez y acc&eacute;der depuis un navigateur
+						Web en utilisant l'URL de l'endpoint du service suivie de
+						<code class="code">?wsdl</code>. </p><div class="mediaobject"><img src="../images/use_case_ccxf4.png"></div></li></ol></div></div></div><div class="section" title="Sc&eacute;nario&nbsp;2 : Fournir un service Web via un cCXF &agrave; partir d'une classe Java"><div class="titlepage"><div><div><h3 class="title"><a name="d0e3511"></a>Sc&eacute;nario&nbsp;2 : Fournir un service Web via un cCXF &agrave; partir d'une classe Java</h3></div></div></div><p>Dans ce sc&eacute;nario, un service Web est fourni par un fichier de classe Java &agrave; l'aide d'un
+			composant <span class="bold"><strong>cCXF</strong></span>.</p><div class="section" title="Cr&eacute;er une classe Java"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3519"></a>Cr&eacute;er une classe Java</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la vue <span class="bold"><strong>Repository</strong></span>, d&eacute;veloppez le n&#339;ud <span class="bold"><strong>Code</strong></span> et cliquez-droit sur le n&#339;ud <span class="bold"><strong>Beans</strong></span>. Dans le menu contextuel, s&eacute;lectionnez
+							<span class="bold"><strong>Create Bean</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ccxf5.png"></div></li><li class="step" title="&Eacute;tape 2"><p>L'assistant <span class="bold"><strong>[New Bean]</strong></span> s'ouvre. Dans le champ <span class="bold"><strong>Name</strong></span>, saisissez un nom pour le bean, par exemple,
+							<span class="emphasis"><em>CXFdemobean</em></span>. Cliquez sur <span class="bold"><strong>Finish</strong></span> pour fermer l'assistant.</p><div class="mediaobject"><img src="../images/use_case_ccxf6.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Changez le type de classe en <code class="code">interface</code>, modifiez le type de retour en
+							<code class="code">string</code> et supprimer le corps du message.</p><p>
+						</p><pre class="programlisting">package beans;
+
+public interface CXFdemobean {
+    public String helloExample(String message) ;
+}</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 4"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre bean.</p></li></ol></div></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3579"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="mediaobject"><img src="../images/use_case_ccxf1.png"></div><p>Ce sc&eacute;nario utilise un composant <span class="bold"><strong>cCXF</strong></span>
+				et un <span class="bold"><strong>cProcessor</strong></span>.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="bold"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="bold"><strong>Messaging</strong></span>, s&eacute;lectionnez le composant <span class="bold"><strong>cCXF</strong></span> et d&eacute;posez-le dans l'espace de mod&eacute;lisation
+						graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>D&eacute;veloppez le dossier <span class="bold"><strong>Processor</strong></span>, s&eacute;lectionnez le
+						composant <span class="bold"><strong>cProcessor</strong></span> et d&eacute;posez-le dans
+						l'espace de mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 3"><p>Cliquez-droit sur le <span class="bold"><strong>cCXF</strong></span>, s&eacute;lectionnez <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>
+						dans le menu contextuel et cliquez sur le <span class="bold"><strong>cProcessor</strong></span>.</p></li><li class="step" title="&Eacute;tape 4"><p>Nommez les composants comme vous le souhaitez pour mieux identifier leur fonction.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3633"></a>Configurer les composants</h4></div></div></div><p>Dans ce sc&eacute;nario, le composant <span class="bold"><strong>cProcessor</strong></span> est utilis&eacute;
+				uniquement pour activer le <span class="bold"><strong>cCXF</strong></span> afin qu'il
+				fonctionne comme un producteur de service. Il ne n&eacute;cessite donc aucune
+				configuration.</p><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le composant <span class="bold"><strong>cCXF</strong></span> pour afficher sa
+						vue <span class="bold"><strong>Basic settings</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ccxf8.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>Address</strong></span>, saisissez l'URL de l'endpoint du
+						service pour le service Web &agrave; fournir, <span class="italic">http://192.168.0.212:8001/service.endpoint</span> dans cet
+						exemple.</p></li><li class="step" title="&Eacute;tape 3"><p>Dans la liste <span class="bold"><strong>Type</strong></span>, s&eacute;lectionnez <span class="bold"><strong>serviceClass</strong></span> pour d&eacute;marrer le service Web &agrave; partir d'une
+						classe Java.</p></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>Service Class</strong></span>, sp&eacute;cifiez la classe
+						pr&eacute;d&eacute;finie du bean, <span class="italic">CXFdemobean</span> dans cet
+						exemple. </p></li><li class="step" title="&Eacute;tape 5"><p>Dans la liste <span class="bold"><strong>Dataformat</strong></span>, s&eacute;lectionnez <span class="bold"><strong>POJO</strong></span> comme format des donn&eacute;es du service.</p></li><li class="step" title="&Eacute;tape 6"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre Route.</p></li></ol></div></div><div class="section" title="Visualiser du code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e3699"></a>Visualiser du code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_ccxf9.png"></div><p>Comme affich&eacute; dans le code, le composant <span class="bold"><strong>cCXF</strong></span> nomm&eacute;
+							<span class="italic">WebService_producer</span> produit le
+						service Web &agrave; partir d'un bean pr&eacute;d&eacute;fini <code class="code">beans.CXFdemobean</code> &agrave;
+						l'aide de l'URL de l'endpoint
+							<code class="code">http://192.168.0.212:8001/service.endpoint</code>. </p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez sur la vue <span class="bold"><strong>Run</strong></span> pour l'afficher et cliquez sur le
+						bouton <span class="bold"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre
+						Route. Vous pouvez &eacute;galement appuyer sur <span class="bold"><strong>F6</strong></span>
+						pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Le service est d&eacute;marr&eacute; avec succ&egrave;s. Vous pouvez y acc&eacute;der via un navigateur
+						Web &agrave; l'aide de l'URL de l'endpoint du service, suivie de
+						<code class="code">?wsdl</code>. </p><div class="mediaobject"><img src="../images/use_case_ccxf10.png"></div></li></ol></div></div></div></div></body></html>

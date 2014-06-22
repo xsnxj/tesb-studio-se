@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.talend.core.routines_provider">
+      <RoutinesProvider
+            class="org.talend.camel.libraries.CamelRoutineProviderCreator">
+      </RoutinesProvider>
+   </extension>
+   <extension
+         point="org.talend.core.systemRoutineLibrary">
+      <systemRoutine
+            name="EventFactoryForShutDown">
+         <library
+               name="camel-core-2.7.3.jar">
+         </library>
+      </systemRoutine>
+      <systemRoutine
+            name="MonitorThread">
+         <library
+               name="camel-core-2.7.3.jar">
+         </library>
+      </systemRoutine>
+      <systemRoutine
+            name="ContextStopper">
+         <library
+               name="camel-core-2.7.3.jar">
+         </library>
+         <library
+               name="commons-management-1.0.jar">
+         </library>
+      </systemRoutine>
+   </extension>
+
+</plugin>

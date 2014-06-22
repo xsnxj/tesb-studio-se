@@ -1,0 +1,159 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cHttp</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch03.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"><link rel="prev" href="cFTP.html" title="cFTP"><link rel="next" href="cJMS.html" title="cJMS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cHttp"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cHttp"></a>cHttp</h2></div></div></div><div class="mediaobject"><img src="../images/cHttp_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cHttp"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4356"></a>Propri&eacute;t&eacute;s du cHttp</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Messaging</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cHttp</strong></span> fournit des endpoints bas&eacute;s HTTP
+								pour consommer des ressources HTTP externes, c'est-&agrave;-dire en tant
+								que client appelant des serveurs externes &agrave; l'aide de Http.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cHttp</strong></span> est con&ccedil;u pour construire un endpoint client
+								afin d'appeler des ressources HTTP externes &agrave; l'aide de Http.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Uri</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Saisissez l'URI de la ressource HTTP &agrave; appeler.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Method</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Liste des m&eacute;thodes de requ&ecirc;tes HTTP.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Get</em></span>
+							</p>
+						</td><td valign="top">
+							<p>R&eacute;cup&egrave;re les informations identifi&eacute;es par l'URI de la requ&ecirc;te :</p>
+							<p><span class="bold"><strong>Parameters</strong></span> : cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter le nombre de lignes
+								n&eacute;cessaire et d&eacute;finir leur cl&eacute; et leur valeur dans la table.</p>
+							<p><span class="bold"><strong>Encoder Charset</strong></span> : saisissez le jeu de caract&egrave;res de
+								l'encodeur dans le champ.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Post</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Demande via une requ&ecirc;te que le serveur d'origine accepte l'entit&eacute; dans la requ&ecirc;te comme
+								une nouvelle subordonn&eacute;e de la ressource identifi&eacute;e par l'URI de la
+								requ&ecirc;te :</p>
+							<p><span class="bold"><strong>Plain text</strong></span> : saisissez le texte dans le champ
+									<span class="bold"><strong>Content</strong></span> du message de la
+								requ&ecirc;te.</p>
+							<p><span class="bold"><strong>Form Style</strong></span> : cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> afin d'ajouter des lignes et de
+								d&eacute;finir leur cl&eacute; et leur valeur dans la table <span class="bold"><strong>Parameters</strong></span>. Saisissez &eacute;galement le jeu de caract&egrave;res
+								de l'encodeur dans le champ <span class="bold"><strong>Encoder
+									Charset</strong></span>.</p>
+							<p><span class="bold"><strong>Use Message Body</strong></span> : utilisez le corps du message
+								entrant comme requ&ecirc;te HTTP.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Put</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Demande via une requ&ecirc;te que l'entit&eacute; soit stock&eacute;e sous l'URI de la requ&ecirc;te
+								fournie.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Delete</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Demande via une requ&ecirc;te que le serveur d'origine supprime la ressource identifi&eacute;e par
+								l'URI de la requ&ecirc;te.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Head</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Identique &agrave; <span class="bold"><strong>GET</strong></span> mais le serveur ne doit pas retourner
+								le corps d'un message dans la r&eacute;ponse.</p>
+							<p><span class="bold"><strong>Parameters</strong></span> : cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter des lignes et d&eacute;finir
+								leur cl&eacute; et leur valeur dans la table.</p>
+							<p><span class="bold"><strong>Encoder Charset</strong></span> : saisissez dans ce champ le jeu de
+								caract&egrave;res de l'encodeur.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Options</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Repr&eacute;sente une requ&ecirc;te d'informations concernant les options de communication
+								disponibles dans la cha&icirc;ne requ&ecirc;te/r&eacute;ponse identifi&eacute;e par l'URI de
+								la requ&ecirc;te.</p>
+						</td></tr><tr><td valign="top">&nbsp;</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Trace</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Invoque le loop-back de la couche applicative distante du message de la requ&ecirc;te.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Advanced settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Headers</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter des lignes et
+								d&eacute;finir la cl&eacute; et la valeur des en-t&ecirc;tes.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cHttp</strong></span> fournit des endpoints bas&eacute;s HTTP
+								pour consommer des ressources HTTP externes, c'est-&agrave;-dire en tant
+								que client appelant des serveurs externes &agrave; l'aide de Http.</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : R&eacute;cup&eacute;rer le contenu d'un fichier distant"><div class="titlepage"><div><div><h3 class="title"><a name="d0e4653"></a>Sc&eacute;nario : R&eacute;cup&eacute;rer le contenu d'un fichier distant </h3></div></div></div><p>Dans ce sc&eacute;nario, le composant <span class="bold"><strong>cHttp</strong></span> est utilis&eacute; pour
+			interroger le corps d'un fichier de d&eacute;finition de condition m&eacute;t&eacute;orologique disponible &agrave;
+			l'adresse : <span><a class="link" href="http://wsf.cdyne.com/WeatherWS/Weather.asmx" target="_top">http://wsf.cdyne.com/WeatherWS/Weather.asmx</a></span>. </p><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4665"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>D&eacute;posez les composants suivants de la <span class="bold"><strong>Palette</strong></span> dans
+						l'espace de mod&eacute;lisation graphique : un <span class="bold"><strong>cMessagingEndpoint</strong></span>, un <span class="bold"><strong>cSetBody</strong></span>, un <span class="bold"><strong>cHttp</strong></span> et un
+							<span class="bold"><strong>cProcessor</strong></span>. Nommez-les respectivement
+							<span class="italic">STARTER</span>, <span class="italic">HTTP_REQUEST_BODY</span>, <span class="italic">GET_WEATHER_DESCRIPTION</span> et <span class="italic">PRINT_RESPONSE</span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez les composants &agrave; l'aide de liens <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_chttp_1.png"></div></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4711"></a>Configurer les composants </h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le <span class="bold"><strong>cMessagingEndpoint</strong></span> pour ouvrir sa
+						vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject"><img src="../images/use_case_chttp_2.png"></div></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>URI</strong></span>, saisissez
+							<code class="code">timer:go?repeatCount=1</code> afin de d&eacute;finir un d&eacute;lai avant de
+						d&eacute;marrer les &eacute;changes de messages. Dans cet exemple, un seul &eacute;change de
+						messages est effectu&eacute; selon la confguration de <code class="code">repeatCount=1</code>. </p></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant <span class="bold"><strong>cSetBody</strong></span> pour ouvrir sa
+						vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_3.png" align="middle"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans la liste <span class="bold"><strong>Language</strong></span>, s&eacute;lectionnez <span class="italic">Constant</span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Dans le champ <span class="bold"><strong>Expression</strong></span>, saisissez le code suivant
+						comme corps du message de la requ&ecirc;te :</p><pre class="programlisting">&lt;soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:weat=\"http://ws.cdyne.com
+/WeatherWS/\"&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;weat:GetWeatherDefinitionInformation/&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</pre></li><li class="step" title="&Eacute;tape 6"><p>Double-cliquez sur le <span class="bold"><strong>cHttp</strong></span> pour ouvrir sa vue <span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 7"><p>Dans le champ <span class="bold"><strong>Uri</strong></span>, saisissez l'emplacement du fichier &agrave;
+						r&eacute;cup&eacute;rer, <span class="italic">http://wsf.cdyne.com/WeatherWS/Weather.asmx</span> dans cet
+						exemple.</p></li><li class="step" title="&Eacute;tape 8"><p>S&eacute;lectionnez <span class="italic">POST</span> dans la liste <span class="bold"><strong>Method</strong></span> puis cochez la case <span class="bold"><strong>Use Message
+							Body</strong></span>.</p></li><li class="step" title="&Eacute;tape 9"><p>Cliquez sur <span class="bold"><strong>Advanced settings</strong></span> pour configurer les
+						param&egrave;tres avanc&eacute;s.</p><div class="mediaobject"><img src="../images/use_case_chttp_8.png"></div></li><li class="step" title="&Eacute;tape 10"><p>Cliquez deux fois sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter deux
+						lignes dans la table <span class="bold"><strong>Headers</strong></span>. </p><p>Saisissez <code class="code">Content-Type</code> et <code class="code">text/xml;charset=UTF-8</code> pour les
+						champs <span class="bold"><strong>Key</strong></span> et <span class="bold"><strong>Value</strong></span> dans la premi&egrave;re ligne et <code class="code">SOAPAction</code>
+						ainsi que <code class="code">http://ws.cdyne.com/WeatherWS/GetWeatherInformation</code>
+						dans la seconde ligne.</p></li><li class="step" title="&Eacute;tape 11"><p>Double-cliquez sur le <span class="bold"><strong>cProcessor</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_chttp_5.png" align="middle"></div></li><li class="step" title="&Eacute;tape 12"><p>Dans le champ <span class="bold"><strong>Code</strong></span>, saisissez le code suivant pour
+						afficher la r&eacute;ponse du site Web distant, c'est-&agrave;-dire le corps du fichier
+						souhait&eacute; :</p><pre class="programlisting">System.out.println("--------------------RESPONSE--------------------");
+System.out.println(exchange.getIn().getBody(String.class));
+System.out.println("--------------------END--------------------");</pre></li><li class="step" title="&Eacute;tape 13"><p>Appuyez sur les touches <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e4865"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique afin de visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_chttp_6.png"></div><p>Comme affich&eacute; ci-dessus, l'&eacute;change de messages d&eacute;marre &agrave; partir (<code class="code">from</code>) de
+						l'endpoint <code class="code">STARTER</code>, r&eacute;cup&egrave;re le corps d&eacute;fini comme
+							<code class="code">&lt;soapenv:Envelope
+							xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"xmlns:weat=\"http://ws.cdyne.com/WeatherWS/\"&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;weat:GetWeatherDefinitionInformation/&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;</code>
+						dans le <code class="code">cSetBody_1</code> et est envoy&eacute; au site Web sp&eacute;cifi&eacute; par le
+							<code class="code">cHttp_1</code>. La r&eacute;ponse est &eacute;crite dans la console via le
+							<code class="code">cProcessor_1</code>.</p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="bold"><strong>F6</strong></span> pour ex&eacute;cuter la Route.</p><div class="mediaobject"><img src="../images/use_case_chttp_7.png"></div><p>Comme affich&eacute; ci-dessus, le fichier r&eacute;cup&eacute;r&eacute; d&eacute;finit 37 conditions m&eacute;t&eacute;orologiques avec
+						leur description d&eacute;taill&eacute;e.</p></li></ol></div></div></div></div></body></html>

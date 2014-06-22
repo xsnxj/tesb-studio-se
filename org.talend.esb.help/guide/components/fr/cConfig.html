@@ -1,0 +1,80 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cConfig</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch01.html" title="Chapitre&nbsp;1.&nbsp;Composants Context"><link rel="prev" href="ch01.html" title="Chapitre&nbsp;1.&nbsp;Composants Context"><link rel="next" href="cJMSConnectionFactory.html" title="cJMSConnectionFactory"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cConfig"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cConfig"></a>cConfig</h2></div></div></div><div class="mediaobject"><img src="../images/cconfig_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cConfig"><div class="titlepage"><div><div><h3 class="title"><a name="d0e242"></a>Propri&eacute;t&eacute;s du cConfig</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Famille de composant</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Context</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Fonction</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le composant <span class="bold"><strong>cConfig</strong></span> permet de configurer le contexte
+								Camel (CamelContext).</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Objectif</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cConfig</strong></span> manipule le contexte Camel comme requis par
+								les Routes.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Basic settings</strong></span>
+							</p>
+						</td><td valign="top">
+							<p>
+								<span class="emphasis"><em>Code</em></span>
+							</p>
+						</td><td valign="top">
+							<p>Ecrit du code pour manipuler le contexte Camel.</p>
+						</td></tr><tr><td>&nbsp;</td><td valign="top">
+							<span class="italic">Dependencies </span>
+						</td><td valign="top">S&eacute;lectionnez la ou les bibilioth&egrave;que(s) requises par le CamelContext ou le
+							Type Converter Registry dans la liste. </td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Utilisation</strong></span>
+							</p>
+						</td><td colspan="2" valign="top">
+							<p>Le <span class="bold"><strong>cConfig</strong></span> ne peut &ecirc;tre directement ajout&eacute; dans une
+								Route.</p>
+						</td></tr><tr><td valign="top">
+							<p>
+								<span class="bold"><strong>Limitation</strong></span>
+							</p>
+						</td><td colspan="2">
+							<p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Impl&eacute;menter un jeu de donn&eacute;es depuis le Registry"><div class="titlepage"><div><div><h3 class="title"><a name="d0e361"></a>Sc&eacute;nario : Impl&eacute;menter un jeu de donn&eacute;es depuis le Registry</h3></div></div></div><p>Dans ce sc&eacute;nario, un jeu de donn&eacute;es est ajout&eacute; dans le Registry et impl&eacute;ment&eacute; par un
+			composant <span class="bold"><strong>cMessagingEndpoint</strong></span>. </p><div class="mediaobject"><img src="../images/use_case_cconfig1.png"></div><div class="section" title="D&eacute;poser et relier les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e372"></a>D&eacute;poser et relier les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la <span class="bold"><strong>Palette</strong></span>, d&eacute;veloppez le dossier <span class="bold"><strong>Context</strong></span> et s&eacute;lectionnez le composant <span class="bold"><strong>cConfig</strong></span>, puis d&eacute;posez-le dans l'espace de
+						mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 2"><p>D&eacute;veloppez le dossier <span class="bold"><strong>Messaging</strong></span>, s&eacute;lectionnez le
+						composant <span class="bold"><strong>cMessagingEndpoint</strong></span> et d&eacute;posez-le
+						dans l'espace de mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 3"><p>D&eacute;veloppez le dossier <span class="bold"><strong>Processor</strong></span>, s&eacute;lectionnez le
+							<span class="bold"><strong>cProcessor</strong></span> et d&eacute;posez-le dans l'espace
+						de mod&eacute;lisation graphique.</p></li><li class="step" title="&Eacute;tape 4"><p>Cliquez-droit sur le composant d'entr&eacute;e <span class="bold"><strong>cMessagingEndpoint</strong></span>, s&eacute;lectionnez <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span> dans le menu
+						contextuel et cliquez sur le composant <span class="bold"><strong>cProcessor</strong></span>.</p></li><li class="step" title="&Eacute;tape 5"><p>Nommez les composants comme vous le souhaitez, afin de mieux identifier leur
+						fonctionnalit&eacute;.</p></li></ol></div></div><div class="section" title="Configurer les composants"><div class="titlepage"><div><div><h4 class="title"><a name="d0e424"></a>Configurer les composants</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Double-cliquez sur le <span class="bold"><strong>cConfig</strong></span> nomm&eacute; <span class="italic">Create_dataset</span> pour afficher sa vue <span class="bold"><strong>Basic settings</strong></span> dans l'onglet <span class="bold"><strong>Component</strong></span> et configurer ses param&egrave;tres. </p><p>
+						</p><div class="mediaobject"><img src="../images/use_case_cconfig4.png"></div><p>
+					</p></li><li class="step" title="&Eacute;tape 2"><p>Dans le champ <span class="bold"><strong>Code</strong></span>, saisissez du code pour enregistrer
+						l'instance du jeu de donn&eacute;es <span class="italic">foo</span> dans le
+						Registry, comme ci-dessous. </p><pre class="programlisting">org.apache.camel.impl.SimpleRegistry registry = new
+org.apache.camel.impl.SimpleRegistry();
+                registry.put("foo", new 
+org.apache.camel.component.dataset.SimpleDataSet());
+camelContext.setRegistry(registry);</pre></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant d'entr&eacute;e <span class="bold"><strong>cMessagingEndpoint</strong></span> nomm&eacute; <span class="italic">Read_dataset</span> pour afficher sa vue <span class="bold"><strong>Basic settings</strong></span> dans l'onglet <span class="bold"><strong>Component</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_cconfig2.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>URI</strong></span>, saisissez
+							<span class="emphasis"><em>dataset:foo</em></span> entre guillemets. </p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le composant <span class="bold"><strong>cProcessor</strong></span> nomm&eacute;
+							<span class="italic">Monitor</span> pour afficher sa vue
+							<span class="bold"><strong>Basic settings</strong></span> dans l'onglet <span class="bold"><strong>Component</strong></span>. </p><div class="mediaobject"><img src="../images/use_case_cconfig3.png"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans le champ <span class="bold"><strong>Code</strong></span>, personnalisez le code comme suit,
+						afin que la console de la vue <span class="bold"><strong>Run</strong></span> affiche
+						le contenu du message :</p><p>
+						</p><pre class="programlisting">System.out.println("Message content: "+ 
+exchange.getIn().toString());</pre><p>
+					</p></li><li class="step" title="&Eacute;tape 7"><p>Appuyez sur les touches <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder votre
+						route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e525"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique pour visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_cconfig5.png"></div><p>Comme affich&eacute; dans le code, une route est cr&eacute;&eacute;e &agrave; partir de (<code class="code">from</code>)
+						l'endpoint identifi&eacute; par <code class="code">Read_dataset</code> et
+							<code class="code">cProcessor_1</code> r&eacute;cup&egrave;re le contenu du message et l'affiche
+						dans la console.</p></li><li class="step" title="&Eacute;tape 2"><p>Cliquez sur la vue <span class="bold"><strong>Run</strong></span> pour l'afficher et cliquez sur le
+						bouton <span class="bold"><strong>Run</strong></span> pour lancer l'ex&eacute;cution de votre
+						route. Vous pouvez &eacute;galement appuyer sur la touche <span class="bold"><strong>F6</strong></span> pour l'ex&eacute;cuter. </p><p>R&eacute;sultat : Le contenu du message est affich&eacute; dans la console.</p><div class="mediaobject"><img src="../images/use_case_cconfig6.png"></div></li></ol></div></div></div></div></body></html>

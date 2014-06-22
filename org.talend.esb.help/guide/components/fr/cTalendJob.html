@@ -1,0 +1,80 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>cTalendJob</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.76.1"><link rel="home" href="index.html" title="Talend Open Studio"><link rel="up" href="ch03.html" title="Chapitre&nbsp;3.&nbsp;Composants Messaging"><link rel="prev" href="cPipesAndFilters.html" title="cPipesAndFilters"><link rel="next" href="ch04.html" title="Chapitre&nbsp;4.&nbsp;Composants Miscellaneous"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="fr" class="section" title="cTalendJob"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cTalendJob"></a>cTalendJob</h2></div></div></div><div class="mediaobject"><img src="../images/cTalendJob_icon32_white.png"></div><div class="section" title="Propri&eacute;t&eacute;s du cTalendJob"><div class="titlepage"><div><div><h3 class="title"><a name="d0e7533"></a>Propri&eacute;t&eacute;s du cTalendJob</h3></div></div></div><div class="informaltable"><table border="1"><colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup><tbody><tr><td valign="top"><p><span class="bold"><strong>Famille de composant</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Messaging</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Fonction</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Le composant <span class="bold"><strong>cTalendJob</strong></span> vous permet d'importer une
+								biblioth&egrave;que.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Objectif</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Le <span class="bold"><strong>cTalendJob</strong></span> appelle un Job <span class="bold"><strong>Talend</strong></span> export&eacute; en tant que <span class="bold"><strong>OSGI Bundle For ESB</strong></span>. Pour plus
+								d'informations concernant l'export d'un Job en tant que Bundle OSGI,
+								consultez le <span class="emphasis"><em>Guide Utilisateur de Talend Open Studio for ESB</em></span>.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Basic
+								settings</strong></span></p>
+						</td><td valign="top"><p><span class="emphasis"><em>Library</em></span></p>
+						</td><td valign="top"><p>S&eacute;lectionnez dans la liste la biblioth&egrave;que que vous souhaitez importer ou cliquez sur le
+								bouton <span class="bold"><strong>[...]</strong></span> pour importer la
+								biblioth&egrave;que jar de votre Job <span class="bold"><strong>Talend</strong></span>.</p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Job</em></span></p>
+						</td><td valign="top"><p>Saisissez le nom du package et le nom de votre Job s&eacute;par&eacute;s par un point. Par exemple :
+									<span class="emphasis"><em>route_project.txmlmap_0_1.tXMLMap</em></span>. Pour
+								obtenir ce nommage, ouvrez la biblioth&egrave;que jar de votre Job, allez &agrave;
+									<span class="bold"><strong>OSGI-INF</strong></span> &gt; <span class="bold"><strong>blueprint</strong></span> et &eacute;ditez le fichier .xml du
+								Job. Le nommage est disponible dans le n&#339;ud d'un bean comme
+									<code class="code">&lt;bean id="job"
+									class="route_project.txmlmap_0_1.<span></span>tXMLMap"/&gt;</code></p>
+						</td></tr><tr><td><p>&nbsp;</p>
+						</td><td valign="top"><p><span class="emphasis"><em>Context</em></span></p>
+						</td><td valign="top"><p>Saisissez le nom du contexte &agrave; utiliser pour ex&eacute;cuter votre Job.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Utilisation</strong></span></p>
+						</td><td colspan="2" valign="top"><p>Le <span class="bold"><strong>cTalendJob</strong></span> peut &ecirc;tre utilis&eacute; en tant que composant de
+								d&eacute;but, composant interm&eacute;diaire ou composant de fin dans une
+								Route.</p>
+						</td></tr><tr><td valign="top"><p><span class="bold"><strong>Limitation</strong></span></p>
+						</td><td colspan="2"><p>&nbsp;n/a</p>
+						</td></tr></tbody></table></div></div><div class="section" title="Sc&eacute;nario : Utiliser les en-t&ecirc;tes des messages Camel comme param&egrave;tres de contexte pour appeler un Job"><div class="titlepage"><div><div><h3 class="title"><a name="andy_20120424_camel-message-header-as-context-variable-for-job-call"></a>Sc&eacute;nario : Utiliser les en-t&ecirc;tes des messages Camel comme param&egrave;tres de contexte pour
+			appeler un Job</h3></div></div></div><p>Dans ce sc&eacute;nario, un Job d'int&eacute;gration de donn&eacute;es est construit avec une variable de
+			contexte d&eacute;finie dans la perspective <span class="bold"><strong>Integration</strong></span>.
+			Ensuite, une Route est con&ccedil;ue dans la perspective <span class="bold"><strong>Mediation</strong></span> avec l'en-t&ecirc;te du message d&eacute;fini de la m&ecirc;me fa&ccedil;on que la
+			variable de contexte dans le Job d'int&eacute;gration de donn&eacute;es. Un composant <span class="bold"><strong>cTalendJob</strong></span> est d&eacute;ploy&eacute; pour appeler le Job d'int&eacute;gration de
+			donn&eacute;es et passer la valeur de l'en-t&ecirc;te du message de la Route &agrave; la variable de
+			contexte du Job d'int&eacute;gration de donn&eacute;es. </p><div class="section" title="Construire un Job d'int&eacute;gration et l'exporter en tant que Bundle OSGI pour ESB"><div class="titlepage"><div><div><h4 class="title"><a name="d0e7690"></a>Construire un Job d'int&eacute;gration et l'exporter en tant que Bundle OSGI pour ESB</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la perspective <span class="bold"><strong>Integration</strong></span>, d&eacute;posez les composants
+						suivants de la <span class="bold"><strong>Palette</strong></span> dans l'espace de
+						mod&eacute;lisation graphique : un <span class="bold"><strong>tFixedFlowInput</strong></span>
+						et un <span class="bold"><strong>tLogRow</strong></span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez les composants &agrave; l'aide d'un lien <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Main</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ctalendjob_1.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le <span class="bold"><strong>tFixedFlowInput</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject"><img src="../images/use_case_ctalendjob_2.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Cliquez sur le bouton <span class="bold"><strong>[...]</strong></span> &agrave; c&ocirc;t&eacute; du champ <span class="bold"><strong>Edit schema</strong></span> pour ouvrir l'&eacute;diteur du
+						sch&eacute;ma.</p><div class="mediaobject"><img src="../images/use_case_ctalendjob_3.png"></div><p>Cliquez sur le bouton <span class="bold"><strong>[+]</strong></span> pour ajouter une ligne.</p><p>Saisissez <span class="italic">file</span> comme nom de colonne et s&eacute;lectionnez
+							<span class="italic">String</span> dans la colonne <span class="bold"><strong>Type</strong></span>.</p><p>Cliquez sur <span class="bold"><strong>OK</strong></span> pour fermer l'&eacute;diteur.</p></li><li class="step" title="&Eacute;tape 5"><p>S&eacute;lectionnez l'option <span class="bold"><strong>Use Single Table</strong></span> et saisissez
+							<span class="italic">context.file</span> dans le champ <span class="bold"><strong>Value</strong></span> de la table <span class="bold"><strong>Values</strong></span>.</p><p>Notez que le contexte <span class="italic">default</span> avec la variable
+							<span class="italic">file</span> a &eacute;t&eacute; d&eacute;fini.</p><p>Pour plus d'informations concernant la configuration du contexte, consultez le <span class="italic">Guide utilisateur de</span>
+						<span class="bluebold">Talend Open Studio for ESB</span>. </p></li><li class="step" title="&Eacute;tape 6"><p>Double-cliquez sur le <span class="bold"><strong>tLogRow</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctalendjob_4.png" align="middle"></div></li><li class="step" title="&Eacute;tape 7"><p>S&eacute;lectionnez <span class="bold"><strong>Table (print values in cells of a table</strong></span>
+						pour un meilleur affichage des r&eacute;sultats.</p></li><li class="step" title="&Eacute;tape 8"><p>Appuyez sur les touches <span class="bold"><strong>Ctrl+S</strong></span> afin de sauvegarder votre
+						Job.</p></li><li class="step" title="&Eacute;tape 9"><p>Exportez le Job en tant que <span class="italic">OSGI Bundle for
+						ESB</span>.</p></li><li class="step" title="&Eacute;tape 10"><p>D&eacute;zippez le fichier jar g&eacute;n&eacute;r&eacute;.</p></li></ol></div></div><div class="section" title="Construire une Route pour &eacute;changer des messages et appeler le Job d'int&eacute;gration de donn&eacute;es"><div class="titlepage"><div><div><h4 class="title"><a name="d0e7831"></a>Construire une Route pour &eacute;changer des messages et appeler le Job d'int&eacute;gration de
+				donn&eacute;es</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Dans la perspective <span class="bold"><strong>Mediation</strong></span>, d&eacute;posez les composants de
+						la <span class="bold"><strong>Palette</strong></span> dans l'espace de mod&eacute;lisation
+						graphique : un <span class="bold"><strong>cFile</strong></span>, un <span class="bold"><strong>cSetHeader</strong></span> et un <span class="bold"><strong>cTalendJob</strong></span>, respectivement nomm&eacute;s <span class="italic">File_Source</span>, <span class="italic">Set_Header</span>
+						et <span class="italic">Call_DI-Job</span>.</p></li><li class="step" title="&Eacute;tape 2"><p>Reliez les composants &agrave; l'aide de liens <span class="bold"><strong>Row</strong></span> &gt; <span class="bold"><strong>Route</strong></span>.</p><div class="mediaobject"><img src="../images/use_case_ctalendjob_5.png"></div></li><li class="step" title="&Eacute;tape 3"><p>Double-cliquez sur le composant <span class="bold"><strong>cFile</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject"><img src="../images/use_case_ctalendjob_6.png"></div></li><li class="step" title="&Eacute;tape 4"><p>Dans le champ <span class="bold"><strong>Path</strong></span>, saisissez la variable <span class="italic">context.root_dir</span> pour sp&eacute;cifier le chemin
+						d'acc&egrave;s au fichier.</p><p>Laissez les autres param&egrave;tres tels qu'ils sont.</p><p>Pour plus d'informations concernant la configuration du contexte, consultez le <span class="italic">Guide utilisateur de </span><span class="bluebold">Talend Open Studio for ESB</span>. </p></li><li class="step" title="&Eacute;tape 5"><p>Double-cliquez sur le <span class="bold"><strong>cSetHeader</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctalendjob_7.png" align="middle"></div></li><li class="step" title="&Eacute;tape 6"><p>Dans le champ <span class="bold"><strong>Header</strong></span>, saisissez <span class="italic">file</span>, comme pour la variable de contexte du Job
+						d'int&eacute;gration de donn&eacute;es.</p><p>S&eacute;lectionnez <span class="italic">Simple</span> dans la liste <span class="bold"><strong>Language</strong></span>.</p><p>Dans le champ <span class="bold"><strong>Expression</strong></span>, saisissez <span class="italic">${header.camelfilename}</span> afin d'obtenir le nom
+						du fichier.</p></li><li class="step" title="&Eacute;tape 7"><p>Double-cliquez sur le <span class="bold"><strong>cTalendJob</strong></span> pour ouvrir sa vue
+							<span class="bold"><strong>Basic settings</strong></span>. </p><div class="mediaobject" align="center"><img src="../images/use_case_ctalendjob_8.png" align="middle"></div></li><li class="step" title="&Eacute;tape 8"><p>Cliquez sur le bouton <span class="bold"><strong>[...]</strong></span> afin de parcourir votre
+						syst&egrave;me jusqu'au fichier jar g&eacute;n&eacute;r&eacute; pour le Job d'int&eacute;gration de
+						donn&eacute;es.</p></li><li class="step" title="&Eacute;tape 9"><p>Dans le dossier d&eacute;zipp&eacute; du fichier jar ci-dessus, ouvrez <span class="italic">job.xml</span> dans le dossier <span class="italic">&lt;DI_Job_JAR_Path&gt;\OSGI-INF\blueprint</span>, <span class="italic">E:\cTalendJob_ShowContextVar-0.1\OSGI-INF\blueprint</span> dans cet
+						exemple. </p><p>Dans la balise <span class="italic">bean</span>, copiez le contenu de l'attribut
+							<span class="italic">class</span>, <span class="italic">work.ctalendjob_showcontextvar_0_1.cTalendJob_ShowContextVar</span>
+						dans cet exemple.</p><p>Collez-le dans le champ <span class="bold"><strong>Job</strong></span>.</p></li><li class="step" title="&Eacute;tape 10"><p>Appuyez sur <span class="bold"><strong>Ctrl+S</strong></span> pour sauvegarder la Route.</p></li></ol></div></div><div class="section" title="Visualiser le code et ex&eacute;cuter la Route"><div class="titlepage"><div><div><h4 class="title"><a name="d0e7994"></a>Visualiser le code et ex&eacute;cuter la Route</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step" title="&Eacute;tape 1"><p>Cliquez sur l'onglet <span class="bold"><strong>Code</strong></span> au bas de l'espace de
+						mod&eacute;lisation graphique afin de visualiser le code g&eacute;n&eacute;r&eacute;.</p><div class="mediaobject"><img src="../images/use_case_ctalendjob_9.png"></div><p>Comme affich&eacute; ci-dessus, le <code class="code">File_Source</code> fournit un fichier pour l'&eacute;change de
+						messages. Le <code class="code">cSetHeader</code> configure l'en-t&ecirc;te d'un message et
+						utilise le nom du fichier source comme valeur de l'en-t&ecirc;te. Cette valeur est
+						pass&eacute;e au <code class="code">cTalendJob_1</code> pour ex&eacute;cution du Job d'int&eacute;gration de
+						donn&eacute;es.</p></li><li class="step" title="&Eacute;tape 2"><p>Appuyez sur <span class="bold"><strong>F6</strong></span> pour ex&eacute;cuter la
+						Route.</p></li><li class="step" title="&Eacute;tape 3"><p>Placez un fichier dans le dossier sp&eacute;cifi&eacute; par <span class="italic">context.root_dir</span>, <span class="italic">test
+							mail.txt</span> dans cet exemple.</p><p>Vous pouvez visualiser le r&eacute;sultat.</p><div class="mediaobject"><img src="../images/use_case_ctalendjob_10.png"></div><p>Comme affich&eacute; ci-dessus, le nom du fichier source est affich&eacute; via le
+						composant <span class="bold"><strong>tLogRow</strong></span>, puisque la valeur de
+						l'en-t&ecirc;te du message de la Route a &eacute;t&eacute; pass&eacute;e &agrave; la variable de contexte du
+						Job d'int&eacute;gration de donn&eacute;es.</p></li></ol></div></div></div></div></body></html>

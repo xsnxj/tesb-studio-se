@@ -1,0 +1,48 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+    java.io.UnsupportedEncodingException
+    java.net.URLEncoder
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+   	String cid = "";
+   	IElementParameter param = node.getElementParameter("LABEL");
+   	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+   		cid = (String)param.getValue();	
+   	}else{
+   		cid = node.getUniqueName();
+   	}
+    String uriRef = "uriMap.get(\"" + cid + "\")";
+    
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+		IConnection iConnection = conns.get(0);
+		INode source = iConnection.getSource();
+		if ("cErrorHandler".equals(source
+				.getComponent().getName())
+				&& source.getIncomingConnections()
+						.size() < 1){
+%>
+			.from(<%=uriRef%>)
+<%
+		}else{
+%>
+			.to(<%=uriRef%>)
+<%
+		}
+	} else {
+%>
+		from(<%=uriRef%>)
+<%
+	}
+%>
+
