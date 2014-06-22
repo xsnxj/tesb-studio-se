@@ -1,0 +1,58 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode
+    org.talend.core.model.process.ElementParameterParser
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.designer.codegen.config.NodeParamsHelper
+    java.util.List
+"
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+
+	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+
+	String acceptType = paramsHelper.getVisibleStringParam("__ACCEPT_TYPE__");
+	String responseClass = "*/*".equals(acceptType) ? "String.class" : "org.w3c.dom.Document.class";
+	String contentType = paramsHelper.getVisibleStringParam("__CONTENT_TYPE__");
+
+	String uri = cid;
+
+	if (node.getIncomingConnections().isEmpty()) {
+%>
+		from(uriMap.get("<%=uri%>"))
+		.process(new org.apache.camel.Processor() {
+				public void process(org.apache.camel.Exchange exchange) throws Exception {
+					org.apache.camel.Message inMessage = exchange.getIn();
+					inMessage.setHeader("http_query",
+						org.apache.cxf.jaxrs.utils.JAXRSUtils.getStructuredParams((String) inMessage.getHeader(org.apache.camel.Exchange.HTTP_QUERY), "&", false, false));
+				}
+			})
+<%
+	} else {
+%>
+		.setHeader(org.apache.camel.Exchange.HTTP_PATH, <%=ElementParameterParser.getValue(node, "__PATH__")%>)
+		.setHeader(org.apache.camel.Exchange.HTTP_METHOD, constant("<%=ElementParameterParser.getValue(node, "__HTTP_METHOD__")%>"))
+<% if (!acceptType.isEmpty()) { %>
+		.setHeader(org.apache.camel.Exchange.ACCEPT_CONTENT_TYPE, constant("<%=acceptType%>"))
+		.setHeader(org.apache.camel.component.cxf.CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, constant(<%=responseClass%>))
+<% } %>
+<% if (!contentType.isEmpty()) { %>
+		.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, constant("<%=contentType%>"))
+<% } %>
+<% if (paramsHelper.getBoolParam("__ENABLE_CORRELATION__")) { %>
+		.process(new org.apache.camel.Processor() {
+				public void process(org.apache.camel.Exchange exchange) throws Exception {
+					correlationIDCallbackHandler_<%=cid%>.setCorrelationId(simple(<%=paramsHelper.getVisibleStringParam("__CORRELATION_VALUE__")%>).evaluate(exchange, String.class));
+				}
+			})
+<% } %>
+
+		.inOut(uriMap.get("<%=uri%>"))
+<%
+	}
+%>

@@ -1,0 +1,33 @@
+<%@ jet
+	package="org.talend.designer.codegen.translators.common"
+	imports="
+		java.util.Vector
+
+		java.util.Map
+		
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+
+		org.talend.core.model.process.IProcess
+	"
+	class="Header_additional"
+%>
+<%
+CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+Vector v = (Vector) codeGenArgument.getArgument();
+IProcess process = (IProcess) v.get(0);
+
+boolean jobHasRouteInputComponent = !process.getNodesOfType("tRouteInput").isEmpty();
+boolean jobHasRouteOutputComponent = !process.getNodesOfType("tRouteOutput").isEmpty();
+boolean jobHasRouteFaultComponent = !process.getNodesOfType("tRouteFault").isEmpty();
+
+if (jobHasRouteInputComponent || jobHasRouteOutputComponent || jobHasRouteFaultComponent) {%>
+
+private org.apache.camel.Exchange routerExchange = null;
+
+public void setExchange(org.apache.camel.Exchange exchange){
+	this.routerExchange = exchange;
+}
+
+<%
+}
+%>

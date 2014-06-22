@@ -1,0 +1,57 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.core.model.components.IComponent
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	INode consumerNode = node;
+	String cid="";
+	
+	boolean inputName="true".equals(ElementParameterParser.getValue(node, "____INPUT_ENDPOINT_NAME____"));
+	boolean asProductor = node.getIncomingConnections().size()>0;
+	if(asProductor && (!inputName)){
+		Object desNode= ElementParameterParser.getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
+		if(desNode!=null){
+			String desNodeName = desNode.toString();
+			List<? extends INode> allNodes = node.getProcess().getGraphicalNodes();
+			for(INode aNode : allNodes){
+				if(aNode.getUniqueName().equals(desNodeName)){
+					consumerNode=aNode;
+					break;
+				}
+			}
+		}
+	}
+   	cid = consumerNode.getUniqueName();
+	//  http://jira.talendforge.org/browse/TESB-5241
+	/*
+   	 * change to use label + unique to make it unique but readable
+   	 */
+//	IElementParameter param = consumerNode.getElementParameter("LABEL");
+//	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+//		cid = (String)param.getValue()+"_"+cid;	
+//	}
+	
+	
+	
+	String uriRef = "uriMap.get(\"" + cid + "\")";
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+%>
+			.to(<%=uriRef%>)
+<%
+	} else {
+%>
+		from(<%=uriRef%>)
+<%
+	}
+%>
