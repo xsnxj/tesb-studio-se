@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.talend.core.components_provider">
+		<ComponentsProvider
+			id="org.talend.designer.esb.components.rs.consumer.ComponentsProvider"
+			class="org.talend.designer.esb.components.rs.consumer.ComponentsProvider"
+			folderName="components" />
+	</extension>
+
+	<extension point="org.talend.designer.codegen.additional_jetfile">
+		<jetProvider
+			id="org.talend.designer.esb.components.rs.consumer.ESBJetFileProvider"
+			class="org.talend.designer.esb.components.rs.consumer.ESBJetFileProvider" />
+	</extension>
+</plugin>

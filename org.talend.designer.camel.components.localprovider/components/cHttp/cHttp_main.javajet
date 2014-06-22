@@ -1,0 +1,135 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+    java.io.UnsupportedEncodingException
+    java.net.URLEncoder
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+    
+    String isServer = ElementParameterParser.getValue(node, "__SERVER__");
+    
+    String cid = node.getUniqueName();
+    //  http://jira.talendforge.org/browse/TESB-5241
+    /*
+     * change to use label + unique to make it unique but readable
+     */
+    IElementParameter param = node.getElementParameter("LABEL");
+    if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
+    	cid = (String)param.getValue()+"_"+cid;	
+    }
+    
+	
+    String uriRef = "uriMap.get(\"" + cid + "\")";
+    
+    if("true".equals(isServer)){
+    	List< ? extends IConnection> conns = node.getIncomingConnections();
+    	if(conns.size()>0){
+%>
+			.to(<%=uriRef%>)
+<%
+    	}else{
+%>
+			from(<%=uriRef%>)
+<%
+    	}
+    	
+    }else{
+		StringBuilder sb = new StringBuilder();
+		
+		String method = ElementParameterParser.getValue(node, "__METHOD__");
+		String contentType = ElementParameterParser.getValue(node, "__CONTENT_TYPE__");
+		
+		sb.append(".setHeader(\"");
+		sb.append("CamelHttpMethod");
+		sb.append("\",");
+		sb.append("constant(\"");
+		sb.append(method);
+		sb.append("\"))");
+		
+		String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
+		String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
+		String noContentStyle = ElementParameterParser.getValue(node, "__NO_CONTENT__");
+		String manualContentType = ElementParameterParser.getValue(node, "__MANUAL_CONTENT_TYPE__");
+		
+		if (contentType.equals("other")) {
+			contentType=manualContentType;
+		}else{
+			contentType = "\""+contentType+"\"";
+		}
+		if(("POST".equals(method)||"PUT".equals(method))){
+			if("true".equals(plainTextStyle)||"true".equals(noContentStyle)){
+				sb.append(".setHeader(\"Content-Type\", constant("+ contentType + "))");
+				if("true".equals(plainTextStyle)){
+					String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
+					sb.append(".setBody(");
+					sb.append("constant(");
+					sb.append(plainTextContent);
+					sb.append("))");
+				}
+			}else if("true".equals(formStyle)){
+				// content-type of form is "application/x-www-form-urlencoded"
+				sb.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
+				List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
+				String encodeCharset = ElementParameterParser.getValue(node, "__ENCODER_CHARSET__");
+				boolean hasParam = false;
+				sb.append(".setBody(");
+				sb.append("constant(");
+				for (Map<String, String> map : parameters) {
+					String argName = map.get("KEY").trim();
+					String argValue = map.get("VALUE").trim();
+					try{
+						if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
+							argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
+							argName = "\""+argName+"\"";
+						}else{
+							argName = URLEncoder.encode(argName,encodeCharset);
+						}
+						if(argValue.startsWith("\"")&&argValue.endsWith("\"")&&argValue.length()>=2){
+							argValue = URLEncoder.encode(argValue.substring(1, argValue.length()-1),encodeCharset);
+							argValue = "\""+argValue+"\"";
+						}else{
+							argValue = URLEncoder.encode(argValue,encodeCharset);
+						}
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					if (hasParam) {
+						sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+					} else {
+						sb.append(argName + "+\"=\"+" + argValue);
+						hasParam = true;
+					}
+				}
+				sb.append("))");
+			}
+		}
+		
+		
+		List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
+		for (Map<String, String> map : arguments) {
+			String argName = map.get("KEY").trim();
+			String argValue = map.get("VALUE").trim();
+			sb.append(".setHeader(");
+			sb.append(argName);
+			sb.append(",");
+			sb.append("constant(");
+			sb.append(argValue);
+			sb.append("))");
+		}
+
+
+%>
+		<%=sb.toString()%>.to(<%=uriRef%>)
+<%
+    }
+%>
+
