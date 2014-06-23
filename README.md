@@ -62,4 +62,4 @@ Feel free to share your Talend components on [Talend Exchange](http://www.talend
 
 Copyright (c) 2006-2014 Talend
 
-Licensed under the Apache v2 License
+Licensed under the LGPLv3 License
