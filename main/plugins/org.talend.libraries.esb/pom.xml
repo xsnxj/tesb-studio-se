@@ -24,10 +24,6 @@
                     <artifactId>wsdl4j</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
@@ -42,10 +38,6 @@
                 <exclusion>
                     <groupId>xml-resolver</groupId>
                     <artifactId>xml-resolver</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
                 </exclusion>
             </exclusions>
 		</dependency>
@@ -211,6 +203,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/lib</outputDirectory>
+							<excludeArtifactIds>javax.ws.rs-api,jaxb-impl,asm</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -226,9 +219,10 @@
 					<licenseMerges>
 						<licenseMerge>Apache Software License - Version 2.0|The Apache Software License, Version 2.0|Apache 2</licenseMerge>
 						<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
-						<licenseMerge>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|CDDL License</licenseMerge>
+						<!--licenseMerge>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|CDDL License</licenseMerge-->
 					</licenseMerges>
 					<excludedGroups>org.talend.esb</excludedGroups>
+					<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm</excludedArtifacts>
 					<missingFile>THIRD-PARTY.properties</missingFile>
 					<useMissingFile>true</useMissingFile>
 					<failIfWarning>true</failIfWarning>

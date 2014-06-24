@@ -51,15 +51,7 @@
 	</ADVANCED_PARAMETERS>
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT NAME="apache-camel"
-					MODULE="camel-core-2.13.1.jar"
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-2.13.1.jar"
-					REQUIRED="true"
-					BundleID="org.apache.camel.camel-core" />
-			<IMPORT NAME="dom4j"
-					MODULE="dom4j-1.6.1.jar"
-					UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
-					REQUIRED="true" />
+			<!-- camel-core & dom4j already in system routines deps -->
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS>
