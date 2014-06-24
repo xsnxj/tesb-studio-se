@@ -1,0 +1,566 @@
+<COMPONENT>
+	<HEADER PLATEFORM="ALL"
+			SERIAL=""
+			VERSION="0.102"
+			STATUS="ALPHA"
+			COMPATIBILITY="ALL"
+			AUTHOR="Talend"
+			RELEASE_DATE="20050320A"
+			SCHEMA_AUTO_PROPAGATE="true"
+			STARTABLE="true"
+			DATA_AUTO_PROPAGATE="false"
+			HAS_CONDITIONAL_OUTPUTS="true"
+			EXTENSION="org.talend.designer.esb.components.ws.consumer" >
+		<SIGNATURE />
+	</HEADER>
+
+	<FAMILIES>
+		<FAMILY>ESB/Web Services</FAMILY>
+	</FAMILIES>
+
+	<DOCUMENTATION>
+		<URL />
+	</DOCUMENTATION>
+
+	<CONNECTORS>
+		<CONNECTOR CTYPE="FLOW" MIN_INPUT="1" MAX_INPUT="1" MAX_OUTPUT="0" />
+		<CONNECTOR NAME="RESPONSE" CTYPE="FLOW" COLOR="009900" MAX_OUTPUT="1" />
+		<CONNECTOR NAME="FAULT" CTYPE="FLOW" LINE_STYLE="2" COLOR="cc0000" MAX_OUTPUT="1" />
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" />
+		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="COMPONENT_OK" />
+		<CONNECTOR CTYPE="COMPONENT_ERROR" />
+		<CONNECTOR CTYPE="RUN_IF" />
+	</CONNECTORS>
+
+	<PARAMETERS>
+		<!--
+		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1" REPOSITORY_VALUE="WEBSERVICE" />
+
+		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true" NUM_ROW="1" />
+		-->
+
+		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
+
+		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="16">
+			<DEFAULT>30</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="CONNECTION_TIMEOUT_DESC" FIELD="LABEL" REQUIRED="true" NUM_ROW="16">
+			<DEFAULT>(Studio Only, See Doc for Runtime)</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="RECEIVE_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="20">
+			<DEFAULT>60</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="RECEIVE_TIMEOUT_DESC" FIELD="LABEL" REQUIRED="true" NUM_ROW="20">
+			<DEFAULT>(Studio Only, See Doc for Runtime)</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
+			<TABLE READONLY="true">
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
+				<!--COLUMN NAME="headers" TYPE="id_Document" READONLY="true" /-->
+			</TABLE>
+		</PARAMETER>
+		<PARAMETER NAME="SCHEMA_RESPONSE" FIELD="SCHEMA_TYPE" NUM_ROW="29" CONTEXT="RESPONSE">
+			<TABLE READONLY="true">
+				<COLUMN NAME="payload" TYPE="id_Document" READONLY="true" />
+			</TABLE>
+		</PARAMETER>
+		<PARAMETER NAME="SCHEMA_FAULT" FIELD="SCHEMA_TYPE" NUM_ROW="30" CONTEXT="FAULT">
+			<TABLE READONLY="true">
+				<COLUMN NAME="faultCode" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultString" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultActor" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultNode" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultRole" TYPE="id_String" LENGTH="1024" READONLY="true" />
+				<COLUMN NAME="faultDetail" TYPE="id_Document" READONLY="true" />
+			</TABLE>
+		</PARAMETER>
+
+		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="40"
+				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_LOCATOR_STRATEGY" FIELD="CLOSED_LIST" NUM_ROW="40"
+				GROUP="ESB" SHOW="false">
+			<ITEMS DEFAULT="SERVICE_LOCATOR_STRATEGY_DEFAULT">
+				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_DEFAULT" VALUE="Default" />
+				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_EVEN_DISTRIBUTION" VALUE="EvenDistribution" />
+				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_RANDOM" VALUE="Random" />
+			</ITEMS>
+		</PARAMETER>
+
+		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="41"
+				GROUP="ESB" DYNAMIC_SETTINGS="true" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="39"
+				GROUP="ESB" SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AUTHENTICATION_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="44"
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')" />
+		<PARAMETER NAME="AUTH_PROPAGATE" FIELD="CHECK" REQUIRED="true" NUM_ROW="46"
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_PROPAGATE"
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="44"
+				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="44"
+				GROUP="ESB" SHOW_IF="(NEED_AUTH == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+			<ITEMS DEFAULT="SECURITY_SAML">
+				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
+				<ITEM NAME="SECURITY_DIGEST" VALUE="DIGEST" />
+				<ITEM NAME="SECURITY_TOKEN" VALUE="TOKEN" />
+				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="PROPAGATE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="44"
+				GROUP="ESB" SHOW_IF="((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SAML'))
+					AND
+					((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+			<ITEMS DEFAULT="PROPAGATE_NONE">
+				<ITEM NAME="PROPAGATE_NONE" VALUE="NONE"/>
+				<ITEM NAME="PROPAGATE_U_P" VALUE="U_P" />
+				<ITEM NAME="PROPAGATE_CERT" VALUE="CERT" />
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="PROPAGATE_U_P_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="45"
+				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
+								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+							) AND
+							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_U_P'))
+						 ) AND
+						 (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
+		</PARAMETER>
+		<PARAMETER NAME="PROPAGATE_CERT_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="45"
+				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
+								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+							) AND
+							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
+						 ) AND
+						 (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_ALIAS" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_ALIAS"
+				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
+								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+							) AND
+							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
+						 ) OR
+						 (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
+						 	(AUTH_PROPAGATE == 'true')
+						 )">
+			<DEFAULT>"alias"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_USERNAME"
+				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
+								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+							) AND
+							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE != 'PROPAGATE_CERT'))
+						 ) OR
+						 (((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')))">
+			<DEFAULT>"username"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AUTH_PASSWORD" FIELD="PASSWORD" REQUIRED="true" NUM_ROW="46"
+				GROUP="ESB" REPOSITORY_VALUE="AUTH_PASSWORD"
+				SHOW_IF="((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
+						 OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" NUM_ROW="47"
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AUTHORIZATION_LABEL" GROUP="ESB" FIELD="LABEL" NUM_ROW="47" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')" />
+
+		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="48"
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND
+				(AUTH_TYPE == 'SECURITY_SAML')) OR
+				(USE_SR == 'true'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NEED_ENCRYPTION" FIELD="CHECK" NUM_ROW="49"
+				GROUP="ESB" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="52"
+				GROUP="ESB" SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false') ">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="53"
+				GROUP="ESB" SHOW_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="USE_PROXY" FIELD="CHECK" REQUIRED="true" NUM_ROW="56"
+				REPOSITORY_VALUE="USE_PROXY">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_HOST" FIELD="TEXT" NUM_ROW="57"
+				 REPOSITORY_VALUE="PROXY_HOST" SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>"61.163.92.4"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PORT" FIELD="TEXT" NUM_ROW="58"
+				REPOSITORY_VALUE="PROXY_PORT" SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>8080</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_USERNAME" FIELD="TEXT" NUM_ROW="59"
+				REPOSITORY_VALUE="PROXY_USERNAME" SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PROXY_PASSWORD" FIELD="PASSWORD" NUM_ROW="60"
+				REPOSITORY_VALUE="PROXY_PASSWORD" SHOW_IF="USE_PROXY == 'true'">
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="61">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SSL_TRUSTSERVER_TRUSTSTORE" FIELD="TEXT" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"C:/clientTrustStore.trustStore"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SSL_TRUSTSERVER_PASSWORD" FIELD="PASSWORD" NUM_ROW="61"
+				SHOW_IF="NEED_SSL_TO_TRUSTSERVER == 'true'">
+			<DEFAULT>"password"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="100">
+			<DEFAULT>true</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="10"
+				SHOW="true">
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
+				SHOW="false" REPOSITORY_VALUE="ENDPOINT">
+			<DEFAULT>"http://www.webservicex.net/globalweather.asmx?WSDL"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NS">
+			<DEFAULT>http://www.webserviceX.NET</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="63"
+				SHOW="false" REPOSITORY_VALUE="SERVICE_NAME">
+			<DEFAULT>GlobalWeather</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NS">
+			<DEFAULT>http://www.webserviceX.NET</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="PORT_NAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="64"
+				SHOW="false" REPOSITORY_VALUE="PORT_NAME">
+			<DEFAULT>GlobalWeatherSoap</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="METHOD_NS" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
+				SHOW="false" REPOSITORY_VALUE="METHOD_NS">
+			<DEFAULT></DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="METHOD" FIELD="TEXT" REQUIRED="true" NUM_ROW="65"
+				SHOW="false" REPOSITORY_VALUE="METHOD">
+			<DEFAULT>GetWeather(GetWeather):GetWeatherResponse</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SOAP_ACTION" FIELD="TEXT" REQUIRED="true" NUM_ROW="66"
+				SHOW="false" REPOSITORY_VALUE="SOAP_ACTION">
+			<DEFAULT>http://www.webserviceX.NET/GetWeather</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="COMMUNICATION_STYLE" FIELD="TEXT" REQUIRED="true" NUM_ROW="67"
+				SHOW="false" REPOSITORY_VALUE="COMMUNICATION_STYLE">
+			<DEFAULT>request-response</DEFAULT>
+		</PARAMETER>
+	</PARAMETERS>
+
+	<ADVANCED_PARAMETERS>
+		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="5"
+				REQUIRED="false" NB_LINES="5"
+				SHOW_IF="(SERVICE_LOCATOR == 'true') AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+			<ITEMS>
+				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
+				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_ACTIVITY_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="7"
+				REQUIRED="false" NB_LINES="5"
+				SHOW_IF="SERVICE_ACTIVITY_MONITOR == 'true'">
+			<ITEMS>
+				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
+				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
+			</ITEMS>
+		</PARAMETER>
+		<PARAMETER NAME="LOG_MESSAGES" FIELD="CHECK" REQUIRED="true" NUM_ROW="11">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="WSDL_CONTENT" FIELD="TEXT" REQUIRED="false" NUM_ROW="15" SHOW="false">
+		</PARAMETER>
+	</ADVANCED_PARAMETERS>
+
+	<CODEGENERATION>
+		<IMPORTS>
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
+					BundleID="org.apache.servicemix.bundles.dom4j"
+					REQUIRED="true" />
+
+			<!-- CXF Core -->
+			<IMPORT NAME="cxf-rt-core"
+					MODULE="${tesb-cxf-rt-core}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-core}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-api"
+					MODULE="${tesb-cxf-api}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-api}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="woodstox-core-asl"
+					MODULE="${tesb-woodstox-core-asl}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-woodstox-core-asl}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="stax2-api"
+					MODULE="${tesb-stax2-api}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-stax2-api}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="wsdl4j"
+					MODULE="wsdl4j-1.6.3.jar"
+					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmlschema-core"
+					MODULE="${tesb-xmlschema-core}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlschema-core}"
+					BundleID=""
+					REQUIRED="true" />
+            <IMPORT NAME="geronimo-java_1.4_spec"
+                    MODULE="mail.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+                    BundleID=""
+                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="slf4j-api"
+					MODULE="${tesb-slf4j-api}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-slf4j-api}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="slf4j-log4j12"
+					MODULE="${tesb-slf4j-log4j12}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-slf4j-log4j12}"
+					BundleID=""
+					REQUIRED="true" />
+
+			<!-- WS client -->
+			<IMPORT NAME="cxf-rt-frontend-jaxws"
+					MODULE="${tesb-cxf-rt-frontend-jaxws}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-frontend-jaxws}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xml-resolver"
+					MODULE="xml-resolver-1.2.jar"
+					UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="asm"
+					MODULE="${tesb-asm}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-asm}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-bindings-soap"
+					MODULE="${tesb-cxf-rt-bindings-soap}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-bindings-soap}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-databinding-jaxb"
+					MODULE="${tesb-cxf-rt-databinding-jaxb}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-databinding-jaxb}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-bindings-xml"
+					MODULE="${tesb-cxf-rt-bindings-xml}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-bindings-xml}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-frontend-simple"
+					MODULE="${tesb-cxf-rt-frontend-simple}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-frontend-simple}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-addr"
+					MODULE="${tesb-cxf-rt-ws-addr}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-ws-addr}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-transports-http"
+					MODULE="${tesb-cxf-rt-transports-http}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-http}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-security"
+					MODULE="${tesb-cxf-rt-ws-security}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-ws-security}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="ehcache-core"
+					MODULE="${tesb-ehcache-core}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-ehcache-core}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="wss4j"
+					MODULE="${tesb-wss4j}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-wss4j}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmlsec"
+					MODULE="${tesb-xmlsec}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlsec}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="opensaml"
+					MODULE="${tesb-opensaml}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-opensaml}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="openws"
+					MODULE="${tesb-openws}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-openws}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="xmltooling"
+					MODULE="${tesb-xmltooling}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmltooling}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="joda-time"
+					MODULE="${tesb-joda-time}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-joda-time}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="cxf-rt-ws-policy"
+					MODULE="${tesb-cxf-rt-ws-policy}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-ws-policy}"
+					BundleID=""
+					REQUIRED="true" />
+			<IMPORT NAME="neethi"
+					MODULE="${tesb-neethi}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-neethi}"
+					BundleID=""
+					REQUIRED="true" />
+
+			<!-- ESB Features-->
+			<IMPORT NAME="spring-context"
+					MODULE="${tesb-spring-context}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-context}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="spring-aop"
+					MODULE="${tesb-spring-aop}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-aop}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="aopalliance"
+					MODULE="${tesb-aopalliance}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-aopalliance}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="spring-beans"
+					MODULE="${tesb-spring-beans}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-beans}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="spring-core"
+					MODULE="${tesb-spring-core}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-core}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="commons-logging"
+					MODULE="commons-logging-1.1.1.jar"
+					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT NAME="spring-expression"
+					MODULE="${tesb-spring-expression}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-expression}"
+					BundleID=""
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+
+			<!-- SL for WS -->
+			<IMPORT NAME="locator"
+					MODULE="${tesb-locator}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-locator}"
+					BundleID="locator"
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT NAME="zookeeper"
+					MODULE="${tesb-zookeeper}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-zookeeper}"
+					BundleID="org.apache.hadoop.zookeeper"
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT NAME="log4j"
+					MODULE="log4j-1.2.17.jar"
+					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+					BundleID=""
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT NAME="cxf-rt-features-clustering"
+					MODULE="${tesb-cxf-rt-features-clustering}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-features-clustering}"
+					BundleID=""
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+
+			<!-- SAM for WS -->
+			<IMPORT NAME="sam-agent"
+					MODULE="${tesb-sam-agent}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-sam-agent}"
+					BundleID="sam-agent"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="sam-common"
+					MODULE="${tesb-sam-common}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-sam-common}"
+					BundleID="sam-common"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="commons-lang"
+					MODULE="commons-lang-2.6.jar"
+					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
+					BundleID=""
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="cxf-rt-frontend-jaxrs"
+					MODULE="${tesb-cxf-rt-frontend-jaxrs}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-frontend-jaxrs}"
+					BundleID=""
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT NAME="javax.ws.rs-api"
+					MODULE="${tesb-javax.ws.rs-api}"
+					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+
+			<!-- CorrelationID -->
+			<IMPORT NAME="correlationid-policy"
+					MODULE="${tesb-correlationid-policy}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
+		</IMPORTS>
+	</CODEGENERATION>
+
+	<RETURNS>
+		<RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" />
+		<RETURN NAME="CORRELATION_ID" TYPE="id_String" AVAILABILITY="FLOW" />
+	</RETURNS>
+</COMPONENT>

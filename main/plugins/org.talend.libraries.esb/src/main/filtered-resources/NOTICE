@@ -1,4 +1,4 @@
-org.talend.libraries.esb
+${project.name}
 Copyright (c) 2011-2013 Talend Inc. - www.talend.com
 All rights reserved.
 
