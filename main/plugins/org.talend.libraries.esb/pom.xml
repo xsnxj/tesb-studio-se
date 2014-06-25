@@ -203,7 +203,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/lib</outputDirectory>
-							<excludeArtifactIds>javax.ws.rs-api,jaxb-impl,asm</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
