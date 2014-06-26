@@ -149,7 +149,7 @@
              		REQUIRED="true"/>
    			<IMPORT NAME="activemq" 
 					MODULE="activemq-all-5.10.0.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/activemq-all-5.10.0.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-5.10.0.jar"
 					REQUIRED="true"/>
             <IMPORT NAME="camel-jms"
                     MODULE="camel-jms-2.13.1.jar"
