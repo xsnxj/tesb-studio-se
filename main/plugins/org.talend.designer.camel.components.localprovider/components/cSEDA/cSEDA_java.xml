@@ -114,8 +114,8 @@
                     UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
+                    MODULE="slf4j-api-1.6.6.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.6.6.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-log4j12"
                     MODULE="slf4j-log4j12-1.7.6.jar"
@@ -138,6 +138,10 @@
             <IMPORT NAME="spring-aop"
                     MODULE="spring-aop-3.2.4.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="aopalliance"
+                    MODULE="aopalliance-1.0.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/aopalliance-1.0.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-beans"
                     MODULE="spring-beans-3.2.4.RELEASE.jar"
