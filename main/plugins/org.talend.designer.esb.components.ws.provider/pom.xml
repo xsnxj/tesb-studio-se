@@ -23,16 +23,4 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>eu.trojanbug.maven.plugins</groupId>
-				<artifactId>propertymapper-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>

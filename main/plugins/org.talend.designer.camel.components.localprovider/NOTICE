@@ -1,0 +1,22 @@
+Talend Designer ESB Tooling Route components plugin
+Copyright (c) 2011-2014 Talend Inc. - www.talend.com
+All rights reserved.
+
+This product includes/uses softwares under their own licenses as described below.
+
+================================================================================
+
+Lists of 12 third-party dependencies.
+     (Apache Software License - Version 2.0) ActiveMQ :: All JAR bundle (org.apache.activemq:activemq-all:5.10.0 - http://activemq.apache.org/activemq-all)
+     (Apache Software License - Version 2.0) Camel :: Context (org.apache.camel:camel-context:2.13.1 - http://camel.apache.org/camel-parent/components/camel-context)
+     (Apache Software License - Version 2.0) Camel :: Core (org.apache.camel:camel-core:2.13.1 - http://camel.apache.org/camel-parent/camel-core)
+     (Apache Software License - Version 2.0) Camel :: CXF (org.apache.camel:camel-cxf:2.13.1 - http://camel.apache.org/camel-parent/components/camel-cxf)
+     (Apache Software License - Version 2.0) Camel :: CXF :: Transport (org.apache.camel:camel-cxf-transport:2.13.1 - http://camel.apache.org/camel-parent/components/camel-cxf-transport)
+     (Apache Software License - Version 2.0) Camel :: Groovy (org.apache.camel:camel-groovy:2.13.1 - http://camel.apache.org/camel-parent/components/camel-groovy)
+     (Apache Software License - Version 2.0) Camel :: HTTP (org.apache.camel:camel-http:2.13.1 - http://camel.apache.org/camel-parent/components/camel-http)
+     (Apache Software License - Version 2.0) Camel :: JMS (org.apache.camel:camel-jms:2.13.1 - http://camel.apache.org/camel-parent/components/camel-jms)
+     (Apache Software License - Version 2.0) Camel :: Script (org.apache.camel:camel-script:2.13.1 - http://camel.apache.org/camel-parent/components/camel-script)
+     (Apache Software License - Version 2.0) Camel :: Spring (org.apache.camel:camel-spring:2.13.1 - http://camel.apache.org/camel-parent/components/camel-spring)
+     (Apache Software License - Version 2.0) Groovy (org.codehaus.groovy:groovy-all:2.2.2 - http://groovy.codehaus.org/)
+     (Apache License, Version 2.0) Spring OSGi Core (org.springframework.osgi:spring-osgi-core:1.2.1 - http://www.springframework.org/osgi)
+

@@ -210,26 +210,9 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<licenseName>apache_v2</licenseName>
-					<licenseFile>${basedir}/LICENSE</licenseFile>
-					<acceptPomPackaging>true</acceptPomPackaging>
-					<groupByLicense>true</groupByLicense>
-					<licenseMerges>
-						<licenseMerge>Apache Software License - Version 2.0|The Apache Software License, Version 2.0|Apache 2</licenseMerge>
-						<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
-						<!--licenseMerge>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|CDDL License</licenseMerge-->
-					</licenseMerges>
-					<excludedGroups>org.talend.esb</excludedGroups>
-					<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm</excludedArtifacts>
-					<missingFile>THIRD-PARTY.properties</missingFile>
-					<useMissingFile>true</useMissingFile>
-					<failIfWarning>true</failIfWarning>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
-							<!--goal>update-project-license</goal-->
 							<goal>add-third-party</goal>
 						</goals>
 					</execution>
@@ -238,36 +221,39 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-					<executions>
-						<execution>
-							<id>create-notice</id>
-							<phase>compile</phase>
-							<configuration>
-								<target>
-									<delete dir="${basedir}/lib"/>
-									<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
-										<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
-									</concat>
-								</target>
-							</configuration>
-							<goals>
-								<goal>run</goal>
-							</goals>
-						</execution>
-
-						<!--execution>
-							<id>compile</id>
-							<phase>compile</phase>
-							<configuration>
-								<target>
-									<echoproperties prefix="tesb-"/>
-								</target>
-							</configuration>
-							<goals>
-								<goal>run</goal>
-							</goals>
-						</execution-->
-					</executions>
+				<executions>
+					<execution>
+						<id>create-notice</id>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<delete dir="${basedir}/lib"/>
+								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
+									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
+								</concat>
+								<concat destfile="${basedir}/build_apl.properties" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/build.properties"/>
+									<footer>bin.excludes = lib/${tesb-javax.ws.rs-api},lib/${tesb-jaxb-impl},lib/${tesb-asm}</footer>
+								</concat>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<!--execution>
+						<id>compile</id>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<echoproperties prefix="tesb-"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution-->
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
