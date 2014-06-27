@@ -15,16 +15,16 @@ package org.talend.designer.esb.webservice.ui.dialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.ui.branding.IBrandingService;
-import org.talend.designer.esb.webservice.WebServiceComponent;
+import org.talend.designer.esb.webservice.WebServiceNode;
 import org.talend.designer.esb.webservice.ui.WebServiceUI;
 
 public class WebServiceDialog extends Wizard {
 
-    private final WebServiceComponent webServiceComponent;
+    private final WebServiceNode webServiceComponent;
 
     private WebServiceUI webServiceUI;
 
-    public WebServiceDialog(WebServiceComponent webServiceComponent) {
+    public WebServiceDialog(WebServiceNode webServiceComponent) {
         this.webServiceComponent = webServiceComponent;
         setWindowTitle(((IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class)).getFullProductName() +
                 " - " + webServiceComponent.getComponent().getName() + //$NON-NLS-1$

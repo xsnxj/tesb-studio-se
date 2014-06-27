@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.esb.webservice;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -20,14 +22,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.IExternalData;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.esb.webservice.ui.dialog.WebServiceDialog;
 
-/**
- * gcui class global comment. Detailled comment
- */
-public class WebServiceComponent extends AbstractExternalNode {
+public class WebServiceNode extends AbstractExternalNode {
 
     public int open(Display display) { // button event
         return open(display.getActiveShell());
@@ -38,13 +38,46 @@ public class WebServiceComponent extends AbstractExternalNode {
     }
 
     private int open(Shell shell) {
-        this.getElementParameter(EParameterName.UPDATE_COMPONENTS.getName()).setValue(Boolean.TRUE);
+    	setParamValue(EParameterName.UPDATE_COMPONENTS.getName(), Boolean.TRUE);
+
         WizardDialog wizardDialog = new WizardDialog(shell, new WebServiceDialog(this));
         return (Window.OK == wizardDialog.open()) ? SWT.OK : SWT.CANCEL;
     }
+    
+	public Object getParamValue(String key) {
+		IElementParameter parameter = getElementParameter(key);
+		return parameter == null ? null : parameter.getValue();
+	}
+	
+	public void setParamValue(String key, Object value) {
+		IElementParameter parameter = getElementParameter(key);
+		if(parameter!=null) {
+			parameter.setValue(value);
+		}
+	}
+
+	public String getParamStringValue(String key) {
+		Object parameterValue = getParamValue(key);
+		if (parameterValue instanceof String) {
+			return StringUtils.trimToNull((String)parameterValue);
+		}
+		return null;
+	}
+
+	public boolean getBooleanValue(String key) {
+		Object value = getParamValue(key);
+		if(value == null) {
+			return false;
+		}
+		if(value instanceof Boolean) {
+			return (Boolean) value;
+		}
+		return BooleanUtils.toBoolean(value.toString());
+	}
 
     @Override
     protected void renameMetadataColumnName(String conectionName, String oldColumnName, String newColumnName) {
+    	throw new UnsupportedOperationException();
     }
 
     public IComponentDocumentation getComponentDocumentation(String componentName, String tempFolderPath) {

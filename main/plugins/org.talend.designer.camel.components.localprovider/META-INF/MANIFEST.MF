@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.ui,
  org.apache.xerces
 Bundle-Vendor: .Talend SA.
 Bundle-ActivationPolicy: lazy
+Import-Package: org.talend.designer.esb.webservice
