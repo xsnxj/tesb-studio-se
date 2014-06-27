@@ -258,7 +258,7 @@
 	<FeatureMap HotLib="camel-xmpp-alldep">
 		<Feature version="[2,5)">camel-xmpp</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-xstream-alldep">
+	<FeatureMap HotLib="camel-xstream">
 		<Feature version="[2,5)">camel-xstream</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-talendjob">
