@@ -262,12 +262,23 @@
                     MODULE="xpp3-1.1.6.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-1.1.6.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-					
-			<IMPORT NAME="qpid-amqp-1-0-client-all" 
-                    MODULE="qpid-amqp-1-0-client-all-0.26.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/qpid-amqp-1-0-client-all-0.26.jar"
+
+            <IMPORT NAME="qpid-amqp-1-0-common" 
+                    MODULE="qpid-amqp-1-0-common-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-common-0.28.jar"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
-			
+            <IMPORT NAME="qpid-amqp-1-0-client" 
+                    MODULE="qpid-amqp-1-0-client-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-client-0.28.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+            <IMPORT NAME="qpid-amqp-1-0-client-jms" 
+                    MODULE="qpid-amqp-1-0-client-jms-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-client-jms-0.28.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+            <IMPORT NAME="geronimo-jms_1.1_spec" 
+                    MODULE="geronimo-jms_1.1_spec-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/geronimo-jms_1.1_spec-1.1.1.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 		</IMPORTS>
 	</CODEGENERATION>
 

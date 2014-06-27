@@ -55,11 +55,6 @@
 			</ITEMS>
 		</PARAMETER>
 
-		<!-- invisible param to add required library. -->
-		<PARAMETER NAME="LIBRARY" FIELD="TEXT" SHOW="false" NUM_ROW="0">
-			<DEFAULT>qpid-amqp-1-0-client-all-0.26.jar</DEFAULT>
-		</PARAMETER>
-
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
@@ -143,14 +138,7 @@
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
 
-			<IMPORT NAME="qpid-amqp-1-0-client-all" 
-                    MODULE="qpid-amqp-1-0-client-all-0.26.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/qpid-amqp-1-0-client-all-0.26.jar"
-             		REQUIRED="true"/>
-   			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-5.10.0.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-5.10.0.jar"
-					REQUIRED="true"/>
+            <!-- camel-jms -->
             <IMPORT NAME="camel-jms"
                     MODULE="camel-jms-2.13.1.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-2.13.1.jar"
@@ -162,6 +150,23 @@
             <IMPORT NAME="spring-tx"
                     MODULE="spring-tx-3.2.4.RELEASE.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.4.RELEASE.jar"
+                    REQUIRED="true" />
+
+            <IMPORT NAME="qpid-amqp-1-0-common" 
+                    MODULE="qpid-amqp-1-0-common-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-common-0.28.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="qpid-amqp-1-0-client" 
+                    MODULE="qpid-amqp-1-0-client-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-client-0.28.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="qpid-amqp-1-0-client-jms" 
+                    MODULE="qpid-amqp-1-0-client-jms-0.28.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/qpid-amqp-1-0-client-jms-0.28.jar"
+                    REQUIRED="true" />
+            <IMPORT NAME="geronimo-jms_1.1_spec" 
+                    MODULE="geronimo-jms_1.1_spec-1.1.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/geronimo-jms_1.1_spec-1.1.1.jar"
                     REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
