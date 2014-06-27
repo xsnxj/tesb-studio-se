@@ -592,9 +592,36 @@
 			<IMPORT MODULE="camel-xmpp-alldep-2.13.1.jar" NAME="talend-camel-xmpp"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xmpp-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XMPP']" />
-			<IMPORT MODULE="camel-xstream-alldep-2.13.1.jar" NAME="talend-camel-xstream"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-xstream-alldep-2.13.1.jar"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+
+            <!-- camel-xstream -->
+            <IMPORT NAME="camel-xstream"
+                    MODULE="camel-xstream-2.13.1.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-xstream-2.13.1.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="xstream"
+                    MODULE="xstream-1.4.7.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xstream-1.4.7.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="xpp3"
+                    MODULE="xpp3-1.1.6.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-1.1.6.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="stax-api"
+                    MODULE="stax-api-1.0.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax-api-1.0.1.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="jettison"
+                    MODULE="jettison-1.3.5.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jettison-1.3.5.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="woodstox-core-asl"
+                    MODULE="woodstox-core-asl-4.2.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/woodstox-core-asl-4.2.1.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
+            <IMPORT NAME="stax2-api"
+                    MODULE="stax2-api-3.1.4.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/stax2-api-3.1.4.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['XSTREAM']" />
 				
 			<!-- New From 2.13.1 -->
 			<IMPORT MODULE="camel-ahc-alldep-2.13.1.jar" 

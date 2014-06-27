@@ -254,13 +254,13 @@
                     MODULE="httpcore-4.2.1.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT NAME="xpp3" 
-                    MODULE="xpp3-1.1.4c.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb.ext/lib/xpp3-1.1.4c.jar"
+            <IMPORT NAME="xstream"
+                    MODULE="xstream-${xstream.version}.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xstream-${xstream.version}.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT NAME="xstream" 
-                    MODULE="xstream-1.4.3.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cJMSConnectionFactory/xstream-1.4.3.jar"
+            <IMPORT NAME="xpp3"
+                    MODULE="xpp3-${xpp3.version}.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-${xpp3.version}.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 					
 			<IMPORT NAME="qpid-amqp-1-0-client-all" 
