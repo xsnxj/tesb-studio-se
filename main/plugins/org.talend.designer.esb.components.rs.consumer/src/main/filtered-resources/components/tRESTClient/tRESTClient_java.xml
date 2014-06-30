@@ -311,7 +311,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="${tesb-javax.ws.rs-api}"
+					MODULE="esb-${tesb-javax.ws.rs-api}"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-javax.ws.rs-api}"
 					REQUIRED="true" />
