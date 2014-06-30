@@ -465,7 +465,7 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.11.jar"
                     REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
-                    MODULE="javax.ws.rs-api-2.0-m10.jar"
+                    MODULE="esb-javax.ws.rs-api-2.0-m10.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
