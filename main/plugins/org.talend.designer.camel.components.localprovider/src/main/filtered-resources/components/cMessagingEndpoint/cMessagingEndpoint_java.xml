@@ -831,9 +831,9 @@
                     MODULE="${tesb-xmlschema-core}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlschema-core}"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+            <IMPORT NAME="geronimo-javamail_1.4_spec"
+                    MODULE="${tesb-geronimo-javamail_1.4_spec}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-javamail_1.4_spec}"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
