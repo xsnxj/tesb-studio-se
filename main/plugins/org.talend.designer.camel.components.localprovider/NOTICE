@@ -6,7 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 19 third-party dependencies.
+Lists of 22 third-party dependencies.
      (BSD style) XStream Core (com.thoughtworks.xstream:xstream:1.4.7 - http://codehaus.org/xstream-parent/xstream/)
      (Apache Software License - Version 2.0) ActiveMQ :: All JAR bundle (org.apache.activemq:activemq-all:5.10.0 - http://activemq.apache.org/activemq-all)
      (Apache Software License - Version 2.0) Camel :: Context (org.apache.camel:camel-context:2.13.1 - http://camel.apache.org/camel-parent/components/camel-context)
@@ -25,5 +25,8 @@ Lists of 19 third-party dependencies.
      (Apache Software License - Version 2.0) qpid-amqp-1-0-common (org.apache.qpid:qpid-amqp-1-0-common:0.28 - http://qpid.apache.org)
      (Apache Software License - Version 2.0) Groovy (org.codehaus.groovy:groovy-all:2.2.2 - http://groovy.codehaus.org/)
      (Apache Software License - Version 2.0) XPP3 (org.ogce:xpp3:1.1.6 - http://www.extreme.indiana.edu/xpp/)
+     (Apache Software License - Version 2.0) Spring Context Support (org.springframework:spring-context-support:3.2.4.RELEASE - https://github.com/SpringSource/spring-framework)
+     (Apache Software License - Version 2.0) Spring JMS (org.springframework:spring-jms:3.2.4.RELEASE - https://github.com/SpringSource/spring-framework)
+     (Apache Software License - Version 2.0) Spring Transaction (org.springframework:spring-tx:3.2.4.RELEASE - https://github.com/SpringSource/spring-framework)
      (Apache License, Version 2.0) Spring OSGi Core (org.springframework.osgi:spring-osgi-core:1.2.1 - http://www.springframework.org/osgi)
 

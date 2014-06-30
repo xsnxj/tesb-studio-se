@@ -250,7 +250,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
                     MODULE="spring-context-support-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-3.2.4.RELEASE.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-osgi-core"
                     MODULE="spring-osgi-core-1.2.1.jar"
@@ -446,11 +446,11 @@
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
             <IMPORT NAME="spring-jms"
                     MODULE="spring-jms-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-jms-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-jms-3.2.4.RELEASE.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
             <IMPORT NAME="spring-tx"
                     MODULE="spring-tx-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-tx-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-3.2.4.RELEASE.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
 			<IMPORT MODULE="camel-jmx-alldep-2.13.1.jar" NAME="talend-camel-jmx"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jmx-alldep-2.13.1.jar"

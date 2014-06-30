@@ -130,7 +130,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="spring-context-support" 
                     MODULE="spring-context-support-3.2.4.RELEASE.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-support-3.2.4.RELEASE.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-3.2.4.RELEASE.jar"
                     REQUIRED="true" />
             <IMPORT NAME="spring-osgi-core"
                     MODULE="spring-osgi-core-1.2.1.jar"
