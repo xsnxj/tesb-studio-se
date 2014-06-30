@@ -269,6 +269,7 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.13.1.jar"
                     REQUIRED="true" />
 
+            <!-- CXF Core -->
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.11.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11.jar"
@@ -428,10 +429,6 @@
                     MODULE="jetty-security-8.1.14.v20131031.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.14.v20131031.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
-                    REQUIRED="true" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
@@ -445,78 +442,26 @@
                     MODULE="zookeeper-3.3.6.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.17.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.11.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11.jar"
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
-            <!-- SAM for RS -->
             <IMPORT NAME="sam-agent"
                     MODULE="sam-agent-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-agent-5.6.0-SNAPSHOT.jar"
-                    BundleID="sam-agent"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="sam-common"
                     MODULE="sam-common-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/sam-common-5.6.0-SNAPSHOT.jar"
-                    BundleID="sam-common"
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
             <IMPORT NAME="commons-lang"
                     MODULE="commons-lang-2.6.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-frontend-jaxws"
-                    MODULE="cxf-rt-frontend-jaxws-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxws-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="xml-resolver"
-                    MODULE="xml-resolver-1.2.jar"
-                    UrlPath="platform:/base/plugins/org.apache.xml.resolver_1.2.0.v201005080400.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="asm"
-                    MODULE="asm-3.3.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/asm-3.3.1.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-bindings-soap"
-                    MODULE="cxf-rt-bindings-soap-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-bindings-soap-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-databinding-jaxb"
-                    MODULE="cxf-rt-databinding-jaxb-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-databinding-jaxb-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-frontend-simple"
-                    MODULE="cxf-rt-frontend-simple-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-simple-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-ws-addr"
-                    MODULE="cxf-rt-ws-addr-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-addr-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="cxf-rt-ws-policy"
-                    MODULE="cxf-rt-ws-policy-2.7.11.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-ws-policy-2.7.11.jar"
-                    BundleID=""
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
-            <IMPORT NAME="neethi"
-                    MODULE="neethi-3.0.3.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/neethi-3.0.3.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-lang-2.6.jar"
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
-            <IMPORT NAME="correlationid"
+            <IMPORT NAME="correlationid-policy"
                     MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />

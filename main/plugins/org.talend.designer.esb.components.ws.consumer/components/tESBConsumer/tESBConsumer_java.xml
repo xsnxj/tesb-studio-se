@@ -537,7 +537,7 @@
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="commons-lang"
 					MODULE="commons-lang-2.6.jar"
-					UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-lang-2.6.jar"
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="cxf-rt-frontend-jaxrs"

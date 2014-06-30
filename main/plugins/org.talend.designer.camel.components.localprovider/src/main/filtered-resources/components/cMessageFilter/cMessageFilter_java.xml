@@ -83,8 +83,8 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-${camel.version}.jar"
                     REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
             <IMPORT NAME="groovy-all"
-                    MODULE="groovy-all-2.2.2.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.2.2.jar"
+                    MODULE="${tesb-groovy-all}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-groovy-all}"
                     REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
             <!-- camel-script -->
             <IMPORT NAME="camel-script"

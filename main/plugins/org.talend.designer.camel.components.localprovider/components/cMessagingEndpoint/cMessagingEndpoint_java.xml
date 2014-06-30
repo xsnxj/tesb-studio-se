@@ -280,7 +280,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="commons-lang"
                     MODULE="commons-lang-2.6.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.lang_2.4.0.v201005080502.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-lang-2.6.jar"
                     REQUIRED="true" />
             <IMPORT NAME="commons-pool"
                     MODULE="commons-pool-1.6.jar" 
@@ -369,11 +369,11 @@
             <IMPORT NAME="camel-groovy"
                     MODULE="camel-groovy-2.13.1.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-groovy-2.13.1.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
             <IMPORT NAME="groovy-all"
                     MODULE="groovy-all-2.2.2.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/groovy-all-2.2.2.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['GROOVY']" />
 			<IMPORT MODULE="camel-guice-alldep-2.13.1.jar" NAME="talend-camel-guice"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-guice-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['GUICE']" />
@@ -390,19 +390,19 @@
             <IMPORT NAME="camel-http"
                     MODULE="camel-http-2.13.1.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-2.13.1.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
             <IMPORT NAME="commons-httpclient"
                     MODULE="commons-httpclient-3.1.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/commons-httpclient-3.1.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
             <IMPORT NAME="commons-codec"
                     MODULE="commons-codec-1.6.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-codec-1.6.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP']" />
 			<IMPORT MODULE="camel-http4-alldep-2.13.1.jar" NAME="talend-camel-http4"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-http4-alldep-2.13.1.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['HTTP4']" />
@@ -805,7 +805,8 @@
 				NAME="talend-camel-vertx"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-vertx-alldep-2.13.1.jar"	
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['VERTX']" />
-				
+
+            <!-- CXF Core -->
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.11.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11.jar"
@@ -922,6 +923,7 @@
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="javax.ws.rs-api"
                     MODULE="esb-javax.ws.rs-api-2.0-m10.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
                     MODULE="cxf-rt-rs-extension-providers-2.7.11.jar"
@@ -963,10 +965,6 @@
             <IMPORT NAME="jetty-security"
                     MODULE="jetty-security-8.1.14.v20131031.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.14.v20131031.jar"
-                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"

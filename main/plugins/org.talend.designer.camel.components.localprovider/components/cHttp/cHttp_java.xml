@@ -208,7 +208,7 @@
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
 
-            <IMPORT NAME="talend-camel-jetty"
+            <IMPORT NAME="camel-jetty"
                     MODULE="camel-jetty-alldep-2.13.1.jar" 
                     UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-2.13.1.jar"
                     REQUIRED_IF="SERVER=='true'" />

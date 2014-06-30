@@ -208,7 +208,7 @@
                     UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
                     REQUIRED="true" />
 
-            <IMPORT NAME="talend-camel-jetty"
+            <IMPORT NAME="camel-jetty"
                     MODULE="camel-jetty-alldep-${camel.version}.jar" 
                     UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-${camel.version}.jar"
                     REQUIRED_IF="SERVER=='true'" />
@@ -219,8 +219,8 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-http-${camel.version}.jar"
                     REQUIRED="true" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
-                    MODULE="geronimo-servlet_3.0_spec-1.0.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
+                    MODULE="${tesb-geronimo-servlet_3.0_spec}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-geronimo-servlet_3.0_spec}"
                     REQUIRED="true" />
             <IMPORT NAME="commons-httpclient"
                     MODULE="commons-httpclient-3.1.jar"

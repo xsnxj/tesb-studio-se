@@ -350,6 +350,7 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-2.13.1.jar"
                     REQUIRED="true" />
 
+            <!-- CXF Core -->
             <IMPORT NAME="cxf-rt-core"
                     MODULE="cxf-rt-core-2.7.11.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-core-2.7.11.jar"
@@ -509,10 +510,6 @@
                     MODULE="jetty-security-8.1.14.v20131031.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jetty-security-8.1.14.v20131031.jar"
                     REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-1.7.6.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
-                    REQUIRED="true" />
             <IMPORT NAME="geronimo-servlet_3.0_spec"
                     MODULE="geronimo-servlet_3.0_spec-1.0.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-servlet_3.0_spec-1.0.jar"
@@ -526,16 +523,13 @@
                     MODULE="zookeeper-3.3.6.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/zookeeper-3.3.6.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.17.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED_IF="ENABLE_SL == 'true'" />
             <IMPORT NAME="cxf-rt-features-clustering"
                     MODULE="cxf-rt-features-clustering-2.7.11.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-features-clustering-2.7.11.jar"
                     REQUIRED_IF="ENABLE_SL == 'true'" />
 
-            <IMPORT NAME="correlationid"
+            <!-- CorrelationID -->
+            <IMPORT NAME="correlationid-policy"
                     MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
                     REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
