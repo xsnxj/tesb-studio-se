@@ -138,10 +138,8 @@
 					<licenseMerges>
 						<licenseMerge>Apache Software License - Version 2.0|The Apache Software License, Version 2.0|Apache 2</licenseMerge>
 						<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
-						<!--licenseMerge>COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0|CDDL License</licenseMerge-->
 					</licenseMerges>
 					<excludedGroups>org.talend.esb</excludedGroups>
-					<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm</excludedArtifacts>
 					<missingFile>THIRD-PARTY.properties</missingFile>
 					<useMissingFile>true</useMissingFile>
 					<failIfWarning>true</failIfWarning>

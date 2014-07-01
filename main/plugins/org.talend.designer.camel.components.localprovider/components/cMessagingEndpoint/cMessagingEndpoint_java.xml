@@ -833,7 +833,7 @@
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="geronimo-javamail_1.4_spec"
                     MODULE="geronimo-javamail_1.4_spec-1.7.1.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/geronimo-javamail_1.4_spec-1.7.1.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
@@ -922,7 +922,7 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-frontend-jaxrs-2.7.11.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="javax.ws.rs-api"
-                    MODULE="esb-javax.ws.rs-api-2.0-m10.jar"
+                    MODULE="javax.ws.rs-api-2.0-m10.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/javax.ws.rs-api-2.0-m10.jar"
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"

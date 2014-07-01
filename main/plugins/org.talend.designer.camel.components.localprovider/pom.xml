@@ -23,7 +23,6 @@
 		<xpp3.version>1.1.6</xpp3.version>
 		<qpid-amqp.version>0.28</qpid-amqp.version>
 		<geronimo-jms.version>1.1.1</geronimo-jms.version>
-		<geronimo-javamail.version>1.7.1</geronimo-javamail.version>
 	</properties>
 
 	<dependencies>
@@ -148,11 +147,6 @@
 			<artifactId>geronimo-jms_1.1_spec</artifactId>
 			<version>${geronimo-jms.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>geronimo-javamail_1.4_spec</artifactId>
-			<version>${geronimo-javamail.version}</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -185,6 +179,7 @@
 						</goals>
 						<configuration>
 							<includeTransitiveDependencies>false</includeTransitiveDependencies>
+							<excludedArtifacts>\Axstream\Z</excludedArtifacts>
 						</configuration>
 					</execution>
 				</executions>
@@ -201,6 +196,10 @@
 								<delete dir="${basedir}/lib"/>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
+								</concat>
+								<concat destfile="${basedir}/build_apl.properties" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/build.properties"/>
+									<footer>bin.excludes = lib/${tesb-xstream}</footer>
 								</concat>
 							</target>
 						</configuration>

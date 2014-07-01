@@ -6,8 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 23 third-party dependencies.
-     (BSD style) XStream Core (com.thoughtworks.xstream:xstream:1.4.7 - http://codehaus.org/xstream-parent/xstream/)
+Lists of 21 third-party dependencies.
      (Apache Software License - Version 2.0) ActiveMQ :: All JAR bundle (org.apache.activemq:activemq-all:5.10.0 - http://activemq.apache.org/activemq-all)
      (Apache Software License - Version 2.0) Camel :: Context (org.apache.camel:camel-context:2.13.1 - http://camel.apache.org/camel-parent/components/camel-context)
      (Apache Software License - Version 2.0) Camel :: Core (org.apache.camel:camel-core:2.13.1 - http://camel.apache.org/camel-parent/camel-core)
@@ -19,7 +18,6 @@ Lists of 23 third-party dependencies.
      (Apache Software License - Version 2.0) Camel :: Script (org.apache.camel:camel-script:2.13.1 - http://camel.apache.org/camel-parent/components/camel-script)
      (Apache Software License - Version 2.0) Camel :: Spring (org.apache.camel:camel-spring:2.13.1 - http://camel.apache.org/camel-parent/components/camel-spring)
      (Apache Software License - Version 2.0) Camel :: XStream (org.apache.camel:camel-xstream:2.13.1 - http://camel.apache.org/camel-parent/components/camel-xstream)
-     (Apache Software License - Version 2.0) JavaMail 1.4 (org.apache.geronimo.specs:geronimo-javamail_1.4_spec:1.7.1 - http://geronimo.apache.org/maven/specs/geronimo-javamail_1.4_spec/1.7.1)
      (Apache Software License - Version 2.0) JMS 1.1 (org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1 - http://geronimo.apache.org/specs/geronimo-jms_1.1_spec)
      (Apache Software License - Version 2.0) qpid-amqp-1-0-client (org.apache.qpid:qpid-amqp-1-0-client:0.28 - http://qpid.apache.org)
      (Apache Software License - Version 2.0) qpid-amqp-1-0-client-jms (org.apache.qpid:qpid-amqp-1-0-client-jms:0.28 - http://qpid.apache.org)
