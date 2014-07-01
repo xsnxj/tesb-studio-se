@@ -375,9 +375,9 @@
                     MODULE="${tesb-xmlschema-core}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlschema-core}"
                     REQUIRED="true" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+            <IMPORT NAME="geronimo-javamail_1.4_spec"
+                    MODULE="${tesb-geronimo-javamail_1.4_spec}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-geronimo-javamail_1.4_spec}"
                     REQUIRED="true" />
 
             <IMPORT NAME="cxf-rt-frontend-jaxws"
@@ -466,7 +466,7 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-frontend-jaxrs}"
                     REQUIRED="true" />
             <IMPORT NAME="javax.ws.rs-api"
-                    MODULE="esb-${tesb-javax.ws.rs-api}"
+                    MODULE="${tesb-javax.ws.rs-api}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-javax.ws.rs-api}"
                     REQUIRED="true" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"

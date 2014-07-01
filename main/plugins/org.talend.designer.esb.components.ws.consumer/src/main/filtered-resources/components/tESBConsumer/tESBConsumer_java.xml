@@ -546,7 +546,7 @@
 					BundleID=""
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="esb-${tesb-javax.ws.rs-api}"
+					MODULE="${tesb-javax.ws.rs-api}"
 					BundleID="org.apache.servicemix.specs.jsr339-api-m10"
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 

@@ -23,10 +23,6 @@
                     <groupId>wsdl4j</groupId>
                     <artifactId>wsdl4j</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
             </exclusions>
 		</dependency>
 		<!-- WS client -->
@@ -199,6 +195,9 @@
 						<goals>
 							<goal>add-third-party</goal>
 						</goals>
+						<configuration>
+							<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm|stax2-api</excludedArtifacts>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

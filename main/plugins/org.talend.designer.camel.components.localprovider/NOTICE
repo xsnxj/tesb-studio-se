@@ -6,8 +6,7 @@ This product includes/uses softwares under their own licenses as described below
 
 ================================================================================
 
-Lists of 22 third-party dependencies.
-     (BSD style) XStream Core (com.thoughtworks.xstream:xstream:1.4.7 - http://codehaus.org/xstream-parent/xstream/)
+Lists of 21 third-party dependencies.
      (Apache Software License - Version 2.0) ActiveMQ :: All JAR bundle (org.apache.activemq:activemq-all:5.10.0 - http://activemq.apache.org/activemq-all)
      (Apache Software License - Version 2.0) Camel :: Context (org.apache.camel:camel-context:2.13.1 - http://camel.apache.org/camel-parent/components/camel-context)
      (Apache Software License - Version 2.0) Camel :: Core (org.apache.camel:camel-core:2.13.1 - http://camel.apache.org/camel-parent/camel-core)
