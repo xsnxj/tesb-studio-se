@@ -128,7 +128,7 @@
 		<!-- AMQP -->
 		<PARAMETER NAME="AMQP_BROKER_URI" FIELD="TEXT" NUM_ROW="4"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'AMQP'">
-			<DEFAULT>"amqp://"</DEFAULT>
+			<DEFAULT>"localhost"</DEFAULT>
 		</PARAMETER>
 
 		<!-- Customized -->
