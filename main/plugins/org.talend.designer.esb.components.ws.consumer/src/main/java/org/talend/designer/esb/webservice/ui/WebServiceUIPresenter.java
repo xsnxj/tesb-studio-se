@@ -17,6 +17,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.ui.swt.extended.table.ExtendedTableModel;
 import org.talend.designer.esb.webservice.SchemaTool;
 import org.talend.designer.esb.webservice.ServiceSetting;
+import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
 import org.talend.designer.esb.webservice.WebServiceNode;
 import org.talend.designer.esb.webservice.adapter.AbstractNodeAdapter;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
@@ -168,5 +169,12 @@ public class WebServiceUIPresenter {
 	
 	public boolean isFunctionRequired() {
 		return nodeAdapter.isServiceOperationRequired();
+	}
+
+	public boolean allowPopulateSchema() {
+		if(WebServiceComponentPlugin.hasRepositoryServices()) {
+			return nodeAdapter.allowPopulateSchema();
+		}
+		return false;
 	}
 }

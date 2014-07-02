@@ -71,4 +71,9 @@ class CCXFNodeAdapter extends AbstractNodeAdapter {
 	public boolean isConsumerNode() {
 		return node.getIncomingConnections().size() > 0;
 	}
+
+	@Override
+	public boolean allowPopulateSchema() {
+		return false;
+	}
 }

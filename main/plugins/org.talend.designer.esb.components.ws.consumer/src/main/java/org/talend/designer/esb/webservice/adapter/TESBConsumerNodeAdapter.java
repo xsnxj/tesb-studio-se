@@ -63,4 +63,9 @@ class TESBConsumerNodeAdapter extends AbstractNodeAdapter{
 	public String getInitialWsdlLocation() {
 		return node.getParamStringValue(ENDPOINT);
 	}
+
+	@Override
+	public boolean allowPopulateSchema() {
+		return true;
+	}
 }

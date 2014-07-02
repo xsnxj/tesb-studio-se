@@ -58,4 +58,6 @@ public abstract class AbstractNodeAdapter extends BaseNodeAdapter {
 	public boolean isServiceOperationRequired() {
 		return true;
 	}
+
+	public abstract boolean allowPopulateSchema();
 }

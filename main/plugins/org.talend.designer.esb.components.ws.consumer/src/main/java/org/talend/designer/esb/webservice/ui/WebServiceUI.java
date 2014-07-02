@@ -166,7 +166,7 @@ public class WebServiceUI extends WizardPage {
 
 		addListenerForWSDLCom();
 
-		if (WebServiceComponentPlugin.hasRepositoryServices()) {
+		if (presenter.allowPopulateSchema()) {
 			populateCheckbox = new Button(wsdlComposite, SWT.CHECK);
 			populateCheckbox.setText("Populate schema to repository on finish");
 			populateCheckbox.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false, wsdlUrlcompositeColumn, 1));
