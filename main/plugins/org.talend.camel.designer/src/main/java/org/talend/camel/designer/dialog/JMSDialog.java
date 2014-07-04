@@ -85,7 +85,7 @@ public class JMSDialog extends Dialog {
     static class ConnectionFactoryLabelProvider extends LabelProvider {
 
         static final Image image = CamelDesignerPlugin.imageDescriptorFromPlugin(CamelDesignerPlugin.PLUGIN_ID,
-                "icons/cJMSConnectionFactory_16.png").createImage();
+                "icons/cMQConnectionFactory_16.png").createImage();
 
         @Override
         public Image getImage(Object element) {
@@ -205,7 +205,7 @@ public class JMSDialog extends Dialog {
         jmsConnectionFactories = new ArrayList<INode>();
 
         for (INode node : nodes) {
-            if (node.getComponent().getName().equals("cJMSConnectionFactory")) {
+            if (node.getComponent().getName().equals("cMQConnectionFactory")) {
                 jmsConnectionFactories.add(node);
             }
         }

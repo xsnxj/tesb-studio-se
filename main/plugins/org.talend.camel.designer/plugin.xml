@@ -318,6 +318,15 @@
                    name="cLogLoggingCategoryMigrationTask"
                    version="5.4.1">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.1.1"
+                class="org.talend.camel.designer.migration.RenameToCMQConnectionFactoryMigrationTask"
+                description="Rename_cJMSConnectionFactory_To_cMQConnectionFactory"
+                id="org.talend.camel.designer.RenameToCMQConnectionFactoryMigrationTask"
+                name="Rename_cJMSConnectionFactory_To_cMQConnectionFactory_MigrationTask"
+                version="5.6.0">
+          </projecttask>
       </extension>
         <extension
          point="org.talend.core.external_component">

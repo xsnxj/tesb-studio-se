@@ -276,7 +276,7 @@
          </importPackage>
       </component>
       <component
-            componentName="cJMSConnectionFactory">
+            componentName="cMQConnectionFactory">
          <importPackage
                packageName="org.apache.camel.component.jms">
          </importPackage>
@@ -571,7 +571,7 @@
       </classpath>
       <classpath
             attributeName="WMQ_DRIVER_JAR"
-            componentName="cJMSConnectionFactory">
+            componentName="cMQConnectionFactory">
          <predicate
                attributeName="MQ_TYPE"
                attributeValue="WebSphere MQ">
@@ -579,7 +579,7 @@
       </classpath>
       <classpath
             attributeName="OTHER_DRIVER_JAR"
-            componentName="cJMSConnectionFactory">
+            componentName="cMQConnectionFactory">
          <predicate
                attributeName="MQ_TYPE"
                attributeValue="Other">

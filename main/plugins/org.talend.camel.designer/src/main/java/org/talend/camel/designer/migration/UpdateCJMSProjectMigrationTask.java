@@ -17,10 +17,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
-import org.talend.core.model.migration.AbstractItemMigrationTask;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -29,29 +28,19 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
+import static org.talend.camel.designer.migration.AbstractRouteItemComponentMigrationTask.UtilTool.*;
+
 /**
  * @author LiXiaopeng
- * 
+ * Update: Removed common functions to handle NodeType to {@link AbstractRouteItemComponentMigrationTask.UtilTool} - by GaoZone.
+
  */
-public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
+public class UpdateCJMSProjectMigrationTask extends AbstractRouteItemMigrationTask {
 
     private static final ProxyRepositoryFactory REPO_FACTORY = ProxyRepositoryFactory.getInstance();
 
     private static final TalendFileFactory FILE_FACTORY = TalendFileFactory.eINSTANCE;
 
-    /**
-     * 
-     * @param nodeType
-     * @param field
-     * @param name
-     * @param value
-     * @param eList
-     */
-    private void addParamTtpe(NodeType nodeType, String field, String name, String value, EList eList) {
-        ElementParameterType paramType = createParamType(field, name, value, eList);
-        nodeType.getElementParameter().add(paramType);
-
-    }
 
     /**
      * 
@@ -62,70 +51,35 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
         NodeType nodeType = FILE_FACTORY.createNodeType();
         nodeType.setSizeX(32);
         nodeType.setSizeY(32);
-        nodeType.setComponentName("cJMSConnectionFactory");
+        nodeType.setComponentName("cMQConnectionFactory");
 
-        String label = getParameterValue("LABEL", currentNode.getElementParameter());
+        String label = getParameterValue(currentNode, "LABEL");
         if (label == null || label.equals("_UNIQUE_NAME_")) {
-            label = getParameterValue("UNIQUE_NAME", currentNode.getElementParameter());
-
+            label = getParameterValue(currentNode, "UNIQUE_NAME");
         }
         label += "_ConnectionFacotry";
 
-        addParamTtpe(nodeType, "TEXT", "LABEL", label, null);
-        addParamTtpe(nodeType, "TEXT", "UNIQUE_NAME", label, null);
+        addParameterType(nodeType, "TEXT", "LABEL", label, null);
+        addParameterType(nodeType, "TEXT", "UNIQUE_NAME", label, null);
 
         // Don't forget set the Connection for cJMS
-        addParamTtpe(currentNode, "TEXT", "CONNECTION_FACOTRY_LABEL", label, null);
-        addParamTtpe(currentNode, "TEXT", "CONNECTION_FACOTRY", label, null);
+        addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY_LABEL", label, null);
+        addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY", label, null);
 
         for (Object e : currentNode.getElementParameter()) {
             ElementParameterType p = (ElementParameterType) e;
             if (!("UNIQUE_NAME".equals(p.getName()) || "LABEL".equals(p.getName()) || "TYPE".equals(p.getName()) || "DESTINATION"
                     .equals(p.getName()))) {
 
-                addParamTtpe(nodeType, p.getField(), p.getName(), p.getValue(), p.getElementValue());
+                 addParameterType(nodeType, p.getField(), p.getName(), p.getValue(), p.getElementValue());
             }
         }
 
         return nodeType;
     }
 
-    /**
-     * 
-     * Create a parameter of a node.
-     * 
-     * @param elemParams
-     * @param field
-     * @param name
-     * @param value
-     */
-    protected ElementParameterType createParamType(String field, String name, String value) {
-        return createParamType(field, name, value, null);
-    }
-
-    /**
-     * 
-     * Create a parameter of a node.
-     * 
-     * @param elemParams
-     * @param field
-     * @param name
-     * @param value
-     * @param elementParameterTypes
-     */
-    protected ElementParameterType createParamType(String field, String name, String value, EList<?> elementParameterTypes) {
-        ElementParameterType paramType = FILE_FACTORY.createElementParameterType();
-        paramType.setField(field);
-        paramType.setName(name);
-        paramType.setValue(value);
-        if (elementParameterTypes != null) {
-            paramType.getElementValue().addAll(elementParameterTypes);
-        }
-        return paramType;
-    }
-
     @Override
-    public ExecutionResult execute(Item item) {
+    public ExecutionResult execute(CamelProcessItem item) {
         try {
             updateJMSComponent(item);
             return ExecutionResult.SUCCESS_NO_ALERT;
@@ -133,22 +87,6 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
             ExceptionHandler.process(e);
             return ExecutionResult.FAILURE;
         }
-    }
-
-    /**
-     * 
-     * @param paramName
-     * @param elementParameterTypes
-     * @return
-     */
-    protected ElementParameterType findElementParameterByName(String paramName, EList<?> elementParameterTypes) {
-        for (Object obj : elementParameterTypes) {
-            ElementParameterType cpType = (ElementParameterType) obj;
-            if (paramName.equals(cpType.getName())) {
-                return cpType;
-            }
-        }
-        return null;
     }
 
     /**
@@ -175,20 +113,6 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
         return gc.getTime();
     }
 
-    /**
-     * 
-     * @param paramName
-     * @param elementParameterTypes
-     * @return
-     */
-    protected String getParameterValue(String paramName, EList<?> elementParameterTypes) {
-        ElementParameterType parameterType = findElementParameterByName(paramName, elementParameterTypes);
-        if (parameterType != null) {
-            return parameterType.getValue();
-        }
-        return null;
-    }
-
     public ProcessType getProcessType(Item item) {
         if (item instanceof ProcessItem) {
             return ((ProcessItem) item).getProcess();
@@ -197,7 +121,7 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
     }
 
     /**
-     * Compute the location of cJMSConnectionFactory Node
+     * Compute the location of cMQConnectionFactory Node
      * 
      * @param processType
      * @param nodes
@@ -214,11 +138,12 @@ public class UpdateCJMSProjectMigrationTask extends AbstractItemMigrationTask {
     }
 
     /**
-     * Update cJMS, add cJMSConnectionFactory.
+     * Update cJMS, add cMQConnectionFactory.
      * 
      * @param item
      * @throws PersistenceException
      */
+    @SuppressWarnings("unchecked")
     private void updateJMSComponent(Item item) throws PersistenceException {
 
         ProcessType processType = getProcessType(item);

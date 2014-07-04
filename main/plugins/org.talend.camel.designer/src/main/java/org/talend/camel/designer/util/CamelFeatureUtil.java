@@ -252,14 +252,14 @@ public final class CamelFeatureUtil {
 					handleSetBodyCase(features, currentNode);
 				}else if("cSetHeader".equals(componentName)){
 					handleSetHeaderCase(features, currentNode);
-				}else if("cJMSConnectionFactory".equals(componentName)){
-					handleJmsConnectionFactory(features, currentNode);
+				}else if("cMQConnectionFactory".equals(componentName)){
+					handleMQConnectionFactory(features, currentNode);
 				}
 			}
 		}
 	}
 
-	private static void handleJmsConnectionFactory(
+	private static void handleMQConnectionFactory(
 			Collection<FeatureModel> features, NodeType currentNode) {
 		ElementParameterType mqType = findElementParameterByName("MQ_TYPE", currentNode.getElementParameter());
 		if("ActiveMQ".equals(mqType.getValue())){
