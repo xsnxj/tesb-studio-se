@@ -69,7 +69,6 @@ public class UpdatecJMSMigrationTask extends AbstractRouteItemComponentMigration
 		UtilTool.addParameterType(currentNode, newConnectionFactoryParam);
 
 		String newId = oldId.replace("cJMSConnectionFactory", "cMQConnectionFactory_");
-		newId = newId.replace("cMQConnectionFactory", "cMQConnectionFactory_");
 
 		ElementParameterType idParam = UtilTool.createParameterType(
 				EParameterFieldType.TECHNICAL.getName(),
