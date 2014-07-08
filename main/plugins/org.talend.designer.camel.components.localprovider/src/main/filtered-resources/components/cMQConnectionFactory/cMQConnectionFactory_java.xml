@@ -324,6 +324,10 @@
                     MODULE="${tesb-geronimo-jms_1.1_spec}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+            <IMPORT NAME="camel-mqtt-alldep" 
+  			    	MODULE="camel-mqtt-alldep-${camel.version}.jar" 
+  			    	UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-mqtt-alldep-${camel.version}.jar" 
+  			    	REQUIRED_IF="(MQ_TYPE == 'MQTT')" /> 
 		</IMPORTS>
 	</CODEGENERATION>
 
