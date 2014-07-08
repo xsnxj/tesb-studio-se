@@ -174,6 +174,7 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>add-third-party</id>
 						<goals>
 							<goal>add-third-party</goal>
 						</goals>
@@ -181,6 +182,12 @@
 							<includeTransitiveDependencies>false</includeTransitiveDependencies>
 							<excludedArtifacts>\Axstream\Z</excludedArtifacts>
 						</configuration>
+					</execution>
+					<execution>
+						<id>update-project-license</id>
+						<goals>
+							<goal>update-project-license</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -193,6 +200,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
+								<delete dir="${basedir}/lib"/>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
