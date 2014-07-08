@@ -144,13 +144,13 @@
 					<useMissingFile>true</useMissingFile>
 					<failIfWarning>true</failIfWarning>
 				</configuration>
-				<!--executions>
+				<executions>
 					<execution>
 						<goals>
 							<goal>update-project-license</goal>
 						</goals>
 					</execution>
-				</executions-->
+				</executions>
 			</plugin>
 		</plugins>
 
