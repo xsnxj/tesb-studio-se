@@ -11,5 +11,6 @@ public interface WebServiceConstants {
 	//tESBConsumer uses METHOD as parameter of operation.
 	String METHOD = "METHOD";
 	String OPERATION_NAME = "OPERATION_NAME";
+	String OPERATION_NAMESPACE = "OPERATION_NAMESPACE";
 
 }

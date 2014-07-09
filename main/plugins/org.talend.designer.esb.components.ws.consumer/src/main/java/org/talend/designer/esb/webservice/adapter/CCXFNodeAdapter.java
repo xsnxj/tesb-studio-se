@@ -1,17 +1,17 @@
 package org.talend.designer.esb.webservice.adapter;
 
-import static org.talend.designer.esb.webservice.WebServiceConstants.*;
-
 import javax.xml.namespace.QName;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.designer.esb.webservice.ServiceSetting;
+import org.talend.designer.esb.webservice.WebServiceConstants;
 import org.talend.designer.esb.webservice.WebServiceNode;
+import org.talend.designer.esb.webservice.util.RouteResourcesHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 
-class CCXFNodeAdapter extends AbstractNodeAdapter {
+class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants {
 
 
 
@@ -23,9 +23,11 @@ class CCXFNodeAdapter extends AbstractNodeAdapter {
 	public IStatus setNodeSetting(ServiceSetting setting) {
 		Function currentFunction = setting.getFunction();
 		node.setParamValue("WSDL_FILE", setting.getWsdlLocation());
-		String operationName = currentFunction.getName();
-		operationName = operationName.substring(0, operationName.indexOf('('));
+		QName operation = QName.valueOf(currentFunction.getName());
+		String namespace = operation.getNamespaceURI();
+		String operationName = operation.getLocalPart();
 		node.setParamValue(OPERATION_NAME, TalendTextUtils.addQuotes(operationName));
+		node.setParamValue(OPERATION_NAMESPACE, TalendTextUtils.addQuotes(namespace));
 
 		String fullServiceName = "{" + currentFunction.getServiceNameSpace() + "}" + currentFunction.getServiceName();
 		node.setParamValue(SERVICE_NAME, TalendTextUtils.addQuotes(fullServiceName));
@@ -59,7 +61,20 @@ class CCXFNodeAdapter extends AbstractNodeAdapter {
 
 	@Override
 	public String getInitialWsdlLocation() {
+		String wsdlType = node.getVisibleParamStringValue("WSDL_TYPE");
+		if("repo".equals(wsdlType)) {
+			String routeResFileLocation = getRouteResourceFileLocation();
+			if(routeResFileLocation != null) {
+				return TalendTextUtils.addQuotes(routeResFileLocation);
+			}
+		}
 		return node.getParamStringValue("WSDL_FILE");
+	}
+
+	private String getRouteResourceFileLocation() {
+		String repoId = node.getParamStringValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_ID");
+		String repoVersion = node.getVisibleParamStringValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_VERSION");
+		return RouteResourcesHelper.getRouteResourcesLocation(repoId, repoVersion);
 	}
 
 	@Override

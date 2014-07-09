@@ -63,6 +63,18 @@ public class WebServiceNode extends AbstractExternalNode {
 		}
 		return null;
 	}
+	
+	public String getVisibleParamStringValue(String key) {
+        String value = getParamStringValue(key);
+        if (!("").equals(value)) {
+            IElementParameter param = getElementParameter(key);
+            if (param.isShow(getElementParametersWithChildrens())) {
+                return value;
+            }
+        }
+        return "";
+    
+	}
 
 	public boolean getBooleanValue(String key) {
 		Object value = getParamValue(key);
