@@ -26,13 +26,8 @@ All Talend Studio repositories follow the same file structure:
 ```
 
 ## How to build projects
-Use maven to build projects. Go to tesb-tooling-se folder and in 
-command line type:
- mvn clean install -Dtycho.targetPlatform=<path_to_tos>
-
-For example,
- mvn clean install -Dtycho.targetPlatform=d:/TOS/TOS_ESB-r77287-V5.1.0NB
- 
+Use maven to pre-build projects. Go to main/plugins folder and in command line type:
+ mvn package
 
 ## Download
 
