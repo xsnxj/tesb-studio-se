@@ -22,16 +22,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.IProxyRepositoryService;
 import org.talend.repository.ui.wizards.PropertiesWizardPage;
-import org.talend.repository.ui.wizards.routines.EditRoutinePropertiesWizard;
 
 /**
  * DOC zwzhao class global comment. Detailled comment
