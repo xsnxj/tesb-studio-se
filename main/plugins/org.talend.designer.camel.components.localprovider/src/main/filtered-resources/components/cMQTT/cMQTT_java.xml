@@ -59,6 +59,15 @@
 		<PARAMETER NAME="TOPIC_NAME" FIELD="TEXT" NUM_ROW="15">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
+		
+		<PARAMETER NAME="URI_OPTIONS" FIELD="TABLE" NUM_ROW="7"
+			NB_LINES="5">
+			<ITEMS>
+				<ITEM NAME="NAME" FIELD="TEXT">
+				</ITEM>
+				<ITEM NAME="VALUE" />
+			</ITEMS>
+		</PARAMETER>
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
@@ -168,7 +177,7 @@
 
             <IMPORT NAME="camel-mqtt-alldep"
                     MODULE="camel-mqtt-alldep-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-mqtt-alldep-${camel.version}.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-${camel.version}.jar"
                     REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
