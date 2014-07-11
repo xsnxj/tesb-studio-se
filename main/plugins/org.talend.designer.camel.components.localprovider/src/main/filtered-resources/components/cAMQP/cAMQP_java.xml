@@ -152,10 +152,10 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-${spring.version}.jar"
                     REQUIRED="true" />
 
-			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-${activemq.version}.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-${activemq.version}.jar"
-					REQUIRED="true" />
+            <IMPORT NAME="talend-camel-amqp"
+                    MODULE="camel-amqp-alldep-${camel.version}.jar" 
+                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-amqp-alldep-${camel.version}.jar"
+                    REQUIRED="true" />
 
             <IMPORT NAME="qpid-amqp-1-0-common" 
                     MODULE="${tesb-qpid-amqp-1-0-common}"
