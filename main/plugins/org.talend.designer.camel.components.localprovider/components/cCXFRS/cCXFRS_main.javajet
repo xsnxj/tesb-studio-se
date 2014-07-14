@@ -17,7 +17,9 @@ imports="
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
 
 	String acceptType = paramsHelper.getVisibleStringParam("__ACCEPT_TYPE__");
+	String responseBean = paramsHelper.getVisibleStringParam("__RESPONSE_BEAN__");
 	String responseClass = "*/*".equals(acceptType) ? "String.class" : "org.w3c.dom.Document.class";
+	responseClass = responseBean == null || responseBean.isEmpty() ? responseClass : responseBean + ".class";
 	String contentType = paramsHelper.getVisibleStringParam("__CONTENT_TYPE__");
 
 	String uri = cid;
