@@ -25,9 +25,8 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 		node.setParamValue("WSDL_FILE", setting.getWsdlLocation());
 		String operationName = currentFunction.getName();
 		operationName = operationName.substring(0, operationName.indexOf('('));
-		node.setParamValue(OPERATION_NAME, TalendTextUtils.addQuotes(operationName));
-		String namespace = currentFunction.getNameSpaceURI(); 
-		node.setParamValue(OPERATION_NAMESPACE, TalendTextUtils.addQuotes(namespace));
+		String fullOperationName = "{" + currentFunction.getNameSpaceURI() + "}" + operationName;
+		node.setParamValue(OPERATION_NAME, TalendTextUtils.addQuotes(fullOperationName));
 
 		String fullServiceName = "{" + currentFunction.getServiceNameSpace() + "}" + currentFunction.getServiceName();
 		node.setParamValue(SERVICE_NAME, TalendTextUtils.addQuotes(fullServiceName));
