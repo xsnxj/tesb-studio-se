@@ -447,6 +447,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 	@Override
 	public void setFocus() {
+		importPackageViewer.getTable().setFocus();
 	}
 	
 	/**
