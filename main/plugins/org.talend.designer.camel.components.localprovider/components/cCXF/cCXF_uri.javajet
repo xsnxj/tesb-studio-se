@@ -2,9 +2,12 @@
 %>
 <%
 // included in header_route.javajet
-// variables : String cid;
+// available variables :
+// INode node;
+// String cid;
 // String componentName;
-// return variables:
+// NodeParamsHelper helper;
+// return values:
 // String uri = ""; generate the endpoint uri.
 // String statements = null; generate the statements before wrapping endpoint uri.
 
@@ -31,11 +34,10 @@ if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SL__"))
 	}
 }
 
+CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
+eb.setComponent("cxf").setName(url);
+
 String serviceType = ElementParameterParser.getValue(node, "__SERVICE_TYPE__");
-
-StringBuilder sb = new StringBuilder();
-sb.append("\"cxf://\"+").append(url).append("+\"?" + serviceType + "=\"");
-
 if ("wsdlURL".equals(serviceType)) {
 
 	//http://jira.talendforge.org/browse/TESB-6226
@@ -49,23 +51,17 @@ if ("wsdlURL".equals(serviceType)) {
 		filePath = "\"classpath:" + filePath + "\"";
 	}
 	filePath.replaceAll("\\\\","/");
-	sb.append("+").append(filePath);
+	eb.addParam(serviceType, filePath);
 } else {
-	sb.append("+" + ElementParameterParser.getValue(node, "__SERVICE_CLASS__"));
+	eb.addParam(serviceType, "__SERVICE_CLASS__");
 }
 
+eb.addParam("dataFormat", "\""+dataformat+"\"");
+eb.getNodeParamNotDefaultAppender(node).visibleRequired(true)
+	.addParam("serviceNameString", "__SERVICE_NAME__")
+	.addParam("endpointNameString", "__PORT_NAME__")
+	.addListMapParams("__ADVARGUMENTS__");
 
-
-sb.append("+\"&dataFormat=" + dataformat + "\"");
-
-String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__");
-if(!serviceName.isEmpty()) {
-	sb.append("+\"&serviceNameString=\"+").append(serviceName);
-}
-String portName = helper.getVisibleStringParam("__PORT_NAME__");
-if(!portName.isEmpty()) {
-	sb.append("+\"&endpointNameString=\"+").append(portName);
-}
 String operationName = helper.getVisibleStringParam("__OPERATION_NAME__").trim();
 if(!operationName.isEmpty() && !operationName.equals("")) {
 	StringBuilder stmt = new StringBuilder();
@@ -74,25 +70,18 @@ if(!operationName.isEmpty() && !operationName.equals("")) {
 		.append(operationName)
 		.append(");}catch(Exception e){}\n");
 	statements = stmt.toString();
-	sb.append("+ operation == null?\"\":(")
-	.append("\"&defaultOperationNamespace=\"+operation.getNamespaceURI()")
-	.append("+\"&defaultOperationName=\"+operation.getLocalPart())");
-}
 
-List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");
-for (Map<String, String> map : tableValues) {
-	String argName = map.get("NAME").trim();
-	String argValue = map.get("VALUE").trim();
-	sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+	eb.getConditionParamAppender("operation == null")
+		.appendParamWhenFalse("defaultOperationNamespace","operation.getNamespaceURI()")
+		.appendParamWhenFalse("defaultOperationName","operation.getLocalPart()")
+		.finish();
 }
 
 if(!conns.isEmpty()){
-	sb.append("+\"&headerFilterStrategy=#CXF_PAYLOAD_HEADER_FILTER\"");
-	sb.append("+\"&properties.id=\"+\"");
-	sb.append(node.getUniqueName());
-	sb.append("\"");
+	eb.addParam("headerFilterStrategy","\"#CXF_PAYLOAD_HEADER_FILTER\"");
+	eb.addParam("properties.id","\""+node.getUniqueName()+"\"");
 }else if("true".equals(useServiceRegistry) || ("true".equals(useSecurity) && "SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__")))) {
-	sb.append("+\"&cxfBinding=#DEFAULT_CXF_BINDING\"");
+	eb.addParam("cxfBinding", "\"#DEFAULT_CXF_BINDING\"");
 }
-uri = sb.toString();
+uri = eb.build();
 %>
