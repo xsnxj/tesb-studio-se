@@ -34,6 +34,10 @@ public class RouteResourcesHelper {
 			return null;
 		}
 		IRepositoryViewObject repositoryObject = getRepositoryObject(repoItemId, version);
+		return getRouteResourcesLocation(repositoryObject);
+	}
+
+	public static String getRouteResourcesLocation(IRepositoryViewObject repositoryObject) {
 		if(repositoryObject == null) {
 			return null;
 		}

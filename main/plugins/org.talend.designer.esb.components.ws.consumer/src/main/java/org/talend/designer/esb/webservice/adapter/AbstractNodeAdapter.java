@@ -60,4 +60,8 @@ public abstract class AbstractNodeAdapter extends BaseNodeAdapter {
 	}
 
 	public abstract boolean allowPopulateSchema();
+
+	public boolean routeResourcesAvailable() {
+		return false;
+	}
 }

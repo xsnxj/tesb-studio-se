@@ -1,9 +1,23 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2014 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.designer.esb.webservice.adapter;
 
 import javax.xml.namespace.QName;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.talend.core.model.properties.Item;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.designer.esb.webservice.ServiceSetting;
 import org.talend.designer.esb.webservice.WebServiceConstants;
@@ -33,6 +47,14 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 
 		String fullPortName = "{" + currentFunction.getServiceNameSpace() + "}" + currentFunction.getPortName();
 		node.setParamValue(PORT_NAME, TalendTextUtils.addQuotes(fullPortName));
+		
+		IRepositoryViewObject resourceNode = setting.getResourceNode();
+		if(resourceNode!=null) {
+            final Item item = resourceNode.getProperty().getItem();
+            String id = item.getProperty().getId();
+            node.setParamValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_ID", id);
+            node.setParamValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_VERSION", item.getProperty().getVersion());
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -89,5 +111,10 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 	@Override
 	public boolean allowPopulateSchema() {
 		return false;
+	}
+
+	@Override
+	public boolean routeResourcesAvailable() {
+		return true;
 	}
 }

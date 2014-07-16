@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.ui.swt.extended.table.ExtendedTableModel;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.esb.webservice.SchemaTool;
 import org.talend.designer.esb.webservice.ServiceSetting;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
@@ -25,7 +26,7 @@ import org.talend.designer.esb.webservice.ws.wsdlinfo.OperationInfo;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.ServiceInfo;
 import org.talend.designer.esb.webservice.ws.wsdlutil.ComponentBuilder;
 
-public class WebServiceUIPresenter {
+public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSelectionListener, FunctionSelectionListener {
 
 	private WebServiceUI webServiceUI;
 	private ServiceSetting currentSetting;
@@ -85,14 +86,17 @@ public class WebServiceUIPresenter {
 		}
 	}
 
+	@Override
 	public ExtendedTableModel<String> getPortTableModel() {
 		return portTableModel;
 	}
 
+	@Override
 	public ExtendedTableModel<Function> getFunctionTableModel() {
 		return functionTableModel;
 	}
 
+	@Override
 	public void portSelected(String portName) {
 		currentSetting.setPort(portName);
 		functionTableModel.removeAll();
@@ -100,6 +104,7 @@ public class WebServiceUIPresenter {
 		webServiceUI.selectFirstFunction();
 	}
 
+	@Override
 	public void refreshPageByWsdl(final String wsdlLocation) {
 		webServiceUI.setErrorMessage(null);
 		portTableModel.removeAll();
@@ -176,5 +181,18 @@ public class WebServiceUIPresenter {
 			return nodeAdapter.allowPopulateSchema();
 		}
 		return false;
+	}
+
+	public boolean showResourcesButton() {
+		return nodeAdapter.routeResourcesAvailable();
+	}
+
+	public void resourceNodeSelected(IRepositoryViewObject resourceNode) {
+		currentSetting.setResourceNode(resourceNode);
+	}
+
+	@Override
+	public void functionSelected(Function function) {
+		webServiceUI.setPageComplete(true);
 	}
 }

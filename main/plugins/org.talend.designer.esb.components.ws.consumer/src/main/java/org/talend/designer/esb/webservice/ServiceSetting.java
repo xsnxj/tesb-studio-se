@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 import org.talend.designer.esb.webservice.ws.wsdlutil.CompressAndEncodeTool;
 
@@ -15,6 +16,7 @@ public class ServiceSetting {
 	private Definition definition;
 	private boolean hasRpcOperation;
 	private String port;
+	private IRepositoryViewObject resourceNode;
 
 	public void setWsdlLocation(String wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
@@ -69,5 +71,11 @@ public class ServiceSetting {
 		this.port = port;
 	}
 
+	public void setResourceNode(IRepositoryViewObject resourceNode) {
+		this.resourceNode = resourceNode;
+	}
 
+	public IRepositoryViewObject getResourceNode() {
+		return resourceNode;
+	}
 }
