@@ -14,10 +14,9 @@ package org.talend.designer.esb.webservice.ui;
 
 import java.util.EventListener;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.repository.model.RepositoryNode;
 
 interface RouteResourceSelectionListener extends EventListener{
@@ -43,12 +42,14 @@ public class RouteResourcesButtonPart extends AbstractButtonPart<RouteResourceSe
 
 	@Override
 	protected void buttonSelected(SelectionEvent e) {
-		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(getShell());
-		if(dialog.open() == Dialog.OK) {
-			RepositoryNode resourceNode = dialog.getResult();
-			if(resourceNode != null) {
-				listener.routeResourceNodeSelected(resourceNode);
-			}
-		}
+		MessageDialog.openError(getShell(), "NOT IMPLEMENTED YET!!", "NOT IMPLEMENTED YET!!");
+		//TODO to fix . TESB-13767, TESB-13911.
+//		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(getShell());
+//		if(dialog.open() == Dialog.OK) {
+//			RepositoryNode resourceNode = dialog.getResult();
+//			if(resourceNode != null) {
+//				listener.routeResourceNodeSelected(resourceNode);
+//			}
+//		}
 	}
 }
