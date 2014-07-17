@@ -235,7 +235,7 @@
 								</concat>
 								<concat destfile="${basedir}/build_apl.properties" ignoreempty="false" fixlastline="yes">
 									<path path="${basedir}/build.properties"/>
-									<footer>bin.excludes = lib/${tesb-javax.ws.rs-api},lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
+									<footer>bin.excludes = lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
 								</concat>
 							</target>
 						</configuration>
