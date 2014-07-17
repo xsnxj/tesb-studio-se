@@ -15,53 +15,63 @@ String url = ElementParameterParser.getValue(node, "__ADDRESS__").trim();
 
 String dataformat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
 
-String useServiceRegistry = ElementParameterParser.getValue(node, "__ENABLE_REGISTRY__");
+boolean useServiceRegistry = helper.getVisibleBoolParam("__ENABLE_REGISTRY__");
 if(!isStudioEEVersion || "RAW".equals(dataformat) || "CXF_MESSAGE".equals(dataformat)){
-	useServiceRegistry = "false";
+	useServiceRegistry = false;
 }
 
-String useSecurity = ElementParameterParser.getValue(node, "__ENABLE_SECURITY__");
-if("true".equals(useServiceRegistry) || "RAW".equals(dataformat) || "CXF_MESSAGE".equals(dataformat)){
-	useSecurity = "false";
+boolean useSecurity = helper.getVisibleBoolParam("__ENABLE_SECURITY__");
+if(useServiceRegistry || "RAW".equals(dataformat) || "CXF_MESSAGE".equals(dataformat)){
+	useSecurity = false;
 }
 
 List<? extends IConnection> conns = node.getIncomingConnections();
 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SL__")) 
-		&&  "false".equals(useServiceRegistry)) {
+		&&  (!useServiceRegistry)) {
 	if (!conns.isEmpty()) {
 		// consumer role
 		url = "((null == bundleContext) ? " + url + " : \"locator://locator/\")";
 	}
 }
 
-CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
-eb.setComponent("cxf").setName(url);
-
 String serviceType = ElementParameterParser.getValue(node, "__SERVICE_TYPE__");
-if ("wsdlURL".equals(serviceType)) {
 
-	//http://jira.talendforge.org/browse/TESB-6226
-    String filePath = "";
-	
-	String wsdlType = ElementParameterParser.getValue(node, "__WSDL_TYPE__");
-	if("file".equals(wsdlType)){
-	  filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
-	}else{
-		filePath =  ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__");
-		filePath = "\"classpath:" + filePath + "\"";
+StringBuilder sb = new StringBuilder();
+sb.append("\"cxf://\"+").append(url);
+sb.append("+\"?dataFormat=" + dataformat + "\"");
+
+if ("wsdlURL".equals(serviceType)) {
+	if(!useServiceRegistry){
+		sb.append("+\"&" + serviceType + "=\"");
+		//http://jira.talendforge.org/browse/TESB-6226
+	    String filePath = "";
+		
+		String wsdlType = ElementParameterParser.getValue(node, "__WSDL_TYPE__");
+		if("file".equals(wsdlType)){
+		  filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
+		}else{
+			filePath =  ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__");
+			filePath = "\"classpath:" + filePath + "\"";
+		}
+		filePath.replaceAll("\\\\","/");
+		sb.append("+").append(filePath);
 	}
-	filePath.replaceAll("\\\\","/");
-	eb.addParam(serviceType, filePath);
 } else {
-	eb.addParam(serviceType, "__SERVICE_CLASS__");
+	sb.append("+\"&" + serviceType + "=\"");
+	sb.append("+" + ElementParameterParser.getValue(node, "__SERVICE_CLASS__"));
 }
 
-eb.addParam("dataFormat", "\""+dataformat+"\"");
-eb.getNodeParamNotDefaultAppender(node).visibleRequired(true)
-	.addParam("serviceNameString", "__SERVICE_NAME__")
-	.addParam("endpointNameString", "__PORT_NAME__")
-	.addListMapParams("__ADVARGUMENTS__");
 
+
+
+String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__");
+if(!serviceName.isEmpty()) {
+	sb.append("+\"&serviceNameString=\"+").append(serviceName);
+}
+String portName = helper.getVisibleStringParam("__PORT_NAME__");
+if(!portName.isEmpty()) {
+	sb.append("+\"&endpointNameString=\"+").append(portName);
+}
 String operationName = helper.getVisibleStringParam("__OPERATION_NAME__").trim();
 if(!operationName.isEmpty() && !operationName.equals("")) {
 	StringBuilder stmt = new StringBuilder();
@@ -70,18 +80,25 @@ if(!operationName.isEmpty() && !operationName.equals("")) {
 		.append(operationName)
 		.append(");}catch(Exception e){}\n");
 	statements = stmt.toString();
+	sb.append("+ (operation == null?\"\":(")
+	.append("\"&defaultOperationNamespace=\"+operation.getNamespaceURI()")
+	.append("+\"&defaultOperationName=\"+operation.getLocalPart()))");
+}
 
-	eb.getConditionParamAppender("operation == null")
-		.appendParamWhenFalse("defaultOperationNamespace","operation.getNamespaceURI()")
-		.appendParamWhenFalse("defaultOperationName","operation.getLocalPart()")
-		.finish();
+List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");
+for (Map<String, String> map : tableValues) {
+	String argName = map.get("NAME").trim();
+	String argValue = map.get("VALUE").trim();
+	sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
 }
 
 if(!conns.isEmpty()){
-	eb.addParam("headerFilterStrategy","\"#CXF_PAYLOAD_HEADER_FILTER\"");
-	eb.addParam("properties.id","\""+node.getUniqueName()+"\"");
-}else if("true".equals(useServiceRegistry) || ("true".equals(useSecurity) && "SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__")))) {
-	eb.addParam("cxfBinding", "\"#DEFAULT_CXF_BINDING\"");
+	sb.append("+\"&headerFilterStrategy=#CXF_PAYLOAD_HEADER_FILTER\"");
+	sb.append("+\"&properties.id=\"+\"");
+	sb.append(node.getUniqueName());
+	sb.append("\"");
+}else if(useServiceRegistry || (useSecurity && "SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__")))) {
+	sb.append("+\"&cxfBinding=#DEFAULT_CXF_BINDING\"");
 }
-uri = eb.build();
+uri = sb.toString();
 %>
