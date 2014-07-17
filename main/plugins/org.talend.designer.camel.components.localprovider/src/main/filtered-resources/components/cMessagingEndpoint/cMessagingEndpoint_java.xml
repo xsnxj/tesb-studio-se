@@ -923,7 +923,6 @@
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="javax.ws.rs-api"
 					MODULE="javax.ws.rs-api-2.0-m10.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.apache.cxf/lib/javax.ws.rs-api-2.0-m10.jar" 
                     REQUIRED_IF="(HOTLIBS.LIBPATH IN ['CXF']) OR (HOTLIBS.LIBPATH IN ['CXF_BUNDLE'])" />
             <IMPORT NAME="cxf-rt-rs-extension-providers"
                     MODULE="${tesb-cxf-rt-rs-extension-providers}"
