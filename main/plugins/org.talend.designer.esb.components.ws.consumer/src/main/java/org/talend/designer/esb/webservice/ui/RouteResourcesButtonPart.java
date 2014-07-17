@@ -14,17 +14,19 @@ package org.talend.designer.esb.webservice.ui;
 
 import java.util.EventListener;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.repository.model.RepositoryNode;
 
-interface RouteResourceSelectionListener extends EventListener{
+interface RouteResourceSelectionListener extends EventListener {
 	void routeResourceNodeSelected(RepositoryNode resourceNode);
 }
 
 public class RouteResourcesButtonPart extends AbstractButtonPart<RouteResourceSelectionListener> {
-
 
 	public RouteResourcesButtonPart(RouteResourceSelectionListener eventListener) {
 		super(eventListener);
@@ -42,14 +44,19 @@ public class RouteResourcesButtonPart extends AbstractButtonPart<RouteResourceSe
 
 	@Override
 	protected void buttonSelected(SelectionEvent e) {
-		MessageDialog.openError(getShell(), "NOT IMPLEMENTED YET!!", "NOT IMPLEMENTED YET!!");
-		//TODO to fix . TESB-13767, TESB-13911.
-//		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(getShell());
-//		if(dialog.open() == Dialog.OK) {
-//			RepositoryNode resourceNode = dialog.getResult();
-//			if(resourceNode != null) {
-//				listener.routeResourceNodeSelected(resourceNode);
-//			}
-//		}
+		try {
+			Class<?> dialogClass = Platform.getBundle("org.talend.camel.designer").loadClass(
+					"org.talend.camel.designer.dialog.RouteResourceSelectionDialog");
+			Dialog dialog = (Dialog) dialogClass.getConstructor(Shell.class).newInstance(getShell());
+			if (dialog.open() == Dialog.OK) {
+				RepositoryNode resourceNode = (RepositoryNode) dialogClass.getMethod("getResult").invoke(dialog);
+				if (resourceNode != null) {
+					listener.routeResourceNodeSelected(resourceNode);
+				}
+			}
+		} catch (Exception e1) {
+			ExceptionHandler.process(new IllegalStateException(
+					"Can't load RouteResourceSelectionDialog from specific bundle", e1));
+		}
 	}
 }
