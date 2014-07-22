@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -53,11 +54,14 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 									evtValue.length() - 1);
 						}
 						if (!evtValue.trim().equals("")) { //$NON-NLS-1$
-							BundleClasspath bundleClasspath = new BundleClasspath();
-							bundleClasspath.setChecked(isChecked);
-							bundleClasspath.setBuiltIn(true);
-							bundleClasspath.setName(evtValue);
-							bundleClasspaths.add(bundleClasspath);
+							String[] names = StringUtils.split(evtValue, ';');
+							for (String name : names) {
+								BundleClasspath bundleClasspath = new BundleClasspath();
+								bundleClasspath.setChecked(isChecked);
+								bundleClasspath.setBuiltIn(true);
+								bundleClasspath.setName(name);
+								bundleClasspaths.add(bundleClasspath);
+							}
 						}
 					}
 				} else {
