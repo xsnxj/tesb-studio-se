@@ -54,6 +54,11 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
             String id = item.getProperty().getId();
             node.setParamValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_ID", id);
             node.setParamValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_VERSION", item.getProperty().getVersion());
+
+			String classpathUrl = RouteResourcesHelper.getClasspathUrl(item);
+			if(classpathUrl != null) {
+				node.setParamValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_RES_URI", classpathUrl);
+			}
 		}
 		return Status.OK_STATUS;
 	}
