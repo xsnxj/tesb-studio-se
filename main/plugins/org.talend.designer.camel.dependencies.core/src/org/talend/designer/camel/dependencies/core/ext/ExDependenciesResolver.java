@@ -2,6 +2,7 @@ package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -245,8 +246,8 @@ public class ExDependenciesResolver {
 	 * we need to handle it specially according the selected language
 	 */
 	private void handleAllConnections() {
-		EList connections = item.getProcess().getConnection();
-		Iterator iterator = connections.iterator();
+		List<?> connections = item.getProcess().getConnection();
+		Iterator<?> iterator = connections.iterator();
 		Map<String, Set<ExImportPackage>> languageImportPackages = ExtensionPointsReader.INSTANCE.getLanguageImportPackages();
 		while(iterator.hasNext()){
 			Object next = iterator.next();
@@ -275,8 +276,8 @@ public class ExDependenciesResolver {
 	}
 
 	private String handleROUTEWHENconnection(ConnectionType connection) {
-		EList elementParameter = connection.getElementParameter();
-		Iterator iterator = elementParameter.iterator();
+		List<?> elementParameter = connection.getElementParameter();
+		Iterator<?> iterator = elementParameter.iterator();
 		while(iterator.hasNext()){
 			Object next = iterator.next();
 			if(next == null || !(next instanceof ElementParameterType)){

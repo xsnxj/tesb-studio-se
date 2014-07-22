@@ -603,7 +603,7 @@
          </predicate>
       </classpath>
       <classpath
-            attributeName="LIBRARY"
+            attributeName="EMBEDDED_LIBRARY"
             checked="true"
             componentName="cAMQP">
       </classpath>
