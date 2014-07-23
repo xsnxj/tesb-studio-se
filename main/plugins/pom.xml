@@ -35,7 +35,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <cxf.version>2.7.11</cxf.version>
+        <cxf.version>2.7.12</cxf.version>
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<jettison.version>1.3.5</jettison.version>
 		<slf4j.version>1.7.6</slf4j.version>
