@@ -41,7 +41,7 @@ imports="
 		.setHeader(org.apache.camel.Exchange.HTTP_METHOD, constant("<%=ElementParameterParser.getValue(node, "__HTTP_METHOD__")%>"))
 <% if (!acceptType.isEmpty()) { %>
 		.setHeader(org.apache.camel.Exchange.ACCEPT_CONTENT_TYPE, constant("<%=acceptType%>"))
-		.setHeader(org.apache.camel.component.cxf.CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, constant(<%=responseClass%>))
+		.setHeader(org.apache.camel.component.cxf.common.message.CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, constant(<%=responseClass%>))
 <% } %>
 <% if (!contentType.isEmpty()) { %>
 		.setHeader(org.apache.camel.Exchange.CONTENT_TYPE, constant("<%=contentType%>"))
