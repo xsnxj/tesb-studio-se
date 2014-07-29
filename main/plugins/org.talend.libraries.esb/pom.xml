@@ -12,4 +12,24 @@
   <artifactId>org.talend.libraries.esb</artifactId>
   <version>5.6.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>     
+       <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+      		<dependency-resolution>
+        		<optionalDependencies>ignore</optionalDependencies>
+      		</dependency-resolution>
+        </configuration>
+      </plugin>
+	</plugins>
+  </build>
 </project>
