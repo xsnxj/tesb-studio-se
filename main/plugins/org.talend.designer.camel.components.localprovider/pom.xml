@@ -198,7 +198,6 @@
 						</goals>
 						<configuration>
 							<includeTransitiveDependencies>false</includeTransitiveDependencies>
-							<excludedArtifacts>\Axstream\Z</excludedArtifacts>
 						</configuration>
 					</execution>
 					<execution>
@@ -222,10 +221,6 @@
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
-								<concat destfile="${basedir}/build_apl.properties" ignoreempty="false" fixlastline="yes">
-									<path path="${basedir}/build.properties"/>
-									<footer>bin.excludes = lib/${tesb-xstream}</footer>
-								</concat>
 							</target>
 						</configuration>
 						<goals>
@@ -234,6 +229,23 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/lib</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>build_apl.properties</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>

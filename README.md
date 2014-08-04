@@ -27,7 +27,7 @@ All Talend Studio repositories follow the same file structure:
 
 ## How to build projects
 Use maven to pre-build projects. Go to main/plugins folder and in command line type:
- mvn package
+ mvn clean package
 
 ## Download
 
