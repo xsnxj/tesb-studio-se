@@ -229,11 +229,10 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
-								<delete dir="${basedir}/lib"/>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
-								<concat destfile="${basedir}/build_apl.properties" ignoreempty="false" fixlastline="yes">
+								<concat destfile="${basedir}/build_lgpl2.properties" ignoreempty="false" fixlastline="yes">
 									<path path="${basedir}/build.properties"/>
 									<footer>bin.excludes = lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
 								</concat>
@@ -257,6 +256,23 @@
 					</execution-->
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/lib</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>build_apl.properties</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>

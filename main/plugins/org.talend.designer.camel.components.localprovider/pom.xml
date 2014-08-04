@@ -217,7 +217,6 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
-								<delete dir="${basedir}/lib"/>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
