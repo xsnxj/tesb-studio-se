@@ -83,7 +83,7 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 	}
 
 	private static boolean subTreePostpositive(INode subProcessStartNode) {
-		return NodeUtil.isNodeMessagingFamily(subProcessStartNode);
+		return NodeUtil.isMessagingFamilyStartNode(subProcessStartNode);
 	}
 
 	private static boolean subTreeNeedSkip(INode subProcessStartNode) {

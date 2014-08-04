@@ -97,9 +97,12 @@ public class NodeUtil {
 		return false;
 	}
 
-	public static boolean isNodeMessagingFamily(INode subProcessStartNode) {
-		IElementParameter family = subProcessStartNode.getElementParameter("FAMILY");
-		return subProcessStartNode.isStart() && null != family && "Messaging".equals(family.getValue());
+	public static boolean isMessagingFamilyStartNode(INode node) {
+		if(node == null) {
+			return false;
+		}
+		IElementParameter family = node.getElementParameter("FAMILY");
+		return node.isStart() && null != family && "Messaging".equals(family.getValue());
 	}
 
 	public static boolean isConfigComponentNode(INode subProcessStartNode) {
