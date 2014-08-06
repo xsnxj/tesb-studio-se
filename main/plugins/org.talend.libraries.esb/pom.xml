@@ -264,12 +264,6 @@
                         <fileset>
                             <directory>${basedir}/lib</directory>
                         </fileset>
-                        <fileset>
-                            <directory>${basedir}</directory>
-                            <includes>
-                                <include>build_apl.properties</include>
-                            </includes>
-                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
