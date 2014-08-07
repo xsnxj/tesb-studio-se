@@ -38,7 +38,9 @@ public abstract class AbstractProcessPartBuilder {
 	public abstract AbstractProcessPartBuilder appendContent() throws CodeGeneratorException;
 
 	protected AbstractProcessPartBuilder append(CharSequence charSequence) {
-		sb.append(charSequence);
+		if (charSequence != null) {
+			sb.append(charSequence);
+		}
 		return this;
 	}
 

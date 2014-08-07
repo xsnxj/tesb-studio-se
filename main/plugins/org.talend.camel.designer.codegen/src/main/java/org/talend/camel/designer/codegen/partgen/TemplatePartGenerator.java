@@ -38,11 +38,6 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		case SUBPROCESS_HEADER_ROUTE:
 			return generateTypedComponentCode(template, params[0]);
 
-		case ITERATE_SUBPROCESS_HEADER:
-		case PART_HEADER:
-		case PART_FOOTER:
-			return generateTypedComponentCode(template, params);
-
 		case CLOSE_BLOCKS_CODE: {
 			INode node = (INode) params[0];
 			CloseBlocksCodeArgument closeBlocksArgument = new CloseBlocksCodeArgument();
@@ -51,9 +46,8 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		}
 			
 		default:
-			break;
+			return generateTypedComponentCode(template, params);
 		}
-		return null;
 	}
 
 	private CharSequence generateTypedComponentCode(ECamelTemplate template, Object... params)
