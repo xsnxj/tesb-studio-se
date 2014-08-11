@@ -125,7 +125,7 @@
 %>
                     org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf_<%=cid%> = new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
                     factory_<%=cid%> = sf_<%=cid%>;
-					sf_<%=cid%>.setResourceClasses(<%=serviceClass%>.class);
+					sf_<%=cid%>.setServiceClass(<%=serviceClass%>.class);
 					sf_<%=cid%>.setResourceProvider(<%=serviceClass%>.class, new org.apache.camel.component.cxf.jaxrs.CamelResourceProvider(<%=serviceClass%>.class));
 					sf_<%=cid%>.setProvider(new CxfPayloadProvider());
 					// avoid JAXBException in runtime
@@ -161,6 +161,11 @@
                     };
                     factory_<%=cid%> = cf_<%=cid%>;
 <%
+                    if ("RESOURCECLASS".equals(ElementParameterParser.getValue(node, "__SERVICE_TYPE__"))) {
+%>
+                    cf_<%=cid%>.setServiceClass(<%=ElementParameterParser.getValue(node, "__RESOURCE_CLASS__")%>.class);
+<%
+                    }
                     if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))) {
                     	String passwordFieldName = "__PASSWORD__";
 %>
