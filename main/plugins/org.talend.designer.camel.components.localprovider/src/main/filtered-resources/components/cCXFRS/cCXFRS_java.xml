@@ -113,7 +113,7 @@
         </PARAMETER>
         <PARAMETER NAME="RESOURCE_OPERATION" FIELD="TEXT" NUM_ROW="6"
             SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND SERVICE_TYPE == 'RESOURCECLASS'">
-            <DEFAULT>constant("")</DEFAULT>
+            <DEFAULT>constant("operationName")</DEFAULT>
         </PARAMETER>
 
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" REQUIRED="true"
