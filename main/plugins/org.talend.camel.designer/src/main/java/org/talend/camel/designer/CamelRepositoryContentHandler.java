@@ -170,6 +170,9 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
 
     @Override
     public Resource saveScreenShots(Item item) throws PersistenceException {
+    	if(!(item instanceof CamelProcessItem)){
+    		return null;
+    	}
         Resource itemResource = xmiResourceManager.getScreenshotResource(item, true, true);
         EMap screenshots =  ((CamelProcessItem) item).getProcess().getScreenshots();
         if (screenshots != null && !screenshots.isEmpty()) {
