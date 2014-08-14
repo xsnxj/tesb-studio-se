@@ -287,9 +287,26 @@
                     UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
                     REQUIRED="true" />
 
-			<IMPORT MODULE="camel-amqp-alldep-${camel.version}.jar" NAME="talend-camel-amqp"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-amqp-alldep-${camel.version}.jar"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
+            <IMPORT NAME="camel-amqp"
+                    MODULE="camel-amqp-${camel.version}.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-amqp-${camel.version}.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
+            <IMPORT NAME="qpid-amqp-1-0-common" 
+                    MODULE="${tesb-qpid-amqp-1-0-common}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
+            <IMPORT NAME="qpid-amqp-1-0-client" 
+                    MODULE="${tesb-qpid-amqp-1-0-client}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client}"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
+            <IMPORT NAME="qpid-amqp-1-0-client-jms" 
+                    MODULE="${tesb-qpid-amqp-1-0-client-jms}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
+            <IMPORT NAME="geronimo-jms_1.1_spec" 
+                    MODULE="${tesb-geronimo-jms_1.1_spec}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['AMQP']" />
 			<IMPORT MODULE="camel-atom-alldep-${camel.version}.jar" NAME="talend-camel-atom"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-atom-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['ATOM']" />
@@ -330,11 +347,11 @@
             <IMPORT NAME="camel-cxf"
                     MODULE="camel-cxf-${camel.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-${camel.version}.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
             <IMPORT NAME="camel-cxf-transport"
                     MODULE="camel-cxf-transport-${camel.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-cxf-transport-${camel.version}.jar"
-                REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['CXF']" />
 			<IMPORT MODULE="camel-dns-alldep-${camel.version}.jar" NAME="talend-camel-dns"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-dns-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['DNS']" />
@@ -443,15 +460,15 @@
             <IMPORT NAME="camel-jms"
                     MODULE="camel-jms-${camel.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-${camel.version}.jar"
-                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
+                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['JMS']) OR (HOTLIBS.LIBPATH IN ['AMQP'])" />
             <IMPORT NAME="spring-jms"
                     MODULE="spring-jms-${spring.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-jms-${spring.version}.jar"
-                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
+                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['JMS']) OR (HOTLIBS.LIBPATH IN ['AMQP'])" />
             <IMPORT NAME="spring-tx"
                     MODULE="spring-tx-${spring.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-${spring.version}.jar"
-                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMS']" />
+                    REQUIRED_IF="(HOTLIBS.LIBPATH IN ['JMS']) OR (HOTLIBS.LIBPATH IN ['AMQP'])" />
 			<IMPORT MODULE="camel-jmx-alldep-${camel.version}.jar" NAME="talend-camel-jmx"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jmx-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JMX']" />

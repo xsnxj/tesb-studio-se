@@ -119,7 +119,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             String routeName = routeNode.getObject().getProperty().getDisplayName();
             File routeFile;
             try {
-                routeFile = File.createTempFile(routeName, FileConstants.JAR_FILE_SUFFIX, new File(getTempDir()));
+                routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
@@ -197,7 +197,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             String jobName = referencedJobNode.getObject().getProperty().getDisplayName();
             File jobFile;
             try {
-                jobFile = File.createTempFile(jobName, FileConstants.JAR_FILE_SUFFIX, new File(getTempDir()));
+                jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }

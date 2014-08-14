@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -29,6 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
@@ -46,8 +50,14 @@ import org.talend.core.model.process.INode;
 import org.talend.core.model.process.INodeConnector;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
+import org.talend.designer.camel.dependencies.core.model.ExportPackage;
+import org.talend.designer.camel.dependencies.core.model.ImportPackage;
+import org.talend.designer.camel.dependencies.core.model.RequireBundle;
+import org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.ITalendSynchronizer;
@@ -275,6 +285,98 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 			return EConnectionType.ROUTE_ENDBLOCK;
 		}
 		return EConnectionType.ROUTE;
+	}
+	
+	@Override
+	public void appendRouteInfo2Doc(Item item, Element jobElement) {
+		addSpringContent(item, jobElement);
+		addManifestContent(item, jobElement);
+		addResourcesContent(item, jobElement);
+	}
+
+	private void addResourcesContent(Item item, Element jobElement) {
+		Element resourcesElement = jobElement.addElement("RouteResources");
+		
+		Set<ResourceDependencyModel> resourceDependencies = RouteResourceUtil.getResourceDependencies(item);
+		for(ResourceDependencyModel resource: resourceDependencies){
+			Element resourceElement = resourcesElement.addElement("Resource");
+			resourceElement.addAttribute("name", resource.getFileName());
+			resourceElement.addAttribute("version", resource.getSelectedVersion());
+			resourceElement.addAttribute("path", resource.getClassPathUrl());
+		}
+	}
+
+	private void addManifestContent(Item item, Element jobElement) {
+		Element manifestElement = jobElement.addElement("RouteManifest");
+		manifestElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE),
+				"preserve");
+		
+		EMap additionalProperties = item.getProperty().getAdditionalProperties();
+		RouterOsgiDependenciesResolver resolver = new RouterOsgiDependenciesResolver((ProcessItem) item, additionalProperties);
+		
+		addImportPackages(resolver, manifestElement);
+		addExportPackages(resolver, manifestElement);
+		addRequiredBundles(resolver, manifestElement);
+		addBundleClasspath(resolver, manifestElement);
+	}
+
+	private void addImportPackages(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
+		Element importPackageElement = manifestElement.addElement("Import-package");
+		
+		List<ImportPackage> storedImportPackages = resolver.getImportPackages();
+		StringBuilder sb = new StringBuilder();
+		for(ImportPackage im: storedImportPackages){
+			sb.append(im.getLabel());
+			sb.append("\n");
+		}
+		importPackageElement.addText(sb.toString());
+	}
+	
+	private void addExportPackages(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
+		Element exportPackageElement = manifestElement.addElement("Export-package");
+		
+		List<ExportPackage> storedExportPackages = resolver.getExportPackages();
+		StringBuilder sb = new StringBuilder();
+		for(ExportPackage ex: storedExportPackages){
+			sb.append(ex.getLabel());
+			sb.append("\n");
+		}
+		exportPackageElement.addText(sb.toString());
+	}
+	
+	private void addRequiredBundles(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
+		Element requiredBundleElement = manifestElement.addElement("Required-bundle");
+		
+		List<RequireBundle> storedRequiredBundle = resolver.getRequireBundles();
+		StringBuilder sb = new StringBuilder();
+		for(RequireBundle re: storedRequiredBundle){
+			sb.append(re.getLabel());
+			sb.append("\n");
+		}
+		requiredBundleElement.addText(sb.toString());
+	}
+	
+	private void addBundleClasspath(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
+		Element bundleClasspathElement = manifestElement.addElement("Bundle-classpath");
+		
+		List<BundleClasspath> storedBundleClasspaths = resolver.getBundleClasspaths();
+		StringBuilder sb = new StringBuilder();
+		for(BundleClasspath bu: storedBundleClasspaths){
+			if(!bu.isChecked()){
+				continue;
+			}
+			sb.append(bu.getLabel());
+			sb.append("\n");
+		}
+		bundleClasspathElement.addText(sb.toString());
+	}
+
+	private void addSpringContent(Item item, Element jobElement) {
+		Element routeSpringElement = jobElement.addElement("RouteSpring");
+		routeSpringElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE),
+				"preserve");
+		String springContent = ((CamelProcessItem)item).getSpringContent();
+		routeSpringElement.addText(springContent);
 	}
 
 }

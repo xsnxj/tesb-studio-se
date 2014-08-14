@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FeatureMaps>
-	<FeatureMap HotLib="camel-amqp-alldep">
+	<FeatureMap HotLib="camel-amqp">
 		<Feature version="[2,5)">camel-amqp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-atom-alldep">

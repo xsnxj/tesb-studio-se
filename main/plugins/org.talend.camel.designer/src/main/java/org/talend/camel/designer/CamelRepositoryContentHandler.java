@@ -16,7 +16,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
@@ -30,6 +32,8 @@ import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.JobletProcessItem;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Status;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -164,6 +168,20 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         return itemResource;
     }
 
+    @Override
+    public Resource saveScreenShots(Item item) throws PersistenceException {
+    	if(!(item instanceof CamelProcessItem)){
+    		return null;
+    	}
+        Resource itemResource = xmiResourceManager.getScreenshotResource(item, true, true);
+        EMap screenshots =  ((CamelProcessItem) item).getProcess().getScreenshots();
+        if (screenshots != null && !screenshots.isEmpty()) {
+            itemResource.getContents().clear();
+            itemResource.getContents().addAll(EcoreUtil.copyAll(screenshots));
+        }
+        return itemResource;
+    }
+    
     private Resource saveFile(FileItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
 
