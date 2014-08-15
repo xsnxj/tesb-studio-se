@@ -37,10 +37,8 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Status;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.core.runtime.CoreRuntimePlugin;
-import org.talend.repository.model.IProxyRepositoryFactory;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -166,8 +164,6 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
             return itemResource;
         }
         if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
-//        	 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-//        	 factory.reload(item.getProperty());
         	itemResource = saveFile((RouteDocumentItem)item);
         	return itemResource;
         }
