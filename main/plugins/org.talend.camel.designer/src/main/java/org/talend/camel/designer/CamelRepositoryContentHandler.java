@@ -23,22 +23,24 @@ import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.JobletProcessItem;
-import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Status;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.core.runtime.CoreRuntimePlugin;
+import org.talend.repository.model.IProxyRepositoryFactory;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -113,6 +115,11 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
             itemResource = create(project, (FileItem) item, path, type);
             return itemResource;
         }
+        if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM){
+        	type = CamelRepositoryNodeType.repositoryDocumentationType;
+        	itemResource = create(project, (FileItem)item, path, type);
+        	return itemResource;
+        }
         return null;
     }
 
@@ -157,6 +164,12 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             itemResource = saveFile((RouteResourceItem) item);
             return itemResource;
+        }
+        if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
+//        	 IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+//        	 factory.reload(item.getProperty());
+        	itemResource = saveFile((RouteDocumentItem)item);
+        	return itemResource;
         }
         return null;
     }
@@ -207,6 +220,8 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
             return ECamelCoreImage.BEAN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+        } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
+        	return ECoreImage.DOCUMENTATION_ICON;
         }
         return null;
     }
@@ -225,6 +240,8 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
             item = CamelPropertiesFactory.eINSTANCE.createBeanItem();
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             item = CamelPropertiesFactory.eINSTANCE.createRouteResourceItem();
+        } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
+        	item = CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
         }
         return item;
     }
@@ -238,6 +255,9 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         }
         if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             return CamelRepositoryNodeType.repositoryRouteResourceType;
+        }
+        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
+        	return CamelRepositoryNodeType.repositoryDocumentationType;
         }
         return null;
     }

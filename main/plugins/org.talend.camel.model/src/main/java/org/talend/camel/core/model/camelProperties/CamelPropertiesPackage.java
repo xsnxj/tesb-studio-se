@@ -114,6 +114,15 @@ public interface CamelPropertiesPackage extends EPackage {
     int BEAN_ITEM__FILE_EXTENSION = PropertiesPackage.ROUTINE_ITEM__FILE_EXTENSION;
 
     /**
+	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BEAN_ITEM__NEED_VERSION = PropertiesPackage.ROUTINE_ITEM__NEED_VERSION;
+
+				/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -232,6 +241,15 @@ public interface CamelPropertiesPackage extends EPackage {
     int CAMEL_PROCESS_ITEM__FILE_EXTENSION = PropertiesPackage.PROCESS_ITEM__FILE_EXTENSION;
 
     /**
+	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CAMEL_PROCESS_ITEM__NEED_VERSION = PropertiesPackage.PROCESS_ITEM__NEED_VERSION;
+
+				/**
 	 * The feature id for the '<em><b>Process</b></em>' reference.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -314,6 +332,15 @@ public interface CamelPropertiesPackage extends EPackage {
     int ROUTE_RESOURCE_ITEM__FILE_EXTENSION = PropertiesPackage.FILE_ITEM__FILE_EXTENSION;
 
     /**
+	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_RESOURCE_ITEM__NEED_VERSION = PropertiesPackage.FILE_ITEM__NEED_VERSION;
+
+				/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -360,6 +387,116 @@ public interface CamelPropertiesPackage extends EPackage {
 
 
     /**
+	 * The meta object id for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteDocumentItemImpl <em>Route Document Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.talend.camel.core.model.camelProperties.impl.RouteDocumentItemImpl
+	 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRouteDocumentItem()
+	 * @generated
+	 */
+	int ROUTE_DOCUMENT_ITEM = 3;
+
+				/**
+	 * The feature id for the '<em><b>Property</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__PROPERTY = PropertiesPackage.DOCUMENTATION_ITEM__PROPERTY;
+
+				/**
+	 * The feature id for the '<em><b>State</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__STATE = PropertiesPackage.DOCUMENTATION_ITEM__STATE;
+
+				/**
+	 * The feature id for the '<em><b>Parent</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__PARENT = PropertiesPackage.DOCUMENTATION_ITEM__PARENT;
+
+				/**
+	 * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__REFERENCE_RESOURCES = PropertiesPackage.DOCUMENTATION_ITEM__REFERENCE_RESOURCES;
+
+				/**
+	 * The feature id for the '<em><b>File Extension</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__FILE_EXTENSION = PropertiesPackage.DOCUMENTATION_ITEM__FILE_EXTENSION;
+
+				/**
+	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__NEED_VERSION = PropertiesPackage.DOCUMENTATION_ITEM__NEED_VERSION;
+
+				/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__NAME = PropertiesPackage.DOCUMENTATION_ITEM__NAME;
+
+				/**
+	 * The feature id for the '<em><b>Extension</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__EXTENSION = PropertiesPackage.DOCUMENTATION_ITEM__EXTENSION;
+
+				/**
+	 * The feature id for the '<em><b>Content</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__CONTENT = PropertiesPackage.DOCUMENTATION_ITEM__CONTENT;
+
+				/**
+	 * The feature id for the '<em><b>Binding Extension</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM__BINDING_EXTENSION = PropertiesPackage.DOCUMENTATION_ITEM_FEATURE_COUNT + 0;
+
+				/**
+	 * The number of structural features of the '<em>Route Document Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTE_DOCUMENT_ITEM_FEATURE_COUNT = PropertiesPackage.DOCUMENTATION_ITEM_FEATURE_COUNT + 1;
+
+
+				/**
 	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.BeanItem <em>Bean Item</em>}'.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -410,6 +547,27 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRouteResourceItem_BindingExtension();
+
+				/**
+	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.RouteDocumentItem <em>Route Document Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Route Document Item</em>'.
+	 * @see org.talend.camel.core.model.camelProperties.RouteDocumentItem
+	 * @generated
+	 */
+	EClass getRouteDocumentItem();
+
+				/**
+	 * Returns the meta object for the attribute '{@link org.talend.camel.core.model.camelProperties.RouteDocumentItem#getBindingExtension <em>Binding Extension</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Binding Extension</em>'.
+	 * @see org.talend.camel.core.model.camelProperties.RouteDocumentItem#getBindingExtension()
+	 * @see #getRouteDocumentItem()
+	 * @generated
+	 */
+	EAttribute getRouteDocumentItem_BindingExtension();
 
 				/**
 	 * Returns the factory that creates the instances of the model.
@@ -478,6 +636,24 @@ public interface CamelPropertiesPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ROUTE_RESOURCE_ITEM__BINDING_EXTENSION = eINSTANCE.getRouteResourceItem_BindingExtension();
+
+								/**
+		 * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteDocumentItemImpl <em>Route Document Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.talend.camel.core.model.camelProperties.impl.RouteDocumentItemImpl
+		 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRouteDocumentItem()
+		 * @generated
+		 */
+		EClass ROUTE_DOCUMENT_ITEM = eINSTANCE.getRouteDocumentItem();
+
+								/**
+		 * The meta object literal for the '<em><b>Binding Extension</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ROUTE_DOCUMENT_ITEM__BINDING_EXTENSION = eINSTANCE.getRouteDocumentItem_BindingExtension();
 
     }
 

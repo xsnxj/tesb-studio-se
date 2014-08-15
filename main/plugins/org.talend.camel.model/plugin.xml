@@ -10,5 +10,12 @@
       </package>
    </extension>
 
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated CamelProperties -->
+      <parser
+            type="camelproperties"
+            class="org.talend.camel.core.model.camelProperties.util.CamelPropertiesResourceFactoryImpl"/>
+   </extension>
+
 
 </plugin>

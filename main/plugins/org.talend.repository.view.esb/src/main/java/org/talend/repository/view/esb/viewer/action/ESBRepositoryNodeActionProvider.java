@@ -20,7 +20,6 @@ import org.talend.repository.viewer.action.RepoNodeActionProvider;
 public class ESBRepositoryNodeActionProvider extends RepoNodeActionProvider {
 
     public ESBRepositoryNodeActionProvider() {
-        //
     }
 
     @Override
