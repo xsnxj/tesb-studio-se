@@ -10,4 +10,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="RouteResourceItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//FileItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingExtension" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RouteDocumentItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//DocumentationItem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingExtension" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+  </eClassifiers>
 </ecore:EPackage>
