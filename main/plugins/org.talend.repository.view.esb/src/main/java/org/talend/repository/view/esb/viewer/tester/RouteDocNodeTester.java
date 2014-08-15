@@ -18,8 +18,6 @@ public class RouteDocNodeTester extends PropertyTester {
 				&& !CamelRepositoryNodeType.repositoryDocumentationType.equals(contentType)){
 			return false;
 		}
-		if(contentType != null)
-			System.out.println(contentType.getFolder()+"   =========");
 		if("isRouteDoc".equals(property)){
 			return true;
 		}
