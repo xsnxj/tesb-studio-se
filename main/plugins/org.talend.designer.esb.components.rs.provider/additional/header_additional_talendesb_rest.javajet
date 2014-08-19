@@ -970,6 +970,8 @@ if (!noBodyRequest) {
 if (contentTypes.containsKey(produces)) {
 	String producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));
 %>	@javax.ws.rs.Produces(<%=producesContentTypes%>)
+<% } else if ("ONEWAY".equals(produces)) {
+%>	@org.apache.cxf.jaxrs.ext.Oneway()
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
@@ -1253,10 +1255,10 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
-			
+
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__CONVERT_JSON_VALUES_TO_STRING__"))) { %>
 				jsonProvider.setConvertTypesToStrings(true);
-			<% } 
+			<% }
 			   else { %>
 			    jsonProvider.setConvertTypesToStrings(false);
 			<% } %>
