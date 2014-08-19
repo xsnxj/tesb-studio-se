@@ -183,55 +183,6 @@
             </enablement>
          </actionProvider>
       </navigatorContent>
-      <navigatorContent
-            contentProvider="org.talend.repository.view.esb.viewer.content.RouteDocContentProvider"
-            icon="icons/resource.gif"
-            id="org.talend.repository.viewer.esb.route_doc"
-            labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="Route Docs"
-            priority="normal">
-         <triggerPoints>
-            <and>
-               <instanceof
-                     value="org.talend.repository.model.RepositoryNode">
-               </instanceof>
-               <test
-                     forcePluginActivation="true"
-                     property="org.talend.repository.node.route.doc.isRouteDoc">
-               </test>
-            </and>
-         </triggerPoints>
-         <actionProvider
-               class="org.talend.repository.view.esb.viewer.action.ESBRepositoryNodeActionProvider"
-               id="org.talend.repository.route.doc.action.provider.id">
-            <enablement>
-               <and>
-                  <instanceof
-                        value="org.talend.repository.model.RepositoryNode">
-                  </instanceof>
-                  <test
-                        property="org.talend.repository.node.route.doc.isRouteDoc">
-                  </test>
-                  <not>
-                     <test
-                           forcePluginActivation="true"
-                           property="org.talend.repository.node.isDeleted">
-                     </test>
-                  </not>
-               </and>
-            </enablement>
-         </actionProvider>
-         <possibleChildren>
-            <and>
-               <instanceof
-                     value="org.talend.repository.model.RepositoryNode">
-               </instanceof>
-               <test
-                     property="org.talend.repository.node.route.doc.isRouteDoc">
-               </test>
-            </and>
-         </possibleChildren>
-      </navigatorContent>
      
    </extension>
    <extension
@@ -255,13 +206,6 @@
             id="org.talend.repository.node.tester.route_resource"
             namespace="org.talend.repository.node"
             properties="isRouteResourceNode"
-            type="org.talend.repository.model.RepositoryNode">
-      </propertyTester>
-      <propertyTester
-            class="org.talend.repository.view.esb.viewer.tester.RouteDocNodeTester"
-            id="org.talend.repository.node.route.doc.tester"
-            namespace="org.talend.repository.node.route.doc"
-            properties="isRouteDoc"
             type="org.talend.repository.model.RepositoryNode">
       </propertyTester>
    </extension>
@@ -300,12 +244,6 @@
             <contentExtension
                   pattern="org.talend.repository.view.sorter.*">
             </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.documentation">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.esb.route_doc">
-            </contentExtension>
          </includes>
       </perspectiveFilter>
       <perspectiveFilter
@@ -328,48 +266,5 @@
             products="CAMEL"
             type="CONTEXT">
       </extraProducts>
-      <extraProducts
-            products="CAMEL"
-            type="DOCUMENTATION">
-      </extraProducts>
-      <repositoryNode
-            class="org.talend.repository.view.esb.doc.RouteDocumentRepositoryNode"
-            folder="documentations/generated/route_docs"
-            isResouce="false"
-            label="Route_Docs"
-            parentNodeType="GENERATED"
-            products="CAMEL"
-            type="ROUTE_DOCS">
-      </repositoryNode>
-      <repositoryNode
-            class="org.talend.repository.view.esb.doc.RouteDocumentRepositoryNode"
-            folder="documentations/generated/route_docs"
-            isResouce="true"
-            label="Route Doc"
-            products="CAMEL"
-            type="ROUTE_DOC">
-      </repositoryNode>
    </extension>
-   <extension
-         point="org.talend.core.repositoryContextualsActions">
-      <Action
-            class="org.talend.repository.view.esb.doc.actions.GenerateAllRoutesDocAction"
-            id="org.talend.repository.view.esb.GenerateRouteDocsAction"
-            level="18"
-            name="Generate all routes Documentation">
-      </Action>
-      <Action
-            class="org.talend.repository.view.esb.doc.actions.OpenRouteHTMLDocAction"
-            id="org.talend.repository.view.esb.openRouteHTMLDocAction"
-            level="19"
-            name="Open Route Documentation">
-      </Action>
-      <Action
-            class="org.talend.repository.view.esb.doc.actions.ExportAllRoutesDocAction"
-            id="org.talend.repository.view.esb.exportAllRoutesDocAction"
-            level="29"
-            name="Export All Routes Documentation">
-      </Action>
-   </extension>
-
 </plugin>
