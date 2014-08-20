@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.repository.services.utils;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,16 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.wsdl.validation.internal.IValidationReport;
 import org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLValidator;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.utils.VersionUtils;
-import org.talend.core.model.metadata.builder.connection.ConnectionFactory;
-import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
-import org.talend.core.model.properties.ItemState;
-import org.talend.core.model.properties.PropertiesFactory;
-import org.talend.core.model.properties.Property;
-import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IRepositoryNode;
@@ -365,26 +354,4 @@ public class WSDLUtils {
         return ERepositoryStatus.ERROR != ((OperationRepositoryObject) object).getInformationStatus();
     }
 
-    public static boolean isNameValidInXmlFileConnection(QName parameter, String portTypeName, String operationName) {
-        try {
-            XmlFileConnectionItem item = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-            XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
-            Property property = PropertiesFactory.eINSTANCE.createProperty();
-            property.setId(ProxyRepositoryFactory.getInstance().getNextId());
-            property.setLabel(parameter.getLocalPart());
-            property.setVersion(VersionUtils.DEFAULT_VERSION);
-            //
-            ItemState itemState = PropertiesFactory.eINSTANCE.createItemState();
-            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName, operationName);
-            itemState.setPath(folderPath);
-            item.setConnection(connection);
-            item.setProperty(property);
-            item.setState(itemState);
-            return ProxyRepositoryFactory.getInstance().isNameAvailable(property.getItem(), parameter.getLocalPart());
-        } catch (PersistenceException e) {
-            return false;
-        } catch (URISyntaxException e) {
-            return false;
-        }
-    }
 }
