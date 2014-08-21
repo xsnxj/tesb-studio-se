@@ -1162,7 +1162,7 @@ if (isProvider) {
 			String context = ElementParameterParser.getValue(node, "__CONTEXT__");
 			contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
 %>
-		org.apache.camel.Endpoint endpoint_<%=cid%> = endpoint("talend:"+ <%=typeName%>+ "?context=" + <%=context%>+"&propagateHeader=<%=propagateHeader%>");
+		org.talend.camel.TalendEndpoint endpoint_<%=cid%> = (org.talend.camel.TalendEndpoint) endpoint("talend:"+ <%=typeName%>+ "?context=" + <%=context%>+"&propagateHeader=<%=propagateHeader%>&id=<%=cid%>");
 <%
 		}else{
 			String typeName = "";
@@ -1191,7 +1191,7 @@ if (isProvider) {
 				typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
 			}
 %>
-			org.apache.camel.Endpoint endpoint_<%=cid%> = endpoint("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
+			org.talend.camel.TalendEndpoint endpoint_<%=cid%> = (org.talend.camel.TalendEndpoint) endpoint("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>&id=<%=cid%>");
 <%
 		}
 		int contextParamsSize = contextParams.size();
@@ -1217,7 +1217,7 @@ if (isProvider) {
 <%
 		}
 %>
-		endpoint_<%=cid%>.getCamelContext().setProperties(propertiesMap);
+		endpoint_<%=cid%>.setEndpointProperties(propertiesMap);
 }
 <%
 	}
