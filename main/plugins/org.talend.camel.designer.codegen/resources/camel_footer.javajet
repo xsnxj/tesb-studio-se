@@ -361,8 +361,26 @@
 					String amqUri = ElementParameterParser.getValue(node, "__AMQ_BROKER_URI__").trim();
 					
 %>
+					
 				{
-				javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+<%
+				String useActiveMQAuth = ElementParameterParser.getValue(node, "__AMQ_AUTH__");
+				if ("true".equals(useActiveMQAuth)){
+					String username = ElementParameterParser.getValue(node, "__AMQ_USERNAME__");
+					String cid = node.getUniqueName();
+					String passwordFieldName = "__AMQ_PASSWORD__";
+%>				
+					<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+					
+					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory( <%=username%>, decryptedPassword_<%=cid%> ,<%=amqUri%>);
+<%				
+				}else{
+%>
+					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+<%						
+				}
+%>
+
 <%
 				String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
 				if("true".equals(amqPool)){
