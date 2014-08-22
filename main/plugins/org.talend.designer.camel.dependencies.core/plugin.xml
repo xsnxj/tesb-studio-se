@@ -608,7 +608,7 @@
    <extension
          point="org.talend.core.runtime.service">
       <Service
-            class="org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver"
+            class="org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService"
             serviceId="IOsgiDependenciesService">
       </Service>
    </extension>
