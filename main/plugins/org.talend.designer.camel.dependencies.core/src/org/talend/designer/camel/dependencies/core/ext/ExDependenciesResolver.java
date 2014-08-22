@@ -31,11 +31,17 @@ public class ExDependenciesResolver {
 	private Set<RequireBundle> bundles = new HashSet<RequireBundle>();
 	private Set<ExportPackage> exportPackages = new HashSet<ExportPackage>();
 	private ProcessItem item;
-
+	private String importJobPkgVersion;
 
 	public ExDependenciesResolver(ProcessItem item) {
+		this(item, null);
+	}
+
+	public ExDependenciesResolver(ProcessItem item, String targetBundleVersion) {
 		this.item = item;
+		this.importJobPkgVersion = targetBundleVersion + "-" + item.getProperty().getLabel();
 		nodes = this.item.getProcess().getNode();
+
 		initialize();
 	}
 
@@ -203,6 +209,9 @@ public class ExDependenciesResolver {
 					importPackage.setBuiltIn(true);
 					importPackage.setName(projectFolderName+"."+jobFolderName); //$NON-NLS-1$
 					importPackage.addRelativeComponent(uniqueName);
+					if (importJobPkgVersion != null) {
+						importPackage.setVersionRange(importJobPkgVersion);
+					}
 					importPackages.add(importPackage);
 				}
 			}

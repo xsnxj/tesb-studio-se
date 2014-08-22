@@ -201,9 +201,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            BundleModel jobModel = new BundleModel(getGroupId(), jobName, getArtifactVersion(), jobFile);
+            String routeName = routeNode.getObject().getProperty().getDisplayName();
+            BundleModel jobModel = new BundleModel(getGroupId(), routeName+"_"+jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportOsgiBundle(referencedJobNode, jobFile, jobVersion, bundleVersion, "Job"); //$NON-NLS-1$
+                exportOsgiBundle(referencedJobNode, jobFile, jobVersion, bundleVersion, "Job", routeName); //$NON-NLS-1$
             }
         }
     }
@@ -219,11 +220,19 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private void exportOsgiBundle(IRepositoryNode node, File filePath, String version, String bundleVersion, String itemType)
             throws InvocationTargetException, InterruptedException {
+        exportOsgiBundle(node, filePath, version, bundleVersion, itemType, null);
+    }
+
+    private void exportOsgiBundle(IRepositoryNode node, File filePath, String version, String bundleVersion, String itemType, String parentRouteName)
+    		throws InvocationTargetException, InterruptedException {
         JobJavaScriptOSGIForESBManager talendJobManager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
+        if(parentRouteName != null) {
+        	talendJobManager.setParentRoute(parentRouteName);
+        }
         JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
                 getTempDir(), itemType);
         action.run(monitor);
