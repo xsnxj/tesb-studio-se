@@ -552,15 +552,6 @@
             </predicate>
          </importPackage>
       </component>
-      <component
-            componentName="cAMQP">
-         <importPackage
-               packageName="org.apache.activemq.camel.component">
-         </importPackage>
-         <importPackage
-               packageName="org.apache.activemq">
-         </importPackage>
-      </component>
    </extension>
    <extension
          point="org.talend.designer.camel.dependencies.bundleClasspath">
