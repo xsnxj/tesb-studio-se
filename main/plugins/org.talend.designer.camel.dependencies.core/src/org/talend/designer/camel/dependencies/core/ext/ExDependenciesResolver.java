@@ -39,7 +39,9 @@ public class ExDependenciesResolver {
 
 	public ExDependenciesResolver(ProcessItem item, String targetBundleVersion) {
 		this.item = item;
-		this.importJobPkgVersion = targetBundleVersion + "-" + item.getProperty().getLabel();
+		if(targetBundleVersion!=null) {
+			this.importJobPkgVersion = targetBundleVersion + "-" + item.getProperty().getLabel();
+		}
 		nodes = this.item.getProcess().getNode();
 
 		initialize();
@@ -61,16 +63,16 @@ public class ExDependenciesResolver {
 				.getComponentImportPackages();
 		Map<String, Set<ExRequireBundle>> exRequireBundles = ExtensionPointsReader.INSTANCE
 				.getComponentRequireBundles();
-		
+
 		Set<ExRequireBundle> requireBundlesForAll = ExtensionPointsReader.INSTANCE.getRequireBundlesForAll();
 		Set<ExImportPackage> importPackagesForAll = ExtensionPointsReader.INSTANCE.getImportPackagesForAll();
-		
+
 		for(ExRequireBundle rb: requireBundlesForAll){
 			RequireBundle target = rb.toTargetIgnorePredicates();
 			target.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
 			bundles.add(target);
 		}
-		
+
 		for(ExImportPackage ip: importPackagesForAll){
 			ImportPackage target = ip.toTargetIgnorePredicates();
 			target.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
@@ -94,7 +96,7 @@ public class ExDependenciesResolver {
 					break;
 				}
 			}
-			
+
 			String componentName = n.getComponentName();
 			Set<ExBundleClasspath> bcs = exClasspaths.get(componentName);
 			if (bcs != null) {
@@ -169,7 +171,7 @@ public class ExDependenciesResolver {
 					}
 				}
 			}
-			
+
 			if("cTalendJob".equals(componentName)){ //$NON-NLS-1$
 				String jobId = null;
 				String jobVersion = null;
@@ -211,12 +213,14 @@ public class ExDependenciesResolver {
 					importPackage.addRelativeComponent(uniqueName);
 					if (importJobPkgVersion != null) {
 						importPackage.setVersionRange(importJobPkgVersion);
+					}else {
+						importPackage.setVersionRange(jobVersion);
 					}
 					importPackages.add(importPackage);
 				}
 			}
 		}
-		
+
 		String version = item.getProperty().getVersion();
 		if("Latest".equals(version)){ //$NON-NLS-1$
 			try {
@@ -239,7 +243,7 @@ public class ExDependenciesResolver {
 
 		exRequireBundles = null;
 	}
-	
+
     private boolean isActivate(NodeType node) {
         for (Object obj : node.getElementParameter()) {
             ElementParameterType cpType = (ElementParameterType) obj;
@@ -280,8 +284,8 @@ public class ExDependenciesResolver {
 				importPackages.add(eip.toTargetIgnorePredicates());
 			}
 		}
-		
-        
+
+
 	}
 
 	private String handleROUTEWHENconnection(ConnectionType connection) {
@@ -316,7 +320,7 @@ public class ExDependenciesResolver {
 	public ImportPackage[] getImportPackages() {
 		return importPackages.toArray(new ImportPackage[0]);
 	}
-	
+
 	public ExportPackage[] getExportPackages() {
 		return exportPackages.toArray(new ExportPackage[0]);
 	}

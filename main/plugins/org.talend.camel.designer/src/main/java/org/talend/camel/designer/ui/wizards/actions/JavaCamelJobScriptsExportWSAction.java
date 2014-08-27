@@ -201,10 +201,14 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getGroupId(), routeName+"_"+jobName, getArtifactVersion(), jobFile);
+            String jobNamePrefix = null;
+			if (!isJobShared()) {
+				jobNamePrefix = routeNode.getObject().getProperty().getDisplayName();
+				jobName = jobNamePrefix + "_" + jobName;
+			}
+            BundleModel jobModel = new BundleModel(getGroupId(), jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportOsgiBundle(referencedJobNode, jobFile, jobVersion, bundleVersion, "Job", routeName); //$NON-NLS-1$
+                exportOsgiBundle(referencedJobNode, jobFile, jobVersion, isJobShared() ? jobVersion:bundleVersion, "Job", jobNamePrefix); //$NON-NLS-1$
             }
         }
     }
@@ -233,6 +237,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         if(parentRouteName != null) {
         	talendJobManager.setParentRoute(parentRouteName);
         }
+        talendJobManager.setJobShared(isJobShared());
         JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
                 getTempDir(), itemType);
         action.run(monitor);
@@ -248,4 +253,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return path;
     }
     // END of TESB-5328
+
+	/**
+     * Indicate whether job shared among several routes.
+     *
+     * @return true, if checks if is job shared
+     */
+    protected boolean isJobShared() {
+		return true;
+	}
 }
