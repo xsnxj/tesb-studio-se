@@ -14,28 +14,24 @@ package org.talend.repository.services.ui;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.process.IContext;
 import org.talend.core.prefs.IDEWorkbenchPlugin;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.services.ui.action.ExportServiceWithMavenAction;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportWithMavenManager;
@@ -50,7 +46,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  */
 public class ServiceExportWizard extends Wizard implements IExportWizard {
 
-    protected IStructuredSelection selection;
+    private final ServiceItem serviceItem;
 
     protected String exportType;
 
@@ -59,45 +55,31 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
     /**
      * Creates a wizard for exporting workspace resources to a zip file.
      */
-    public ServiceExportWizard() {
+    public ServiceExportWizard(ServiceItem serviceItem) {
+        this.serviceItem = serviceItem;
         IDialogSettings workbenchSettings = Activator.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings.getSection("ServiceExportWizard"); //$NON-NLS-1$
         if (section == null) {
             section = workbenchSettings.addNewSection("ServiceExportWizard"); //$NON-NLS-1$
         }
         setDialogSettings(section);
-    }
 
-    /*
-     * (non-Javadoc) Method declared on IWizard.
-     */
-    @Override
-    public void addPages() {
-        super.addPages();
-        mainPage = new ServiceExportWSWizardPage(selection);
-        addPage(mainPage);
-    }
-
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchWizard.
-     */
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.selection = currentSelection;
-        List<?> selectedResources = IDE.computeSelectedResources(currentSelection);
-        if (!selectedResources.isEmpty()) {
-            this.selection = new StructuredSelection(selectedResources);
-        }
-
-        setWindowTitle(Messages.ServiceExportWizard_Wizard_Title);
         //        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
         setDefaultPageImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
                 "$nl$/icons/full/wizban/exportzip_wiz.png")); //$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 
-    /*
-     * (non-Javadoc) Method declared on IWizard.
-     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+    }
+
+    @Override
+    public void addPages() {
+        super.addPages();
+        mainPage = new ServiceExportWSWizardPage(serviceItem);
+        addPage(mainPage);
+    }
+
     @Override
     public boolean performFinish() {
         final String destinationValue = mainPage.getDestinationValue();
@@ -113,19 +95,17 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
 
         Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
         try {
-            for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-                RepositoryNode node = (RepositoryNode) iterator.next();
-                if (mainPage.isAddMavenScript()) {
-                    ServiceExportWithMavenManager mavenManager = new ServiceExportWithMavenManager(exportChoiceMap,
-                            IContext.DEFAULT, JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
-                    IRunnableWithProgress action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, node,
-                            destinationValue);
-                    getContainer().run(false, true, action);
-                } else {
-                    IRunnableWithProgress action = new ExportServiceAction(exportChoiceMap, node, destinationValue);
-                    getContainer().run(true, true, action);
-                }
+            if (mainPage.isAddMavenScript()) {
+                ServiceExportWithMavenManager mavenManager = new ServiceExportWithMavenManager(exportChoiceMap,
+                        IContext.DEFAULT, JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+                IRunnableWithProgress action = new ExportServiceWithMavenAction(mavenManager, exportChoiceMap, serviceItem,
+                        destinationValue);
+                getContainer().run(false, true, action);
+            } else {
+                IRunnableWithProgress action = new ExportServiceAction(serviceItem, destinationValue, exportChoiceMap);
+                getContainer().run(true, true, action);
             }
+
             mainPage.finish();
         } catch (InvocationTargetException e) {
             MessageBoxExceptionHandler.process(e.getCause(), getShell());
@@ -136,15 +116,9 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.Wizard#performCancel()
-     */
     @Override
     public boolean performCancel() {
         ProcessorUtilities.resetExportConfig();
-        selection = null;
         mainPage = null;
         return true;
     }
