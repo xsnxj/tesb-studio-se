@@ -291,7 +291,7 @@
 					REQUIRED="true" />
 			<IMPORT NAME="wsdl4j"
 					MODULE="wsdl4j-1.6.3.jar"
-					UrlPath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/wsdl4j-1.6.3.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="xmlschema-core"
@@ -404,7 +404,7 @@
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 			<IMPORT NAME="log4j"
 					MODULE="log4j-1.2.17.jar"
-					UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
 					BundleID=""
 					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
 			<IMPORT NAME="cxf-rt-features-clustering"
