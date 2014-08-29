@@ -119,11 +119,11 @@
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-		<dependency>
+		<!--dependency> used platform:/plugin/org.talend.libraries.apache/lib/activemq-all-5.10.0.jar
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-all</artifactId>
 			<version>${activemq.version}</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xstream</artifactId>

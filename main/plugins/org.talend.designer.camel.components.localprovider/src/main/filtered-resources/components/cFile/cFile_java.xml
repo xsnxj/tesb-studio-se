@@ -92,7 +92,7 @@
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
                     MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
                     MODULE="slf4j-api-${slf4j.version}.jar"
