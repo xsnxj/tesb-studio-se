@@ -213,7 +213,7 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-${camel.version}.jar"
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
+                    MODULE="log4j-1.2.17.jar"
                     UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
