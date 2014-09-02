@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IElementParameter;
@@ -110,6 +111,9 @@ public class WebServiceNode extends AbstractExternalNode {
 
     public IExternalData getTMapExternalData() {
         return null;
+    }
+
+    public void metadataOutputChanged(IMetadataTable currentMetadata) {
     }
 
 }
