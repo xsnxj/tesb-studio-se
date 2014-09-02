@@ -1165,7 +1165,7 @@ for (INode node : graphicalNodes) {
 		boolean hasOptions = false;
 
 		StringBuffer sb = new StringBuffer();
-		sb.append(name).append("+\":" + type + ":" + type + "://\"").append("+" + destination);
+		sb.append(name).append("+\":" + type + "://\"").append("+" + destination);
 
 		List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__URI_OPTIONS__");
 		for (Map<String, String> map : tableValues) {

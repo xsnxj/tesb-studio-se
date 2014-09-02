@@ -498,17 +498,37 @@
 					}
 <%
 				}else if("AMQP".equals(mqType)){
-					String amqpUri = ElementParameterParser.getValue(node, "__AMQP_BROKER_URI__").trim();
+					String cid = node.getUniqueName();
+					String host = helper.getStringParam("__AMQP_BROKER_URI__");
+					boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
+					boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTHORIZATION__");
+					
+					StringBuilder ep = new StringBuilder();
+					ep.append("\"");
+					ep.append(useSSL?"amqps":"amqp");
+					ep.append("://\" + ");
+					if(useAuth) {
+						ep.append(helper.getStringParam("__AMQP_USERNAME__"));
+						ep.append("+ \":\" +");
+	                	String passwordFieldName = "__AMQP_PASSWORD__";
+
+	                    %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
+	                    
+						ep.append("decryptedPassword_");
+	                    ep.append(cid);
+						ep.append("+ \"@\" +");
+					}
+					ep.append(host);
+					String port = helper.getStringParam("__AMQP_PORT__");
+					if (!port.isEmpty()) {
+						ep.append("+ \":\" + ");
+						ep.append(port);
+					}
 %>				
-				{	
+				{
 					try{
-						String amqpUrl = <%=amqpUri%>;
-						if(!amqpUrl.startsWith("amqp://")) {
-							amqpUrl = "amqp://" + amqpUrl;
-						}
-						javax.jms.ConnectionFactory jmsConnectionFactory = org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(amqpUrl);
-						org.apache.camel.component.amqp.AMQPComponent activeMQComponent = new org.apache.camel.component.amqp.AMQPComponent(jmsConnectionFactory);
-						camelContext.addComponent(<%=name%>,activeMQComponent);
+						camelContext.addComponent(<%=name%>,
+								org.apache.camel.component.amqp.AMQPComponent.amqpComponent(<%=ep.toString()%>));
 					}catch(Exception e){
 						throw new RuntimeException(e);
 					}
@@ -556,19 +576,45 @@
 			}
 			List<? extends INode> amqpNodes = process.getNodesOfType("cAMQP");
 			for(INode node : amqpNodes) {
-				String amqpUri = ElementParameterParser.getValue(node, "__BROKER_URI__").trim();
-				String name = node.getUniqueName().replace("_", "");
-				name = "\"" + name + "\"";
+				NodeParamsHelper helper = new NodeParamsHelper(node);
+				if(helper.getBoolParam("__USE_CONNECTION_FACTORY__")) {
+					continue;
+				}
+				
+				String cid = node.getUniqueName();
+				String name = "\"" + cid.replace("_", "") + "\"";
+
+				String host = helper.getStringParam("__BROKER_URI__");
+				boolean useSSL = helper.getBoolParam("__SSL__");
+				boolean useAuth = helper.getBoolParam("__USE_AUTHORIZATION__");
+				
+				StringBuilder ep = new StringBuilder();
+				ep.append("\"");
+				ep.append(useSSL?"amqps":"amqp");
+				ep.append("://\" + ");
+				if(useAuth) {
+					ep.append(helper.getStringParam("__USERNAME__"));
+					ep.append("+ \":\" +");
+                	String passwordFieldName = "__PASSWORD__";
+
+                    %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
+                    
+					ep.append("decryptedPassword_");
+                    ep.append(cid);
+					ep.append("+ \"@\" +");
+				}
+				ep.append(host);
+				String port = helper.getStringParam("__PORT__");
+				if (!port.isEmpty()) {
+					ep.append("+ \":\" + ");
+					ep.append(port);
+				}
+
 				%>				
 				{	
 					try{
-						String amqpUrl = <%=amqpUri%>;
-						if(!amqpUrl.startsWith("amqp://")) {
-							amqpUrl = "amqp://" + amqpUrl;
-						}
-						javax.jms.ConnectionFactory jmsConnectionFactory = org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(amqpUrl);
-						org.apache.camel.component.amqp.AMQPComponent activeMQComponent = new org.apache.camel.component.amqp.AMQPComponent(jmsConnectionFactory);
-						camelContext.addComponent(<%=name%>,activeMQComponent);
+						camelContext.addComponent(<%=name%>,
+								org.apache.camel.component.amqp.AMQPComponent.amqpComponent(<%=ep.toString()%>));
 					}catch(Exception e){
 						throw new RuntimeException(e);
 					}
