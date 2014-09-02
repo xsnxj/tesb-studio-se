@@ -329,12 +329,6 @@
           </projecttask>
       </extension>
         <extension
-         point="org.talend.core.external_component">
-      <ExternalComponent
-            class="org.talend.camel.designer.component.JMSExternalComponent">
-      </ExternalComponent>
-   </extension>
-        <extension
               point="org.talend.designer.core.generators">
            <generator
                  class="org.talend.camel.designer.generator.RouteResourceGenerator"
