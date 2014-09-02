@@ -56,15 +56,15 @@ public class OsgiDependenciesService implements IOsgiDependenciesService {
 	}
 
 	@Override
-	public Map<String, String> getBundleDependences(ProcessItem pi, String targetBundleVersion) {
+	public Map<String, String> getBundleDependences(ProcessItem pi) {
 		Map<String, String> map = new HashMap<String, String>();
-		for (DependencyItems<?> items : getBundleDependencyItems(pi, targetBundleVersion)) {
+		for (DependencyItems<?> items : getBundleDependencyItems(pi)) {
 			map.put(items.name, items.toManifestString());
 		}
 		return map;
 	}
 
-	private static DependencyItems<?>[] getBundleDependencyItems(final ProcessItem pi, final String targetBundleVersion) {
+	private static DependencyItems<?>[] getBundleDependencyItems(final ProcessItem pi) {
 		EMap<?, ?> additionProperties = pi.getProperty().getAdditionalProperties();
 
 		DependencyItems<ImportPackage> importPackages = new DependencyItems<ImportPackage>(IMPORT_PACKAGE);
@@ -77,7 +77,7 @@ public class OsgiDependenciesService implements IOsgiDependenciesService {
 			}
 		};
 
-		ExDependenciesResolver resolver = new ExDependenciesResolver(pi, targetBundleVersion);
+		ExDependenciesResolver resolver = new ExDependenciesResolver(pi);
 
 		// retrieve all import-packages
 		importPackages.addAll(resolver.getImportPackages());
