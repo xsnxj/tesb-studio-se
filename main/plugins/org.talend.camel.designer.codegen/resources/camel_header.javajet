@@ -1191,7 +1191,7 @@ if (isProvider) {
 				typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
 			}
 %>
-			org.apache.camel.Endpoint endpoint_<%=cid%> = endpoint("talend:"+<%=typeName%>.class.getName()+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
+			org.apache.camel.Endpoint endpoint_<%=cid%> = endpoint("talend:"+"<%=typeName%>"+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
 <%
 		}
 		int contextParamsSize = contextParams.size();
