@@ -146,6 +146,32 @@
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'AMQP'">
 			<DEFAULT>"localhost"</DEFAULT>
 		</PARAMETER>
+		<PARAMETER NAME="AMQP_PORT" FIELD="TEXT" NUM_ROW="10"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>"5672"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_SSL" FIELD="CHECK" NUM_ROW="20"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE" FIELD="FILE" NUM_ROW="21"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE_PASSWORD" FIELD="PASSWORD" NUM_ROW="21"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_USE_AUTHORIZATION" FIELD="CHECK" NUM_ROW="25"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_USERNAME" FIELD="TEXT" NUM_ROW="30"
+			SHOW_IF="(MQ_TYPE == 'AMQP') AND (AMQP_USE_AUTHORIZATION == 'true')">
+			<DEFAULT>"guest"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_PASSWORD" FIELD="PASSWORD" NUM_ROW="35"
+			SHOW_IF="(MQ_TYPE == 'AMQP') AND (AMQP_USE_AUTHORIZATION == 'true')">
+			<DEFAULT>"guest"</DEFAULT>
+		</PARAMETER>
 
 		<!-- MQTT-->
 		<PARAMETER NAME="MQTT_HOST" FIELD="TEXT" NUM_ROW="4"
@@ -331,6 +357,10 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-${xpp3.version}.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
+            <IMPORT NAME="camel-amqp"
+                    MODULE="camel-amqp-${camel.version}.jar" 
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-amqp-${camel.version}.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
             <IMPORT NAME="qpid-amqp-1-0-common" 
                     MODULE="${tesb-qpid-amqp-1-0-common}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
