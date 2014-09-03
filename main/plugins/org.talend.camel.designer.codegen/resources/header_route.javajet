@@ -1347,36 +1347,12 @@ for (INode node : graphicalNodes) {
 		uri = sb.toString();
 	} else if ("cMQTT".equals(componentName)) {
 		CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
-		boolean useFactory = helper.getBoolParam("__USE_CONNECTION_FACTORY__");
-		if(!useFactory) {
-			eb.setComponent("mqtt");
-		}else {
-			String factoryCompName =  helper.getStringParam("__ROUTE_COMPONENT_TYPE_ID__");
-			factoryCompName = factoryCompName.replace("_", "");
-			eb.setComponent(factoryCompName);
-		}
-		eb.setName(helper.getStringParam("__NAME__"));
+		
+		String factoryCompName =  helper.getStringParam("__ROUTE_COMPONENT_TYPE_ID__");
+		factoryCompName = factoryCompName.replace("_", "");
+		eb.setComponent(factoryCompName);
 
-		if(!useFactory) {
-			String host = helper.getVisibleStringParam("__HOST__");
-			String port = helper.getVisibleStringParam("__PORT__");
-			boolean useSSL = helper.getBoolParam("__SSL__");
-
-			BuildingValueParamAppender appender = eb.getBuildingValueParamAppender("host");
-			appender.appendDirectString((useSSL? "ssl":"tcp") + "://");
-			if(host.isEmpty() || host.equals("\"\"")) {
-				appender.appendDirectString("127.0.0.1");
-			}else {
-				appender.appendExpression(host);
-			}
-			appender.appendDirectString(":");
-			if(port.isEmpty() || port.equals("\"\"")) {
-				appender.appendDirectString("1883");
-			}else {
-				appender.appendExpression(port);
-			}
-			appender.finish();
-		}
+		eb.setName("\""+cid+"\"");
 
 		String topicName = helper.getStringParam("__TOPIC_NAME__");
 		List< ? extends IConnection> conns = node.getIncomingConnections();
@@ -1386,16 +1362,6 @@ for (INode node : graphicalNodes) {
 			eb.addParam("subscribeTopicName", topicName);
 		}
 
-		if(!useFactory) {
-			eb.getNodeParamNotDefaultAppender(node)
-				.addParam("connectAttemptsMax", "__CONNECT_ATTEMPTS__", "-1")
-				.addParam("reconnectAttempts", "__RECONNECT_ATTEMPTS__", "-1")
-				.addParam("reconnectDelay", "__RECONNECT_DELAY__", "10")
-				.addParam("qualityOfService", "__QOS__", "AtLeastOnce")
-				.addParam("connectWaitInSeconds", "__CONNECT_WAIT_IN_SECONDS__", "10")
-				.addParam("disconnectWaitInSeconds", "__DISCONNECT_WAIT_IN_SECONDS__", "5")
-				.addParam("sendWaitInSeconds", "__SEND_WAIT_IN_SECONDS__", "5");
-		}
 		List<Map<String, String>> tableValues = getObjectValue(node, "__URI_OPTIONS__");
 		eb.addParams(tableValues);
 		uri = eb.build();
