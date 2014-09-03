@@ -594,9 +594,12 @@
          </predicate>
       </classpath>
       <classpath
-            attributeName="EMBEDDED_LIBRARY"
-            checked="true"
-            componentName="cAMQP">
+            attributeName="AMQP_DRIVER_JAR"
+            componentName="cMQConnectionFactory">
+         <predicate
+               attributeName="MQ_TYPE"
+               attributeValue="AMQP">
+         </predicate>
       </classpath>
    </extension>
    <extension

@@ -44,12 +44,6 @@
 			<ITEM NAME="cMQConnectionFactory" VALUE="cMQConnectionFactory" FILTER="MQ_TYPE == 'AMQP'"></ITEM>
 			</ITEMS>
 		</PARAMETER>
-
-		<PARAMETER NAME="EMBEDDED_LIBRARY" FIELD="TEXT"
-			NUM_ROW="888" SHOW="false">
-			<DEFAULT>${tesb-qpid-amqp-1-0-common};${tesb-qpid-amqp-1-0-client};${tesb-qpid-amqp-1-0-client-jms}</DEFAULT>
-		</PARAMETER>
-
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
