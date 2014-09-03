@@ -595,55 +595,6 @@
 				}
 			
 			}
-			List<? extends INode> amqpNodes = process.getNodesOfType("cAMQP");
-			for(INode node : amqpNodes) {
-				NodeParamsHelper helper = new NodeParamsHelper(node);
-				if(helper.getBoolParam("__USE_CONNECTION_FACTORY__")) {
-					continue;
-				}
-				
-				String cid = node.getUniqueName();
-				String name = "\"" + cid.replace("_", "") + "\"";
-
-				String host = helper.getStringParam("__BROKER_URI__");
-				boolean useSSL = helper.getBoolParam("__SSL__");
-				boolean useAuth = helper.getBoolParam("__USE_AUTHORIZATION__");
-				
-				StringBuilder ep = new StringBuilder();
-				ep.append("\"");
-				ep.append(useSSL?"amqps":"amqp");
-				ep.append("://\" + ");
-				if(useAuth) {
-					ep.append(helper.getStringParam("__USERNAME__"));
-					ep.append("+ \":\" +");
-                	String passwordFieldName = "__PASSWORD__";
-
-                    %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
-                    
-					ep.append("decryptedPassword_");
-                    ep.append(cid);
-					ep.append("+ \"@\" +");
-				}
-				ep.append(host);
-				String port = helper.getStringParam("__PORT__");
-				if (!port.isEmpty()) {
-					ep.append("+ \":\" + ");
-					ep.append(port);
-				}
-
-				%>				
-				{	
-					try{
-						camelContext.addComponent(<%=name%>,
-								org.apache.camel.component.amqp.AMQPComponent.amqpComponent(<%=ep.toString()%>));
-					}catch(Exception e){
-						throw new RuntimeException(e);
-					}
-					
-				}
-<%				
-			}
-			
 			//http://jira.talendforge.org/browse/TESB-4087: Change CamelContext name
 %>
 			//using Route name as CamelContext ID

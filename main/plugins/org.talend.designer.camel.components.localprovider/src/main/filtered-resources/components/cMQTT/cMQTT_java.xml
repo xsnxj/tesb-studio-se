@@ -28,12 +28,8 @@
 
 	<PARAMETERS>
 	
-		<PARAMETER NAME="USE_CONNECTION_FACTORY" FIELD="RADIO" NUM_ROW="5" SHOW="false">
-			<DEFAULT>true</DEFAULT>
-		</PARAMETER>
-
 		<PARAMETER NAME="CONNECTION_FACTORY_CONFIGURATION" FIELD="ROUTE_COMPONENT_TYPE"
-			NUM_ROW="10"  SHOW_IF="USE_CONNECTION_FACTORY == 'true'">
+			NUM_ROW="10">
 			<ITEMS>
 			<ITEM NAME="cMQConnectionFactory" VALUE="cMQConnectionFactory" FILTER="MQ_TYPE == 'MQTT'"></ITEM>
 			</ITEMS>
@@ -55,83 +51,10 @@
 				<ITEM NAME="VALUE" />
 			</ITEMS>
 		</PARAMETER>
-</ADVANCED_PARAMETERS>
+	</ADVANCED_PARAMETERS>
 
-<CODEGENERATION>
-		<IMPORTS>
-            <!-- camel-core -->
-            <IMPORT NAME="camel-core"
-                    MODULE="camel-core-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.17.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-${slf4j.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-${slf4j.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-${slf4j.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-${slf4j.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jaxb-impl"
-                    MODULE="${tesb-jaxb-impl}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
-                    REQUIRED="true" />
-
-            <!-- camel-spring -->
-            <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context"
-                    MODULE="spring-context-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-aop"
-                    MODULE="spring-aop-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="aopalliance"
-                    MODULE="${tesb-aopalliance}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-aopalliance}"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-beans"
-                    MODULE="spring-beans-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-core"
-                    MODULE="spring-core-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-expression"
-                    MODULE="spring-expression-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context-support" 
-                    MODULE="spring-context-support-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core"
-                    MODULE="spring-osgi-core-${spring.osgi.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-${spring.osgi.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="org.eclipse.osgi"
-                    MODULE="org.eclipse.osgi.jar"
-                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
-                    REQUIRED="true" />
-
-            <IMPORT NAME="camel-mqtt-alldep"
-                    MODULE="camel-mqtt-alldep-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-${camel.version}.jar"
-                    REQUIRED="true" />
-		</IMPORTS>
+	<CODEGENERATION>
+		<IMPORTS/>
 	</CODEGENERATION>
 
 	<RETURNS />

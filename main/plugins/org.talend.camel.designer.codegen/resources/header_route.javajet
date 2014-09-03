@@ -1147,13 +1147,7 @@ for (INode node : graphicalNodes) {
 
 		uri = sb.toString();
 	} else if("cAMQP".equals(componentName)) {
-		boolean useConnectionFactory = "true".equals(ElementParameterParser.getValue(node, "__USE_CONNECTION_FACTORY__"));
-		String name = null;
-		if(useConnectionFactory) {
-			name = ElementParameterParser.getValue(node, "__ROUTE_COMPONENT_TYPE_ID__");
-		}else {
-			name = node.getUniqueName();
-		}
+		String name = ElementParameterParser.getValue(node, "__ROUTE_COMPONENT_TYPE_ID__");
 		if (name == null || name.equals("")) {
 			name = "amqp";
 		}
