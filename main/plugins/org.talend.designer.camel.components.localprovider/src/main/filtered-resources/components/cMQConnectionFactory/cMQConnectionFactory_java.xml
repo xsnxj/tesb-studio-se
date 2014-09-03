@@ -173,6 +173,11 @@
 			<DEFAULT>"guest"</DEFAULT>
 		</PARAMETER>
 
+		<PARAMETER NAME="AMQP_DRIVER_JAR" FIELD="TEXT"
+			NUM_ROW="888" SHOW="false">
+			<DEFAULT>${tesb-qpid-amqp-1-0-common};${tesb-qpid-amqp-1-0-client};${tesb-qpid-amqp-1-0-client-jms}</DEFAULT>
+		</PARAMETER>
+
 		<!-- MQTT-->
 		<PARAMETER NAME="MQTT_HOST" FIELD="TEXT" NUM_ROW="4"
 			SHOW_IF="MQ_TYPE == 'MQTT'">
