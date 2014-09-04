@@ -20,8 +20,6 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.internal.registry.ViewDescriptor;
-import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.talend.rcp.intro.ActionBarBuildHelper;
 
@@ -84,12 +82,12 @@ public class CamelActionBarHelper extends ActionBarBuildHelper {
             }
         }
 
-        for (IViewDescriptor desc : viewsToDelete) {
-            ViewDescriptor viewDesc = (ViewDescriptor) desc;
-            ViewRegistry registry = (ViewRegistry) window.getWorkbench().getViewRegistry();
-            ViewDescriptor[] descriptors = { viewDesc };
-            registry.removeExtension(viewDesc.getConfigurationElement().getDeclaringExtension(), descriptors);
-        }
+        // for (IViewDescriptor desc : viewsToDelete) {
+        // ViewDescriptor viewDesc = (ViewDescriptor) desc;
+        // ViewRegistry registry = (ViewRegistry) window.getWorkbench().getViewRegistry();
+        // ViewDescriptor[] descriptors = { viewDesc };
+        // registry.removeExtension(viewDesc.getConfigurationElement().getDeclaringExtension(), descriptors);
+        // }
 
         String[] prefsId = { "org.eclipse.ant.ui.AntPreferencePage",
                 "org.eclipse.datatools.connectivity.internal.ui.preferences.DataToolsMainPage",
