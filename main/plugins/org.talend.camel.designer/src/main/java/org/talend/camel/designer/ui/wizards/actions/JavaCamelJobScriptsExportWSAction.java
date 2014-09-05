@@ -43,6 +43,7 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.RouteUsedJobManager;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
@@ -236,19 +237,19 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath, String jobVersion,
     		String bundleName, String bundleVersion,
     		String routeName, String routeVersion) throws InvocationTargetException, InterruptedException {
-//    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice());
-//        talendJobManager.setJobVersion(jobVersion);
-//        talendJobManager.setBundleName(bundleName);
-//        talendJobManager.setBundleVersion(bundleVersion);
-//        talendJobManager.setDestinationPath(filePath.getAbsolutePath());
-//    	talendJobManager.setRouteName(routeName);
-//    	talendJobManager.setRouteVersion(routeVersion);
-//    	talendJobManager.setGroupId(getGroupId());
-//    	talendJobManager.setArtifactId(getArtifactId());
-//    	talendJobManager.setArtifactVersion(getArtifactVersion());
-//        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion, talendJobManager,
-//                getTempDir(), "Job");
-//        action.run(monitor);
+    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice());
+        talendJobManager.setJobVersion(jobVersion);
+        talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleVersion(bundleVersion);
+        talendJobManager.setDestinationPath(filePath.getAbsolutePath());
+    	talendJobManager.setRouteName(routeName);
+    	talendJobManager.setRouteVersion(routeVersion);
+    	talendJobManager.setGroupId(getGroupId());
+    	talendJobManager.setArtifactId(getArtifactId());
+    	talendJobManager.setArtifactVersion(getArtifactVersion());
+        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion, talendJobManager,
+                getTempDir(), "Job");
+        action.run(monitor);
 	}
 
     protected static String getTempDir() {
