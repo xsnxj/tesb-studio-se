@@ -27,6 +27,10 @@ public interface CamelRepositoryNodeType {
     String BEANS = "BEANS";
 
 	String ROUTE_RESOURCES = "ROUTE_RESOURCES";
+	
+	String ROUTE_DOCUMENTATIONS = "ROUTE_DOCS";
+	
+	String ROUTE_DOCUMENTATION = "ROUTE_DOC";
 
     ERepositoryObjectType repositoryRoutesType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
             ERepositoryObjectType.class, ROUTES);
@@ -37,10 +41,19 @@ public interface CamelRepositoryNodeType {
 	ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
 			.valueOf(ERepositoryObjectType.class, ROUTE_RESOURCES);
 	
+	ERepositoryObjectType repositoryDocumentationsType = (ERepositoryObjectType) ERepositoryObjectType
+			.valueOf(ERepositoryObjectType.class, ROUTE_DOCUMENTATIONS);
+	
+	ERepositoryObjectType repositoryDocumentationType = (ERepositoryObjectType) ERepositoryObjectType
+			.valueOf(ERepositoryObjectType.class, ROUTE_DOCUMENTATION);
+	
 	//repository type and folder name Map
 	Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>(){{
 		put(repositoryBeansType, "Bean");
 		put(repositoryRouteResourceType, "Resource");
 		put(repositoryRoutesType, "Route");
+		put(repositoryDocumentationsType, "Route_Docs");
+		put(repositoryDocumentationType, "Route_Doc");
 	}};
+
 }

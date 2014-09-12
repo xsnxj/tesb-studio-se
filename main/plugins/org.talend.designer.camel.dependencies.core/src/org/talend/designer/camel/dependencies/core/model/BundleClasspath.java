@@ -57,7 +57,7 @@ public class BundleClasspath extends AbstractDependencyItem {
 	}
 
 	@Override
-	public String toString() {
+	public String toManifestString() {
 		return name;
 	}
 

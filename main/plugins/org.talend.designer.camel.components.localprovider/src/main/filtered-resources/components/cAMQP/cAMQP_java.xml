@@ -2,7 +2,7 @@
 
 	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
 		COMPATIBILITY="ALL" AUTHOR="Talend" RELEASE_DATE="20100401A"
-		STARTABLE="true" EXTENSION="org.talend.camel.designer">
+		STARTABLE="true">
 		<SIGNATURE />
 	</HEADER>
 
@@ -37,29 +37,13 @@
 			REQUIRED="true" NUM_ROW="4" GROUP="URI_GROUP">
 			<DEFAULT>"name"</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="USE_CONNECTION_FACTORY" FIELD="RADIO" NUM_ROW="6">
-			<DEFAULT>true</DEFAULT>
-		</PARAMETER>
-		<PARAMETER NAME="INPUT_BROKER_URI" FIELD="RADIO" NUM_ROW="6">
-			<DEFAULT>false</DEFAULT>
-		</PARAMETER>
-		
-		<PARAMETER NAME="BROKER_URI" READONLY="false" FIELD="TEXT"
-			NUM_ROW="10" SHOW_IF="INPUT_BROKER_URI == 'true'">
-			<DEFAULT>"localhost"</DEFAULT>
-		</PARAMETER>
+
 		<PARAMETER NAME="CONNECTION_FACOTRY_CONFIGURATION" FIELD="ROUTE_COMPONENT_TYPE"
-			NUM_ROW="12" SHOW_IF="USE_CONNECTION_FACTORY == 'true'">
+			NUM_ROW="12">
 			<ITEMS>
 			<ITEM NAME="cMQConnectionFactory" VALUE="cMQConnectionFactory" FILTER="MQ_TYPE == 'AMQP'"></ITEM>
 			</ITEMS>
 		</PARAMETER>
-
-		<PARAMETER NAME="EMBEDDED_LIBRARY" FIELD="TEXT"
-			NUM_ROW="888" SHOW="false">
-			<DEFAULT>${tesb-qpid-amqp-1-0-common};${tesb-qpid-amqp-1-0-client};${tesb-qpid-amqp-1-0-client-jms}</DEFAULT>
-		</PARAMETER>
-
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
@@ -74,110 +58,7 @@
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
-		<IMPORTS>
-            <!-- camel-core -->
-            <IMPORT NAME="camel-core"
-                    MODULE="camel-core-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-api"
-                    MODULE="slf4j-api-${slf4j.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-${slf4j.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="slf4j-log4j12"
-                    MODULE="slf4j-log4j12-${slf4j.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-log4j12-${slf4j.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="jaxb-impl"
-                    MODULE="${tesb-jaxb-impl}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
-                    REQUIRED="true" />
-
-            <!-- camel-spring -->
-            <IMPORT NAME="camel-spring"
-                    MODULE="camel-spring-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-spring-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context"
-                    MODULE="spring-context-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-context-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-aop"
-                    MODULE="spring-aop-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-aop-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="aopalliance"
-                    MODULE="${tesb-aopalliance}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-aopalliance}"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-beans"
-                    MODULE="spring-beans-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-beans-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-core"
-                    MODULE="spring-core-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-core-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="commons-logging"
-                    MODULE="commons-logging-1.1.1.jar"
-                    UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-expression"
-                    MODULE="spring-expression-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/spring-expression-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-context-support" 
-                    MODULE="spring-context-support-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-support-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-osgi-core"
-                    MODULE="spring-osgi-core-${spring.osgi.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-osgi-core-${spring.osgi.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="org.eclipse.osgi"
-                    MODULE="org.eclipse.osgi.jar"
-                    UrlPath="platform:/base/plugins/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"
-                    REQUIRED="true" />
-
-            <!-- camel-jms -->
-            <IMPORT NAME="camel-jms"
-                    MODULE="camel-jms-${camel.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jms-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-jms"
-                    MODULE="spring-jms-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-jms-${spring.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="spring-tx"
-                    MODULE="spring-tx-${spring.version}.jar"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-${spring.version}.jar"
-                    REQUIRED="true" />
-
-            <IMPORT NAME="camel-amqp"
-                    MODULE="camel-amqp-${camel.version}.jar" 
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-amqp-${camel.version}.jar"
-                    REQUIRED="true" />
-            <IMPORT NAME="qpid-amqp-1-0-common" 
-                    MODULE="${tesb-qpid-amqp-1-0-common}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
-                    REQUIRED="true" />
-            <IMPORT NAME="qpid-amqp-1-0-client" 
-                    MODULE="${tesb-qpid-amqp-1-0-client}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client}"
-                    REQUIRED="true" />
-            <IMPORT NAME="qpid-amqp-1-0-client-jms" 
-                    MODULE="${tesb-qpid-amqp-1-0-client-jms}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
-                    REQUIRED="true" />
-            <IMPORT NAME="geronimo-jms_1.1_spec" 
-                    MODULE="${tesb-geronimo-jms_1.1_spec}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
-                    REQUIRED="true" />
-		</IMPORTS>
+		<IMPORTS/>
 	</CODEGENERATION>
 
 	<RETURNS />

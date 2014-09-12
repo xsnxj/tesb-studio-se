@@ -552,15 +552,6 @@
             </predicate>
          </importPackage>
       </component>
-      <component
-            componentName="cAMQP">
-         <importPackage
-               packageName="org.apache.activemq.camel.component">
-         </importPackage>
-         <importPackage
-               packageName="org.apache.activemq">
-         </importPackage>
-      </component>
    </extension>
    <extension
          point="org.talend.designer.camel.dependencies.bundleClasspath">
@@ -603,9 +594,12 @@
          </predicate>
       </classpath>
       <classpath
-            attributeName="EMBEDDED_LIBRARY"
-            checked="true"
-            componentName="cAMQP">
+            attributeName="AMQP_DRIVER_JAR"
+            componentName="cMQConnectionFactory">
+         <predicate
+               attributeName="MQ_TYPE"
+               attributeValue="AMQP">
+         </predicate>
       </classpath>
    </extension>
    <extension
@@ -617,7 +611,7 @@
    <extension
          point="org.talend.core.runtime.service">
       <Service
-            class="org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver"
+            class="org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService"
             serviceId="IOsgiDependenciesService">
       </Service>
    </extension>

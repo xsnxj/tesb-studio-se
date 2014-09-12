@@ -43,6 +43,7 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.RouteUsedJobManager;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
@@ -126,7 +127,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
             BundleModel routeModel = new BundleModel(getGroupId(), routeName, getArtifactVersion(), routeFile);
             if (featuresModel.addBundle(routeModel)) {
-                exportOsgiBundle(routeNode, routeFile, version, bundleVersion, "Route"); //$NON-NLS-1$
+                exportRouteBundle(routeNode, routeFile, version, bundleVersion);
 
                 // http://jira.talendforge.org/browse/TESB-5426 LiXiaopeng
                 CamelFeatureUtil.addFeatureAndBundles(routeNode, featuresModel);
@@ -203,7 +204,11 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
             BundleModel jobModel = new BundleModel(getGroupId(), jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportOsgiBundle(referencedJobNode, jobFile, jobVersion, bundleVersion, "Job"); //$NON-NLS-1$
+            		exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
+            				jobName, jobVersion,
+            				routeNode.getObject().getProperty().getDisplayName(),
+            				version
+            				);
             }
         }
     }
@@ -217,7 +222,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return null;
     }
 
-    private void exportOsgiBundle(IRepositoryNode node, File filePath, String version, String bundleVersion, String itemType)
+    private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion)
             throws InvocationTargetException, InterruptedException {
         JobJavaScriptOSGIForESBManager talendJobManager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
@@ -225,9 +230,27 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
         JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
-                getTempDir(), itemType);
+                getTempDir(), "Route");
         action.run(monitor);
     }
+
+    protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath, String jobVersion,
+    		String bundleName, String bundleVersion,
+    		String routeName, String routeVersion) throws InvocationTargetException, InterruptedException {
+    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice());
+        talendJobManager.setJobVersion(jobVersion);
+        talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleVersion(bundleVersion);
+        talendJobManager.setDestinationPath(filePath.getAbsolutePath());
+    	talendJobManager.setRouteName(routeName);
+    	talendJobManager.setRouteVersion(routeVersion);
+    	talendJobManager.setGroupId(getGroupId());
+    	talendJobManager.setArtifactId(getArtifactId());
+    	talendJobManager.setArtifactVersion(getArtifactVersion());
+        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion, talendJobManager,
+                getTempDir(), "Job");
+        action.run(monitor);
+	}
 
     protected static String getTempDir() {
         String path = System.getProperty("java.io.tmpdir") + File.separatorChar + "route" + File.separatorChar; //$NON-NLS-1$
@@ -239,4 +262,5 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return path;
     }
     // END of TESB-5328
+
 }

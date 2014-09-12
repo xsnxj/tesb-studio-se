@@ -361,8 +361,26 @@
 					String amqUri = ElementParameterParser.getValue(node, "__AMQ_BROKER_URI__").trim();
 					
 %>
+					
 				{
-				javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+<%
+				String useActiveMQAuth = ElementParameterParser.getValue(node, "__AMQ_AUTH__");
+				if ("true".equals(useActiveMQAuth)){
+					String username = ElementParameterParser.getValue(node, "__AMQ_USERNAME__");
+					String cid = node.getUniqueName();
+					String passwordFieldName = "__AMQ_PASSWORD__";
+%>				
+					<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+					
+					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory( <%=username%>, decryptedPassword_<%=cid%> ,<%=amqUri%>);
+<%				
+				}else{
+%>
+					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+<%						
+				}
+%>
+
 <%
 				String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
 				if("true".equals(amqPool)){
@@ -480,17 +498,37 @@
 					}
 <%
 				}else if("AMQP".equals(mqType)){
-					String amqpUri = ElementParameterParser.getValue(node, "__AMQP_BROKER_URI__").trim();
+					String cid = node.getUniqueName();
+					String host = helper.getStringParam("__AMQP_BROKER_URI__");
+					boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
+					boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTHORIZATION__");
+					
+					StringBuilder ep = new StringBuilder();
+					ep.append("\"");
+					ep.append(useSSL?"amqps":"amqp");
+					ep.append("://\" + ");
+					if(useAuth) {
+						ep.append(helper.getStringParam("__AMQP_USERNAME__"));
+						ep.append("+ \":\" +");
+	                	String passwordFieldName = "__AMQP_PASSWORD__";
+
+	                    %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
+	                    
+						ep.append("decryptedPassword_");
+	                    ep.append(cid);
+						ep.append("+ \"@\" +");
+					}
+					ep.append(host);
+					String port = helper.getStringParam("__AMQP_PORT__");
+					if (!port.isEmpty()) {
+						ep.append("+ \":\" + ");
+						ep.append(port);
+					}
 %>				
-				{	
+				{
 					try{
-						String amqpUrl = <%=amqpUri%>;
-						if(!amqpUrl.startsWith("amqp://")) {
-							amqpUrl = "amqp://" + amqpUrl;
-						}
-						javax.jms.ConnectionFactory jmsConnectionFactory = org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(amqpUrl);
-						org.apache.camel.component.amqp.AMQPComponent activeMQComponent = new org.apache.camel.component.amqp.AMQPComponent(jmsConnectionFactory);
-						camelContext.addComponent(<%=name%>,activeMQComponent);
+						camelContext.addComponent(<%=name%>,
+								org.apache.camel.component.amqp.AMQPComponent.amqpComponent(<%=ep.toString()%>));
 					}catch(Exception e){
 						throw new RuntimeException(e);
 					}
@@ -498,6 +536,7 @@
 				}
 <%
 				}else if("MQTT".equals(mqType)){
+					String cid = node.getUniqueName();
 					String host = helper.getStringParam("__MQTT_HOST__");
 					String port = helper.getStringParam("__MQTT_PORT__");
 					boolean useSSL = helper.getBoolParam("__MQTT_SSL__");
@@ -518,6 +557,26 @@
 							 config.setConnectWaitInSeconds(<%=helper.getStringParam("__MQTT_CONNECT_WAIT_IN_SECONDS__")%>);
 							 config.setDisconnectWaitInSeconds(<%=helper.getStringParam("__MQTT_DISCONNECT_WAIT_IN_SECONDS__")%>);
 							 config.setSendWaitInSeconds(<%=helper.getStringParam("__MQTT_SEND_WAIT_IN_SECONDS__")%>);
+							 
+							 <%if("true".equals(helper.getStringParam("__MQTT_SSL__"))){%>
+							 	javax.net.ssl.TrustManagerFactory tmf = javax.net.ssl.TrustManagerFactory
+								.getInstance(javax.net.ssl.TrustManagerFactory
+										.getDefaultAlgorithm());
+	
+								java.io.FileInputStream fis = new java.io.FileInputStream(
+										<%=helper.getStringParam("__MQTT_SSL_TRUST_STORE__")%>);
+								java.security.KeyStore ks = java.security.KeyStore
+										.getInstance(java.security.KeyStore.getDefaultType());
+								<%String passwordFieldName = "__MQTT_SSL_TRUST_STORE_PASSWORD__";%>
+                    			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>                       
+								ks.load(fis, decryptedPassword_<%=cid%>.toCharArray());
+								fis.close();
+								tmf.init(ks);
+								javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
+								sslContext.init(null, tmf.getTrustManagers(), new java.security.SecureRandom());
+								config.setSslContext(sslContext);
+							 <%}%>
+							 
 							 return endpoint;
 							}
 					 };
@@ -536,29 +595,6 @@
 				}
 			
 			}
-			List<? extends INode> amqpNodes = process.getNodesOfType("cAMQP");
-			for(INode node : amqpNodes) {
-				String amqpUri = ElementParameterParser.getValue(node, "__BROKER_URI__").trim();
-				String name = node.getUniqueName().replace("_", "");
-				name = "\"" + name + "\"";
-				%>				
-				{	
-					try{
-						String amqpUrl = <%=amqpUri%>;
-						if(!amqpUrl.startsWith("amqp://")) {
-							amqpUrl = "amqp://" + amqpUrl;
-						}
-						javax.jms.ConnectionFactory jmsConnectionFactory = org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(amqpUrl);
-						org.apache.camel.component.amqp.AMQPComponent activeMQComponent = new org.apache.camel.component.amqp.AMQPComponent(jmsConnectionFactory);
-						camelContext.addComponent(<%=name%>,activeMQComponent);
-					}catch(Exception e){
-						throw new RuntimeException(e);
-					}
-					
-				}
-<%				
-			}
-			
 			//http://jira.talendforge.org/browse/TESB-4087: Change CamelContext name
 %>
 			//using Route name as CamelContext ID

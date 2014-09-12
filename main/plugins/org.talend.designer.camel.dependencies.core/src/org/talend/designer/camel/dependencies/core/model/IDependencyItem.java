@@ -28,4 +28,6 @@ public interface IDependencyItem {
 	public void setChecked(boolean isChecked);
 	
 	public String getDescription();
+
+	public String toManifestString();
 }

@@ -107,7 +107,7 @@ public class ExportPackage extends AbstractDependencyItem {
 	}
 
 	@Override
-	public String toString() {
+	public String toManifestString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 

@@ -92,7 +92,12 @@ public abstract class AbstractDependencyItem implements IDependencyItem{
 	public boolean isChecked() {
 		return this.isChecked;
 	}
-	
+
+	@Override
+	public String toString() {
+		return toManifestString();
+	}
+
 	public static final int OK = 0;
 	public static final int NAME_NULL = 1;
 	public static final int NAME_INVALID = 2;

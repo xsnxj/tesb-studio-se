@@ -77,31 +77,26 @@ try {
 
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
-		new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+			new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
+
+	boolean inOSGi = false;
+	try {
+		inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+	} catch (ClassNotFoundException e_<%=cid%>) {
+		; // ignore
+	}
+
 	<% if (useAuth && "BASIC".equals(authType)) { %>
 		// set BASIC auth
+		<% String passwordFieldName = "__AUTH_PASSWORD__"; %>
+		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
 		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
-		
-        <%
-        String passwordFieldName = "__AUTH_PASSWORD__";
-        %>
-        
-        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>   
-        		
 		factoryBean_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
 	<% } %>
 
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
 			new java.util.ArrayList<org.apache.cxf.feature.Feature>();
-
-	<% if (isSLEnable || isSAMEnable) { %>
-		boolean inOSGi = false;
-		try {
-			inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
-		} catch (ClassNotFoundException e_<%=cid%>) {
-			; // ignore
-		}
-	<% } %>
 
 	<% if (isSLEnable) { %>
 		factoryBean_<%=cid%>.setAddress("locator://rest");
@@ -163,23 +158,24 @@ try {
 	<% } %>
 
 	<% if (useBusinessCorrelation) { %>
-	   class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
-                    private String correlationId;
-                    public EsbJobCorrelationCallbackHandler(final String correlationId) {
-                        if (null != correlationId && correlationId.length() > 0) {
-                            this.correlationId = correlationId;
-                        }
-                    }
-                    public String getCorrelationId() {
-                        return correlationId;
-                    };
-                }
-        final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=paramsHelper.getStringParam("__CORRELATION_VALUE__")%>);
-		factoryBean_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
-			correlationIDCallbackHandler);
+		class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
+				private String correlationId;
+				public EsbJobCorrelationCallbackHandler(final String correlationId) {
+					if (null != correlationId && correlationId.length() > 0) {
+						this.correlationId = correlationId;
+					}
+				}
+				public String getCorrelationId() {
+					return correlationId;
+				};
+			}
+		final Object correlationIDCallbackHandler = new EsbJobCorrelationCallbackHandler(<%=paramsHelper.getStringParam("__CORRELATION_VALUE__")%>);
+		factoryBean_<%=cid%>.getProperties(true).put(
+				org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER,
+				correlationIDCallbackHandler);
 		features_<%=cid%>.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
 	<% } %>
-	
+
 	factoryBean_<%=cid%>.setFeatures(features_<%=cid%>);
 
 
@@ -227,26 +223,23 @@ try {
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
 
-    <% if (useAuth && "SAML".equals(authType)) { %>
-        if (null != stsProperties) {
-            // set SAML Token authentication
-            <%
-            String passwordFieldName = "__AUTH_PASSWORD__";
-            %>
-            
-            <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+	<% if (useAuth && "SAML".equals(authType)) { %>
+		if (null != stsProperties) {
+			// set SAML Token authentication
+			<% String passwordFieldName = "__AUTH_PASSWORD__"; %>
+			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
-            java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
-            securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
-            securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
-            org.apache.cxf.ws.security.trust.STSClient stsClient =
-                org.talend.esb.security.saml.STSClientUtils.createSTSClient(factoryBean_<%=cid%>.getBus(), securityProps);
-            <% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))) { %>
-                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE__")%>);
-            <% } %>
-            org.talend.esb.security.saml.SAMLRESTUtils.configureClient(factoryBean_<%=cid%>, stsClient);
-        }
-    <% } %>
+			java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
+			securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
+			securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
+			org.apache.cxf.ws.security.trust.STSClient stsClient =
+				org.talend.esb.security.saml.STSClientUtils.createSTSClient(factoryBean_<%=cid%>.getBus(), securityProps);
+			<% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))) { %>
+				org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE__")%>);
+			<% } %>
+			org.talend.esb.security.saml.SAMLRESTUtils.configureClient(factoryBean_<%=cid%>, stsClient);
+		}
+	<% } %>
 
 	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
 
@@ -256,29 +249,27 @@ try {
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
-	conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
-	conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
+	if (!inOSGi) {
+		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
+		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
+		<% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+			<% String passwordFieldName = "__PROXY_PASSWORD__"; %>
+			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+			conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
+			conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
+			conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
+			conduit_<%=cid%>.getProxyAuthorization().setPassword(decryptedPassword_<%=cid%>);
+		<% } %>
+	}
 	<% if (paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")) { %>
 		conduit_<%=cid%>.getClient().setAutoRedirect(true);
 		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.relative.uri", true);
 		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.same.host.only", <%=!paramsHelper.getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
 	<% } %>
-	<% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
-		conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
-		conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
-		conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
-		
-        <%
-        String passwordFieldName = "__PROXY_PASSWORD__";
-        %>
-        
-        <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
-        	final String decryptedPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
-        <%} else {%>
-        	final String decryptedPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
-        <%}%>		
-		
-		conduit_<%=cid%>.getProxyAuthorization().setPassword(decryptedPwd_<%=cid%>);
+
+	<% if (paramsHelper.getBoolParam("__DISABLE_CHUNKED_ENCODING__")) { %>
+		conduit_<%=cid%>.getClient().setAllowChunking(false);
 	<% } %>
 
 	<% if (!"GET".equals(method) && !"DELETE".equals(method)) { %>

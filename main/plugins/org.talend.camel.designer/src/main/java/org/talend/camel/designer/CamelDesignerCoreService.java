@@ -37,6 +37,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.ui.CreateCamelProcess;
 import org.talend.camel.designer.ui.bean.CreateCamelBean;
@@ -49,6 +50,7 @@ import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.INodeConnector;
 import org.talend.core.model.properties.ByteArray;
+import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.ReferenceFileItem;
@@ -107,6 +109,15 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 	
 	public ERepositoryObjectType getResourcesType() {
 		return CamelRepositoryNodeType.repositoryRouteResourceType;
+	}
+	
+	public ERepositoryObjectType getRouteDocType() {
+		return CamelRepositoryNodeType.repositoryDocumentationType;
+	}
+	
+	@Override
+	public ERepositoryObjectType getRouteDocsType() {
+		return CamelRepositoryNodeType.repositoryDocumentationsType;
 	}
 
 	public ProcessType getCamelProcessType(Item item) {
@@ -377,6 +388,11 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 				"preserve");
 		String springContent = ((CamelProcessItem)item).getSpringContent();
 		routeSpringElement.addText(springContent);
+	}
+	
+	@Override
+	public FileItem newRouteDocumentationItem() {
+		return CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
 	}
 
 }

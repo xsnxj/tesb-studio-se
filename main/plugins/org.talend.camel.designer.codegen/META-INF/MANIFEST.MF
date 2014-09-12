@@ -14,5 +14,5 @@ Require-Bundle: org.eclipse.ui,
  org.talend.designer.core,
  org.talend.camel.designer,
  org.talend.repository
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

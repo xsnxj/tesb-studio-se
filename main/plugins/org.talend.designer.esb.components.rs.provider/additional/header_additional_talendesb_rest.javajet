@@ -970,6 +970,8 @@ if (!noBodyRequest) {
 if (contentTypes.containsKey(produces)) {
 	String producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));
 %>	@javax.ws.rs.Produces(<%=producesContentTypes%>)
+<% } else if ("ONEWAY".equals(produces)) {
+%>	@org.apache.cxf.jaxrs.ext.Oneway()
 <% } %>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
@@ -1048,6 +1050,7 @@ if (contentTypes.containsKey(produces)) {
 		request_<%=cid%>.put("URI", ui.getPath());
 		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
 		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
+		request_<%=cid%>.put("URI_REQUEST", ui.getRequestUri().toString());
 
 		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
@@ -1106,6 +1109,7 @@ if (contentTypes.containsKey(produces)) {
 		wrongRequest.put("URI", context.getUriInfo().getPath());
 		wrongRequest.put("URI_BASE", context.getUriInfo().getBaseUri().toString());
 		wrongRequest.put("URI_ABSOLUTE", context.getUriInfo().getAbsolutePath().toString());
+		wrongRequest.put("URI_REQUEST", context.getUriInfo().getRequestUri().toString());
 
 		return processRequest(wrongRequest);
 	}
@@ -1253,12 +1257,11 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				jsonProvider.setSupportUnwrapped(true);
 				jsonProvider.setWrapperName("root");
 			<% } %>
-			
+
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__CONVERT_JSON_VALUES_TO_STRING__"))) { %>
 				jsonProvider.setConvertTypesToStrings(true);
-			<% } 
-			   else { %>
-			    jsonProvider.setConvertTypesToStrings(false);
+			<% } else { %>
+				jsonProvider.setConvertTypesToStrings(false);
 			<% } %>
 			providers.add(jsonProvider);
 			sf.setProviders(providers);
@@ -1315,9 +1318,9 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				features.add(samEventFeature);
 			<% } %>
 
-            <% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_BUSINESS_CORRELATION__"))) { %>
-                features.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
-            <% } %>
+			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_BUSINESS_CORRELATION__"))) { %>
+				features.add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
+			<% } %>
 
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__LOG_MESSAGES__"))) { %>
 				features.add(new org.apache.cxf.feature.LoggingFeature());
