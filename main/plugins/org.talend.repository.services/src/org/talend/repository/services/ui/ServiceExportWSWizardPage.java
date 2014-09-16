@@ -92,7 +92,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         } else {
             idealSuffix = getOutputSuffix();
         }
-        dialog.setFilterExtensions(new String[] { idealSuffix, "*.*" }); //$NON-NLS-1$
+        dialog.setFilterExtensions(new String[] { '*' + idealSuffix, "*.*" }); //$NON-NLS-1$
         File destination = new File(getDestinationValue());
         dialog.setFileName(destination.getName());
         dialog.setFilterPath(destination.getParent());
