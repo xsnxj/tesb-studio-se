@@ -501,7 +501,7 @@
 					String cid = node.getUniqueName();
 					String host = helper.getStringParam("__AMQP_BROKER_URI__");
 					boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
-					boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTHORIZATION__");
+					boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTH__");
 					
 					StringBuilder ep = new StringBuilder();
 					ep.append("\"");
