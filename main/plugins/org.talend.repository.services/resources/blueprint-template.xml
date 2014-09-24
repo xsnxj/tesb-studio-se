@@ -14,7 +14,7 @@
 #[[
     <property-placeholder persistent-id="org.talend.esb.job.service" placeholder-prefix="$serviceDefault{"
         xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0" />
-    <property-placeholder ]]#persistent-id="${samlConfig}.org.talend.esb.job.service"#[[ placeholder-prefix="$service{"
+    <property-placeholder ]]#persistent-id="org.talend.esb.job.service.${samlConfig}"#[[ placeholder-prefix="$service{"
         xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0" >
         <default-properties>
             <property name="ws-security.signature.username" value="$serviceDefault{ws-security.signature.username}"/>
