@@ -15,6 +15,7 @@
 	   			<property name="ignoreCamelContextEvents" value="true" />
 	   			<property name="ignoreRouteEvents" value="true" />
 	   			<property name="ignoreServiceEvents" value="true" />
+	   			<property name="ignoreExchangeEvents" value="true" />
 	   </bean>
 
 </beans>
