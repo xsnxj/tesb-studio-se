@@ -4,6 +4,7 @@
    <extension-point id="org.talend.designer.camel.dependencies.importPackage" name="Camel Import Package" schema="schema/org.talend.designer.camel.dependencies.importPackage.exsd"/>
    <extension-point id="org.talend.designer.camel.dependencies.bundleClasspath" name="Camel Bundle Classpath" schema="schema/org.talend.designer.camel.dependencies.bundleClasspath.exsd"/>
    <extension-point id="org.talend.designer.camel.dependencies.requireBundle" name="Require Bundle" schema="schema/org.talend.designer.camel.dependencies.requireBundle.exsd"/>
+   <extension-point id="org.talend.designer.camel.dependencies.exportPackage" name="Camel Export Package" schema="schema/org.talend.designer.camel.dependencies.exportPackage.exsd"/>
    <extension
          point="org.talend.designer.camel.dependencies.importPackage">
       <importPackage
@@ -614,6 +615,20 @@
             class="org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService"
             serviceId="IOsgiDependenciesService">
       </Service>
+   </extension>
+   <extension
+         point="org.talend.designer.camel.dependencies.exportPackage">
+      <component
+            componentName="cMQConnectionFactory">
+         <exportPackage
+               packageName="org.apache.qpid.amqp_1_0.jms.impl"
+               version="0.28.0">
+            <predicate
+                  attributeName="MQ_TYPE"
+                  attributeValue="AMQP">
+            </predicate>
+         </exportPackage>
+      </component>
    </extension>
 
 </plugin>

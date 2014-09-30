@@ -20,7 +20,9 @@ public class ExtensionPointsReader {
 	private static final String REQUIRE_BUNDLE = "requireBundle"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME = "attributeName"; //$NON-NLS-1$
 	private static final String IMPORT_PACKAGE = "importPackage"; //$NON-NLS-1$
+	private static final String EXPORT_PACKAGE = "exportPackage"; //$NON-NLS-1$
 	private static final String OPTIONAL = "optional"; //$NON-NLS-1$
+	private static final String VERSION = "version";
 	private static final String MIN_VERSION = "minVersion"; //$NON-NLS-1$
 	private static final String MAX_VERSION = "maxVersion"; //$NON-NLS-1$
 	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
@@ -29,15 +31,18 @@ public class ExtensionPointsReader {
 	private static final String REQUIRE_BUNDLE_EXT = "org.talend.designer.camel.dependencies.requireBundle"; //$NON-NLS-1$
 	private static final String IMPORT_PACKAGE_EXT = "org.talend.designer.camel.dependencies.importPackage"; //$NON-NLS-1$
 	private static final String BUNDLE_CLASSPATH_EXT = "org.talend.designer.camel.dependencies.bundleClasspath"; //$NON-NLS-1$
+	private static final String EXPORT_PACKAGE_EXT = "org.talend.designer.camel.dependencies.exportPackage"; //$NON-NLS-1$
 
 	public static ExtensionPointsReader INSTANCE = new ExtensionPointsReader();
 
 	private Map<String, Set<ExBundleClasspath>> componentBundleClasspaths = new HashMap<String, Set<ExBundleClasspath>>();
 	private Map<String, Set<ExImportPackage>> componentImportPackages = new HashMap<String, Set<ExImportPackage>>();
+	private Map<String, Set<ExExportPackage>> componentExportPackages = new HashMap<String, Set<ExExportPackage>>();
 	private Map<String, Set<ExRequireBundle>> componentRequireBundles = new HashMap<String, Set<ExRequireBundle>>();
 	private Set<ExRequireBundle> requireBundlesForAll = new HashSet<ExRequireBundle>();
 	private Set<ExImportPackage> importPackagesForAll = new HashSet<ExImportPackage>();
-	
+	private Set<ExExportPackage> exportPackagesForAll = new HashSet<ExExportPackage>();
+
 	//this one is special case for ROUTE_WHEN Connection Type
 	private Map<String, Set<ExImportPackage>> languageImportPackages = new HashMap<String, Set<ExImportPackage>>();
 
@@ -48,10 +53,11 @@ public class ExtensionPointsReader {
 	private void initialization() {
 		readRegisteredBundleClasspaths();
 		readRegisteredImportPackages();
+		readRegisteredExportPackages();
 		readRegisteredRequireBundles();
 		initLanguageDependenciesMap();
 	}
-	
+
 
 	private void initLanguageDependenciesMap() {
 		/*
@@ -60,28 +66,28 @@ public class ExtensionPointsReader {
 		 */
 //        String[] languages = { "constant", "el", "groovy", "header", "javaScript", "jxpath", "mvel", "ognl", "php", "property",
 //                "python", "ruby", "simple", "spel", "sql", "xpath", "xquery" };
-//        
+//
         Set<ExImportPackage> groovySet = new HashSet<ExImportPackage>();
         ExImportPackage importPackage = new ExImportPackage();
         importPackage.setPackageName("groovy.lang");
         groovySet.add(importPackage);
-        
+
         importPackage = new ExImportPackage();
         importPackage.setPackageName("org.codehaus.groovy.runtime");
         groovySet.add(importPackage);
-        
+
         importPackage = new ExImportPackage();
         importPackage.setPackageName("org.codehaus.groovy.runtime.callsite");
         groovySet.add(importPackage);
-        
+
         importPackage = new ExImportPackage();
         importPackage.setPackageName("org.codehaus.groovy.runtime.typehandling");
         groovySet.add(importPackage);
-        
+
         importPackage = new ExImportPackage();
         importPackage.setPackageName("org.codehaus.groovy.reflection");
         groovySet.add(importPackage);
-       
+
         languageImportPackages.put("groovy", groovySet);
 	}
 
@@ -105,7 +111,7 @@ public class ExtensionPointsReader {
 
 			ExBundleClasspath bc = new ExBundleClasspath();
 			bc.setAttributeName(attrName);
-			
+
 			if("true".equals(isChecked)){ //$NON-NLS-1$
 				bc.setChecked(true);
 			}else if("false".equals(isChecked)){ //$NON-NLS-1$
@@ -160,6 +166,64 @@ public class ExtensionPointsReader {
 				importPackagesForAll.add(importPackage);
 			}
 		}
+	}
+
+	private void readRegisteredExportPackages() {
+		IConfigurationElement[] configurationElements = Platform
+				.getExtensionRegistry().getConfigurationElementsFor(
+						EXPORT_PACKAGE_EXT);
+		if (configurationElements == null || configurationElements.length == 0) {
+			return;
+		}
+		for (IConfigurationElement e : configurationElements) {
+			String name = e.getName();
+			if (name.equals(COMPONENT)) {
+				String cmpName = e.getAttribute(COMPONENT_NAME);
+				Set<ExExportPackage> packageSet = componentExportPackages
+						.get(cmpName);
+				if (packageSet == null) {
+					packageSet = new HashSet<ExExportPackage>();
+					componentExportPackages.put(cmpName, packageSet);
+				}
+				IConfigurationElement[] packages = e
+						.getChildren(EXPORT_PACKAGE);
+				for (IConfigurationElement p : packages) {
+					ExExportPackage exportPackage = createExportPackageFrom(p);
+					packageSet.add(exportPackage);
+				}
+			} else {
+				ExExportPackage exportPackage = createExportPackageFrom(e);
+				exportPackagesForAll.add(exportPackage);
+			}
+		}
+	}
+
+	private ExExportPackage createExportPackageFrom(IConfigurationElement p) {
+		String packageName = p.getAttribute(PACKAGE_NAME);
+		String version = p.getAttribute(VERSION);
+
+		ExExportPackage exportPackage = new ExExportPackage();
+		exportPackage.setPackageName(packageName);
+		if (version != null && !"".equals(version)) { //$NON-NLS-1$
+			exportPackage.setVersion(version);
+		}
+
+		IConfigurationElement[] predicates = p.getChildren(PREDICATE);
+		if (predicates != null) {
+			for (IConfigurationElement pe : predicates) {
+				String name = pe.getAttribute(ATTRIBUTE_NAME);
+				String value = pe.getAttribute(ATTRIBUTE_VALUE);
+				String isRegex = pe.getAttribute(REGEX);
+				ExPredicate exPredicate = new ExPredicate();
+				exPredicate.setAttributeName(name);
+				exPredicate.setAttributeValue(value);
+				if ("true".equals(isRegex)) { //$NON-NLS-1$
+					exPredicate.setRegex(true);
+				}
+				exportPackage.addPredicate(exPredicate);
+			}
+		}
+		return exportPackage;
 	}
 
 	private ExImportPackage createImportPackageFrom(IConfigurationElement p) {
@@ -236,8 +300,8 @@ public class ExtensionPointsReader {
 		ExRequireBundle requireBundle = new ExRequireBundle();
 		requireBundle.setBundleName(bundleName);
 		requireBundle.setVersionRange(VersionValidateUtil.tryToGetValidVersionRange(minVersion, maxVersion));
-		
-		
+
+
 		if (optional != null) {
 			requireBundle.setOptional(Boolean.getBoolean(optional));
 		}
@@ -264,6 +328,10 @@ public class ExtensionPointsReader {
 		return importPackagesForAll;
 	}
 
+	public Set<ExExportPackage> getExportPackagesForAll() {
+		return exportPackagesForAll;
+	}
+
 	public Set<ExRequireBundle> getRequireBundlesForAll() {
 		return requireBundlesForAll;
 	}
@@ -279,8 +347,13 @@ public class ExtensionPointsReader {
 	public Map<String, Set<ExRequireBundle>> getComponentRequireBundles() {
 		return componentRequireBundles;
 	}
-	
+
 	public Map<String, Set<ExImportPackage>> getLanguageImportPackages() {
 		return languageImportPackages;
 	}
+
+	public Map<String, Set<ExExportPackage>> getComponentExportPackages() {
+		return componentExportPackages;
+	}
+
 }

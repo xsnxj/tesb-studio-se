@@ -50,6 +50,7 @@ public class ExDependenciesResolver {
 	private void handleAllNodes() {
 		Set<ExRequireBundle> requireBundlesForAll = ExtensionPointsReader.INSTANCE.getRequireBundlesForAll();
 		Set<ExImportPackage> importPackagesForAll = ExtensionPointsReader.INSTANCE.getImportPackagesForAll();
+		Set<ExExportPackage> exportPackagesForAll = ExtensionPointsReader.INSTANCE.getExportPackagesForAll();
 
 		for(ExRequireBundle rb: requireBundlesForAll){
 			RequireBundle target = rb.toTargetIgnorePredicates();
@@ -91,6 +92,13 @@ public class ExDependenciesResolver {
 			exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
 			exportPackages.add(exportPackage);
 		}
+
+		for(ExExportPackage ip: exportPackagesForAll){
+			ExportPackage target = ip.toTargetIgnorePredicates();
+			target.setDescription(Messages.ExDependenciesResolver_generatedPackage);
+			exportPackages.add(target);
+		}
+
 	}
 
 	private void handleNode(NodeType n) {
@@ -98,6 +106,8 @@ public class ExDependenciesResolver {
 				.getBundleClasspaths();
 		Map<String, Set<ExImportPackage>> exImportPackages = ExtensionPointsReader.INSTANCE
 				.getComponentImportPackages();
+		Map<String, Set<ExExportPackage>> exExportPackages = ExtensionPointsReader.INSTANCE
+				.getComponentExportPackages();
 		Map<String, Set<ExRequireBundle>> exRequireBundles = ExtensionPointsReader.INSTANCE
 				.getComponentRequireBundles();
 
@@ -158,6 +168,29 @@ public class ExDependenciesResolver {
 				target.addRelativeComponent(uniqueName);
 				if(!found){
 					importPackages.add(target);
+				}
+			}
+		}
+
+		Set<ExExportPackage> eps = exExportPackages.get(componentName);
+		if (eps != null) {
+			for (ExExportPackage ip : eps) {
+				ExportPackage target = ip.toTargets(n);
+				if(target == null){
+					continue;
+				}
+				ExportPackage[] array = exportPackages.toArray(new ExportPackage[0]);
+				boolean found = false;
+				for(ExportPackage obj :array){
+					if(obj!=null && obj.equals(target)){
+						target = obj;
+						found = true;
+						break;
+					}
+				}
+				target.addRelativeComponent(uniqueName);
+				if(!found){
+					exportPackages.add(target);
 				}
 			}
 		}
