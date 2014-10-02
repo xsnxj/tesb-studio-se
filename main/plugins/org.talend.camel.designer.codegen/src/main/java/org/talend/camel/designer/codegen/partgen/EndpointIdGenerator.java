@@ -14,6 +14,9 @@ public class EndpointIdGenerator implements PartGenerator<INode> {
 
 	private final String generateEndpointId(INode node) {
 		if (NodeUtil.isStartNode(node)) {
+            if ("cErrorHandler".equals(node.getComponent().getName())) { //$NON-NLS-1$
+                return ""; //$NON-NLS-1$
+            }
 			// http://jira.talendforge.org/browse/TESB-4086
 			// XiaopengLi
 			String label = null;
