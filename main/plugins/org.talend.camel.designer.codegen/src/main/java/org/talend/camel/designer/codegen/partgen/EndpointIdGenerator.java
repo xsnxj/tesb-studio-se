@@ -17,8 +17,8 @@ public class EndpointIdGenerator implements PartGenerator<INode> {
 			// http://jira.talendforge.org/browse/TESB-4086
 			// XiaopengLi
 			String label = null;
-			IElementParameter parameter = node.getElementParameter("LABEL");
-			if (parameter != null && !"__UNIQUE_NAME__".equals(parameter.getValue())) {
+			IElementParameter parameter = node.getElementParameter("LABEL"); //$NON-NLS-1$
+			if (parameter != null && !"__UNIQUE_NAME__".equals(parameter.getValue())) { //$NON-NLS-1$
 				label = (String) parameter.getValue();
 			}
 
@@ -29,14 +29,11 @@ public class EndpointIdGenerator implements PartGenerator<INode> {
 			if (label == null) {
 				label = node.getUniqueName();
 			} else {
-				label += "_" + node.getUniqueName();
+				label += '_' + node.getUniqueName();
 			}
-			if (!"cErrorHandler".equals(node.getComponent().getName())) {
-				return ".routeId(\"" + label + "\")";
-			}
+			return ".routeId(\"" + label + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			return ".id(\"" + node.getUniqueName() + "\")";
+			return ".id(\"" + node.getUniqueName() + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return "";
 	}
 }
