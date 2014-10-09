@@ -8,6 +8,7 @@ imports="
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
 
 	String formatType = ElementParameterParser.getValue(node, "__DATAFORMAT__");
 
@@ -24,7 +25,7 @@ imports="
 	}
 	String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
 
-	String endpointVar = "endpoint_" + node.getUniqueName();
+	String endpointVar = "endpoint_" + cid;
 	if (node.getIncomingConnections().isEmpty()) {
 %>
         from(<%=endpointVar%>)
@@ -33,10 +34,11 @@ imports="
             if (useRegistry || useCorrelation) {
                 if(!"".equals(correlationValue) && !"\"\"".equals(correlationValue)){
 %>                  
-                    .setHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID).simple(<%=correlationValue%>)
-<%              }else{
-%>
-                    .removeHeader(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID)
+		.process(new org.apache.camel.Processor() {
+				public void process(org.apache.camel.Exchange exchange) throws Exception {
+					correlationIDCallbackHandler_<%=cid%>.setCorrelationId(simple(<%=correlationValue%>).evaluate(exchange, String.class));
+				}
+			})
 <%              }
             }
 %>
