@@ -178,6 +178,13 @@ public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilde
 				&& !"RAW".equals(dataFormat) && !useRegistry) {
 				hasSam = true;
             }
+            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
+                hasCorrelationID = true;
+                String cid = node.getUniqueName();
+%>
+    private final CorrelationIDCallbackHandler correlationIDCallbackHandler_<%=cid%> = new CorrelationIDCallbackHandler();
+<%
+            } // CorrelationID
 		} else if ("cCXFRS".equals(node.getComponent().getName())) {
             String cid = node.getUniqueName();
             if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {

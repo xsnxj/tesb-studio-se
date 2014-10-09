@@ -860,13 +860,17 @@ if (isProvider) {
 			if("RAW".equals(formatType)){
 				useCorrelation = "false";
 			}
-			String correlationValue = ElementParameterParser.getValue(node, "__CORRELATION_VALUE__");
-			if(correlationValue != null && "".equals(correlationValue.trim())){
-				correlationValue = null;
-			}
 
 			if ("true".equals(useCorrelation) && !useRegistry) {
 %>
+                final String correlationId_<%=cid%> = <%=ElementParameterParser.getValue(node, "__CORRELATION_VALUE__")%>;
+                if (null != correlationId_<%=cid%> && correlationId_<%=cid%>.length() > 0) {
+                    correlationIDCallbackHandler_<%=cid%>.setCorrelationId(correlationId_<%=cid%>);
+                    java.util.Map<String, Object> properties = new java.util.HashMap<String, Object>();
+                    properties.put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
+                        correlationIDCallbackHandler_<%=cid%>);
+                    <%=endpointVar%>.setProperties(properties);
+                }
 				<%=endpointVar%>.getFeatures().add(new org.talend.esb.policy.correlation.feature.CorrelationIDFeature());
 <%			}
 			if ("true".equals(useSL) && (isProvider || !useRegistry)) {
@@ -899,7 +903,7 @@ if (isProvider) {
 %>
 				// Add Service Activity Monitor Service to <%=endpointVar%>
 				if (eventFeature != null) {
-					((org.apache.camel.component.cxf.CxfEndpoint)<%=endpointVar%>).getFeatures().add(eventFeature);
+					<%=endpointVar%>.getFeatures().add(eventFeature);
 				}
 <%
 			}
