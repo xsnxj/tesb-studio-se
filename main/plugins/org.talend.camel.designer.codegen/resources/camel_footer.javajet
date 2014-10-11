@@ -518,7 +518,7 @@
 				{
 					try{
 						camelContext.addComponent(<%=name%>,
-								org.apache.camel.component.amqp.AMQPComponent.amqpComponent(<%=ep.toString()%>));
+								new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
 					}catch(Exception e){
 						throw new RuntimeException(e);
 					}
