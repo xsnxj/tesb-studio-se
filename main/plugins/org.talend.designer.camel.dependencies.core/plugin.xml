@@ -616,19 +616,5 @@
             serviceId="IOsgiDependenciesService">
       </Service>
    </extension>
-   <extension
-         point="org.talend.designer.camel.dependencies.exportPackage">
-      <component
-            componentName="cMQConnectionFactory">
-         <exportPackage
-               packageName="org.apache.qpid.amqp_1_0.jms.impl"
-               version="0.28.0">
-            <predicate
-                  attributeName="MQ_TYPE"
-                  attributeValue="AMQP">
-            </predicate>
-         </exportPackage>
-      </component>
-   </extension>
 
 </plugin>
