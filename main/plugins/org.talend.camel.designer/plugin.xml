@@ -327,6 +327,15 @@
                 name="Rename_cJMSConnectionFactory_To_cMQConnectionFactory_MigrationTask"
                 version="5.6.0">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.6.0"
+                class="org.talend.camel.designer.migration.UnifyPasswordEncryption4ParametersInRouteMigrationTask"
+                description="Unify the entryption for pass fields of parameters of routes"
+                id="org.talend.camel.designer.migration.UnifyPasswordEncryption4ParametersInRouteMigrationTask"
+                name="UnifyPasswordEncryption4ParametersInRouteMigrationTask"
+                version="5.6.0">
+          </projecttask>
       </extension>
         <extension
               point="org.talend.designer.core.generators">
