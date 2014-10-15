@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.ui,
  org.talend.repository
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir

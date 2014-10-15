@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.osgi
  ,org.eclipse.core.runtime
  ,org.talend.core
+Eclipse-BundleShape: dir

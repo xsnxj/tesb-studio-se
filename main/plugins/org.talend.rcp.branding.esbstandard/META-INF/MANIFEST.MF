@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.ui,
  org.talend.core,
  org.talend.commons.ui
 Eclipse-LazyStart: true
+Eclipse-BundleShape: dir
