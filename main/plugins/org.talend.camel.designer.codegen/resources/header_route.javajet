@@ -178,7 +178,7 @@ public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilde
 				&& !"RAW".equals(dataFormat) && !useRegistry) {
 				hasSam = true;
             }
-            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
+            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__")) || useRegistry) {
                 hasCorrelationID = true;
                 String cid = node.getUniqueName();
 %>
