@@ -444,9 +444,10 @@
 			<IMPORT MODULE="camel-jcr-alldep-${camel.version}.jar" NAME="talend-camel-jcr"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jcr-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JCR']" />
-			<IMPORT MODULE="camel-jdbc-alldep-${camel.version}.jar" NAME="talend-camel-jdbc"
-				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jdbc-alldep-${camel.version}.jar"
-				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" />
+            <IMPORT NAME="camel-jdbc"
+                    MODULE="camel-jdbc-${camel.version}.jar"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jdbc-${camel.version}.jar"
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" />
 			<IMPORT MODULE="camel-jetty-alldep-${camel.version}.jar" NAME="talend-camel-jetty"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JETTY']" />

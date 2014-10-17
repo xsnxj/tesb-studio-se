@@ -101,7 +101,7 @@
 	<FeatureMap HotLib="camel-jcr-alldep">
 		<Feature version="[2,5)">camel-jcr</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jdbc-alldep">
+	<FeatureMap HotLib="camel-jdbc">
 		<Feature version="[2,5)">camel-jdbc</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jetty-alldep">

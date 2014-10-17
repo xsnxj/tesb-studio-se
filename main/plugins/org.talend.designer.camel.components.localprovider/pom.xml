@@ -170,6 +170,11 @@
 			<artifactId>geronimo-jms_1.1_spec</artifactId>
 			<version>${geronimo-jms.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jdbc</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
