@@ -2,7 +2,7 @@
 <feature
       id="org.talend.rcp.branding.esbstandard_feature"
       label="ESB standard edition  branding feature"
-      version="5.6.0.qualifier"
+      version="6.0.0.qualifier"
       provider-name=".Talend SA."
       plugin="org.talend.rcp.branding.esbstandard">
 

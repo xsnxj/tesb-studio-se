@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: org.talend.designer.camel.dependencies.core;singleton:=true
-Bundle-Version: 5.6.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.dependencies.core.CoreActivator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
