@@ -71,6 +71,7 @@ import org.talend.core.model.metadata.builder.connection.XMLFileNode;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.ConnectionItem;
+import org.talend.core.model.properties.ItemState;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.XmlFileConnectionItem;
@@ -415,7 +416,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     break;
                 }
             }
-            if (!needRewrite && !WSDLUtils.isNameValidInXmlFileConnection(parameter, portTypeName, operationName)) {
+            if (!needRewrite && !isNameValidInXmlFileConnection(parameter, portTypeName, operationName)) {
                 return;
             }
         }
@@ -445,7 +446,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         // Use xsd schema file name + zip file name as xml file path in case we need get the root schema of xml
         // connection after.
         String schemaFileName = schemaFile.getName();
-        schemaFileName = schemaFileName.substring(0, schemaFileName.lastIndexOf(".")); //$NON-NLS-1$
+        schemaFileName = schemaFileName.substring(0, schemaFileName.lastIndexOf('.'));
         connection.setXmlFilePath(schemaFileName.concat("_").concat(zip.getName())); //$NON-NLS-1$
 
         try {
@@ -572,7 +573,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         case ATreeNode.ATTRIBUTE_TYPE:
             // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
             // xpath
-            xmlNode.setXMLPath("" + node.getValue()); //$NON-NLS-1$
+            xmlNode.setXMLPath(node.getValue().toString());
             column = ConnectionFactory.eINSTANCE.createMetadataColumn();
             column.setTalendType(xmlNode.getType());
             String uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
@@ -659,4 +660,26 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return columnName;
     }
 
+    private static boolean isNameValidInXmlFileConnection(QName parameter, String portTypeName, String operationName) {
+        try {
+            XmlFileConnectionItem item = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
+            XmlFileConnection connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
+            Property property = PropertiesFactory.eINSTANCE.createProperty();
+            property.setId(ProxyRepositoryFactory.getInstance().getNextId());
+            property.setLabel(parameter.getLocalPart());
+            property.setVersion(VersionUtils.DEFAULT_VERSION);
+            //
+            ItemState itemState = PropertiesFactory.eINSTANCE.createItemState();
+            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName, operationName);
+            itemState.setPath(folderPath);
+            item.setConnection(connection);
+            item.setProperty(property);
+            item.setState(itemState);
+            return ProxyRepositoryFactory.getInstance().isNameAvailable(property.getItem(), parameter.getLocalPart());
+        } catch (PersistenceException e) {
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
 }

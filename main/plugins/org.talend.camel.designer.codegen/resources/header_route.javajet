@@ -77,27 +77,19 @@ package <%= packageName %>;
 	importsSet.add("import java.util.Map");
 	importsSet.add("import javax.xml.bind.JAXBException");
 	importsSet.add("import javax.xml.namespace.QName");
-	importsSet.add("import org.apache.camel.ProducerTemplate");
-	importsSet.add("import org.apache.camel.impl.DefaultCamelContext");
-	importsSet.add("import org.apache.camel.main.MainSupport");
 	importsSet.add("import routines.TalendString");
 	importsSet.add("import routines.system.api.TalendESBRoute");
 	importsSet.add("import routines.*");
 	importsSet.add("import routines.system.*");
 	importsSet.add("import java.text.ParseException");
-	importsSet.add("import org.apache.camel.view.ModelFileGenerator");
-	importsSet.add("import org.apache.camel.spi.Registry");
-	importsSet.add("import org.apache.camel.impl.DefaultCamelContext");
-	importsSet.add("import org.apache.camel.spring.SpringRouteBuilder");
 	importsSet.add("import org.apache.camel.osgi.CamelContextFactoryBean");
 	importsSet.add("import org.apache.camel.osgi.SpringCamelContextFactory");
 	importsSet.add("import org.springframework.context.support.ClassPathXmlApplicationContext");
-	importsSet.add("import  org.apache.camel.CamelContext");
-	importsSet.add("import  java.util.Properties");
-	importsSet.add("import  org.apache.camel.management.JmxNotificationEventNotifier");
-	importsSet.add("import  org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext");
-	importsSet.add("import  org.apache.camel.impl.SimpleRegistry");
-	importsSet.add("import  java.util.Set");
+	importsSet.add("import org.apache.camel.CamelContext");
+	importsSet.add("import java.util.Properties");
+	importsSet.add("import org.apache.camel.management.JmxNotificationEventNotifier");
+	importsSet.add("import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext");
+	importsSet.add("import java.util.Set");
 	
 	String headerImports = ElementParameterParser.getValue(process, "__HEADER_IMPORT__");
 	if(headerImports!=null && !"".equals(headerImports.trim())){
@@ -155,7 +147,7 @@ package <%= packageName %>;
  * @version <%=version %>
  * @status <%=ElementParameterParser.getValue(process, "__STATUS__") %>
  */
-public class <%=process.getName()%> extends SpringRouteBuilder implements TalendESBRoute {
+public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
 
 <%
 	for (INode node : graphicalNodes) {
@@ -186,6 +178,13 @@ public class <%=process.getName()%> extends SpringRouteBuilder implements Talend
 				&& !"RAW".equals(dataFormat) && !useRegistry) {
 				hasSam = true;
             }
+            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__")) || useRegistry) {
+                hasCorrelationID = true;
+                String cid = node.getUniqueName();
+%>
+    private final CorrelationIDCallbackHandler correlationIDCallbackHandler_<%=cid%> = new CorrelationIDCallbackHandler();
+<%
+            } // CorrelationID
 		} else if ("cCXFRS".equals(node.getComponent().getName())) {
             String cid = node.getUniqueName();
             if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {

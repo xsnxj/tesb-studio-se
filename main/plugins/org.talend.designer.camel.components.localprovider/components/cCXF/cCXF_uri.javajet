@@ -40,6 +40,10 @@ StringBuilder sb = new StringBuilder();
 sb.append("\"cxf://\"+").append(url);
 sb.append("+\"?dataFormat=" + dataformat + "\"");
 
+if ("true".equals(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"))) {
+	sb.append("+\"&loggingFeatureEnabled=true\"");
+}
+
 if ("wsdlURL".equals(serviceType)) {
 	if(!useServiceRegistry){
 		sb.append("+\"&" + serviceType + "=\"");

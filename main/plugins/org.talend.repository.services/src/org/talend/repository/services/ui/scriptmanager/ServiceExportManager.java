@@ -65,20 +65,17 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         // TODO: do this in looooooooop!!!
 
         Definition def = WSDLUtils.getDefinition(wsdl);
-        String serviceName = null;
-        String serviceNS = null;
+        QName serviceQName = null;
         String endpointAddress = null;
         String endpointName = null;
         Map<QName, Service> services = def.getServices();
         ServicePort servicePort = studioPort.getKey();
         for (Entry<QName, Service> serviceEntry : services.entrySet()) { // TODO: support multi-services
-            QName serviceQName = serviceEntry.getKey();
             Service service = serviceEntry.getValue();
             Collection<Port> servicePorts = service.getPorts().values(); // TODO: support multi-ports
             for (Port port : servicePorts) {
                 if (servicePort.getName().equals(port.getBinding().getPortType().getQName().getLocalPart())) {
-                    serviceName = serviceQName.getLocalPart();
-                    serviceNS = serviceQName.getNamespaceURI();
+                    serviceQName = serviceEntry.getKey();
                     endpointName = port.getName();
                     endpointAddress = WSDLUtils.getPortAddress(port);
                     if (null != endpointAddress) {
@@ -108,13 +105,14 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             LOG.warn("Endpoint URI invalid: " + e);
                         }
                     }
+                    break;
                 }
             }
         }
 
         Map<String, Object> endpointInfo = new HashMap<String, Object>();
-        endpointInfo.put("namespace", serviceNS); //$NON-NLS-1$
-        endpointInfo.put("service", serviceName); //$NON-NLS-1$
+        endpointInfo.put("namespace", serviceQName.getNamespaceURI()); //$NON-NLS-1$
+        endpointInfo.put("service", serviceQName.getLocalPart()); //$NON-NLS-1$
         endpointInfo.put("port", endpointName); //$NON-NLS-1$
         endpointInfo.put("address", endpointAddress); //$NON-NLS-1$
         endpointInfo.put("studioName", studioServiceName); //$NON-NLS-1$
@@ -176,6 +174,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
             }
         }
         endpointInfo.put("slCustomProps", slCustomProperties); //$NON-NLS-1$
+
+        endpointInfo.put("samlConfig", //$NON-NLS-1$
+                serviceQName.toString().replaceAll("\\W+", "_").substring(1)); //$NON-NLS-1$
 
         TemplateProcessor.processTemplate("DATA_SERVICE_BLUEPRINT_CONFIG", endpointInfo, outputFile, //$NON-NLS-1$
                 new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_BLUEPRINT)));
