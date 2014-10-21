@@ -10,5 +10,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.commons.runtime,
  org.talend.librariesmanager
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: .Talend SA.
