@@ -208,7 +208,7 @@
 		<repository>
 			<id>sonatype-releases</id>
 			<url>https://oss.sonatype.org/content/repositories/releases/</url>
-			<name>Sonatype Snapshots Repo</name>
+			<name>Sonatype Releases Repo</name>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

@@ -476,9 +476,18 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
+            <!-- CorrelationID -->
             <IMPORT NAME="correlationid-policy"
-                    MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
+                    MODULE="${tesb-correlationid-policy}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
+                    REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
+            <IMPORT NAME="cloning"
+                    MODULE="${tesb-cloning}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cloning}"
+                    REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
+            <IMPORT NAME="objenesis"
+                    MODULE="${tesb-objenesis}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-objenesis}"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
             <!-- Security -->
             <IMPORT NAME="security-common"
