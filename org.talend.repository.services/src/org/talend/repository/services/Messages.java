@@ -28,8 +28,6 @@ public class Messages extends NLS {
 
     public static String ServiceExportManager_Exception_invalid_blueprint_xml;
 
-    public static String ServiceExportWizard_Wizard_Title;
-
     public static String ServiceExportWizard_WarningMessage_WillBeOverwritten;
 
     public static String AssignChoicePage_assignJobLabel;

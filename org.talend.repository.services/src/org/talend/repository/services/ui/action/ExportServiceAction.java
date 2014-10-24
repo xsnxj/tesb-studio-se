@@ -30,7 +30,6 @@ import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -38,7 +37,6 @@ import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
-import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
@@ -52,9 +50,11 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
 	protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
 
+    protected final ServiceItem serviceItem;
+
     protected Map<ExportChoice, Object> exportChoiceMap;
 
-    protected List<RepositoryNode> nodes = new ArrayList<RepositoryNode>();
+    protected List<IRepositoryViewObject> nodes = new ArrayList<IRepositoryViewObject>();
 
     private String serviceVersion;
 
@@ -70,25 +70,14 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private String groupId;
 
-    private final ServiceItem serviceItem;
+    private Map<String, String> additionalInfo;
 
-    private ServiceConnection serviceConnection;
+    private Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
 
-    public ExportServiceAction(Map<ExportChoice, Object> exportChoiceMap, RepositoryNode node, String targetPath)
+    public ExportServiceAction(ServiceItem serviceItem, String targetPath, Map<ExportChoice, Object> exportChoiceMap)
             throws InvocationTargetException {
-        if (node.getType() == ENodeType.REPOSITORY_ELEMENT
-                && node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
-            serviceItem = (ServiceItem) node.getObject().getProperty().getItem();
-            this.exportChoiceMap = exportChoiceMap;
-            init(targetPath);
-        } else {
-            IllegalArgumentException e = new IllegalArgumentException("provided node is not service node");
-            throw new InvocationTargetException(e);
-        }
-    }
-
-    public ExportServiceAction(IRepositoryViewObject viewObject, String targetPath) throws InvocationTargetException {
-        serviceItem = (ServiceItem) viewObject.getProperty().getItem();
+        this.serviceItem = serviceItem;
+        this.exportChoiceMap = exportChoiceMap;
         init(targetPath);
     }
 
@@ -97,43 +86,45 @@ public class ExportServiceAction implements IRunnableWithProgress {
         serviceVersion = serviceItem.getProperty().getVersion();
 
         serviceWsdl = WSDLUtils.getWsdlFile(serviceItem);
-        serviceConnection = (ServiceConnection) serviceItem.getConnection();
+        ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+        additionalInfo = serviceConnection.getAdditionalInfo().map();
         EList<ServicePort> listPort = serviceConnection.getServicePort();
+
+        List<IRepositoryViewObject> jobs;
         try {
-            for (ServicePort port : listPort) {
-                List<ServiceOperation> listOperation = port.getServiceOperation();
-                Map<String, String> operations = new HashMap<String, String>(listOperation.size());
-                for (ServiceOperation operation : listOperation) {
-                    if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                        String operationName = operation.getName();
-                        RepositoryNode jobNode = getJobRepositoryNode(operation.getReferenceJobId());
-                        if(jobNode==null) {
-                        	continue;
-                        }
-                        String jobName = jobNode.getObject().getLabel();
-                        operations.put(operationName, jobName);
-                        nodes.add(jobNode);
-                    }
-                }
-                ports.put(port, operations);
-            }
+            jobs = ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS);
         } catch (PersistenceException e) {
             throw new InvocationTargetException(e);
+        }
+        for (ServicePort port : listPort) {
+            List<ServiceOperation> listOperation = port.getServiceOperation();
+            Map<String, String> operations = new HashMap<String, String>(listOperation.size());
+            for (ServiceOperation operation : listOperation) {
+                String jobId = operation.getReferenceJobId();
+                if (jobId != null && !jobId.equals("")) {
+                    String operationName = operation.getName();
+                    IRepositoryViewObject jobNode = null;
+                    for (IRepositoryViewObject job : jobs) {
+                        if (job.getId().equals(jobId)) {
+                            jobNode = job;
+                            break;
+                        }
+                    }
+                    if (jobNode == null) {
+                    	continue;
+                    }
+                    String jobName = jobNode.getLabel();
+                    operations.put(operationName, jobName);
+                    nodes.add(jobNode);
+                    contextValues.putAll(JobContextUtils.getContextsMap((ProcessItem) jobNode.getProperty().getItem()));
+                }
+            }
+            ports.put(port, operations);
         }
 
         this.serviceManager = new ServiceExportManager(exportChoiceMap);
         serviceManager.setDestinationPath(targetPath);
         tempFolder = getTmpFolderPath();
-    }
-
-    private RepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
-        List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS);
-        for (IRepositoryViewObject job : jobs) {
-            if (job.getId().equals(jobId)) {
-                return new RepositoryNode(job, null, ENodeType.REPOSITORY_ELEMENT);
-            }
-        }
-        return null;
     }
 
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -152,8 +143,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
         FeaturesModel feature = new FeaturesModel(getGroupId(), getServiceName(), getServiceVersion());
         feature.setConfigName(getServiceName());
-        feature.setContexts(ContextNodeRetriever.getContextsMap(serviceItem));
-
+        feature.setContexts(contextValues);
 
         try {
         	addRequiredFeatures(feature);
@@ -166,6 +156,10 @@ public class ExportServiceAction implements IRunnableWithProgress {
         	processFeature(feature);
 
         	processFinalResult(destinationPath);
+        } catch (InvocationTargetException e) {
+            throw e;
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
         	throw new InvocationTargetException(e);
         } finally {
@@ -175,20 +169,20 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
 	private void addControlBundle(FeaturesModel feature) throws IOException,
 			CoreException {
-		final String artefactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-		File contrilBundle = generateControlBundle(getGroupId(), artefactName);
-		feature.addBundle(new BundleModel(getGroupId(), artefactName, getServiceVersion(), contrilBundle));
+		final String artifactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
+		feature.addBundle(new BundleModel(getGroupId(), artifactName, getServiceVersion(), 
+		        generateControlBundle(getGroupId(), artifactName)));
 	}
 
 	private void exportJobsBundle(IProgressMonitor monitor,
 			FeaturesModel feature) throws InvocationTargetException,
 			InterruptedException {
 		String directoryName = serviceManager.getRootFolderName(tempFolder);
-		for (RepositoryNode node : nodes) {
+		for (IRepositoryViewObject node : nodes) {
 			JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
 					getServiceVersion());
-			JobExportAction job = new JobExportAction(Collections.singletonList(node), node.getObject().getVersion(),
-					getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
+			JobExportAction job = new JobExportAction(Collections.singletonList(new RepositoryNode(node, null, ENodeType.REPOSITORY_ELEMENT)),
+			        node.getVersion(), getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
 			job.run(monitor);
 			feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(manager.getDestinationPath())));
 		}
@@ -206,9 +200,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
         }
         
         //add talend-data-mapper feature
-        for(RepositoryNode node: nodes){
-        	ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
-        	if(null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)){
+        for(IRepositoryViewObject node : nodes){
+        	ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
+        	if (null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)) {
         		features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
         		break;
         	}
@@ -229,7 +223,6 @@ public class ExportServiceAction implements IRunnableWithProgress {
                 FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
             }
         }
-        Map<String, String> additionalInfo = serviceConnection.getAdditionalInfo().map();
         // blueprint
         File blueprint = new File(temp, FileConstants.BLUEPRINT_FOLDER_NAME);
         blueprint.mkdirs();
