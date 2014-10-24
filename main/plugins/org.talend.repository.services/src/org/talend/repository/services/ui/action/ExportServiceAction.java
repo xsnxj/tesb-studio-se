@@ -42,7 +42,6 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.utils.EmfModelUtils;
-import org.talend.repository.utils.JobContextUtils;
 import org.talend.utils.io.FilesUtils;
 
 public class ExportServiceAction implements IRunnableWithProgress {
