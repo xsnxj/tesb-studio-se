@@ -259,7 +259,7 @@
                   attributeValue="SAML">
             </predicate>
             <predicate
-                  attributeName="NEED_AUTHORIZATION"
+                  attributeName="USE_AUTHORIZATION"
                   attributeValue="true">
             </predicate>
          </importPackage>
