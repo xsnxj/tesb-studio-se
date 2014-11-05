@@ -93,6 +93,8 @@ import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePag
 import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
 import org.talend.repository.services.utils.WSDLUtils;
+import org.talend.repository.ui.utils.XsdMetadataUtils;
+
 import orgomg.cwm.resource.record.RecordFactory;
 import orgomg.cwm.resource.record.RecordFile;
 
@@ -317,8 +319,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
@@ -335,8 +337,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
@@ -351,8 +353,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        populateMessage2(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
@@ -372,262 +374,6 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         }
     }
 
-    private int orderId;
-
-    private boolean loopElementFound;
-
-    /**
-     * To optimize, right now it will write the xsd file many times. Since there is no clues if the parameters comes
-     * from the same xsd, generate it everytime right now.
-     * 
-     * @param operationName
-     * @param hashMap
-     * @throws IOException
-     */
-    private void populateMessage2(QName parameter, String portTypeName, String operationName, File schemaFile,
-            Collection<XmlFileConnectionItem> selectItems, File zip) throws IOException {
-        String name = /* componentName + "_"+ */parameter.getLocalPart();
-        XmlFileConnection connection = null;
-        Property connectionProperty = null;
-        XmlFileConnectionItem connectionItem = null;
-        String oldConnectionId = null;
-        String oldTableId = null;
-        IMetadataTable oldMetadataTable = null;
-        Map<String, String> oldTableMap = null;
-
-        if (!selectItems.isEmpty()) {
-            boolean needRewrite = false;
-            for (XmlFileConnectionItem item : selectItems) {
-                connectionProperty = item.getProperty();
-                if (connectionProperty.getLabel().equals(name)) {
-                    oldConnectionId = connectionProperty.getId();
-                    connectionItem = item;
-                    connection = (XmlFileConnection) connectionItem.getConnection();
-                    needRewrite = true;
-                    Set<MetadataTable> tables = ConnectionHelper.getTables(connection);
-                    MetadataTable oldTable = null;
-                    if (tables.size() > 0) {
-                        oldTable = tables.toArray(new MetadataTable[0])[0];
-                        oldTableId = oldTable.getId();
-                        oldMetadataTable = ConvertionHelper.convert(oldTable);
-                    }
-                    oldTableMap = RepositoryUpdateManager.getOldTableIdAndNameMap(connectionItem, oldTable, false);
-                    break;
-                }
-            }
-            if (!needRewrite && !WSDLUtils.isNameValidInXmlFileConnection(parameter, portTypeName, operationName)) {
-                return;
-            }
-        }
-
-        // if (!exist) {
-        connection = ConnectionFactory.eINSTANCE.createXmlFileConnection();
-        connection.setName(ERepositoryObjectType.METADATA_FILE_XML.getKey());
-        connectionItem = PropertiesFactory.eINSTANCE.createXmlFileConnectionItem();
-        connectionProperty = PropertiesFactory.eINSTANCE.createProperty();
-        connectionProperty.setAuthor(((RepositoryContext) CoreRuntimePlugin.getInstance().getContext()
-                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
-        connectionProperty.setLabel(name);
-        connectionProperty.setVersion(VersionUtils.DEFAULT_VERSION);
-        connectionProperty.setStatusCode(""); //$NON-NLS-1$
-
-        connectionItem.setProperty(connectionProperty);
-        connectionItem.setConnection(connection);
-
-        connection.setInputModel(false);
-        // }
-
-        ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
-        byteArray.setInnerContentFromFile(zip);
-        connection.setFileContent(byteArray.getInnerContent());
-
-        // don't put any XSD directly inside the xml connection but put zip file
-        // Use xsd schema file name + zip file name as xml file path in case we need get the root schema of xml
-        // connection after.
-        String schemaFileName = schemaFile.getName();
-        schemaFileName = schemaFileName.substring(0, schemaFileName.lastIndexOf(".")); //$NON-NLS-1$
-        connection.setXmlFilePath(schemaFileName.concat("_").concat(zip.getName())); //$NON-NLS-1$
-
-        try {
-            String filePath = schemaFile.getPath(); // name of xsd file needed
-            XSDSchema xsdSchema = populationUtil.getXSDSchema(filePath);
-            List<ATreeNode> rootNodes = populationUtil.getAllRootNodes(xsdSchema);
-
-            ATreeNode node = null;
-
-            // try to find the root element needed from XSD file.
-            // note: if there is any prefix, it will get the node with the first correct name, no matter the prefix.
-
-            // once the we can get the correct prefix value from the wsdl, this code should be modified.
-            for (ATreeNode curNode : rootNodes) {
-                String curName = (String) curNode.getValue();
-                if (curName.contains(":")) { //$NON-NLS-1$
-                    // if with prefix, don't care about it for now, just compare the name.
-                    if (curName.split(":")[1].equals(name)) { //$NON-NLS-1$
-                        node = curNode;
-                        break;
-                    }
-                } else if (curName.equals(name)) {
-                    node = curNode;
-                    break;
-                }
-            }
-
-            node = populationUtil.getSchemaTree(xsdSchema, node);
-            orderId = 1;
-            loopElementFound = false;
-            if (ConnectionHelper.getTables(connection).isEmpty()) {
-                MetadataTable table = ConnectionFactory.eINSTANCE.createMetadataTable();
-                if (oldTableId != null) {
-                    table.setId(oldTableId);
-                } else {
-                    table.setId(ProxyRepositoryFactory.getInstance().getNextId());
-                }
-                RecordFile record = (RecordFile) ConnectionHelper.getPackage(connection.getName(), connection, RecordFile.class);
-                if (record != null) { // hywang
-                    PackageHelper.addMetadataTable(table, record);
-                } else {
-                    RecordFile newrecord = RecordFactory.eINSTANCE.createRecordFile();
-                    newrecord.setName(connection.getName());
-                    ConnectionHelper.addPackage(newrecord, connection);
-                    PackageHelper.addMetadataTable(table, newrecord);
-                }
-            }
-            boolean haveElement = false;
-            for (Object curNode : node.getChildren()) {
-                if (((ATreeNode) curNode).getType() == ATreeNode.ELEMENT_TYPE) {
-                    haveElement = true;
-                    break;
-                }
-            }
-            fillRootInfo(connection, node, "", !haveElement); //$NON-NLS-1$
-        } catch (IOException e) {
-            throw e;
-        } catch (URISyntaxException e1) {
-            ExceptionHandler.process(e1);
-        } catch (OdaException e) {
-            ExceptionHandler.process(e);
-        }
-
-        // save
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        connectionProperty.setId(factory.getNextId());
-        try {
-            // http://jira.talendforge.org/browse/TESB-3655 Remove possible
-            // schema prefix
-            String folderPath = FolderNameUtil.getImportedXmlSchemaPath(parameter.getNamespaceURI(), portTypeName, operationName);
-            IPath path = new Path(folderPath);
-            factory.create(connectionItem, path, true); // consider this as migration will overwrite the old metadata if
-                                                        // existing in the same path
-            if (oldConnectionId != null) {
-                connectionItem.getProperty().setId(oldConnectionId);
-                factory.save(connectionItem);
-            }
-
-            propagateSchemaChange(oldMetadataTable, oldTableMap, connection, connectionItem);
-
-            ProxyRepositoryFactory.getInstance().saveProject(ProjectManager.getInstance().getCurrentProject());
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        } catch (URISyntaxException e) {
-            ExceptionHandler.process(e);
-        }
-    }
-
-    private void propagateSchemaChange(final IMetadataTable oldMetaTable, final Map<String, String> oldTableMap,
-            final XmlFileConnection connection, final XmlFileConnectionItem connectionItem) {
-        if (oldMetaTable == null) {
-            return;
-        }
-
-        Display.getDefault().syncExec(new Runnable() {
-
-            @Override
-            public void run() {
-                MetadataTable newTable = ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0];
-                RepositoryUpdateManager.updateSingleSchema(connectionItem, newTable, oldMetaTable, oldTableMap);
-            }
-        });
-    }
-
-    private void fillRootInfo(XmlFileConnection connection, ATreeNode node, String path, boolean inLoop) {
-        XMLFileNode xmlNode = ConnectionFactory.eINSTANCE.createXMLFileNode();
-        xmlNode.setXMLPath(path + '/' + node.getValue());
-        xmlNode.setOrder(orderId);
-        orderId++;
-        MappingTypeRetriever retriever;
-        String nameWithoutPrefixForColumn;
-        String curName = (String) node.getValue();
-        if (curName.contains(":")) { //$NON-NLS-1$
-            nameWithoutPrefixForColumn = curName.split(":")[1]; //$NON-NLS-1$
-        } else {
-            nameWithoutPrefixForColumn = curName;
-        }
-        retriever = MetadataTalendType.getMappingTypeRetriever("xsd_id"); //$NON-NLS-1$
-        xmlNode.setAttribute("attri"); //$NON-NLS-1$
-        xmlNode.setType(retriever.getDefaultSelectedTalendType(node.getDataType()));
-        MetadataColumn column = null;
-        MetadataTable metadataTable = ConnectionHelper.getTables(connection).toArray(new MetadataTable[0])[0];
-        switch (node.getType()) {
-        case ATreeNode.ATTRIBUTE_TYPE:
-            // fix for TDI-20390 and TDI-20671 ,XMLPath for attribute should only store attribute name but not full
-            // xpath
-            xmlNode.setXMLPath("" + node.getValue()); //$NON-NLS-1$
-            column = ConnectionFactory.eINSTANCE.createMetadataColumn();
-            column.setTalendType(xmlNode.getType());
-            String uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
-            column.setLabel(uniqueName);
-            xmlNode.setRelatedColumn(uniqueName);
-            metadataTable.getColumns().add(column);
-            break;
-        case ATreeNode.ELEMENT_TYPE:
-            boolean haveElementOrAttributes = false;
-            for (Object curNode : node.getChildren()) {
-                if (((ATreeNode) curNode).getType() != ATreeNode.NAMESPACE_TYPE) {
-                    haveElementOrAttributes = true;
-                    break;
-                }
-            }
-            if (!haveElementOrAttributes) {
-                xmlNode.setAttribute("branch"); //$NON-NLS-1$
-                column = ConnectionFactory.eINSTANCE.createMetadataColumn();
-                column.setTalendType(xmlNode.getType());
-                uniqueName = extractColumnName(nameWithoutPrefixForColumn, metadataTable.getColumns());
-                column.setLabel(uniqueName);
-                xmlNode.setRelatedColumn(uniqueName);
-                metadataTable.getColumns().add(column);
-            } else {
-                xmlNode.setAttribute("main"); //$NON-NLS-1$
-            }
-            break;
-        case ATreeNode.NAMESPACE_TYPE:
-            xmlNode.setAttribute("ns"); //$NON-NLS-1$
-            // specific for namespace... no path set, there is only the prefix value.
-            // this value is saved now in node.getDataType()
-            xmlNode.setXMLPath(node.getDataType());
-
-            xmlNode.setDefaultValue((String) node.getValue());
-            break;
-        case ATreeNode.OTHER_TYPE:
-            break;
-        }
-        boolean subElementsInLoop = inLoop;
-        // will try to get the first element (branch or main), and set it as loop.
-        if ((!loopElementFound && path.split("/").length == 2 && node.getType() == ATreeNode.ELEMENT_TYPE) || subElementsInLoop) { //$NON-NLS-1$
-            connection.getLoop().add(xmlNode);
-
-            loopElementFound = true;
-            subElementsInLoop = true;
-        } else {
-            connection.getRoot().add(xmlNode);
-        }
-        if (node.getChildren().length > 0) {
-            for (Object curNode : node.getChildren()) {
-                fillRootInfo(connection, (ATreeNode) curNode, path + '/' + node.getValue(), subElementsInLoop);
-            }
-        }
-    }
-
     private static File initFileContent(final XmlSchema schema) throws IOException {
         FileOutputStream outStream = null;
         try {
@@ -636,27 +382,9 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             schema.write(outStream); // this method hangs when using invalid wsdl.
             return temfile;
         } finally {
-            outStream.close();
+            if (outStream != null) {
+                outStream.close();
+            }
         }
     }
-
-    private static final Pattern PATTERN_TOREPLACE = Pattern.compile("[^a-zA-Z0-9]"); //$NON-NLS-1$
-
-    private static String extractColumnName(String currentExpr, List<MetadataColumn> fullSchemaTargetList) {
-
-        String columnName = currentExpr.startsWith("@") ? currentExpr.substring(1) : currentExpr; //$NON-NLS-1$
-        columnName = PATTERN_TOREPLACE.matcher(columnName).replaceAll("_"); //$NON-NLS-1$
-
-        UniqueStringGenerator<MetadataColumn> uniqueStringGenerator = new UniqueStringGenerator<MetadataColumn>(columnName,
-                fullSchemaTargetList) {
-
-            @Override
-            protected String getBeanString(MetadataColumn bean) {
-                return bean.getLabel();
-            }
-        };
-        columnName = uniqueStringGenerator.getUniqueString();
-        return columnName;
-    }
-
 }
