@@ -10,4 +10,5 @@
   </parent>
   <artifactId>org.talend.designer.esb.components.ws.consumer</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <name>Talend Designer ESB Tooling web service consumer plugin</name>
 </project>

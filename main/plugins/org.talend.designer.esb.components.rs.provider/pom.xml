@@ -10,4 +10,5 @@
   </parent>
   <artifactId>org.talend.designer.esb.components.rs.provider</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <name>Talend Designer ESB Tooling REST Service provider plugin</name>
 </project>

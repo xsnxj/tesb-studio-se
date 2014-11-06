@@ -9,6 +9,29 @@
   </parent>
   <artifactId>tesb-studio-se</artifactId>
   <packaging>pom</packaging>
+  <name>Talend ESB Tooling</name>
+  <organization>
+    <name>Talend Inc.</name>
+    <url>www.talend.com</url>
+  </organization>
+  <inceptionYear>2011</inceptionYear>
+  <url>http://talend.com</url>
+  <issueManagement>
+	<system>Jira</system>
+	<url>https://jira.talendforge.org/browse/TESB</url>
+  </issueManagement>
+  <developers></developers>
+  <scm>
+	<url>https://github.com/Talend/tesb-studio-se</url>
+  </scm>
+  <properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cxf.version>2.7.12</cxf.version>
+	<spring.version>3.2.4.RELEASE</spring.version>
+	<jettison.version>1.3.5</jettison.version>
+	<slf4j.version>1.7.7</slf4j.version>
+	<tesb.version>5.6.1-SNAPSHOT</tesb.version>
+  </properties>
   <repositories>
 	<repository>
 		<id>talend_open</id>
@@ -30,8 +53,55 @@
 		</snapshots>
 		<url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
 	</repository>
+	<!--repository>
+		<id>apache-releases</id>
+		<url>https://repository.apache.org/content/repositories/releases/</url>
+		<name>Apache releases Repo</name>
+		<snapshots>
+			<enabled>false</enabled>
+		</snapshots>
+		<releases>
+			<enabled>true</enabled>
+		</releases>
+	</repository-->
+	<!--repository>
+		<id>apache-snapshots</id>
+		<url>http://repository.apache.org/snapshots</url>
+		<name>Apache Snapshots Repo</name>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+	</repository-->
+	<repository>
+		<id>sonatype-snapshots</id>
+		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		<name>Sonatype Snapshots Repo</name>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+	</repository>
   </repositories>
+  
+  <pluginRepositories>
+	<pluginRepository>
+		<id>trojanbug.plugins</id>
+		<url>https://propertymapper-maven-plugin.googlecode.com/svn/maven-repository/</url>
+		<releases>
+			<enabled>true</enabled>
+			<updatePolicy>never</updatePolicy>
+			<checksumPolicy>warn</checksumPolicy>
+		</releases>
+	</pluginRepository>
+  </pluginRepositories>
+  
   <modules>
+    <module>main/plugins/esb_maven</module>
     <module>i18n/plugins/org.talend.camel.designer.nl</module>
     <module>i18n/plugins/org.talend.repository.services.nl</module>
     <module>i18n/plugins/org.talend.repository.view.esb.nl</module>
@@ -77,6 +147,120 @@
         <version>0.21.0</version>
         <extensions>true</extensions>
       </plugin>
+	  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>2.6</version>
+			<executions>
+				<execution>
+					<id>filter</id>
+					<phase>generate-resources</phase>
+					<goals>
+						<goal>resources</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-dependency-plugin</artifactId>
+			<version>2.8</version>
+			<executions>
+				<execution>
+					<id>properties</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>properties</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>eu.trojanbug.maven.plugins</groupId>
+			<artifactId>propertymapper-maven-plugin</artifactId>
+			<version>0.1</version>
+			<executions>
+				<execution>
+					<id>map</id>
+					<phase>initialize</phase>
+					<goals>
+						<goal>map-properties</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<mappings>
+					<mapping>
+						<from>
+							<name>[^:]+:([^:]+):jar</name>
+							<value>.*[\\/]([^\\/]+)</value>
+						</from>
+						<to>
+							<name>tesb-$1</name>
+							<value>$2</value>
+						</to>
+					</mapping>
+					<!--mapping>
+						<from>
+							<name>[^:]+:([^:]+):jar</name>
+							<value>(.*)</value>
+						</from>
+						<to>
+							<name>tesb-path-$1</name>
+							<value>$2</value>
+						</to>
+					</mapping-->
+				</mappings>
+			</configuration>
+		</plugin>
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>license-maven-plugin</artifactId>
+			<version>1.7</version>
+			<configuration>
+				<licenseName>apache_v2</licenseName>
+				<licenseFile>${basedir}/LICENSE</licenseFile>
+				<acceptPomPackaging>true</acceptPomPackaging>
+				<groupByLicense>true</groupByLicense>
+				<licenseMerges>
+					<licenseMerge>Apache Software License - Version 2.0|The Apache Software License, Version 2.0|Apache 2</licenseMerge>
+					<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
+				</licenseMerges>
+				<excludedGroups>org.talend.esb</excludedGroups>
+				<missingFile>THIRD-PARTY.properties</missingFile>
+				<useMissingFile>true</useMissingFile>
+				<failIfWarning>true</failIfWarning>
+			</configuration>
+		</plugin>
     </plugins>
+	<resources>
+		<resource>
+			<directory>src/main/filtered-resources</directory>
+			<filtering>true</filtering>
+			<targetPath>${basedir}</targetPath>
+		</resource>
+	</resources>
+
+	<pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+		</plugins>
+	</pluginManagement>
   </build>
 </project>
