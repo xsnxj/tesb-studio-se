@@ -12,6 +12,7 @@
 		<artifactId>tooling.parent</artifactId>
 		<groupId>org.talend.esb</groupId>
 		<version>5.6.0.qualifier</version>
+		<relativePath>../esb_maven</relativePath>
 	</parent>
 
 	<dependencies>
