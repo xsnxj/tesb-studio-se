@@ -43,12 +43,12 @@
 	</properties>
 
 	<modules>
-		<module>../org.talend.libraries.esb/esb_maven</module>
-		<module>../org.talend.designer.esb.components.rs.consumer/esb_maven</module>
-		<module>../org.talend.designer.esb.components.ws.consumer/esb_maven</module>
-		<module>../org.talend.designer.esb.components.ws.provider/esb_maven</module>
-		<module>../org.talend.designer.esb.components.rs.provider/esb_maven</module>
-		<module>../org.talend.designer.camel.components.localprovider/esb_maven</module>
+		<module>../org.talend.libraries.esb</module>
+		<module>../org.talend.designer.esb.components.rs.consumer</module>
+		<module>../org.talend.designer.esb.components.ws.consumer</module>
+		<module>../org.talend.designer.esb.components.ws.provider</module>
+		<module>../org.talend.designer.esb.components.rs.provider</module>
+		<module>../org.talend.designer.camel.components.localprovider</module>
 	</modules>
 
 	<build>
