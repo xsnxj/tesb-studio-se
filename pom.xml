@@ -101,7 +101,6 @@
   </pluginRepositories>
   
   <modules>
-    <module>main/plugins/esb_maven</module>
     <module>i18n/plugins/org.talend.camel.designer.nl</module>
     <module>i18n/plugins/org.talend.repository.services.nl</module>
     <module>i18n/plugins/org.talend.repository.view.esb.nl</module>
