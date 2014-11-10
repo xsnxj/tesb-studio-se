@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.runprocess.IProcessor;
@@ -252,7 +253,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
             exportChoiceMap = getDefaultExportChoiceMap();
         }
         JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap,
-                "Default", serviceVersion, statisticPort, tracePort); //$NON-NLS-1$
+            ((ProcessItem) node.getProperty().getItem()).getProcess().getDefaultContext(), serviceVersion, statisticPort, tracePort);
         String artifactName = getNodeLabel(node);
         File path = getFilePath(parentPath, groupId, artifactName, serviceVersion);
         File file = new File(path, artifactName + '-' + serviceVersion + manager.getOutputSuffix());
