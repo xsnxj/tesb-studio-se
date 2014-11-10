@@ -12,7 +12,7 @@
 		<artifactId>tooling.parent</artifactId>
 		<groupId>org.talend.esb</groupId>
 		<version>5.6.0.qualifier</version>
-		<relativePath>../../esb_maven</relativePath>
+		<relativePath>../../</relativePath>
 	</parent>
 
 	<properties>
@@ -174,8 +174,6 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>..</sourceDirectory>
-		<outputDirectory>../target</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -190,7 +188,7 @@
 						<configuration>
 							<excludeTypes>pom</excludeTypes>
 							<excludeTransitive>true</excludeTransitive>
-							<outputDirectory>${basedir}/lib</outputDirectory>
+							<outputDirectory>${basedir}/../lib</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -205,6 +203,7 @@
 							<goal>add-third-party</goal>
 						</goals>
 						<configuration>
+							<outputDirectory>${basedir}/../target/generated-sources/license</outputDirectory>
 							<includeTransitiveDependencies>false</includeTransitiveDependencies>
 						</configuration>
 					</execution>
@@ -225,8 +224,8 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
-								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
-									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
+								<concat destfile="${basedir}/../NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/../target/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
 							</target>
 						</configuration>
@@ -242,10 +241,10 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${basedir}/lib</directory>
+                            <directory>${basedir}/../lib</directory>
                         </fileset>
                         <fileset>
-                            <directory>${basedir}</directory>
+                            <directory>${basedir}/../</directory>
                             <includes>
                                 <include>build_apl.properties</include>
                             </includes>

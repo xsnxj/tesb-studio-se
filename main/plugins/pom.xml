@@ -52,11 +52,12 @@
 	</modules>
 
 	<build>
+		<outputDirectory>${basedir}/../target</outputDirectory>
 		<resources>
 			<resource>
-				<directory>src/main/filtered-resources</directory>
+				<directory>../src/main/filtered-resources</directory>
 				<filtering>true</filtering>
-				<targetPath>${basedir}</targetPath>
+				<targetPath>${basedir}/../</targetPath>
 			</resource>
 		</resources>
 		<plugins>
@@ -132,7 +133,7 @@
 				<version>1.7</version>
 				<configuration>
 					<licenseName>apache_v2</licenseName>
-					<licenseFile>${basedir}/LICENSE</licenseFile>
+					<licenseFile>${basedir}/../LICENSE</licenseFile>
 					<acceptPomPackaging>true</acceptPomPackaging>
 					<groupByLicense>true</groupByLicense>
 					<licenseMerges>
@@ -140,7 +141,7 @@
 						<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
 					</licenseMerges>
 					<excludedGroups>org.talend.esb</excludedGroups>
-					<missingFile>THIRD-PARTY.properties</missingFile>
+					<missingFile>${basedir}/../THIRD-PARTY.properties</missingFile>
 					<useMissingFile>true</useMissingFile>
 					<failIfWarning>true</failIfWarning>
 				</configuration>

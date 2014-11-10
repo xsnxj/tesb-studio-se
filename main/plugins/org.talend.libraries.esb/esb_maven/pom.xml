@@ -14,7 +14,7 @@
         <groupId>org.talend.esb</groupId>
 		<artifactId>tooling.parent</artifactId>
 		<version>5.6.0.qualifier</version>
-		<relativePath>../../esb_maven</relativePath>
+		<relativePath>../../</relativePath>
 	</parent>
 
 	<dependencies>
@@ -164,8 +164,7 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>..</sourceDirectory>
-		<outputDirectory>../target</outputDirectory>
+		<outputDirectory>${basedir}/../target</outputDirectory>
 		<plugins>
 			<!--plugin>
 				<groupId>org.apache.felix</groupId>
@@ -200,7 +199,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/lib</outputDirectory>
+							<outputDirectory>${basedir}/../lib</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -215,6 +214,7 @@
 							<goal>add-third-party</goal>
 						</goals>
 						<configuration>
+							<outputDirectory>${basedir}/../target/generated-sources/license</outputDirectory>
 							<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm|stax2-api</excludedArtifacts>
 						</configuration>
 					</execution>
@@ -235,11 +235,11 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
-								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
-									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
+								<concat destfile="${basedir}/../NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/../target/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
-								<concat destfile="${basedir}/build_lgpl2.properties" ignoreempty="false" fixlastline="yes">
-									<path path="${basedir}/build.properties"/>
+								<concat destfile="${basedir}/../build_lgpl2.properties" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/../build.properties"/>
 									<footer>bin.excludes = lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
 								</concat>
 							</target>
@@ -268,7 +268,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${basedir}/lib</directory>
+                            <directory>${basedir}/../lib</directory>
                         </fileset>
                     </filesets>
                 </configuration>

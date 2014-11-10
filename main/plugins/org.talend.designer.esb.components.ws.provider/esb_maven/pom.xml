@@ -12,7 +12,7 @@
 		<artifactId>tooling.parent</artifactId>
 		<groupId>org.talend.esb</groupId>
 		<version>5.6.0.qualifier</version>
-		<relativePath>../../esb_maven</relativePath>
+		<relativePath>../../</relativePath>
 	</parent>
 
 	<dependencies>
@@ -23,10 +23,5 @@
 			<type>pom</type>
 		</dependency>
 	</dependencies>
-	
-	<build>
-		<sourceDirectory>..</sourceDirectory>
-		<outputDirectory>../target</outputDirectory>
-	</build>
 
 </project>
