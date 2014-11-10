@@ -23,5 +23,10 @@
 			<type>pom</type>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<sourceDirectory>..</sourceDirectory>
+		<outputDirectory>..</outputDirectory>
+	</build>
 
 </project>

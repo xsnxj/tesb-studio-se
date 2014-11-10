@@ -16,6 +16,11 @@
 		<version>5.6.0.qualifier</version>
 		<relativePath>../../esb_maven</relativePath>
 	</parent>
+	
+	<build>
+		<sourceDirectory>..</sourceDirectory>
+		<outputDirectory>..</outputDirectory>
+	</build>
 
 	<dependencies>
 		<!-- override 2.1.13 activated by cxf for java 6 -->

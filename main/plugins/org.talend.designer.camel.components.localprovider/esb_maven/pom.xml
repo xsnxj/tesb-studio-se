@@ -25,6 +25,11 @@
 		<qpid-amqp.version>0.28</qpid-amqp.version>
 		<geronimo-jms.version>1.1.1</geronimo-jms.version>
 	</properties>
+	
+	<build>
+		<sourceDirectory>..</sourceDirectory>
+		<outputDirectory>..</outputDirectory>
+	</build>
 
 	<dependencies>
 		<dependency>
