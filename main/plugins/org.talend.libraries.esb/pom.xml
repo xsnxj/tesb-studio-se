@@ -77,14 +77,14 @@
 				<executions>
 					<execution>
 						<id>create-notice</id>
-						<phase>compile</phase>
+						<phase>process-resources</phase>
 						<configuration>
 							<target>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
-								<concat destfile="${basedir}/build_lgpl2.properties" ignoreempty="false" fixlastline="yes">
-									<path path="${basedir}/build.properties"/>
+								<concat destfile="${basedir}/build.properties" ignoreempty="false" fixlastline="yes">
+									<path path="${basedir}/build.properties.template"/>
 									<footer>bin.excludes = lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
 								</concat>
 							</target>
