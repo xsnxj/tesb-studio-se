@@ -184,7 +184,16 @@
                     }
 				}
 %>
-                factory_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>);
+<% 
+				if (isProvider) {
+%>
+                factory_<%=cid%>.setAddress(getCXFRSEndpointAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>));
+<% 				} else {
+%>
+				factory_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>);
+<% 
+				}
+%>
 <%
                 if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
 %>
@@ -453,6 +462,7 @@
 	       			((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setHostName(<%=wmqServer%>);
 	       			try {
 	       				((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
+	       				((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
 	       				((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
 	       				((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);	
 	       			} catch (javax.jms.JMSException e) {
@@ -519,6 +529,7 @@
 					try{
 						camelContext.addComponent(<%=name%>,
 								new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+						//((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
 					}catch(Exception e){
 						throw new RuntimeException(e);
 					}
