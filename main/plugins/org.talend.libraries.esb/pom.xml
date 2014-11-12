@@ -46,6 +46,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/lib</outputDirectory>
+							<excludeArtifactIds>jaxb-impl, asm, stax2-api</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -60,7 +61,7 @@
 							<goal>add-third-party</goal>
 						</goals>
 						<configuration>
-							<excludedArtifacts>javax.ws.rs-api|jaxb-impl|asm|stax2-api</excludedArtifacts>
+							<excludedArtifacts>jaxb-impl|asm|stax2-api</excludedArtifacts>
 						</configuration>
 					</execution>
 					<execution>
@@ -82,10 +83,6 @@
 							<target>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
-								</concat>
-								<concat destfile="${basedir}/build.properties" ignoreempty="false" fixlastline="yes">
-									<path path="${basedir}/build.properties.template"/>
-									<footer>bin.excludes = lib/${tesb-jaxb-impl},lib/${tesb-asm},lib/${tesb-stax2-api}</footer>
 								</concat>
 							</target>
 						</configuration>

@@ -190,6 +190,7 @@
 							<excludeTypes>pom</excludeTypes>
 							<excludeTransitive>true</excludeTransitive>
 							<outputDirectory>${basedir}/lib</outputDirectory>
+							<excludeGroupIds>p2.eclipse-plugin</excludeGroupIds>
 						</configuration>
 					</execution>
 				</executions>

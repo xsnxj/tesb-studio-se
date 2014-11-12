@@ -48,7 +48,7 @@
 		<module>org.talend.designer.esb.components.ws.consumer/esb_maven</module>
 		<module>org.talend.designer.esb.components.ws.provider/esb_maven</module>
 		<module>org.talend.designer.esb.components.rs.provider/esb_maven</module>
-		<module>org.talend.designer.camel.components.localprovider/esb_maven</module>
+		<!--module>org.talend.designer.camel.components.localprovider/esb_maven</module-->
 	</modules>
 
 	<build>
