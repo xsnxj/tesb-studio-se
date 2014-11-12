@@ -11,4 +11,12 @@
   <artifactId>org.talend.designer.esb.components.ws.consumer</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>Talend Designer ESB Tooling web service consumer plugin</name>
+	<dependencies>
+		<dependency>
+			<groupId>org.talend.studio</groupId>
+			<artifactId>org.talend.libraries.esb</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
 </project>
