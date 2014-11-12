@@ -43,7 +43,7 @@
 	</properties>
 
 	<modules>
-		<module>org.talend.libraries.esb/esb_maven</module>
+		<!--module>org.talend.libraries.esb/esb_maven</module-->
 		<module>org.talend.designer.esb.components.rs.consumer/esb_maven</module>
 		<module>org.talend.designer.esb.components.ws.consumer/esb_maven</module>
 		<module>org.talend.designer.esb.components.ws.provider/esb_maven</module>

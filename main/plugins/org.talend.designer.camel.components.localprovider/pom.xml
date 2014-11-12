@@ -167,6 +167,11 @@
 			<artifactId>geronimo-jms_1.1_spec</artifactId>
 			<version>${geronimo-jms.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jdbc</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -216,7 +221,7 @@
 				<executions>
 					<execution>
 						<id>create-notice</id>
-						<phase>compile</phase>
+						<phase>process-resources</phase>
 						<configuration>
 							<target>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
@@ -237,12 +242,6 @@
                     <filesets>
                         <fileset>
                             <directory>${basedir}/lib</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>${basedir}</directory>
-                            <includes>
-                                <include>build_apl.properties</include>
-                            </includes>
                         </fileset>
                     </filesets>
                 </configuration>
