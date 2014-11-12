@@ -255,9 +255,9 @@
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
 %>
-                    final String correlationId = <%=ElementParameterParser.getValue(node, "__CORRELATION_VALUE__")%>;
-                    if (null != correlationId && correlationId.length() > 0) {
-                        correlationIDCallbackHandler_<%=cid%>.setCorrelationId(correlationId);
+                    final String correlationId_<%=cid%> = <%=ElementParameterParser.getValue(node, "__CORRELATION_VALUE__")%>;
+                    if (null != correlationId_<%=cid%> && correlationId_<%=cid%>.length() > 0) {
+                        correlationIDCallbackHandler_<%=cid%>.setCorrelationId(correlationId_<%=cid%>);
                         factory_<%=cid%>.getProperties(true).put(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.CORRELATION_ID_CALLBACK_HANDLER, 
                             correlationIDCallbackHandler_<%=cid%>);
                     }
