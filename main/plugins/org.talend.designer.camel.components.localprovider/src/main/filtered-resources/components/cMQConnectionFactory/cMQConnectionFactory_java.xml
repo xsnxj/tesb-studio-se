@@ -335,7 +335,11 @@
                     MODULE="spring-tx-${spring.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-${spring.version}.jar"
                     REQUIRED="true" />
-
+			<IMPORT NAME="geronimo-jms_1.1_spec" 
+                    MODULE="${tesb-geronimo-jms_1.1_spec}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
+                    REQUIRED="true" />
+			
 			<IMPORT NAME="activemq" 
 					MODULE="activemq-all-${activemq.version}.jar" 
 					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/activemq-all-${activemq.version}.jar"
@@ -377,10 +381,6 @@
             <IMPORT NAME="qpid-amqp-1-0-client-jms" 
                     MODULE="${tesb-qpid-amqp-1-0-client-jms}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
-                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
-            <IMPORT NAME="geronimo-jms_1.1_spec" 
-                    MODULE="${tesb-geronimo-jms_1.1_spec}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 
             <IMPORT NAME="camel-mqtt-alldep" 
