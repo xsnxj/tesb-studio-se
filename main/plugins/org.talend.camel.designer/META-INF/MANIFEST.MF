@@ -28,7 +28,6 @@ Require-Bundle: org.apache.commons.collections,
  org.talend.repository.items.importexport,
  org.talend.designer.camel.dependencies.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.migration,
  org.talend.camel.designer.model,

@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Repository Services Plug-in
 Bundle-SymbolicName: org.talend.repository.services;singleton:=true
 Bundle-Version: 6.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.talend.repository.services.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.apache.commons.collections,
