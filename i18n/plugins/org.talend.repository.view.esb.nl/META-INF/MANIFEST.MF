@@ -3,4 +3,4 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nl
 Bundle-SymbolicName: org.talend.repository.view.esb.nl
 Bundle-Version: 6.0.0.qualifier
-Fragment-Host: org.talend.repository.view.esb;bundle-version="6.0.0"
+Fragment-Host: org.talend.repository.view.esb
