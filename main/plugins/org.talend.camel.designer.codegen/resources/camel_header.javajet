@@ -1181,11 +1181,10 @@ if (isProvider) {
 				String useRouteContext = ElementParameterParser.getValue(node, "__USE_ROUTE_CONTEXT__");
 				String useJobContext = ElementParameterParser.getValue(node, "__USE_JOB_CONTEXT__");
 				if("true".equals(useRouteContext)){
-					context = ElementParameterParser.getProcessSelectedContext(process.getId()); // route context
-					boolean found = ElementParameterParser.checkIfContextExisted(id, context); // check the same context exist or not in job
-					if(!found){
-						context = ElementParameterParser.getProcessSelectedContext(id); // if not found, then use default job context
-					}
+					// TESB-13614
+					// we can't define context during codegeneration in this case, because
+					// context will provided to the job before execution
+					context = "NOT_DEFINED";					
 
 				}else if("true".equals(useJobContext)){
 					context = ElementParameterParser.getProcessSelectedContext(id);
@@ -1197,10 +1196,20 @@ if (isProvider) {
 				String jobFolderName = JavaResourcesHelper.getJobFolderName(jobName, jobVersion);
 				typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
 			}
+			
+			if("NOT_DEFINED".equals(context)){
+        		String executionContextVariable = "contextStr";
+%>
+			org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
+			    (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+<%=executionContextVariable%>+"&propagateHeader=<%=propagateHeader%>");
+<%			
+			} else {
 %>
 			org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
 			    (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
-<%
+<%			
+			}			
+						
 		}
 		int contextParamsSize = contextParams.size();
 		if(contextParamsSize > 0){
