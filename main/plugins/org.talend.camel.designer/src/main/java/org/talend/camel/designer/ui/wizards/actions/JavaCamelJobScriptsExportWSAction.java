@@ -207,7 +207,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             if(getArtifactVersion().endsWith("-SNAPSHOT")) {
             	jobArtifactVersion += "-SNAPSHOT";
             }
-            BundleModel jobModel = new BundleModel(getGroupId(), jobName, jobArtifactVersion, jobFile);
+            String routeName = routeNode.getObject().getProperty().getDisplayName();
+            BundleModel jobModel = new BundleModel(getGroupId(), routeName+"_"+jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
             		exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
             				jobName, jobVersion,
