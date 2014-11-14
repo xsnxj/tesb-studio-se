@@ -82,13 +82,9 @@ package <%= packageName %>;
 	importsSet.add("import routines.*");
 	importsSet.add("import routines.system.*");
 	importsSet.add("import java.text.ParseException");
-	importsSet.add("import org.apache.camel.osgi.CamelContextFactoryBean");
-	importsSet.add("import org.apache.camel.osgi.SpringCamelContextFactory");
-	importsSet.add("import org.springframework.context.support.ClassPathXmlApplicationContext");
 	importsSet.add("import org.apache.camel.CamelContext");
 	importsSet.add("import java.util.Properties");
 	importsSet.add("import org.apache.camel.management.JmxNotificationEventNotifier");
-	importsSet.add("import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext");
 	importsSet.add("import java.util.Set");
 	
 	String headerImports = ElementParameterParser.getValue(process, "__HEADER_IMPORT__");
