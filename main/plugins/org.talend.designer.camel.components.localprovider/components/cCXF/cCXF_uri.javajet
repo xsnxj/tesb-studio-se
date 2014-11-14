@@ -59,6 +59,8 @@ if ("wsdlURL".equals(serviceType)) {
 		}
 		filePath.replaceAll("\\\\","/");
 		sb.append("+").append(filePath);
+	} else {
+		sb.append("+\"&wsdlURL=\"");
 	}
 } else {
 	sb.append("+\"&" + serviceType + "=\"");
