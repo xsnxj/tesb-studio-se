@@ -30,13 +30,13 @@
 
 			main = new org.apache.camel.main.Main(){
 
-		protected CamelContext createContext() {
-			final CamelContext camelContext;
+		protected Map<String, CamelContext> getCamelContextMap() {
+			final org.apache.camel.impl.DefaultCamelContext camelContext;
 			if(bundleContext != null){
 				org.apache.camel.spring.SpringCamelContext.setNoStart(true);
-				CamelContextFactoryBean contextFactory = new CamelContextFactoryBean();
+				org.apache.camel.osgi.CamelContextFactoryBean contextFactory = new org.apache.camel.osgi.CamelContextFactoryBean();
 				contextFactory.setId("<%=process.getName()%>-ctx");
-				OsgiBundleXmlApplicationContext appContext = new OsgiBundleXmlApplicationContext(
+				org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext appContext = new org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext(
 						new String[]{"META-INF/spring/<%=process.getName().toLowerCase()%>.xml"});
 				appContext.setBundleContext(bundleContext);
 				appContext.refresh();
@@ -44,14 +44,18 @@
 				contextFactory.setBundleContext(bundleContext);
 				camelContext = contextFactory.getContext(true);
 				bundleContext.registerService(CamelContext.class.getName(), camelContext, null);
-			}else{
-				SpringCamelContextFactory contextFactory = new SpringCamelContextFactory();
-				contextFactory.setApplicationContext(new ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
-				org.apache.camel.impl.DefaultCamelContext defaultCamelContext = contextFactory.createContext();
-				defaultCamelContext.setName("<%=process.getName()%>-ctx");
-				camelContext = defaultCamelContext;
+			} else {
+				org.apache.camel.osgi.SpringCamelContextFactory contextFactory = new org.apache.camel.osgi.SpringCamelContextFactory();
+				contextFactory.setApplicationContext(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
+				camelContext = contextFactory.createContext();
+				camelContext.setName("<%=process.getName()%>-ctx");
 			}
-<%		
+			final org.apache.camel.impl.CompositeRegistry compositeRegistry =
+				new org.apache.camel.impl.CompositeRegistry();
+			compositeRegistry.addRegistry(camelContext.getRegistry());
+			compositeRegistry.addRegistry(registry);
+			camelContext.setRegistry(compositeRegistry);
+<%
 			//process cConfig components first 
 			List<? extends INode> camelContextNodes = process.getNodesOfType("cConfig");
 			for(INode node: camelContextNodes){
@@ -598,5 +602,5 @@
 			}
 			//http://jira.talendforge.org/browse/TESB-4087: Change CamelContext name
 %>
-            return camelContext;
+            return java.util.Collections.singletonMap(camelContext.getName(), (CamelContext) camelContext);
 		}
