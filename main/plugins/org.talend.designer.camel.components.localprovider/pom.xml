@@ -9,6 +9,7 @@
     <relativePath>../../../</relativePath>
   </parent>
   <artifactId>org.talend.designer.camel.components.localprovider</artifactId>
+  <name>Talend Designer ESB Tooling Route components plugin</name>
   <packaging>eclipse-plugin</packaging>
   
   <properties>
@@ -228,6 +229,8 @@
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
+								<delete file="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt" />
+								<delete file="${project.build.directory}/classes/THIRD-PARTY.txt" />
 							</target>
 						</configuration>
 						<goals>
