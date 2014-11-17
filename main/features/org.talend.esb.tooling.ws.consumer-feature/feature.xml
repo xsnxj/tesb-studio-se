@@ -20,59 +20,54 @@
          id="org.talend.designer.esb.routines"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
-   <!-- org.talend.libraries.esb -->
    <plugin
          id="javax.wsdl"
          download-size="0"
          install-size="0"
-         version="1.6.2.v201012040545" />
+         version="1.6.2.v201012040545"/>
 
    <plugin
          id="org.apache.xml.resolver"
          download-size="0"
          install-size="0"
-         version="1.2.0.v201005080400" />
+         version="1.2.0.v201005080400"/>
 
    <plugin
          id="org.apache.commons.logging"
          download-size="0"
          install-size="0"
-         version="1.1.1.v201101211721" />
+         version="1.1.1.v201101211721"/>
 
    <plugin
          id="org.apache.log4j"
          download-size="0"
          install-size="0"
-         version="1.2.15.v201012070815" />
+         version="1.2.15.v201012070815"/>
 
    <plugin
          id="org.apache.commons.lang"
          download-size="0"
          install-size="0"
-         version="2.4.0.v201005080502" />
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.libraries.esb"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.designer.esb.components.ws.consumer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.talend.designer.esb.components.rs.consumer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
+         version="0.0.0"/>
 
 </feature>
