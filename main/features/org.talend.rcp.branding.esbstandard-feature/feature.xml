@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.talend.rcp.branding.esbstandard_feature"
+      id="org.talend.rcp.branding.esbstandard-feature"
       label="ESB standard edition  branding feature"
       version="6.0.0.qualifier"
       provider-name=".Talend SA."
