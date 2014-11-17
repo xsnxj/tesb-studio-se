@@ -225,7 +225,7 @@
 					<licenseMerge>Apache Software License - Version 2.0|The Apache Software License, Version 2.0|Apache 2</licenseMerge>
 					<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
 				</licenseMerges>
-				<excludedGroups>org.talend.studio</excludedGroups>
+				<excludedGroups>org\.talend\.(.*)</excludedGroups>
 				<missingFile>THIRD-PARTY.properties</missingFile>
 				<useMissingFile>true</useMissingFile>
 				<failIfWarning>true</failIfWarning>
