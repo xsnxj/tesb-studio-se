@@ -44,10 +44,8 @@ public class AddSpringConfigurationPropertyMigrationTask extends AbstractRouteIt
 			QName qname = QName.get("bean", SPRING_BEANS_NAMESPACE);
 			List<Element> beans = document.getRootElement().elements(qname);
 			for (Element bean : beans) {
-				String idValue = bean.attributeValue("id");
-				String classValue = bean.attributeValue("class");
-				if (null != idValue && idValue.equals("jmxEventNotifier") &&
-						null != classValue && classValue.equals("org.apache.camel.management.JmxNotificationEventNotifier"))
+				if ("jmxEventNotifier".equals(bean.attributeValue("id")) &&
+						"org.apache.camel.management.JmxNotificationEventNotifier".equals(bean.attributeValue("class")))
 				{
 					List<Element> properties = bean.elements(QName.get("property", SPRING_BEANS_NAMESPACE));
 					boolean hasIgnore = false;
@@ -68,8 +66,8 @@ public class AddSpringConfigurationPropertyMigrationTask extends AbstractRouteIt
 						bean.add(ignoreExchangeElement);
 						item.setSpringContent(document.asXML());
 						saveItem(item);
-						break;
 					}
+					break;
 				}
 			}
 		}
