@@ -336,6 +336,15 @@
                 name="UnifyPasswordEncryption4ParametersInRouteMigrationTask"
                 version="5.6.0">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.4.1"
+                class="org.talend.camel.designer.migration.AddSpringConfigurationPropertyMigrationTask"
+                description="Add ignore exchange event property to JmxNotificationEventNotifier"
+                id="org.talend.camel.designer.migration.AddSpringConfigurationPropertyMigrationTask"
+                name="AddSpringConfigurationPropertyMigrationTask"
+                version="5.6.1">
+          </projecttask>
       </extension>
         <extension
               point="org.talend.designer.core.generators">
