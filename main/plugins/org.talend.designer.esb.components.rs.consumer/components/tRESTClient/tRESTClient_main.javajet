@@ -10,6 +10,7 @@
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnectionCategory
 		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.metadata.IMetadataColumn
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 		org.talend.designer.codegen.config.NodeConnectionsHelper
 		org.talend.designer.codegen.config.NodeParamsHelper
@@ -58,12 +59,18 @@ try {
 	// request body
 	org.dom4j.Document requestDoc_<%=cid%> = null;
 	String requestString_<%=cid%> = null;
-	<% if (null != inputConn) { %>
-		if (null != <%=inputConn.getName()%>.body) {
-			requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
-		}
-		requestString_<%=cid%> = <%=inputConn.getName()%>.string;
-	<% } %>
+<%	if (null != inputConn) {
+		IMetadataColumn inputConnBodyColumn = inputConn.getMetadataTable().getColumn("body");
+		if (null != inputConnBodyColumn && "id_Document".equals(inputConnBodyColumn.getTalendType())) { %>
+			if (null != <%=inputConn.getName()%>.body) {
+				requestDoc_<%=cid%> = <%=inputConn.getName()%>.body.getDocument();
+			}
+<%		}
+		IMetadataColumn inputConnStringColumn = inputConn.getMetadataTable().getColumn("string");
+		if (null != inputConnStringColumn && "id_String".equals(inputConnStringColumn.getTalendType())) { %>
+			requestString_<%=cid%> = <%=inputConn.getName()%>.string;
+<%		}
+	} %>
 
 	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
 
