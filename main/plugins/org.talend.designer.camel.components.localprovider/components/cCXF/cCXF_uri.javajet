@@ -70,11 +70,11 @@ if ("wsdlURL".equals(serviceType)) {
 
 
 
-String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__");
+String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__").trim();
 if(!serviceName.isEmpty() && !serviceName.equals("\"\"")) {
 	sb.append("+\"&serviceNameString=\"+").append(serviceName);
 }
-String portName = helper.getVisibleStringParam("__PORT_NAME__");
+String portName = helper.getVisibleStringParam("__PORT_NAME__").trim();
 if(!portName.isEmpty() && !portName.equals("\"\"")) {
 	sb.append("+\"&endpointNameString=\"+").append(portName);
 }
