@@ -31,13 +31,12 @@ public class UpdatecCXFServiceNamePortNameDefault extends
 		boolean needSave = false;
 		for (Object e : currentNode.getElementParameter()) {
 			ElementParameterType p = (ElementParameterType) e;
-			if (!"SPECIFY_SERVICE".equals(p.getName())) {
-				continue;
-			}
-			String value = p.getValue();
-			if ("false".equals(value)) {
-				needSave = true;
-			}
+			if ("SPECIFY_SERVICE".equals(p.getName())) {
+				  if ("false".equals(p.getValue())) {
+				    needSave = true;
+				    break;
+				  }
+			}			
 		}
 		if (needSave) {
 			for (Object e : currentNode.getElementParameter()) {
