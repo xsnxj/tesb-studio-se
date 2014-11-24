@@ -345,6 +345,16 @@
                 name="AddSpringConfigurationPropertyMigrationTask"
                 version="5.6.1">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.4.1"
+                class="org.talend.camel.designer.migration.UpdatecCXFServiceNamePortNameDefault"
+                description="Set Default value of Service name and Port name to empty string"
+                id="org.talend.camel.designer.migration.UpdatecCXFServiceNamePortNameDefault"
+                name="UpdatecCXFServiceNamePortNameDefault"
+                version="5.6.1">
+          </projecttask>
+          
       </extension>
         <extension
               point="org.talend.designer.core.generators">
