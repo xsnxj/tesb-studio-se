@@ -207,7 +207,7 @@
 		</repository-->
 		<repository>
 			<id>sonatype-releases</id>
-			<url>https://oss.sonatype.org/content/repositories/releases/</url>
+			<url>https://oss.sonatype.org/content/repositories/staging/</url>
 			<name>Sonatype Releases Repo</name>
 			<snapshots>
 				<enabled>false</enabled>
