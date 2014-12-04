@@ -2,7 +2,7 @@
 <feature
       id="org.talend.camel.core_feature"
       label="Core_feature"
-      version="1.0.0.qualifier">
+      version="6.0.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -545,6 +545,13 @@
 
    <plugin
          id="org.eclipse.equinox.app"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ibm.icu"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -1187,11 +1194,6 @@
          fragment="true"
          unpack="false"/>
 
-   <plugin
-         id="com.ibm.icu"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+
 
 </feature>

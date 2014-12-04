@@ -258,7 +258,7 @@
                   attributeValue="SAML">
             </predicate>
             <predicate
-                  attributeName="NEED_AUTHORIZATION"
+                  attributeName="USE_AUTHORIZATION"
                   attributeValue="true">
             </predicate>
          </importPackage>
@@ -594,9 +594,12 @@
          </predicate>
       </classpath>
       <classpath
-            attributeName="EMBEDDED_LIBRARY"
-            checked="true"
-            componentName="cAMQP">
+            attributeName="AMQP_DRIVER_JAR"
+            componentName="cMQConnectionFactory">
+         <predicate
+               attributeName="MQ_TYPE"
+               attributeValue="AMQP">
+         </predicate>
       </classpath>
    </extension>
    <extension
@@ -608,7 +611,7 @@
    <extension
          point="org.talend.core.runtime.service">
       <Service
-            class="org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver"
+            class="org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService"
             serviceId="IOsgiDependenciesService">
       </Service>
    </extension>

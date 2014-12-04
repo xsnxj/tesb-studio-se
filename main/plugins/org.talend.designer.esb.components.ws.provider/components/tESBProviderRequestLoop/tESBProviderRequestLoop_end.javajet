@@ -21,8 +21,7 @@
 			// job interrupted from outside
 			break;
 		} catch (Exception e_<%=cid%>) {
-		new TalendException(e_tESBProviderRequest_1, currentComponent, globalMap).printStackTrace();
-		((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFaultByDefault(e_<%=cid%>);
+			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFaultByDefault(e_<%=cid%>);
 		} finally {
 			// close DB connections
 			try {

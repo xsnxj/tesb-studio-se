@@ -2,10 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.talend.designer.esb.components.rs.provider;singleton:=true
-Bundle-Version: 5.6.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.talend.designer.esb.components.rs.provider.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime,
@@ -18,3 +17,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.designer.core,
  org.talend.core.ui
 Import-Package: org.eclipse.gef.commands
+Eclipse-BundleShape: dir

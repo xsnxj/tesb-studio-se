@@ -1,6 +1,7 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -74,7 +75,7 @@ public abstract class AbstractExPredicator<T, K> {
 			/*
 			 * if not a complex value, then continue
 			 */
-			EList elementValues = ept.getElementValue();
+			List<?> elementValues = ept.getElementValue();
 			if (elementValues == null) {
 				continue;
 			}

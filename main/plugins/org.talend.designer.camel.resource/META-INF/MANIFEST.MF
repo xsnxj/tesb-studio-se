@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Route Resource
 Bundle-SymbolicName: org.talend.designer.camel.resource;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.resource.RouteResourceActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -24,6 +24,5 @@ Require-Bundle: org.eclipse.ui,
  org.talend.designer.camel.resource.core,
  org.talend.repository.items.importexport
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.io
 Bundle-Vendor: .Talend SA.

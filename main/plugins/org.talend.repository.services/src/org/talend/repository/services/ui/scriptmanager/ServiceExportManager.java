@@ -34,10 +34,11 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.RepositoryPlugin;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.utils.WSDLUtils;
@@ -65,20 +66,17 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         // TODO: do this in looooooooop!!!
 
         Definition def = WSDLUtils.getDefinition(wsdl);
-        String serviceName = null;
-        String serviceNS = null;
+        QName serviceQName = null;
         String endpointAddress = null;
         String endpointName = null;
         Map<QName, Service> services = def.getServices();
         ServicePort servicePort = studioPort.getKey();
         for (Entry<QName, Service> serviceEntry : services.entrySet()) { // TODO: support multi-services
-            QName serviceQName = serviceEntry.getKey();
             Service service = serviceEntry.getValue();
             Collection<Port> servicePorts = service.getPorts().values(); // TODO: support multi-ports
             for (Port port : servicePorts) {
                 if (servicePort.getName().equals(port.getBinding().getPortType().getQName().getLocalPart())) {
-                    serviceName = serviceQName.getLocalPart();
-                    serviceNS = serviceQName.getNamespaceURI();
+                    serviceQName = serviceEntry.getKey();
                     endpointName = port.getName();
                     endpointAddress = WSDLUtils.getPortAddress(port);
                     if (null != endpointAddress) {
@@ -108,13 +106,14 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                             LOG.warn("Endpoint URI invalid: " + e);
                         }
                     }
+                    break;
                 }
             }
         }
 
         Map<String, Object> endpointInfo = new HashMap<String, Object>();
-        endpointInfo.put("namespace", serviceNS); //$NON-NLS-1$
-        endpointInfo.put("service", serviceName); //$NON-NLS-1$
+        endpointInfo.put("namespace", serviceQName.getNamespaceURI()); //$NON-NLS-1$
+        endpointInfo.put("service", serviceQName.getLocalPart()); //$NON-NLS-1$
         endpointInfo.put("port", endpointName); //$NON-NLS-1$
         endpointInfo.put("address", endpointAddress); //$NON-NLS-1$
         endpointInfo.put("studioName", studioServiceName); //$NON-NLS-1$
@@ -176,6 +175,9 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
             }
         }
         endpointInfo.put("slCustomProps", slCustomProperties); //$NON-NLS-1$
+
+        endpointInfo.put("samlConfig", //$NON-NLS-1$
+                serviceQName.toString().replaceAll("\\W+", "_").substring(1)); //$NON-NLS-1$
 
         TemplateProcessor.processTemplate("DATA_SERVICE_BLUEPRINT_CONFIG", endpointInfo, outputFile, //$NON-NLS-1$
                 new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_BLUEPRINT)));
@@ -246,15 +248,15 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
     }
 
     public JobScriptsManager getJobManager(Map<ExportChoice, Object> exportChoiceMap, String parentPath,
-            RepositoryNode node, String groupId, String serviceVersion) {
+            IRepositoryViewObject node, String groupId, String serviceVersion) {
         if (exportChoiceMap == null) {
             exportChoiceMap = getDefaultExportChoiceMap();
         }
         JobJavaScriptOSGIForESBManager manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap,
-                "Default", serviceVersion, statisticPort, tracePort); //$NON-NLS-1$
-        String artefactName = getNodeLabel(node);
-        File path = getFilePath(parentPath, groupId, artefactName, serviceVersion);
-        File file = new File(path, artefactName + '-' + serviceVersion + manager.getOutputSuffix());
+            ((ProcessItem) node.getProperty().getItem()).getProcess().getDefaultContext(), serviceVersion, statisticPort, tracePort);
+        String artifactName = getNodeLabel(node);
+        File path = getFilePath(parentPath, groupId, artifactName, serviceVersion);
+        File file = new File(path, artifactName + '-' + serviceVersion + manager.getOutputSuffix());
         manager.setDestinationPath(file.getAbsolutePath());
         return manager;
     }
@@ -268,8 +270,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         return version;
     }
 
-    public String getNodeLabel(RepositoryNode node) {
-        return node.getObject().getProperty().getLabel();
+    public String getNodeLabel(IRepositoryViewObject node) {
+        return node.getProperty().getLabel();
     }
 
 }

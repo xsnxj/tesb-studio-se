@@ -29,19 +29,8 @@
 	
 %>
 
-protected void doStart() throws java.lang.Exception {
-		// init uriMap first
-		initUriMap();
-		
-		//add route
-		addRouteBuilder(<%=process.getName()%>.this);
-
-		//prepare camel contexts
-		super.doStart();
-		postProcessContext();
-
-		//add jmx notification
-		CamelContext camelContext = getCamelContexts().get(0);
+protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+		super.postProcessCamelContext(camelContext);
 		// add notifier
 		java.util.Set<JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
 				.getRegistry().findByType(
@@ -99,10 +88,7 @@ if(librariesSb.length()>0){
 %>
 
 		runStat.initStatisticsInterceptor();
-<% } //if stats %>
-		//start camel context	
-		camelContext.start();
-<% if(stats) { %>
+
 		runStat.openSocket(true);
 		runStat.setAllPID(pid, pid, pid, jobName);
 		runStat.startThreadStat(clientHost, portStats);
@@ -113,19 +99,6 @@ if(librariesSb.length()>0){
 
 	}
 
-	protected void doStop() throws java.lang.Exception {
-		super.doStop();
-		getCamelContexts().get(0).stop();
-	}
-
-	protected ProducerTemplate findOrCreateCamelTemplate() {
-		return getCamelContexts().get(0).createProducerTemplate();
-	}
-	
-	protected ModelFileGenerator createModelFileGenerator()
-		throws JAXBException {
-		return null;
-	}
 <% if(stats) { %>
 
 	class MyStatThread implements Runnable {
@@ -160,30 +133,28 @@ if(librariesSb.length()>0){
 <% } //if stats %>
 
 };
-	mainSupport.run();
+    // init uriMap first
+    initUriMap();
+
+    //add route
+    main.addRouteBuilder(this);
+
+	main.run();
 }
-	public void stop() throws java.lang.Exception{
-		if(mainSupport != null){
-			mainSupport.stop();
+
+	public void stop() throws java.lang.Exception {
+		if(main != null) {
+			main.stop();
 		}
 	}
-	
-	public void shutdown() throws java.lang.Exception{
-		if(mainSupport != null){
-			mainSupport.shutdown();
+
+	public void shutdown() throws java.lang.Exception {
+		if(main != null) {
+			main.shutdown();
 		}
 	}
-	
-	private Properties defaultProps = new Properties();
 
-	public class ContextProperties extends Properties {
-
-		public ContextProperties(Properties properties) {
-			super(properties);
-		}
-		public ContextProperties() {
-			super();
-		}
+	public static class ContextProperties extends Properties {
 
 		public void synchronizeContext() {
 		<% for (IContextParameter ctxParam : params){
@@ -223,7 +194,7 @@ for (IContextParameter ctxParam : params) {
 %>
 	}
 
-	private ContextProperties context = new ContextProperties();
+	private final ContextProperties context = new ContextProperties();
 	
 	//private final String jobVersion = "<%=process.getVersion() %>";
 	private final String jobName = "<%=codeGenArgument.getJobName() %>";
@@ -301,22 +272,19 @@ for (IContextParameter ctxParam : params) {
 	* @parameter contextName : the name of context while will be used
 	*/
 	public void readContextValues(String contextName){
-			
 		try {
 			java.io.InputStream inContext = <%=process.getName()%>.class.getClassLoader().getResourceAsStream("<%=codeGenArgument.getCurrentProjectName().toLowerCase() %>/<%=jobFolderName %>/contexts/"+contextName+".properties");
-			
+
 			if (inContext!=null) {
-	    		//defaultProps is in order to keep the original context value
-	    		defaultProps.load(inContext);
+	    		context.load(inContext);
     			inContext.close();
-	    		context = new ContextProperties(defaultProps);
 	    	}else{
 	    		//print info and job continue to run, for case: context_param is not empty.
 	    		System.err.println("Could not find the context " + contextName);
 			}
-			
-			if(!context_param.isEmpty()) {						
-			    context.putAll(context_param);		
+
+			if(!context_param.isEmpty()) {
+			    context.putAll(context_param);
 			}
 <% 
 			//for bug TDI-22398
@@ -417,54 +385,4 @@ for (IContextParameter ctxParam : params) {
             }
     	}	
 	}
-}
-
-class <%=process.getName()%>_Registry extends SimpleRegistry {
-
-	private final Registry wrapped;
-
-	public <%=process.getName()%>_Registry(Registry wrapped) {
-		this.wrapped = wrapped;
-	}
-
-	@Override
-	public Object lookupByName(String name) {
-		Object obj = wrapped.lookupByName(name);
-		if (obj == null) {
-			obj = super.lookupByName(name);
-		}
-		return obj;
-	}
-
-	@Override
-	public <T> T lookupByNameAndType(String name, Class<T> type) {
-		T t = wrapped.lookupByNameAndType(name, type);
-		if (t == null) {
-			t = super.lookupByNameAndType(name, type);
-		}
-		return t;
-	}
-	
-	@Override
-	public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-		Map<String, T> result = wrapped.findByTypeWithName(type);
-		if (result == null) {
-			result = super.findByTypeWithName(type);
-		}
-		return result;
-	}
-
-	@Override
-	public <T> Set<T> findByType(Class<T> type){
-		Set<T> result = wrapped.findByType(type);
-		if (result == null) {
-			result = super.findByType(type);
-		}
-		return result;
-	}
-	
-	public void register(String name, Object instance) {
-		put(name, instance);
-	}
-
 }

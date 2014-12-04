@@ -118,7 +118,7 @@ public class AssignJobPage extends WizardPage {
              */
             if (type == ENodeType.REPOSITORY_ELEMENT) {
                 for (IRepositoryNode rn : routeInputContainedJobs) {
-                    if (rn == node) {
+                    if (rn.equals(node)) {
                         return true;
                     }
                 }

@@ -146,6 +146,37 @@
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'AMQP'">
 			<DEFAULT>"localhost"</DEFAULT>
 		</PARAMETER>
+		<PARAMETER NAME="AMQP_PORT" FIELD="TEXT" NUM_ROW="10"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>"5672"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_SSL" FIELD="CHECK" NUM_ROW="20"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE" FIELD="FILE" NUM_ROW="21"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE_PASSWORD" FIELD="PASSWORD" NUM_ROW="21"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_USE_AUTH" FIELD="CHECK" NUM_ROW="25"
+			SHOW_IF="MQ_TYPE == 'AMQP'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_USERNAME" FIELD="TEXT" NUM_ROW="30"
+			SHOW_IF="(MQ_TYPE == 'AMQP') AND (AMQP_USE_AUTH== 'true')">
+			<DEFAULT>"guest"</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="AMQP_PASSWORD" FIELD="PASSWORD" NUM_ROW="35"
+			SHOW_IF="(MQ_TYPE == 'AMQP') AND (AMQP_USE_AUTH== 'true')">
+			<DEFAULT>"guest"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="AMQP_DRIVER_JAR" FIELD="TEXT"
+			NUM_ROW="888" SHOW="false">
+			<DEFAULT>${tesb-qpid-amqp-1-0-common};${tesb-qpid-amqp-1-0-client};${tesb-qpid-amqp-1-0-client-jms}</DEFAULT>
+		</PARAMETER>
 
 		<!-- MQTT-->
 		<PARAMETER NAME="MQTT_HOST" FIELD="TEXT" NUM_ROW="4"
@@ -156,9 +187,17 @@
 			SHOW_IF="MQ_TYPE == 'MQTT'">
 			<DEFAULT>1883</DEFAULT>
 		</PARAMETER>
+		
 		<PARAMETER NAME="MQTT_SSL" FIELD="CHECK" NUM_ROW="6"
 			SHOW_IF="MQ_TYPE == 'MQTT'">
 		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE" FIELD="FILE" NUM_ROW="7"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		<PARAMETER NAME="MQTT_SSL_TRUST_STORE_PASSWORD" FIELD="PASSWORD" NUM_ROW="7"
+			SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_SSL == 'true')">
+		</PARAMETER>
+		
 		<PARAMETER NAME="MQTT_CONNECT_ATTEMPTS" FIELD="TEXT" NUM_ROW="11"
 			SHOW_IF="MQ_TYPE == 'MQTT'">
 			<DEFAULT>-1</DEFAULT>
@@ -221,8 +260,8 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-core-${camel.version}.jar"
                     REQUIRED="true" />
             <IMPORT NAME="log4j"
-                    MODULE="log4j-1.2.15.jar"
-                    UrlPath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+                    MODULE="log4j-1.2.17.jar"
+                    UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
                     REQUIRED="true" />
             <IMPORT NAME="slf4j-api"
                     MODULE="slf4j-api-${slf4j.version}.jar"
@@ -296,10 +335,14 @@
                     MODULE="spring-tx-${spring.version}.jar"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-tx-${spring.version}.jar"
                     REQUIRED="true" />
-
+			<IMPORT NAME="geronimo-jms_1.1_spec" 
+                    MODULE="${tesb-geronimo-jms_1.1_spec}"
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
+                    REQUIRED="true" />
+			
 			<IMPORT NAME="activemq" 
 					MODULE="activemq-all-${activemq.version}.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-${activemq.version}.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/activemq-all-${activemq.version}.jar"
 					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ')" />
 			<IMPORT NAME="commons-pool" 
 					MODULE="commons-pool-1.6.jar" 
@@ -323,6 +366,10 @@
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/xpp3-${xpp3.version}.jar"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
+            <IMPORT NAME="camel-amqp"
+                    MODULE="camel-amqp-${camel.version}.jar" 
+                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-amqp-${camel.version}.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
             <IMPORT NAME="qpid-amqp-1-0-common" 
                     MODULE="${tesb-qpid-amqp-1-0-common}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
@@ -334,10 +381,6 @@
             <IMPORT NAME="qpid-amqp-1-0-client-jms" 
                     MODULE="${tesb-qpid-amqp-1-0-client-jms}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
-                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
-            <IMPORT NAME="geronimo-jms_1.1_spec" 
-                    MODULE="${tesb-geronimo-jms_1.1_spec}"
-                    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 
             <IMPORT NAME="camel-mqtt-alldep" 

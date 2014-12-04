@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>org.talend.designer.camel.components.localprovider</artifactId>
-	<packaging>pom</packaging>
-	<name>Talend Designer ESB Tooling Route components plugin</name>
-
-	<parent>
-		<artifactId>tooling.parent</artifactId>
-		<groupId>org.talend.esb</groupId>
-		<version>5.6.0.qualifier</version>
-	</parent>
-
-	<properties>
-        <camel.version>2.13.2</camel.version>
-        <activemq.version>5.10.0</activemq.version>
-		<spring.osgi.version>1.2.1</spring.osgi.version>
-		<groovy.version>2.2.2</groovy.version>
-		<xstream.version>1.4.7</xstream.version>
-		<xpp3.version>1.1.6</xpp3.version>
-		<qpid-amqp.version>0.28</qpid-amqp.version>
-		<geronimo-jms.version>1.1.1</geronimo-jms.version>
-	</properties>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.talend.studio</groupId>
+    <artifactId>tesb-studio-se</artifactId>
+    <version>6.0.0-SNAPSHOT</version>
+    <relativePath>../../../</relativePath>
+  </parent>
+  <artifactId>org.talend.designer.camel.components.localprovider</artifactId>
+  <name>Talend Designer ESB Tooling Route components plugin</name>
+  <packaging>eclipse-plugin</packaging>
+  
+  <properties>
+	<camel.version>2.13.2</camel.version>
+	<activemq.version>5.10.0</activemq.version>
+	<spring.osgi.version>1.2.1</spring.osgi.version>
+	<groovy.version>2.2.2</groovy.version>
+	<xstream.version>1.4.7</xstream.version>
+	<xpp3.version>1.1.6</xpp3.version>
+	<qpid-amqp.version>0.28</qpid-amqp.version>
+	<geronimo-jms.version>1.1.1</geronimo-jms.version>
+  </properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.talend.esb</groupId>
+			<groupId>org.talend.studio</groupId>
 			<artifactId>org.talend.libraries.esb</artifactId>
 			<version>${project.version}</version>
 			<type>pom</type>
@@ -119,11 +117,11 @@
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-		<dependency>
+		<!--dependency> used platform:/plugin/org.talend.libraries.apache/lib/activemq-all-5.10.0.jar
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-all</artifactId>
 			<version>${activemq.version}</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-xstream</artifactId>
@@ -170,6 +168,11 @@
 			<artifactId>geronimo-jms_1.1_spec</artifactId>
 			<version>${geronimo-jms.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jdbc</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -180,7 +183,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -188,6 +191,7 @@
 							<excludeTypes>pom</excludeTypes>
 							<excludeTransitive>true</excludeTransitive>
 							<outputDirectory>${basedir}/lib</outputDirectory>
+							<excludeGroupIds>p2.eclipse-plugin,org.talend.studio</excludeGroupIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -219,12 +223,14 @@
 				<executions>
 					<execution>
 						<id>create-notice</id>
-						<phase>compile</phase>
+						<phase>process-resources</phase>
 						<configuration>
 							<target>
 								<concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
 									<path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt"/>
 								</concat>
+								<delete file="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt" />
+								<delete file="${project.build.directory}/classes/THIRD-PARTY.txt" />
 							</target>
 						</configuration>
 						<goals>
@@ -240,12 +246,6 @@
                     <filesets>
                         <fileset>
                             <directory>${basedir}/lib</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>${basedir}</directory>
-                            <includes>
-                                <include>build_apl.properties</include>
-                            </includes>
                         </fileset>
                     </filesets>
                 </configuration>

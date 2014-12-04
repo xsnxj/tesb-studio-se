@@ -14,12 +14,10 @@ package org.talend.repository.services.ui;
 
 import java.io.File;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -36,13 +34,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.IRepositoryNode.EProperties;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.Messages;
-import org.talend.repository.services.utils.ESBRepositoryNodeType;
+import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.resource.IExportServiceScriptResourcesService;
 
@@ -52,9 +46,11 @@ import org.talend.resource.IExportServiceScriptResourcesService;
  */
 public class ServiceExportWSWizardPage extends WizardPage {
 
-    private String serviceName;
+    private static final String OUTPUT_FILE_SUFFIX = FileConstants.ZIP_FILE_SUFFIX;
 
-    private String serviceVersion;
+    private final String serviceName;
+
+    private final String serviceVersion;
 
     private String destinationValue;
 
@@ -62,24 +58,10 @@ public class ServiceExportWSWizardPage extends WizardPage {
 
     private Button addBSButton;
 
-    private static final String OUTPUT_FILE_SUFFIX = ".zip"; //$NON-NLS-1$
-
-    public ServiceExportWSWizardPage(IStructuredSelection selection) {
-        super(org.talend.repository.services.Messages.ServiceExportWizard_Wizard_Title);
-        @SuppressWarnings("unchecked")
-        List<RepositoryNode> nodes = selection.toList();
-        serviceName = "";
-        serviceVersion = "";
-        if (nodes.size() >= 1) {
-            RepositoryNode node = nodes.get(0);
-            if (node.getType() == ENodeType.REPOSITORY_ELEMENT) {
-                IRepositoryViewObject repositoryObject = node.getObject();
-                if (node.getProperties(EProperties.CONTENT_TYPE) == ESBRepositoryNodeType.SERVICES) {
-                    serviceName = repositoryObject.getLabel();
-                    serviceVersion = repositoryObject.getVersion();
-                }
-            }
-        }
+    public ServiceExportWSWizardPage(ServiceItem serviceItem) {
+        super("ServiceExportWSWizardPage"); //$NON-NLS-1$
+        serviceName = serviceItem.getProperty().getLabel();
+        serviceVersion = serviceItem.getProperty().getVersion();
     }
 
     protected void handleDestinationBrowseButtonPressed() {
@@ -90,7 +72,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
         } else {
             idealSuffix = getOutputSuffix();
         }
-        dialog.setFilterExtensions(new String[] { idealSuffix, "*.*" }); //$NON-NLS-1$
+        dialog.setFilterExtensions(new String[] { '*' + idealSuffix, "*.*" }); //$NON-NLS-1$
         File destination = new File(getDestinationValue());
         dialog.setFileName(destination.getName());
         dialog.setFilterPath(destination.getParent());

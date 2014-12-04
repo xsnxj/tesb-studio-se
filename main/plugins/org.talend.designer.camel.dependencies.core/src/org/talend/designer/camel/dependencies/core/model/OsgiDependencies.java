@@ -164,10 +164,5 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 		return sb.toString();
 	}
 
-	@Override
-	public String toString() {
-		return toManifestString();
-	}
-
 	abstract protected String getVersionPrefix();
 }

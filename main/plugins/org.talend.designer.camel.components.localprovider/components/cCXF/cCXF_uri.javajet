@@ -40,6 +40,10 @@ StringBuilder sb = new StringBuilder();
 sb.append("\"cxf://\"+").append(url);
 sb.append("+\"?dataFormat=" + dataformat + "\"");
 
+if ("true".equals(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"))) {
+	sb.append("+\"&loggingFeatureEnabled=true\"");
+}
+
 if ("wsdlURL".equals(serviceType)) {
 	if(!useServiceRegistry){
 		sb.append("+\"&" + serviceType + "=\"");
@@ -55,6 +59,8 @@ if ("wsdlURL".equals(serviceType)) {
 		}
 		filePath.replaceAll("\\\\","/");
 		sb.append("+").append(filePath);
+	} else {
+		sb.append("+\"&wsdlURL=\"");
 	}
 } else {
 	sb.append("+\"&" + serviceType + "=\"");
@@ -64,16 +70,16 @@ if ("wsdlURL".equals(serviceType)) {
 
 
 
-String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__");
-if(!serviceName.isEmpty()) {
+String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__").trim();
+if(!serviceName.isEmpty() && !serviceName.equals("\"\"")) {
 	sb.append("+\"&serviceNameString=\"+").append(serviceName);
 }
-String portName = helper.getVisibleStringParam("__PORT_NAME__");
-if(!portName.isEmpty()) {
+String portName = helper.getVisibleStringParam("__PORT_NAME__").trim();
+if(!portName.isEmpty() && !portName.equals("\"\"")) {
 	sb.append("+\"&endpointNameString=\"+").append(portName);
 }
 String operationName = helper.getVisibleStringParam("__OPERATION_NAME__").trim();
-if(!operationName.isEmpty() && !operationName.equals("")) {
+if(!operationName.isEmpty() && !operationName.equals("") && !operationName.equals("\"\"") ) {
 	StringBuilder stmt = new StringBuilder();
 	stmt.append("QName operation = null;\n");
 	stmt.append("try { operation = QName.valueOf(")
