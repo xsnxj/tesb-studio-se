@@ -217,10 +217,11 @@ public class ExportServiceAction implements IRunnableWithProgress {
         File wsdl = new File(temp, serviceWsdl.getName());
         FilesUtils.copyFile(serviceWsdl.getContents(), wsdl);
         // wsdl:import
-        String serviceWsdlPrefix = serviceName + '_' + serviceVersion + '_';
+        String serviceWsdlPrefix = serviceName + '_' + serviceVersion + '.';
         for (IResource resource : serviceWsdl.getParent().members()) {
             if (IResource.FILE == resource.getType()
-                && resource.getName().startsWith(serviceWsdlPrefix)) {
+                && resource.getName().startsWith(serviceWsdlPrefix)
+                && "wsdl".equals(resource.getFileExtension())) {
                 FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
             }
         }
