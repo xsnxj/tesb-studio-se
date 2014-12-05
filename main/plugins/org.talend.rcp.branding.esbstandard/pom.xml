@@ -23,11 +23,12 @@
             <goals>
               <goal>attach-artifact</goal>
             </goals>
-            <configuration>
+             <configuration>
               <artifacts>
                 <artifact>
                   <file>./resources/license.txt</file>
-                  <type>license</type>
+                  <type>txt</type>
+				  <classifier>license</classifier>
                 </artifact>
               </artifacts>
             </configuration>
