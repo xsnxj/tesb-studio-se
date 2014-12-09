@@ -70,16 +70,16 @@ if ("wsdlURL".equals(serviceType)) {
 
 
 
-String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__");
-if(!serviceName.isEmpty()) {
+String serviceName = helper.getVisibleStringParam("__SERVICE_NAME__").trim();
+if(!serviceName.isEmpty() && !serviceName.equals("\"\"")) {
 	sb.append("+\"&serviceNameString=\"+").append(serviceName);
 }
-String portName = helper.getVisibleStringParam("__PORT_NAME__");
-if(!portName.isEmpty()) {
+String portName = helper.getVisibleStringParam("__PORT_NAME__").trim();
+if(!portName.isEmpty() && !portName.equals("\"\"")) {
 	sb.append("+\"&endpointNameString=\"+").append(portName);
 }
 String operationName = helper.getVisibleStringParam("__OPERATION_NAME__").trim();
-if(!operationName.isEmpty() && !operationName.equals("")) {
+if(!operationName.isEmpty() && !operationName.equals("") && !operationName.equals("\"\"") ) {
 	StringBuilder stmt = new StringBuilder();
 	stmt.append("QName operation = null;\n");
 	stmt.append("try { operation = QName.valueOf(")
