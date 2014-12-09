@@ -114,7 +114,6 @@
     <module>main/features/org.talend.esb.tooling.ws.consumer-feature</module>
     <module>main/features/org.talend.esb.tooling.ws.provider-feature</module>
     <module>main/features/org.talend.esbstandard-feature</module>
-    <module>main/features/org.talend.rcp.branding.camel-feature</module>
     <module>main/features/org.talend.rcp.branding.esbstandard-feature</module>
     <module>main/features/org.talend.repository.services-feature</module>
     <module>main/plugins/org.talend.camel.designer</module>
@@ -134,7 +133,6 @@
     <module>main/plugins/org.talend.designer.esb.routines</module>
     <module>main/plugins/org.talend.designer.routines.camelprovider</module>
     <module>main/plugins/org.talend.libraries.esb</module>
-    <module>main/plugins/org.talend.rcp.branding.camel</module>
     <module>main/plugins/org.talend.rcp.branding.esbstandard</module>
     <module>main/plugins/org.talend.repository.services</module>
     <module>main/plugins/org.talend.repository.view.esb</module>
