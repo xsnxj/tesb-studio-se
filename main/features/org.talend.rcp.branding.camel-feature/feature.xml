@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.talend.rcp.branding.camel_feature"
+      id="org.talend.rcp.branding.camel-feature"
       label="Camel studio branding feature"
       version="6.0.0.qualifier"
       provider-name=".Talend SA."
