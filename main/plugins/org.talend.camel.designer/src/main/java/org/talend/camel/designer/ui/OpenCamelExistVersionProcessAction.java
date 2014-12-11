@@ -41,8 +41,8 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.ui.IUIRefresher;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.repository.editor.JobEditorInput;
 import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
@@ -108,12 +108,13 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
 
     }
 
+    @Override
     protected IEditorPart getCorrespondingEditor(RepositoryNode node) {
         IEditorReference[] eidtors = getActivePage().getEditorReferences();
 
-        for (int i = 0; i < eidtors.length; i++) {
+        for (IEditorReference eidtor : eidtors) {
             try {
-                IEditorInput input = eidtors[i].getEditorInput();
+                IEditorInput input = eidtor.getEditorInput();
                 if (!(input instanceof JobEditorInput)) {
                     continue;
                 }
@@ -124,7 +125,7 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
 
                     IPath path = repositoryInput.getFile().getLocation();
 
-                    return eidtors[i].getEditor(false);
+                    return eidtor.getEditor(false);
                 }
             } catch (PartInitException e) {
                 continue;
@@ -155,6 +156,7 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
                     final String tmpMess = message;
                     display.syncExec(new Runnable() {
 
+                        @Override
                         public void run() {
                             Shell shell = null;
                             final IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -176,10 +178,11 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
     }
 
     // http://jira.talendforge.org/browse/TESB-5930
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = selection.size() == 1;
         if (canWork) {
-            Object o = ((IStructuredSelection) selection).getFirstElement();
+            Object o = selection.getFirstElement();
             if (o instanceof RepositoryNode) {
                 RepositoryNode node = (RepositoryNode) o;
                 switch (node.getType()) {

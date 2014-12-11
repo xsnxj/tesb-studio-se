@@ -27,7 +27,7 @@ import org.talend.designer.core.ui.editor.nodes.NodePart;
  * and only effect to cTalendJob component.
  * Use to support a simple access point for editor job that linked to a cTalendJob component.
  */
-public class OpenTalendJobRefAction extends org.talend.designer.core.ui.editor.CustomExternalActions {
+public class OpenTalendJobRefAction extends org.talend.core.ui.editor.CustomExternalActions {
 
     private static final String NODE_PARAM_FROM_REPOSITORY_JOB = "FROM_REPOSITORY_JOB";
 	private static final String NODE_PARAM_SELECTED_JOB_NAME = "SELECTED_JOB_NAME";
