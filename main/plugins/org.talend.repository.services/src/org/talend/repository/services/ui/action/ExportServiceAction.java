@@ -196,7 +196,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         if(!"true".equals(useRegistry)) {
 	        String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
 	        if("true".equals(useCorrelation)) {
-	        	features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
+	        	features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME));
 	        }
         }
         
@@ -204,7 +204,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         for(IRepositoryViewObject node : nodes){
         	ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
         	if (null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)) {
-        		features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME, FeaturesModel.ESB_FEATURE_VERSION_RANGE));
+        		features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME));
         		break;
         	}
         }

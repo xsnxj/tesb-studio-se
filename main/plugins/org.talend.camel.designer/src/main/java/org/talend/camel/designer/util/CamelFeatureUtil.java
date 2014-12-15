@@ -68,8 +68,8 @@ public final class CamelFeatureUtil {
 
 	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http", "[5,10)");
 
-	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
-	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client", FeaturesModel.ESB_FEATURE_VERSION_RANGE);
+	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent");
+	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client");
 
 	private static final Map<String, Collection<FeatureModel>> camelFeaturesMap =
 			new HashMap<String, Collection<FeatureModel>>();
