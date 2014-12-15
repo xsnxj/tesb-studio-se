@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.Bundle;
-import org.talend.core.ui.branding.AbstractTalendBrandingService;
+import org.talend.core.branding.AbstractTalendBrandingService;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.rcp.branding.camel.i18n.Messages;
 

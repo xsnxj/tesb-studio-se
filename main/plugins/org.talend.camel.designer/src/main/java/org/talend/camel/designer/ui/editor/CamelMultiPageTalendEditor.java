@@ -30,7 +30,7 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.Item;
-import org.talend.core.ui.ISVNProviderService;
+import org.talend.core.services.ISVNProviderService;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;

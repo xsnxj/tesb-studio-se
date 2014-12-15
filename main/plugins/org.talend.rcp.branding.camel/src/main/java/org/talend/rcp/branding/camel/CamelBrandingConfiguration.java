@@ -20,8 +20,8 @@ import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
+import org.talend.core.branding.DefaultBrandingConfiguration;
 import org.talend.core.language.ECodeLanguage;
-import org.talend.core.ui.branding.DefaultBrandingConfiguration;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.repository.model.IRepositoryNode;
 

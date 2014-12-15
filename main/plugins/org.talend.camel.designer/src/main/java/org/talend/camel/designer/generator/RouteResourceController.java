@@ -54,6 +54,7 @@ import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.runprocess.ProcessorUtilities;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
@@ -63,7 +64,6 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
-import org.talend.designer.runprocess.ProcessorUtilities;
 
 /**
  * @author Xiaopeng Li
