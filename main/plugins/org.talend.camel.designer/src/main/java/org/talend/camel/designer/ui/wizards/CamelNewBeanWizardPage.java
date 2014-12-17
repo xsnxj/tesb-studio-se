@@ -28,9 +28,9 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizardPage;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryConstants;
-import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
  * Page for new project details. <br/>

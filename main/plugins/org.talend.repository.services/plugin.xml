@@ -105,10 +105,10 @@
 			<triggerPoints>
       <or>
          <adapt
-               type="org.talend.repository.model.ProjectRepositoryNode">
+               type="org.talend.core.repository.model.ProjectRepositoryNode">
          </adapt>
          <instanceof
-               value="org.talend.repository.model.ProjectRepositoryNode">
+               value="org.talend.core.repository.model.ProjectRepositoryNode">
          </instanceof>
          <and>
             <instanceof

@@ -22,9 +22,9 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.wizards.EditRouteResourcePropertiesWizard;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizard;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.EditPropertiesAction;
-import org.talend.repository.ui.wizards.PropertiesWizard;
 
 /**
  * smallet class global comment. Detailled comment <br/>

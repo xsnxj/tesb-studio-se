@@ -32,12 +32,12 @@ import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizard;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.EditPropertiesAction;
-import org.talend.repository.ui.wizards.PropertiesWizard;
 
 /**
  * smallet class global comment. Detailled comment <br/>

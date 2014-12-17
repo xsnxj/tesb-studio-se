@@ -14,7 +14,7 @@ import org.talend.core.model.utils.ContextParameterUtils;
 import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.designer.esb.webservice.WebServiceNode;
 import org.talend.designer.esb.webservice.util.WSDLHelper;
-import org.talend.repository.ui.utils.ConnectionContextHelper;
+import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
 
 public abstract class BaseNodeAdapter {
 	protected WebServiceNode node;

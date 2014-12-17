@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.camel.resource.i18n.Messages;
-import org.talend.repository.ui.wizards.PropertiesWizard;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizard;
 
 public class EditRouteResourcePropertiesWizard extends PropertiesWizard{
 
