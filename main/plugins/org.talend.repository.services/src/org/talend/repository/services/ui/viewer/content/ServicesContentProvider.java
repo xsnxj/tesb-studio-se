@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.repository.services.ui.viewer.content;
 
-import org.talend.repository.model.ProjectRepositoryNode;
+import org.talend.core.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.viewer.content.ProjectRepoDirectChildrenNodeContentProvider;

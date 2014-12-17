@@ -21,13 +21,13 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.model.ProjectRepositoryNode;
+import org.talend.core.repository.ui.utils.RecombineRepositoryNodeUtil;
 import org.talend.core.ui.IJobletProviderService;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.dialog.RepositoryReviewDialog;
-import org.talend.repository.ui.utils.RecombineRepositoryNodeUtil;
 
 public class AssignJobPage extends WizardPage {
 

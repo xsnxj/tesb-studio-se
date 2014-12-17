@@ -16,9 +16,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
-import org.talend.repository.editor.RepositoryEditorInput;
 import org.talend.repository.model.IRepositoryNode;
 
 /**
