@@ -731,7 +731,7 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 					endpointUrl = endpointUrl.substring("/services".length());
 				}
 				if (!endpointUrl.startsWith("/")) {
-					endpointUrl = "/" + endpointUrl;
+					endpointUrl = '/' + endpointUrl;
 				}
 			}
 			return endpointUrl;
@@ -739,53 +739,15 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 		String defaultEndpointUrl = "<%=defaultUri%>";
 		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
 				endpointUrl = defaultEndpointUrl;
-			} else if (!endpointUrl.contains("://")) { // relative
-				if (endpointUrl.startsWith("/")) {
-					endpointUrl = endpointUrl.substring(1);
-				}
-				endpointUrl = defaultEndpointUrl + endpointUrl;
+		} else if (!endpointUrl.contains("://")) { // relative
+			if (endpointUrl.startsWith("/")) {
+				endpointUrl = endpointUrl.substring(1);
 			}
-
-			//test for busy
-			java.net.URI endpointURI = java.net.URI.create(endpointUrl);
-			String host = endpointURI.getHost();
-			try {
-				if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
-					int port = endpointURI.getPort();
-					java.net.ServerSocket ss = null;
-					try {
-						ss = new java.net.ServerSocket(port);
-					} catch (java.io.IOException e) {
-						// rethrow exception
-						throw new IllegalArgumentException(
-								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
-					} finally {
-						if (ss != null) {
-							try {
-								ss.close();
-							} catch (java.io.IOException e) {
-								// ignore
-							}
-						}
-					}
-					try {
-						// ok, let's doublecheck for silent listeners
-						java.net.Socket cs = new java.net.Socket(host, port);
-						// if succeed - somebody silently listening, fail!
-						cs.close();
-						// rethrow exception
-						throw new IllegalArgumentException(
-								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
-					} catch (java.io.IOException e) {
-						//ok, nobody listens, proceed
-					}
-				}
-			} catch (java.net.UnknownHostException e) {
-				// ignore
-			}
-			return endpointUrl;
+			endpointUrl = defaultEndpointUrl + endpointUrl;
+		}
+		return endpointUrl;
 	}
-	
+
 static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org.apache.camel.component.cxf.CxfPayload<javax.xml.transform.Source>> {
     public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
         return cls == org.apache.camel.component.cxf.CxfPayload.class;
