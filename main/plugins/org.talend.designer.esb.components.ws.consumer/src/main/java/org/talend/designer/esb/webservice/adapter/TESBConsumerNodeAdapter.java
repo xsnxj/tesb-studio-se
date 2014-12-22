@@ -34,11 +34,11 @@ class TESBConsumerNodeAdapter extends AbstractNodeAdapter {
         node.setParamValue(SERVICE_NAME, currentFunction.getServiceName());
         node.setParamValue("PORT_NS", currentFunction.getServiceNameSpace());
         node.setParamValue("SOAP_ACTION", currentFunction.getSoapAction());
-        if (setting.getWsdlLocation().startsWith("context.")) {
-            node.setParamValue("ESB_ENDPOINT", setting.getWsdlLocation());
-        } else {
+
+        if (!node.getParamStringValue("ESB_ENDPOINT").startsWith("context.")) {
             node.setParamValue("ESB_ENDPOINT", TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
         }
+
         node.setParamValue("COMMUNICATION_STYLE", currentFunction.getCommunicationStyle());
         return Status.OK_STATUS;
     }
