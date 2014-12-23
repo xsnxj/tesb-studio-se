@@ -14,9 +14,9 @@ package org.talend.camel.designer.ui.editor;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.core.ui.projectsetting.ProjectSettingManager;
-import org.talend.repository.editor.JobEditorInput;
 import org.talend.repository.model.RepositoryNode;
 
 /**
@@ -51,6 +51,7 @@ public class CamelProcessEditorInput extends JobEditorInput {
      * 
      * @see org.talend.repository.editor.JobEditorInput#createProcess()
      */
+    @Override
     protected Process createProcess() {
         return new RouteProcess(getItem().getProperty());
     }
@@ -60,19 +61,21 @@ public class CamelProcessEditorInput extends JobEditorInput {
      * 
      * @see org.talend.repository.editor.JobEditorInput#saveProcessBefore()
      */
+    @Override
     protected void saveProcessBefore() {
         ProjectSettingManager.defaultUseProjectSetting(getLoadedProcess());
     }
 
+    @Override
     public Process getLoadedProcess() {
         return (Process) loadedProcess;
     }
-    
+
     @Override
     public Object getAdapter(Class adapter) {
-    	if(adapter == RepositoryNode.class){
-    		return getRepositoryNode();
-    	}
-    	return super.getAdapter(adapter);
+        if (adapter == RepositoryNode.class) {
+            return getRepositoryNode();
+        }
+        return super.getAdapter(adapter);
     }
 }

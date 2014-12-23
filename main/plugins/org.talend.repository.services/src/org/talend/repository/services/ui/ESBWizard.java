@@ -24,14 +24,14 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.runtime.CoreRuntimePlugin;
+import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
+import org.talend.metadata.managment.ui.wizard.CheckLastVersionRepositoryWizard;
+import org.talend.metadata.managment.ui.wizard.metadata.connection.Step0WizardPage;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
-import org.talend.repository.ui.utils.ConnectionContextHelper;
-import org.talend.repository.ui.wizards.CheckLastVersionRepositoryWizard;
-import org.talend.repository.ui.wizards.metadata.connection.Step0WizardPage;
 
 /**
  * hwang class global comment. Detailled comment

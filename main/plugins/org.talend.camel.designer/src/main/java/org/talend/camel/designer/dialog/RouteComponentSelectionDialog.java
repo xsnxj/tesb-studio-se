@@ -37,10 +37,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.generator.RouteComponentController;
 import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.process.IGEFProcess;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.ui.CoreUIPlugin;
+import org.talend.core.ui.process.IGEFProcess;
 
 /**
  * @author LiXiaopeng Dialog for cJMS ConnectionFactory selection.

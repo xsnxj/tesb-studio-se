@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.IImage;
-import org.talend.core.repository.IExtendRepositoryNode;
+import org.talend.commons.ui.runtime.repository.IExtendRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 
 /**

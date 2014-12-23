@@ -24,10 +24,10 @@ import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.wizards.NewProcessWizardPage;
-import org.talend.repository.editor.JobEditorInput;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryNode;
@@ -72,7 +72,7 @@ public class SaveAsRoutesWizard extends Wizard {
         }
 
         IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
-        this.path = service.getRepositoryPath((RepositoryNode) repositoryNode);
+        this.path = service.getRepositoryPath(repositoryNode);
 
         this.oldCamelProcessItem = (CamelProcessItem) jobEditorInput.getItem();
         oldProperty = this.oldCamelProcessItem.getProperty();
@@ -90,6 +90,7 @@ public class SaveAsRoutesWizard extends Wizard {
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_WIZ));
     }
 
+    @Override
     public void addPages() {
         mainPage = new NewProcessWizardPage(property, path);
         mainPage.initializeSaveAs(oldProperty.getLabel(), oldProperty.getVersion(), true);
@@ -102,6 +103,7 @@ public class SaveAsRoutesWizard extends Wizard {
         setWindowTitle("Save As");
     }
 
+    @Override
     public boolean performFinish() {
 
         boolean ok = false;

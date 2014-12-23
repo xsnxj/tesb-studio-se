@@ -35,12 +35,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.repository.model.ProjectRepositoryNode;
+import org.talend.core.repository.ui.utils.RecombineRepositoryNodeUtil;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.EProperties;
-import org.talend.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.nodes.IProjectRepositoryNode;
-import org.talend.repository.ui.utils.RecombineRepositoryNodeUtil;
 import org.talend.repository.viewer.ui.provider.RepositoryViewerProvider;
 import org.talend.repository.viewer.ui.viewer.RepositoryTreeViewer;
 

@@ -15,7 +15,7 @@ package org.talend.repository.services.action;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IFileEditorInput;
 import org.talend.core.model.properties.Item;
-import org.talend.repository.editor.RepositoryEditorInput;
+import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 
 public class ServiceEditorInput extends RepositoryEditorInput {
 

@@ -27,6 +27,7 @@ import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.services.resource.IExportRouteResourcesService;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.constants.IExportJobConstants;
 import org.talend.repository.documentation.ExportFileResource;
@@ -36,7 +37,6 @@ import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
-import org.talend.resource.IExportRouteResourcesService;
 import org.talend.resources.util.EMavenBuildScriptProperties;
 
 /**
