@@ -49,13 +49,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.help.appserver"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.core.runtime.compatibility.registry"
          download-size="0"
          install-size="0"
@@ -385,14 +378,7 @@
          id="javax.wsdl"
          download-size="0"
          install-size="0"
-         version="1.6.2.v201012040545"
-         unpack="false"/>
-
-   <plugin
-         id="javax.wsdl"
-         download-size="0"
-         install-size="0"
-         version="1.5.1.v201005080630"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
@@ -555,13 +541,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <!--plugin
-         id="org.talend.designer.esb.webservice"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="true"/-->
 
    <plugin
          id="javax.xml.soap"
