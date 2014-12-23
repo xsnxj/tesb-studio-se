@@ -3,7 +3,7 @@ package org.talend.camel.designer.ui.editor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
-import org.talend.repository.editor.RepositoryEditorInput;
+import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 import org.talend.repository.model.RepositoryNode;
 
 public class CamelEditorUtil {

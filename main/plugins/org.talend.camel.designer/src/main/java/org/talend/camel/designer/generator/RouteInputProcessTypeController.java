@@ -13,7 +13,7 @@ import org.talend.camel.designer.ui.wizards.AssignJobWizardDialog;
 import org.talend.camel.designer.util.CamelDesignerUtil;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.properties.tab.IDynamicProperty;
+import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.core.ui.editor.properties.controllers.ProcessController;

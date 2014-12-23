@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.talend.commons.emf.TalendXMIResource;
+import org.talend.commons.runtime.model.emf.TalendXMIResource;
 import org.talend.repository.items.importexport.handlers.HandlerUtil;
 import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
 import org.talend.repository.items.importexport.handlers.model.ImportItem;

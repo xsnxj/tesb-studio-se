@@ -55,6 +55,7 @@ import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.datatools.xml.utils.XSDPopulationUtil2;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.metadata.managment.ui.utils.XsdMetadataUtils;
 import org.talend.repository.services.Activator;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.ui.RewriteSchemaDialog;
@@ -62,7 +63,6 @@ import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePag
 import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
 import org.talend.repository.services.utils.WSDLUtils;
-import org.talend.repository.ui.utils.XsdMetadataUtils;
 
 public class PublishMetadataRunnable implements IRunnableWithProgress {
 

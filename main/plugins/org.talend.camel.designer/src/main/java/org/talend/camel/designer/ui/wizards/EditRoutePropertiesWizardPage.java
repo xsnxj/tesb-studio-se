@@ -29,8 +29,8 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizardPage;
 import org.talend.repository.model.IProxyRepositoryService;
-import org.talend.repository.ui.wizards.PropertiesWizardPage;
 
 /**
  * DOC zwzhao class global comment. Detailled comment

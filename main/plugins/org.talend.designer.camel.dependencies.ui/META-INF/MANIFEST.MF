@@ -6,7 +6,10 @@ Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.talend.designer.camel.dependencies.ui.UIActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.talend.model,
+ org.talend.commons.ui,
  org.talend.core.repository,
+ org.talend.core.ui,
  org.talend.core,
  org.talend.designer.core
 Bundle-ActivationPolicy: lazy
@@ -20,13 +23,7 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.part,
  org.talend.camel.core.model.camelProperties,
  org.talend.camel.designer.ui.editor,
- org.talend.commons.exception,
- org.talend.commons.ui.swt.actions,
- org.talend.core.model.properties,
- org.talend.core.model.repository,
- org.talend.core.repository.model,
  org.talend.designer.camel.dependencies.core.model,
  org.talend.designer.camel.dependencies.core.util,
- org.talend.designer.core.model.utils.emf.talendfile,
- org.talend.repository.ui.actions
+ org.talend.designer.core.model.utils.emf.talendfile
 Bundle-Vendor: .Talend SA.

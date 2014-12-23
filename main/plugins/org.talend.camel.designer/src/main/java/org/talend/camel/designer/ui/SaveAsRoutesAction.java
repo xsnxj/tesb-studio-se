@@ -23,7 +23,7 @@ import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.wizards.SaveAsRoutesWizard;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
-import org.talend.repository.editor.JobEditorInput;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.repository.model.IRepositoryNode;
 
 /**
@@ -51,8 +51,8 @@ public class SaveAsRoutesAction extends Action {
 
                 IWorkbenchPage page = editorPart.getSite().getPage();
 
-                IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(newRoutesEditorInput.getItem()
-                        .getProperty().getId(), false);
+                IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(
+                        newRoutesEditorInput.getItem().getProperty().getId(), false);
                 newRoutesEditorInput.setRepositoryNode(repositoryNode);
 
                 // close the old editor

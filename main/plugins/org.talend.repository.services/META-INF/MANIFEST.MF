@@ -29,9 +29,9 @@ Require-Bundle: org.apache.commons.collections,
  org.apache.commons.lang,
  org.talend.libraries.dom4j-jaxen,
  org.eclipse.wst.wsdl,
+ org.talend.metadata.managment.ui,
  org.talend.repository.items.importexport
-Import-Package: org.talend.repository.ui.wizards.metadata.connection,
- org.talend.utils.wsdl
+Import-Package: org.talend.utils.wsdl
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .,

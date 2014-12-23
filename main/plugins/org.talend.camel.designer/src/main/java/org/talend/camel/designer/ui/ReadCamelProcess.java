@@ -25,12 +25,12 @@ import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.ui.action.AbstractProcessAction;
-import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.RepositoryNode;
 
 /**

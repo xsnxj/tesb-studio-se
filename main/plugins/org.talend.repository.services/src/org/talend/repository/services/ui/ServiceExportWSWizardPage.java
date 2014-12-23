@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.repository.constants.FileConstants;
+import org.talend.core.services.resource.IExportServiceScriptResourcesService;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
-import org.talend.resource.IExportServiceScriptResourcesService;
 
 /**
  * DOC x class global comment. Detailled comment <br/>

@@ -27,6 +27,7 @@ import org.talend.camel.designer.ui.wizards.OpenAnotherVersionPage;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.CorePlugin;
@@ -39,7 +40,6 @@ import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
-import org.talend.repository.model.ERepositoryStatus;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
 

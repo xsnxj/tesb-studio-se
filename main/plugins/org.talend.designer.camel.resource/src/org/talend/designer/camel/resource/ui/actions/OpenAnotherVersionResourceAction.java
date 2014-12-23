@@ -26,7 +26,7 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.ui.IUIRefresher;
+import org.talend.core.services.IUIRefresher;
 import org.talend.designer.camel.resource.RouteResourceActivator;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
 import org.talend.designer.camel.resource.ui.dialogs.PropertyManagerWizardDialog;

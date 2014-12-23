@@ -21,13 +21,13 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.ICheckDeleteItemReference;
 import org.talend.core.repository.model.AbstractCheckDeleteItemReference;
+import org.talend.core.repository.model.ItemReferenceBean;
+import org.talend.core.repository.model.provider.ICheckDeleteItemReference;
+import org.talend.core.repository.ui.actions.DeleteActionCache;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.ItemReferenceBean;
-import org.talend.repository.ui.actions.DeleteActionCache;
 
 /**
  * @author xpli

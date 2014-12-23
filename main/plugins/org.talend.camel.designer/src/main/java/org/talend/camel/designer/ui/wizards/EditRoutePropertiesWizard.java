@@ -15,7 +15,7 @@ package org.talend.camel.designer.ui.wizards;
 import org.eclipse.core.runtime.IPath;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.repository.ui.wizards.PropertiesWizard;
+import org.talend.metadata.managment.ui.wizard.PropertiesWizard;
 import org.talend.repository.ui.wizards.routines.EditRoutinePropertiesWizardPage;
 
 /**

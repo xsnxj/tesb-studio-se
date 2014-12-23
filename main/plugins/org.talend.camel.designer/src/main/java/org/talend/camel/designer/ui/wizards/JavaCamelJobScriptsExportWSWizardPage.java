@@ -45,13 +45,13 @@ import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWit
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.repository.constants.FileConstants;
+import org.talend.core.services.resource.IExportRouteResourcesService;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
-import org.talend.resource.IExportRouteResourcesService;
 
 /**
  * DOC x class global comment. Detailled comment <br/>
