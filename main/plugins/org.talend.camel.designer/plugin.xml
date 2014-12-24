@@ -475,4 +475,11 @@
               </importItemsHandler>
            </importItemsProvider>
         </extension>
+        <extension
+              point="org.talend.core.ui.showPerspectiveAtStartup">
+           <perspective
+                 appearsAfter="org.talend.rcp.perspective"
+                 id="org.talend.camel.perspective">
+           </perspective>
+        </extension>
 </plugin>
