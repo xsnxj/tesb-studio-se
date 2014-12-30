@@ -210,7 +210,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>trojanbug.plugins</id>
-			<url>https://propertymapper-maven-plugin.googlecode.com/svn/maven-repository/</url>
+			<url>http://newbuild.talend.com:8081/nexus/content/repositories/propertymapper-maven-plugin/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
