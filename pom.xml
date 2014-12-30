@@ -116,17 +116,17 @@
     <module>i18n/plugins/org.talend.camel.designer.nl</module>
     <module>i18n/plugins/org.talend.repository.services.nl</module>
     <module>i18n/plugins/org.talend.repository.view.esb.nl</module>
-    <module>main/features/org.talend.camel-feature</module>
-    <module>main/features/org.talend.camel.core-feature</module>
-    <module>main/features/org.talend.camel.designer-feature</module>
-    <module>main/features/org.talend.camel.repository-feature</module>
-    <module>main/features/org.talend.esb.tooling-feature</module>
-    <module>main/features/org.talend.esb.tooling.rs.provider-feature</module>
-    <module>main/features/org.talend.esb.tooling.ws.consumer-feature</module>
-    <module>main/features/org.talend.esb.tooling.ws.provider-feature</module>
-    <module>main/features/org.talend.esbstandard-feature</module>
-    <module>main/features/org.talend.rcp.branding.esbstandard-feature</module>
-    <module>main/features/org.talend.repository.services-feature</module>
+    <module>main/features/org.talend.camel.feature</module>
+    <module>main/features/org.talend.camel.core.feature</module>
+    <module>main/features/org.talend.camel.designer.feature</module>
+    <module>main/features/org.talend.camel.repository.feature</module>
+    <module>main/features/org.talend.esb.tooling.feature</module>
+    <module>main/features/org.talend.esb.tooling.rs.provider.feature</module>
+    <module>main/features/org.talend.esb.tooling.ws.consumer.feature</module>
+    <module>main/features/org.talend.esb.tooling.ws.provider.feature</module>
+    <module>main/features/org.talend.esbstandard.feature</module>
+    <module>main/features/org.talend.rcp.branding.esbstandard.feature</module>
+    <module>main/features/org.talend.repository.services.feature</module>
     <module>main/plugins/org.talend.camel.designer</module>
     <module>main/plugins/org.talend.camel.designer.codegen</module>
     <module>main/plugins/org.talend.camel.libraries</module>
