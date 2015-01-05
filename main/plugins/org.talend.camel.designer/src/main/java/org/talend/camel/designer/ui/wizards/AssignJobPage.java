@@ -146,6 +146,13 @@ public class AssignJobPage extends WizardPage {
                 if (current == null) {
                     return false;
                 }
+                /*
+                 * Compare via equals for jobs in sub folders because of different instances
+                 * of RepositoryNode representing same object. (Maybe because of proxy)
+                 */
+                if (current.equals(ancestor)) {
+                	return true;
+                }
                 current = current.getParent();
             }
             return true;
