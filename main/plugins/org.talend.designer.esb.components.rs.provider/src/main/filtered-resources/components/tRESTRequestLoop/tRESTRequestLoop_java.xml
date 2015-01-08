@@ -28,20 +28,23 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
+		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
+			<DEFAULT>"http://localhost:8088/"</DEFAULT>
+		</PARAMETER>
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
-        <PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="110"
-                DYNAMIC_SETTINGS="true" SHOW="true" >
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="120"
-                DYNAMIC_SETTINGS="true" SHOW="true" >
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="130">
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
+		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="110"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="120"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="130">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
@@ -83,11 +86,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlschema-core}"
 					BundleID=""
 					REQUIRED="true" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
-                    BundleID=""
-                    REQUIRED="true" />
+			<IMPORT NAME="geronimo-java_1.4_spec"
+					MODULE="mail.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+					BundleID=""
+					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="${tesb-slf4j-api}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-slf4j-api}"
@@ -106,7 +109,7 @@
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="javax.ws.rs-api"
-					MODULE="javax.ws.rs-api-2.0-m10.jar" 
+					MODULE="javax.ws.rs-api-2.0-m10.jar"
 					BundleID=""
 					REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-xml"
@@ -359,25 +362,25 @@
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
-            		MODULE="${tesb-correlationid-policy}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
-            <IMPORT NAME="cloning"
-                    MODULE="${tesb-cloning}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cloning}"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
-            <IMPORT NAME="objenesis"
-                    MODULE="${tesb-objenesis}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-objenesis}"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
-            <IMPORT NAME="cxf-rt-bindings-soap"
-                    MODULE="${tesb-cxf-rt-bindings-soap}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-bindings-soap}"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+					MODULE="${tesb-correlationid-policy}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+			<IMPORT NAME="cloning"
+					MODULE="${tesb-cloning}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cloning}"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+			<IMPORT NAME="objenesis"
+					MODULE="${tesb-objenesis}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-objenesis}"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+			<IMPORT NAME="cxf-rt-bindings-soap"
+					MODULE="${tesb-cxf-rt-bindings-soap}"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-bindings-soap}"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
