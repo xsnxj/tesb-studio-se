@@ -1169,10 +1169,7 @@ public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.
 	}
 }
 
-
-Thread4RestServiceProviderEndpoint thread4RestServiceProviderEndpoint = null;
-
-class Thread4RestServiceProviderEndpoint extends Thread {
+private String checkEndpointUrl(String url) {
 <%
 	String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
 	if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
@@ -1181,67 +1178,75 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 		defaultUri = defaultUri + "/";
 	}
 %>
-	private final String defaultEndpointUrl = "<%=defaultUri%>";
+	final String defaultEndpointUrl = "<%=defaultUri%>";
 
-	private String endpointUrl = <%=ElementParameterParser.getValue(node, "__REST_ENDPOINT__")%>;
+	String endpointUrl = url;
+	if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
+		endpointUrl = defaultEndpointUrl;
+	} else if (!endpointUrl.contains("://")) { // relative
+		if (endpointUrl.startsWith("/")) {
+			endpointUrl = endpointUrl.substring(1);
+		}
+		endpointUrl = defaultEndpointUrl + endpointUrl;
+	}
 
-	private org.apache.cxf.endpoint.Server server;
+	// test for busy
+	java.net.URI endpointURI = java.net.URI.create(endpointUrl);
+	String host = endpointURI.getHost();
+	try {
+		if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
+			int port = endpointURI.getPort();
+			java.net.ServerSocket ss = null;
+			try {
+				ss = new java.net.ServerSocket(port);
+			} catch (IOException e) {
+				// rethrow exception
+				throw new IllegalArgumentException("Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
+			} finally {
+				if (ss != null) {
+					try {
+						ss.close();
+					} catch (IOException e) {
+						// ignore
+					}
+				}
+			}
+			try {
+				// ok, let's doublecheck for silent listeners
+				java.net.Socket cs = new java.net.Socket(host, port);
+				// if succeed - somebody silently listening, fail!
+				cs.close();
+				// rethrow exception
+				throw new IllegalArgumentException("Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
+			} catch (IOException e) {
+				// ok, nobody listens, proceed
+			}
+		}
+	} catch (java.net.UnknownHostException e) {
+		// ignore
+	}
+
+	return endpointUrl;
+}
+
+
+Thread4RestServiceProviderEndpoint thread4RestServiceProviderEndpoint = null;
+
+class Thread4RestServiceProviderEndpoint extends Thread {
+
+	private final String endpointUrl;
 
 	private final <%=process.getName()%> job;
 
-	public Thread4RestServiceProviderEndpoint(<%=process.getName()%> job) {
+	private org.apache.cxf.endpoint.Server server;
+
+	public Thread4RestServiceProviderEndpoint(<%=process.getName()%> job, String endpointUrl) {
 		this.job = job;
+		this.endpointUrl = endpointUrl;
 	}
 
 	public void run() {
 		try {
-			if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
-				endpointUrl = defaultEndpointUrl;
-			} else if (!endpointUrl.contains("://")) { // relative
-				if (endpointUrl.startsWith("/")) {
-					endpointUrl = endpointUrl.substring(1);
-				}
-				endpointUrl = defaultEndpointUrl + endpointUrl;
-			}
-
-			//test for busy
-			java.net.URI endpointURI = java.net.URI.create(endpointUrl);
-			String host = endpointURI.getHost();
-			try {
-				if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
-					int port = endpointURI.getPort();
-					java.net.ServerSocket ss = null;
-					try {
-						ss = new java.net.ServerSocket(port);
-					} catch (IOException e) {
-						// rethrow exception
-						throw new IllegalArgumentException(
-								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
-					} finally {
-						if (ss != null) {
-							try {
-								ss.close();
-							} catch (IOException e) {
-								// ignore
-							}
-						}
-					}
-					try {
-						// ok, let's doublecheck for silent listeners
-						java.net.Socket cs = new java.net.Socket(host, port);
-						// if succeed - somebody silently listening, fail!
-						cs.close();
-						// rethrow exception
-						throw new IllegalArgumentException(
-								"Cannot start provider with uri: " + endpointUrl + ". Port " + port + " already in use.");
-					} catch (IOException e) {
-						//ok, nobody listens, proceed
-					}
-				}
-			} catch (java.net.UnknownHostException e) {
-				// ignore
-			}
-
 			RestServiceProviderImpl4TalendJob provider = new RestServiceProviderImpl4TalendJob(job);
 
 			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf =

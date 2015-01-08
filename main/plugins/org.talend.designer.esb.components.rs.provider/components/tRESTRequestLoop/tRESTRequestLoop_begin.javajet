@@ -3,6 +3,7 @@
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.IConnectionCategory
+		org.talend.core.model.process.ElementParameterParser
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
 		java.util.List
@@ -59,8 +60,9 @@
 				throw new RuntimeException("request is not provided");
 			} else {
 				if (!runInTalendEsbRuntimeContainer && null == thread4RestServiceProviderEndpoint) {
+					String endpointUrl_<%=cid%> = checkEndpointUrl(<%=ElementParameterParser.getValue(node, "__REST_ENDPOINT__")%>);
 					// *** external thread for endpoint initialization
-					thread4RestServiceProviderEndpoint = new Thread4RestServiceProviderEndpoint(this);
+					thread4RestServiceProviderEndpoint = new Thread4RestServiceProviderEndpoint(this, endpointUrl_<%=cid%>);
 					thread4RestServiceProviderEndpoint.start();
 					// *** external thread for endpoint initialization
 				}
