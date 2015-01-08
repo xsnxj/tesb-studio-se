@@ -28,20 +28,23 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
+		<PARAMETER FIELD="TEXT" NAME="REST_ENDPOINT" NUM_ROW="5" REQUIRED="true" SHOW="true">
+			<DEFAULT>"http://localhost:8088/"</DEFAULT>
+		</PARAMETER>
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
-        <PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="110"
-                DYNAMIC_SETTINGS="true" SHOW="true" >
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="120"
-                DYNAMIC_SETTINGS="true" SHOW="true" >
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="130">
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
+		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="110"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="120"
+				DYNAMIC_SETTINGS="true" SHOW="true" >
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="130">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
@@ -83,11 +86,11 @@
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/xmlschema-core-2.1.0.jar"
 					BundleID=""
 					REQUIRED="true" />
-            <IMPORT NAME="geronimo-java_1.4_spec"
-                    MODULE="mail.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
-                    BundleID=""
-                    REQUIRED="true" />
+			<IMPORT NAME="geronimo-java_1.4_spec"
+					MODULE="mail.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail.jar"
+					BundleID=""
+					REQUIRED="true" />
 			<IMPORT NAME="slf4j-api"
 					MODULE="slf4j-api-1.7.6.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.6.jar"
@@ -365,10 +368,10 @@
 					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 			<!-- CorrelationID -->
 			<IMPORT NAME="correlationid-policy"
-            		MODULE="correlationid-policy-5.5.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.5.1.jar"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
+					MODULE="correlationid-policy-5.5.1.jar"
+					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.5.1.jar"
+					BundleID=""
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
