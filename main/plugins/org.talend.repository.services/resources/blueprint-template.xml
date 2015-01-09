@@ -12,16 +12,10 @@
 
 #if ($useSecuritySAML || $useServiceRegistry)
 #[[
-    <property-placeholder persistent-id="org.talend.esb.job.service" placeholder-prefix="$serviceDefault{"
+    <cm-properties persistent-id="org.talend.esb.job.service" id="org.talend.esb.job.service"
+        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0"/>
+    <property-placeholder defaults-ref="org.talend.esb.job.service" ]]#persistent-id="org.talend.esb.job.service.${samlConfig}"#[[ placeholder-prefix="$service{"
         xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0" />
-    <property-placeholder ]]#persistent-id="org.talend.esb.job.service.${samlConfig}"#[[ placeholder-prefix="$service{"
-        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0" >
-        <default-properties>
-            <property name="ws-security.signature.username" value="$serviceDefault{ws-security.signature.username}"/>
-            <property name="ws-security.signature.password" value="$serviceDefault{ws-security.signature.password}"/>
-            <property name="ws-security.signature.properties" value="$serviceDefault{ws-security.signature.properties}"/>
-        </default-properties>
-    </property-placeholder>
 ]]#
 #end ## ($useSecuritySAML || $useServiceRegistry)
 
@@ -48,10 +42,9 @@
 #[[
             <entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
             <entry key="ws-security.callback-handler">
-                <bean class="org.apache.cxf.interceptor.security.NamePasswordCallbackHandler">
+                <bean class="org.talend.esb.security.saml.WSPasswordCallbackHandler">
                     <argument type="java.lang.String" value="$service{ws-security.signature.username}" />
                     <argument type="java.lang.String" value="$service{ws-security.signature.password}" />
-                    <argument type="java.lang.String" value="setPassword" />
                 </bean>
             </entry>
             <entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />

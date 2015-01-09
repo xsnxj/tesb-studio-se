@@ -215,7 +215,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                         + (useSAM ? ",org.talend.esb.sam.agent.feature" : "") //$NON-NLS-1$
                         + (useBusinessCorrelation ? ",org.talend.esb.policy.correlation.feature" : "") //$NON-NLS-1$
                         + (useSecurityToken || useRegistry ? ",org.apache.ws.security.validate" : "") //$NON-NLS-1$
-                        + (useSecuritySAML || useRegistry ? ",org.apache.cxf.interceptor.security" : "") //$NON-NLS-1$
+                        + (useSecuritySAML || useRegistry ? ",org.talend.esb.security.saml" : "") //$NON-NLS-1$
                         + (useEncryption || useRegistry ? ",org.apache.cxf.xkms.crypto" : "") //$NON-NLS-1$
         );
         return manifest;
