@@ -231,23 +231,38 @@ if (inputConn != null) {
                     
                     genericConsumer_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
                 <% } %>
-                <% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+				boolean use_proxy_<%= cid %> = false;
+				<%
+				  if( node.getElementParameter("USE_PROXY").isContextMode() ) {
+				%>
+				   use_proxy_<%= cid %> = <%= ElementParameterParser.getValue(node, "__USE_PROXY__") %>;
+				<%
+				   } else {
+			    if ( ElementParameterParser.getValue(node, "__USE_PROXY__").equals("true") ) {
+				%>
+				   use_proxy_<%= cid %> = true; // not from context
+				<%
+				   }
+				}
+				%>
+				if(use_proxy_<%= cid %>){
                     genericConsumer_<%=cid%>.setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
                     genericConsumer_<%=cid%>.setProxyPort(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>);
                     genericConsumer_<%=cid%>.setProxyUsername(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
                     
                     <%
-                    String passwordFieldName = "__PROXY_PASSWORD__";
+                    String passwordProxyFieldName = "__PROXY_PASSWORD__";
                     %>
                                     
-                    <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
-                    final String decryptedProxyPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
+                    <%if (ElementParameterParser.canEncrypt(node, passwordProxyFieldName)) {%> 
+                    final String decryptedProxyPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordProxyFieldName)%>);
                     <%} else {%>
-                    final String decryptedProxyPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
+                    final String decryptedProxyPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordProxyFieldName)%>; 
                     <%}%>                                      
                     
                     genericConsumer_<%=cid%>.setProxyPassword(decryptedProxyPwd_<%=cid%>);
-                <% } %>
+					}
+
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
 
