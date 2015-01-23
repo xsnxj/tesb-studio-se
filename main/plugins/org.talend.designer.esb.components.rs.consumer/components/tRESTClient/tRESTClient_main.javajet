@@ -259,7 +259,21 @@ try {
 	if (!inOSGi) {
 		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
 		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
-		<% if (paramsHelper.getBoolParam("__USE_PROXY__")) { %>
+		boolean use_proxy_<%= cid %> = false;
+		<%
+		  if( node.getElementParameter("USE_PROXY").isContextMode() ) {
+		%>
+		   use_proxy_<%= cid %> = <%= ElementParameterParser.getValue(node, "__USE_PROXY__") %>;
+		<%
+		   } else {
+	    if ( ElementParameterParser.getValue(node, "__USE_PROXY__").equals("true") ) {
+		%>
+		   use_proxy_<%= cid %> = true; // not from context
+		<%
+		   }
+		}
+		%>
+		if(use_proxy_<%= cid %>){
 			<% String passwordFieldName = "__PROXY_PASSWORD__"; %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
@@ -267,7 +281,8 @@ try {
 			conduit_<%=cid%>.getClient().setProxyServerPort(Integer.valueOf(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>));
 			conduit_<%=cid%>.getProxyAuthorization().setUserName(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
 			conduit_<%=cid%>.getProxyAuthorization().setPassword(decryptedPassword_<%=cid%>);
-		<% } %>
+		}
+
 	}
 	<% if (paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")) { %>
 		conduit_<%=cid%>.getClient().setAutoRedirect(true);
