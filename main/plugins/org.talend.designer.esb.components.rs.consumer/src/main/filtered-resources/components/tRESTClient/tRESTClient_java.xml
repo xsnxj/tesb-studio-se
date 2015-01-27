@@ -540,14 +540,9 @@
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
                     BundleID=""
                     REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
-            <IMPORT NAME="cloning"
-                    MODULE="${tesb-cloning}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cloning}"
-                    BundleID=""
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
-            <IMPORT NAME="objenesis"
-                    MODULE="${tesb-objenesis}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-objenesis}"
+            <IMPORT NAME="commons-jxpath"
+                    MODULE="${tesb-commons-jxpath}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-commons-jxpath}"
                     BundleID=""
                     REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true')" />
 

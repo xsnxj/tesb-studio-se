@@ -481,14 +481,11 @@
                     MODULE="${tesb-correlationid-policy}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
-            <IMPORT NAME="cloning"
-                    MODULE="${tesb-cloning}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cloning}"
+            <IMPORT NAME="commons-jxpath"
+                    MODULE="${tesb-commons-jxpath}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-commons-jxpath}"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
-            <IMPORT NAME="objenesis"
-                    MODULE="${tesb-objenesis}"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-objenesis}"
-                    REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
+
             <!-- Security -->
             <IMPORT NAME="security-common"
                     MODULE="${tesb-security-common}"
