@@ -27,7 +27,6 @@ import java.util.zip.ZipFile;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -45,6 +44,7 @@ import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.services.resource.IExportRouteResourcesService;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -464,15 +464,15 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
      * @see
      * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#addRoutinesSourceCodes(org.talend
      * .repository.documentation.ExportFileResource[], org.talend.repository.documentation.ExportFileResource,
-     * org.eclipse.core.resources.IProject, boolean)
+     * ITalendProcessJavaProject, boolean)
      */
     @Override
-    protected void addRoutinesSourceCodes(ExportFileResource[] process, ExportFileResource resource, IProject javaProject,
-            boolean useBeans) throws Exception {
+    protected void addRoutinesSourceCodes(ExportFileResource[] process, ExportFileResource resource,
+            ITalendProcessJavaProject talendProcessJavaProject, boolean useBeans) throws Exception {
         if (useBeans) {
-            super.addRoutinesSourceCodes(process, resource, javaProject, true);
+            super.addRoutinesSourceCodes(process, resource, talendProcessJavaProject, true);
             // FIXME, need add routines also, else the maven should be error to execute
-            super.addRoutinesSourceCodes(process, resource, javaProject, false);
+            super.addRoutinesSourceCodes(process, resource, talendProcessJavaProject, false);
         }
     }
 

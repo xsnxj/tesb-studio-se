@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EMap;
@@ -40,7 +39,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.process.INode;
@@ -52,10 +50,12 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.resource.core.extension.ResourceCheckExtensionPointManager;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.ui.editor.process.Process;
+import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.ProjectManager;
 
 /**
@@ -124,11 +124,15 @@ public class RouteResourceUtil {
     }
 
     private static IFolder getRouteResourceFolder() {
-        IPath path = new Path(JavaUtils.JAVA_SRC_DIRECTORY);
-        path = path.append(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
-
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(JavaUtils.JAVA_PROJECT_NAME);
-        return project.getFolder(path);
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+            IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                    IRunProcessService.class);
+            ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
+            if (talendProcessJavaProject != null) {
+                return talendProcessJavaProject.getSrcFolder().getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
+            }
+        }
+        return null;
     }
 
     /**
@@ -138,30 +142,31 @@ public class RouteResourceUtil {
      * @return
      */
     public static IFile getSourceFile(RouteResourceItem item) {
-    	//the file may come from a reference project
-    	IFolder rrfolder = null;
-    	Resource eResource = item.eResource();
-    	if(eResource!=null){
-    		URI uri = eResource.getURI();
-    		if(uri != null && uri.isPlatformResource()){
-    			String platformString = uri.toPlatformString(true);
-    			IContainer parentContainer = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString)).getParent();
-    			if(parentContainer instanceof IFolder){
-    				rrfolder = (IFolder) parentContainer;
-    			}
-    		}
-    	}
-    	if(rrfolder == null){
-    		Project talendProject = ProjectManager.getInstance().getCurrentProject();
-    		String technicalLabel = talendProject.getTechnicalLabel();
+        // the file may come from a reference project
+        IFolder rrfolder = null;
+        Resource eResource = item.eResource();
+        if (eResource != null) {
+            URI uri = eResource.getURI();
+            if (uri != null && uri.isPlatformResource()) {
+                String platformString = uri.toPlatformString(true);
+                IContainer parentContainer = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
+                        .getParent();
+                if (parentContainer instanceof IFolder) {
+                    rrfolder = (IFolder) parentContainer;
+                }
+            }
+        }
+        if (rrfolder == null) {
+            Project talendProject = ProjectManager.getInstance().getCurrentProject();
+            String technicalLabel = talendProject.getTechnicalLabel();
 
-    		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
-    		String folderPath = item.getState().getPath();
-    		rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
-    		if (folderPath != null && !folderPath.isEmpty()) {
-    			rrfolder = rrfolder.getFolder(folderPath);
-    		}
-    	}
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
+            String folderPath = item.getState().getPath();
+            rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
+            if (folderPath != null && !folderPath.isEmpty()) {
+                rrfolder = rrfolder.getFolder(folderPath);
+            }
+        }
         String itemName = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
 
@@ -262,11 +267,11 @@ public class RouteResourceUtil {
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
 
         Property property = routeItem.getProperty();
-        //Changed for TDI-24563
-//      Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        // Changed for TDI-24563
+        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
         Process process = getProcessFromItem(property.getItem());
-        if(process == null){
-        	return new HashSet<ResourceDependencyModel>();
+        if (process == null) {
+            return new HashSet<ResourceDependencyModel>();
         }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
@@ -282,30 +287,31 @@ public class RouteResourceUtil {
      */
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(IRepositoryViewObject node) {
         Property property = node.getProperty();
-        //Changed for TDI-24563
-//        Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        // Changed for TDI-24563
+        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
         Item item = property.getItem();
         Process process = getProcessFromItem(item);
-        if(process == null){
-        	return new HashSet<ResourceDependencyModel>();
+        if (process == null) {
+            return new HashSet<ResourceDependencyModel>();
         }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
         return getBuiltInResourceDependencies(nodes);
     }
 
-    private static Process getProcessFromItem(Item item){
-    	IProcess process = null;
-    	IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
-                  .getService(IDesignerCoreService.class);
-    	if(designerCoreService != null){
-    		process = designerCoreService.getProcessFromItem(item);
-    	}
-    	if(process != null && process instanceof Process){
-    		return (Process) process;
-    	}
-    	return null;
+    private static Process getProcessFromItem(Item item) {
+        IProcess process = null;
+        IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault().getService(
+                IDesignerCoreService.class);
+        if (designerCoreService != null) {
+            process = designerCoreService.getProcessFromItem(item);
+        }
+        if (process != null && process instanceof Process) {
+            return (Process) process;
+        }
+        return null;
     }
+
     /**
      * @param nodes
      * 
@@ -394,12 +400,12 @@ public class RouteResourceUtil {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        if(rvo != null){
-	        Item item = rvo.getProperty().getItem();
-	        ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
-	        resourceDependencyModel.setSelectedVersion(version);
-	        resourceDependencyModel.setBuiltIn(true);
-	        return resourceDependencyModel;
+        if (rvo != null) {
+            Item item = rvo.getProperty().getItem();
+            ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
+            resourceDependencyModel.setSelectedVersion(version);
+            resourceDependencyModel.setBuiltIn(true);
+            return resourceDependencyModel;
         }
         return null;
     }
@@ -408,9 +414,17 @@ public class RouteResourceUtil {
      * Clear route resources before running
      */
     public static void clearRouteResources() {
-
+        if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+            return;
+        }
+        IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                IRunProcessService.class);
+        ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+        if (talendProcessJavaProject == null) {
+            return;
+        }
         File localFile = getResourceDescFile();
-        IFolder srcFolder = getSrcFolder();
+        IFolder srcFolder = talendProcessJavaProject.getSrcFolder();
 
         Set<String> resFileNames = new HashSet<String>();
         try {
@@ -455,19 +469,18 @@ public class RouteResourceUtil {
 
     }
 
-    private static IProject getProject() {
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(JavaUtils.JAVA_PROJECT_NAME);
-        return project;
-    }
-
-    private static IFolder getSrcFolder() {
-        return getProject().getFolder(JavaUtils.JAVA_SRC_DIRECTORY);
-    }
-
     private static File getResourceDescFile() {
-        IProject project = getProject();
-        IFile file = project.getFile(ROUTE_RESOURCES_DESC_FILE);
-        File localFile = file.getLocation().toFile();
+        if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+            return null;
+        }
+        IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                IRunProcessService.class);
+        ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+        if (talendProcessJavaProject == null) {
+            return null;
+        }
+        File localFile = talendProcessJavaProject.getProject().getFile(ROUTE_RESOURCES_DESC_FILE).getLocation().toFile();
+
         return localFile;
     }
 
