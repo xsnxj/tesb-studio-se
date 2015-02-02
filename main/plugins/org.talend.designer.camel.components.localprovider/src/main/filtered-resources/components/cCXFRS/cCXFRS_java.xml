@@ -476,10 +476,16 @@
                     BundleID=""
                     REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
+            <!-- CorrelationID -->
             <IMPORT NAME="correlationid-policy"
-                    MODULE="correlationid-policy-5.6.0-SNAPSHOT.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/correlationid-policy-5.6.0-SNAPSHOT.jar"
+                    MODULE="${tesb-correlationid-policy}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
+            <IMPORT NAME="commons-jxpath"
+                    MODULE="${tesb-commons-jxpath}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-commons-jxpath}"
+                    REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
+
             <!-- Security -->
             <IMPORT NAME="security-common"
                     MODULE="${tesb-security-common}"

@@ -525,6 +525,10 @@
                     MODULE="${tesb-correlationid-policy}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-correlationid-policy}"
                     REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
+            <IMPORT NAME="commons-jxpath"
+                    MODULE="${tesb-commons-jxpath}"
+                    UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-commons-jxpath}"
+                    REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
 
             <!-- Security -->
             <IMPORT NAME="security-common"
