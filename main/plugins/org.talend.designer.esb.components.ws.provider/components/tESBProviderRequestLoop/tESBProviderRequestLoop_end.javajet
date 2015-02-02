@@ -21,6 +21,8 @@
 			// job interrupted from outside
 			break;
 		} catch (Exception e_<%=cid%>) {
+			// handle exception by 'On Component Error' trigger or/and tLogCatcher
+			new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
 			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFaultByDefault(e_<%=cid%>);
 		} finally {
 			// close DB connections
