@@ -39,7 +39,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<jettison.version>1.3.5</jettison.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<tesb.version>6.0.0-SNAPSHOT</tesb.version>
+		<tesb.version>6.0.0-M2</tesb.version>
 	</properties>
 
 	<modules>
