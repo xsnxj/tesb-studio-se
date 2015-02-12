@@ -31,6 +31,7 @@ List<IConnection> dataOutputs = connsHelper.getDataOutputs();
 String projectName = codeGenArgument.getCurrentProjectName();
 String cid = node.getUniqueName();
 String processName = node.getProcess().getName();
+String passwordFieldName;
 
 NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
 String serviceNS = paramsHelper.getStringParam("__SERVICE_NS__");
@@ -220,16 +221,13 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
 
                 <% if (useAuth) { %>
+				{
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
-                    
-                    <%
-                    String passwordFieldName = "__AUTH_PASSWORD__";
-                    %>
-                    
+                    <% passwordFieldName = "__AUTH_PASSWORD__"; %>
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>                       
-                    
                     genericConsumer_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+				}
                 <% } %>
 				boolean use_proxy_<%= cid %> = false;
 				<%
@@ -245,44 +243,28 @@ if (inputConn != null) {
 				   }
 				}
 				%>
-				if(use_proxy_<%= cid %>){
+				if (use_proxy_<%= cid %>){
                     genericConsumer_<%=cid%>.setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
                     genericConsumer_<%=cid%>.setProxyPort(<%=paramsHelper.getStringParam("__PROXY_PORT__")%>);
                     genericConsumer_<%=cid%>.setProxyUsername(<%=paramsHelper.getStringParam("__PROXY_USERNAME__")%>);
-                    
-                    <%
-                    String passwordProxyFieldName = "__PROXY_PASSWORD__";
-                    %>
-                                    
-                    <%if (ElementParameterParser.canEncrypt(node, passwordProxyFieldName)) {%> 
-                    final String decryptedProxyPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordProxyFieldName)%>);
-                    <%} else {%>
-                    final String decryptedProxyPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordProxyFieldName)%>; 
-                    <%}%>                                      
-                    
-                    genericConsumer_<%=cid%>.setProxyPassword(decryptedProxyPwd_<%=cid%>);
-					}
+                    <% passwordFieldName = "__PROXY_PASSWORD__"; %>
+                    <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>                       
+                    genericConsumer_<%=cid%>.setProxyPassword(decryptedPassword_<%=cid%>);
+				}
 
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
-                <% if (paramsHelper.getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) { %>
+                <% if (paramsHelper.getBoolParam("__NEED_SSL_TO_TRUSTSERVER__")) {
+					passwordFieldName = "__SSL_TRUSTSERVER_PASSWORD__"; %>
+					{
+					<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
                     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
                     System.setProperty("javax.net.ssl.trustStore", <%=paramsHelper.getStringParam("__SSL_TRUSTSERVER_TRUSTSTORE__")%>);
-                    
-                    <%
-                    String passwordFieldName = "__SSL_TRUSTSERVER_PASSWORD__";
-                    %>
-                                    
-                    <%if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
-                    final String decryptedPwd_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
-                    <%} else {%>
-                    final String decryptedPwd_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
-                    <%}%>                        
-                    
-                    System.setProperty("javax.net.ssl.trustStorePassword", decryptedPwd_<%=cid%>);
+                    System.setProperty("javax.net.ssl.trustStorePassword", decryptedPassword_<%=cid%>);
+					}
                 <% } %>
 
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
@@ -322,20 +304,17 @@ if (inputConn != null) {
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
 
-                            <%
-                            String passwordFieldName = "__AUTH_PASSWORD__";
-                            
-                            if(useSR || useAuth) {
-                            %>
-                            
+                            <% if(useSR || useAuth) { 
+								passwordFieldName = "__AUTH_PASSWORD__"; %>
                             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>  
-                            
                             <%}%>
 
                             <% if (useSR) { %>
                                 put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
+
                                 put("password", decryptedPassword_<%=cid%>);
+
                                 <% if (!authorizationRole.isEmpty() && !"\"\"".equals(authorizationRole)) { %>
                                     put("role", <%=authorizationRole%>);
                                 <% } %>
