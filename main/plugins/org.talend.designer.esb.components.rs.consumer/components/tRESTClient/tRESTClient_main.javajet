@@ -28,7 +28,7 @@ IConnection connFault = connsHelper.getOutputConnFault();
 List<IConnection> dataOutputs = connsHelper.getDataOutputs();
 
 String cid = node.getUniqueName();
-
+String passwordFieldName;
 NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
 String method = paramsHelper.getStringParam("__METHOD__");
 String acceptType = paramsHelper.getStringParam("__ACCEPT_TYPE__");
@@ -94,12 +94,14 @@ try {
 	}
 
 	<% if (useAuth && "BASIC".equals(authType)) { %>
+		{
 		// set BASIC auth
-		<% String passwordFieldName = "__AUTH_PASSWORD__"; %>
+		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
 		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
 		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
 		factoryBean_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+		}
 	<% } %>
 
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
@@ -233,7 +235,7 @@ try {
 	<% if (useAuth && "SAML".equals(authType)) { %>
 		if (null != stsProperties) {
 			// set SAML Token authentication
-			<% String passwordFieldName = "__AUTH_PASSWORD__"; %>
+			<%  passwordFieldName = "__AUTH_PASSWORD__"; %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
 			java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
@@ -274,7 +276,7 @@ try {
 		}
 		%>
 		if(use_proxy_<%= cid %>){
-			<% String passwordFieldName = "__PROXY_PASSWORD__"; %>
+			<% passwordFieldName = "__PROXY_PASSWORD__"; %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
 			conduit_<%=cid%>.getClient().setProxyServer(<%=paramsHelper.getStringParam("__PROXY_HOST__")%>);
