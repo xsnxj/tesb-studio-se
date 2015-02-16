@@ -30,13 +30,13 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
-import org.talend.core.language.ECodeLanguage;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.ui.branding.AbstractBrandingService;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.codegen.AbstractRoutineSynchronizer;
@@ -55,6 +55,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * 
      * @see org.talend.designer.codegen.ITalendSynchronizer#syncAllRoutines()
      */
+    @Override
     public void syncAllRoutines() throws SystemException {
         // TODO Auto-generated method stub
 
@@ -65,6 +66,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * 
      * @see org.talend.designer.codegen.ITalendSynchronizer#syncAllBeans()
      */
+    @Override
     public void syncAllBeans() throws SystemException {
         // TODO Auto-generated method stub
         for (IRepositoryViewObject routine : getBeans()) {
@@ -74,6 +76,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
         }
     }
 
+    @Override
     public void syncAllBeansForLogOn() throws SystemException {
         for (IRepositoryViewObject routine : getBeans()) {
             BeanItem beanItem = (BeanItem) routine.getProperty().getItem();
@@ -87,9 +90,10 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * 
      * @see org.talend.designer.codegen.ITalendSynchronizer#getFile(org.talend.core.model.properties.Item)
      */
+    @Override
     public IFile getFile(Item item) throws SystemException {
         if (item instanceof BeanItem) {
-            return getBeanFile((BeanItem) item);
+            return getBeanFile(item);
         } else if (item instanceof CamelProcessItem) {
             return getCamelProcessFile((CamelProcessItem) item);
         }
@@ -98,20 +102,18 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
 
     private IFile getCamelProcessFile(CamelProcessItem item) throws SystemException {
         IRunProcessService service = CamelDesignerPlugin.getDefault().getRunProcessService();
-        try {
-            IProject javaProject = service.getProject(ECodeLanguage.JAVA);
-
-            String projectFolderName = JavaResourcesHelper.getProjectFolderName(item);
-
-            String folderName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), item.getProperty()
-                    .getVersion());
-            IFile file = javaProject.getFile(JavaUtils.JAVA_SRC_DIRECTORY + "/" //$NON-NLS-1$
-                    + projectFolderName + "/" + folderName + "/" //$NON-NLS-1$ //$NON-NLS-2$
-                    + item.getProperty().getLabel() + JavaUtils.JAVA_EXTENSION);
-            return file;
-        } catch (CoreException e) {
-            throw new SystemException(e);
+        ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
+        if (talendProcessJavaProject == null) {
+            return null;
         }
+        IFolder srcFolder = talendProcessJavaProject.getSrcFolder();
+
+        String projectFolderName = JavaResourcesHelper.getProjectFolderName(item);
+
+        String folderName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), item.getProperty().getVersion());
+        IFile file = srcFolder.getFile(projectFolderName + '/' + folderName + '/' + item.getProperty().getLabel()
+                + JavaUtils.JAVA_EXTENSION);
+        return file;
     }
 
     /*
@@ -119,6 +121,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * 
      * @see org.talend.designer.codegen.ITalendSynchronizer#getProcessFile(org.talend.core.model.process.JobInfo)
      */
+    @Override
     public IFile getProcessFile(JobInfo jobInfo) throws SystemException {
         // TODO Auto-generated method stub
         return null;
@@ -131,6 +134,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * org.talend.designer.codegen.ITalendSynchronizer#deleteBeanfile(org.talend.core.model.repository.IRepositoryViewObject
      * )
      */
+    @Override
     public void deleteBeanfile(IRepositoryViewObject objToDelete) {
         // TODO Auto-generated method stub
 
@@ -254,35 +258,14 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     }
 
     private IFile getBeanFile(Item beanItem) throws SystemException {
-        try {
-            IRunProcessService service = CamelDesignerPlugin.getDefault().getRunProcessService();
-            IProject javaProject = service.getProject(ECodeLanguage.JAVA);
-            ProjectManager projectManager = ProjectManager.getInstance();
-            org.talend.core.model.properties.Project project = projectManager.getProject(beanItem);
-            initBeanFolder(javaProject, project);
-            String beansFolder = getBeansFolder(null);
-            // if (!beanItem.isBuiltIn()) {
-            beansFolder = getBeansFolder(project);
-            // }
-            IFile file = javaProject.getFile(beansFolder + "/" //$NON-NLS-1$
-                    + beanItem.getProperty().getLabel() + JavaUtils.JAVA_EXTENSION);
-            return file;
-        } catch (CoreException e) {
-            throw new SystemException(e);
+        IRunProcessService service = CamelDesignerPlugin.getDefault().getRunProcessService();
+        ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
+        if (talendProcessJavaProject == null) {
+            return null;
         }
-    }
-
-    private String getBeansFolder(org.talend.core.model.properties.Project project) {
-        String routinesPath = JavaUtils.JAVA_SRC_DIRECTORY + "/" //$NON-NLS-1$
-                + JavaUtils.JAVA_BEANS_DIRECTORY;
-        return routinesPath;
-    }
-
-    private void initBeanFolder(IProject javaProject, org.talend.core.model.properties.Project project) throws CoreException {
-        IFolder rep = javaProject.getFolder(getBeansFolder(null));
-        if (!rep.exists()) {
-            rep.create(true, true, null);
-        }
+        IFolder beanFolder = talendProcessJavaProject.getSrcSubFolder(null, JavaUtils.JAVA_BEANS_DIRECTORY);
+        IFile file = beanFolder.getFile(beanItem.getProperty().getLabel() + JavaUtils.JAVA_EXTENSION);
+        return file;
     }
 
     /*
@@ -291,6 +274,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      * @see
      * org.talend.designer.codegen.ITalendSynchronizer#getRoutinesFile(org.talend.core.model.properties.RoutineItem)
      */
+    @Override
     public IFile getRoutinesFile(Item item) throws SystemException {
         try {
             if (item instanceof BeanItem) {
@@ -300,13 +284,13 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
                 IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getTechnicalLabel());
                 String repositoryPath = ERepositoryObjectType.getFolderName(CamelRepositoryNodeType.repositoryBeansType);
                 String folderPath = RepositoryNodeUtilities.getPath(routineItem.getProperty().getId()).toString();
-                String fileName = routineItem.getProperty().getLabel() + "_" + routineItem.getProperty().getVersion()
+                String fileName = routineItem.getProperty().getLabel() + '_' + routineItem.getProperty().getVersion()
                         + JavaUtils.ITEM_EXTENSION;
                 String path = null;
-                if (folderPath != null && !folderPath.trim().equals("")) {
-                    path = repositoryPath + "/" + folderPath + "/" + fileName;
+                if (folderPath != null && folderPath.trim().length() > 0) {
+                    path = repositoryPath + '/' + folderPath + '/' + fileName;
                 } else {
-                    path = repositoryPath + "/" + fileName;
+                    path = repositoryPath + '/' + fileName;
                 }
 
                 IFile file = iProject.getFile(path);
