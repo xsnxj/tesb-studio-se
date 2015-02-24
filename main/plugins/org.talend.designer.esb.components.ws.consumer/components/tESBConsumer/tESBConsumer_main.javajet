@@ -219,17 +219,33 @@ if (inputConn != null) {
                     genericConsumer_<%=cid%>.setCorrelationIDCallbackHandler(correlationIDCallbackHandler);
                 <% } %>
                 genericConsumer_<%=cid%>.setEsbFeatures(esbFeatures_<%=cid%>);
-
-                <% if (useAuth) { %>
-				{
+				boolean use_auth_<%= cid %> = false;
+				<%
+				  if( node.getElementParameter("NEED_AUTH").isContextMode() ) {
+				%>
+				   use_auth_<%= cid %> = <%= ElementParameterParser.getValue(node, "__NEED_AUTH__") %>;
+				<%
+				   } else {
+			    if ( ElementParameterParser.getValue(node, "__NEED_AUTH__").equals("true") ) {
+				%>
+				   use_auth_<%= cid %> = true; // not from context
+				<%
+				   }
+				}
+				%>
+    			if (use_auth_<%= cid %>) {
+				   <% if (authType.startsWith("context.") ) { %>
+                    genericConsumer_<%=cid%>.setAuthType(<%=authType%>);
+				   <% } else { %>
                     genericConsumer_<%=cid%>.setAuthType("<%=authType%>");
+				   <% }%>
                     genericConsumer_<%=cid%>.setUsername(<%=username%>);
                     <% passwordFieldName = "__AUTH_PASSWORD__"; %>
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>                       
                     genericConsumer_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
 				}
-                <% } %>
-				boolean use_proxy_<%= cid %> = false;
+
+ 				boolean use_proxy_<%= cid %> = false;
 				<%
 				  if( node.getElementParameter("USE_PROXY").isContextMode() ) {
 				%>
@@ -303,13 +319,24 @@ if (inputConn != null) {
                             <% } %>
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
-
-                            <% if(useSR || useAuth) { 
-								passwordFieldName = "__AUTH_PASSWORD__"; %>
+							boolean use_auth_<%= cid %> = false;
+							<%
+							  if( node.getElementParameter("NEED_AUTH").isContextMode() ) {
+							%>
+							   use_auth_<%= cid %> = <%= ElementParameterParser.getValue(node, "__NEED_AUTH__") %>;
+							<%
+							   } else {
+						    if ( ElementParameterParser.getValue(node, "__NEED_AUTH__").equals("true") ) {
+							%>
+							   use_auth_<%= cid %> = true; // not from context
+							<%
+							   }
+							}
+							%>
+                            if (use_auth_<%= cid %> || <%=useSR%>) {
+						    <%	passwordFieldName = "__AUTH_PASSWORD__"; %>
                             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>  
-                            <%}%>
-
-                            <% if (useSR) { %>
+                             if (<%=useSR%>) { 
                                 put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
 
@@ -321,7 +348,7 @@ if (inputConn != null) {
                                 <% if (useCrypto) { %>
                                     put("useCrypto", <%=useCrypto%>);
                                 <% } %>
-                            <% } else if (useAuth) { %>
+                             } else if (use_auth_<%= cid %>) { 
                                 <% if (useSAML) { %>
                                     <% if (useAuthorization) { %>
                                         put("role", <%=authorizationRole%>);
@@ -329,11 +356,15 @@ if (inputConn != null) {
                                         put("useCrypto", <%=useCrypto%>);
                                     <% } %>
                                 <% } %>
-                                put("esbSecurity", "<%=authType%>");
+							   <% if (authType.startsWith("context.") ) { %>
+						                    put("esbSecurity", <%=authType%>);
+							   <% } else { %>
+					                    put("esbSecurity", "<%=authType%>");
+							   <% }%>
                                 put("username", <%=username%>);
                                 put("password", decryptedPassword_<%=cid%>);
-                                <% } %>
-
+                               } 
+                           }
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }

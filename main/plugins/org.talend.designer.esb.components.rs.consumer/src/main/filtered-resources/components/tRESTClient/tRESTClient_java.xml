@@ -111,11 +111,11 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="40">
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="40"  DYNAMIC_SETTINGS="true">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="40"
-				SHOW_IF="NEED_AUTH == 'true'">
+		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="40"  DYNAMIC_SETTINGS="true"
+				SHOW_IF="((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false')))">
 			<ITEMS DEFAULT="SECURITY_BASIC">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
 				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
@@ -123,15 +123,15 @@
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
-				SHOW_IF="(NEED_AUTH == 'true') AND ((AUTH_TYPE == 'SECURITY_BASIC') OR (AUTH_TYPE == 'SECURITY_SAML'))">
+				SHOW_IF="((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="PASSWORD" REQUIRED="true" NUM_ROW="40"
-				SHOW_IF="(NEED_AUTH == 'true') AND ((AUTH_TYPE == 'SECURITY_BASIC') OR (AUTH_TYPE == 'SECURITY_SAML'))">
+				SHOW_IF="((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_BEARER_TOKEN" FIELD="TEXT" REQUIRED="true" NUM_ROW="40"
-				SHOW_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_OAUTH2_BEARER')">
+				SHOW_IF="((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_SAML')) ">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" REQUIRED="true" NUM_ROW="50"
@@ -381,7 +381,7 @@
 					MODULE="commons-logging-1.1.1.jar"
 					UrlPath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="spring-expression"
 					MODULE="${tesb-spring-expression}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-spring-expression}"
@@ -404,7 +404,7 @@
 					MODULE="log4j-1.2.17.jar"
 					UrlPath="platform:/plugin/org.talend.libraries.apache/lib/log4j-1.2.17.jar"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="cxf-rt-features-clustering"
 					MODULE="${tesb-cxf-rt-features-clustering}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-features-clustering}"
@@ -425,52 +425,52 @@
 					MODULE="${tesb-cxf-rt-ws-security}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-ws-security}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					 REQUIRED="true" />
 			<IMPORT NAME="cxf-rt-bindings-soap"
 					MODULE="${tesb-cxf-rt-bindings-soap}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-bindings-soap}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="cxf-rt-databinding-jaxb"
 					MODULE="${tesb-cxf-rt-databinding-jaxb}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-databinding-jaxb}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="ehcache-core"
 					MODULE="${tesb-ehcache-core}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-ehcache-core}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="wss4j"
 					MODULE="${tesb-wss4j}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-wss4j}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="xmlsec"
 					MODULE="${tesb-xmlsec}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmlsec}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="opensaml"
 					MODULE="${tesb-opensaml}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-opensaml}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="openws"
 					MODULE="${tesb-openws}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-openws}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="xmltooling"
 					MODULE="${tesb-xmltooling}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-xmltooling}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 			<IMPORT NAME="joda-time"
 					MODULE="${tesb-joda-time}"
 					UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-joda-time}"
 					BundleID=""
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR ((NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML'))" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((AUTH_TYPE != 'SECURITY_BASIC') AND (AUTH_TYPE != 'SECURITY_OAUTH2_BEARER')))" />
 
 			<!-- SAM for RS -->
 			<IMPORT NAME="sam-agent"
@@ -551,12 +551,12 @@
                     MODULE="${tesb-cxf-rt-rs-security-xml}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-rs-security-xml}"
                     BundleID=""
-                    REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
+                    REQUIRED="true"  />
             <IMPORT NAME="security-common"
                     MODULE="${tesb-security-common}"
                     UrlPath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-security-common}"
                     BundleID=""
-                    REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML')" />
+                    REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 

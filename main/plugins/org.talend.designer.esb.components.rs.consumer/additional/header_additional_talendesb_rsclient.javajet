@@ -23,7 +23,7 @@ List<? extends INode> restClients = process.getNodesOfType("tRESTClient");
 for (INode restClient : restClients) {
 	boolean useAuth = Boolean.valueOf(ElementParameterParser.getValue(restClient, "__NEED_AUTH__"));
 	String authType = ElementParameterParser.getValue(restClient, "__AUTH_TYPE__");
-	if (useAuth && "SAML".equals(authType)) {
+	if (true) {
 		useSAML = true;
 		break;
 	}
