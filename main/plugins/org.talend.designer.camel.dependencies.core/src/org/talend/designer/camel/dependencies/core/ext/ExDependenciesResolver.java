@@ -1,5 +1,6 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -284,20 +285,20 @@ public class ExDependenciesResolver {
 		return null;
 	}
 
-	public BundleClasspath[] getBundleClasspaths() {
-		return classpaths.toArray(new BundleClasspath[0]);
+	public Collection<BundleClasspath> getBundleClasspaths() {
+		return classpaths;
 	}
 
-	public RequireBundle[] getRequireBundles() {
-		return bundles.toArray(new RequireBundle[0]);
+	public Collection<RequireBundle> getRequireBundles() {
+		return bundles;
 	}
 
-	public ImportPackage[] getImportPackages() {
-		return importPackages.toArray(new ImportPackage[0]);
+	public Collection<ImportPackage> getImportPackages() {
+		return importPackages;
 	}
 
-	public ExportPackage[] getExportPackages() {
-		return exportPackages.toArray(new ExportPackage[0]);
+	public Collection<ExportPackage> getExportPackages() {
+		return exportPackages;
 	}
 
 }
