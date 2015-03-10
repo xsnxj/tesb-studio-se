@@ -58,7 +58,7 @@ public class BundleClasspath extends AbstractDependencyItem {
 
 	@Override
 	public String toManifestString() {
-		return name;
+		return isChecked ? name : null;
 	}
 
 	@Override
