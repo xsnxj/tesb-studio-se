@@ -1,6 +1,7 @@
 package org.talend.designer.camel.dependencies.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,7 +40,6 @@ import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
@@ -47,7 +47,7 @@ import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
-import org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver;
+import org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService;
 import org.talend.designer.camel.dependencies.ui.Messages;
 import org.talend.designer.camel.dependencies.ui.UIActivator;
 import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
@@ -74,19 +74,23 @@ public class RouterDependenciesEditor extends EditorPart implements
 	private RouterDependenciesTableViewer exportPackageViewer;
 
 	// source
-	private Property property;
+	private ProcessItem processItem;
 
 	private boolean isReadOnly;
-	
+
+	private static ProcessItem fromEditorInput(IEditorInput input) {
+        RepositoryNode repositoryNode = (RepositoryNode) input
+            .getAdapter(RepositoryNode.class);
+        return (ProcessItem) repositoryNode.getObject().getProperty().getItem();
+	}
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		setInput(input);
 		setSite(site);
 		setPartName(input.getName());
-		RepositoryNode repositoryNode = (RepositoryNode) input
-				.getAdapter(RepositoryNode.class);
-		property = repositoryNode.getObject().getProperty();
+		processItem = fromEditorInput(input);
 		isReadOnly = isReadOnly();
 	}
 
@@ -251,7 +255,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		try {
 			List<IEditorPart> dirtyList = new ArrayList<IEditorPart>();
 			
-			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem());
+			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(processItem);
 			if (processEditor != null && processEditor.isDirty()) {
 				dirtyList.add(processEditor);
 			}
@@ -280,7 +284,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				//check camel editor and update the input source every time
 				try {
-					updatePropertyFromProcessEditor(DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem()));
+					updatePropertyFromProcessEditor(DependenciesUiUtil.getCorrespondingProcessEditor(processItem));
 				} catch (PartInitException e) {
 					e.printStackTrace();
 					return Status.CANCEL_STATUS;
@@ -293,9 +297,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 				exportPackages.clear();
 				
 				// re-calculate all datas
-				RouterOsgiDependenciesResolver resolver = new RouterOsgiDependenciesResolver(
-						(ProcessItem) property.getItem(),
-						property.getAdditionalProperties());
+				OsgiDependenciesService resolver = OsgiDependenciesService.fromProcessItem(processItem);
 				importPackages.addAll(resolver.getImportPackages());
 				requireBundles.addAll(resolver.getRequireBundles());
 				bundleClasspaths.addAll(resolver.getBundleClasspaths());
@@ -371,15 +373,15 @@ public class RouterDependenciesEditor extends EditorPart implements
 	public void doSave(IProgressMonitor monitor) {
 		try {
 			//check editor and update the input source before saving
-			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(property.getItem());
+			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(processItem);
 			updatePropertyFromProcessEditor(processEditor);
 			
 			//save all datas
-			DependenciesCoreUtil.saveToMap(property.getAdditionalProperties(),
-					(List<BundleClasspath>) bundleClasspathViewer.getInput(),
-					(List<ImportPackage>) importPackageViewer.getInput(),
-					(List<RequireBundle>) requireBundleViewer.getInput(),
-					(List<ExportPackage>)exportPackageViewer.getInput());
+			DependenciesCoreUtil.saveToMap(processItem.getProperty().getAdditionalProperties(),
+					(Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
+					(Collection<ImportPackage>) importPackageViewer.getInput(),
+					(Collection<RequireBundle>) requireBundleViewer.getInput(),
+					(Collection<ExportPackage>)exportPackageViewer.getInput());
 			
 			// save model
 			
@@ -392,7 +394,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 			// save current editor
 			IProxyRepositoryFactory factory = ProxyRepositoryFactory
 					.getInstance();
-			factory.save(property.getItem());
+			factory.save(processItem);
 			setDirty(false);
 			
 			// save process editor if it was un-dirty
@@ -411,15 +413,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 	 * else no changes
 	 */
 	private void updatePropertyFromProcessEditor(IEditorPart processEditor) {
-		if (processEditor != null) {
-			property = ((RepositoryNode) processEditor.getEditorInput()
-					.getAdapter(RepositoryNode.class)).getObject()
-					.getProperty().getItem().getProperty();
-		}else{
-			RepositoryNode repositoryNode = (RepositoryNode) getEditorInput()
-					.getAdapter(RepositoryNode.class);
-			property = repositoryNode.getObject().getProperty();
-		}
+	    processItem = fromEditorInput((processEditor != null) ? processEditor.getEditorInput() : getEditorInput());
 	}
 
 	private boolean isDirty = false;
@@ -463,7 +457,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		if(!hasMoreEditorOpenedExcept){
 			ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
 			try {
-				factory.unlock(property.getItem());
+				factory.unlock(processItem);
 			} catch (PersistenceException e) {
 				e.printStackTrace();
 			} catch (LoginException e) {

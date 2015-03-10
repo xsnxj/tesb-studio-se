@@ -17,11 +17,10 @@ public class DependenciesListSorter implements Comparator<IDependencyItem> {
 		if (e1 == null || e2 == null) {
 			return 0;
 		}
-		boolean builtIn1 = ((IDependencyItem) e1).isBuiltIn();
-		boolean builtIn2 = ((IDependencyItem) e2).isBuiltIn();
+		boolean builtIn1 = e1.isBuiltIn();
+		boolean builtIn2 = e2.isBuiltIn();
 		if (builtIn1 && builtIn2) {
-			return ((IDependencyItem) e1).getLabel().compareTo(
-					((IDependencyItem) e2).getLabel());
+			return e1.getLabel().compareTo(e2.getLabel());
 		}
 		if (builtIn1 && !builtIn2) {
 			return -1;
