@@ -19,10 +19,10 @@ import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 
 public class OsgiDependenciesService implements IOsgiDependenciesService {
 
-    private List<ImportPackage> importPackages = new ArrayList<ImportPackage>();
-    private List<RequireBundle> requireBundles = new ArrayList<RequireBundle>();
-    private List<BundleClasspath> bundleClasspaths = new ArrayList<BundleClasspath>();
-    private List<ExportPackage> exportPackages = new ArrayList<ExportPackage>();
+    private List<ImportPackage> importPackages;
+    private List<RequireBundle> requireBundles;
+    private List<BundleClasspath> bundleClasspaths;
+    private List<ExportPackage> exportPackages;
 
     public static OsgiDependenciesService fromProcessItem(ProcessItem pi) {
         OsgiDependenciesService s = new OsgiDependenciesService();
@@ -45,9 +45,9 @@ public class OsgiDependenciesService implements IOsgiDependenciesService {
     private void init(ProcessItem pi) {
         ExDependenciesResolver resolver = new ExDependenciesResolver(pi);
         EMap<?, ?> additionProperties = pi.getProperty().getAdditionalProperties();
-        importPackages.addAll(resolver.getImportPackages());
-        requireBundles.addAll(resolver.getRequireBundles());
-        bundleClasspaths.addAll(resolver.getBundleClasspaths());
+        importPackages = new ArrayList<ImportPackage>(resolver.getImportPackages());
+        requireBundles = new ArrayList<RequireBundle>(resolver.getRequireBundles());
+        bundleClasspaths = new ArrayList<BundleClasspath>(resolver.getBundleClasspaths());
 
         for (ImportPackage ip : DependenciesCoreUtil.getStoredImportPackages(additionProperties)) {
             if (importPackages.contains(ip)) {
@@ -72,7 +72,7 @@ public class OsgiDependenciesService implements IOsgiDependenciesService {
         }
 
         //retrieve all export-packages
-        exportPackages.addAll(resolver.getExportPackages());
+        exportPackages = new ArrayList<ExportPackage>(resolver.getExportPackages());
         for (ExportPackage rb : DependenciesCoreUtil.getStoredExportPackages(additionProperties)) {
             if (exportPackages.contains(rb)) {
                 continue;
