@@ -26,7 +26,8 @@ public class DependenciesCoreUtil {
 	public static void saveToMap(EMap map,
 			Collection<BundleClasspath> bundleClasspaths,
 			Collection<ImportPackage> importPackages,
-			Collection<RequireBundle> requiredBundles, List<ExportPackage> exportPackages){
+			Collection<RequireBundle> requiredBundles,
+			Collection<ExportPackage> exportPackages){
 		//save classpaths
 		StringBuilder sb = new StringBuilder();
 		for (BundleClasspath b : bundleClasspaths) {

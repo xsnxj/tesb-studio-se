@@ -1,11 +1,11 @@
 package org.talend.designer.camel.dependencies.core.util;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.EMap;
 import org.talend.core.IOsgiDependenciesService;
@@ -19,84 +19,102 @@ import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 
 public class OsgiDependenciesService implements IOsgiDependenciesService {
 
-	private static class DependencyItems<E extends IDependencyItem> {
-		private final Set<E> dependencies = new TreeSet<E>(new DependenciesListSorter());
-		private final String name;
+    private List<ImportPackage> importPackages;
+    private List<RequireBundle> requireBundles;
+    private List<BundleClasspath> bundleClasspaths;
+    private List<ExportPackage> exportPackages;
 
-		DependencyItems(String name) {
-			this.name = name;
-		}
+    public static OsgiDependenciesService fromProcessItem(ProcessItem pi) {
+        OsgiDependenciesService s = new OsgiDependenciesService();
+        s.init(pi);
+        return s;
+    }
 
-		void addAll(E[] dependencies) {
-			addAll(Arrays.asList(dependencies));
-		}
+    @Override
+    public Map<String, String> getBundleDependences(ProcessItem pi) {
+        init(pi);
 
-		void addAll(Collection<E> dependencies) {
-			this.dependencies.addAll(dependencies);
-		}
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(IMPORT_PACKAGE, toManifestString(getImportPackages()));
+        map.put(REQUIRE_BUNDLE, toManifestString(getRequireBundles()));
+        map.put(BUNDLE_CLASSPATH, toManifestString(getBundleClasspaths()));
+        map.put(EXPORT_PACKAGE, toManifestString(getExportPackages()));
+        return map;
+    }
 
-		String toManifestString() {
-			StringBuilder sb = new StringBuilder();
-			for (E item : dependencies) {
-				String manifestString = buildManifestString(item);
-				if(manifestString == null) {
-					continue;
-				}
-				if (sb.length() != 0) {
-					sb.append(ITEM_SEPARATOR);
-				}
-				sb.append(manifestString);
-			}
-			return sb.toString();
-		}
+    private void init(ProcessItem pi) {
+        ExDependenciesResolver resolver = new ExDependenciesResolver(pi);
+        EMap<?, ?> additionProperties = pi.getProperty().getAdditionalProperties();
+        importPackages = new ArrayList<ImportPackage>(resolver.getImportPackages());
+        requireBundles = new ArrayList<RequireBundle>(resolver.getRequireBundles());
+        bundleClasspaths = new ArrayList<BundleClasspath>(resolver.getBundleClasspaths());
 
-		String buildManifestString(E item) {
-			return item.toManifestString();
-		};
-	}
+        for (ImportPackage ip : DependenciesCoreUtil.getStoredImportPackages(additionProperties)) {
+            if (importPackages.contains(ip)) {
+                continue;
+            }
+            importPackages.add(ip);
+        }
 
-	@Override
-	public Map<String, String> getBundleDependences(ProcessItem pi) {
-		Map<String, String> map = new HashMap<String, String>();
-		for (DependencyItems<?> items : getBundleDependencyItems(pi)) {
-			map.put(items.name, items.toManifestString());
-		}
-		return map;
-	}
+        for (RequireBundle rb : DependenciesCoreUtil.getStoredRequireBundles(additionProperties)) {
+            if (requireBundles.contains(rb)) {
+                continue;
+            }
+            requireBundles.add(rb);
+        }
 
-	private static DependencyItems<?>[] getBundleDependencyItems(final ProcessItem pi) {
-		EMap<?, ?> additionProperties = pi.getProperty().getAdditionalProperties();
+        List<BundleClasspath> additionClasspaths = DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties);
+        for (BundleClasspath bcp : bundleClasspaths) {
+            int index = additionClasspaths.indexOf(bcp);
+            if(index != -1){
+                bcp.setChecked(additionClasspaths.get(index).isChecked());
+            }
+        }
 
-		DependencyItems<ImportPackage> importPackages = new DependencyItems<ImportPackage>(IMPORT_PACKAGE);
-		DependencyItems<RequireBundle> requireBundles = new DependencyItems<RequireBundle>(REQUIRE_BUNDLE);
-		DependencyItems<ExportPackage> exportPackages = new DependencyItems<ExportPackage>(EXPORT_PACKAGE);
-		DependencyItems<BundleClasspath> bundleClasspaths = new DependencyItems<BundleClasspath>(BUNDLE_CLASSPATH) {
-			@Override
-			String buildManifestString(BundleClasspath item) {
-				return item.isChecked() ? super.buildManifestString(item) : null;
-			}
-		};
+        //retrieve all export-packages
+        exportPackages = new ArrayList<ExportPackage>(resolver.getExportPackages());
+        for (ExportPackage rb : DependenciesCoreUtil.getStoredExportPackages(additionProperties)) {
+            if (exportPackages.contains(rb)) {
+                continue;
+            }
+            exportPackages.add(rb);
+        }
 
-		ExDependenciesResolver resolver = new ExDependenciesResolver(pi);
+        DependenciesListSorter sorter = new DependenciesListSorter();
+        Collections.sort(importPackages, sorter);
+        Collections.sort(requireBundles, sorter);
+        Collections.sort(bundleClasspaths, sorter);
+    }
 
-		// retrieve all import-packages
-		importPackages.addAll(resolver.getImportPackages());
-		importPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
+    public Collection<BundleClasspath> getBundleClasspaths() {
+        return bundleClasspaths;
+    }
 
-		// retrieve all require-bundles
-		requireBundles.addAll(resolver.getRequireBundles());
-		requireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
+    public Collection<RequireBundle> getRequireBundles() {
+        return requireBundles;
+    }
 
-		// retrieve all bundle-classpaths
-		bundleClasspaths.addAll(resolver.getBundleClasspaths());
-		bundleClasspaths.addAll(DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties));
+    public Collection<ImportPackage> getImportPackages() {
+        return importPackages;
+    }
 
-		// retrieve all export-packages
-		exportPackages.addAll(resolver.getExportPackages());
-		exportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
+    public Collection<ExportPackage> getExportPackages() {
+        return exportPackages;
+    }
 
-		DependencyItems<?>[] itemsArray = {importPackages, requireBundles, bundleClasspaths, exportPackages};
-		return itemsArray;
-	}
+    private static String toManifestString(Collection<? extends IDependencyItem> dependencyItems) {
+        StringBuilder sb = new StringBuilder();
+        for (IDependencyItem item : dependencyItems) {
+            String text = item.toManifestString();
+            if (null == text) {
+                continue;
+            }
+            if (sb.length() != 0) {
+                sb.append(OsgiDependenciesService.ITEM_SEPARATOR);
+            }
+            sb.append(item.toManifestString());
+        }
+        return sb.toString();
+    }
 
 }

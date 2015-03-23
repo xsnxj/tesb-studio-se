@@ -15,6 +15,7 @@ package org.talend.camel.designer;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
@@ -53,11 +53,8 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
-import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
-import org.talend.designer.camel.dependencies.core.model.ExportPackage;
-import org.talend.designer.camel.dependencies.core.model.ImportPackage;
-import org.talend.designer.camel.dependencies.core.model.RequireBundle;
-import org.talend.designer.camel.dependencies.core.util.RouterOsgiDependenciesResolver;
+import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
+import org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.CodeGeneratorActivator;
@@ -76,54 +73,50 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     /*
      * (non-Jsdoc)
      * 
-     * @see org.talend.designer.core.ICamelDesignerCoreService#getCreateProcessAction (boolean)
+     * @see
+     * org.talend.designer.core.ICamelDesignerCoreService#getCreateProcessAction
+     * (boolean)
      */
-    @Override
     public IAction getCreateProcessAction(boolean isToolbar) {
         return new CreateCamelProcess(isToolbar);
     }
 
-    @Override
-    public String getDeleteFolderName(ERepositoryObjectType type) {
+    public String getDeleteFolderName(ERepositoryObjectType type){
         return CamelRepositoryNodeType.AllRouteRespositoryTypes.get(type);
     }
-
     /*
      * (non-Jsdoc)
      * 
-     * @see org.talend.designer.core.ICamelDesignerCoreService#getCreateBeanAction (boolean)
+     * @see
+     * org.talend.designer.core.ICamelDesignerCoreService#getCreateBeanAction
+     * (boolean)
      */
-    @Override
     public IAction getCreateBeanAction(boolean isToolbar) {
         // TODO Auto-generated method stub
         return new CreateCamelBean(isToolbar);
     }
 
-    @Override
     public ERepositoryObjectType getRoutes() {
         return CamelRepositoryNodeType.repositoryRoutesType;
     }
 
-    @Override
     public ERepositoryObjectType getBeansType() {
         return CamelRepositoryNodeType.repositoryBeansType;
     }
-
+    
     public ERepositoryObjectType getResourcesType() {
         return CamelRepositoryNodeType.repositoryRouteResourceType;
     }
-
-    @Override
+    
     public ERepositoryObjectType getRouteDocType() {
         return CamelRepositoryNodeType.repositoryDocumentationType;
     }
-
+    
     @Override
     public ERepositoryObjectType getRouteDocsType() {
         return CamelRepositoryNodeType.repositoryDocumentationsType;
     }
 
-    @Override
     public ProcessType getCamelProcessType(Item item) {
         if (item instanceof CamelProcessItem) {
             CamelProcessItem camelItem = (CamelProcessItem) item;
@@ -132,7 +125,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return null;
     }
 
-    @Override
     public boolean isInstanceofCamelRoutes(Item item) {
         if (item instanceof CamelProcessItem) {
             return true;
@@ -140,7 +132,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return false;
     }
 
-    @Override
     public boolean isInstanceofCamelBeans(Item item) {
         if (item instanceof BeanItem) {
             return true;
@@ -148,7 +139,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return false;
     }
 
-    @Override
     public boolean isInstanceofCamel(Item item) {
         if (item instanceof BeanItem || item instanceof CamelProcessItem || item instanceof RouteResourceItem) {
             return true;
@@ -156,12 +146,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return false;
     }
 
-    @Override
     public ITalendSynchronizer createCamelJavaSynchronizer() {
         return new CamelJavaRoutesSychronizer();
     }
 
-    @Override
     public boolean isCamelMulitPageEditor(IEditorPart editor) {
         boolean isCamelEditor = false;
         if (editor instanceof CamelMultiPageTalendEditor) {
@@ -170,7 +158,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return isCamelEditor;
     }
 
-    @Override
     public List<IPath> synchronizeRouteResource(Item item) {
 
         RouteResourceUtil.clearRouteResources();
@@ -181,7 +168,8 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
             return paths;
         }
 
-        Set<ResourceDependencyModel> models = RouteResourceUtil.getResourceDependencies(item);
+        Set<ResourceDependencyModel> models = RouteResourceUtil
+                .getResourceDependencies(item);
         for (ResourceDependencyModel model : models) {
             IFile file = copyResources(model);
             if (file != null) {
@@ -192,11 +180,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         RouteResourceUtil.addRouteResourcesDesc(models);
 
         forceBuildProject();
-
-        // https://jira.talendforge.org/browse/TESB-7893
-        // add spring file
-        IPath springFilePath = getRouteResourceFolder().getLocation().append(
-                "/META-INF/spring/" + item.getProperty().getLabel().toLowerCase() + ".xml");
+        
+        //https://jira.talendforge.org/browse/TESB-7893
+        //add spring file
+        IPath springFilePath = getRouteResourceFolder().getLocation().append("/META-INF/spring/"+item.getProperty().getLabel().toLowerCase()+".xml");
         paths.add(springFilePath);
 
         return paths;
@@ -235,13 +222,15 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
         RouteResourceItem item = model.getItem();
         ByteArray content = null;
-        EList referenceResources = item.getReferenceResources();
+        EList<?> referenceResources = item.getReferenceResources();
         if (referenceResources.isEmpty()) {
             return null;
         }
-        ReferenceFileItem refFile = (ReferenceFileItem) referenceResources.get(0);
+        ReferenceFileItem refFile = (ReferenceFileItem) referenceResources
+                .get(0);
         content = refFile.getContent();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getInnerContent());
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(
+                content.getInnerContent());
 
         String classPathUrl = model.getClassPathUrl();
         IFile classpathFile = folder.getFile(new Path(classPathUrl));
@@ -261,8 +250,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
         try {
             try {
-                parentFolder.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-                classpathFile.create(inputStream, true, new NullProgressMonitor());
+                parentFolder.refreshLocal(IResource.DEPTH_ONE,
+                        new NullProgressMonitor());
+                classpathFile.create(inputStream, true,
+                        new NullProgressMonitor());
             } finally {
                 inputStream.close();
             }
@@ -274,37 +265,34 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
     }
 
-    @Override
     public boolean isRouteBuilderNode(INode node) {
         return ComponentCategory.CATEGORY_4_CAMEL.getName().equals(node.getProcess().getComponentsType());
     }
-
-    @Override
+    
     public boolean canCreateNodeOnLink(IConnection connection, INode node) {
         INodeConnector connector = node.getConnectorFromType(EConnectionType.ROUTE);
-        if (connector.getMaxLinkOutput() > 0) {
+        if(connector.getMaxLinkOutput() >0 ){
             return true;
         }
         connector = node.getConnectorFromType(EConnectionType.ROUTE_ENDBLOCK);
-        if (connector.getMaxLinkOutput() > 0) {
+        if(connector.getMaxLinkOutput() >0 ){
             return true;
         }
         return false;
     }
-
-    @Override
+    
     public EConnectionType getTargetConnectionType(INode node) {
         INodeConnector connector = node.getConnectorFromType(EConnectionType.ROUTE);
-        if (connector.getMaxLinkOutput() > 0) {
+        if(connector.getMaxLinkOutput() >0 ){
             return EConnectionType.ROUTE;
         }
         connector = node.getConnectorFromType(EConnectionType.ROUTE_ENDBLOCK);
-        if (connector.getMaxLinkOutput() > 0) {
+        if(connector.getMaxLinkOutput() >0 ){
             return EConnectionType.ROUTE_ENDBLOCK;
         }
         return EConnectionType.ROUTE;
     }
-
+    
     @Override
     public void appendRouteInfo2Doc(Item item, Element jobElement) {
         addSpringContent(item, jobElement);
@@ -314,9 +302,9 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
     private void addResourcesContent(Item item, Element jobElement) {
         Element resourcesElement = jobElement.addElement("RouteResources");
-
+        
         Set<ResourceDependencyModel> resourceDependencies = RouteResourceUtil.getResourceDependencies(item);
-        for (ResourceDependencyModel resource : resourceDependencies) {
+        for(ResourceDependencyModel resource: resourceDependencies){
             Element resourceElement = resourcesElement.addElement("Resource");
             resourceElement.addAttribute("name", resource.getFileName());
             resourceElement.addAttribute("version", resource.getSelectedVersion());
@@ -326,75 +314,37 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
     private void addManifestContent(Item item, Element jobElement) {
         Element manifestElement = jobElement.addElement("RouteManifest");
-        manifestElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE), "preserve");
+        manifestElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE),
+                "preserve");
 
-        EMap additionalProperties = item.getProperty().getAdditionalProperties();
-        RouterOsgiDependenciesResolver resolver = new RouterOsgiDependenciesResolver((ProcessItem) item, additionalProperties);
-
-        addImportPackages(resolver, manifestElement);
-        addExportPackages(resolver, manifestElement);
-        addRequiredBundles(resolver, manifestElement);
-        addBundleClasspath(resolver, manifestElement);
+        OsgiDependenciesService resolver = OsgiDependenciesService.fromProcessItem((ProcessItem) item);
+        manifestElement.addElement("Import-package").addText(getDependencyItems(resolver.getImportPackages()));
+        manifestElement.addElement("Export-package").addText(getDependencyItems(resolver.getExportPackages()));
+        manifestElement.addElement("Required-bundle").addText(getDependencyItems(resolver.getRequireBundles()));
+        manifestElement.addElement("Bundle-classpath").addText(getDependencyItems(resolver.getBundleClasspaths()));
     }
 
-    private void addImportPackages(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
-        Element importPackageElement = manifestElement.addElement("Import-package");
-
-        List<ImportPackage> storedImportPackages = resolver.getImportPackages();
+    private static String getDependencyItems(Collection<? extends IDependencyItem> dependencyItems) {
         StringBuilder sb = new StringBuilder();
-        for (ImportPackage im : storedImportPackages) {
-            sb.append(im.getLabel());
-            sb.append("\n");
-        }
-        importPackageElement.addText(sb.toString());
-    }
-
-    private void addExportPackages(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
-        Element exportPackageElement = manifestElement.addElement("Export-package");
-
-        List<ExportPackage> storedExportPackages = resolver.getExportPackages();
-        StringBuilder sb = new StringBuilder();
-        for (ExportPackage ex : storedExportPackages) {
-            sb.append(ex.getLabel());
-            sb.append("\n");
-        }
-        exportPackageElement.addText(sb.toString());
-    }
-
-    private void addRequiredBundles(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
-        Element requiredBundleElement = manifestElement.addElement("Required-bundle");
-
-        List<RequireBundle> storedRequiredBundle = resolver.getRequireBundles();
-        StringBuilder sb = new StringBuilder();
-        for (RequireBundle re : storedRequiredBundle) {
-            sb.append(re.getLabel());
-            sb.append("\n");
-        }
-        requiredBundleElement.addText(sb.toString());
-    }
-
-    private void addBundleClasspath(RouterOsgiDependenciesResolver resolver, Element manifestElement) {
-        Element bundleClasspathElement = manifestElement.addElement("Bundle-classpath");
-
-        List<BundleClasspath> storedBundleClasspaths = resolver.getBundleClasspaths();
-        StringBuilder sb = new StringBuilder();
-        for (BundleClasspath bu : storedBundleClasspaths) {
-            if (!bu.isChecked()) {
+        for (IDependencyItem item : dependencyItems) {
+            String text = item.toManifestString();
+            if (null == text) {
                 continue;
             }
-            sb.append(bu.getLabel());
+            sb.append(text);
             sb.append("\n");
         }
-        bundleClasspathElement.addText(sb.toString());
+        return sb.toString();
     }
 
     private void addSpringContent(Item item, Element jobElement) {
         Element routeSpringElement = jobElement.addElement("RouteSpring");
-        routeSpringElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE), "preserve");
-        String springContent = ((CamelProcessItem) item).getSpringContent();
+        routeSpringElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE),
+                "preserve");
+        String springContent = ((CamelProcessItem)item).getSpringContent();
         routeSpringElement.addText(springContent);
     }
-
+    
     @Override
     public FileItem newRouteDocumentationItem() {
         return CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
