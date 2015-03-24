@@ -79,7 +79,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      */
     @Override
     protected IImage getEditorTitleImage() {
-        return ECamelCoreImage.ROUTES_ICON;
+        return ECamelCoreImage.ROUTES_ICON_EDITOR;
     }
 
     /**
