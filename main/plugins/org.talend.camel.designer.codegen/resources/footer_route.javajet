@@ -289,6 +289,27 @@ for (IContextParameter ctxParam : params) {
 <% 
 			//for bug TDI-22398
 			for (IContextParameter ctxParam :params){ //start for
+			
+            	if (ctxParam.getType().equals("id_Password")) {
+            %>
+            		String pwd_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
+            		context.<%=ctxParam.getName()%> = null;
+            		if(pwd_<%=ctxParam.getName()%>_value!=null) {
+            			if(context_param.containsKey("<%=ctxParam.getName()%>")) {//no need to decrypt if it come from program argument or parent job runtime
+            				context.<%=ctxParam.getName()%> = pwd_<%=ctxParam.getName()%>_value;
+            			} else if (!pwd_<%=ctxParam.getName()%>_value.isEmpty()) {
+            				try {
+            					context.<%=ctxParam.getName()%> = routines.system.PasswordEncryptUtil.decryptPassword(pwd_<%=ctxParam.getName()%>_value);
+            					context.put("<%=ctxParam.getName()%>",context.<%=ctxParam.getName()%>);
+            				} catch (java.lang.RuntimeException e) {
+            					//do nothing
+            				}
+            			}
+            		}
+            <%
+            		continue;
+            	}						
+			
 			    String typeToGenerate ="String";
 			    if( !(ctxParam.getType().equals("id_File") || ctxParam.getType().equals("id_Directory") ||ctxParam.getType().equals("id_List Of Value")))
 			    {
