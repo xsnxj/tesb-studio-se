@@ -164,7 +164,7 @@
 	<FeatureMap HotLib="camel-jdbc">
 		<Feature version="[2,5)">camel-jdbc</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-jetty-alldep">
+	<FeatureMap HotLib="camel-jetty">
 		<Feature version="[2,5)">camel-jetty</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jgroups-alldep">
@@ -222,7 +222,7 @@
 	<FeatureMap HotLib="camel-lucene-alldep">
 		<Feature version="[2,5)">camel-lucene</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mail-alldep">
+	<FeatureMap HotLib="camel-mail">
 		<Feature version="[2,5)">camel-mail</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mina2-alldep">
@@ -318,7 +318,7 @@
 	<FeatureMap HotLib="camel-script">
 		<Feature version="[2,5)">camel-script</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-servlet-alldep">
+	<FeatureMap HotLib="camel-servlet">
 		<Feature version="[2,5)">camel-servlet</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-servletlistener-alldep">

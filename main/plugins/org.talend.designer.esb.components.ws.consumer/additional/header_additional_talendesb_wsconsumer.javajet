@@ -169,7 +169,7 @@ if (actAsConsumer) {
         public org.dom4j.Document invoke(org.dom4j.Document doc) throws GenericFaultInfoException, org.apache.cxf.interceptor.Fault {
             org.apache.cxf.frontend.ClientFactoryBean clientFactory = new org.apache.cxf.frontend.ClientFactoryBean();
             clientFactory.setDataBinding(new org.apache.cxf.databinding.source.SourceDataBinding());
-            clientFactory.getServiceFactory().getServiceConfigurations().add(0, new org.apache.cxf.service.factory.AbstractServiceConfiguration() {
+            clientFactory.getServiceFactory().getServiceConfigurations().add(0, new org.apache.cxf.wsdl.service.factory.AbstractServiceConfiguration() {
                 @Override
                 public Boolean isOperation(java.lang.reflect.Method method) {
                     return "invoke".equals(method.getName());
@@ -242,15 +242,14 @@ if (actAsConsumer) {
                 conduit.setAuthorization(authorizationPolicy);
             } else if ("TOKEN".equals(authType)) {
                 java.util.Map<String, Object> wssProps = new java.util.HashMap<String, Object>();
-                wssProps.put(org.apache.ws.security.handler.WSHandlerConstants.ACTION, org.apache.ws.security.handler.WSHandlerConstants.USERNAME_TOKEN);
-                wssProps.put(org.apache.ws.security.handler.WSHandlerConstants.USER, username);
-                wssProps.put(org.apache.ws.security.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.ws.security.WSConstants.PW_TEXT);
-                wssProps.put(org.apache.ws.security.handler.WSHandlerConstants.PW_CALLBACK_REF,
+                wssProps.put(org.apache.wss4j.common.ConfigurationConstants.ACTION, org.apache.wss4j.common.ConfigurationConstants.USERNAME_TOKEN);
+                wssProps.put(org.apache.wss4j.common.ConfigurationConstants.USER, username);
+                wssProps.put(org.apache.wss4j.common.ConfigurationConstants.PASSWORD_TYPE, org.apache.wss4j.common.WSS4JConstants.PW_TEXT);
+                wssProps.put(org.apache.wss4j.common.ConfigurationConstants.PW_CALLBACK_REF,
                         new javax.security.auth.callback.CallbackHandler() {
                             public void handle(javax.security.auth.callback.Callback[] callbacks)
                                     throws java.io.IOException, javax.security.auth.callback.UnsupportedCallbackException {
-                                org.apache.ws.security.WSPasswordCallback pc = (org.apache.ws.security.WSPasswordCallback) callbacks[0];
-                                pc.setPassword(password);
+                                ((org.apache.wss4j.common.ext.WSPasswordCallback) callbacks[0]).setPassword(password);
                             }
                         });
                 client.getEndpoint()

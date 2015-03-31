@@ -46,7 +46,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/lib</outputDirectory>
-							<excludeArtifactIds>jaxb-impl, asm, stax2-api</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
@@ -60,9 +59,6 @@
 						<goals>
 							<goal>add-third-party</goal>
 						</goals>
-						<configuration>
-							<excludedArtifacts>jaxb-impl|asm|stax2-api</excludedArtifacts>
-						</configuration>
 					</execution>
 					<execution>
 						<id>update-project-license</id>
@@ -115,37 +111,36 @@
                     </filesets>
                 </configuration>
             </plugin>
-			<plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <extensions>true</extensions>
-      </plugin>     
-       <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-      		<dependency-resolution>
-        		<optionalDependencies>ignore</optionalDependencies>
-      		</dependency-resolution>
-        </configuration>
-      </plugin>
 	</plugins>
   </build>
-  
+
   <dependencies>
 	<!-- override 2.1.13 activated by cxf for java 6 -->
-	<dependency>
+	<!--dependency>
 		<groupId>com.sun.xml.bind</groupId>
 		<artifactId>jaxb-impl</artifactId>
 		<version>2.2.6</version>
+	</dependency-->
+	<dependency>
+		<groupId>org.apache.cxf</groupId>
+		<artifactId>cxf-core</artifactId>
+		<version>${cxf.version}</version>
+		<!--exclusions>
+			<exclusion>
+				<groupId>org.codehaus.woodstox</groupId>
+				<artifactId>stax2-api</artifactId>
+			</exclusion>
+		</exclusions-->
 	</dependency>
 	<dependency>
 		<groupId>org.apache.cxf</groupId>
-		<artifactId>cxf-rt-core</artifactId>
+		<artifactId>cxf-rt-bindings-soap</artifactId>
 		<version>${cxf.version}</version>
 		<exclusions>
+			<exclusion>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm</artifactId>
+			</exclusion>
 			<exclusion>
 				<groupId>wsdl4j</groupId>
 				<artifactId>wsdl4j</artifactId>
@@ -158,6 +153,10 @@
 		<artifactId>cxf-rt-frontend-jaxws</artifactId>
 		<version>${cxf.version}</version>
 		<exclusions>
+			<exclusion>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm</artifactId>
+			</exclusion>
 			<exclusion>
 				<groupId>xml-resolver</groupId>
 				<artifactId>xml-resolver</artifactId>
@@ -175,26 +174,42 @@
 		<version>${cxf.version}</version>
 		<exclusions>
 			<exclusion>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
+				<groupId>org.apache.geronimo.specs</groupId>
+				<artifactId>geronimo-javamail_1.4_spec</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk15on</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
 			</exclusion>
 		</exclusions>
 	</dependency>
-	<dependency>
+	<!--dependency>
 		<groupId>org.apache.cxf</groupId>
 		<artifactId>cxf-rt-ws-policy</artifactId>
 		<version>${cxf.version}</version>
-	</dependency>
+	</dependency-->
 	<!-- RS client -->
 	<dependency>
 		<groupId>org.apache.cxf</groupId>
-		<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+		<artifactId>cxf-rt-rs-client</artifactId>
 		<version>${cxf.version}</version>
 		<exclusions>
 			<exclusion>
+				<groupId>javax.annotation</groupId>
+				<artifactId>javax.annotation-api</artifactId>
+			</exclusion>
+			<!--exclusion>
 				<groupId>javax.ws.rs</groupId>
 				<artifactId>javax.ws.rs-api</artifactId>
-			</exclusion>
+			</exclusion-->
 		</exclusions>
 	</dependency>
 	<dependency>
@@ -217,8 +232,18 @@
 		<groupId>org.apache.cxf</groupId>
 		<artifactId>cxf-rt-transports-http-jetty</artifactId>
 		<version>${cxf.version}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>*</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</exclusion>
+		</exclusions>
 	</dependency>
-	<dependency>
+	<!--dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-log4j12</artifactId>
 		<version>${slf4j.version}</version>
@@ -228,7 +253,7 @@
 				<artifactId>log4j</artifactId>
 			</exclusion>
 		</exclusions>
-	</dependency>
+	</dependency-->
 	<!-- ESB Features-->
 	<dependency>
 		<groupId>org.springframework</groupId>
@@ -250,6 +275,10 @@
 			<exclusion>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>wsdl4j</groupId>
+				<artifactId>wsdl4j</artifactId>
 			</exclusion>
 		</exclusions>
 	</dependency>

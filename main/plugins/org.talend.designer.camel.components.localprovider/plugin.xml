@@ -23,5 +23,282 @@
       </ExternalComponent>
    </extension>
 
+    <extension point="org.talend.core.runtime.librariesNeeded">
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-core}"
+            id="camel-core"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-core}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-jaxb-impl}"
+            id="jaxb-impl"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-jaxb-core}"
+            id="jaxb-core"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-core}"
+            bundleID="" />
+        <!-- ${tesb-slf4j-api} -->
+        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
+            name="slf4j-api-1.7.5.jar"
+            id="slf4j-api"
+            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
+            name="slf4j-log4j12-1.7.5.jar"
+            id="slf4j-log4j12"
+            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.7.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.apache.log4j"
+            name="org.apache.log4j_1.2.15.v201012070815.jar"
+            id="log4j"
+            uripath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-core"
+                id="camel-core"
+                name="camel-core">
+            <library id="camel-core" />
+            <!-- TODO: library id="jaxb-impl" />
+            <library id="jaxb-core" /-->
+            <library id="slf4j-api" />
+            <library id="slf4j-log4j12" />
+            <library id="log4j" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-spring}"
+            id="camel-spring"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-spring}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-spring-tx}"
+            id="spring-tx"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-tx}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-spring-osgi-core}"
+            id="spring-osgi-core"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-osgi-core}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.apache.commons.logging"
+            name="org.eclipse.osgi_3.10.1.v20140909-1633.jar"
+            id="org.eclipse.osgi"
+            uripath="platform:/base/plugins/org.eclipse.osgi_3.10.1.v20140909-1633.jar"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-spring"
+                id="camel-spring"
+                name="camel-spring">
+            <library id="camel-spring" />
+            <group id="spring-context" />
+            <library id="spring-tx" />
+            <library id="spring-osgi-core" />
+            <library id="org.eclipse.osgi" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-groovy}"
+            id="camel-groovy"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-groovy}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-groovy-all}"
+            id="groovy-all"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-groovy-all}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-groovy"
+                id="camel-groovy"
+                name="camel-groovy">
+            <library id="camel-groovy" />
+            <library id="groovy-all" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-http}"
+            id="camel-http"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http}"
+            bundleID="" />
+        <!-- ${tesb-commons-httpclient} -->
+        <libraryNeeded context="plugin:org.apache.commons.httpclient"
+            name="org.apache.commons.httpclient_3.1.0.v201012070820.jar"
+            id="commons-httpclient"
+            uripath="platform:/base/plugins/org.apache.commons.httpclient_3.1.0.v201012070820.jar"
+            bundleID="" />
+        <!-- ${tesb-commons-codec} -->
+        <!--libraryNeeded context="plugin:org.apache.commons.codec"
+            name="org.apache.commons.codec_1.6.0.v201305230611.jar"
+            id="commons-codec"
+            uripath="platform:/base/plugins/org.apache.commons.codec_1.6.0.v201305230611.jar"
+            bundleID="" /-->
+
+        <libraryNeededGroup
+                description="camel-http"
+                id="camel-http"
+                name="camel-http">
+            <library id="camel-http" />
+            <library id="javax.servlet-api" />
+            <library id="commons-httpclient" />
+            <library id="commons-logging" />
+            <library id="commons-codec" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-jms}"
+            id="camel-jms"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-jms}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-geronimo-jms_1.1_spec}"
+            id="geronimo-jms_1.1_spec"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-geronimo-jms_1.1_spec}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-spring-jms}"
+            id="spring-jms"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-jms}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-amqp"
+                id="camel-amqp"
+                name="camel-amqp">
+            <library id="camel-amqp" />
+            <library id="geronimo-jms_1.1_spec" />
+            <library id="spring-jms" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-amqp}"
+            id="camel-amqp"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-amqp}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-qpid-amqp-1-0-common}"
+            id="qpid-amqp-1-0-common"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-qpid-amqp-1-0-client}"
+            id="qpid-amqp-1-0-client"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-qpid-amqp-1-0-client-jms}"
+            id="qpid-amqp-1-0-client-jms"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-amqp"
+                id="camel-amqp"
+                name="camel-amqp">
+            <library id="camel-amqp" />
+            <library id="qpid-amqp-1-0-common" />
+            <library id="qpid-amqp-1-0-client" />
+            <library id="qpid-amqp-1-0-client-jms" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-mail}"
+            id="camel-mail"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-mail}"
+            bundleID="" />
+        <!-- ${tesb-mail} -->
+        <libraryNeeded context="plugin:javax.mail"
+            name="javax.mail_1.4.0.v201005080615.jar"
+            id="mail"
+            uripath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-mail"
+                id="camel-mail"
+                name="camel-mail">
+            <library id="camel-mail" />
+            <library id="mail" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-servlet}"
+            id="camel-servlet"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-servlet}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-servlet"
+                id="camel-servlet"
+                name="camel-servlet">
+            <library id="camel-servlet" />
+            <group id="camel-http" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-jetty}"
+            id="camel-jetty"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-jetty}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-jetty-common}"
+            id="camel-jetty-common"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-jetty-common}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-jetty8}"
+            id="camel-jetty8"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-jetty8}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.jetty"
+            name="jetty-all-8.1.12.v20130726.jar"
+            id="jetty-all"
+            uripath="platform:/plugin/org.talend.libraries.jetty/lib/jetty-all-8.1.12.v20130726.jar"
+            bundleID="" />
+        <libraryNeededGroup
+                description="camel-jetty"
+                id="camel-jetty"
+                name="camel-jetty">
+            <library id="camel-jetty" />
+            <library id="camel-jetty-common" />
+            <library id="camel-jetty8" />
+            <library id="camel-http" />
+            <group id="jetty-server" />
+            <library id="jetty-all" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-xstream}"
+            id="camel-xstream"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-xstream}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-xstream}"
+            id="xstream"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-xstream}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-xpp3}"
+            id="xpp3"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-xpp3}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-xstream"
+                id="camel-xstream"
+                name="camel-xstream">
+            <library id="camel-xstream" />
+            <library id="xstream" />
+            <library id="xpp3" />
+            <library id="stax-api" />
+            <library id="jettison" />
+            <library id="woodstox-core-asl" />
+            <library id="stax2-api" />
+        </libraryNeededGroup>
+
+    </extension>
 
 </plugin>
