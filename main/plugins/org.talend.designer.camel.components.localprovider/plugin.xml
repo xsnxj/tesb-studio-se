@@ -24,6 +24,39 @@
    </extension>
 
     <extension point="org.talend.core.runtime.librariesNeeded">
+
+        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
+            name="commons-collections-3.2.1.jar"
+            id="commons-collections"
+            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.1.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
+            name="commons-io-2.4.jar"
+            id="commons-io"
+            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-io-2.4.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
+            name="commons-pool-1.6.jar"
+            id="commons-pool"
+            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
+            bundleID="" />
+
+        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
+            name="httpclient-4.2.5.jar"
+            id="httpclient"
+            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
+            name="httpcore-4.2.5.jar"
+            id="httpcore"
+            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-activemq-all}"
+            id="activemq-all"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-activemq-all}"
+            bundleID="" />
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-camel-core}"
             id="camel-core"
@@ -83,7 +116,7 @@
             id="spring-osgi-core"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-osgi-core}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.apache.commons.logging"
+        <libraryNeeded context="plugin:org.eclipse.osgi"
             name="org.eclipse.osgi_3.10.1.v20140909-1633.jar"
             id="org.eclipse.osgi"
             uripath="platform:/base/plugins/org.eclipse.osgi_3.10.1.v20140909-1633.jar"
@@ -165,10 +198,10 @@
             bundleID="" />
 
         <libraryNeededGroup
-                description="camel-amqp"
-                id="camel-amqp"
-                name="camel-amqp">
-            <library id="camel-amqp" />
+                description="camel-jms"
+                id="camel-jms"
+                name="camel-jms">
+            <library id="camel-jms" />
             <library id="geronimo-jms_1.1_spec" />
             <library id="spring-jms" />
         </libraryNeededGroup>
@@ -202,6 +235,43 @@
             <library id="qpid-amqp-1-0-common" />
             <library id="qpid-amqp-1-0-client" />
             <library id="qpid-amqp-1-0-client-jms" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-mqtt}"
+            id="camel-mqtt"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-mqtt}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-mqtt-client}"
+            id="mqtt-client"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-mqtt-client}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-hawtdispatch-transport}"
+            id="hawtdispatch-transport"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-hawtdispatch-transport}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-hawtdispatch}"
+            id="hawtdispatch"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-hawtdispatch}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-hawtbuf}"
+            id="hawtbuf"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-hawtbuf}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-mqtt"
+                id="camel-mqtt"
+                name="camel-mqtt">
+            <library id="camel-mqtt" />
+            <library id="mqtt-client" />
+            <library id="hawtdispatch-transport" />
+            <library id="hawtdispatch" />
+            <library id="hawtbuf" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"

@@ -259,33 +259,24 @@
 
             <IMPORT MODULE_GROUP="camel-jms" REQUIRED="true"/>
 
-			<IMPORT NAME="activemq" 
-					MODULE="activemq-all-${activemq.version}.jar" 
-					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/activemq-all-${activemq.version}.jar"
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ')" />
-			<IMPORT NAME="commons-pool" 
-					MODULE="commons-pool-1.6.jar" 
-					UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
-					REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
+            <IMPORT MODULE="activemq-all" 
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ')" />
+            <IMPORT MODULE="commons-pool"
+                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 
-            <IMPORT NAME="httpclient" 
-                    MODULE="httpclient-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.1.jar" 
+            <IMPORT MODULE="httpclient" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT NAME="httpcore" 
-                    MODULE="httpcore-4.2.1.jar"
-                    UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.1.jar" 
+            <IMPORT MODULE="httpcore" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
             <IMPORT MODULE="xstream"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
             <IMPORT MODULE="xpp3"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
-            <IMPORT MODULE_GROUP="camel-amqp" REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+            <IMPORT MODULE_GROUP="camel-amqp"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 
-            <IMPORT NAME="camel-mqtt-alldep" 
-                    MODULE="camel-mqtt-alldep-${camel.version}.jar" 
-                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-mqtt-alldep-${camel.version}.jar"
+            <IMPORT MODULE_GROUP="camel-mqtt"
                     REQUIRED_IF="(MQ_TYPE == 'MQTT')" /> 
 		</IMPORTS>
 	</CODEGENERATION>

@@ -234,7 +234,7 @@
 	<FeatureMap HotLib="camel-mongodb-alldep">
 		<Feature version="[2,5)">camel-mongodb</Feature>
 	</FeatureMap>
-	<FeatureMap HotLib="camel-mqtt-alldep">
+	<FeatureMap HotLib="camel-mqtt">
 		<Feature version="[2,5)">camel-mqtt</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-msv-alldep">
