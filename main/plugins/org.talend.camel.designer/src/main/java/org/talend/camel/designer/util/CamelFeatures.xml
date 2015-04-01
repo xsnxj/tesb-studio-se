@@ -1,456 +1,456 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FeatureMaps>
 	<FeatureMap HotLib="camel-ahc-alldep">
-		<Feature version="[2,5)">camel-ahc</Feature>
+		<Feature>camel-ahc</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-amqp">
-		<Feature version="[2,5)">camel-amqp</Feature>
+		<Feature>camel-amqp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-apns-alldep">
-		<Feature version="[2,5)">camel-apns</Feature>
+		<Feature>camel-apns</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-atom-alldep">
-		<Feature version="[2,5)">camel-atom</Feature>
+		<Feature>camel-atom</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-avro-alldep">
-		<Feature version="[2,5)">camel-avro</Feature>
+		<Feature>camel-avro</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-aws-alldep">
-		<Feature version="[2,5)">camel-aws</Feature>
+		<Feature>camel-aws</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-bam-alldep">
-		<Feature version="[2,5)">camel-bam</Feature>
+		<Feature>camel-bam</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-base64-alldep">
-        <Feature version="[2,5)">camel-base64</Feature>
+        <Feature>camel-base64</Feature>
     </FeatureMap>
     <FeatureMap HotLib="camel-beanio-alldep">
-        <Feature version="[2,5)">camel-beanio</Feature>
+        <Feature>camel-beanio</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-bean-validator-alldep">
-		<Feature version="[2,5)">camel-bean-validator</Feature>
+		<Feature>camel-bean-validator</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-bindy-alldep">
-		<Feature version="[2,5)">camel-bindy</Feature>
+		<Feature>camel-bindy</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-blueprint-alldep">
-		<Feature version="[2,5)">camel-blueprint</Feature>
+		<Feature>camel-blueprint</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cache-alldep">
-		<Feature version="[2,5)">camel-cache</Feature>
+		<Feature>camel-cache</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-castor-alldep">
-		<Feature version="[2,5)">camel-castor</Feature>
+		<Feature>camel-castor</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cmis-alldep">
-		<Feature version="[2,5)">camel-cmis</Feature>
+		<Feature>camel-cmis</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cometd-alldep">
-		<Feature version="[2,5)">camel-cometd</Feature>
+		<Feature>camel-cometd</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-context">
-		<Feature version="[2,5)">camel-context</Feature>
+		<Feature>camel-context</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-couchdb-alldep">
-		<Feature version="[2,5)">camel-couchdb</Feature>
+		<Feature>camel-couchdb</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-crypto-alldep">
-		<Feature version="[2,5)">camel-crypto</Feature>
+		<Feature>camel-crypto</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-csv-alldep">
-		<Feature version="[2,5)">camel-csv</Feature>
+		<Feature>camel-csv</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-cxf">
-		<Feature version="[2,5)">camel-cxf</Feature>
-		<Feature version="[2,5)">cxf</Feature>
+		<Feature>camel-cxf</Feature>
+		<Feature>cxf</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-disruptor-alldep">
-		<Feature version="[2,5)">camel-disruptor</Feature>
+		<Feature>camel-disruptor</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-dns-alldep">
-		<Feature version="[2,5)">camel-dns</Feature>
+		<Feature>camel-dns</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-dozer-alldep">
-		<Feature version="[2,5)">camel-dozer</Feature>
+		<Feature>camel-dozer</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-elasticsearch-alldep">
-		<Feature version="[2,5)">camel-elasticsearch</Feature>
+		<Feature>camel-elasticsearch</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-eventadmin-alldep">
-		<Feature version="[2,5)">camel-eventadmin</Feature>
+		<Feature>camel-eventadmin</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-exec-alldep">
-		<Feature version="[2,5)">camel-exec</Feature>
+		<Feature>camel-exec</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-facebook-alldep">
-        <Feature version="[2,5)">camel-facebook</Feature>
+        <Feature>camel-facebook</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-flatpack-alldep">
-		<Feature version="[2,5)">camel-flatpack</Feature>
+		<Feature>camel-flatpack</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-fop-alldep">
-		<Feature version="[2,5)">camel-fop</Feature>
+		<Feature>camel-fop</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-freemarker-alldep">
-		<Feature version="[2,5)">camel-freemarker</Feature>
+		<Feature>camel-freemarker</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ftp-alldep">
-		<Feature version="[2,5)">camel-ftp</Feature>
+		<Feature>camel-ftp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-gae-alldep">
-		<Feature version="[2,5)">camel-gae</Feature>
+		<Feature>camel-gae</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-geocoder-alldep">
-		<Feature version="[2,5)">camel-geocoder</Feature>
+		<Feature>camel-geocoder</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-groovy">
-		<Feature version="[2,5)">camel-groovy</Feature>
+		<Feature>camel-groovy</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-gson-alldep">
-        <Feature version="[2,5)">camel-gson</Feature>
+        <Feature>camel-gson</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-guava-eventbus-alldep">
-		<Feature version="[2,5)">camel-guava-eventbus</Feature>
+		<Feature>camel-guava-eventbus</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-guice-alldep">
-		<Feature version="[2,5)">camel-guice</Feature>
+		<Feature>camel-guice</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hawtdb-alldep">
-		<Feature version="[2,5)">camel-hawtdb</Feature>
+		<Feature>camel-hawtdb</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hazelcast-alldep">
-		<Feature version="[2,5)">camel-hazelcast</Feature>
+		<Feature>camel-hazelcast</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hbase-alldep">
-		<Feature version="[2,5)">camel-hbase</Feature>
+		<Feature>camel-hbase</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hdfs2-alldep">
-		<Feature version="[2,5)">camel-hdfs2</Feature>
+		<Feature>camel-hdfs2</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hdfs-alldep">
-		<Feature version="[2,5)">camel-hdfs</Feature>
+		<Feature>camel-hdfs</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-hl7-alldep">
-		<Feature version="[2,5)">camel-hl7</Feature>
+		<Feature>camel-hl7</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-http">
-		<Feature version="[2,5)">camel-http</Feature>
-		<Feature version="[2,5)">http</Feature>
+		<Feature>camel-http</Feature>
+		<Feature>http</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-http4-alldep">
-		<Feature version="[2,5)">camel-http4</Feature>
+		<Feature>camel-http4</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ibatis-alldep">
-		<Feature version="[2,5)">camel-ibatis</Feature>
+		<Feature>camel-ibatis</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-infinispan-alldep">
-		<Feature version="[2,5)">camel-infinispan</Feature>
+		<Feature>camel-infinispan</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-irc-alldep">
-		<Feature version="[2,5)">camel-irc</Feature>
+		<Feature>camel-irc</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jackson-alldep">
-		<Feature version="[2,5)">camel-jackson</Feature>
+		<Feature>camel-jackson</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jasypt-alldep">
-		<Feature version="[2,5)">camel-jasypt</Feature>
+		<Feature>camel-jasypt</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jaxb-alldep">
-		<Feature version="[2,5)">camel-jaxb</Feature>
+		<Feature>camel-jaxb</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jcr-alldep">
-		<Feature version="[2,5)">camel-jcr</Feature>
+		<Feature>camel-jcr</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jdbc">
-		<Feature version="[2,5)">camel-jdbc</Feature>
+		<Feature>camel-jdbc</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jetty">
-		<Feature version="[2,5)">camel-jetty</Feature>
+		<Feature>camel-jetty</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jgroups-alldep">
-		<Feature version="[2,5)">camel-jgroups</Feature>
+		<Feature>camel-jgroups</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jibx-alldep">
-		<Feature version="[2,5)">camel-jibx</Feature>
+		<Feature>camel-jibx</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jing-alldep">
-		<Feature version="[2,5)">camel-jing</Feature>
+		<Feature>camel-jing</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jms">
-		<Feature version="[2,5)">camel-jms</Feature>
-		<Feature version="[2,5)">spring-jms</Feature>
+		<Feature>camel-jms</Feature>
+		<Feature>spring-jms</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jmx-alldep">
-		<Feature version="[2,5)">camel-jmx</Feature>
+		<Feature>camel-jmx</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-josql-alldep">
-		<Feature version="[2,5)">camel-josql</Feature>
+		<Feature>camel-josql</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jpa-alldep">
-		<Feature version="[2,5)">camel-jpa</Feature>
+		<Feature>camel-jpa</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jsch-alldep">
-		<Feature version="[2,5)">camel-jsch</Feature>
+		<Feature>camel-jsch</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-jsonpath-alldep">
-        <Feature version="[2,5)">camel-jsonpath</Feature>
+        <Feature>camel-jsonpath</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-jt400-alldep">
-		<Feature version="[2,5)">camel-jt400</Feature>
+		<Feature>camel-jt400</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-juel-alldep">
-		<Feature version="[2,5)">camel-juel</Feature>
+		<Feature>camel-juel</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-jxpath-alldep">
-		<Feature version="[2,5)">camel-jxpath</Feature>
+		<Feature>camel-jxpath</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-kafka-alldep">
-		<Feature version="[2,5)">camel-kafka</Feature>
+		<Feature>camel-kafka</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-kestrel-alldep">
-		<Feature version="[2,5)">camel-kestrel</Feature>
+		<Feature>camel-kestrel</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-krati-alldep">
-		<Feature version="[2,5)">camel-krati</Feature>
+		<Feature>camel-krati</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ldap-alldep">
-		<Feature version="[2,5)">camel-ldap</Feature>
+		<Feature>camel-ldap</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-leveldb-alldep">
-        <Feature version="[2,5)">camel-leveldb</Feature>
+        <Feature>camel-leveldb</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-lucene-alldep">
-		<Feature version="[2,5)">camel-lucene</Feature>
+		<Feature>camel-lucene</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mail">
-		<Feature version="[2,5)">camel-mail</Feature>
+		<Feature>camel-mail</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mina2-alldep">
-		<Feature version="[2,5)">camel-mina2</Feature>
+		<Feature>camel-mina2</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mina-alldep">
-		<Feature version="[2,5)">camel-mina</Feature>
+		<Feature>camel-mina</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mongodb-alldep">
-		<Feature version="[2,5)">camel-mongodb</Feature>
+		<Feature>camel-mongodb</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mqtt">
-		<Feature version="[2,5)">camel-mqtt</Feature>
+		<Feature>camel-mqtt</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-msv-alldep">
-		<Feature version="[2,5)">camel-msv</Feature>
+		<Feature>camel-msv</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mustache-alldep">
-		<Feature version="[2,5)">camel-mustache</Feature>
+		<Feature>camel-mustache</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mvel-alldep">
-		<Feature version="[2,5)">camel-mvel</Feature>
+		<Feature>camel-mvel</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-mybatis-alldep">
-		<Feature version="[2,5)">camel-mybatis</Feature>
+		<Feature>camel-mybatis</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-nagios-alldep">
-		<Feature version="[2,5)">camel-nagios</Feature>
+		<Feature>camel-nagios</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-netty-alldep">
-		<Feature version="[2,5)">camel-netty</Feature>
+		<Feature>camel-netty</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-netty-http-alldep">
-		<Feature version="[2,5)">camel-netty-http</Feature>
+		<Feature>camel-netty-http</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ognl-alldep">
-		<Feature version="[2,5)">camel-ognl</Feature>
+		<Feature>camel-ognl</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-optaplanner-alldep">
-		<Feature version="[2,5)">camel-optaplanner</Feature>
+		<Feature>camel-optaplanner</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-paxlogging-alldep">
-		<Feature version="[2,5)">camel-paxlogging</Feature>
+		<Feature>camel-paxlogging</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-printer-alldep">
-		<Feature version="[2,5)">camel-printer</Feature>
+		<Feature>camel-printer</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-protobuf-alldep">
-		<Feature version="[2,5)">camel-protobuf</Feature>
+		<Feature>camel-protobuf</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-quartz2-alldep">
-		<Feature version="[2,5)">camel-quartz2</Feature>
+		<Feature>camel-quartz2</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-quartz-alldep">
-		<Feature version="[2,5)">camel-quartz</Feature>
+		<Feature>camel-quartz</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-quickfix-alldep">
-		<Feature version="[2,5)">camel-quickfix</Feature>
+		<Feature>camel-quickfix</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-rabbitmq-alldep">
-		<Feature version="[2,5)">camel-rabbitmq</Feature>
+		<Feature>camel-rabbitmq</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-restlet-alldep">
-		<Feature version="[2,5)">camel-restlet</Feature>
+		<Feature>camel-restlet</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-rmi-alldep">
-		<Feature version="[2,5)">camel-rmi</Feature>
+		<Feature>camel-rmi</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-routebox-alldep">
-		<Feature version="[2,5)">camel-routebox</Feature>
+		<Feature>camel-routebox</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-rss-alldep">
-		<Feature version="[2,5)">camel-rss</Feature>
+		<Feature>camel-rss</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ruby-alldep">
-		<Feature version="[2,5)">camel-ruby</Feature>
+		<Feature>camel-ruby</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-rx-alldep">
-        <Feature version="[2,5)">camel-rx</Feature>
+        <Feature>camel-rx</Feature>
     </FeatureMap>
     <FeatureMap HotLib="camel-salesforce-alldep">
-        <Feature version="[2,5)">camel-salesforce</Feature>
+        <Feature>camel-salesforce</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-sap-netweaver-alldep">
-		<Feature version="[2,5)">camel-sap-netweaver</Feature>
+		<Feature>camel-sap-netweaver</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-saxon-alldep">
-		<Feature version="[2,5)">camel-saxon</Feature>
+		<Feature>camel-saxon</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-scala-alldep">
-		<Feature version="[2,5)">camel-scala</Feature>
+		<Feature>camel-scala</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-script">
-		<Feature version="[2,5)">camel-script</Feature>
+		<Feature>camel-script</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-servlet">
-		<Feature version="[2,5)">camel-servlet</Feature>
+		<Feature>camel-servlet</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-servletlistener-alldep">
-        <Feature version="[2,5)">camel-servletlistener</Feature>
+        <Feature>camel-servletlistener</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-shiro-alldep">
-		<Feature version="[2,5)">camel-shiro</Feature>
+		<Feature>camel-shiro</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-sip-alldep">
-		<Feature version="[2,5)">camel-sip</Feature>
+		<Feature>camel-sip</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-sjms-alldep">
-		<Feature version="[2,5)">camel-sjms</Feature>
+		<Feature>camel-sjms</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-smpp-alldep">
-		<Feature version="[2,5)">camel-smpp</Feature>
+		<Feature>camel-smpp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-snmp-alldep">
-		<Feature version="[2,5)">camel-snmp</Feature>
+		<Feature>camel-snmp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-soap-alldep">
-		<Feature version="[2,5)">camel-soap</Feature>
+		<Feature>camel-soap</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-solr-alldep">
-		<Feature version="[2,5)">camel-solr</Feature>
+		<Feature>camel-solr</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-splunk-alldep">
-		<Feature version="[2,5)">camel-splunk</Feature>
+		<Feature>camel-splunk</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-spring">
-		<Feature version="[2,5)">camel-spring</Feature>
+		<Feature>camel-spring</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-spring-batch-alldep">
-		<Feature version="[2,5)">camel-spring-batch</Feature>
+		<Feature>camel-spring-batch</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-spring-integration-alldep">
-		<Feature version="[2,5)">camel-spring-integration</Feature>
+		<Feature>camel-spring-integration</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-spring-javaconfig-alldep">
-        <Feature version="[2,5)">camel-spring-javaconfig</Feature>
+        <Feature>camel-spring-javaconfig</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-spring-ldap-alldep">
-		<Feature version="[2,5)">camel-spring-ldap</Feature>
+		<Feature>camel-spring-ldap</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-spring-redis-alldep">
-		<Feature version="[2,5)">camel-spring-redis</Feature>
+		<Feature>camel-spring-redis</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-spring-security-alldep">
-        <Feature version="[2,5)">camel-spring-security</Feature>
+        <Feature>camel-spring-security</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-spring-ws-alldep">
-		<Feature version="[2,5)">camel-spring-ws</Feature>
+		<Feature>camel-spring-ws</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-sql-alldep">
-		<Feature version="[2,5)">camel-sql</Feature>
+		<Feature>camel-sql</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-ssh-alldep">
-		<Feature version="[2,5)">camel-ssh</Feature>
+		<Feature>camel-ssh</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-stax-alldep">
-		<Feature version="[2,5)">camel-stax</Feature>
+		<Feature>camel-stax</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-stomp-alldep">
-		<Feature version="[2,5)">camel-stomp</Feature>
+		<Feature>camel-stomp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-stream-alldep">
-		<Feature version="[2,5)">camel-stream</Feature>
+		<Feature>camel-stream</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-stringtemplate-alldep">
-		<Feature version="[2,5)">camel-string-template</Feature>
+		<Feature>camel-string-template</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-syslog-alldep">
-		<Feature version="[2,5)">camel-syslog</Feature>
+		<Feature>camel-syslog</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-tagsoup-alldep">
-		<Feature version="[2,5)">camel-tagsoup</Feature>
+		<Feature>camel-tagsoup</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-twitter-alldep">
-		<Feature version="[2,5)">camel-twitter</Feature>
+		<Feature>camel-twitter</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-urlrewrite-alldep">
-        <Feature version="[2,5)">camel-urlrewrite</Feature>
+        <Feature>camel-urlrewrite</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-velocity-alldep">
-		<Feature version="[2,5)">camel-velocity</Feature>
+		<Feature>camel-velocity</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-vertx-alldep">
-        <Feature version="[2,5)">camel-vertx</Feature>
+        <Feature>camel-vertx</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-weather-alldep">
-		<Feature version="[2,5)">camel-weather</Feature>
+		<Feature>camel-weather</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-websocket-alldep">
-		<Feature version="[2,5)">camel-websocket</Feature>
+		<Feature>camel-websocket</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-xmlbeans-alldep">
-		<Feature version="[2,5)">camel-xmlbeans</Feature>
+		<Feature>camel-xmlbeans</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-xmljson-alldep">
-        <Feature version="[2,5)">camel-xmljson</Feature>
+        <Feature>camel-xmljson</Feature>
     </FeatureMap>
     <FeatureMap HotLib="camel-xmlrpc-alldep">
-        <Feature version="[2,5)">camel-xmlrpc</Feature>
+        <Feature>camel-xmlrpc</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-xmlsecurity-alldep">
-		<Feature version="[2,5)">camel-xmlsecurity</Feature>
+		<Feature>camel-xmlsecurity</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-xmpp-alldep">
-		<Feature version="[2,5)">camel-xmpp</Feature>
+		<Feature>camel-xmpp</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-xstream">
-		<Feature version="[2,5)">camel-xstream</Feature>
+		<Feature>camel-xstream</Feature>
 	</FeatureMap>
 	<FeatureMap HotLib="camel-yammer-alldep">
-		<Feature version="[2,5)">camel-yammer</Feature>
+		<Feature>camel-yammer</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="camel-zipfile-alldep">
-        <Feature version="[2,5)">camel-zipfile</Feature>
+        <Feature>camel-zipfile</Feature>
     </FeatureMap>
 	<FeatureMap HotLib="camel-zookeeper-alldep">
-		<Feature version="[2,5)">camel-zookeeper</Feature>
+		<Feature>camel-zookeeper</Feature>
 	</FeatureMap>
 
 	<FeatureMap HotLib="camel-talendjob">
-		<Feature version="[2,10)">camel-talendjob</Feature>
+		<Feature>camel-talendjob</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="activemq-all">
-		<Feature version="[5,10)">activemq</Feature>
-		<Feature version="[5,10)">activemq-camel</Feature>
+		<Feature>activemq</Feature>
+		<Feature>activemq-camel</Feature>
 	</FeatureMap>
     <FeatureMap HotLib="tdm-camel">
-		<Feature version="[5,10)">talend-data-mapper</Feature>
+		<Feature>talend-data-mapper</Feature>
 	</FeatureMap>
 </FeatureMaps>
 	
