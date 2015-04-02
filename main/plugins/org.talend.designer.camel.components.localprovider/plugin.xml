@@ -134,6 +134,29 @@
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-cxf}"
+            id="camel-cxf"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-cxf}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-cxf-transport}"
+            id="camel-cxf-transport"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-cxf-transport}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-cxf"
+                id="camel-cxf"
+                name="camel-cxf">
+            <library id="camel-cxf" />
+            <library id="camel-cxf-transport" />
+            <group id="cxf-core" />
+            <group id="cxf-rt-frontend-jaxws" />
+            <group id="cxf-rt-rs-client" />
+            <group id="cxf-rt-transports-http-jetty" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-camel-groovy}"
             id="camel-groovy"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-groovy}"
