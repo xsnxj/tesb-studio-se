@@ -217,7 +217,7 @@
 				<groupByLicense>true</groupByLicense>
 				<licenseMerges>
 					<licenseMerge>The Apache Software License, Version 2.0|Apache License, Version 2.0|Apache 2</licenseMerge>
-					<licenseMerge>BSD License|BSD|The BSD License</licenseMerge>
+					<!--licenseMerge>BSD License|BSD|The BSD License</licenseMerge-->
 				</licenseMerges>
 				<excludedGroups>org\.talend\.(.*)</excludedGroups>
 				<useMissingFile>true</useMissingFile>

@@ -254,6 +254,7 @@
                 description="camel-amqp"
                 id="camel-amqp"
                 name="camel-amqp">
+            <group id="camel-jms" />
             <library id="camel-amqp" />
             <library id="qpid-amqp-1-0-common" />
             <library id="qpid-amqp-1-0-client" />
