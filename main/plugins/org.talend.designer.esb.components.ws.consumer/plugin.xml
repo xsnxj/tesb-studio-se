@@ -536,7 +536,7 @@
             <library id="opensaml-xacml-saml-impl" />
             <library id="opensaml-xacml-saml-api" />
             <library id="jasypt" />
-            <library id="geronimo-javamail_1.4_spec" />
+            <!--library id="geronimo-javamail_1.4_spec" /-->
             <library id="ehcache" />
             <library id="wss4j-ws-security-dom" />
             <library id="wss4j-policy" />
