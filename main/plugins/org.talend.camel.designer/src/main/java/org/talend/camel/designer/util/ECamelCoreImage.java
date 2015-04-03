@@ -18,9 +18,10 @@ import org.talend.commons.ui.runtime.image.IImage;
  * DOC guanglong.du class global comment. Detailled comment
  */
 public enum ECamelCoreImage implements IImage {
-	ROUTE_RESOURCE_ICON("/icons/route-resource.png"), //$NON-NLS-1$
+    ROUTE_RESOURCE_ICON("/icons/route-resource.png"), //$NON-NLS-1$
     BEAN_ICON("/icons/bean.gif"), //$NON-NLS-1$
     ROUTES_ICON("/icons/routes_icon.png"), //$NON-NLS-1$
+    ROUTES_ICON_EDITOR("/icons/routes_icon_editor.png"), //$NON-NLS-1$
     BEAN_WIZ("/icons/bean_wiz.png");
 
     private String path;
@@ -38,6 +39,7 @@ public enum ECamelCoreImage implements IImage {
      * 
      * @return the path
      */
+    @Override
     public String getPath() {
         return this.path;
     }
@@ -47,6 +49,7 @@ public enum ECamelCoreImage implements IImage {
      * 
      * @return the clazz
      */
+    @Override
     public Class getLocation() {
         return ECamelCoreImage.class;
     }

@@ -60,13 +60,11 @@ public final class CamelFeatureUtil {
 
 	private static final String MAPPING_XML_FILE = "CamelFeatures.xml";
 
-	private static final String CAMEL_VERSION_RANGE = "[2,5)";
+	private static final FeatureModel FEATURE_CAMEL_GROOVY = new FeatureModel("camel-groovy");
+	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript");
+	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script");
 
-	private static final FeatureModel FEATURE_CAMEL_GROOVY = new FeatureModel("camel-groovy", CAMEL_VERSION_RANGE);
-	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript", CAMEL_VERSION_RANGE);
-	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script", CAMEL_VERSION_RANGE);
-
-	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http", "[5,10)");
+	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http");
 
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent");
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client");
@@ -426,11 +424,8 @@ public final class CamelFeatureUtil {
 						camelFeaturesMap.put(hotLib, features);
 					}
 
-					String featureVersion = node.getAttributes()
-							.getNamedItem("version").getNodeValue();
 					String featureName = node.getFirstChild().getNodeValue();
-					features.add(new FeatureModel(featureName,
-							featureVersion));
+					features.add(new FeatureModel(featureName));
 				}
 //				list = (NodeList) newXPath.evaluate("//FeatureMap/Bundle",
 //						document, XPathConstants.NODESET);

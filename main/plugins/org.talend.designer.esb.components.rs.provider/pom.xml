@@ -11,12 +11,4 @@
   <artifactId>org.talend.designer.esb.components.rs.provider</artifactId>
   <packaging>eclipse-plugin</packaging>
   <name>Talend Designer ESB Tooling REST Service provider plugin</name>
-	<dependencies>
-		<dependency>
-			<groupId>org.talend.studio</groupId>
-			<artifactId>org.talend.libraries.esb</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-		</dependency>
-	</dependencies>
 </project>
