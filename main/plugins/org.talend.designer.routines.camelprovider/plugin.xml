@@ -12,7 +12,7 @@
       <systemRoutine
             name="CamelStat">
          <library
-               name="camel-core">
+               name="camel-core-2.15.1.jar">
             <bundleId
                   bundleId="org.apache.camel.camel-core">
             </bundleId>
