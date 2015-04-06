@@ -144,11 +144,7 @@
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
 
             <IMPORT MODULE_GROUP="camel-http" REQUIRED="true" />
-
-            <IMPORT NAME="camel-jetty"
-                    MODULE="camel-jetty-alldep-${camel.version}.jar" 
-                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jetty-alldep-${camel.version}.jar"
-                    REQUIRED_IF="SERVER=='true'" />
+            <IMPORT MODULE_GROUP="camel-jetty" REQUIRED_IF="SERVER=='true'" />
 		</IMPORTS>
 	</CODEGENERATION>
 

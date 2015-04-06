@@ -25,27 +25,32 @@
 
     <extension point="org.talend.core.runtime.librariesNeeded">
 
+        <!-- ${tesb-commons-collections} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.common"
             name="commons-collections-3.2.1.jar"
             id="commons-collections"
             uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.1.jar"
             bundleID="" />
+        <!-- ${tesb-commons-io} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.common"
             name="commons-io-2.4.jar"
             id="commons-io"
             uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-io-2.4.jar"
             bundleID="" />
+        <!-- ${tesb-commons-pool} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.common"
             name="commons-pool-1.6.jar"
             id="commons-pool"
             uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
             bundleID="" />
 
+        <!-- ${tesb-httpclient} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.http"
             name="httpclient-4.2.5.jar"
             id="httpclient"
             uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.5.jar"
             bundleID="" />
+        <!-- ${tesb-httpcore} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.http"
             name="httpcore-4.2.5.jar"
             id="httpcore"
@@ -352,6 +357,7 @@
             id="jetty-all"
             uripath="platform:/plugin/org.talend.libraries.jetty/lib/jetty-all-8.1.12.v20130726.jar"
             bundleID="" />
+
         <libraryNeededGroup
                 description="camel-jetty"
                 id="camel-jetty"
@@ -391,6 +397,32 @@
             <library id="jettison" />
             <library id="woodstox-core-asl" />
             <library id="stax2-api" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-ftp}"
+            id="camel-ftp"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-ftp}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-jsch}"
+            id="jsch"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jsch}"
+            bundleID="" />
+        <!-- ${tesb-commons-net} -->
+        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
+            name="commons-net-1.4.1.jar"
+            id="commons-net"
+            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-net-1.4.1.jar"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-ftp"
+                id="camel-ftp"
+                name="camel-ftp">
+            <library id="camel-ftp" />
+            <library id="jsch" />
+            <library id="commons-net" />
         </libraryNeededGroup>
 
     </extension>

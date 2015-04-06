@@ -28,6 +28,8 @@
         <mqtt-client.version>1.10</mqtt-client.version>
         <hawtbuf.version>1.10</hawtbuf.version>
         <hawtdispatch.version>1.20</hawtdispatch.version>
+        <!-- camel-ftp -->
+        <jsch.version>0.1.51</jsch.version>
     </properties>
 
     <dependencies>
@@ -201,6 +203,12 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servletlistener</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
             <version>${camel.version}</version>
         </dependency>
@@ -239,6 +247,35 @@
             <groupId>org.fusesource.hawtbuf</groupId>
             <artifactId>hawtbuf</artifactId>
             <version>${hawtbuf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ftp</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${jsch.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stax</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <version>${camel.version}</version>
         </dependency>
 
     </dependencies>
