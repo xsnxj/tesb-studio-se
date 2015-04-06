@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
-import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.EConnectionType;
+import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.properties.Property;
 import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -36,7 +36,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.RepositoryPlugin;
 
 /**
  * Camel component feature
@@ -78,22 +78,6 @@ public final class CamelFeatureUtil {
 	private static final String LANGUAGES = "LANGUAGES"; //$NON-NLS-1$
 	private static final String LOOP_TYPE = "LOOP_TYPE"; //$NON-NLS-1$
 
-
-	/**
-	 * Check the node is Route
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private static boolean checkNode(IRepositoryNode node) {
-		if (node == null) {
-			return false;
-		}
-		if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
-			return false;
-		}
-		return true;
-	}
 
 	/**
 	 * Compute check field parameter value with a given parameter name
@@ -382,23 +366,12 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @param featuresModel
 	 */
-	public static void addFeatureAndBundles(IRepositoryNode node,
-			FeaturesModel featuresModel) {
-
-		if (!checkNode(node)) {
-			return;
-		}
-
-		Property property = node.getObject().getProperty();
-		//changed for TDI-24563
-//		Process process = new org.talend.designer.core.ui.editor.process.Process(
-//				property);
-		RouteProcess process = new RouteProcess(property);
-		process.loadXmlFile();
+	public static void addFeatureAndBundles(ProcessItem routeProcess, FeaturesModel featuresModel) {
+        IDesignerCoreService designerService = RepositoryPlugin.getDefault().getDesignerCoreService();
+        IProcess process = designerService.getProcessFromProcessItem(routeProcess, false);
 		Collection<String> neededLibraries = process.getNeededLibraries(true);
 
-		Collection<FeatureModel> features = getFeaturesOfRoute(neededLibraries,
-				((ProcessItem) property.getItem()).getProcess());
+		Collection<FeatureModel> features = getFeaturesOfRoute(neededLibraries, routeProcess.getProcess());
 		for (FeatureModel model : features) {
 			featuresModel.addFeature(model);
 		}
@@ -407,9 +380,6 @@ public final class CamelFeatureUtil {
 //		for (BundleModel model : bundles) {
 //			featuresModel.addBundle(model);
 //		}
-
-		process.dispose();
-
 	}
 
 	/**

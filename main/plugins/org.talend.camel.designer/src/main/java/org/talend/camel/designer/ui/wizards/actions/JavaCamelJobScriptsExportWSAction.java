@@ -129,10 +129,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             if (featuresModel.addBundle(routeModel)) {
                 exportRouteBundle(routeNode, routeFile, version, bundleVersion);
 
-                // http://jira.talendforge.org/browse/TESB-5426 LiXiaopeng
-                CamelFeatureUtil.addFeatureAndBundles(routeNode, featuresModel);
-
-                ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
+                final ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
+                CamelFeatureUtil.addFeatureAndBundles(routeProcess, featuresModel);
                 featuresModel.setConfigName(routeNode.getObject().getLabel());
                 featuresModel.setContexts(JobContextUtils.getContextsMap(routeProcess));
 
