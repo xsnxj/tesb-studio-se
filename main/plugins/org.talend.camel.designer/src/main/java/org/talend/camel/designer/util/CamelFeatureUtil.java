@@ -37,6 +37,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.RepositoryPlugin;
+import org.talend.repository.utils.EmfModelUtils;
 
 /**
  * Camel component feature
@@ -78,24 +79,6 @@ public final class CamelFeatureUtil {
 	private static final String LANGUAGES = "LANGUAGES"; //$NON-NLS-1$
 	private static final String LOOP_TYPE = "LOOP_TYPE"; //$NON-NLS-1$
 
-
-	/**
-	 * Compute check field parameter value with a given parameter name
-	 * 
-	 * @param paramName
-	 * @param elementParameterTypes
-	 * @return
-	 */
-	protected static boolean computeCheckElementValue(String paramName,
-			EList<?> elementParameterTypes) {
-		ElementParameterType cpType = findElementParameterByName(paramName,
-				elementParameterTypes);
-		if (cpType == null) {
-			return false;
-		}
-		String isNone = cpType.getValue();
-		return "true".equals(isNone);
-	}
 
     private static Collection<FeatureModel> computeFeature(String libraryName) {
         String nameWithoutVersion = getNameWithoutVersion(libraryName);
@@ -139,32 +122,6 @@ public final class CamelFeatureUtil {
 			}
 		}
 		return interName;
-	}
-
-	protected static ElementParameterType findElementParameterByName(
-			String paramName, EList<?> elementParameterTypes) {
-		for (Object obj : elementParameterTypes) {
-			ElementParameterType cpType = (ElementParameterType) obj;
-			if (paramName.equals(cpType.getName())) {
-				return cpType;
-			}
-		}
-		return null;
-	}
-	
-	protected static Map<String, ElementParameterType> findElementParameterByNames(
-			List<String> paramNames, EList<?> elementParameterTypes) {
-		Map<String, ElementParameterType> map = new HashMap<String, ElementParameterType>(paramNames.size());
-		for (Object obj : elementParameterTypes) {
-			ElementParameterType cpType = (ElementParameterType) obj;
-			String name = cpType.getName();
-			if(paramNames.contains(name)){
-				map.put(name, cpType);
-				paramNames.remove(name);
-			}
-			
-		}
-		return map;
 	}
 
 	/**
@@ -217,20 +174,23 @@ public final class CamelFeatureUtil {
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
 				NodeType currentNode = (NodeType) o;
+				if (!EmfModelUtils.isComponentActive(currentNode)) {
+				    continue;
+				}
 				String componentName = currentNode.getComponentName();
 				if ("cCXF".equals(componentName) || "cCXFRS".equals(componentName)) {
 					handleCXFcase(features, currentNode);
-				}else if("cLoop".equals(componentName)){
+				} else if("cLoop".equals(componentName)){
 					handleLoopCase(features, currentNode);
-				}else if("cMessageFilter".equals(componentName)){
+				} else if("cMessageFilter".equals(componentName)){
 					handleMessageFilterCase(features, currentNode);
-				}else if("cRecipientList".equals(componentName)){
+				} else if("cRecipientList".equals(componentName)){
 					handleRecipientListCase(features, currentNode);
-				}else if("cSetBody".equals(componentName)){
+				} else if("cSetBody".equals(componentName)){
 					handleSetBodyCase(features, currentNode);
-				}else if("cSetHeader".equals(componentName)){
+				} else if("cSetHeader".equals(componentName)){
 					handleSetHeaderCase(features, currentNode);
-				}else if("cMQConnectionFactory".equals(componentName)){
+				} else if("cMQConnectionFactory".equals(componentName)){
 					handleMQConnectionFactory(features, currentNode);
 				}
 			}
@@ -239,10 +199,9 @@ public final class CamelFeatureUtil {
 
 	private static void handleMQConnectionFactory(
 			Collection<FeatureModel> features, NodeType currentNode) {
-		ElementParameterType mqType = findElementParameterByName("MQ_TYPE", currentNode.getElementParameter());
+		ElementParameterType mqType = EmfModelUtils.findElementParameterByName("MQ_TYPE", currentNode);
 		if("ActiveMQ".equals(mqType.getValue())){
-			ElementParameterType useHttpBroker = findElementParameterByName("IS_AMQ_HTTP_BROKER", currentNode.getElementParameter());
-			if (null != useHttpBroker && "true".equals(useHttpBroker.getValue())) {
+			if (EmfModelUtils.computeCheckElementValue("IS_AMQ_HTTP_BROKER", currentNode)) {
 				features.add(FEATURE_ACTIVEMQ_OPTIONAL);
 			}
 		}
@@ -286,7 +245,7 @@ public final class CamelFeatureUtil {
 	
 	protected static void handleSetHeaderCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		ElementParameterType element = findElementParameterByName("VALUES", currentNode.getElementParameter());
+		ElementParameterType element = EmfModelUtils.findElementParameterByName("VALUES", currentNode);
 		EList elementValue = element.getElementValue();
 		Iterator iterator = elementValue.iterator();
 		while(iterator.hasNext()){
@@ -306,7 +265,7 @@ public final class CamelFeatureUtil {
 
 	protected static void handleSetBodyCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		ElementParameterType languages = findElementParameterByName(LANGUAGES, currentNode.getElementParameter());
+		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
 		if (!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
@@ -315,7 +274,7 @@ public final class CamelFeatureUtil {
 
 	private static void handleRecipientListCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		ElementParameterType languages = findElementParameterByName(LANGUAGES, currentNode.getElementParameter());
+		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
 		if (!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
@@ -324,7 +283,7 @@ public final class CamelFeatureUtil {
 
 	protected static void handleMessageFilterCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		ElementParameterType languages = findElementParameterByName(LANGUAGES, currentNode.getElementParameter());
+		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
 		if (!JAVA_SCRIPT.equals(languages.getValue())){
 			return;
 		}
@@ -333,17 +292,12 @@ public final class CamelFeatureUtil {
 
 	protected static void handleLoopCase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		List<String> paraNames = new ArrayList<String>();
-		paraNames.add(LOOP_TYPE);
-		paraNames.add(LANGUAGES);
-
-		Map<String, ElementParameterType> found = findElementParameterByNames(paraNames, currentNode.getElementParameter());
-		ElementParameterType loopType = found.get(LOOP_TYPE);
-		if(!"EXPRESSION_TYPE".equals(loopType.getValue())){
+		ElementParameterType found = EmfModelUtils.findElementParameterByName(LOOP_TYPE, currentNode);
+		if (!"EXPRESSION_TYPE".equals(found.getValue())) {
 			return;
 		}
-		ElementParameterType languages = found.get(LANGUAGES);
-		if(!JAVA_SCRIPT.equals(languages.getValue())){
+		found = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
+		if (!JAVA_SCRIPT.equals(found.getValue())) {
 			return;
 		}
 		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
@@ -351,10 +305,10 @@ public final class CamelFeatureUtil {
 
 	protected static void handleCXFcase(Collection<FeatureModel> features,
 			NodeType currentNode) {
-		if (computeCheckElementValue("ENABLE_SAM", currentNode.getElementParameter())) {
+		if (EmfModelUtils.computeCheckElementValue("ENABLE_SAM", currentNode)) {
 			features.add(FEATURE_ESB_SAM);
 		}
-		if (computeCheckElementValue("ENABLE_SL", currentNode.getElementParameter())) {
+		if (EmfModelUtils.computeCheckElementValue("ENABLE_SL", currentNode)) {
 			// http://jira.talendforge.org/browse/TESB-5461
 			features.add(FEATURE_ESB_LOCATOR);
 		}
