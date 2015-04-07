@@ -68,10 +68,6 @@ public final class CamelFeatureUtil {
             put("camel-jetty8", new FeatureModel[] { });
 	}};
 
-//	private static final Map<String, Collection<BundleModel>> camelBundlesMap =
-//			new HashMap<String, Collection<BundleModel>>();
-
-
 	private static final String JAVA_SCRIPT = "javaScript"; //$NON-NLS-1$
 
 	private static final String LANGUAGES = "LANGUAGES"; //$NON-NLS-1$
@@ -79,96 +75,32 @@ public final class CamelFeatureUtil {
 
 
     private static Collection<FeatureModel> computeFeature(String libraryName) {
-        String nameWithoutVersion = getNameWithoutVersion(libraryName);
-        FeatureModel[] features = camelFeaturesMap.get(nameWithoutVersion);
-        if (null == features && nameWithoutVersion.startsWith("camel-")) { //$NON-NLS-1$
+        FeatureModel[] features = camelFeaturesMap.get(libraryName);
+        if (null == features && libraryName.startsWith("camel-")) { //$NON-NLS-1$
             features = new FeatureModel[] { new FeatureModel(
-                nameWithoutVersion.endsWith("-alldep") //$NON-NLS-1$
-                ? nameWithoutVersion.substring(0, nameWithoutVersion.length() - "-alldep".length()) //$NON-NLS-1$
-                : nameWithoutVersion) };
+                libraryName.endsWith("-alldep") //$NON-NLS-1$
+                ? libraryName.substring(0, libraryName.length() - "-alldep".length()) //$NON-NLS-1$
+                : libraryName) };
         }
         return features != null ? Arrays.asList(features) : null;
     }
 
-	/**
-	 * 
-	 * @param libraryName
-	 * @return
-	 */
-//	private static Collection<BundleModel> computeBundle(String libraryName) {
-//		if (camelBundlesMap.isEmpty()) {
-//			initMap();
-//		}
-//		String nameWithoutVersion = getNameWithoutVersion(libraryName);
-//		return camelBundlesMap.get(nameWithoutVersion);
-//	}
+    private static String getNameWithoutVersion(String libraryName) {
+        if (!libraryName.endsWith(".jar")) {
+            return libraryName;
+        }
+        int lastIndexOf;
+        while ((lastIndexOf = libraryName.lastIndexOf('-')) != -1) {
+            char ch = libraryName.charAt(lastIndexOf + 1);
+            libraryName = libraryName.substring(0, lastIndexOf);
+            if (Character.isDigit(ch)) {
+                break;
+            }
+        }
+        return libraryName;
+    }
 
-	private static String getNameWithoutVersion(String libraryName){
-		if(libraryName == null || libraryName.isEmpty() || !libraryName.endsWith(".jar")){
-			return libraryName;
-		}
-		String interName = libraryName;
-		int lastIndexOf = interName.lastIndexOf('-');
-		while(lastIndexOf != -1){
-			try{
-				Integer.parseInt(Character.toString(interName.charAt(lastIndexOf+1)));
-				interName = interName.substring(0, lastIndexOf);
-				break;
-			}catch(Exception e){
-				interName = interName.substring(0, lastIndexOf);
-				lastIndexOf = interName.lastIndexOf('-');
-			}
-		}
-		return interName;
-	}
-
-	/**
-	 * Get bundle in feature.xml
-	 * 
-	 * @param node
-	 * @return
-	 */
-//	private static Collection<BundleModel> getBundlesOfRoute(
-//			Collection<String> neededLibraries) {
-//		Collection<BundleModel> bundles = new HashSet<BundleModel>();
-//		for (String lib : neededLibraries) {
-//			Collection<BundleModel> model = computeBundle(lib);
-//			if (model != null) {
-//				bundles.addAll(model);
-//			}
-//		}
-//		return bundles;
-//	}
-
-	/**
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private static Collection<FeatureModel> getFeaturesOfRoute(
-			Collection<String> neededLibraries, ProcessType processType) {
-
-		Collection<FeatureModel> features = new HashSet<FeatureModel>();
-		for (String lib : neededLibraries) {
-			Collection<FeatureModel> featureModel = computeFeature(lib);
-			if (featureModel != null) {
-				features.addAll(featureModel);
-			}
-		}
-
-		addProcessSpecialFeatures(features, processType);
-
-		return features;
-	}
-
-	private static void addProcessSpecialFeatures(Collection<FeatureModel> features,
-			ProcessType processType) {
-		addNodesSpecialFeatures(features, processType);
-		addConnectionsSpecialFeatures(features, processType);
-	}
-
-	private static void addNodesSpecialFeatures(Collection<FeatureModel> features,
-			ProcessType processType) {
+	private static void addNodesSpecialFeatures(Collection<FeatureModel> features, ProcessType processType) {
 		for (Object o : processType.getNode()) {
 			if (o instanceof NodeType) {
 				NodeType currentNode = (NodeType) o;
@@ -178,32 +110,29 @@ public final class CamelFeatureUtil {
 				String componentName = currentNode.getComponentName();
 				if ("cCXF".equals(componentName) || "cCXFRS".equals(componentName)) {
 					handleCXFcase(features, currentNode);
-				} else if("cLoop".equals(componentName)){
+				} else if ("cLoop".equals(componentName)) {
 					handleLoopCase(features, currentNode);
-				} else if("cMessageFilter".equals(componentName)){
-					handleMessageFilterCase(features, currentNode);
-				} else if("cRecipientList".equals(componentName)){
-					handleRecipientListCase(features, currentNode);
-				} else if("cSetBody".equals(componentName)){
-					handleSetBodyCase(features, currentNode);
-				} else if("cSetHeader".equals(componentName)){
+				} else if ("cMessageFilter".equals(componentName)) {
+				    handleLanguagesJavascript(features, currentNode);
+				} else if ("cRecipientList".equals(componentName)) {
+				    handleLanguagesJavascript(features, currentNode);
+				} else if ("cSetBody".equals(componentName)) {
+					handleLanguagesJavascript(features, currentNode);
+				} else if ("cSetHeader".equals(componentName)) {
 					handleSetHeaderCase(features, currentNode);
-				} else if("cMQConnectionFactory".equals(componentName)){
+				} else if ("cMQConnectionFactory".equals(componentName)) {
 					handleMQConnectionFactory(features, currentNode);
 				}
 			}
 		}
 	}
 
-	private static void handleMQConnectionFactory(
-			Collection<FeatureModel> features, NodeType currentNode) {
-		ElementParameterType mqType = EmfModelUtils.findElementParameterByName("MQ_TYPE", currentNode);
-		if("ActiveMQ".equals(mqType.getValue())){
-			if (EmfModelUtils.computeCheckElementValue("IS_AMQ_HTTP_BROKER", currentNode)) {
-				features.add(FEATURE_ACTIVEMQ_OPTIONAL);
-			}
-		}
-	}
+    private static void handleMQConnectionFactory(Collection<FeatureModel> features, NodeType currentNode) {
+        if ("ActiveMQ".equals(EmfModelUtils.findElementParameterByName("MQ_TYPE", currentNode).getValue())
+            && EmfModelUtils.computeCheckElementValue("IS_AMQ_HTTP_BROKER", currentNode)) {
+            features.add(FEATURE_ACTIVEMQ_OPTIONAL);
+        }
+    }
 
 	private static void addConnectionsSpecialFeatures(
 			Collection<FeatureModel> features, ProcessType processType) {
@@ -240,77 +169,46 @@ public final class CamelFeatureUtil {
 			}
 		}
 	}
-	
-	protected static void handleSetHeaderCase(Collection<FeatureModel> features,
-			NodeType currentNode) {
+
+	private static void handleSetHeaderCase(Collection<FeatureModel> features, NodeType currentNode) {
 		ElementParameterType element = EmfModelUtils.findElementParameterByName("VALUES", currentNode);
-		EList elementValue = element.getElementValue();
-		Iterator iterator = elementValue.iterator();
-		while(iterator.hasNext()){
+		Iterator<?> iterator = element.getElementValue().iterator();
+		while (iterator.hasNext()) {
 			Object next = iterator.next();
-			if(!(next instanceof ElementValueType)){
+			if(!(next instanceof ElementValueType)) {
 				continue;
 			}
 			ElementValueType evt = (ElementValueType) next;
 			String elementRef = evt.getElementRef();
-			if("LANGUAGE".equals(elementRef) && JAVA_SCRIPT.equals(evt.getValue())){
+			if ("LANGUAGE".equals(elementRef) && JAVA_SCRIPT.equals(evt.getValue())) {
 				features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
 				break;
 			}
 		}
-		
 	}
 
-	protected static void handleSetBodyCase(Collection<FeatureModel> features,
-			NodeType currentNode) {
-		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
-		if (!JAVA_SCRIPT.equals(languages.getValue())){
-			return;
-		}
-		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
-	}
+    private static void handleLanguagesJavascript(Collection<FeatureModel> features, NodeType currentNode) {
+        if (JAVA_SCRIPT.equals(EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode).getValue())){
+            features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
+        }
+    }
 
-	private static void handleRecipientListCase(Collection<FeatureModel> features,
-			NodeType currentNode) {
-		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
-		if (!JAVA_SCRIPT.equals(languages.getValue())){
-			return;
-		}
-		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
-	}
+    private static void handleLoopCase(Collection<FeatureModel> features, NodeType currentNode) {
+        if ("EXPRESSION_TYPE".equals(EmfModelUtils.findElementParameterByName(LOOP_TYPE, currentNode).getValue())
+            && JAVA_SCRIPT.equals(EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode).getValue())) {
+            features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
+        }
+    }
 
-	protected static void handleMessageFilterCase(Collection<FeatureModel> features,
-			NodeType currentNode) {
-		ElementParameterType languages = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
-		if (!JAVA_SCRIPT.equals(languages.getValue())){
-			return;
-		}
-		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
-	}
-
-	protected static void handleLoopCase(Collection<FeatureModel> features,
-			NodeType currentNode) {
-		ElementParameterType found = EmfModelUtils.findElementParameterByName(LOOP_TYPE, currentNode);
-		if (!"EXPRESSION_TYPE".equals(found.getValue())) {
-			return;
-		}
-		found = EmfModelUtils.findElementParameterByName(LANGUAGES, currentNode);
-		if (!JAVA_SCRIPT.equals(found.getValue())) {
-			return;
-		}
-		features.add(FEATURE_CAMEL_SCRIPT_JAVASCRIPT);
-	}
-
-	protected static void handleCXFcase(Collection<FeatureModel> features,
-			NodeType currentNode) {
-		if (EmfModelUtils.computeCheckElementValue("ENABLE_SAM", currentNode)) {
-			features.add(FEATURE_ESB_SAM);
-		}
-		if (EmfModelUtils.computeCheckElementValue("ENABLE_SL", currentNode)) {
-			// http://jira.talendforge.org/browse/TESB-5461
-			features.add(FEATURE_ESB_LOCATOR);
-		}
-	}
+    private static void handleCXFcase(Collection<FeatureModel> features, NodeType currentNode) {
+        if (EmfModelUtils.computeCheckElementValue("ENABLE_SAM", currentNode)) {
+            features.add(FEATURE_ESB_SAM);
+        }
+        if (EmfModelUtils.computeCheckElementValue("ENABLE_SL", currentNode)) {
+            // http://jira.talendforge.org/browse/TESB-5461
+            features.add(FEATURE_ESB_LOCATOR);
+        }
+    }
 
 	/**
 	 * Add feature and bundle to Feature Model
@@ -318,21 +216,25 @@ public final class CamelFeatureUtil {
 	 * @param node
 	 * @param featuresModel
 	 */
-	public static void addFeatureAndBundles(ProcessItem routeProcess, FeaturesModel featuresModel) {
+    public static void addFeatureAndBundles(ProcessItem routeProcess, FeaturesModel featuresModel) {
         IDesignerCoreService designerService = RepositoryPlugin.getDefault().getDesignerCoreService();
         IProcess process = designerService.getProcessFromProcessItem(routeProcess, false);
-		Collection<String> neededLibraries = process.getNeededLibraries(true);
 
-		Collection<FeatureModel> features = getFeaturesOfRoute(neededLibraries, routeProcess.getProcess());
-		for (FeatureModel model : features) {
-			featuresModel.addFeature(model);
-		}
+        Collection<FeatureModel> features = new HashSet<FeatureModel>();
+        for (String lib : process.getNeededLibraries(true)) {
+            Collection<FeatureModel> featureModel = computeFeature(getNameWithoutVersion(lib));
+            if (featureModel != null) {
+                features.addAll(featureModel);
+            }
+        }
 
-//		Collection<BundleModel> bundles = getBundlesOfRoute(neededLibraries);
-//		for (BundleModel model : bundles) {
-//			featuresModel.addBundle(model);
-//		}
-	}
+        addNodesSpecialFeatures(features, routeProcess.getProcess());
+        addConnectionsSpecialFeatures(features, routeProcess.getProcess());
+
+        for (FeatureModel model : features) {
+            featuresModel.addFeature(model);
+        }
+    }
 
 	/**
 	 * 
