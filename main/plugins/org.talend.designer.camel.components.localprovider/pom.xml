@@ -30,6 +30,7 @@
         <hawtdispatch.version>1.20</hawtdispatch.version>
         <!-- camel-ftp -->
         <jsch.version>0.1.51</jsch.version>
+        <commons-net.version>3.3</commons-net.version>
     </properties>
 
     <dependencies>
@@ -258,6 +259,11 @@
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
             <version>${jsch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>${commons-net.version}</version>
         </dependency>
 
         <dependency>

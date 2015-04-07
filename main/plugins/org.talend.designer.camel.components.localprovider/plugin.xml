@@ -26,16 +26,16 @@
     <extension point="org.talend.core.runtime.librariesNeeded">
 
         <!-- ${tesb-commons-collections} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
-            name="commons-collections-3.2.1.jar"
+        <libraryNeeded context="plugin:org.apache.commons.collections"
+            name="org.apache.commons.collections_3.2.0.v2013030210310.jar"
             id="commons-collections"
-            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.1.jar"
+            uripath="platform:/base/plugins/org.apache.commons.collections_3.2.0.v2013030210310.jar"
             bundleID="" />
         <!-- ${tesb-commons-io} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
-            name="commons-io-2.4.jar"
+        <libraryNeeded context="plugin:org.apache.commons.io"
+            name="org.apache.commons.io_2.2.0.v201405211200.jar"
             id="commons-io"
-            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-io-2.4.jar"
+            uripath="platform:/base/plugins/org.apache.commons.io_2.2.0.v201405211200.jar"
             bundleID="" />
         <!-- ${tesb-commons-pool} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.common"
@@ -409,11 +409,10 @@
             id="jsch"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jsch}"
             bundleID="" />
-        <!-- ${tesb-commons-net} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
-            name="commons-net-1.4.1.jar"
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-commons-net}"
             id="commons-net"
-            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-net-1.4.1.jar"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-commons-net}"
             bundleID="" />
 
         <libraryNeededGroup
