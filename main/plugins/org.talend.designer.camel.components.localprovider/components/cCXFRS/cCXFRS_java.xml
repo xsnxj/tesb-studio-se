@@ -63,6 +63,7 @@
 			<ITEMS DEFAULT="XML">
 				<ITEM NAME="XML" VALUE="application/xml" />
 				<ITEM NAME="JSON" VALUE="application/json" />
+                <ITEM NAME="PLAIN" VALUE="text/plain" />
 				<ITEM NAME="ANY" VALUE="*/*" />
 			</ITEMS>
 		</PARAMETER>
