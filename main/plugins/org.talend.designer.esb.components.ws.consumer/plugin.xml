@@ -595,6 +595,7 @@
                 description="sam-agent"
                 id="sam-agent"
                 name="sam-agent">
+            <group id="cxf-rt-frontend-jaxws" />
             <library id="sam-agent" />
             <library id="sam-common" />
             <library id="commons-lang" />
