@@ -84,11 +84,11 @@
             id="wsdl4j"
             uripath="platform:/base/plugins/javax.wsdl_1.6.2.v201012040545.jar"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
+        <!--TODO: libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-asm}"
             id="asm"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-asm}"
-            bundleID="" />
+            bundleID="" /-->
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-databinding-jaxb}"
             id="cxf-rt-databinding-jaxb"
@@ -595,6 +595,7 @@
                 description="sam-agent"
                 id="sam-agent"
                 name="sam-agent">
+            <group id="cxf-rt-frontend-jaxws" />
             <library id="sam-agent" />
             <library id="sam-common" />
             <library id="commons-lang" />
