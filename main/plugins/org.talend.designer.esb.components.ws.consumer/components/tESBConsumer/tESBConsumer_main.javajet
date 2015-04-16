@@ -270,6 +270,8 @@ if (inputConn != null) {
 
                 genericConsumer_<%=cid%>.setConnectionTimeout((long)(<%=connTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
+                genericConsumer_<%=cid%>.setAutoRedirect(<%=paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")%>);
+                genericConsumer_<%=cid%>.setRedirectSameHostOnly(<%=!paramsHelper.getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 
