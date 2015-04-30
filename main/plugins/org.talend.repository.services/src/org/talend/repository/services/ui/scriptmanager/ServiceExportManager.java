@@ -14,7 +14,6 @@ package org.talend.repository.services.ui.scriptmanager;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -179,8 +178,8 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         endpointInfo.put("samlConfig", //$NON-NLS-1$
                 serviceQName.toString().replaceAll("\\W+", "_").substring(1)); //$NON-NLS-1$
 
-        TemplateProcessor.processTemplate("DATA_SERVICE_BLUEPRINT_CONFIG", endpointInfo, outputFile, //$NON-NLS-1$
-                new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_BLUEPRINT)));
+        TemplateProcessor.processTemplate("DATA_SERVICE_BLUEPRINT_CONFIG", //$NON-NLS-1$
+            endpointInfo, outputFile, getClass().getResourceAsStream(TEMPLATE_BLUEPRINT));
     }
 
     public Manifest getManifest(String artefactName, String serviceVersion, Map<String, String> additionalInfo) {

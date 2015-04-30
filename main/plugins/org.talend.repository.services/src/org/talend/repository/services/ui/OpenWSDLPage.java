@@ -15,8 +15,6 @@ package org.talend.repository.services.ui;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
@@ -218,14 +216,13 @@ public class OpenWSDLPage extends WizardPage {
                     ((ServiceConnection) item.getConnection()).getServicePort().clear();
 
                     final IFile fileWsdl = WSDLUtils.getWsdlFile(item);
-                    InputStream is;
+                    final InputStream is;
                     if (null == path) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         // create new WSDL file from template
                         TemplateProcessor.processTemplate("DATA_SERVICE_WSDL",
                                 Collections.singletonMap("serviceName", (Object) label),
-                                new OutputStreamWriter(baos),
-                                new InputStreamReader(this.getClass().getResourceAsStream(TEMPLATE_SERVICE_WSDL)));
+                                baos, getClass().getResourceAsStream(TEMPLATE_SERVICE_WSDL));
                         is = new ByteArrayInputStream(baos.toByteArray());
                     } else {
                         String filenameTemplate = item.getProperty().getLabel() + '_' + item.getProperty().getVersion() + ".%d.wsdl"; //$NON-NLS-1$
