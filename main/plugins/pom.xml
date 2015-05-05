@@ -154,14 +154,6 @@
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.8</version>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.9</version>
-					<configuration>
-						<downloadSources>true</downloadSources>
-					</configuration>
-				</plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -208,7 +200,7 @@
 		</repository-->
         <repository>
             <id>sonatype-staging</id>
-            <url>https://oss.sonatype.org/content/repositories/orgtalend-1028/</url>
+            <url>https://oss.sonatype.org/content/repositories/orgtalend-1029/</url>
             <name>Sonatype Staging Repo</name>
             <snapshots>
                 <enabled>false</enabled>
