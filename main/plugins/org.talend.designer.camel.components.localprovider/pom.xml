@@ -13,11 +13,11 @@
   <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <camel.version>2.15.1</camel.version>
+        <camel.version>2.15.2</camel.version>
         <activemq.version>5.11.1</activemq.version>
         <spring.osgi.version>1.2.1</spring.osgi.version>
         <!-- camel-groovy -->
-        <groovy.version>2.4.3</groovy.version>
+        <!--groovy.version>2.4.3</groovy.version-->
         <!-- camel-xstream -->
         <xstream.version>1.4.7</xstream.version>
         <xpp3.version>1.1.6</xpp3.version>
@@ -102,11 +102,11 @@
             <artifactId>camel-groovy</artifactId>
             <version>${camel.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.apache.camel</groupId>

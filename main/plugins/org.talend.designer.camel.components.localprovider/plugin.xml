@@ -167,9 +167,9 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-groovy}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-groovy-all}"
+            name="groovy-all-2.3.3"
             id="groovy-all"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-groovy-all}"
+            uripath="platform:/plugin/org.codehaus.groovy_2.3.3.xx-201406301445-e44/lib/groovy-all-2.3.3.jar"
             bundleID="" />
 
         <libraryNeededGroup
