@@ -424,6 +424,37 @@
             <library id="commons-net" />
         </libraryNeededGroup>
 
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-flatpack}"
+            id="camel-flatpack"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-flatpack}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-flatpack}"
+            id="flatpack"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-flatpack}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-jdom}"
+            id="jdom"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jdom}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-jxl}"
+            id="jxl"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jxl}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-flatpack"
+                id="camel-flatpack"
+                name="camel-flatpack">
+            <library id="camel-flatpack" />
+            <library id="flatpack" />
+            <library id="jdom" />
+            <library id="jxl" />
+        </libraryNeededGroup>
+
     </extension>
 
 </plugin>
