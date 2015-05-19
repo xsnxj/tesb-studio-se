@@ -81,11 +81,11 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <IMPORT MODULE="dom4j" REQUIRED="true" />
+            <IMPORT MODULE="dom4j" MVN="mvn:org.talend.libraries/dom4j/6.0.0"  REQUIRED="true" />
             <IMPORT MODULE_GROUP="cxf-core" REQUIRED="true" />
             <IMPORT MODULE_GROUP="cxf-rt-frontend-jaxws" REQUIRED="true" />
             <IMPORT MODULE_GROUP="cxf-rt-transports-http-jetty" REQUIRED="true" />
-            <IMPORT MODULE="wss4j-ws-security-common" REQUIRED="true" />
+            <IMPORT MODULE="wss4j-ws-security-common" MVN="mvn:org.talend.libraries/wss4j-ws-security-common/6.0.0"  REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
