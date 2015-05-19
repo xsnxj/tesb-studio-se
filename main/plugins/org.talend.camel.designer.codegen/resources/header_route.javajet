@@ -1522,161 +1522,45 @@ for (INode node : graphicalNodes) {
 		if(node.getIncomingConnections().size()>0){
 			continue;//is productor node. use exist endpoint.
 		}
-		uri = "\"flatpack:\"";
-		StringBuilder sb = new StringBuilder();
-		
-		String isfixed = ElementParameterParser.getValue(node, "__ISFIXED__");
-		String isdelimited = ElementParameterParser.getValue(node, "__ISDELIMITED__");
-		if ("true".equals(isfixed))
-		{
-			sb.append("+\"fixed:\"");
+		StringBuilder sb = new StringBuilder("\"flatpack:");
+		boolean isfixed = getBoolValue(node, "__ISFIXED__");
+		boolean isdelimited = getBoolValue(node, "__ISDELIMITED__");
+		if (isfixed){
+			sb.append("fixed:");
+		} else if (isdelimited) {
+			sb.append("delim:");
 		}
-		else if ("true".equals(isdelimited))
-		{
-			sb.append("+\"delim:\"");
-		}
+		sb.append('"');
 		
-		String filePath = "";
+		final String filePath;
 		String pzmap_filetype = ElementParameterParser.getValue(node, "__PZMAP_FILETYPE__");
-		if ("file".equals(pzmap_filetype))
-		{
-			filePath =  ElementParameterParser.getValue(node, "__PZMAP_FILENAME__");
-			filePath = "\"file://\"+" + filePath;
+		if ("file".equals(pzmap_filetype)) {
+			filePath = "\"file://\"+" + ElementParameterParser.getValue(node, "__PZMAP_FILENAME__");
+		} else {
+			filePath = "\"classpath:" + ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__") + '"';
 		}
-		else
-		{
-			filePath =  ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__");
-			filePath = "\"classpath:" + filePath + "\"";
-		}
-		filePath.replaceAll("\\\\","/");
-		sb.append("+").append(filePath);
+		sb.append("+").append(filePath.replaceAll("\\\\","/"));
 
-		int no_options = 0;
-		
-		String splitRows = ElementParameterParser.getValue(node, "__SPLIT_ROWS__");
-		String text_qualifier = ElementParameterParser.getValue(node, "__TEXT_QUALIFIER__");
-		String text_delimiter = ElementParameterParser.getValue(node, "__TEXT_DELIMITER__");
-		String ignoreFirstRecord = ElementParameterParser.getValue(node, "__IGNORE_FIRST_RECORD__");
-		String allowShortLines = ElementParameterParser.getValue(node, "__ALLOW_SHORT_LINES__");
-		String ignoreExtraColumns = ElementParameterParser.getValue(node, "__IGNORE_EXTRA_COLUMNS__");
+		boolean splitRows = getBoolValue(node, "__SPLIT_ROWS__");
+		boolean allowShortLines = getBoolValue(node, "__ALLOW_SHORT_LINES__");
+		boolean ignoreExtraColumns = getBoolValue(node, "__IGNORE_EXTRA_COLUMNS__");
 	
-		if ("false".equals(splitRows))
-		{
-			if (no_options==0)
-			{
-				sb.append("+\"?splitRows=false\"");
-				no_options++;
-			}
-			else
-			{
-				sb.append("+\"&splitRows=false\"");
-			}
-		}
+		appendParamWhenNotDefault(sb, "splitRows", splitRows, true);
+		appendParamWhenNotDefault(sb, "allowShortLines", allowShortLines, false);
+		appendParamWhenNotDefault(sb, "ignoreExtraColumns", ignoreExtraColumns, false);
 	
-		if ("true".equals(isfixed))
-		{
-			if ("true".equals(allowShortLines))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?allowShortLines=true\"");
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&allowShortLines=true\"");
-				}
-			}
-			
-			if ("true".equals(ignoreExtraColumns))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?ignoreExtraColumns=true\"");
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&ignoreExtraColumns=true\"");
-				}
-			}
+		if (isdelimited) {
+			String textQualifier = ElementParameterParser.getValue(node, "__TEXT_QUALIFIER__");
+			appendParamWhenNotDefaultNorEmpty(sb, "textQualifier", textQualifier, "\"");
+
+			String delimiter = ElementParameterParser.getValue(node, "__TEXT_DELIMITER__");
+			appendParamWhenNotDefaultNorEmpty(sb, "delimiter", delimiter, ",");
+
+			boolean ignoreFirstRecord = getBoolValue(node, "__IGNORE_FIRST_RECORD__");
+			appendParamWhenNotDefault(sb, "ignoreFirstRecord", ignoreFirstRecord, true);
 		}
-		
-		if ("true".equals(isdelimited))
-		{
-			if (!("\"".equals(text_qualifier)))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?textQualifier=\"+");
-					sb.append(text_qualifier);
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&textQualifier=\"+");
-					sb.append(text_qualifier);
-				}
-			}
-			
-			if (",".equals(text_delimiter))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?delimiter=\"+");
-					sb.append(text_delimiter);
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&delimiter=\"+");
-					sb.append(text_delimiter);
-				}
-			}
-			
-			if ("false".equals(ignoreFirstRecord))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?ignoreFirstRecord=false\"");
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&ignoreFirstRecord=false\"");
-				}
-			}
-			
-			if ("true".equals(allowShortLines))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?allowShortLines=true\"");
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&allowShortLines=true\"");
-				}
-			}
-			
-			if ("true".equals(ignoreExtraColumns))
-			{
-				if (no_options==0)
-				{
-					sb.append("+\"?ignoreExtraColumns=true\"");
-					no_options++;
-				}
-				else
-				{
-					sb.append("+\"&ignoreExtraColumns=true\"");
-				}
-			}
-		}
-		
-		if(sb.length()>0){
-			uri = uri + sb.toString();
-		}
+
+		uri = getURI(sb);
 	} else {
 		continue;
 	}
