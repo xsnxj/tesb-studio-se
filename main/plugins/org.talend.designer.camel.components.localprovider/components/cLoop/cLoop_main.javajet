@@ -18,6 +18,7 @@ imports="
 	String exp = ElementParameterParser.getValue(node, "__EXPRESSION__");
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	String copy = ElementParameterParser.getValue(node, "__COPY__");
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 		if("VALUE_TYPE".equals(type)) {
@@ -42,6 +43,11 @@ imports="
 				.loop().<%=exp%>
 <%
 			}
+		}
+		if ("true".equals(copy)) {
+%>
+			.copy()
+<%
 		}
 	}
 %>

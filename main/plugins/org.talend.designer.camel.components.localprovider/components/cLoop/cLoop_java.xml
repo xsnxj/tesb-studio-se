@@ -86,7 +86,10 @@
 				<ITEM NAME="URI" VALUE="" />	
 			</ITEMS>
 		</PARAMETER>
-
+        <PARAMETER NAME="COPY" FIELD="CHECK"
+            REQUIRED="true" NUM_ROW="8" >
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
 	</PARAMETERS>
 
 	<ADVANCED_PARAMETERS>
