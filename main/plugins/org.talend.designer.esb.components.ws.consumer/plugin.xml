@@ -439,10 +439,11 @@
             id="java-support"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-java-support}"
             bundleID="" />
+        <!-- ${tesb-guava} -->
         <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="${tesb-guava}"
+            name="com.google.guava_15.0.0.v201403281430.jar"
             id="guava"
-            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-guava}"
+            uripath="platform:/base/plugins/com.google.guava_15.0.0.v201403281430.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-joda-time}"
