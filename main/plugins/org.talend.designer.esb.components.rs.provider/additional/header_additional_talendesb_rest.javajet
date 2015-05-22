@@ -802,6 +802,7 @@ if (null != conns && !conns.isEmpty()) {
 		String uriPattern = null;
 		String consumes = null;
 		String produces = null;
+		boolean streaming = false;
 
 		boolean foundMapping = false;
 		for (Map<String, String> mapping : mappings) {
@@ -812,6 +813,7 @@ if (null != conns && !conns.isEmpty()) {
 				uriPattern = mapping.get("URI_PATTERN");
 				consumes = mapping.get("CONSUMES");
 				produces = mapping.get("PRODUCES");
+				streaming = ("true").equals(mapping.get("STREAMING"));
 			}
 		}
 		if (!foundMapping) {
@@ -973,6 +975,7 @@ if (contentTypes.containsKey(produces)) {
 <% } else if ("ONEWAY".equals(produces)) {
 %>	@org.apache.cxf.jaxrs.ext.Oneway()
 <% } %>
+    // <%=streaming%>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
 			for (Parameter param : parameters.values()) {
@@ -1045,12 +1048,7 @@ if (contentTypes.containsKey(produces)) {
 		request_<%=cid%>.put("BODY", body);
 	<% } %>
 
-		final javax.ws.rs.core.UriInfo ui = messageContext.getUriInfo();
-
-		request_<%=cid%>.put("URI", ui.getPath());
-		request_<%=cid%>.put("URI_BASE", ui.getBaseUri().toString());
-		request_<%=cid%>.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
-		request_<%=cid%>.put("URI_REQUEST", ui.getRequestUri().toString());
+		populateRequestInfo(request_<%=cid%>, messageContext);
 
 		java.util.Map<String, Object> parameters_<%=cid%> = new java.util.HashMap<String, Object>();
 		<%	for (java.util.Map.Entry<String, Parameter> paramEntry : parameters.entrySet()) { %>
@@ -1058,38 +1056,15 @@ if (contentTypes.containsKey(produces)) {
 		<%	} %>
 		request_<%=cid%>.put("PARAMS", parameters_<%=cid%>);
 
-		request_<%=cid%>.put("ALL_HEADER_PARAMS", messageContext.getHttpHeaders().getRequestHeaders());
-		request_<%=cid%>.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
-
 <% if (multipartSupported) { %>
-		java.util.Map<String, String> attachmentFilenames_<%=cid%> = new java.util.HashMap<String, String>();
-
-		java.util.Map<String, java.util.Map<String, java.util.List<String>>> attachmentHeaders_<%=cid%> =
-			new java.util.HashMap<String, java.util.Map<String, java.util.List<String>>>();
+		java.util.List<String> partNames_<%=cid%> = new java.util.ArrayList<String>();
 <%		for (Parameter param : parameters.values()) {
-			if ("MULTIPART".equals(param.getParamType())) {
-				String partName = param.getVariableName(); %>
-				org.apache.cxf.jaxrs.ext.multipart.Attachment att_<%=partName%>_<%=cid%> = getFirstMatchingPart(messageContext, "<%=partName%>");
-				if (att_<%=partName%>_<%=cid%> != null) {
-					attachmentHeaders_<%=cid%>.put("<%=partName%>", att_<%=partName%>_<%=cid%>.getHeaders());
-					if (null != att_<%=partName%>_<%=cid%>.getContentDisposition()) {
-						String filename = att_<%=partName%>_<%=cid%>.getContentDisposition().getParameter("filename");
-						if (null != filename) {
-							attachmentFilenames_<%=cid%>.put("<%=partName%>", filename);
-						}
-					}
-				}
+			if ("MULTIPART".equals(param.getParamType())) { %>
+				partNames_<%=cid%>.add("<%=param.getVariableName()%>");
 <%			}
-		} // loop thru jax-rs parameters %>
- 		request_<%=cid%>.put("ATTACHMENT_HEADERS", attachmentHeaders_<%=cid%>);
- 		request_<%=cid%>.put("ATTACHMENT_FILENAMES", attachmentFilenames_<%=cid%>);
+		} %>
+		populateMultipartRequestInfo(request_<%=cid%>, messageContext, partNames_<%=cid%>);
 <% } %>
-
- 		javax.ws.rs.core.SecurityContext securityContext_<%=cid%> = messageContext.getSecurityContext();
-		if (null != securityContext_<%=cid%> && null != securityContext_<%=cid%>.getUserPrincipal()) {
-			request_<%=cid%>.put("PRINCIPAL_NAME", securityContext_<%=cid%>.getUserPrincipal().getName());
-		}
-		request_<%=cid%>.put("CorrelationID", messageContext.get("CorrelationID"));
 
 		return processRequest(request_<%=cid%>);
 	}
@@ -1097,6 +1072,7 @@ if (contentTypes.containsKey(produces)) {
 	}
 }
 %>
+
 	public javax.ws.rs.core.Response handleWrongRequest(
 			org.apache.cxf.jaxrs.ext.MessageContext context, int status, String error) {
 
@@ -1114,17 +1090,60 @@ if (contentTypes.containsKey(produces)) {
 		return processRequest(wrongRequest);
 	}
 
-	private static org.apache.cxf.jaxrs.ext.multipart.Attachment getFirstMatchingPart(
-			org.apache.cxf.jaxrs.ext.MessageContext messageContext, String partName) {
-		List<org.apache.cxf.jaxrs.ext.multipart.Attachment> all =
-			org.apache.cxf.jaxrs.utils.multipart.AttachmentUtils.getAttachments(messageContext);
-		for (org.apache.cxf.jaxrs.ext.multipart.Attachment att : all) {
-			if (partName.equals(att.getContentId())) {
-				return att;
+	private void populateRequestInfo(java.util.Map<String, Object> request, org.apache.cxf.jaxrs.ext.MessageContext context) {
+		final javax.ws.rs.core.UriInfo ui = context.getUriInfo();
+
+		request.put("URI", ui.getPath());
+		request.put("URI_BASE", ui.getBaseUri().toString());
+		request.put("URI_ABSOLUTE", ui.getAbsolutePath().toString());
+		request.put("URI_REQUEST", ui.getRequestUri().toString());
+
+		request.put("ALL_HEADER_PARAMS", context.getHttpHeaders().getRequestHeaders());
+		request.put("ALL_QUERY_PARAMS", ui.getQueryParameters());
+
+		javax.ws.rs.core.SecurityContext securityContext = context.getSecurityContext();
+		if (null != securityContext && null != securityContext.getUserPrincipal()) {
+			request.put("PRINCIPAL_NAME", securityContext.getUserPrincipal().getName());
+		}
+
+		request.put("CorrelationID", context.get("CorrelationID"));
+	}
+
+	private void populateMultipartRequestInfo(java.util.Map<String, Object> request, org.apache.cxf.jaxrs.ext.MessageContext context,
+			java.util.List<String> partNames) {
+		java.util.Map<String, String> attachmentFilenames = new java.util.HashMap<String, String>();
+
+		java.util.Map<String, java.util.Map<String, java.util.List<String>>> attachmentHeaders =
+			new java.util.HashMap<String, java.util.Map<String, java.util.List<String>>>();
+
+		for (String partName : partNames) {
+			org.apache.cxf.jaxrs.ext.multipart.Attachment attachment = getFirstMatchingPart(context, partName);
+			if (null != attachment) {
+				attachmentHeaders.put(partName, attachment.getHeaders());
+				if (null != attachment.getContentDisposition()) {
+					String filename = attachment.getContentDisposition().getParameter("filename");
+					if (null != filename) {
+						attachmentFilenames.put(partName, filename);
+					}
+				}
 			}
-			org.apache.cxf.jaxrs.ext.multipart.ContentDisposition cd = att.getContentDisposition();
+		}
+
+		request.put("ATTACHMENT_HEADERS", attachmentHeaders);
+		request.put("ATTACHMENT_FILENAMES", attachmentFilenames);
+	}
+
+	private static org.apache.cxf.jaxrs.ext.multipart.Attachment getFirstMatchingPart(
+			org.apache.cxf.jaxrs.ext.MessageContext context, String partName) {
+		List<org.apache.cxf.jaxrs.ext.multipart.Attachment> attachments =
+			org.apache.cxf.jaxrs.utils.multipart.AttachmentUtils.getAttachments(context);
+		for (org.apache.cxf.jaxrs.ext.multipart.Attachment attachment : attachments) {
+			if (partName.equals(attachment.getContentId())) {
+				return attachment;
+			}
+			org.apache.cxf.jaxrs.ext.multipart.ContentDisposition cd = attachment.getContentDisposition();
 			if (null != cd && partName.equals(cd.getParameter("name"))) {
-				return att;
+				return attachment;
 			}
 		}
 		// unexpected
