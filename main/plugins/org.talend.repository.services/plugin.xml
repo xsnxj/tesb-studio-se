@@ -278,5 +278,14 @@
           class="org.talend.repository.services.ui.validate.RESTRequestReconnectionValidation">
     </validator>
  </extension>
+ <extension
+       point="org.talend.designer.maven.ui.repositoryMavenSetting">
+    <RepositorySupportType
+          name="Supported Type">
+       <RepositoryType
+             type="SERVICES">
+       </RepositoryType>
+    </RepositorySupportType>
+ </extension>
 
 </plugin>
