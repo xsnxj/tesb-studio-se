@@ -82,22 +82,22 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         initializeDialogUnits(parent);
         GridLayout layout = new GridLayout();
 
-//        if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
-            SashForm sash = createExportTree(parent);
+        // if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
+        SashForm sash = createExportTree(parent);
 
-            pageComposite = new Group(sash, 0);
-            pageComposite.setLayout(layout);
-            pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-            pageComposite.setFont(parent.getFont());
-            setControl(sash);
-            sash.setWeights(new int[] { 0, 1, 23 });
-//        } else {
-//            pageComposite = new Group(parent, 0);
-//            pageComposite.setLayout(layout);
-//            pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-//            pageComposite.setFont(parent.getFont());
-//            setControl(parent);
-//        }
+        pageComposite = new Group(sash, 0);
+        pageComposite.setLayout(layout);
+        pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+        pageComposite.setFont(parent.getFont());
+        setControl(sash);
+        sash.setWeights(new int[] { 0, 1, 23 });
+        // } else {
+        // pageComposite = new Group(parent, 0);
+        // pageComposite.setLayout(layout);
+        // pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+        // pageComposite.setFont(parent.getFont());
+        // setControl(parent);
+        // }
         layout = new GridLayout();
         destinationNameFieldComposite = new Composite(pageComposite, SWT.NONE);
         GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -179,18 +179,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         // exportTypeCombo.add("JBI (JSR 208)");
 
         exportTypeCombo.setText(EXPORTTYPE_KAR);
-//        if (exportTypeFixed != null) {
-//            left.setVisible(false);
-//            optionsGroup.setVisible(false);
-//            exportTypeCombo.setText(exportTypeFixed);
-//        }
+        // if (exportTypeFixed != null) {
+        // left.setVisible(false);
+        // optionsGroup.setVisible(false);
+        // exportTypeCombo.setText(exportTypeFixed);
+        // }
 
         exportTypeCombo.addSelectionListener(new SelectionListener() {
 
+            @Override
             public void widgetDefaultSelected(SelectionEvent e) {
 
             }
 
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 destinationNameFieldInnerComposite.dispose();
                 GridLayout layout = new GridLayout();
@@ -221,8 +223,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         String launcher = (launcherCombo == null || launcherCombo.isDisposed()) ? "all" : launcherCombo.getText();
         String context = (contextCombo == null || contextCombo.isDisposed()) ? "Default" : contextCombo.getText();
         return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), context, launcher, IProcessor.NO_STATISTICS,
-                IProcessor.NO_TRACES,
-                JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(EXPORTTYPE_KAR));
+                IProcessor.NO_TRACES, JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(EXPORTTYPE_KAR));
     }
 
     /**
@@ -248,7 +249,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         }
         dialog.setText(""); //$NON-NLS-1$
         // this is changed by me shenhaize
-        dialog.setFileName((String) this.getDefaultFileName().get(0));
+        dialog.setFileName(this.getDefaultFileName().get(0));
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString.lastIndexOf(File.separator);
         if (lastSeparatorIndex != -1) {
@@ -275,7 +276,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
 
             String str = file.getName();
 
-            String s = (String) this.getDefaultFileName().get(0);
+            String s = this.getDefaultFileName().get(0);
 
             if (str.equals(s)) {
                 selectedFileName = b + "_" + this.getDefaultFileName().get(1) + idealSuffix; //$NON-NLS-1$
@@ -315,7 +316,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         }
     }
 
-    @Override
     public boolean isAddMavenScript() {
         if (addBSButton != null) {
             return addBSButton.getSelection();
