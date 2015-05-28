@@ -482,4 +482,13 @@
                  id="org.talend.camel.perspective">
            </perspective>
         </extension>
+        <extension
+              point="org.talend.designer.maven.ui.repositoryMavenSetting">
+           <RepositorySupportType
+                 name="Supported Type">
+              <RepositoryType
+                    type="ROUTES">
+              </RepositoryType>
+           </RepositorySupportType>
+        </extension>
 </plugin>
