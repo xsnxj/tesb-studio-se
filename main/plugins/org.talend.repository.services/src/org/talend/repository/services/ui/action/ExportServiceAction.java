@@ -1,10 +1,9 @@
 package org.talend.repository.services.ui.action;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.runtime.utils.io.FileCopyUtils;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -238,13 +238,11 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     protected void processFeature(FeaturesModel feature) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                getFeatureFilePath())));
+        OutputStream os = new FileOutputStream(getFeatureFilePath());
         try {
-            bw.write(feature.getContent());
-            bw.flush();
+            FileCopyUtils.copyStreams(feature.getContent(), os);
         } finally {
-            bw.close();
+            os.close();
         }
     }
 
