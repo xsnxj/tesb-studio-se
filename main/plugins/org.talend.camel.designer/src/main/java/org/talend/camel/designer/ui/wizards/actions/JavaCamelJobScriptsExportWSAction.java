@@ -147,15 +147,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         // create kar file
-        ZipModel output = null;
         try {
-            output = new ZipModel(featuresModel, new File(destinationKar));
+            new ZipModel(featuresModel, new File(destinationKar));
         } catch (IOException e) {
             throw new InvocationTargetException(e);
-        } finally {
-            if (null != output) {
-                output.close();
-            }
         }
     }
 
