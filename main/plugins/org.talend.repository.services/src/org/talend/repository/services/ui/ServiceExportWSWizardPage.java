@@ -33,9 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-import org.talend.core.GlobalServiceRegister;
+import org.talend.core.PluginChecker;
 import org.talend.core.repository.constants.FileConstants;
-import org.talend.core.services.resource.IExportServiceScriptResourcesService;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -162,12 +161,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
     }
 
     private void createBSGroup(Group optionsGroup) {
-        IExportServiceScriptResourcesService resourcesService = null;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportServiceScriptResourcesService.class)) {
-            resourcesService = (IExportServiceScriptResourcesService) GlobalServiceRegister.getDefault().getService(
-                    IExportServiceScriptResourcesService.class);
-        }
-        if (resourcesService == null) {
+        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
             return;
         }
 
