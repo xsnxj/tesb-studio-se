@@ -20,18 +20,18 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.core.services.resource.IExportRouteResourcesService;
+import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
+import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
+import org.talend.core.runtime.services.IMavenUIService;
 import org.talend.designer.runprocess.ProcessorException;
-import org.talend.repository.constants.IExportJobConstants;
 import org.talend.repository.documentation.ExportFileResource;
-import org.talend.repository.preference.constants.IExportServicePrefConstants;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -86,50 +86,49 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
 
     @Override
     protected void addMavenBuildScripts(List<URL> scriptsUrls, Map<String, String> mavenPropertiesMap) {
-        IExportRouteResourcesService resourcesService = null;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportRouteResourcesService.class)) {
-            resourcesService = (IExportRouteResourcesService) GlobalServiceRegister.getDefault().getService(
-                    IExportRouteResourcesService.class);
+        IMavenUIService mavenUiService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IMavenUIService.class)) {
+            mavenUiService = (IMavenUIService) GlobalServiceRegister.getDefault().getService(IMavenUIService.class);
         }
-        if (resourcesService == null) {
+        if (mavenUiService == null) {
             return;
         }
 
-        File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + IExportJobConstants.MAVEN_BUILD_FILE_NAME);
+        File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + IProjectSettingTemplateConstants.POM_FILE_NAME);
         File mavenBuildBundleFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + IExportJobConstants.MAVEN_CONTROL_BUILD_BUNDLE_FILE_NAME);
+                + IProjectSettingTemplateConstants.MAVEN_CONTROL_BUILD_BUNDLE_FILE_NAME);
         File mavenBuildFeatureFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + IExportJobConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
+                + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
         File mavenBuildParentFile = new File(getTmpFolder() + PATH_SEPARATOR
-                + IExportJobConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
+                + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-            String mavenScript = resourcesService
-                    .getScriptFromPreferenceStore(IExportServicePrefConstants.MAVEN_SERVICES_SCRIPT_TEMPLATE);
+            String mavenScript = mavenUiService
+                    .getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_POM);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
                 scriptsUrls.add(mavenBuildFile.toURL());
             }
 
-            mavenScript = resourcesService
-                    .getScriptFromPreferenceStore(IExportServicePrefConstants.MAVEN_SERVICES_SCRIPT_TEMPLATE_BUNDLE);
+            mavenScript = mavenUiService
+                    .getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_BUNDLE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
                 scriptsUrls.add(mavenBuildBundleFile.toURL());
             }
 
-            mavenScript = resourcesService
-                    .getScriptFromPreferenceStore(IExportServicePrefConstants.MAVEN_SERVICES_SCRIPT_TEMPLATE_FEATURE);
+            mavenScript = mavenUiService
+                    .getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_FEATURE);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFeatureFile.toURL());
             }
 
-            mavenScript = resourcesService
-                    .getScriptFromPreferenceStore(IExportServicePrefConstants.MAVEN_SERVICES_SCRIPT_TEMPLATE_PARENT);
+            mavenScript = mavenUiService
+                    .getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_PARENT);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);

@@ -43,9 +43,8 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
-import org.talend.core.GlobalServiceRegister;
+import org.talend.core.PluginChecker;
 import org.talend.core.repository.constants.FileConstants;
-import org.talend.core.services.resource.IExportRouteResourcesService;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
@@ -388,12 +387,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     private void createOptionsForKar(Composite optionsGroup, Font font) {
-        IExportRouteResourcesService resourcesService = null;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IExportRouteResourcesService.class)) {
-            resourcesService = (IExportRouteResourcesService) GlobalServiceRegister.getDefault().getService(
-                    IExportRouteResourcesService.class);
-        }
-        if (resourcesService == null) {
+        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
             return;
         }
 
