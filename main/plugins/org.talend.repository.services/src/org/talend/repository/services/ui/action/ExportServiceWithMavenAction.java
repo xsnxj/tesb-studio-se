@@ -87,7 +87,7 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
         // control bundle file
         ZipToFile.unZipFile(getControlBundleFilePath(), tempFolder + PATH_SEPERATOR + resourcesPath);
         // feature file
-        FilesUtils.copyFile(new File(getFeatureFilePath()), new File(tempFolder + PATH_SEPERATOR + resourcesPath
+        FilesUtils.copyFile(getFeatureFile(), new File(tempFolder + PATH_SEPERATOR + resourcesPath
                 + "/feature/feature.xml")); //$NON-NLS-1$
         FilesUtils.removeFolder(tempFolder + PATH_SEPERATOR + repositoryPath, true);
     }

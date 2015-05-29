@@ -238,7 +238,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     protected void processFeature(FeaturesModel feature) throws IOException {
-        OutputStream os = new FileOutputStream(getFeatureFilePath());
+        OutputStream os = new FileOutputStream(getFeatureFile());
         try {
             FileCopyUtils.copyStreams(feature.getContent(), os);
         } finally {
@@ -263,10 +263,10 @@ public class ExportServiceAction implements IRunnableWithProgress {
         return filePath;
     }
 
-    protected String getFeatureFilePath() {
-        String artefactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
-        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artefactName, getServiceVersion()),
-                getServiceName() + '-' + getServiceVersion() + FeaturesModel.NAME_SUFFIX + ".xml").getAbsolutePath(); //$NON-NLS-1$
+    protected File getFeatureFile() {
+        final String artifactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
+        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artifactName, getServiceVersion()),
+            artifactName + '-' + getServiceVersion() + ".xml"); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {
