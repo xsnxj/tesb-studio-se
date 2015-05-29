@@ -59,6 +59,12 @@
 			//process cConfig components first 
 			List<? extends INode> camelContextNodes = process.getNodesOfType("cConfig");
 			for(INode node: camelContextNodes){
+                boolean useMdcLogging = Boolean.parseBoolean(ElementParameterParser.getValue(node, "__USE_MDC_LOGGING__"));
+                if(useMdcLogging){
+%>
+                    camelContext.setUseMDCLogging(true);
+<%
+                }
 %>
 			    <%=ElementParameterParser.getValue(node, "__CODE__")%>
 <%
