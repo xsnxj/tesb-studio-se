@@ -30,6 +30,7 @@ import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -94,7 +95,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
             openBeanEditor(beanItem, false);
             refresh(repositoryNode);
             CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
-            CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<String>(), null);
+            CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<ModuleNeeded>(), null);
         } catch (PartInitException e) {
             MessageBoxExceptionHandler.process(e);
         } catch (SystemException e) {
