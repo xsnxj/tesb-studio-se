@@ -27,6 +27,8 @@ import java.util.zip.ZipFile;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -34,8 +36,8 @@ import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.PluginChecker;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
@@ -44,13 +46,16 @@ import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
-import org.talend.core.runtime.services.IMavenUIService;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.template.MavenTemplateManager;
+import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.documentation.ExportFileResource;
@@ -62,6 +67,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JavaScriptForESBWithMavenManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.OSGIJavaScriptForESBWithMavenManager;
 import org.talend.resources.util.EMavenBuildScriptProperties;
+import org.talend.utils.io.FilesUtils;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -197,13 +203,39 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     }
 
     @Override
-    protected void addMavenBuildScripts(List<URL> scriptsUrls, Map<String, String> mavenPropertiesMap) {
-        IMavenUIService mavenUiService = null;
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IMavenUIService.class)) {
-            mavenUiService = (IMavenUIService) GlobalServiceRegister.getDefault().getService(IMavenUIService.class);
-        }
-        if (mavenUiService == null) {
+    protected void addMavenBuildScripts(ExportFileResource[] processes, List<URL> scriptsUrls,
+            Map<String, String> mavenPropertiesMap) {
+        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
             return;
+        }
+
+        Item item = processes[0].getItem();
+        File templatePomFile = null, templateBundleFile = null, templateFeatureFile = null, templateParentFile = null;
+
+        if (item != null) {
+            IPath itemLocationPath = ItemResourceUtil.getItemLocationPath(item.getProperty());
+            IFolder objectTypeFolder = ItemResourceUtil.getObjectTypeFolder(item.getProperty());
+            if (itemLocationPath != null && objectTypeFolder != null) {
+                IPath itemRelativePath = itemLocationPath.removeLastSegments(1).makeRelativeTo(objectTypeFolder.getLocation());
+                templatePomFile = PomUtil.getTemplateFile(objectTypeFolder, itemRelativePath, TalendMavenConstants.POM_FILE_NAME);
+
+                if (FilesUtils.allInSameFolder(templatePomFile,
+                        IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME,
+                        IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME,
+                        IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME)) {
+
+                    templateBundleFile = new File(templatePomFile.getParentFile(),
+                            IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME);
+                    templateFeatureFile = new File(templatePomFile.getParentFile(),
+                            IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
+                    templateParentFile = new File(templatePomFile.getParentFile(),
+                            IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
+
+                } else { // don't use template file from repository.
+                    // other files is not init, so no need set null at all.
+                    templatePomFile = null;
+                }
+            }
         }
 
         File mavenBuildFile = new File(getTmpFolder() + PATH_SEPARATOR + IProjectSettingTemplateConstants.POM_FILE_NAME);
@@ -215,29 +247,40 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-            String mavenScript = mavenUiService
-                    .getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_POM);
+
+            String mavenScript = MavenTemplateManager.getTemplateContent(templatePomFile,
+                    IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_POM, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/' + TalendMavenConstants.POM_FILE_NAME);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
                 scriptsUrls.add(mavenBuildFile.toURL());
             }
 
-            mavenScript = mavenUiService.getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_BUNDLE);
+            mavenScript = MavenTemplateManager.getTemplateContent(templateBundleFile,
+                    IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_BUNDLE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/'
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
                 scriptsUrls.add(mavenBuildBundleFile.toURL());
             }
 
-            mavenScript = mavenUiService.getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_FEATURE);
+            mavenScript = MavenTemplateManager.getTemplateContent(templateFeatureFile,
+                    IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_FEATURE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/'
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFeatureFile.toURL());
             }
 
-            mavenScript = mavenUiService.getProjectSettingValue(IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_PARENT);
+            mavenScript = MavenTemplateManager.getTemplateContent(templateParentFile,
+                    IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_PARENT, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/'
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
