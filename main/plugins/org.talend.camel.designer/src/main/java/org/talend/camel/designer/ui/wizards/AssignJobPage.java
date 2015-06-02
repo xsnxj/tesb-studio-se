@@ -13,6 +13,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelDesignerUtil;
 import org.talend.core.GlobalServiceRegister;
@@ -146,6 +149,13 @@ public class AssignJobPage extends WizardPage {
                 if (current == null) {
                     return false;
                 }
+                /*
+                 * Compare via equals for jobs in sub folders because of different instances
+                 * of RepositoryNode representing same object. (Maybe because of proxy)
+                 */
+                if (current.equals(ancestor)) {
+            		return true;
+                }
                 current = current.getParent();
             }
             return true;
@@ -194,6 +204,22 @@ public class AssignJobPage extends WizardPage {
 
         @Override
         public Control createDialogArea(Composite parent) {
+
+            IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+
+            if (activeWorkbenchWindow != null) {
+                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+
+                if (activePage != null) {
+
+                    String perspectiveId = activePage.getPerspective().getId();
+                    if ("org.talend.camel.perspective".equals(perspectiveId)) {
+                        return super.createDialogArea(parent, "org.talend.rcp.perspective");
+                    }
+
+                }
+            }
+
             return super.createDialogArea(parent);
         }
 
