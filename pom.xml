@@ -26,12 +26,15 @@
 	<url>https://github.com/Talend/tesb-studio-se</url>
   </scm>
   <properties>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     <cxf.version>3.1.1-SNAPSHOT</cxf.version>
-	<spring.version>3.2.11.RELEASE</spring.version>
-	<jettison.version>1.3.7</jettison.version>
-	<!--slf4j.version>1.7.9</slf4j.version-->
-	<tesb.version>6.0.0-SNAPSHOT</tesb.version>
+    <spring.version>3.2.11.RELEASE</spring.version>
+    <jettison.version>1.3.7</jettison.version>
+    <!--slf4j.version>1.7.9</slf4j.version-->
+    <tesb.version>6.0.0-SNAPSHOT</tesb.version>
+
+    <mvn-dom4j>mvn:dom4j:dom4j:1.6.1</mvn-dom4j>
   </properties>
   <repositories>
 	<repository>
@@ -194,16 +197,16 @@
 							<value>$2</value>
 						</to>
 					</mapping>
-					<!--mapping>
+					<mapping>
 						<from>
-							<name>[^:]+:([^:]+):jar</name>
-							<value>(.*)</value>
+							<name>([^:]+):([^:]+):jar</name>
+							<value>.*[\\/]([\d]+\.[\d]+[^\\/]*).*</value>
 						</from>
 						<to>
-							<name>tesb-path-$1</name>
-							<value>$2</value>
+							<name>mvn-$2</name>
+							<value>mvn:$1:$2:$3</value>
 						</to>
-					</mapping-->
+					</mapping>
 				</mappings>
 			</configuration>
 		</plugin>

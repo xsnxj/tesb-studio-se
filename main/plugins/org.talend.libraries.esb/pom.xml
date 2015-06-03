@@ -101,7 +101,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<target>
-								<echoproperties prefix="tesb-"/>
+								<echoproperties prefix="mvn-"/>
 							</target>
 						</configuration>
 						<goals>
