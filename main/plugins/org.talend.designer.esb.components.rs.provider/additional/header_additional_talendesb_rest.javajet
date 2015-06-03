@@ -507,26 +507,46 @@ public static class RestServiceProviderImpl4TalendJob {
 		this.job = job;
 	}
 
+	private void populateRequestWithJobContext(java.util.Map<String, Object> requestGlobalMap, <%=process.getName()%> job) {
+		// pass job DataSources
+		java.util.Map<String, routines.system.TalendDataSource> talendDataSources =
+			(java.util.Map<String, routines.system.TalendDataSource>) job.globalMap.get(KEY_DB_DATASOURCES);
+		if (null != talendDataSources) {
+			java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
+			for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
+				restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
+			}
+			requestGlobalMap.put(KEY_DB_DATASOURCES, restDataSources);
+		}
+
+		// pass job shared connections
+		requestGlobalMap.putAll(job.getSharedConnections4REST());
+
+		// pass job concurrent map
+		requestGlobalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
+	}
+
+	private void closePassedDataSourceConnections(java.util.Map<String, Object> requestGlobalMap) {
+		// close connections in passed job DataSources
+		try {
+			java.util.Map<String, routines.system.TalendDataSource> restDataSources =
+				(java.util.Map<String, routines.system.TalendDataSource>) requestGlobalMap.get(KEY_DB_DATASOURCES);
+			if (null != restDataSources) {
+				for (routines.system.TalendDataSource restDataSource : restDataSources.values()) {
+					restDataSource.close();
+				}
+			}
+		} catch (Throwable e) {
+			e.printStackTrace(System.err);
+		}
+	}
+
 	private javax.ws.rs.core.Response processRequest(java.util.Map<String, Object> request) {
 		final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
 		try {
 			globalMap.put("restRequest", request);
 
-			// pass DataSource
-			java.util.Map<String, routines.system.TalendDataSource> talendDataSources =
-				(java.util.Map<String, routines.system.TalendDataSource>) job.globalMap.get(KEY_DB_DATASOURCES);
-			if (null != talendDataSources) {
-				java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
-				for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
-					restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
-				}
-				globalMap.put(KEY_DB_DATASOURCES, restDataSources);
-			}
-
-			// pass JMS connections
-			globalMap.putAll(job.getSharedConnections4REST());
-
-			globalMap.put("concurrentHashMap", job.globalMap.get("concurrentHashMap"));
+			populateRequestWithJobContext(globalMap, job);
 
 			job.<%=cid%>_LoopProcess(globalMap);
 
@@ -562,18 +582,34 @@ public static class RestServiceProviderImpl4TalendJob {
 			throw new javax.ws.rs.WebApplicationException(ex, 500);
 		} finally {
 			// close DB connections
-			try {
-				java.util.Map<String, routines.system.TalendDataSource> restDataSources =
-					(java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
-				if (null != restDataSources) {
-					for (routines.system.TalendDataSource restDataSource : restDataSources.values()) {
-						restDataSource.close();
-					}
-				}
-			} catch (Throwable e) {
-				e.printStackTrace(System.err);
-			}
+			closePassedDataSourceConnections(globalMap);
 		}
+	}
+
+	private javax.ws.rs.core.Response processStreamingResponseRequest(final java.util.Map<String, Object> request) {
+
+		javax.ws.rs.core.StreamingOutput streamingOutput = new javax.ws.rs.core.StreamingOutput() {
+			public void write(java.io.OutputStream output) {
+				final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>();
+				try {
+					globalMap.put("restResponseStream", output);
+
+					globalMap.put("restRequest", request);
+
+					populateRequestWithJobContext(globalMap, job);
+
+					job.<%=cid%>_LoopProcess(globalMap);
+				} catch (Throwable ex) {
+					ex.printStackTrace();
+					throw new javax.ws.rs.WebApplicationException(ex, 500);
+				} finally {
+					// close DB connections
+					closePassedDataSourceConnections(globalMap);
+				}
+			}
+		};
+
+		return javax.ws.rs.core.Response.ok().entity(streamingOutput).build();
 	}
 
 <%
@@ -975,7 +1011,6 @@ if (contentTypes.containsKey(produces)) {
 <% } else if ("ONEWAY".equals(produces)) {
 %>	@org.apache.cxf.jaxrs.ext.Oneway()
 <% } %>
-    // <%=streaming%>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
 			for (Parameter param : parameters.values()) {
@@ -1066,7 +1101,7 @@ if (contentTypes.containsKey(produces)) {
 		populateMultipartRequestInfo(request_<%=cid%>, messageContext, partNames_<%=cid%>);
 <% } %>
 
-		return processRequest(request_<%=cid%>);
+		return process<%=((streaming) ? "StreamingResponse" : "")%>Request(request_<%=cid%>);
 	}
 <%
 	}
@@ -1107,6 +1142,8 @@ if (contentTypes.containsKey(produces)) {
 		}
 
 		request.put("CorrelationID", context.get("CorrelationID"));
+
+		request.put("MESSAGE_CONTEXT", context);
 	}
 
 	private void populateMultipartRequestInfo(java.util.Map<String, Object> request, org.apache.cxf.jaxrs.ext.MessageContext context,

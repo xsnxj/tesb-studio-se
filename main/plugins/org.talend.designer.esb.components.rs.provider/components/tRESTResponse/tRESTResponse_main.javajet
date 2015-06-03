@@ -32,7 +32,10 @@ if (node.getProcess().getNodesOfType("tRESTRequestLoop").isEmpty()) { %>
 				if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
 
 %>
-	if (globalMap.containsKey("restResponse")) {
+	java.io.OutputStream outputStream_<%=cid%> = (java.io.OutputStream) globalMap.get("restResponseStream");
+	boolean responseAlreadySent_<%=cid%> = globalMap.containsKey("restResponse");
+
+	if (null == outputStream_<%=cid%> && responseAlreadySent_<%=cid%>) {
 		throw new RuntimeException("Rest response already sent.");
 	} else if (!globalMap.containsKey("restRequest")) {
 		throw new RuntimeException("Not received rest request yet.");
@@ -72,13 +75,28 @@ for (Map<String, String> header : headers) { %>
 		restProviderResponseHeaders_<%=cid%>.put(<%=header.get("NAME") %>, <%=header.get("VALUE") %>);
 <% } %>
 
-		java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
-		restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
-		restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
-		restResponse_<%=cid%>.put("HEADERS", restProviderResponseHeaders_<%=cid%>);
-		restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
-		globalMap.put("restResponse", restResponse_<%=cid%>);
-
+		if (null == outputStream_<%=cid%>) {
+			java.util.Map<String, Object> restResponse_<%=cid%> = new java.util.HashMap<String, Object>();
+			restResponse_<%=cid%>.put("BODY", restProviderResponse_<%=cid%>);
+			restResponse_<%=cid%>.put("STATUS", restProviderStatusCode_<%=cid%>);
+			restResponse_<%=cid%>.put("HEADERS", restProviderResponseHeaders_<%=cid%>);
+			restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
+			globalMap.put("restResponse", restResponse_<%=cid%>);
+		} else {
+			if (!responseAlreadySent_<%=cid%>) {
+				java.util.Map<String, Object> restRequest_<%=cid%> = (java.util.Map<String, Object>) globalMap.get("restRequest");
+				org.apache.cxf.jaxrs.ext.MessageContext messageContext_<%=cid%> = (org.apache.cxf.jaxrs.ext.MessageContext) restRequest_<%=cid%>.get("MESSAGE_CONTEXT");
+				messageContext_<%=cid%>.put(org.apache.cxf.message.Message.RESPONSE_CODE, restProviderStatusCode_<%=cid%>);
+				javax.ws.rs.core.MultivaluedMap<String, String> headersMultivaluedMap_<%=cid%> = new org.apache.cxf.jaxrs.impl.MetadataMap<String, String>();
+				for (java.util.Map.Entry<String, String> multivaluedHeader : restProviderResponseHeaders_<%=cid%>.entrySet()) {
+					headersMultivaluedMap_<%=cid%>.putSingle(multivaluedHeader.getKey(), multivaluedHeader.getValue());
+				}
+				messageContext_<%=cid%>.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headersMultivaluedMap_<%=cid%>);
+				globalMap.put("restResponse", true);
+			}
+			outputStream_<%=cid%>.write(String.valueOf(restProviderResponse_<%=cid%>).getBytes());
+			outputStream_<%=cid%>.flush();
+		}
 	}
 <%
 				} // (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA))
