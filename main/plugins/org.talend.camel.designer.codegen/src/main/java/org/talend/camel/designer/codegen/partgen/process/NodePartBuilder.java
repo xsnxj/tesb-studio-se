@@ -25,8 +25,8 @@ public class NodePartBuilder extends AbstractProcessPartBuilder {
 		CodeGeneratorArgument argument = manager.getArgumentBuilder().build();
 		argument.setNode(node);
 		if (subTree != null) {
-			argument.setAllMainSubTreeConnections(subTree.getAllMainSubTreeConnections());
-			argument.setSubTreeContainsParallelIterate(subTree.subTreeContainsParallelIterate());
+		    argument.setAllMainSubTreeConnections(subTree.getAllMainSubTreeConnections());
+		    argument.setSubTree(subTree);
 		}
 		argument.setCodePart(part);
 		argument.setIncomingName(incomingName);
