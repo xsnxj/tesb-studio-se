@@ -92,7 +92,7 @@
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="${tesb-camel-talendjob}"
-			    MODULE="${tesb-camel-talendjob}" MVN="mvn:org.talend.libraries/${tesb-camel-talendjob}/6.0.0" 
+			    MODULE="${tesb-camel-talendjob}" MVN="${mvn-camel-talendjob}"
 			    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-talendjob}"
                 REQUIRED="true" />
 		</IMPORTS>

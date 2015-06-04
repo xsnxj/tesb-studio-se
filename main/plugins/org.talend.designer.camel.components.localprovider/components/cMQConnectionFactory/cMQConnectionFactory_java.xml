@@ -259,18 +259,18 @@
 
             <IMPORT MODULE_GROUP="camel-jms" REQUIRED="true"/>
 
-            <IMPORT MODULE="activemq-all" MVN="mvn:org.talend.libraries/activemq-all/6.0.0"  
+            <IMPORT MODULE="activemq-all" MVN="${mvn-activemq-all}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ')" />
-            <IMPORT MODULE="commons-pool" MVN="mvn:org.talend.libraries/commons-pool/6.0.0" 
+            <IMPORT MODULE="commons-pool" MVN="${mvn-commons-pool}" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 
-            <IMPORT MODULE="httpclient" MVN="mvn:org.talend.libraries/httpclient/6.0.0"  
+            <IMPORT MODULE="httpclient" MVN="${mvn-httpclient}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="httpcore" MVN="mvn:org.talend.libraries/httpcore/6.0.0"  
+            <IMPORT MODULE="httpcore" MVN="${mvn-httpcore}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="xstream" MVN="mvn:org.talend.libraries/xstream/6.0.0" 
+            <IMPORT MODULE="xstream" MVN="${mvn-xstream}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="xpp3" MVN="mvn:org.talend.libraries/xpp3/6.0.0" 
+            <IMPORT MODULE="xpp3" MVN="${mvn-xpp3}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
             <IMPORT MODULE_GROUP="camel-amqp"

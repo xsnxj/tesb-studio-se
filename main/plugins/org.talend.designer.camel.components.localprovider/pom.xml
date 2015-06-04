@@ -35,6 +35,14 @@
         <flatpack.version>3.4.2</flatpack.version>
         <jdom.version>1.1.3</jdom.version>
         <jxl.version>2.4.2</jxl.version>
+
+        <!-- external deps -->
+        <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2</mvn-commons-collections>
+        <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
+        <mvn-commons-lang>mvn:commons-lang/commons-lang/2.6</mvn-commons-lang>
+        <mvn-commons-pool>mvn:commons-pool/commons-pool/1.6</mvn-commons-pool>
+        <mvn-httpcore>mvn:org.apache.httpcomponents/httpcore/4.2.5</mvn-httpcore>
+        <mvn-httpclient>mvn:org.apache.httpcomponents/httpclient/4.2.5</mvn-httpclient>
     </properties>
 
     <dependencies>

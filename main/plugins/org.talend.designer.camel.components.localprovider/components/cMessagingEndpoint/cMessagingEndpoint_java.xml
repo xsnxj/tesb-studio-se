@@ -240,13 +240,13 @@
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
 
             <!-- additional deps which excluded by camel-shape build -->
-            <IMPORT MODULE="commons-codec" MVN="mvn:org.talend.libraries/commons-codec/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-collections" MVN="mvn:org.talend.libraries/commons-collections/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-httpclient" MVN="mvn:org.talend.libraries/commons-httpclient/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-io" MVN="mvn:org.talend.libraries/commons-io/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-lang" MVN="mvn:org.talend.libraries/commons-lang/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-pool" MVN="mvn:org.talend.libraries/commons-pool/6.0.0"  REQUIRED="true" />
-            <IMPORT MODULE="commons-net" MVN="mvn:org.talend.libraries/commons-net/6.0.0"  REQUIRED="true" />
+            <IMPORT MODULE="commons-codec" MVN="${mvn-commons-codec}" REQUIRED="true" />
+            <IMPORT MODULE="commons-collections" MVN="${mvn-commons-collections}" REQUIRED="true" />
+            <IMPORT MODULE="commons-httpclient" MVN="${mvn-commons-httpclient}" REQUIRED="true" />
+            <IMPORT MODULE="commons-io" MVN="${mvn-commons-io}" REQUIRED="true" />
+            <IMPORT MODULE="commons-lang" MVN="${mvn-commons-lang}" REQUIRED="true" />
+            <IMPORT MODULE="commons-pool" MVN="${mvn-commons-pool}" REQUIRED="true" />
+            <IMPORT MODULE="commons-net" MVN="${mvn-commons-net}" REQUIRED="true" />
 
 			<IMPORT MODULE="camel-ahc-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-ahc-alldep-${camel.version}/6.0.0"  NAME="talend-camel-ahc"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ahc-alldep-${camel.version}.jar" 
@@ -319,7 +319,7 @@
 			<IMPORT MODULE="camel-couchdb-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-couchdb-alldep-${camel.version}/6.0.0"  NAME="talend-camel-couchdb"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-couchdb-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['COUCHDB']" />
-            <IMPORT MODULE="camel-context-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-context-${camel.version}/6.0.0"  NAME="camel-context"
+            <IMPORT MODULE="camel-context-${camel.version}.jar" MVN="${mvn-camel-context}" NAME="camel-context"
                 UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-context-${camel.version}.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['CONTEXT']" />
 			<IMPORT MODULE="camel-crypto-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-crypto-alldep-${camel.version}/6.0.0"  NAME="talend-camel-crypto"
@@ -454,7 +454,7 @@
 			<IMPORT MODULE="camel-javaspace-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-javaspace-alldep-${camel.version}/6.0.0"  NAME="talend-camel-javaspace"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-javaspace-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JAVASPACE']" />
-            <IMPORT MODULE="camel-jaxb-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jaxb-${camel.version}/6.0.0"  NAME="camel-jaxb"
+            <IMPORT MODULE="camel-jaxb-${camel.version}.jar" MVN="${mvn-camel-jaxb}" NAME="camel-jaxb"
                 UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jaxb-${camel.version}.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['JAXB']" />
 			<IMPORT MODULE="camel-jclouds-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jclouds-alldep-${camel.version}/6.0.0"  NAME="talend-camel-jclouds"
@@ -463,7 +463,7 @@
 			<IMPORT MODULE="camel-jcr-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jcr-alldep-${camel.version}/6.0.0"  NAME="talend-camel-jcr"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jcr-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JCR']" />
-            <IMPORT MODULE="camel-jdbc-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jdbc-${camel.version}/6.0.0"  NAME="camel-jdbc"
+            <IMPORT MODULE="camel-jdbc-${camel.version}.jar" MVN="${mvn-camel-jdbc}" NAME="camel-jdbc"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jdbc-${camel.version}.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" />
             <IMPORT MODULE_GROUP="camel-jetty"
@@ -642,12 +642,12 @@
 			<IMPORT MODULE="camel-scr-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-scr-alldep-${camel.version}/6.0.0"  NAME="talend-camel-scr"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-scr-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SCR']" />
-            <IMPORT MODULE="camel-script-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-script-${camel.version}/6.0.0"  NAME="camel-script"
+            <IMPORT MODULE="camel-script-${camel.version}.jar" MVN="${mvn-camel-script}" NAME="camel-script"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-${camel.version}.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['SCRIPT']" />
             <IMPORT MODULE_GROUP="camel-servlet"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['SERVLET']" />
-            <IMPORT MODULE="camel-servletlistener-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-servletlistener-${camel.version}/6.0.0"  NAME="camel-servletlistener"
+            <IMPORT MODULE="camel-servletlistener-${camel.version}.jar" MVN="${mvn-camel-servletlistener}" NAME="camel-servletlistener"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-servletlistener-${camel.version}.jar"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['SERVLETLISTENER']" />
 			<IMPORT MODULE="camel-shiro-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-shiro-alldep-${camel.version}/6.0.0"  NAME="talend-camel-shiro"
@@ -704,13 +704,13 @@
 			<IMPORT MODULE="camel-ssh-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-ssh-alldep-${camel.version}/6.0.0"  NAME="talend-camel-ssh"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-ssh-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['SSH']" />
-            <IMPORT MODULE="camel-stax-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-stax-${camel.version}/6.0.0"  NAME="camel-stax"
+            <IMPORT MODULE="camel-stax-${camel.version}.jar" MVN="${mvn-camel-stax}" NAME="camel-stax"
                 UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-stax-${camel.version}.jar"    
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['STAX']" />
 			<IMPORT MODULE="camel-stomp-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-stomp-alldep-${camel.version}/6.0.0"  NAME="talend-camel-stomp"
 				UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-stomp-alldep-${camel.version}.jar"
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['STOMP']" />
-            <IMPORT MODULE="camel-stream-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-stream-${camel.version}/6.0.0"  NAME="camel-stream"
+            <IMPORT MODULE="camel-stream-${camel.version}.jar" MVN="${mvn-camel-stream}" NAME="camel-stream"
                 UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-stream-${camel.version}.jar"
                 REQUIRED_IF="HOTLIBS.LIBPATH IN ['STREAM']" />
 			<IMPORT MODULE="camel-stringtemplate-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-stringtemplate-alldep-${camel.version}/6.0.0"  NAME="talend-camel-stringtemplate"
