@@ -77,22 +77,6 @@
             id="jaxb-core"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-core}"
             bundleID="" />
-        <!-- ${tesb-slf4j-api} -->
-        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
-            name="slf4j-api-1.7.5.jar"
-            id="slf4j-api"
-            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
-            bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
-            name="slf4j-log4j12-1.7.5.jar"
-            id="slf4j-log4j12"
-            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.7.5.jar"
-            bundleID="" />
-        <libraryNeeded context="plugin:org.apache.log4j"
-            name="org.apache.log4j_1.2.15.v201012070815.jar"
-            id="log4j"
-            uripath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
-            bundleID="" />
 
         <libraryNeededGroup
                 description="camel-core"
@@ -101,9 +85,7 @@
             <library id="camel-core" />
             <!-- TODO: library id="jaxb-impl" />
             <library id="jaxb-core" /-->
-            <library id="slf4j-api" />
-            <library id="slf4j-log4j12" />
-            <library id="log4j" />
+            <group id="slf4j" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"

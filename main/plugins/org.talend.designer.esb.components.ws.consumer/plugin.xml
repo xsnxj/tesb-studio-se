@@ -547,6 +547,32 @@
             <library id="wss4j-ws-security-policy-stax" />
         </libraryNeededGroup>
 
+        <!-- ${tesb-slf4j-api} -->
+        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
+            name="slf4j-api-1.7.5.jar"
+            id="slf4j-api"
+            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
+            name="slf4j-log4j12-1.7.5.jar"
+            id="slf4j-log4j12"
+            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-log4j12-1.7.5.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.apache.log4j"
+            name="org.apache.log4j_1.2.15.v201012070815.jar"
+            id="log4j"
+            uripath="platform:/base/plugins/org.apache.log4j_1.2.15.v201012070815.jar"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="slf4j"
+                id="slf4j"
+                name="slf4j">
+            <library id="slf4j-api" />
+            <library id="slf4j-log4j12" />
+            <library id="log4j" />
+        </libraryNeededGroup>
+
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-locator}"
             id="locator"
@@ -569,6 +595,7 @@
                 id="locator"
                 name="locator">
             <library id="locator" />
+            <group id="slf4j" />
             <library id="zookeeper" />
             <library id="cxf-rt-features-clustering" />
             <group id="cxf-rt-ws-policy" />
