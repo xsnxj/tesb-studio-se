@@ -203,6 +203,10 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 			</exclusion>
+			<exclusion>
+				<groupId>net.shibboleth.utilities</groupId>
+				<artifactId>java-support</artifactId>
+			</exclusion>
 		</exclusions>
 	</dependency>
 	<!--dependency>

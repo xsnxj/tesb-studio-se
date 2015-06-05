@@ -434,11 +434,11 @@
             id="opensaml-xmlsec-impl"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-opensaml-xmlsec-impl}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
+        <!--libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-java-support}"
             id="java-support"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-java-support}"
-            bundleID="" />
+            bundleID="" /-->
         <!-- ${tesb-guava} -->
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="com.google.guava_15.0.0.v201403281430.jar"
@@ -529,7 +529,7 @@
             <library id="cryptacular" />
             <library id="bcprov-jdk15on" />
             <library id="opensaml-xmlsec-impl" />
-            <library id="java-support" />
+            <!--library id="java-support" /-->
             <library id="guava" />
             <library id="joda-time" />
             <library id="opensaml-xacml-impl" />
