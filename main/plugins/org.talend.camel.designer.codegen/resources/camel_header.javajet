@@ -876,6 +876,11 @@ if (isProvider) {
                 <% } %>
 <%			}
 			if ("true".equals(useSL) && (isProvider || !useRegistry)) {
+                if (!isProvider) {
+%>
+                    <%=endpointVar%>.setAddress("locator://cCXF");
+<%
+                }
 				List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
 %>
 				// Add Service Locator Service to <%=endpointVar%>
