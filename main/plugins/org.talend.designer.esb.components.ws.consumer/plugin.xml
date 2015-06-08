@@ -644,6 +644,7 @@
                 description="correlationid-policy"
                 id="correlationid-policy"
                 name="correlationid-policy">
+            <group id="cxf-rt-ws-policy" />
             <library id="correlationid-policy" />
             <library id="commons-jxpath" />
         </libraryNeededGroup>
