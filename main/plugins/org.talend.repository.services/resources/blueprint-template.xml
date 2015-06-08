@@ -33,7 +33,7 @@
 #end ## ($useWsdlSchemaValidation && !$useServiceRegistry)
 #if ($useSecurityToken || $useServiceRegistry)
             <entry key="ws-security.ut.validator">
-                <bean class="org.apache.ws.security.validate.JAASUsernameTokenValidator">
+                <bean class="org.apache.wss4j.dom.validate.JAASUsernameTokenValidator">
                     <property name="contextName" value="karaf" />
                 </bean>
             </entry>
