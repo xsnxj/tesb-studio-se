@@ -345,7 +345,7 @@
 					wss4jInInterceptor.setProperties(props);
 					cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
 
-					org.apache.ws.security.validate.JAASUsernameTokenValidator validator = new org.apache.ws.security.validate.JAASUsernameTokenValidator();
+					org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 					validator.setContextName("karaf");
 					Map<String,Object> map = new HashMap<String, Object>();
 					map.put("ws-security.ut.validator", validator);
@@ -533,8 +533,7 @@ if(hasCXFRegistryProvider){
 		String password = (String) securityProps.get("ws-security.signature.password");
 		String properties = (String) securityProps.get("ws-security.signature.properties");
 
-		org.apache.ws.security.validate.JAASUsernameTokenValidator jaasUTValidator=
-		new org.apache.ws.security.validate.JAASUsernameTokenValidator();
+		org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.ws.security.validate.JAASUsernameTokenValidator();
 		jaasUTValidator.setContextName("karaf");
 		// set endpoint properties
 		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
