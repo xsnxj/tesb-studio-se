@@ -1073,7 +1073,7 @@ for (INode node : graphicalNodes) {
 		System.out.println(uri);
 
 	} else if ("cCXF".equals(componentName)) {
-		%><%@ include file="@{org.talend.designer.camel.components.localprovider}/components/cCXF/cCXF_uri.javajet"%><%
+		%><%@ include file="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cCXF/cCXF_uri.javajet"%><%
     } else if ("cCXFRS".equals(componentName)) {
         StringBuilder sb = new StringBuilder("\"cxfrs://bean://" + node.getUniqueName() + '"');
 
