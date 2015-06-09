@@ -56,17 +56,19 @@ public final class CamelFeatureUtil {
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client"); //$NON-NLS-1$
 
-	private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
-            put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
-            put("camel-http", new FeatureModel[] { new FeatureModel("camel-http"), new FeatureModel("http") });
-            put("camel-jms", new FeatureModel[] { new FeatureModel("camel-jms"), new FeatureModel("spring-jms") });
-            put("activemq-all", new FeatureModel[] { new FeatureModel("activemq"), new FeatureModel("activemq-camel") });
-            put("tdm-camel", new FeatureModel[] { new FeatureModel("talend-data-mapper") });
-            //put("camel-talendjob", new FeatureModel[] { new FeatureModel("camel-talendjob") });
-            put("camel-cxf-transport", new FeatureModel[] { });
-            put("camel-jetty-common", new FeatureModel[] { });
-            put("camel-jetty8", new FeatureModel[] { });
-	}};
+    @SuppressWarnings("serial")
+    private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
+        put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
+        put("camel-http", new FeatureModel[] { new FeatureModel("camel-http"), new FeatureModel("http") });
+        put("camel-jms", new FeatureModel[] { new FeatureModel("camel-jms"), new FeatureModel("spring-jms") });
+        put("activemq-all", new FeatureModel[] { new FeatureModel("activemq"), new FeatureModel("activemq-camel") });
+        put("tdm-camel", new FeatureModel[] { new FeatureModel("talend-data-mapper") });
+        //put("camel-talendjob", new FeatureModel[] { new FeatureModel("camel-talendjob") });
+        put("camel-cxf-transport", new FeatureModel[] { });
+        put("camel-jetty-common", new FeatureModel[] { });
+        put("camel-jetty8", new FeatureModel[] { });
+        put("camel-jetty", new FeatureModel[] { new FeatureModel("camel-jetty9") });
+    }};
 
 	private static final String JAVA_SCRIPT = "javaScript"; //$NON-NLS-1$
 
