@@ -28,7 +28,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <cxf.version>3.1.1-SNAPSHOT</cxf.version>
+    <cxf.version>3.1.1</cxf.version>
     <spring.version>3.2.11.RELEASE</spring.version>
     <jettison.version>1.3.7</jettison.version>
     <!--slf4j.version>1.7.9</slf4j.version-->
@@ -57,7 +57,7 @@
 		</snapshots>
 		<url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
 	</repository>
-	<!--repository>
+	<repository>
 		<id>apache-releases</id>
 		<url>http://newbuild.talend.com:8081/nexus/content/repositories/apache-releases/</url>
 		<name>Apache releases Repo</name>
@@ -67,8 +67,8 @@
 		<releases>
 			<enabled>true</enabled>
 		</releases>
-	</repository-->
-	<repository>
+	</repository>
+	<!--repository>
 		<id>apache-snapshots</id>
 		<url>http://newbuild.talend.com:8081/nexus/content/repositories/apache-snapshots/</url>
 		<name>Apache Snapshots Repo</name>
@@ -78,7 +78,7 @@
 		<releases>
 			<enabled>false</enabled>
 		</releases>
-	</repository>
+	</repository-->
 	<repository>
 		<id>sonatype-snapshots</id>
 		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
