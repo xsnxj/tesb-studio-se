@@ -502,10 +502,10 @@
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jasypt}"
             bundleID="" />
         <!-- ${tesb-geronimo-javamail_1.4_spec} -->
-        <libraryNeeded context="plugin:javax.mail"
-            name="javax.mail_1.4.0.v201005080615.jar"
-            id="geronimo-javamail_1.4_spec"
-            uripath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
+        <libraryNeeded context="plugin:org.talend.libraries.apache.axis2"
+            name="mail-1.4.jar"
+            id="mail"
+            uripath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail-1.4.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-ehcache}"

@@ -291,10 +291,10 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-mail}"
             bundleID="" />
         <!-- ${tesb-mail} -->
-        <libraryNeeded context="plugin:javax.mail"
-            name="javax.mail_1.4.0.v201005080615.jar"
+        <libraryNeeded context="plugin:org.talend.libraries.apache.axis2"
+            name="mail-1.4.jar"
             id="mail"
-            uripath="platform:/base/plugins/javax.mail_1.4.0.v201005080615.jar"
+            uripath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail-1.4.jar"
             bundleID="" />
 
         <libraryNeededGroup
