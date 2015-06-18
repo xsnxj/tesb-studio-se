@@ -12,6 +12,7 @@
                   key="Resources"
                   label="Resources"
                   name_pattern="\w+([\.-]\w+)*"
+                  ordinal="2"
                   products="CAMEL"
                   type="ROUTE_RESOURCES">
             </repositoryNode>

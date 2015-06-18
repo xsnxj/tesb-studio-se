@@ -17,6 +17,7 @@
                   isResouce="true"
                   key="Routes"
                   label="Routes"
+                  ordinal="1"
                   products="CAMEL"
                   type="ROUTES">
             </repositoryNode>

@@ -40,7 +40,7 @@ public class CamelExtendRoutesNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getOrdinal()
      */
     public int getOrdinal() {
-        return 5;
+        return 1;
     }
 
     /*

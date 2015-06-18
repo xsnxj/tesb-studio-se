@@ -57,7 +57,7 @@ public class RouteResourceExtendRepositoryNode implements IExtendRepositoryNode 
 	 * @see org.talend.core.repository.IExtendRepositoryNode#getOrdinal()
 	 */
 	public int getOrdinal() {
-		return 6;
+		return 2;
 	}
 
 }
