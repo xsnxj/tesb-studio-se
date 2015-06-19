@@ -273,7 +273,7 @@
                     REQUIRED_IF="(ENABLE_SL == 'true') OR ((ENABLE_REGISTRY == 'true') AND (IS_STUDIO_EE_VERSION == 'true') AND ((DATAFORMAT == 'POJO') OR ( DATAFORMAT == 'PAYLOAD')))" />
 
             <IMPORT MODULE_GROUP="correlationid-policy"
-                    REQUIRED_IF=" ((IS_STUDIO_EE_VERSION == 'true') AND ((ENABLE_REGISTRY == 'true') OR (ENABLE_CORRELATION == 'true'))) OR (ENABLE_CORRELATION == 'true')" />
+                    REQUIRED_IF="(ENABLE_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
 
             <IMPORT MODULE_GROUP="security-common"
                     REQUIRED_IF="((ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')) OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
