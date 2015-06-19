@@ -384,6 +384,11 @@
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-ws-security}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-cxf-rt-security-saml}"
+            id="cxf-rt-security-saml"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-security-saml}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-security}"
             id="cxf-rt-security"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-security}"
@@ -539,6 +544,7 @@
                 name="cxf-rt-ws-security">
             <library id="cxf-rt-ws-security" />
             <group id="cxf-rt-bindings-soap" />
+            <library id="cxf-rt-security-saml" />
             <library id="cxf-rt-security" />
             <library id="wss4j-ws-security-common" />
             <library id="xmlsec" />

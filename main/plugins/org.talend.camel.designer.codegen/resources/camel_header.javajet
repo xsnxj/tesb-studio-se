@@ -339,7 +339,7 @@
 <%if(hasCXFUsernameTokenProvider){%>
 				if(isProvider){
 					Map<String, Object> props = new HashMap<String, Object>();
-					props.put(org.apache.ws.security.handler.WSHandlerConstants.ACTION, org.apache.ws.security.handler.WSHandlerConstants.USERNAME_TOKEN);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION, org.apache.wss4j.dom.handler.WSHandlerConstants.USERNAME_TOKEN);
 
 					org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor wss4jInInterceptor = new org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor();
 					wss4jInInterceptor.setProperties(props);
@@ -376,10 +376,10 @@ if(hasCXFUsernameTokenConsumer){
 					};
 
 					Map<String, Object> props = new HashMap<String, Object>();
-					props.put(org.apache.ws.security.handler.WSHandlerConstants.ACTION, org.apache.ws.security.handler.WSHandlerConstants.USERNAME_TOKEN);
-					props.put(org.apache.ws.security.handler.WSHandlerConstants.USER, userInfo[0]);
-					props.put(org.apache.ws.security.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.ws.security.WSConstants.PW_TEXT);
-					props.put(org.apache.ws.security.handler.WSHandlerConstants.PW_CALLBACK_REF, c);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION, org.apache.wss4j.dom.handler.WSHandlerConstants.USERNAME_TOKEN);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.USER, userInfo[0]);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.ws.security.WSConstants.PW_TEXT);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PW_CALLBACK_REF, c);
 
 					org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor wss4jOutInterceptor = new org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor();
 					wss4jOutInterceptor.setProperties(props);
@@ -699,15 +699,16 @@ if (isProvider) {
 		// add in intercept
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(
-				org.apache.ws.security.handler.WSHandlerConstants.ACTION,
-				org.apache.ws.security.handler.WSHandlerConstants.ENCRYPT+" "
-						+org.apache.ws.security.handler.WSHandlerConstants.SAML_TOKEN_SIGNED+" "
-						+org.apache.ws.security.handler.WSHandlerConstants.SIGNATURE);
+				org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION,
+				org.apache.wss4j.dom.handler.WSHandlerConstants.ENCRYPT+" "
+						+org.apache.wss4j.dom.handler.WSHandlerConstants.SAML_TOKEN_SIGNED+" "
+						+org.apache.wss4j.dom.handler.WSHandlerConstants.SIGNATURE);
 		props.put(
-				org.apache.ws.security.handler.WSHandlerConstants.SIG_PROP_FILE,
+				org.apache.wss4j.dom.handler.WSHandlerConstants.SIG_PROP_FILE,
 				properties);
 
-		org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor wss4jInInterceptor = org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor.INSTANCE;
+		org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor wss4jInInterceptor =
+		    new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor();
 		wss4jInInterceptor.setProperties(props);
 		cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
 
