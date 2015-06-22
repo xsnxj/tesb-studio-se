@@ -444,86 +444,59 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 %>
 
 	if(!isProvider){
-			if(usePropagateSamlAP && (token[4] == null)){
-				usePropagateSamlAP = false ;
-			}
-            Map<String, String> stsProps = new HashMap<String, String>(stsProperties);
-			final org.apache.cxf.ws.security.trust.STSClient stsClient;
-			if(usePropagateSamlAP) {
-                stsProps.put(org.apache.cxf.ws.security.SecurityConstants.STS_TOKEN_USERNAME, token[4]);
-                stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, stsProps);
-			}else {
-                stsProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, token[1]);
-                stsProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, token[2]);
-                stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, stsProps);
-			}
-			if (token[3]/*Role*/ != null && !("".equals(token[3]))) {
-                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, token[3]);
-			}
+		if(usePropagateSamlAP && (token[4] == null)){
+			usePropagateSamlAP = false ;
+		}
+        Map<String, String> stsProps = new HashMap<String, String>(stsProperties);
+		final org.apache.cxf.ws.security.trust.STSClient stsClient;
+		if(usePropagateSamlAP) {
+            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.STS_TOKEN_USERNAME, token[4]);
+            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, stsProps);
+		}else {
+            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, token[1]);
+            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, token[2]);
+            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, stsProps);
+		}
+		if (token[3]/*Role*/ != null && !("".equals(token[3]))) {
+            org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, token[3]);
+		}
 
-			Map<String, Object> clientProps = new HashMap<String, Object>();
-			clientProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME,
-					token[1]);
-			clientProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD,
-					token[2]);
+		Map<String, Object> clientProps = new HashMap<String, Object>();
+		clientProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME,
+				token[1]);
+		clientProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD,
+				token[2]);
 
-			clientProps.put(
-					org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
-					stsClient);
+		clientProps.put(
+				org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
+				stsClient);
 
-			for (Map.Entry<String, String> entry : clientProperties.entrySet()) {
-				if (org.apache.cxf.ws.security.SecurityConstants.ALL_PROPERTIES
-						.contains(entry.getKey())) {
-					clientProps.put(entry.getKey(), entry.getValue());
-				}
+		for (Map.Entry<String, String> entry : clientProperties.entrySet()) {
+			if (org.apache.cxf.ws.security.SecurityConstants.ALL_PROPERTIES
+					.contains(entry.getKey())) {
+				clientProps.put(entry.getKey(), entry.getValue());
 			}
+		}
 
-			if(usePropagateSamlAP) {
-				clientProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, token[4]);
-				clientProps
-				.put(org.apache.cxf.ws.security.SecurityConstants.CALLBACK_HANDLER,
-						new org.talend.esb.security.saml.WSPasswordCallbackHandler(token[4], token[2]));
-			}else {
-				clientProps
-				.put(org.apache.cxf.ws.security.SecurityConstants.CALLBACK_HANDLER,
-						new org.talend.esb.security.saml.WSPasswordCallbackHandler(
-								clientProperties
-								.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME),
-								clientProperties
-								.get("ws-security.signature.password")));
-			}
-			clientProps.put("soap.no.validate.parts", Boolean.TRUE);
-			clientProps.put("use.service.registry", "true");
-			// set the cxfEndpoint Properties
-			cxfEndpoint.setProperties(clientProps);
-			<%//for fix [TESB-12172], set default address to null to avoid override after wsdl from registry initialized. 
-			%>
-			final org.apache.camel.component.cxf.CxfEndpointConfigurer cxfEndpointConfigurer = cxfEndpoint.getCxfEndpointConfigurer();
-			cxfEndpoint.setCxfEndpointConfigurer(new org.apache.camel.component.cxf.CxfEndpointConfigurer() {
-						public void configure(org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory factory) {
-							if(cxfEndpointConfigurer != null){
-								cxfEndpointConfigurer.configure(factory);
-							}
-							factory.setAddress(null);
-						}
-					});
-			<%//for fix [TESB-12172], add locator feature when necessary. 
-			%>
-			org.apache.cxf.endpoint.ClientLifeCycleManager cLifeCycleManager = bus.getExtension(org.apache.cxf.endpoint.ClientLifeCycleManager.class);
-			if(cLifeCycleManager != null){
-				cLifeCycleManager.registerListener(new org.apache.cxf.endpoint.ClientLifeCycleListener() {
-					public void clientDestroyed(org.apache.cxf.endpoint.Client client) {
-					}
-					public void clientCreated(org.apache.cxf.endpoint.Client client) {
-						String address = client.getEndpoint().getEndpointInfo().getAddress();
-						if((address != null) && address.startsWith("locator://")) {
-							new org.talend.esb.servicelocator.cxf.LocatorFeature().initialize(client, client.getBus());
-						}
-					}
-				});
-			}
-			
-			}
+		if(usePropagateSamlAP) {
+			clientProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, token[4]);
+			clientProps
+			.put(org.apache.cxf.ws.security.SecurityConstants.CALLBACK_HANDLER,
+					new org.talend.esb.security.saml.WSPasswordCallbackHandler(token[4], token[2]));
+		}else {
+			clientProps
+			.put(org.apache.cxf.ws.security.SecurityConstants.CALLBACK_HANDLER,
+					new org.talend.esb.security.saml.WSPasswordCallbackHandler(
+							clientProperties
+							.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME),
+							clientProperties
+							.get("ws-security.signature.password")));
+		}
+		clientProps.put("soap.no.validate.parts", Boolean.TRUE);
+		clientProps.put("use.service.registry", "true");
+		// set the cxfEndpoint Properties
+		cxfEndpoint.setProperties(clientProps);
+	}
 <%
 }
 if(hasCXFRegistryProvider){
