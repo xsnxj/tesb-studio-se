@@ -483,6 +483,27 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 		clientProps.put("use.service.registry", "true");
 		// set the cxfEndpoint Properties
 		cxfEndpoint.setProperties(clientProps);
+		<%//for fix [TESB-12172], set default address to null to avoid override after wsdl from registry initialized. 
+		%>
+		final org.apache.camel.component.cxf.CxfEndpointConfigurer cxfEndpointConfigurer = cxfEndpoint.getCxfEndpointConfigurer();
+		cxfEndpoint.setCxfEndpointConfigurer(new org.apache.camel.component.cxf.CxfEndpointConfigurer() {
+			public void configure(org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory factory) {
+				if (cxfEndpointConfigurer != null) {
+					cxfEndpointConfigurer.configure(factory);
+				}
+				factory.setAddress(null);
+			}
+			public void configureClient(org.apache.cxf.endpoint.Client client) {
+				if (cxfEndpointConfigurer != null) {
+					cxfEndpointConfigurer.configureClient(client);
+				}
+			}
+			public void configureServer(org.apache.cxf.endpoint.Server server) {
+				if (cxfEndpointConfigurer != null) {
+					cxfEndpointConfigurer.configureServer(server);
+				}
+			}
+		});
 	}
 <%
 }
