@@ -224,8 +224,8 @@
 						super.propagateHeadersFromCxfToCamel(cxfMessage, camelMessage, camelExchange);
 						camelExchange.getIn().removeHeader("samlToken");
 						org.apache.cxf.security.SecurityContext securityContext = cxfMessage.get(org.apache.cxf.security.SecurityContext.class);
-						if(securityContext != null && securityContext instanceof org.apache.cxf.interceptor.security.SAMLSecurityContext){
-							org.apache.cxf.interceptor.security.SAMLSecurityContext ssc = (org.apache.cxf.interceptor.security.SAMLSecurityContext) securityContext;
+						if(securityContext != null && securityContext instanceof org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext){
+							org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext ssc = (org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext) securityContext;
 							org.w3c.dom.Element assertionElement = ssc.getAssertionElement();
 							if(assertionElement != null){
 								camelExchange.getIn().setHeader("samlToken", assertionElement);
