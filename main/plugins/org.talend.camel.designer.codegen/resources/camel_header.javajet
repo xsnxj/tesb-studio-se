@@ -348,7 +348,7 @@
 					org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 					validator.setContextName("karaf");
 					Map<String,Object> map = new HashMap<String, Object>();
-					map.put("ws-security.ut.validator", validator);
+					map.put(org.apache.cxf.rt.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator);
 					cxfEndpoint.setProperties(map);
 
 					org.apache.neethi.PolicyReference policyReference = new org.apache.neethi.PolicyReference();
@@ -477,7 +477,7 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 							clientProperties
 							.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME),
 							clientProperties
-							.get("ws-security.signature.password")));
+							.get("security.signature.password")));
 		}
 		clientProps.put("soap.no.validate.parts", Boolean.TRUE);
 		clientProps.put("use.service.registry", "true");
@@ -489,9 +489,9 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 if(hasCXFRegistryProvider){
 %>
 	if (isProvider) {
-		String userName = (String) securityProps.get("ws-security.signature.username");
-		String password = (String) securityProps.get("ws-security.signature.password");
-		String properties = (String) securityProps.get("ws-security.signature.properties");
+		String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		String password = (String) securityProps.get("security.signature.password");
+		String properties = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES);
 
 		org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 		jaasUTValidator.setContextName("karaf");
@@ -499,10 +499,10 @@ if(hasCXFRegistryProvider){
 		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
 				userName, password, "setPassword");
 		Map<String, Object> endpointProps = new HashMap<String, Object>();
-		endpointProps.put("ws-security.signature.username", userName);
-		endpointProps.put("ws-security.signature.properties", properties);
-		endpointProps.put("ws-security.callback-handler", callbackHandler);
-		endpointProps.put("ws-security.ut.validator", jaasUTValidator);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, properties);
+		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, callbackHandler);
+		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, jaasUTValidator);
 		endpointProps.put("use.service.registry", "true");
 		cxfEndpoint.setProperties(endpointProps);
 
@@ -623,7 +623,7 @@ if(hasCXFSamlTokenConsumer){
 							clientProperties
 							.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME),
 							clientProperties
-							.get("ws-security.signature.password")));
+							.get("security.signature.password")));
 		}
 		// set the cxfEndpoint Properties
 		cxfEndpoint.setProperties(clientProps);
@@ -650,12 +650,9 @@ if(hasCXFSamlTokenProvider){
 %>
 if (isProvider) {
 		// get saml properties
-		String userName = (String) securityProps
-				.get("ws-security.signature.username");
-		String password = (String) securityProps
-				.get("ws-security.signature.password");
-		String properties = (String) securityProps
-				.get("ws-security.signature.properties");
+		String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		String password = (String) securityProps.get("security.signature.password");
+		String properties = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES);
 		// add in intercept
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(
@@ -667,18 +664,15 @@ if (isProvider) {
 				org.apache.wss4j.dom.handler.WSHandlerConstants.SIG_PROP_FILE,
 				properties);
 
-		org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor wss4jInInterceptor =
-		    new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor();
-		wss4jInInterceptor.setProperties(props);
-		cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
+		cxfEndpoint.getInInterceptors().add(new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor(props));
 
 		// set endpoint properties
 		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
 				userName, password, "setPassword");
 		Map<String, Object> endpointProps = new HashMap<String, Object>();
-		endpointProps.put("ws-security.signature.username", userName);
-		endpointProps.put("ws-security.signature.properties", properties);
-		endpointProps.put("ws-security.callback-handler", callbackHandler);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, properties);
+		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, callbackHandler);
 		endpointProps.put("use.service.registry", "false");
 		cxfEndpoint.setProperties(endpointProps);
 		// add policy
