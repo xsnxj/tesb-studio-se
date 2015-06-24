@@ -276,7 +276,7 @@
                     REQUIRED_IF="(ENABLE_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
 
             <IMPORT MODULE_GROUP="security-common"
-                    REQUIRED_IF="((ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')) OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
+                    REQUIRED_IF="((ENABLE_SECURITY == 'true') AND ((SECURITY_TYPE == 'USER') OR (SECURITY_TYPE == 'SAML'))) OR ((IS_STUDIO_EE_VERSION == 'true') AND (ENABLE_REGISTRY == 'true'))" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
