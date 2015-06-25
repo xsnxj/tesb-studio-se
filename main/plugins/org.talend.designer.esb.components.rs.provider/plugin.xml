@@ -26,19 +26,19 @@
 		<projecttask
 	        beforeLogon="false"
 	        breaks="5.3.2"
-	        class="org.talend.designer.esb.components.rs.provider.migration.RestRequestFormContentTypeMigrationTask"
+	        class="org.talend.designer.esb.components.rs.provider.migration.FormContentTypeMigrationTask"
 	        description="Change the default Content-Type for FORM paramter type"
-	        id="org.talend.designer.esb.webservice.RestRequestFormContentTypeMigrationTask"
-	        name="RestRequestFormContentTypeMigrationTask"
+	        id="org.talend.designer.esb.webservice.FormContentTypeMigrationTask"
+	        name="FormContentTypeMigrationTask"
 	        version="5.4.0">
   		</projecttask>
       	<projecttask
                 beforeLogon="false"
                 breaks="5.3.0"
-                class="org.talend.designer.esb.components.rs.provider.migration.RestRequestConsumesTypeMigrationTask"
-                description="RestRequestConsumesTypeMigrationTask"
-                id="org.talend.designer.esb.components.rs.provider.migration.RestRequestConsumesTypeMigrationTask"
-                name="RestRequestConsumesTypeMigrationTask"
+                class="org.talend.designer.esb.components.rs.provider.migration.ConsumesTypeMigrationTask"
+                description="ConsumesTypeMigrationTask"
+                id="org.talend.designer.esb.components.rs.provider.migration.ConsumesTypeMigrationTask"
+                name="ConsumesTypeMigrationTask"
                 version="5.4.0">
           </projecttask>
 	</extension>

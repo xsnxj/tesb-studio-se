@@ -18,7 +18,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.MetadataType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
-public class RestRequestFormContentTypeMigrationTask extends
+public class FormContentTypeMigrationTask extends
 		AbstractJobMigrationTask {
 
 	private static final ProxyRepositoryFactory FACTORY = ProxyRepositoryFactory

@@ -28,7 +28,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
  * update consumes type in case POST/PUT, set default consumes type to
  * "XML-JSON", instead of "NULL"(&lt;no-content&gt;).
  */
-public class RestRequestConsumesTypeMigrationTask extends AbstractJobItemComponentMigrationTask {
+public class ConsumesTypeMigrationTask extends AbstractJobItemComponentMigrationTask {
 
 	public Date getOrder() {
 		GregorianCalendar gc = new GregorianCalendar(2013, 8, 15, 00, 00, 00);
