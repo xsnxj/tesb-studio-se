@@ -40,18 +40,18 @@
 #end ## ($useSecurityToken || $useServiceRegistry)
 #if ($useSecuritySAML || $useServiceRegistry)
 #[[
-            <entry key="ws-security.signature.username" value="$service{ws-security.signature.username}" />
+            <entry key="security.signature.username" value="$service{security.signature.username}" />
             <entry key="ws-security.callback-handler">
                 <bean class="org.talend.esb.security.saml.WSPasswordCallbackHandler">
-                    <argument type="java.lang.String" value="$service{ws-security.signature.username}" />
-                    <argument type="java.lang.String" value="$service{ws-security.signature.password}" />
+                    <argument type="java.lang.String" value="$service{security.signature.username}" />
+                    <argument type="java.lang.String" value="$service{security.signature.password}" />
                 </bean>
             </entry>
-            <entry key="ws-security.signature.properties" value="$service{ws-security.signature.properties}" />
+            <entry key="security.signature.properties" value="$service{security.signature.properties}" />
 ]]#
 #if ($useEncryption || $useServiceRegistry)
-            <entry key="ws-security.encryption.crypto" value-ref="cryptoProvider" />
-            <entry key="ws-security.encryption.username" value="$service{ws-security.encryption.username}"/>
+            <entry key="security.encryption.crypto" value-ref="cryptoProvider" />
+            <entry key="security.encryption.username" value="$service{security.encryption.username}"/>
 #end ## ($useEncryption || $useServiceRegistry)
 #end ## ($useSecuritySAML || $useServiceRegistry)
 
