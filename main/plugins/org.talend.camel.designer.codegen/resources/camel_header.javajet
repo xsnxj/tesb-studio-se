@@ -504,6 +504,21 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 				}
 			}
 		});
+		<%//for fix [TESB-12172], add locator feature when necessary. 
+		%>
+		org.apache.cxf.endpoint.ClientLifeCycleManager cLifeCycleManager = bus.getExtension(org.apache.cxf.endpoint.ClientLifeCycleManager.class);
+		if (cLifeCycleManager != null) {
+			cLifeCycleManager.registerListener(new org.apache.cxf.endpoint.ClientLifeCycleListener() {
+				public void clientCreated(org.apache.cxf.endpoint.Client client) {
+					String address = client.getEndpoint().getEndpointInfo().getAddress();
+					if ((address != null) && address.startsWith("locator://")) {
+						new org.talend.esb.servicelocator.cxf.LocatorFeature().initialize(client, client.getBus());
+					}
+				}
+				public void clientDestroyed(org.apache.cxf.endpoint.Client client) {
+				}
+			});
+		}
 	}
 <%
 }
