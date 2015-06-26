@@ -21,6 +21,7 @@
 		org.talend.designer.runprocess.CodeGeneratorRoutine
 		org.talend.designer.codegen.i18n.Messages
 		org.talend.designer.codegen.ITalendSynchronizer
+		org.talend.core.utils.TalendQuoteUtils
 	"
 %>
 <%
@@ -81,9 +82,10 @@
 
 			List<? extends INode> cFtpNodes = process.getNodesOfType("cFtp");
 			if(cFtpNodes.size() > 0){
+			// for fix [TESB-15654], Set custom server port for cFTP
 %>
 			private org.apache.camel.component.file.remote.RemoteFileEndpoint<?> getFtpEndpoint(
-					String uri, String server, String username, String password,
+					String uri, String server, int port, String username, String password,
 					String directory) {
 				org.apache.camel.component.file.remote.RemoteFileEndpoint<?> endpoint;
 				endpoint = (org.apache.camel.component.file.remote.RemoteFileEndpoint<?>) endpoint(uri);
@@ -92,6 +94,7 @@
 				configuration.setUsername(username);
 				configuration.setPassword(password);
 				configuration.setHost(server);
+				configuration.setPort(port);
 				configuration.setDirectory(directory);
 				return endpoint;
 			}
@@ -922,6 +925,7 @@ if (isProvider) {
 				password = null;
 			}
 			String ftpServer = ElementParameterParser.getValue(node, "__SERVER__");
+			int ftpPort = Integer.parseInt(TalendQuoteUtils.removeQuotes(ElementParameterParser.getValue(node, "__PORT__")));
 			String directory = ElementParameterParser.getValue(node, "__DIRECTORY__");
 			if("".trim().equals(directory)){
 				directory = null;
@@ -931,7 +935,7 @@ if (isProvider) {
 %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 			
-			org.apache.camel.component.file.remote.RemoteFileEndpoint<?> <%=ftpEndpointVar%> = getFtpEndpoint(<%=uriRef%>, <%=ftpServer%>, <%=userName%>, decryptedPassword_<%=cid%>, <%=directory%>);
+			org.apache.camel.component.file.remote.RemoteFileEndpoint<?> <%=ftpEndpointVar%> = getFtpEndpoint(<%=uriRef%>, <%=ftpServer%>, <%=ftpPort%>, <%=userName%>, decryptedPassword_<%=cid%>, <%=directory%>);
 <%
 
 	}else if("cMail".equals(nodeComponentName)){
