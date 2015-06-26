@@ -703,7 +703,10 @@ if (isProvider) {
 				org.apache.wss4j.dom.handler.WSHandlerConstants.SIG_PROP_FILE,
 				properties);
 
-		cxfEndpoint.getInInterceptors().add(new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor(props));
+        org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor wss4jInInterceptor =
+            new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor();
+        wss4jInInterceptor.setProperties(props);
+        cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
 
 		// set endpoint properties
 		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
