@@ -60,7 +60,6 @@ public final class CamelFeatureUtil {
     private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
         put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
         put("camel-http", new FeatureModel[] { new FeatureModel("camel-http"), new FeatureModel("http") });
-        put("camel-jms", new FeatureModel[] { new FeatureModel("camel-jms"), new FeatureModel("spring-jms") });
         put("activemq-all", new FeatureModel[] { new FeatureModel("activemq"), new FeatureModel("activemq-camel") });
         put("tdm-camel", new FeatureModel[] { new FeatureModel("talend-data-mapper") });
         //put("camel-talendjob", new FeatureModel[] { new FeatureModel("camel-talendjob") });
