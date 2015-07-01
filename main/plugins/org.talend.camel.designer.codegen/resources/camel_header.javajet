@@ -371,7 +371,7 @@ if(hasCXFUsernameTokenConsumer){
 					Map<String, Object> props = new HashMap<String, Object>();
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION, org.apache.wss4j.dom.handler.WSHandlerConstants.USERNAME_TOKEN);
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.USER, userInfo[0]);
-					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.ws.security.WSConstants.PW_TEXT);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.wss4j.common.WSS4JConstants.PW_TEXT);
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PW_CALLBACK_REF,
 					    new org.talend.esb.security.saml.WSPasswordCallbackHandler(userInfo[0], userInfo[1]));
 					cxfEndpoint.getOutInterceptors().add(new org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor(props));
