@@ -151,50 +151,6 @@
             </predicate>
          </importPackage>
          <importPackage
-               packageName="org.apache.ws.security.validate">
-            <predicate
-                  attributeName="ENABLE_SECURITY"
-                  attributeValue="true">
-            </predicate>
-            <predicate
-                  attributeName="SECURITY_TYPE"
-                  attributeValue="USER">
-            </predicate>
-         </importPackage>
-         <importPackage
-               packageName="org.apache.cxf.ws.security.trust">
-            <predicate
-                  attributeName="ENABLE_SECURITY"
-                  attributeValue="true">
-            </predicate>
-            <predicate
-                  attributeName="SECURITY_TYPE"
-                  attributeValue="SAML">
-            </predicate>
-         </importPackage>
-         <importPackage
-               packageName="org.apache.cxf.ws.security">
-            <predicate
-                  attributeName="ENABLE_SECURITY"
-                  attributeValue="true">
-            </predicate>
-            <predicate
-                  attributeName="SECURITY_TYPE"
-                  attributeValue="SAML">
-            </predicate>
-         </importPackage>
-         <importPackage
-               packageName="org.apache.ws.security">
-            <predicate
-                  attributeName="ENABLE_SECURITY"
-                  attributeValue="true">
-            </predicate>
-            <predicate
-                  attributeName="SECURITY_TYPE"
-                  attributeValue="SAML">
-            </predicate>
-         </importPackage>
-         <importPackage
                packageName="org.talend.esb.job.controller">
             <predicate
                   attributeName="ENABLE_SECURITY"
