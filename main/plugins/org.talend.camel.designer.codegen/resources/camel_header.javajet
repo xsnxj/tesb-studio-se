@@ -930,7 +930,7 @@ if (isProvider) {
 				password = null;
 			}
 			String ftpServer = ElementParameterParser.getValue(node, "__SERVER__");
-			int ftpPort = Integer.parseInt(TalendQuoteUtils.removeQuotes(ElementParameterParser.getValue(node, "__PORT__")));
+			String ftpPort = ElementParameterParser.getValue(node, "__PORT__");
 			String directory = ElementParameterParser.getValue(node, "__DIRECTORY__");
 			if("".trim().equals(directory)){
 				directory = null;
@@ -940,7 +940,7 @@ if (isProvider) {
 %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 			
-			org.apache.camel.component.file.remote.RemoteFileEndpoint<?> <%=ftpEndpointVar%> = getFtpEndpoint(<%=uriRef%>, <%=ftpServer%>, <%=ftpPort%>, <%=userName%>, decryptedPassword_<%=cid%>, <%=directory%>);
+			org.apache.camel.component.file.remote.RemoteFileEndpoint<?> <%=ftpEndpointVar%> = getFtpEndpoint(<%=uriRef%>, <%=ftpServer%>, Integer.parseInt(String.valueOf(<%=ftpPort%>)), <%=userName%>, decryptedPassword_<%=cid%>, <%=directory%>);
 <%
 
 	}else if("cMail".equals(nodeComponentName)){
