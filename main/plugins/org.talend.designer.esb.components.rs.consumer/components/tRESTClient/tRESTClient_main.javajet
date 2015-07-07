@@ -112,16 +112,6 @@ try {
                         authType = quoteChar+authType+quoteChar;
 				}%>
 
-	 if (use_auth_<%= cid %> && "BASIC".equals(<%=authType%>)) {
-		// set BASIC auth
-		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
-		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-
-		factoryBean_<%=cid%>.setUsername(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>);
-		factoryBean_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
-	 }
-
-
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
 			new java.util.ArrayList<org.apache.cxf.feature.Feature>();
 
@@ -276,6 +266,27 @@ try {
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
+	if (use_auth_<%= cid %> && "BASIC".equals(<%=authType%>)) {
+        // set BASIC auth
+        <% passwordFieldName = "__AUTH_PASSWORD__"; %>
+        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+        org.apache.cxf.configuration.security.AuthorizationPolicy authPolicy_<%=cid%> = new org.apache.cxf.configuration.security.AuthorizationPolicy(); 
+        authPolicy_<%=cid%>.setAuthorizationType("Basic"); 
+        authPolicy_<%=cid%>.setUserName(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>); 
+        authPolicy_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+        conduit_<%=cid%>.setAuthorization(authPolicy_<%=cid%>);
+    } else if (use_auth_<%= cid %> && "HTTP Digest".equals(<%=authType%>)) {
+        // set Digest auth
+        <% passwordFieldName = "__AUTH_PASSWORD__"; %>
+        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+        org.apache.cxf.configuration.security.AuthorizationPolicy authPolicy_<%=cid%> = new org.apache.cxf.configuration.security.AuthorizationPolicy(); 
+        authPolicy_<%=cid%>.setAuthorizationType("Digest"); 
+        authPolicy_<%=cid%>.setUserName(<%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>); 
+        authPolicy_<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+        conduit_<%=cid%>.setAuthorization(authPolicy_<%=cid%>);
+    }
 	if (!inOSGi) {
 		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
 		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
