@@ -880,7 +880,7 @@ if (isProvider) {
 				List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
 %>
 				// Add Service Locator Service to <%=endpointVar%>
-				org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+				org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
 				if (null == bundleContext) {
 					<%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 				}
@@ -890,13 +890,13 @@ if (isProvider) {
 						slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
 					<% } %>
 					<% if (isProvider) { %>
-						locatorFeature.setAvailableEndpointProperties(slCustomProps_<%=cid%>);
+						locatorFeature_<%=cid%>.setAvailableEndpointProperties(slCustomProps_<%=cid%>);
 					<% } else { %>
-						locatorFeature.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+						locatorFeature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
 					<% } %>
 				<% } %>
 
-				<%=endpointVar%>.getFeatures().add(locatorFeature);
+				<%=endpointVar%>.getFeatures().add(locatorFeature_<%=cid%>);
 <%
 			}
 			//http://jira.talendforge.org/browse/TESB-3850
