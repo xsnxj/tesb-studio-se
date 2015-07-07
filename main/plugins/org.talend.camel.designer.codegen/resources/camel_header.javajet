@@ -883,7 +883,7 @@ if (isProvider) {
 %>
 				// Add Service Locator Service to <%=endpointVar%>
 				if (null != bundleContext) {
-					org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+					org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
 
 					<% if (!customProperties.isEmpty()) { %>
 						java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
@@ -891,13 +891,13 @@ if (isProvider) {
 							slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
 						<% } %>
 						<% if (isProvider) { %>
-                            locatorFeature.setAvailableEndpointProperties(slCustomProps_<%=cid%>);
+                            locatorFeature_<%=cid%>.setAvailableEndpointProperties(slCustomProps_<%=cid%>);
 						<% } else { %>
-                            locatorFeature.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+                            locatorFeature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
 						<% } %>
 					<% } %>
 
-					<%=endpointVar%>.getFeatures().add(locatorFeature);
+					<%=endpointVar%>.getFeatures().add(locatorFeature_<%=cid%>);
 				}
 <%
 			}
