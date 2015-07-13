@@ -90,7 +90,7 @@
 			<enabled>false</enabled>
 		</releases>
 	</repository-->
-	<repository>
+	<!--repository>
 		<id>sonatype-staging</id>
 		<url>https://oss.sonatype.org/content/repositories/staging/</url>
 		<name>Sonatype Staging Repo</name>
@@ -100,8 +100,8 @@
 		<releases>
 			<enabled>true</enabled>
 		</releases>
-	</repository>
-	<!--repository>
+	</repository-->
+	<repository>
 		<id>sonatype-releases</id>
 		<url>https://oss.sonatype.org/content/repositories/releases/</url>
 		<name>Sonatype Releases Repo</name>
@@ -111,7 +111,7 @@
 		<releases>
 			<enabled>true</enabled>
 		</releases>
-	</repository-->
+	</repository>
   </repositories>
   
   <pluginRepositories>
