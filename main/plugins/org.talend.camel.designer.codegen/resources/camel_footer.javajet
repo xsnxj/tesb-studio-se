@@ -560,6 +560,24 @@
 							 org.apache.camel.component.mqtt.MQTTEndpoint endpoint = 
 									 (org.apache.camel.component.mqtt.MQTTEndpoint) super.createEndpoint(uri, remaining, parameters);
 							 org.apache.camel.component.mqtt.MQTTConfiguration config = endpoint.getConfiguration();
+							 
+							 
+							 
+<%
+                String useActiveMQTTAuth = ElementParameterParser.getValue(node, "__MQTT_AUTH__");
+                if ("true".equals(useActiveMQTTAuth)){
+                    String username = ElementParameterParser.getValue(node, "__MQTT_USERNAME__");
+                    String passwordFieldName = "__MQTT_PASSWORD__";
+%>              
+                    <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+                    config.setUserName(<%=username%>);
+                    config.setPassword(decryptedPassword_<%=cid%>);
+<%              
+                }
+%>		 
+							 
+							 
+							 
 							 config.setHost(<%=brokerUri%>);
 							 config.setConnectAttemptsMax(<%=helper.getStringParam("__MQTT_CONNECT_ATTEMPTS__")%>);
 							 config.setReconnectAttemptsMax(<%=helper.getStringParam("__MQTT_RECONNECT_ATTEMPTS__")%>);

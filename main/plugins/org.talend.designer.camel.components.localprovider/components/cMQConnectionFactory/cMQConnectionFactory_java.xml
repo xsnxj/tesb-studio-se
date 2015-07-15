@@ -85,7 +85,7 @@
 		<PARAMETER NAME="AMQ_PASSWORD" FIELD="PASSWORD" NUM_ROW="14"
 			SHOW_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_AUTH == 'true')">
 			<DEFAULT>""</DEFAULT>
-		</PARAMETER>
+		</PARAMETER>	
 
 		<!-- WebSphere MQ -->
 		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
@@ -246,6 +246,21 @@
 				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
 			</ITEMS>
 		</PARAMETER>
+		
+        <PARAMETER NAME="MQTT_AUTH" FIELD="CHECK" REQUIRED="true"
+            NUM_ROW="31" SHOW_IF="(MQ_TYPE == 'MQTT')">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="MQTT_USERNAME" FIELD="TEXT" NUM_ROW="32"
+            SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_AUTH == 'true')">
+            <DEFAULT>""</DEFAULT>
+        </PARAMETER>
+
+        <PARAMETER NAME="MQTT_PASSWORD" FIELD="PASSWORD" NUM_ROW="32"
+            SHOW_IF="(MQ_TYPE == 'MQTT') AND (MQTT_AUTH == 'true')">
+            <DEFAULT>""</DEFAULT>
+        </PARAMETER>    		
 
 	</PARAMETERS>
 
