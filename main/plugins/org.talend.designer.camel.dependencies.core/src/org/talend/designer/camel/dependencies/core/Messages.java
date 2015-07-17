@@ -10,8 +10,6 @@ public class Messages extends NLS {
 	public static String ExDependenciesResolver_commonImportPackage;
 	public static String ExDependenciesResolver_commonRequireBundle;
 	public static String ExDependenciesResolver_generatedPackage;
-	public static String VersionValidateUtil_InvalidFormatInBundleVersion;
-	public static String VersionValidateUtil_invalidVersionRangeFormat;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

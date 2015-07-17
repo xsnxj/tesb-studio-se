@@ -12,12 +12,8 @@
 // ============================================================================
 package org.talend.designer.camel.dependencies.core.util;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.osgi.framework.Version;
-import org.talend.designer.camel.dependencies.core.CoreActivator;
-import org.talend.designer.camel.dependencies.core.Messages;
 
 /**
  * The Class VersionValidateUtil. Use for validate version string.
@@ -31,35 +27,13 @@ public class VersionValidateUtil {
 	 *            the version string
 	 * @return the i status
 	 */
-	public static IStatus validateVersion(String versionString) {
+	public static String validateVersion(String versionString) {
 		try {
-			if (versionString != null)
-				new Version(versionString.trim());
+			Version.parseVersion(versionString);
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, CoreActivator.PLUGIN_ID,
-					IStatus.ERROR,
-					Messages.VersionValidateUtil_InvalidFormatInBundleVersion,
-					e);
+			return e.getMessage();
 		}
-		return Status.OK_STATUS;
-	}
-
-	/**
-	 * Validate version range.
-	 * 
-	 * @param versionRangeString
-	 *            the version range string
-	 * @return the i status
-	 */
-	public static IStatus validateVersionRange(String versionRangeString) {
-		try {
-			new VersionRange(versionRangeString);
-		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, CoreActivator.PLUGIN_ID,
-					IStatus.ERROR,
-					Messages.VersionValidateUtil_invalidVersionRangeFormat, e);
-		}
-		return Status.OK_STATUS;
+		return null;
 	}
 
 	/**
@@ -244,24 +218,6 @@ public class VersionValidateUtil {
 
 		result = v1.getMicro() - v2.getMicro();
 		return result;
-	}
-
-	/**
-	 * Compute initial plugin version.
-	 * 
-	 * @param version
-	 *            the version
-	 * @return the string
-	 */
-	public static String computeInitialPluginVersion(String version) {
-		if (version != null
-				&& VersionValidateUtil.validateVersion(version).isOK()) {
-			Version pvi = Version.parseVersion(version);
-			return pvi.getMajor() + "." + pvi.getMinor() //$NON-NLS-1$
-					+ "." + pvi.getMicro(); //$NON-NLS-1$
-		}
-
-		return version;
 	}
 
 	/**

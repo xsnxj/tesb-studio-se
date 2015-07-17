@@ -202,10 +202,12 @@ public class DependencyVersionPart {
 	 * @return the i status
 	 */
 	private IStatus validateVersion(String text, Text textWidget) {
-		if (text.length() == 0)
+		if (text.length() == 0) {
 			return Status.OK_STATUS;
-		if (VersionValidateUtil.validateVersion(text).getSeverity() != IStatus.OK) {
-			String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
+		}
+		final String errorMessage = VersionValidateUtil.validateVersion(text);
+		if (errorMessage != null) {
+//			String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
 			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
 					IStatus.ERROR, errorMessage, null);
 		}

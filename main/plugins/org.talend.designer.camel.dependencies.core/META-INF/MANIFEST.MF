@@ -3,15 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: org.talend.designer.camel.dependencies.core;singleton:=true
 Bundle-Version: 6.1.0.qualifier
-Bundle-Activator: org.talend.designer.camel.dependencies.core.CoreActivator
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources,
  org.talend.core.runtime
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.designer.camel.dependencies.core.model,
  org.talend.designer.camel.dependencies.core.util
 Import-Package: org.eclipse.emf.common.util,
- org.eclipse.emf.ecore,
  org.talend.core.model.properties,
  org.talend.core.repository.model,
  org.talend.designer.core.model.components,
