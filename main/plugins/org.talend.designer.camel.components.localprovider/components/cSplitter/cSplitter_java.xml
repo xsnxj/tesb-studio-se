@@ -58,7 +58,7 @@
 			REQUIRED="true" GROUP="CORRELATION">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="USE_RESULT_CLASS_TYPE" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="7" GROUP="CORRELATION" SHOW_IF="LANGUAGES=='XPATH'">
 			<DEFAULT>false</DEFAULT>
@@ -90,7 +90,7 @@
 			REQUIRED="false" SHOW_IF="USE_STRATEGY=='true'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="PARALLET_PROCESSING" FIELD="CHECK" NUM_ROW="12" GROUP ="ARGUMENTS">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -121,10 +121,10 @@
                     MODULE="camel-script-${camel.version}.jar" MVN="${mvn-camel-script}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-${camel.version}.jar"
                     REQUIRED_IF="LANGUAGES == 'JAVASCRIPT'" />
-            </IMPORTS>
-            <IMPORT MODULE="camel-jsonpath-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jsonpath-alldep-${camel.version}/6.0.0" NAME="talend-camel-jsonpath"
-                UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jsonpath-alldep-${camel.version}.jar"
-                REQUIRED_IF="LANGUAGES == 'JSONPATH'" />
+            <IMPORT NAME="talend-camel-jsonpath"
+                    MODULE="camel-jsonpath-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jsonpath-alldep-${camel.version}/6.0.0"
+                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jsonpath-alldep-${camel.version}.jar"
+                    REQUIRED_IF="LANGUAGES == 'JSONPATH'" />
         </IMPORTS>
 	</CODEGENERATION>
 
