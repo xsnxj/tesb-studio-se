@@ -8,9 +8,4 @@
 			folderName="components" />
 	</extension>
 
-	<extension point="org.talend.designer.codegen.additional_jetfile">
-		<jetProvider
-			id="org.talend.designer.esb.components.rs.consumer.ESBJetFileProvider"
-			class="org.talend.designer.esb.components.rs.consumer.ESBJetFileProvider" />
-	</extension>
 </plugin>

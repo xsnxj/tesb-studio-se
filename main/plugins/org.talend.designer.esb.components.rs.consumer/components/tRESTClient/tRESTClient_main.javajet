@@ -240,23 +240,22 @@ try {
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
 
-	 if (use_auth_<%= cid %> && "SAML".equals(<%=authType%>)) {
-		if (null != stsProperties) {
-			// set SAML Token authentication
-			<%  passwordFieldName = "__AUTH_PASSWORD__"; %>
-			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+	if (use_auth_<%= cid %> && "SAML".equals(<%=authType%>)) {
+	    if (!inOSGi) {
+	        throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
+	    }
+		// set SAML Token authentication
+		<%  passwordFieldName = "__AUTH_PASSWORD__"; %>
+		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 
-			java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
-			securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>);
-			securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
-			org.apache.cxf.ws.security.trust.STSClient stsClient =
-				org.talend.esb.security.saml.STSClientUtils.createSTSClient(factoryBean_<%=cid%>.getBus(), securityProps);
-			<% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))) { %>
-				org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE__")%>);
-			<% } %>
-			org.talend.esb.security.saml.SAMLRESTUtils.configureClient(factoryBean_<%=cid%>, stsClient);
-		}
-	 }
+		org.apache.cxf.ws.security.trust.STSClient stsClient =
+			org.talend.esb.security.saml.STSClientUtils.createSTSClient(factoryBean_<%=cid%>.getBus(),
+			    <%=ElementParameterParser.getValue(node, "__AUTH_USERNAME__")%>, decryptedPassword_<%=cid%>);
+		<% if ("true".equals(ElementParameterParser.getValue(node, "__NEED_AUTHORIZATION__"))) { %>
+			org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE__")%>);
+		<% } %>
+		org.talend.esb.security.saml.SAMLRESTUtils.configureClient(factoryBean_<%=cid%>, stsClient);
+	}
 
 	org.apache.cxf.jaxrs.client.WebClient webClient_<%=cid%> = factoryBean_<%=cid%>.createWebClient();
 
