@@ -386,14 +386,8 @@ if(hasCXFSamlTokenConsumer || hasCXFRegistryConsumer){
 
 private Map<String, String> clientProperties;
 
-private Map<String, String> stsProperties;
-
 public void setClientProperties(Map<String, String> clientProperties) {
 		this.clientProperties = clientProperties;
-}
-
-public void setStsProperties(Map<String, String> stsProperties) {
-		this.stsProperties = stsProperties;
 }
 
 <%
@@ -437,15 +431,11 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 		if(usePropagateSamlAP && (token[4] == null)){
 			usePropagateSamlAP = false ;
 		}
-        Map<String, String> stsProps = new HashMap<String, String>(stsProperties);
 		final org.apache.cxf.ws.security.trust.STSClient stsClient;
 		if(usePropagateSamlAP) {
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.STS_TOKEN_USERNAME, token[4]);
-            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, stsProps);
+            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, token[4]);
 		}else {
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, token[1]);
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, token[2]);
-            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, stsProps);
+            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, token[1], token[2]);
 		}
 		if (token[3]/*Role*/ != null && !("".equals(token[3]))) {
             org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, token[3]);
@@ -624,15 +614,11 @@ private void addSAMLToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint
 if(hasCXFSamlTokenConsumer){
 %>
 	if (!isProvider) {
-        Map<String, String> stsProps = new HashMap<String, String>(stsProperties);
         final org.apache.cxf.ws.security.trust.STSClient stsClient;
-        if(usePropagateSamlAP) {
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.STS_TOKEN_USERNAME, token[4]);
-            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, stsProps);
-        }else {
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, token[1]);
-            stsProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, token[2]);
-            stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, stsProps);
+        if (usePropagateSamlAP) {
+            stsClient = org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, token[4]);
+        } else {
+            stsClient = org.talend.esb.security.saml.STSClientUtils.createSTSClient(bus, token[1], token[2]);
         }
 <%if(hasCXFSamlTokenAuthorizationConsumer){%>
 		if (token[3] != null && !("".equals(token[3]))) {

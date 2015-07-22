@@ -178,17 +178,16 @@
 <%
                         } else if ("SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
-                            if (null != stsProperties) {
-                                java.util.Map<String, String> securityProps = new java.util.HashMap<String, String>(stsProperties);
-                                securityProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME, <%=ElementParameterParser.getValue(node, "__USERNAME__")%>);
-                                securityProps.put(org.apache.cxf.ws.security.SecurityConstants.PASSWORD, decryptedPassword_<%=cid%>);
-                                org.apache.cxf.ws.security.trust.STSClient stsClient =
-                                    org.talend.esb.security.saml.STSClientUtils.createSTSClient(cf_<%=cid%>.getBus(), securityProps);
-                                <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_AUTHORIZATION__"))) { %>
-                                    org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE_NAME__")%>);
-                                <% } %>
-                                org.talend.esb.security.saml.SAMLRESTUtils.configureClient(cf_<%=cid%>, stsClient);
+                            if (bundleContext == null) {
+                                throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
                             }
+                            org.apache.cxf.ws.security.trust.STSClient stsClient =
+                                org.talend.esb.security.saml.STSClientUtils.createSTSClient(cf_<%=cid%>.getBus(),
+                                    <%=ElementParameterParser.getValue(node, "__USERNAME__")%>, decryptedPassword_<%=cid%>);
+                            <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_AUTHORIZATION__"))) { %>
+                                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE_NAME__")%>);
+                            <% } %>
+                            org.talend.esb.security.saml.SAMLRESTUtils.configureClient(cf_<%=cid%>, stsClient);
 <%
                         }
                     }
