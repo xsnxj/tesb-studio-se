@@ -12,10 +12,17 @@
 
 #if ($useSecuritySAML || $useServiceRegistry)
 #[[
-    <cm-properties persistent-id="org.talend.esb.job.service" id="org.talend.esb.job.service"
-        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0"/>
-    <property-placeholder defaults-ref="org.talend.esb.job.service" ]]#persistent-id="org.talend.esb.job.service.${samlConfig}"#[[ placeholder-prefix="$service{"
-        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0" />
+    <property-placeholder persistent-id="org.talend.esb.job.service" placeholder-prefix="$default{"
+        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0"/>
+    <property-placeholder ]]#persistent-id="org.talend.esb.job.service.${samlConfig}"#[[ placeholder-prefix="$service{"
+        xmlns="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0" >
+        <default-properties>
+            <property name="security.signature.username" value="$default{security.signature.username}" />
+            <property name="security.signature.password" value="$default{security.signature.password}" />
+            <property name="security.signature.properties" value="$default{security.signature.properties}" />
+            <property name="security.encryption.username" value="$default{security.encryption.username}" />
+        </default-properties>
+    </property-placeholder>
 ]]#
 #end ## ($useSecuritySAML || $useServiceRegistry)
 
