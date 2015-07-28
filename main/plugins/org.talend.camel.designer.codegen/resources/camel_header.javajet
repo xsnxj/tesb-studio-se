@@ -187,7 +187,7 @@
 
 		if(hasCXFSAMLPropagateConsumer){
 %>
-			class CXFConsumerBinding extends org.apache.camel.component.cxf.DefaultCxfBinding {
+			private final static class CXFConsumerBinding extends org.apache.camel.component.cxf.DefaultCxfBinding {
 				private org.apache.camel.component.cxf.CxfEndpoint endpoint;
 
 				public CXFConsumerBinding(org.apache.camel.component.cxf.CxfEndpoint endpoint){
@@ -199,27 +199,22 @@
 						Map<String, Object> camelHeaders, org.apache.cxf.message.Exchange cxfExchange,
 						Map<String, Object> cxfContext) {
 					super.propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, cxfContext);
-					Object samlToken = camelHeaders.get("samlToken");
-					if(samlToken == null){
-						return;
+					final Object samlToken = camelHeaders.get("samlToken");
+					if (samlToken != null) {
+						final Map<String, Object> properties = endpoint.getProperties();
+						if (properties != null){
+							Object object = properties.get(org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT);
+							if (object != null && object instanceof org.apache.cxf.ws.security.trust.STSClient) {
+								((org.apache.cxf.ws.security.trust.STSClient) object).setOnBehalfOf(samlToken);
+							}
+						}
 					}
-
-					Map<String, Object> properties = endpoint.getProperties();
-					if(properties == null){
-						return;
-					}
-					Object object = properties.get(org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT);
-					if(object == null || !(object instanceof org.apache.cxf.ws.security.trust.STSClient)){
-						return;
-					}
-					org.apache.cxf.ws.security.trust.STSClient stsClient = (org.apache.cxf.ws.security.trust.STSClient) object;
-					stsClient.setOnBehalfOf(samlToken);
 				}
 			}
 <%		}
 		if(hasCXFRegistryProvider || hasCXFSamlTokenProvider){
 %>
-				class CXFProviderBinding extends org.apache.camel.component.cxf.DefaultCxfBinding{
+				private final static class CXFProviderBinding extends org.apache.camel.component.cxf.DefaultCxfBinding{
 
 					@Override
 					protected void propagateHeadersFromCxfToCamel( org.apache.cxf.message.Message cxfMessage,
@@ -228,8 +223,7 @@
 						camelExchange.getIn().removeHeader("samlToken");
 						org.apache.cxf.security.SecurityContext securityContext = cxfMessage.get(org.apache.cxf.security.SecurityContext.class);
 						if(securityContext != null && securityContext instanceof org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext){
-							org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext ssc = (org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext) securityContext;
-							org.w3c.dom.Element assertionElement = ssc.getAssertionElement();
+							org.w3c.dom.Element assertionElement = ((org.apache.cxf.rt.security.saml.claims.SAMLSecurityContext) securityContext).getAssertionElement();
 							if(assertionElement != null){
 								camelExchange.getIn().setHeader("samlToken", assertionElement);
 							}
@@ -395,7 +389,7 @@ public void setClientProperties(Map<String, String> clientProperties) {
 
 if(hasCXFComponentConsumer){
 %>
-org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy consumerSoapHeaderFilter = new org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy(){
+private final static org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy consumerSoapHeaderFilter = new org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy(){
 	public boolean applyFilterToCamelHeaders(String headerName,
 			Object headerValue, org.apache.camel.Exchange exchange) {
 		//filter propagated cxf header
@@ -518,19 +512,14 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 if(hasCXFRegistryProvider){
 %>
 	if (isProvider) {
-		String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
-		String password = (String) securityProps.get("security.signature.password");
-		String properties = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES);
-
 		org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 		jaasUTValidator.setContextName("karaf");
 		// set endpoint properties
-		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
-				userName, password, "setPassword");
-		Map<String, Object> endpointProps = new HashMap<String, Object>();
+		final String userName = securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		final Map<String, Object> endpointProps = new HashMap<String, Object>();
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
-		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, properties);
-		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.CALLBACK_HANDLER, callbackHandler);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
+		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, securityProps.get("security.signature.password")));
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, jaasUTValidator);
 		endpointProps.put("use.service.registry", "true");
 		cxfEndpoint.setProperties(endpointProps);
@@ -544,9 +533,9 @@ if(hasCXFRegistryProvider){
 
 if (hasCXFSamlTokenProvider || hasCXFRegistryProvider) {
 %>
-private Map<String, Object> securityProps;
+private Map<String, String> securityProps;
 
-public void setSecurityProps(Map<String, Object> securityProps) {
+public void setSecurityProps(Map<String, String> securityProps) {
 	this.securityProps = securityProps;
 }
 <%
@@ -674,33 +663,12 @@ if(hasCXFSamlTokenConsumer){
 if(hasCXFSamlTokenProvider){
 %>
 if (isProvider) {
-		// get saml properties
-		String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
-		String password = (String) securityProps.get("security.signature.password");
-		String properties = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES);
-		// add in intercept
-		Map<String, Object> props = new HashMap<String, Object>();
-		props.put(
-				org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION,
-				org.apache.wss4j.dom.handler.WSHandlerConstants.ENCRYPT+" "
-						+org.apache.wss4j.dom.handler.WSHandlerConstants.SAML_TOKEN_SIGNED+" "
-						+org.apache.wss4j.dom.handler.WSHandlerConstants.SIGNATURE);
-		props.put(
-				org.apache.wss4j.dom.handler.WSHandlerConstants.SIG_PROP_FILE,
-				properties);
-
-        org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor wss4jInInterceptor =
-            new org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor();
-        wss4jInInterceptor.setProperties(props);
-        cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
-
 		// set endpoint properties
-		org.apache.cxf.interceptor.security.NamePasswordCallbackHandler callbackHandler = new org.apache.cxf.interceptor.security.NamePasswordCallbackHandler(
-				userName, password, "setPassword");
-		Map<String, Object> endpointProps = new HashMap<String, Object>();
+		final String userName = securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		final Map<String, Object> endpointProps = new HashMap<String, Object>();
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
-		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, properties);
-		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, callbackHandler);
+		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
+		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, securityProps.get("security.signature.password")));
 		endpointProps.put("use.service.registry", "false");
 		cxfEndpoint.setProperties(endpointProps);
 		// add policy
