@@ -238,143 +238,116 @@
 %>
 
 			private org.apache.camel.component.cxf.CxfEndpoint getCxfEndpoint(String uri, boolean isProvider, boolean useAuthorization, boolean usePropagateSamlAP, String... token){
-				org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint = (org.apache.camel.component.cxf.CxfEndpoint)endpoint(uri);
-
-<%if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFHTTPAuthProvider || hasCXFRegistryProvider || hasCXFRegistryConsumer){%>
-				if( null != bundleContext ){
-					<%if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFRegistryProvider || hasCXFRegistryConsumer){%>
-						org.apache.cxf.Bus bus = cxfEndpoint.getBus();
+				final org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint = (org.apache.camel.component.cxf.CxfEndpoint) endpoint(uri);
+<%
+				if(hasCXFHTTPAuthConsumer){
+%>
+					if (!isProvider&&token!=null &&
+							(org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])
+									|| org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_DIGEST.equals(token[0]))) {
+						addHttpAuthConsumer(cxfEndpoint, isProvider, token[0], token[1], token[2]);
+					}
+<%
+				}
+				if(hasCXFUsernameTokenConsumer){
+%>
+				if(!isProvider&&token!=null&&token.length>=3&&"UsernameToken".equals(token[0])){
+					addUsernameTokenConsumer(cxfEndpoint, token[1], token[2]);
+				}
+<%
+				}
+if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFHTTPAuthProvider || hasCXFRegistryProvider || hasCXFRegistryConsumer){%>
+				if (null != policyProvider) {
+<%
+					if(hasCXFHTTPAuthProvider){
+%>
+						if (isProvider && token!=null && org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])) {
+							addHttpAuthProvider(cxfEndpoint);
+						}
 <%
 					}
 					if(hasCXFUsernameTokenProvider){
 %>
-						if(isProvider&&token!=null&&"UsernameToken".equals(token[0])){
-							addUsernameToken(cxfEndpoint,bus, true);
+						if(isProvider && token!=null && "UsernameToken".equals(token[0])) {
+							addUsernameTokenProvider(cxfEndpoint);
 						}
-<%
-					}
-					if(hasCXFHTTPAuthProvider){
-%>
-						if(isProvider&&token!=null &&
-							(org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])
-								||org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_DIGEST.equals(token[0]))){
-							addHttpAuth(cxfEndpoint, isProvider, token);
-						}
+
 <%
 					}
 					if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer){
 
 %>
 					if(token!=null&&"SAMLToken".equals(token[0])){
-						addSAMLToken(cxfEndpoint, bus, isProvider, useAuthorization, usePropagateSamlAP, token);
+						addSAMLToken(cxfEndpoint,isProvider, useAuthorization, usePropagateSamlAP, token);
 					}
 <%					}
 					if(hasCXFRegistryProvider || hasCXFRegistryConsumer){
 %>
 					if(token!=null&&"Registry".equals(token[0])){
-						addRegistry(cxfEndpoint, bus, isProvider, usePropagateSamlAP, token);
+						addRegistry(cxfEndpoint, isProvider, usePropagateSamlAP, token);
 					}
 <%}%>
 				}
 <%
 }
-				if(hasCXFUsernameTokenConsumer){
-%>
-				if(!isProvider&&token!=null&&token.length>=3&&"UsernameToken".equals(token[0])){
-					addUsernameToken(cxfEndpoint, null, false, token[1], token[2]);
-				}
-<%
-				}
-				if(hasCXFHTTPAuthConsumer){
-%>
-					if(!isProvider&&token!=null &&
-							(org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])
-									||org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_DIGEST.equals(token[0]))){
-						addHttpAuth(cxfEndpoint, isProvider, token);
-					}
-<%
-				}
 %>
 
 				return cxfEndpoint;
 			}
 <%
-			if(hasCXFHTTPAuthConsumer || hasCXFHTTPAuthProvider){
+			if (hasCXFHTTPAuthConsumer) {
 %>
-			private void addHttpAuth(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint, boolean isProvider, final String... userInfo){
-<%
-				if(hasCXFHTTPAuthConsumer){
-%>
-					if(!isProvider){
-						Map <String, Object> myProperties = new HashMap<String, Object> ();
-						org.apache.cxf.configuration.security.AuthorizationPolicy authorizationPolicy = new org.apache.cxf.configuration.security.AuthorizationPolicy();
-						authorizationPolicy.setUserName(userInfo[1]);
-						authorizationPolicy.setPassword(userInfo[2]);
-						authorizationPolicy.setAuthorizationType(userInfo[0]);
-						myProperties.put(org.apache.cxf.configuration.security.AuthorizationPolicy.class.getName(), authorizationPolicy);
-						cxfEndpoint.setProperties(myProperties);
-					}
-<%
-				}
-				if(hasCXFHTTPAuthProvider){
-%>
-					if(isProvider){
-						org.apache.cxf.interceptor.security.JAASLoginInterceptor jaasLoginInterceptor = new org.apache.cxf.interceptor.security.JAASLoginInterceptor();
-						jaasLoginInterceptor.setContextName("karaf");
-						cxfEndpoint.getInInterceptors().add(jaasLoginInterceptor);
-					}
-<%
-				}
-%>
+			private void addHttpAuthConsumer(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint, String type, String username, String password) {
+				org.apache.cxf.configuration.security.AuthorizationPolicy authorizationPolicy = new org.apache.cxf.configuration.security.AuthorizationPolicy();
+				authorizationPolicy.setAuthorizationType(type);
+				authorizationPolicy.setUserName(username);
+				authorizationPolicy.setPassword(password);
+				cxfEndpoint.setProperties(java.util.Collections.<String, Object>singletonMap(org.apache.cxf.configuration.security.AuthorizationPolicy.class.getName(), authorizationPolicy));
 			}
 <%
 			}
-			if(hasCXFUsernameTokenConsumer || hasCXFUsernameTokenProvider){
+			if (hasCXFHTTPAuthProvider) {
 %>
-			private void addUsernameToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
-					org.apache.cxf.Bus bus, boolean isProvider, final String... userInfo){
-<%if(hasCXFUsernameTokenProvider){%>
-				if(isProvider){
-					Map<String, Object> props = new HashMap<String, Object>();
-					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION, org.apache.wss4j.dom.handler.WSHandlerConstants.USERNAME_TOKEN);
-
-					org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor wss4jInInterceptor = new org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor();
-					wss4jInInterceptor.setProperties(props);
-					cxfEndpoint.getInInterceptors().add(wss4jInInterceptor);
-
-					org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
-					validator.setContextName("karaf");
-					Map<String,Object> map = new HashMap<String, Object>();
-					map.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator);
-					cxfEndpoint.setProperties(map);
-
-					org.apache.neethi.PolicyReference policyReference = new org.apache.neethi.PolicyReference();
-					policyReference.setURI("org.talend.esb.job.token.policy");
-					org.apache.neethi.Policy policy = new org.apache.neethi.Policy();
-					policy.addPolicyComponent(policyReference);
-
-					org.apache.cxf.ws.policy.WSPolicyFeature wsPolicyFeature = new org.apache.cxf.ws.policy.WSPolicyFeature();
-					wsPolicyFeature.getPolicies().add(policy);
-					bus.getFeatures().add(wsPolicyFeature);
-				}
+			private void addHttpAuthProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
+				org.apache.cxf.interceptor.security.JAASLoginInterceptor jaasLoginInterceptor = new org.apache.cxf.interceptor.security.JAASLoginInterceptor();
+				jaasLoginInterceptor.setContextName("karaf");
+				cxfEndpoint.getInInterceptors().add(jaasLoginInterceptor);
+			}
 <%
-}
-if(hasCXFUsernameTokenConsumer){
+			}
+
+			if (hasCXFUsernameTokenProvider) {
 %>
-				if(!isProvider){
+			private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
+				org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
+				validator.setContextName("karaf");
+				cxfEndpoint.setProperties(java.util.Collections.<String, Object>singletonMap(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator));
+				cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policyProvider.getUsernamePolicy(cxfEndpoint.getBus())));
+			}
+<%
+			}
+			if (hasCXFUsernameTokenConsumer) {
+%>
+			private void addUsernameTokenConsumer(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
+					String username, String password) {
+				if (null != policyProvider) {
+					Map<String, Object> props = new HashMap<String, Object>();
+					props.put(org.apache.cxf.rt.security.SecurityConstants.USERNAME, username);
+					props.put(org.apache.cxf.rt.security.SecurityConstants.PASSWORD, password);
+					cxfEndpoint.setProperties(props);
+					cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policyProvider.getUsernamePolicy(cxfEndpoint.getBus())));
+				} else {
 					Map<String, Object> props = new HashMap<String, Object>();
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.ACTION, org.apache.wss4j.dom.handler.WSHandlerConstants.USERNAME_TOKEN);
-					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.USER, userInfo[0]);
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PASSWORD_TYPE, org.apache.wss4j.common.WSS4JConstants.PW_TEXT);
+					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.USER, username);
 					props.put(org.apache.wss4j.dom.handler.WSHandlerConstants.PW_CALLBACK_REF,
-					    new org.talend.esb.security.saml.WSPasswordCallbackHandler(userInfo[0], userInfo[1]));
+						new org.talend.esb.security.saml.WSPasswordCallbackHandler(username, password));
 					cxfEndpoint.getOutInterceptors().add(new org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor(props));
 				}
-<%}%>
 			}
-<%
-			}
-			}
+<%			}
+		}
 if(hasCXFSamlTokenConsumer || hasCXFRegistryConsumer){
 %>
 
@@ -416,12 +389,13 @@ private final static org.apache.camel.component.cxf.common.header.CxfHeaderFilte
 }
 if(hasCXFRegistryProvider || hasCXFRegistryConsumer){
 %>
-private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint, org.apache.cxf.Bus bus,
+private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 		boolean isProvider, boolean usePropagateSamlAP, final String... token) {
 <%if(hasCXFRegistryConsumer){
 %>
 
 	if(!isProvider){
+		final org.apache.cxf.Bus bus = cxfEndpoint.getBus();
 		if(usePropagateSamlAP && (token[4] == null)){
 			usePropagateSamlAP = false ;
 		}
@@ -523,8 +497,6 @@ if(hasCXFRegistryProvider){
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, jaasUTValidator);
 		endpointProps.put("use.service.registry", "true");
 		cxfEndpoint.setProperties(endpointProps);
-
-
 	}
 <%}%>
 }
@@ -551,54 +523,23 @@ public void setAuthorizationInterceptor(org.apache.cxf.interceptor.Interceptor<?
 <%
 }
 
-if(hasCXFComponent && (hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer
+if(hasCXFComponent && (hasCXFUsernameTokenProvider || hasCXFUsernameTokenConsumer || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer
 	||hasCXFRegistryProvider || hasCXFRegistryConsumer)){
 %>
 
+private org.talend.esb.security.policy.PolicyProvider policyProvider;
 
-private Map<String, String> policies;
-
-public void setPolicies(Map<String, String> policies){
-	this.policies = policies;
-}
-
-private org.apache.neethi.Policy loadPolicy(String location, org.apache.cxf.Bus bus) {
-	java.io.InputStream is = null;
-	try {
-		is = new java.io.FileInputStream(location);
-		return bus.getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(is);
-	} catch (Exception e) {
-		throw new RuntimeException("Cannot load policy", e);
-	} finally {
-		if (null != is) {
-			try {
-				is.close();
-			} catch (java.io.IOException e) {
-				// just ignore
-			}
-		}
-	}
-}
-public void registerPolicies(org.apache.cxf.Bus bus) {
-	if(policies != null){
-		org.apache.neethi.PolicyRegistry policyRegistry =
-				bus.getExtension(org.apache.cxf.ws.policy.PolicyEngine.class).getRegistry();
-		policyRegistry.register("org.talend.esb.job.token.policy",
-				loadPolicy(policies.get("policy.username"), bus));
-		policyRegistry.register("org.talend.esb.job.saml.policy",
-				loadPolicy(policies.get("policy.saml"), bus));
-
-		policyRegistry.register("org.talend.esb.job.saml.authz.policy",
-				loadPolicy(policies.get("policy.saml.authz"), bus));
-	}
+public void setPolicyProvider(org.talend.esb.security.policy.PolicyProvider policyProvider) {
+	this.policyProvider = policyProvider;
 }
 
 <%
 if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider){
 %>
 
-private void addSAMLToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint, org.apache.cxf.Bus bus,
+private void addSAMLToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 		boolean isProvider, boolean useAuthorization, boolean usePropagateSamlAP, String... token) {
+		final org.apache.cxf.Bus bus = cxfEndpoint.getBus();
 <%
 if(hasCXFSamlTokenConsumer){
 %>
@@ -641,22 +582,6 @@ if(hasCXFSamlTokenConsumer){
 		}
 		// set the cxfEndpoint Properties
 		cxfEndpoint.setProperties(clientProps);
-
-		// add policy
-		org.apache.neethi.PolicyReference policyReference = new org.apache.neethi.PolicyReference();
-		if(useAuthorization){
-			policyReference.setURI("org.talend.esb.job.saml.authz.policy");
-		}else{
-			policyReference.setURI("org.talend.esb.job.saml.policy");
-		}
-		org.apache.neethi.Policy policy = new org.apache.neethi.Policy();
-		policy.addPolicyComponent(policyReference);
-
-		org.apache.cxf.ws.policy.WSPolicyFeature wsPolicyFeature = new org.apache.cxf.ws.policy.WSPolicyFeature();
-		wsPolicyFeature.getPolicies().add(policy);
-		cxfEndpoint.getFeatures().add(wsPolicyFeature);
-		// register bus with policy
-		registerPolicies(bus);
 	}
 <%
 }
@@ -669,31 +594,23 @@ if (isProvider) {
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
 		endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, securityProps.get("security.signature.password")));
-		endpointProps.put("use.service.registry", "false");
 		cxfEndpoint.setProperties(endpointProps);
-		// add policy
-		org.apache.neethi.PolicyReference policyReference = new org.apache.neethi.PolicyReference();
-		if(!useAuthorization){
-			policyReference.setURI("org.talend.esb.job.saml.policy");
-		}else{
-			policyReference.setURI("org.talend.esb.job.saml.authz.policy");
-		}
-		org.apache.neethi.Policy policy = new org.apache.neethi.Policy();
-		policy.addPolicyComponent(policyReference);
-
-		org.apache.cxf.ws.policy.WSPolicyFeature wsPolicyFeature = new org.apache.cxf.ws.policy.WSPolicyFeature();
-		wsPolicyFeature.getPolicies().add(policy);
-		cxfEndpoint.getFeatures().add(wsPolicyFeature);
-		// register policy on bus
-		registerPolicies(bus);
 }
+
 <%
-}//end if(hasCXFSamlTokenProvider){
+}//end if(hasCXFSamlTokenProvider)
 %>
+		// add policy
+		final org.apache.neethi.Policy policy;
+		if (useAuthorization) {
+			policy = policyProvider.getSAMLAuthzPolicy(bus);
+		} else {
+			policy = policyProvider.getSAMLPolicy(bus);
+		}
+		cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
 }<%
-}//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider){
-}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer
-//||hasCXFRegistryProvider || hasCXFRegistryConsumer){
+}//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
+}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
 			/**
 			* please initial uri map
