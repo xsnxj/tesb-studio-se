@@ -505,9 +505,9 @@ if(hasCXFRegistryProvider){
 
 if (hasCXFSamlTokenProvider || hasCXFRegistryProvider) {
 %>
-private Map<String, String> securityProps;
+private Map<String, Object> securityProps;
 
-public void setSecurityProps(Map<String, String> securityProps) {
+public void setSecurityProps(Map<String, Object> securityProps) {
 	this.securityProps = securityProps;
 }
 <%
@@ -589,7 +589,7 @@ if(hasCXFSamlTokenProvider){
 %>
 if (isProvider) {
 		// set endpoint properties
-		final String userName = securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
 		final Map<String, Object> endpointProps = new HashMap<String, Object>();
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
