@@ -362,29 +362,7 @@ public void setClientProperties(Map<String, String> clientProperties) {
 
 if(hasCXFComponentConsumer){
 %>
-private final static org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy consumerSoapHeaderFilter = new org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy(){
-	public boolean applyFilterToCamelHeaders(String headerName,
-			Object headerValue, org.apache.camel.Exchange exchange) {
-		//filter propagated cxf header
-		if(org.apache.cxf.headers.Header.HEADER_LIST.equals(headerName)){
-			return true;
-		}
-		//remove correlationID header, if it's null or empty
-		if("CorrelationID".equals(headerName)
-				&& (headerValue == null || "".equals(headerValue.toString()))){
-			return true;
-		}
-		return super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
-	}
-
-	public boolean applyFilterToExternalHeaders(String headerName,
-			Object headerValue, org.apache.camel.Exchange exchange) {
-		if(org.apache.cxf.headers.Header.HEADER_LIST.equals(headerName)){
-			return true;
-		}
-		return super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
-	}
-};
+private final static org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy consumerSoapHeaderFilter = new org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy();
 <%
 }
 if(hasCXFRegistryProvider || hasCXFRegistryConsumer){

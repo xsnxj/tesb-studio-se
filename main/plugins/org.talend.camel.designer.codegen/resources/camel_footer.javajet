@@ -104,6 +104,7 @@
 				}
 				if(hasCXFConsumer){
 %>
+                    consumerSoapHeaderFilter.setRelayHeaders(false);
 					bind("CXF_PAYLOAD_HEADER_FILTER", consumerSoapHeaderFilter);
 <%
 				}
