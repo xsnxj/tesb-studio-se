@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.talend.camel.model,
- org.talend.core.repository
+ org.talend.core.repository,
+ org.talend.camel.designer
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.talend.designer.camel.resource.core.model,

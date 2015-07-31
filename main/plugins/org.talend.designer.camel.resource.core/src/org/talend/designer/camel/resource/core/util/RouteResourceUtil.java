@@ -38,7 +38,14 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -66,6 +73,8 @@ import org.talend.repository.ProjectManager;
  */
 public class RouteResourceUtil {
 
+    public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
+
     private static final String COMMA_TAG = ",";
 
     private static final String SLASH_TAG = "|";
@@ -73,8 +82,6 @@ public class RouteResourceUtil {
     private static final String REPACE_SLASH_TAG = "\\|";
 
     public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
-
-    private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
 
     private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
 
@@ -138,30 +145,31 @@ public class RouteResourceUtil {
      * @return
      */
     public static IFile getSourceFile(RouteResourceItem item) {
-    	//the file may come from a reference project
-    	IFolder rrfolder = null;
-    	Resource eResource = item.eResource();
-    	if(eResource!=null){
-    		URI uri = eResource.getURI();
-    		if(uri != null && uri.isPlatformResource()){
-    			String platformString = uri.toPlatformString(true);
-    			IContainer parentContainer = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString)).getParent();
-    			if(parentContainer instanceof IFolder){
-    				rrfolder = (IFolder) parentContainer;
-    			}
-    		}
-    	}
-    	if(rrfolder == null){
-    		Project talendProject = ProjectManager.getInstance().getCurrentProject();
-    		String technicalLabel = talendProject.getTechnicalLabel();
+        // the file may come from a reference project
+        IFolder rrfolder = null;
+        Resource eResource = item.eResource();
+        if (eResource != null) {
+            URI uri = eResource.getURI();
+            if (uri != null && uri.isPlatformResource()) {
+                String platformString = uri.toPlatformString(true);
+                IContainer parentContainer = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
+                        .getParent();
+                if (parentContainer instanceof IFolder) {
+                    rrfolder = (IFolder) parentContainer;
+                }
+            }
+        }
+        if (rrfolder == null) {
+            Project talendProject = ProjectManager.getInstance().getCurrentProject();
+            String technicalLabel = talendProject.getTechnicalLabel();
 
-    		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
-    		String folderPath = item.getState().getPath();
-    		rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
-    		if (folderPath != null && !folderPath.isEmpty()) {
-    			rrfolder = rrfolder.getFolder(folderPath);
-    		}
-    	}
+            IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(technicalLabel);
+            String folderPath = item.getState().getPath();
+            rrfolder = project.getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
+            if (folderPath != null && !folderPath.isEmpty()) {
+                rrfolder = rrfolder.getFolder(folderPath);
+            }
+        }
         String itemName = item.getProperty().getLabel();
         String version = item.getProperty().getVersion();
 
@@ -262,11 +270,11 @@ public class RouteResourceUtil {
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
 
         Property property = routeItem.getProperty();
-        //Changed for TDI-24563
-//      Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        // Changed for TDI-24563
+        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
         Process process = getProcessFromItem(property.getItem());
-        if(process == null){
-        	return new HashSet<ResourceDependencyModel>();
+        if (process == null) {
+            return new HashSet<ResourceDependencyModel>();
         }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
@@ -282,30 +290,31 @@ public class RouteResourceUtil {
      */
     public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(IRepositoryViewObject node) {
         Property property = node.getProperty();
-        //Changed for TDI-24563
-//        Process process = new org.talend.designer.core.ui.editor.process.Process(property);
+        // Changed for TDI-24563
+        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
         Item item = property.getItem();
         Process process = getProcessFromItem(item);
-        if(process == null){
-        	return new HashSet<ResourceDependencyModel>();
+        if (process == null) {
+            return new HashSet<ResourceDependencyModel>();
         }
         process.loadXmlFile();
         List<? extends INode> nodes = process.getGraphicalNodes();
         return getBuiltInResourceDependencies(nodes);
     }
 
-    private static Process getProcessFromItem(Item item){
-    	IProcess process = null;
-    	IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
-                  .getService(IDesignerCoreService.class);
-    	if(designerCoreService != null){
-    		process = designerCoreService.getProcessFromItem(item);
-    	}
-    	if(process != null && process instanceof Process){
-    		return (Process) process;
-    	}
-    	return null;
+    private static Process getProcessFromItem(Item item) {
+        IProcess process = null;
+        IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault().getService(
+                IDesignerCoreService.class);
+        if (designerCoreService != null) {
+            process = designerCoreService.getProcessFromItem(item);
+        }
+        if (process != null && process instanceof Process) {
+            return (Process) process;
+        }
+        return null;
     }
+
     /**
      * @param nodes
      * 
@@ -394,12 +403,12 @@ public class RouteResourceUtil {
         } catch (PersistenceException e) {
             e.printStackTrace();
         }
-        if(rvo != null){
-	        Item item = rvo.getProperty().getItem();
-	        ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
-	        resourceDependencyModel.setSelectedVersion(version);
-	        resourceDependencyModel.setBuiltIn(true);
-	        return resourceDependencyModel;
+        if (rvo != null) {
+            Item item = rvo.getProperty().getItem();
+            ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
+            resourceDependencyModel.setSelectedVersion(version);
+            resourceDependencyModel.setBuiltIn(true);
+            return resourceDependencyModel;
         }
         return null;
     }
@@ -504,6 +513,30 @@ public class RouteResourceUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Find open editor in active workbench window
+     * 
+     * @param selectedRouteItem
+     * @return
+     */
+    public static IEditorPart findOpenedEditor(Item selectedRouteItem) {
+        if (selectedRouteItem instanceof CamelProcessItem) {
+            IWorkbenchWindow workBench = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (workBench != null) {
+                IWorkbenchPage page = workBench.getActivePage();
+                try {
+                    CamelProcessEditorInput editorInput = new CamelProcessEditorInput((CamelProcessItem) selectedRouteItem, true,
+                            true);
+
+                    return page.findEditor((IEditorInput) editorInput);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 
 }
