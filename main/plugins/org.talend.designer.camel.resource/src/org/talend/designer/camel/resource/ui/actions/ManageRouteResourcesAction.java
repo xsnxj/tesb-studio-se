@@ -14,8 +14,13 @@ package org.talend.designer.camel.resource.ui.actions;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
+import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
@@ -83,14 +88,23 @@ public class ManageRouteResourcesAction extends AContextualAction {
         RelationshipItemBuilder.getInstance().addOrUpdateItem(selectedRouteItem);
 
         // TESB-15201: Find and update additional properties in open editor
-        CamelMultiPageTalendEditor editor = (CamelMultiPageTalendEditor) RouteResourceUtil.findOpenedEditor(selectedRouteItem);
+        IWorkbenchWindow workBench = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (workBench != null) {
+            IWorkbenchPage page = workBench.getActivePage();
+            try {
+                CamelProcessEditorInput editorInput = new CamelProcessEditorInput((CamelProcessItem) selectedRouteItem, true,
+                        true);
 
-        if (editor != null && editor.getProcess().getAdditionalProperties() != null) {
-            String resourcesProp = selectedRouteItem.getProperty().getAdditionalProperties()
-                    .get(RouteResourceUtil.ROUTE_RESOURCES_PROP).toString();
-            editor.getProcess().getAdditionalProperties().put(RouteResourceUtil.ROUTE_RESOURCES_PROP, resourcesProp);
+                CamelMultiPageTalendEditor editor = (CamelMultiPageTalendEditor) page.findEditor(editorInput);
+                if (editor != null && editor.getProcess().getAdditionalProperties() != null) {
+                    String resourcesProp = selectedRouteItem.getProperty().getAdditionalProperties()
+                            .get(RouteResourceUtil.ROUTE_RESOURCES_PROP).toString();
+                    editor.getProcess().getAdditionalProperties().put(RouteResourceUtil.ROUTE_RESOURCES_PROP, resourcesProp);
+                }
+            } catch (PersistenceException e) {
+                e.printStackTrace();
+            }
         }
-
         /*
          * if it's locked, then release this lock
          */

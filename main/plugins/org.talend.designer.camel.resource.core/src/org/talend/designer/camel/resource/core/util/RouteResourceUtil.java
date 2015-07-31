@@ -38,14 +38,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -513,30 +506,6 @@ public class RouteResourceUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Find open editor in active workbench window
-     * 
-     * @param selectedRouteItem
-     * @return
-     */
-    public static IEditorPart findOpenedEditor(Item selectedRouteItem) {
-        if (selectedRouteItem instanceof CamelProcessItem) {
-            IWorkbenchWindow workBench = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            if (workBench != null) {
-                IWorkbenchPage page = workBench.getActivePage();
-                try {
-                    CamelProcessEditorInput editorInput = new CamelProcessEditorInput((CamelProcessItem) selectedRouteItem, true,
-                            true);
-
-                    return page.findEditor((IEditorInput) editorInput);
-                } catch (PersistenceException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
     }
 
 }
