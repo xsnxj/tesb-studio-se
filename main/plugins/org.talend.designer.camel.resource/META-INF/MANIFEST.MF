@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.jface.text,
  org.talend.designer.camel.resource.core,
- org.talend.repository.items.importexport
+ org.talend.repository.items.importexport,
+ org.talend.core.ui
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.io
 Bundle-Vendor: .Talend SA.

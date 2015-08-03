@@ -74,9 +74,9 @@ public class RouteResourceUtil {
 
     public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
 
-    private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
-
     private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
+
+    public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
 
     /**
      * Copy route resource
