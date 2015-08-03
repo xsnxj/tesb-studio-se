@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
 import org.talend.designer.camel.dependencies.core.Messages;
@@ -23,7 +24,7 @@ public class DependenciesCoreUtil {
 	private static final String BUNDLE_CLASSPATH_ID = ID + ".bundleClasspath"; //$NON-NLS-1$
 	private static final String EXPORT_PACKAGE_ID = ID + ".exportPackage"; //$NON-NLS-1$
 
-	public static void saveToMap(EMap map,
+	public static void saveToMap(Map map,
 			Collection<BundleClasspath> bundleClasspaths,
 			Collection<ImportPackage> importPackages,
 			Collection<RequireBundle> requiredBundles,

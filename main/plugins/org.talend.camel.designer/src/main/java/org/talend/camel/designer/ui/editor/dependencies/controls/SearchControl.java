@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.editor.controls;
+package org.talend.camel.designer.ui.editor.dependencies.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.talend.camel.designer.ui.editor.dependencies.controls.ImageControl;
 
 public class SearchControl extends Composite implements PaintListener {
 

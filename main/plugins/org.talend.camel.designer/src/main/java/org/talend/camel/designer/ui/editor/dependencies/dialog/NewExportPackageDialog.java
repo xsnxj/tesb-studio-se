@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.dialog;
+package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
 import java.util.List;
 
@@ -16,11 +16,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.ui.editor.dependencies.Messages;
 import org.talend.designer.camel.dependencies.core.model.AbstractDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
-import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
-import org.talend.designer.camel.dependencies.ui.Messages;
-import org.talend.designer.camel.dependencies.ui.UIActivator;
 
 /**
  * Dialog for set export package properties.
@@ -176,17 +175,17 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 			}
 			AbstractDependencyItem e = (AbstractDependencyItem) o;
 			if (name.equals(e.getName())) {
-				return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+				return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 						Messages.NewExportPackageDialog_nameAlreadyExist);
 			}
 		}
 		
 		if(name == null || name.trim().equals("")){ //$NON-NLS-1$
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID, Messages.NewExportPackageDialog_nameNullError);
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID, Messages.NewExportPackageDialog_nameNullError);
 		}
 		
 		if(!name.matches(NAME_PATTERN)) {
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID, Messages.NewOrEditDependencyDialog_nameInvalidMsg);
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID, Messages.NewOrEditDependencyDialog_nameInvalidMsg);
 		}
 		return Status.OK_STATUS;
 	}

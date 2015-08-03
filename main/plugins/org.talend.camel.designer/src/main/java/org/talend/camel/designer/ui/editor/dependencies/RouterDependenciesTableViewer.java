@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.editor;
+package org.talend.camel.designer.ui.editor.dependencies;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -18,10 +18,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
-import org.talend.designer.camel.dependencies.ui.UIActivator;
 
 public class RouterDependenciesTableViewer extends TableViewer implements
 		Listener {
@@ -192,18 +192,18 @@ public class RouterDependenciesTableViewer extends TableViewer implements
 				switch (((IDependencyItem) element).getType()) {
 				case IDependencyItem.IMPORT_PACKAGE:
 					if (((ImportPackage) element).isOptional()) {
-						return UIActivator.getImage(UIActivator.IMPORT_PACKAGE_OVERLAY_ICON);
+						return CamelDesignerPlugin.getImage(CamelDesignerPlugin.IMPORT_PACKAGE_OVERLAY_ICON);
 					} else
-						return UIActivator.getImage(UIActivator.IMPORT_PKG_ICON);
+						return CamelDesignerPlugin.getImage(CamelDesignerPlugin.IMPORT_PKG_ICON);
 				case IDependencyItem.REQUIRE_BUNDLE:
 					if (((RequireBundle) element).isOptional()) {
-						return UIActivator.getImage(UIActivator.REQUIRE_BUNDLE_OVERLAY_ICON);
+						return CamelDesignerPlugin.getImage(CamelDesignerPlugin.REQUIRE_BUNDLE_OVERLAY_ICON);
 					} else
-						return UIActivator.getImage(UIActivator.REQUIRE_BD_ICON);
+						return CamelDesignerPlugin.getImage(CamelDesignerPlugin.REQUIRE_BD_ICON);
 				case IDependencyItem.CLASS_PATH:
-					return UIActivator.getImage(UIActivator.BUNDLE_CP_ICON);
+					return CamelDesignerPlugin.getImage(CamelDesignerPlugin.BUNDLE_CP_ICON);
 				case IDependencyItem.EXPORT_PACKAGE:
-					return UIActivator.getImage(UIActivator.IMPORT_PKG_ICON);
+					return CamelDesignerPlugin.getImage(CamelDesignerPlugin.IMPORT_PKG_ICON);
 				default:
 					break;
 				}

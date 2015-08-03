@@ -1,13 +1,10 @@
-package org.talend.designer.camel.dependencies.ui;
+package org.talend.camel.designer.ui.editor.dependencies;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.talend.designer.camel.dependencies.ui.messages"; //$NON-NLS-1$
-	public static String EditDependenciesContextualAction_1;
+	private static final String BUNDLE_NAME = "org.talend.camel.designer.ui.editor.dependencies.messages"; //$NON-NLS-1$
 	public static String EditDependenciesContextualAction_ActionName;
-	public static String EditDependenciesContextualAction_readonlyOpenedMsg;
-	public static String EditDependenciesContextualAction_readonlyOpenedTitle;
 	public static String NewDependencyItemDialog_addImportPackage;
 	public static String NewDependencyItemDialog_addRequireBundle;
 	public static String NewDependencyItemDialog_addRequireBundleMsg;

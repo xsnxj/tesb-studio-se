@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.dialog;
+package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
 import java.util.List;
 
@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.ui.editor.dependencies.Messages;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
-import org.talend.designer.camel.dependencies.ui.Messages;
-import org.talend.designer.camel.dependencies.ui.UIActivator;
 
 /**
  * Dialog for create/edit bundle/package dependency.
@@ -313,12 +313,12 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			}
 			OsgiDependencies<?> e = (OsgiDependencies<?>) o;
 			if (name.equals(e.getName())) {
-				return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+				return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 						Messages.NewDependencyItemDialog_existCheckMessage);
 			}
 		}
 		if (!name.matches(NAME_PATTERN)) {
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 					Messages.NewOrEditDependencyDialog_nameInvalidMsg);
 		}
 		return Status.OK_STATUS;

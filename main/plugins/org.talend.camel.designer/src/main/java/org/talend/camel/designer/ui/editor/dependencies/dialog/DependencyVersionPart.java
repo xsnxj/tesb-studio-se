@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.camel.dependencies.ui.dialog;
+package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Version;
+import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.ui.editor.dependencies.Messages;
 import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
-import org.talend.designer.camel.dependencies.ui.Messages;
-import org.talend.designer.camel.dependencies.ui.UIActivator;
 
 /**
  * Use to create UI part to set/get dependency version.
@@ -208,7 +208,7 @@ public class DependencyVersionPart {
 		final String errorMessage = VersionValidateUtil.validateVersion(text);
 		if (errorMessage != null) {
 //			String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 					IStatus.ERROR, errorMessage, null);
 		}
 
@@ -235,7 +235,7 @@ public class DependencyVersionPart {
 		try {
 			v1 = new Version(getMinVersion());
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 					IStatus.ERROR, errorMessage, null);
 		}
 		if (!fRangeAllowed) // version created fine
@@ -244,14 +244,14 @@ public class DependencyVersionPart {
 		try {
 			v2 = new Version(getMaxVersion());
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID,
+			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 					IStatus.ERROR, errorMessage, null);
 		}
 		if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
 			fIsRanged = v1.compareTo(v2) != 0;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, UIActivator.PLUGIN_ID, IStatus.ERROR,
+		return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID, IStatus.ERROR,
 				Messages.DependencyVersionDialog_versionRangeError, null);
 	}
 

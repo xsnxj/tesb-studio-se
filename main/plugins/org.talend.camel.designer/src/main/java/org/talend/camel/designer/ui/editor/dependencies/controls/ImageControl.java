@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.editor.controls;
+package org.talend.camel.designer.ui.editor.dependencies.controls;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;

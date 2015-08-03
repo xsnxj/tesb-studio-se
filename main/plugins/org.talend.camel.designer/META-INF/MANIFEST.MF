@@ -6,7 +6,6 @@ Bundle-Version: 6.1.0.qualifier
 Bundle-Activator: org.talend.camel.designer.CamelDesignerPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.apache.commons.collections,
- org.apache.commons.lang,
  org.talend.commons.ui,
  org.talend.camel.model,
  org.talend.core,
@@ -19,9 +18,7 @@ Require-Bundle: org.apache.commons.collections,
  org.talend.designer.core,
  org.eclipse.debug.ui,
  org.talend.librariesmanager,
- org.eclipse.gef,
  org.talend.designer.codegen,
- org.talend.libraries.apache,
  org.talend.designer.camel.resource.core,
  org.talend.resources,
  org.talend.designer.publish.core,

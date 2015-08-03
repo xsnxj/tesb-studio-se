@@ -17,22 +17,12 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.core.ui.projectsetting.ProjectSettingManager;
-import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
  */
 public class CamelProcessEditorInput extends JobEditorInput {
 
-    /**
-     * DOC guanglong.du CamelProcessEditorInput constructor comment.
-     * 
-     * @param item
-     * @param load
-     * @param lastVersion
-     * @param readonly
-     * @throws PersistenceException
-     */
     public CamelProcessEditorInput(CamelProcessItem item, boolean load, Boolean lastVersion, Boolean readonly)
             throws PersistenceException {
         super(item, load, lastVersion, readonly);
@@ -46,36 +36,14 @@ public class CamelProcessEditorInput extends JobEditorInput {
         this(processItem, load, lastVersion, null);
     }
 
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.repository.editor.JobEditorInput#createProcess()
-     */
     @Override
     protected Process createProcess() {
         return new RouteProcess(getItem().getProperty());
     }
 
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.repository.editor.JobEditorInput#saveProcessBefore()
-     */
     @Override
     protected void saveProcessBefore() {
-        ProjectSettingManager.defaultUseProjectSetting(getLoadedProcess());
+        ProjectSettingManager.defaultUseProjectSetting((Process) getLoadedProcess());
     }
 
-    @Override
-    public Process getLoadedProcess() {
-        return (Process) loadedProcess;
-    }
-
-    @Override
-    public Object getAdapter(Class adapter) {
-        if (adapter == RepositoryNode.class) {
-            return getRepositoryNode();
-        }
-        return super.getAdapter(adapter);
-    }
 }

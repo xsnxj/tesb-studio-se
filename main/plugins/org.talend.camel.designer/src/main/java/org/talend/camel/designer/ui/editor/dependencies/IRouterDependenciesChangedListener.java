@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.editor;
+package org.talend.camel.designer.ui.editor.dependencies;
 
 public interface IRouterDependenciesChangedListener {
 

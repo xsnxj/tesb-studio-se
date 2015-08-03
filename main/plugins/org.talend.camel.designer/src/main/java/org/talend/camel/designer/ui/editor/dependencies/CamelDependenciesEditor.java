@@ -1,13 +1,16 @@
-package org.talend.designer.camel.dependencies.ui.editor;
+package org.talend.camel.designer.ui.editor.dependencies;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -28,7 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IFormColors;
@@ -36,11 +38,13 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
-import org.talend.camel.designer.ui.editor.CamelEditorUtil;
-import org.talend.commons.exception.LoginException;
-import org.talend.commons.exception.PersistenceException;
+import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
+import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
@@ -48,18 +52,14 @@ import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
 import org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService;
-import org.talend.designer.camel.dependencies.ui.Messages;
-import org.talend.designer.camel.dependencies.ui.UIActivator;
-import org.talend.designer.camel.dependencies.ui.dialog.RelativeEditorsSaveDialog;
-import org.talend.designer.camel.dependencies.ui.editor.controls.SearchControl;
-import org.talend.designer.camel.dependencies.ui.util.DependenciesUiUtil;
-import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 
-public class RouterDependenciesEditor extends EditorPart implements
-		IRouterDependenciesChangedListener {
+public class CamelDependenciesEditor extends EditorPart implements IRouterDependenciesChangedListener {
 
-	public static final String ID = "org.talend.designer.camel.dependencies.ui.dependenciesEditor"; //$NON-NLS-1$
+    private final CommandStack commandStack;
+    private final boolean isReadOnly;
+
+    private Label statusLabel;
 
 	//used to store all data
 	private List<ImportPackage> importPackages = new ArrayList<ImportPackage>();
@@ -73,28 +73,17 @@ public class RouterDependenciesEditor extends EditorPart implements
 	private RouterDependenciesTableViewer importPackageViewer;
 	private RouterDependenciesTableViewer exportPackageViewer;
 
-	// source
-	private ProcessItem processItem;
-
-	private boolean isReadOnly;
-
-	private static ProcessItem fromEditorInput(IEditorInput input) {
-        RepositoryNode repositoryNode = (RepositoryNode) input
-            .getAdapter(RepositoryNode.class);
-        return (ProcessItem) repositoryNode.getObject().getProperty().getItem();
-	}
-
+	public CamelDependenciesEditor(final AbstractMultiPageTalendEditor editor, boolean isReadOnly) {
+	    commandStack = editor.getTalendEditor().getCommandStack();
+	    this.isReadOnly = isReadOnly;
+    }
 	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setInput(input);
 		setSite(site);
-		setPartName(input.getName());
-		processItem = fromEditorInput(input);
-		isReadOnly = isReadOnly();
 	}
 
-	@Override
+    @Override
 	public void createPartControl(Composite parent) {
 		int columnCount = 1;
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
@@ -124,10 +113,10 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 		SearchControl searchComposite = new SearchControl(toolsPanel, SWT.NONE);
 		searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		searchComposite.setActiveImage(UIActivator
-				.getImage(UIActivator.HIGHLIGHT_REM_ICON));
-		searchComposite.setDeactiveImage(UIActivator
-				.getImage(UIActivator.GRAY_REM_ICON));
+		searchComposite.setActiveImage(CamelDesignerPlugin
+				.getImage(CamelDesignerPlugin.HIGHLIGHT_REM_ICON));
+		searchComposite.setDeactiveImage(CamelDesignerPlugin
+				.getImage(CamelDesignerPlugin.GRAY_REM_ICON));
 		Text filterText = searchComposite.getText();
 
 		Button hideBuiltIn = toolkit.createButton(toolsPanel,
@@ -135,10 +124,10 @@ public class RouterDependenciesEditor extends EditorPart implements
 		hideBuiltIn.setBackground(toolsPanel.getBackground());
 
 		Button refreshBtn = toolkit.createButton(toolsPanel, "", SWT.PUSH); //$NON-NLS-1$
-		refreshBtn.setImage(UIActivator.getImage(UIActivator.REFRESH_ICON));
+		refreshBtn.setImage(CamelDesignerPlugin.getImage(CamelDesignerPlugin.REFRESH_ICON));
 		refreshBtn
 				.setToolTipText(Messages.RouterDependenciesEditor_refreshDependenciesTooltip);
-		refreshBtn.setEnabled(!isReadOnly);
+		refreshBtn.setEnabled(!isReadOnly());
 
 		// create data tables
 		SashForm sashForm = new SashForm(composite, SWT.NONE);
@@ -181,7 +170,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		
 		statusLabel = toolkit.createLabel(statusComposite, ""); //$NON-NLS-1$
 		statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		if(isReadOnly){
+		if (isReadOnly()) {
 			statusLabel.setText(Messages.RouterDependenciesEditor_itemIsLockedByOther);
 		}
 		
@@ -241,7 +230,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 	}
 	
 	public void setStatus(String message){
-		if(isReadOnly){
+		if (isReadOnly()) {
 			return;
 		}
 		if(message == null){
@@ -253,49 +242,31 @@ public class RouterDependenciesEditor extends EditorPart implements
 
 	protected void refreshDependencies() {
 		try {
-			List<IEditorPart> dirtyList = new ArrayList<IEditorPart>();
-			
-			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(processItem);
-			if (processEditor != null && processEditor.isDirty()) {
-				dirtyList.add(processEditor);
-			}
-			if (isDirty()) {
-				dirtyList.add(this);
-			}
-			if (!dirtyList.isEmpty()) {
-				RelativeEditorsSaveDialog dialog = new RelativeEditorsSaveDialog(getSite().getShell(), dirtyList);
-				int open = dialog.open();
-				if( open != Dialog.OK){
-					return;
-				}
-			}
 			updateInput();
-			setDirty(false);
+//			setDirty(false);
 		} catch (Exception e) {
-			e.printStackTrace();
+            ExceptionHandler.process(e);
 		}
 	}
-	
+
+    private ProcessItem fromEditorInput() {
+        return (ProcessItem) ((CamelProcessEditorInput) getEditorInput()).getItem();
+    }
+
 	private void updateInput() {
 		UIJob job = new UIJob(getSite().getShell().getDisplay(),
 				Messages.RouterDependenciesEditor_refreshing) {
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				//check camel editor and update the input source every time
-				try {
-					updatePropertyFromProcessEditor(DependenciesUiUtil.getCorrespondingProcessEditor(processItem));
-				} catch (PartInitException e) {
-					e.printStackTrace();
-					return Status.CANCEL_STATUS;
-				}
-				
 				//clear all datas first
 				importPackages.clear();
 				requireBundles.clear();
 				bundleClasspaths.clear();
 				exportPackages.clear();
-				
+
+                ProcessItem processItem = fromEditorInput();
+
 				// re-calculate all datas
 				OsgiDependenciesService resolver = OsgiDependenciesService.fromProcessItem(processItem);
 				importPackages.addAll(resolver.getImportPackages());
@@ -335,7 +306,7 @@ public class RouterDependenciesEditor extends EditorPart implements
 		section.setText(title);
 		section.setLayout(new GridLayout(1, false));
 		RouterDependenciesPanel c = new RouterDependenciesPanel(section,
-				style, type, toolkit, isReadOnly);
+				style, type, toolkit, isReadOnly());
 		section.setClient(c);
 		toolkit.adapt(c);
 		c.addDependenciesChangedListener(this);
@@ -357,77 +328,49 @@ public class RouterDependenciesEditor extends EditorPart implements
 		return c.getTableViewer();
 	}
 
-	/*
-	 * if it's readonly, then nothing can be changed
-	 */
-	private boolean isReadOnly(){
-		return ((RouterDependenciesEditorInput)getEditorInput()).isReadOnly();
-	}
-	
-	@Override
+    @Override
 	public void dependencesChanged() {
-		setDirty(true);
+//		setDirty(true);
+		doSave(new NullProgressMonitor());
 	}
 
-	@Override
+    @Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			//check editor and update the input source before saving
-			IEditorPart processEditor = DependenciesUiUtil.getCorrespondingProcessEditor(processItem);
-			updatePropertyFromProcessEditor(processEditor);
-			
-			//save all datas
-			DependenciesCoreUtil.saveToMap(processItem.getProperty().getAdditionalProperties(),
-					(Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
-					(Collection<ImportPackage>) importPackageViewer.getInput(),
-					(Collection<RequireBundle>) requireBundleViewer.getInput(),
-					(Collection<ExportPackage>)exportPackageViewer.getInput());
-			
-			// save model
-			
-			//record process editor dirty signal first
-			boolean processEditorDirty = true;
-			if(processEditor !=null){
-				processEditorDirty = processEditor.isDirty();
-			}
-			
-			// save current editor
-			IProxyRepositoryFactory factory = ProxyRepositoryFactory
-					.getInstance();
-			factory.save(processItem);
-			setDirty(false);
-			
-			// save process editor if it was un-dirty
-			if(!processEditorDirty && processEditor!=null){
-				processEditor.doSave(monitor);
-			}
+            //record process editor dirty signal first
+		    commandStack.execute(new Command() {
+                @Override
+                public void execute() {
+                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
+                    saveToMap(process.getAdditionalProperties());
+                    // update ProcessItem for unsaved editor
+//                        saveToMap(process.getProperty().getAdditionalProperties().map());
+                }
+            });
+//            } else {
+                //check editor and update the input source before saving
+//                saveToMap(((CamelProcessEditorInput) getEditorInput()).getLoadedProcess().getAdditionalProperties());
+                // save model
+//                ProxyRepositoryFactory.getInstance().save(processItem);
+
+//            firePropertyChange(PROP_DIRTY);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    ExceptionHandler.process(e);
 		}
-
-	}
-	
-	/**
-	 * check the corresponding editor is opened or not
-	 * if it's opened, then reuse the property object with it
-	 * else no changes
-	 */
-	private void updatePropertyFromProcessEditor(IEditorPart processEditor) {
-	    processItem = fromEditorInput((processEditor != null) ? processEditor.getEditorInput() : getEditorInput());
 	}
 
-	private boolean isDirty = false;
-
-	private Label statusLabel;
+    private void saveToMap(Map additionalProperties) {
+        //save all datas
+        DependenciesCoreUtil.saveToMap(additionalProperties,
+                (Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
+                (Collection<ImportPackage>) importPackageViewer.getInput(),
+                (Collection<RequireBundle>) requireBundleViewer.getInput(),
+                (Collection<ExportPackage>)exportPackageViewer.getInput());
+    }
 
 	@Override
 	public boolean isDirty() {
-		return isDirty;
-	}
-
-	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-		firePropertyChange(PROP_DIRTY);
+		return false;
 	}
 
 	@Override
@@ -443,27 +386,9 @@ public class RouterDependenciesEditor extends EditorPart implements
 	public void setFocus() {
 		importPackageViewer.getTable().setFocus();
 	}
-	
-	/**
-	 * unlock if it's the latest opened editor,
-	 * else keep locked
-	 */
-	@Override
-	public void dispose() {
-		IEditorInput input = getEditorInput();
-		RepositoryNode repositoryNode = (RepositoryNode) input
-				.getAdapter(RepositoryNode.class);
-		boolean hasMoreEditorOpenedExcept = CamelEditorUtil.hasMoreEditorOpenedExcept(repositoryNode, input);
-		if(!hasMoreEditorOpenedExcept){
-			ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-			try {
-				factory.unlock(processItem);
-			} catch (PersistenceException e) {
-				e.printStackTrace();
-			} catch (LoginException e) {
-				e.printStackTrace();
-			}
-		}
-		super.dispose();
-	}
+
+    private boolean isReadOnly() {
+        return isReadOnly;
+    }
+
 }

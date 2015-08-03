@@ -1,4 +1,4 @@
-package org.talend.designer.camel.dependencies.ui.editor;
+package org.talend.camel.designer.ui.editor.dependencies;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,12 +23,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.talend.camel.designer.ui.editor.dependencies.dialog.NewExportPackageDialog;
+import org.talend.camel.designer.ui.editor.dependencies.dialog.NewOrEditDependencyDialog;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
-import org.talend.designer.camel.dependencies.ui.Messages;
-import org.talend.designer.camel.dependencies.ui.dialog.NewExportPackageDialog;
-import org.talend.designer.camel.dependencies.ui.dialog.NewOrEditDependencyDialog;
 
 /**
  * uneditable if readonly
@@ -65,34 +64,36 @@ public class RouterDependenciesPanel extends Composite implements
 		Table table = toolkit.createTable(this, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.H_SCROLL | style);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.addSelectionListener(new SelectionAdapter() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(e.detail == SWT.CHECK){
-					((IDependencyItem)e.item.getData()).setChecked(((TableItem)e.item).getChecked());
-					fireDependenciesChangedListener();
-				}
-			}
-		});
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.stateMask == SWT.NONE) {
-					if (remBtn != null && remBtn.isEnabled()
-							&& e.keyCode == SWT.DEL) {
-						removeItems();
-					} else if (e.keyCode == SWT.INSERT) {
-						addNewItem();
-					} else if (editBtn != null && editBtn.isEnabled()
-							&& e.keyCode == SWT.F2) {
-						editSelected();
-					}
-				}
-			}
-		});
-		if(isReadOnly){
-			table.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+        if (isReadOnly) {
+//          table.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+            table.setEnabled(false);
+        } else {
+    		table.addSelectionListener(new SelectionAdapter() {
+    			
+    			@Override
+    			public void widgetSelected(SelectionEvent e) {
+    				if(e.detail == SWT.CHECK){
+    					((IDependencyItem)e.item.getData()).setChecked(((TableItem)e.item).getChecked());
+    					fireDependenciesChangedListener();
+    				}
+    			}
+    		});
+    		table.addKeyListener(new KeyAdapter() {
+    			@Override
+    			public void keyPressed(KeyEvent e) {
+    				if (e.stateMask == SWT.NONE) {
+    					if (remBtn != null && remBtn.isEnabled()
+    							&& e.keyCode == SWT.DEL) {
+    						removeItems();
+    					} else if (e.keyCode == SWT.INSERT) {
+    						addNewItem();
+    					} else if (editBtn != null && editBtn.isEnabled()
+    							&& e.keyCode == SWT.F2) {
+    						editSelected();
+    					}
+    				}
+    			}
+    		});
 		}
 
 		tableViewer = new RouterDependenciesTableViewer(table);
