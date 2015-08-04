@@ -145,7 +145,6 @@
     <module>main/plugins/org.talend.camel.model</module>
     <module>main/plugins/org.talend.designer.camel.components.localprovider</module>
     <module>main/plugins/org.talend.designer.camel.dependencies.core</module>
-    <module>main/plugins/org.talend.designer.camel.dependencies.ui</module>
     <module>main/plugins/org.talend.designer.camel.resource</module>
     <module>main/plugins/org.talend.designer.camel.resource.core</module>
     <module>main/plugins/org.talend.designer.esb.components.router</module>
