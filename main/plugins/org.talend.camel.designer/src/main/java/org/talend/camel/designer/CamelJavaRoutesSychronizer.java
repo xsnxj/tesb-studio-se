@@ -166,6 +166,9 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
             FileOutputStream fos = null;
             try {
                 IFile file = getBeanFile(beanItem);
+                if (file == null) {
+                    return;
+                }
                 if (beanItem.getProperty().getModificationDate() != null) {
                     long modificationItemDate = beanItem.getProperty().getModificationDate().getTime();
                     long modificationFileDate = file.getModificationStamp();
