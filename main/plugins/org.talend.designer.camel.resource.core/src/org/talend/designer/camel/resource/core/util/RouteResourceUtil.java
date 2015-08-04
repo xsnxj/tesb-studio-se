@@ -87,6 +87,9 @@ public class RouteResourceUtil {
     public static void copyResources(FileItem item) throws CoreException {
 
         IFolder folder = getRouteResourceFolder();
+        if (folder == null) {
+            return;
+        }
         File resFolder = folder.getLocation().toFile();
         if (!resFolder.exists()) {
             resFolder.mkdirs();
@@ -114,6 +117,10 @@ public class RouteResourceUtil {
     public static void deleteResources(FileItem item) throws CoreException {
 
         IFolder folder = getRouteResourceFolder();
+        if (folder == null) {
+            return;
+        }
+
         File resFolder = folder.getLocation().toFile();
         if (!resFolder.exists()) {
             return;
@@ -492,6 +499,9 @@ public class RouteResourceUtil {
     public static void addRouteResourcesDesc(Set<ResourceDependencyModel> models) {
 
         File localFile = getResourceDescFile();
+        if (localFile == null) {
+            return;
+        }
         StringBuffer buffer = new StringBuffer();
         for (ResourceDependencyModel model : models) {
             buffer.append(model.getClassPathUrl()).append("\n");
