@@ -37,27 +37,28 @@
   <PARAMETERS>
 
     <PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="false" NUM_ROW="3">
-		<ITEMS DEFAULT="XPATH">
-			<ITEM NAME="NONE"       VALUE="none" />
-			<ITEM NAME="CONSTANT"   VALUE="constant" />
-			<ITEM NAME="EL"         VALUE="el" />
-			<ITEM NAME="GROOVY"     VALUE="groovy" />
-			<ITEM NAME="HEADER"     VALUE="header" />
-			<ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
-			<ITEM NAME="JOSQL" 		VALUE="sql" />
-			<ITEM NAME="JXPATH"     VALUE="jxpath" />
-			<ITEM NAME="MVEL"       VALUE="mvel" />
-			<ITEM NAME="OGNL"       VALUE="ognl" />
-			<ITEM NAME="PHP"        VALUE="php" />
-			<ITEM NAME="PROPERTY"   VALUE="property" />
-			<ITEM NAME="PYTHON"     VALUE="python" />
-			<ITEM NAME="RUBY"       VALUE="ruby" />
-			<ITEM NAME="SIMPLE"     VALUE="simple" />
-			<ITEM NAME="SPEL"       VALUE="spel" />
-			<ITEM NAME="SQL"        VALUE="sql" />			
-			<ITEM NAME="XPATH"      VALUE="xpath" />
-			<ITEM NAME="XQUERY"     VALUE="xquery" />
-		</ITEMS>
+        <ITEMS DEFAULT="CONSTANT">
+            <ITEM NAME="NONE"       VALUE="none" />
+            <ITEM NAME="CONSTANT"   VALUE="constant" />
+            <ITEM NAME="EL"         VALUE="el" />
+            <ITEM NAME="GROOVY"     VALUE="groovy" />
+            <ITEM NAME="HEADER"     VALUE="header" />
+            <ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
+            <ITEM NAME="JOSQL"      VALUE="sql" />
+            <ITEM NAME="JSONPATH"   VALUE="jsonpath" />
+            <ITEM NAME="JXPATH"     VALUE="jxpath" />
+            <ITEM NAME="MVEL"       VALUE="mvel" />
+            <ITEM NAME="OGNL"       VALUE="ognl" />
+            <ITEM NAME="PHP"        VALUE="php" />
+            <ITEM NAME="PROPERTY"   VALUE="property" />
+            <ITEM NAME="PYTHON"     VALUE="python" />
+            <ITEM NAME="RUBY"       VALUE="ruby" />
+            <ITEM NAME="SIMPLE"     VALUE="simple" />
+            <ITEM NAME="SPEL"       VALUE="spel" />
+            <ITEM NAME="SQL"        VALUE="sql" />
+            <ITEM NAME="XPATH"      VALUE="xpath" />
+            <ITEM NAME="XQUERY"     VALUE="xquery" />
+        </ITEMS>
 	</PARAMETER>
     
     <PARAMETER NAME="EXPRESSION" FIELD="TEXT"  NUM_ROW="5" REQUIRED="true">
@@ -82,13 +83,16 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <IMPORT MODULE_GROUP="camel-groovy" REQUIRED_IF=" LANGUAGES == 'GROOVY'" />
-
+            <IMPORT MODULE_GROUP="camel-groovy" REQUIRED_IF="LANGUAGES == 'GROOVY'" />
             <!-- camel-script -->
             <IMPORT NAME="camel-script"
                     MODULE="camel-script-${camel.version}.jar" MVN="${mvn-camel-script}"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-script-${camel.version}.jar"
-                    REQUIRED_IF=" LANGUAGES == 'JAVASCRIPT'" />
+                    REQUIRED_IF="LANGUAGES == 'JAVASCRIPT'" />
+            <IMPORT NAME="talend-camel-jsonpath"
+                    MODULE="camel-jsonpath-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jsonpath-alldep-${camel.version}/6.0.0"
+                    UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-jsonpath-alldep-${camel.version}.jar"
+                    REQUIRED_IF="LANGUAGES == 'JSONPATH'" />
 		</IMPORTS>
 	</CODEGENERATION>
 
