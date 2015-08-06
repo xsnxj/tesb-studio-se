@@ -1,9 +1,9 @@
 package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.dependencies.Messages;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
@@ -35,22 +34,16 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 
 	// name regular expression
 	/** The Constant NAME_PATTERN. */
-	protected static final String NAME_PATTERN = "[^\\s;=\"\\[\\]\\(\\),:|]+"; //$NON-NLS-1$
+	private static final Pattern NAME_PATTERN = Pattern.compile("[^\\s;=\"\\[\\]\\(\\),:|]+"); //$NON-NLS-1$
 
-	/** The type. */
-	private int type;
-	
-	/** The item. */
-	private OsgiDependencies<?> item;
-	
 	/** The input. */
-	private List<?> input;
+	private final Collection<? extends IDependencyItem> input;
 
-	/** The is new. */
-	private boolean isNew = false;
-	
 	/** The origin. */
-	private OsgiDependencies<?> origin;
+	private final OsgiDependencies origin;
+
+    /** The type. */
+    private final int type;
 
 	/** The name text. */
 	private Text fNameText;
@@ -61,7 +54,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	/** The version part. */
 	private DependencyVersionPart fVersionPart;
 
-	/**
+    private final OsgiDependencies item;
+
+    /**
 	 * Instantiates a new new or edit dependency dialog. 
 	 * Use for create a new dependency
 	 *
@@ -69,7 +64,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @param parentShell the parent shell
 	 * @param type the type
 	 */
-	public NewOrEditDependencyDialog(List<?> input, Shell parentShell, int type) {
+	public NewOrEditDependencyDialog(Collection<? extends IDependencyItem> input, Shell parentShell, int type) {
 		this(input, null, parentShell, type);
 	}
 
@@ -82,29 +77,29 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @param parentShell the parent shell
 	 * @param type the type
 	 */
-	public NewOrEditDependencyDialog(List<?> input,
-			OsgiDependencies<?> sourceItem, Shell parentShell, int type) {
+	public NewOrEditDependencyDialog(Collection<? extends IDependencyItem> input,
+			OsgiDependencies sourceItem, Shell parentShell, int type) {
 		super(parentShell);
 
 		this.input = input;
 		this.origin = sourceItem;
-		this.isNew = (origin == null);
 		this.type = type;
-		switch (type) {
-		case IDependencyItem.IMPORT_PACKAGE:
-			this.item = new ImportPackage((ImportPackage) sourceItem);
-			break;
-		case IDependencyItem.REQUIRE_BUNDLE:
-			this.item = new RequireBundle((RequireBundle) sourceItem);
-			break;
-		default:
-			break;
-		}
 
 		fVersionPart = new DependencyVersionPart(true);
-		if (!isNew) {
+		if (null != origin) {
 			fVersionPart.setVersion(origin.getVersionRange());
 		}
+        switch (type) {
+        case IDependencyItem.IMPORT_PACKAGE:
+            item = new ImportPackage();
+            break;
+        case IDependencyItem.REQUIRE_BUNDLE:
+            item = new RequireBundle();
+            break;
+        default:
+            item = null;
+            break;
+        }
 	}
 
 	/**
@@ -121,66 +116,40 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		if (isNew) {
-			switch (type) {
-			case IDependencyItem.IMPORT_PACKAGE:
-				getShell().setText(
-						Messages.NewDependencyItemDialog_addImportPackage);
-				setTitle(Messages.NewDependencyItemDialog_importPackage);
-				setMessage(Messages.NewDependencyItemDialog_importPackageMessage);
-				break;
-			case IDependencyItem.REQUIRE_BUNDLE:
-				getShell().setText(
-						Messages.NewDependencyItemDialog_addRequireBundle);
-				setTitle(Messages.NewDependencyItemDialog_requireBundle);
-				setMessage(Messages.NewDependencyItemDialog_addRequireBundleMsg);
-				break;
-
-			default:
-				break;
-			}
-		} else {
-			switch (type) {
-			case IDependencyItem.IMPORT_PACKAGE:
-				getShell()
-						.setText(
-								Messages.NewDependencyItemDialog_editImportPackageTitle);
-				setTitle(Messages.NewDependencyItemDialog_importPackage);
-				setMessage(Messages.NewDependencyItemDialog_editImportPackageMsg);
-				break;
-			case IDependencyItem.REQUIRE_BUNDLE:
-				getShell()
-						.setText(
-								Messages.NewDependencyItemDialog_editRequireBundleTitle);
-				setTitle(Messages.NewDependencyItemDialog_requireBundle);
-				setMessage(Messages.NewDependencyItemDialog_editRequireBundleMsg);
-				break;
-
-			default:
-				break;
-			}
+        boolean isNew = (origin == null);
+		switch (type) {
+		case IDependencyItem.IMPORT_PACKAGE:
+            setTitle(Messages.NewDependencyItemDialog_importPackage);
+			getShell().setText(isNew ? Messages.NewDependencyItemDialog_addImportPackage
+			    : Messages.NewDependencyItemDialog_editImportPackageTitle);
+			setMessage(isNew ? Messages.NewDependencyItemDialog_importPackageMessage
+			    : Messages.NewDependencyItemDialog_editImportPackageMsg);
+			break;
+		case IDependencyItem.REQUIRE_BUNDLE:
+            setTitle(Messages.NewDependencyItemDialog_requireBundle);
+			getShell().setText(isNew ? Messages.NewDependencyItemDialog_addRequireBundle
+			    : Messages.NewDependencyItemDialog_editRequireBundleTitle);
+			setMessage(isNew ? Messages.NewDependencyItemDialog_addRequireBundleMsg
+			    : Messages.NewDependencyItemDialog_editRequireBundleMsg);
+			break;
 		}
 
-		parent.setLayout(new GridLayout(1, false));
+        parent.setLayout(new GridLayout());
 
-		Composite c = new Composite(parent, SWT.NONE);
-		c.setLayout(new GridLayout(2, false));
-		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite c = new Composite(parent, SWT.NONE);
+        c.setLayout(new GridLayout(2, false));
+        c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(c, SWT.NONE).setText(Messages.NewDependencyItemDialog_name);
 		fNameText = new Text(c, SWT.BORDER);
-		GridData tGridData = new GridData(GridData.FILL_HORIZONTAL);
-		fNameText.setLayoutData(tGridData);
+		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Group propertiesGroup = new Group(parent, SWT.NONE);
+        propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		propertiesGroup.setText(Messages.NewOrEditDependencyDialog_properties);
 		propertiesGroup.setLayout(new GridLayout());
-		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOptionalBtn = new Button(propertiesGroup, SWT.CHECK);
 		fOptionalBtn.setText(Messages.NewDependencyItemDialog_optional);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fOptionalBtn.setLayoutData(gd);
 
 		fVersionPart.createVersionFields(parent, true, true);
 
@@ -193,10 +162,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * Preload fields.
 	 */
 	private void preloadFields() {
-
-		if (!isNew) {
-			fNameText.setText(item.getName() == null ? "" : item.getName()); //$NON-NLS-1$
-			fOptionalBtn.setSelection(item.isOptional());
+		if (null != origin) {
+			fNameText.setText(origin.getName() == null ? "" : origin.getName()); //$NON-NLS-1$
+			fOptionalBtn.setSelection(origin.isOptional());
 		}
 		fNameText.selectAll();
 		fNameText.setFocus();
@@ -231,18 +199,21 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @return true, if successful valid
 	 */
 	private boolean validate() {
-		IStatus status = validateName();
-		if (status.isOK()) {
-			status = fVersionPart.validateFullVersionRangeText();
+	    String errorMessage = validateName();
+		if (null == errorMessage) {
+		    IStatus status = fVersionPart.validateFullVersionRangeText();
+	        if (!status.isOK()) {
+	            errorMessage = status.getMessage();
+	        }
 		}
-		if (!status.isOK()) {
-			setErrorMessage(status.getMessage());
+		if (null != errorMessage) {
+			setErrorMessage(errorMessage);
 			return false;
 		}
-		item.setOptional(getOptional());
-		item.setName(getDependencyName());
-		item.setVersionRange(getVersion());
-		if (item.strictEqual(origin)) {
+        item.setName(getDependencyName());
+        item.setVersionRange(getVersion());
+        item.setOptional(getOptional());
+		if (getDependencyItem().strictEqual(origin)) {
 			setErrorMessage(null);
 			// nothing changes.
 			return false;
@@ -265,16 +236,15 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 *
 	 * @return the dependency item
 	 */
-	public OsgiDependencies<?> getDependencyItem() {
-		return item;
+	public OsgiDependencies getDependencyItem() {
+        return item;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
 	 */
 	protected Point getInitialSize() {
-		Point computeSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,
-				true);
+		Point computeSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		computeSize.x += 100;
 		return computeSize;
 	}
@@ -302,26 +272,20 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 *
 	 * @return the i status
 	 */
-	public IStatus validateName() {
+	public String validateName() {
 		String name = getDependencyName();
 		if (origin != null && name.equals(origin.getName())) {
-			return Status.OK_STATUS;
+			return null;
 		}
-		for (Object o : input) {
-			if (!(o instanceof OsgiDependencies<?>)) {
-				continue;
-			}
-			OsgiDependencies<?> e = (OsgiDependencies<?>) o;
-			if (name.equals(e.getName())) {
-				return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
-						Messages.NewDependencyItemDialog_existCheckMessage);
+		for (IDependencyItem o : input) {
+			if (name.equals(o.getName())) {
+				return Messages.NewDependencyItemDialog_existCheckMessage;
 			}
 		}
-		if (!name.matches(NAME_PATTERN)) {
-			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
-					Messages.NewOrEditDependencyDialog_nameInvalidMsg);
+		if (!NAME_PATTERN.matcher(name).matches()) {
+			return Messages.NewOrEditDependencyDialog_nameInvalidMsg;
 		}
-		return Status.OK_STATUS;
+		return null;
 	}
 
 	/**

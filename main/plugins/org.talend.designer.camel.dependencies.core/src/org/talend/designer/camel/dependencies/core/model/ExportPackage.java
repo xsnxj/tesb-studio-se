@@ -1,6 +1,6 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-import java.util.regex.Matcher;
+import org.osgi.framework.Version;
 
 public class ExportPackage extends AbstractDependencyItem {
 
@@ -40,6 +40,11 @@ public class ExportPackage extends AbstractDependencyItem {
 		this.version = normalizeVersion(version);
 	}
 
+    private static String normalizeVersion(String version) {
+        Version v = Version.parseVersion(version);
+        return v != Version.emptyVersion ? v.toString() : null;
+    }
+
 	public String getVersion() {
 		return version;
 	}
@@ -61,7 +66,6 @@ public class ExportPackage extends AbstractDependencyItem {
 		return EXPORT_PACKAGE;
 	}
 
-	@Override
 	public boolean strictEqual(Object obj) {
 		if (!equals(obj)) {
 			return false;
@@ -69,7 +73,7 @@ public class ExportPackage extends AbstractDependencyItem {
 		return isEquals(version, ((ExportPackage) obj).getVersion());
 	}
 
-	protected boolean isEquals(String a, String b) {
+	private static boolean isEquals(String a, String b) {
 		if (a == null) {
 			if (b == null) {
 				return true;
@@ -81,33 +85,8 @@ public class ExportPackage extends AbstractDependencyItem {
 		return a.equals(b);
 	}
 
-	/**
-	 * only care about the name, ignore others
-	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (obj.getClass() != getClass()) {
-			return false;
-		}
-		if (name == null) {
-			return false;
-		}
-		return name.equals(((ExportPackage) obj).getName());
-	}
-
-	@Override
-	public int hashCode() {
-		return name == null ? super.hashCode() : name.hashCode();
-	}
-
-	@Override
-	public String toManifestString() {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 
@@ -120,24 +99,4 @@ public class ExportPackage extends AbstractDependencyItem {
 		return sb.toString();
 	}
 
-	public static final int VERSION_INVALID = 4;
-
-	public int isValid() {
-		if (name == null || name.trim().equals("")) { //$NON-NLS-1$
-			return NAME_NULL;
-		}
-
-		if (!namePattern.matcher(name).matches()) {
-			return NAME_INVALID;
-		}
-
-		if (version != null && !version.trim().equals("")) { //$NON-NLS-1$
-			Matcher matcher = versionPattern.matcher(version);
-			if (!matcher.matches()) {
-				return VERSION_INVALID;
-			}
-		}
-
-		return OK;
-	}
 }

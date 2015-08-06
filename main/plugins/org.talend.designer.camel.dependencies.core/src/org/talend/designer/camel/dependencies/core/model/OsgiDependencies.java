@@ -3,9 +3,9 @@ package org.talend.designer.camel.dependencies.core.model;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
 
-public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
-		AbstractDependencyItem {
-	protected boolean isOptional = false;
+public abstract class OsgiDependencies extends AbstractDependencyItem {
+
+    protected boolean isOptional = false;
 	private String versionRange;
 
 	public String getVersionRange() {
@@ -34,14 +34,6 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 			parse(inputString);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public OsgiDependencies(T copied) {
-		if (copied != null) {
-			setName(copied.getName());
-			setOptional(copied.isOptional());
-			setVersionRange(copied.getVersionRange());
 		}
 	}
 
@@ -77,77 +69,25 @@ public abstract class OsgiDependencies<T extends OsgiDependencies<?>> extends
 		this.isOptional = isOptional;
 	}
 
-	/**
-	 * only care about the name, ignore others
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (obj.getClass() != getClass()) {
-			return false;
-		}
-		if (name == null) {
-			return false;
-		}
-		return name.equals(((OsgiDependencies<?>) obj).getName());
-	}
-
-	@Override
-	public boolean strictEqual(Object obj) {
+	public boolean strictEqual(final OsgiDependencies obj) {
 		if (!equals(obj)) {
 			return false;
 		}
-		OsgiDependencies<?> o = (OsgiDependencies<?>) obj;
-		
-		if (VersionValidateUtil.compare(name, versionRange, o.name, o.versionRange, VersionValidateUtil.IMatchRules.EQUIVALENT) 
-				&& isOptional == o.isOptional()) {
+		if (VersionValidateUtil.compare(name, versionRange, obj.name, obj.versionRange, VersionValidateUtil.IMatchRules.EQUIVALENT) 
+				&& isOptional == obj.isOptional()) {
 			return true;
 		}
 		return false;
 	}
 
-	protected boolean isEquals(String a, String b) {
-		if (a == null) {
-			if (b == null) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return a.equals(b);
-	}
-
-	/**
-	 * only care about name
-	 */
-	@Override
-	public int hashCode() {
-		return name == null ? super.hashCode() : name.hashCode();
-	}
-
-	/**
-	 * validate the dependency information is valid or not
-	 * 
-	 * @return {@link #OK} {@link #NAME_NULL} {@link #MIN_INVALID}
-	 *         {@link #MAX_INVALID} {@link #MIN_MAX_INVALID}
-	 */
-	public int isValid() {
-		return OK;
-	}
 
 	@Override
 	public String getLabel() {
-		return name + " "
-				+ VersionValidateUtil.getVersionLabelString(versionRange);
+		return name + ' ' + VersionValidateUtil.getVersionLabelString(versionRange);
 	}
 
-	public String toManifestString() {
+    @Override
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		if (versionRange != null) {

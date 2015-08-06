@@ -5,29 +5,24 @@ public interface IDependencyItem {
 	/**
 	 * types
 	 */
-	public static final int IMPORT_PACKAGE = 0x1;
-	public static final int REQUIRE_BUNDLE = 0x2;
-	public static final int CLASS_PATH = 0x4;
-	public static final int EXPORT_PACKAGE = 0x8;
+	int IMPORT_PACKAGE = 0x1;
+	int REQUIRE_BUNDLE = 0x2;
+	int CLASS_PATH = 0x4;
+	int EXPORT_PACKAGE = 0x8;
 
-	public String getLabel();
+	String getName();
 
-	public boolean isBuiltIn();
+	String getLabel();
+
+	boolean isBuiltIn();
 
 	/**
 	 * {@link #IMPORT_PACKAGE} {@link #REQUIRE_BUNDLE} {@link #CLASS_PATH}
 	 * 
 	 * @return
 	 */
-	public int getType();
-	
-	public boolean strictEqual(Object obj);
-	
-	public boolean isChecked();
-	
-	public void setChecked(boolean isChecked);
-	
+	int getType();
+
 	public String getDescription();
 
-	public String toManifestString();
 }

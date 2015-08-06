@@ -53,8 +53,8 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
-import org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.CodeGeneratorActivator;
@@ -314,7 +314,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         Element manifestElement = jobElement.addElement("RouteManifest");
         manifestElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE), "preserve");
 
-        OsgiDependenciesService resolver = OsgiDependenciesService.fromProcessItem((ProcessItem) item);
+        final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) item);
         manifestElement.addElement("Import-package").addText(getDependencyItems(resolver.getImportPackages()));
         manifestElement.addElement("Export-package").addText(getDependencyItems(resolver.getExportPackages()));
         manifestElement.addElement("Required-bundle").addText(getDependencyItems(resolver.getRequireBundles()));
@@ -324,7 +324,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     private static String getDependencyItems(Collection<? extends IDependencyItem> dependencyItems) {
         StringBuilder sb = new StringBuilder();
         for (IDependencyItem item : dependencyItems) {
-            String text = item.toManifestString();
+            String text = item.toString();
             if (null == text) {
                 continue;
             }

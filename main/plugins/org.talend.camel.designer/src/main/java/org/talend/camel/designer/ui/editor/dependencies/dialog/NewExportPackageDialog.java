@@ -1,6 +1,6 @@
 package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,7 +37,7 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 	private boolean isEdit = false;
 
 	/** The input. */
-	private List<?> input;
+	private final Collection<? extends ExportPackage> input;
 
 	/** The origin. */
 	private ExportPackage origin;
@@ -55,7 +55,7 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 	 * @param parentShell the parent shell
 	 * @param input the input
 	 */
-	public NewExportPackageDialog(Shell parentShell, List<?> input) {
+	public NewExportPackageDialog(Shell parentShell, Collection<? extends ExportPackage> input) {
 		this(parentShell, null, input);
 	}
 
@@ -67,7 +67,7 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 	 * @param input the input
 	 */
 	public NewExportPackageDialog(Shell parentShell, ExportPackage origin,
-			List<?> input) {
+	    Collection<? extends ExportPackage> input) {
 		super(parentShell);
 		this.origin = origin;
 		this.isEdit= (origin!=null);
@@ -169,12 +169,8 @@ public class NewExportPackageDialog extends TitleAreaDialog {
 		if(origin!=null&&name.equals(origin.getName())) {
 			return Status.OK_STATUS;
 		}
-		for (Object o : input) {
-			if (!(o instanceof AbstractDependencyItem)) {
-				continue;
-			}
-			AbstractDependencyItem e = (AbstractDependencyItem) o;
-			if (name.equals(e.getName())) {
+		for (ExportPackage o : input) {
+			if (name.equals(o.getName())) {
 				return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
 						Messages.NewExportPackageDialog_nameAlreadyExist);
 			}

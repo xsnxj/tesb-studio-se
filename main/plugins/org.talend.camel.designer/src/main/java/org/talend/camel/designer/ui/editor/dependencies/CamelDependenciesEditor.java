@@ -1,8 +1,6 @@
 package org.talend.camel.designer.ui.editor.dependencies;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +26,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -45,13 +42,13 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.ui.editor.JobEditorInput;
+import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
-import org.talend.designer.camel.dependencies.core.util.OsgiDependenciesService;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 
 public class CamelDependenciesEditor extends EditorPart implements IRouterDependenciesChangedListener {
@@ -61,22 +58,32 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 
     private Label statusLabel;
 
-	//used to store all data
-	private List<ImportPackage> importPackages = new ArrayList<ImportPackage>();
-	private List<RequireBundle> requireBundles = new ArrayList<RequireBundle>();
-	private List<BundleClasspath> bundleClasspaths = new ArrayList<BundleClasspath>();
-	private List<ExportPackage> exportPackages = new ArrayList<ExportPackage>();
-	
 	//show all datas
-	private RouterDependenciesTableViewer requireBundleViewer;
-	private RouterDependenciesTableViewer bundleClasspathViewer;
-	private RouterDependenciesTableViewer importPackageViewer;
-	private RouterDependenciesTableViewer exportPackageViewer;
+	private FilterTableViewerAdapter requireBundleViewer;
+	private FilterTableViewerAdapter bundleClasspathViewer;
+	private FilterTableViewerAdapter importPackageViewer;
+	private FilterTableViewerAdapter exportPackageViewer;
+	
+	private final ISelectionChangedListener selectionChangedListener = new ISelectionChangedListener() {
+        @Override
+        public void selectionChanged(SelectionChangedEvent event) {
+            IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+            int size = selection.size();
+            if (size == 0) {
+                setStatus(""); //$NON-NLS-1$
+            } else if (selection.size() == 1) {
+                setStatus(((IDependencyItem) selection.getFirstElement()).getDescription());
+            } else {
+                setStatus(size + Messages.RouterDependenciesEditor_multiItemsSelectedStatusMsg);
+            }
+        }
+    };
 
 	public CamelDependenciesEditor(final AbstractMultiPageTalendEditor editor, boolean isReadOnly) {
 	    commandStack = editor.getTalendEditor().getCommandStack();
 	    this.isReadOnly = isReadOnly;
     }
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setInput(input);
@@ -139,18 +146,18 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		leftPart.setLayout(new GridLayout(1, false));
 		importPackageViewer = createTableViewer(leftPart, toolkit,
 				Messages.RouterDependenciesEditor_importPackageSec,
-				IDependencyItem.IMPORT_PACKAGE, SWT.NONE);
+				IDependencyItem.IMPORT_PACKAGE, false);
 		exportPackageViewer = createTableViewer(leftPart, toolkit,
-				Messages.RouterDependenciesEditor_exportPackage, IDependencyItem.EXPORT_PACKAGE, SWT.NONE);
+				Messages.RouterDependenciesEditor_exportPackage, IDependencyItem.EXPORT_PACKAGE, false);
 
 		SashForm rightPart = new SashForm(sashForm, SWT.VERTICAL);
 		rightPart.setLayout(new GridLayout(1, false));
 		bundleClasspathViewer = createTableViewer(rightPart, toolkit,
 				Messages.RouterDependenciesEditor_classpathSec,
-				IDependencyItem.CLASS_PATH, SWT.CHECK);
+				IDependencyItem.CLASS_PATH, true);
 		requireBundleViewer = createTableViewer(rightPart, toolkit,
 				Messages.RouterDependenciesEditor_requireBundleSec,
-				IDependencyItem.REQUIRE_BUNDLE, SWT.NONE);
+				IDependencyItem.REQUIRE_BUNDLE, false);
 	
 		toolkit.adapt(rightPart);
 		toolkit.adapt(leftPart);
@@ -259,41 +266,19 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				//clear all datas first
-				importPackages.clear();
-				requireBundles.clear();
-				bundleClasspaths.clear();
-				exportPackages.clear();
-
-                ProcessItem processItem = fromEditorInput();
-
 				// re-calculate all datas
-				OsgiDependenciesService resolver = OsgiDependenciesService.fromProcessItem(processItem);
-				importPackages.addAll(resolver.getImportPackages());
-				requireBundles.addAll(resolver.getRequireBundles());
-				bundleClasspaths.addAll(resolver.getBundleClasspaths());
-				exportPackages.addAll(resolver.getExportPackages());
-				
+                final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) fromEditorInput());
 				// set datas
-				importPackageViewer.setInput(importPackages);
-				requireBundleViewer.setInput(requireBundles);
-				bundleClasspathViewer.setInput(bundleClasspaths);
-				exportPackageViewer.setInput(exportPackages);
-				
-				// check the status of classpath items
-				TableItem[] items = bundleClasspathViewer.getTable().getItems();
-				for(TableItem ti: items){
-					Object data = ti.getData();
-					if(data !=null && data instanceof IDependencyItem){
-						ti.setChecked(((IDependencyItem)data).isChecked());
-					}
-				}
+				importPackageViewer.getTableViewer().setInput(resolver.getImportPackages());
+				requireBundleViewer.getTableViewer().setInput(resolver.getRequireBundles());
+				bundleClasspathViewer.getTableViewer().setInput(resolver.getBundleClasspaths());
+				exportPackageViewer.getTableViewer().setInput(resolver.getExportPackages());
 
 				// show datas
-				importPackageViewer.refresh();
-				requireBundleViewer.refresh();
-				bundleClasspathViewer.refresh();
-				exportPackageViewer.refresh();
+				importPackageViewer.getTableViewer().refresh();
+				requireBundleViewer.getTableViewer().refresh();
+				bundleClasspathViewer.getTableViewer().refresh();
+				exportPackageViewer.getTableViewer().refresh();
 				return Status.OK_STATUS;
 			}
 		};
@@ -301,31 +286,18 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		job.schedule();
 	}
 
-	private RouterDependenciesTableViewer createTableViewer(Composite parent, FormToolkit toolkit, String title, int type, int style) {
+	private FilterTableViewerAdapter createTableViewer(Composite parent, FormToolkit toolkit, String title, int type, boolean isCheck) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR );
 		section.setText(title);
-		section.setLayout(new GridLayout(1, false));
-		RouterDependenciesPanel c = new RouterDependenciesPanel(section,
-				style, type, toolkit, isReadOnly());
+		section.setLayout(new FillLayout());
+		CamelDependenciesPanel c = isCheck
+		    ? new CheckedCamelDependenciesPanel(section, type, toolkit, isReadOnly())
+		    : new CamelDependenciesPanel(section, type, toolkit, isReadOnly());
 		section.setClient(c);
 		toolkit.adapt(c);
 		c.addDependenciesChangedListener(this);
-		c.getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				int size = selection.size();
-				if(size == 0){
-					setStatus(""); //$NON-NLS-1$
-				}else if(selection.size()==1){
-					setStatus(((IDependencyItem)selection.getFirstElement()).getDescription());
-				}else{
-					setStatus(size+Messages.RouterDependenciesEditor_multiItemsSelectedStatusMsg);
-				}
-			}
-		});
-		return c.getTableViewer();
+		c.getTableViewer().addSelectionChangedListener(selectionChangedListener);
+		return c.getFilterTableViewerAdapter();
 	}
 
     @Override
@@ -362,10 +334,10 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
     private void saveToMap(Map additionalProperties) {
         //save all datas
         DependenciesCoreUtil.saveToMap(additionalProperties,
-                (Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
-                (Collection<ImportPackage>) importPackageViewer.getInput(),
-                (Collection<RequireBundle>) requireBundleViewer.getInput(),
-                (Collection<ExportPackage>)exportPackageViewer.getInput());
+                (Collection<BundleClasspath>) bundleClasspathViewer.getTableViewer().getInput(),
+                (Collection<ImportPackage>) importPackageViewer.getTableViewer().getInput(),
+                (Collection<RequireBundle>) requireBundleViewer.getTableViewer().getInput(),
+                (Collection<ExportPackage>)exportPackageViewer.getTableViewer().getInput());
     }
 
 	@Override
@@ -384,7 +356,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 
 	@Override
 	public void setFocus() {
-		importPackageViewer.getTable().setFocus();
+		importPackageViewer.getTableViewer().getTable().setFocus();
 	}
 
     private boolean isReadOnly() {

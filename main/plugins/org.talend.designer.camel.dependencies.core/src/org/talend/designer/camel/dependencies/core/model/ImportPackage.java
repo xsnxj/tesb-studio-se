@@ -1,6 +1,6 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-public class ImportPackage extends OsgiDependencies<ImportPackage> {
+public class ImportPackage extends OsgiDependencies {
 
 	public ImportPackage() {
 		super();
@@ -8,10 +8,6 @@ public class ImportPackage extends OsgiDependencies<ImportPackage> {
 
 	public ImportPackage(String inputString) {
 		super(inputString);
-	}
-
-	public ImportPackage(ImportPackage copied) {
-		super(copied);
 	}
 
 	@Override

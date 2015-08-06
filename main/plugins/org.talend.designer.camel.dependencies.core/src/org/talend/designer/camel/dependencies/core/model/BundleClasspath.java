@@ -3,9 +3,11 @@ package org.talend.designer.camel.dependencies.core.model;
 
 public class BundleClasspath extends AbstractDependencyItem {
 
-	public BundleClasspath(){
+    private boolean isChecked;
+
+    public BundleClasspath(){
 	}
-	
+
 	public BundleClasspath(String input) {
 		parse(input);
 	}
@@ -16,39 +18,7 @@ public class BundleClasspath extends AbstractDependencyItem {
 		if (split.length <= 1) {
 			return;
 		}
-		try {
-			setChecked(Boolean.parseBoolean(split[1]));
-		} catch (Exception e) {
-		}
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof BundleClasspath)) {
-			return false;
-		}
-		if (name == null) {
-			return false;
-		}
-		return name.equals(((BundleClasspath) obj).getName());
-	}
-
-	@Override
-	public int hashCode() {
-		return name == null ? super.hashCode() : name.hashCode();
-	}
-
-	public int isValid() {
-		if(name == null || name.equals("")){ //$NON-NLS-1$
-			return NAME_NULL;
-		}
-		return OK;
+		setChecked(Boolean.parseBoolean(split[1]));
 	}
 
 	@Override
@@ -56,8 +26,16 @@ public class BundleClasspath extends AbstractDependencyItem {
 		return name;
 	}
 
+    public void setChecked(boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+
+    public boolean isChecked() {
+        return this.isChecked;
+    }
+
 	@Override
-	public String toManifestString() {
+	public String toString() {
 		return isChecked ? name : null;
 	}
 
@@ -66,8 +44,8 @@ public class BundleClasspath extends AbstractDependencyItem {
 		return CLASS_PATH;
 	}
 
-	@Override
-	public boolean strictEqual(Object obj) {
-		return equals(obj);
-	}
+//	@Override
+//	public boolean strictEqual(Object obj) {
+//		return equals(obj);
+//	}
 }
