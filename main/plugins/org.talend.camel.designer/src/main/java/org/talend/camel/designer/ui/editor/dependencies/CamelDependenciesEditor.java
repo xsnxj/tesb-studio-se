@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,11 +28,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.progress.UIJob;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
@@ -92,58 +88,42 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 
     @Override
 	public void createPartControl(Composite parent) {
-		int columnCount = 1;
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		parent.setLayout(new GridLayout(1, false));
-		
-		Composite tmp = toolkit.createComposite(parent);
-		tmp.setLayout(new FillLayout());
-		tmp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		ScrolledComposite top = new ScrolledComposite(tmp, SWT.H_SCROLL | SWT.V_SCROLL);
-		
-		Composite composite = toolkit.createComposite(top);
-		composite.setLayout(new GridLayout(columnCount, false));
-		top.setContent(composite);
+		parent.setLayout(new GridLayout());
 
-		//create search group, hide button and refresh button
-		Composite toolsPanel = toolkit.createComposite(composite);
-		toolsPanel.setLayout(new GridLayout(4, false));
-		toolsPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		toolsPanel.setBackground(toolkit.getColors()
-				.getColor(IFormColors.TB_BG));
-		toolsPanel.setBackgroundMode(SWT.INHERIT_FORCE);
+        //create search group, hide button and refresh button
+        Composite toolsPanel = toolkit.createComposite(parent);
+        toolsPanel.setLayout(new GridLayout(4, false));
+        toolsPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        toolsPanel.setBackgroundMode(SWT.INHERIT_FORCE);
 
-		Label filterLabel = toolkit.createLabel(toolsPanel,
-				Messages.RouterDependenciesEditor_filterLabel);
-		filterLabel.setBackground(toolsPanel.getBackground());
+        toolkit.createLabel(toolsPanel, Messages.RouterDependenciesEditor_filterLabel);
 
-		SearchControl searchComposite = new SearchControl(toolsPanel, SWT.NONE);
-		searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		searchComposite.setActiveImage(CamelDesignerPlugin
-				.getImage(CamelDesignerPlugin.HIGHLIGHT_REM_ICON));
-		searchComposite.setDeactiveImage(CamelDesignerPlugin
-				.getImage(CamelDesignerPlugin.GRAY_REM_ICON));
-		Text filterText = searchComposite.getText();
+        SearchControl searchComposite = new SearchControl(toolsPanel, SWT.NONE);
+        searchComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        searchComposite.setActiveImage(CamelDesignerPlugin
+                .getImage(CamelDesignerPlugin.HIGHLIGHT_REM_ICON));
+        searchComposite.setDeactiveImage(CamelDesignerPlugin
+                .getImage(CamelDesignerPlugin.GRAY_REM_ICON));
+        Text filterText = searchComposite.getText();
 
-		Button hideBuiltIn = toolkit.createButton(toolsPanel,
-				Messages.RouterDependenciesEditor_hideBuiltInItems, SWT.CHECK);
-		hideBuiltIn.setBackground(toolsPanel.getBackground());
+        Button hideBuiltIn = toolkit.createButton(toolsPanel,
+                Messages.RouterDependenciesEditor_hideBuiltInItems, SWT.CHECK);
 
-		Button refreshBtn = toolkit.createButton(toolsPanel, "", SWT.PUSH); //$NON-NLS-1$
-		refreshBtn.setImage(CamelDesignerPlugin.getImage(CamelDesignerPlugin.REFRESH_ICON));
-		refreshBtn
-				.setToolTipText(Messages.RouterDependenciesEditor_refreshDependenciesTooltip);
-		refreshBtn.setEnabled(!isReadOnly());
+        Button refreshBtn = toolkit.createButton(toolsPanel, null, SWT.PUSH);
+        refreshBtn.setImage(CamelDesignerPlugin.getImage(CamelDesignerPlugin.REFRESH_ICON));
+        refreshBtn
+                .setToolTipText(Messages.RouterDependenciesEditor_refreshDependenciesTooltip);
+        refreshBtn.setEnabled(!isReadOnly());
+
 
 		// create data tables
-		SashForm sashForm = new SashForm(composite, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = columnCount;
-		sashForm.setLayoutData(gd);
-		
+        ScrolledComposite top = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+        top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		SashForm sashForm = new SashForm(top, SWT.NONE);
+
 		SashForm leftPart = new SashForm(sashForm, SWT.VERTICAL);
-		leftPart.setLayout(new GridLayout(1, false));
+		leftPart.setLayout(new FillLayout(SWT.VERTICAL));
 		importPackageViewer = createTableViewer(leftPart, toolkit,
 				Messages.RouterDependenciesEditor_importPackageSec,
 				IDependencyItem.IMPORT_PACKAGE, false);
@@ -151,41 +131,40 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 				Messages.RouterDependenciesEditor_exportPackage, IDependencyItem.EXPORT_PACKAGE, false);
 
 		SashForm rightPart = new SashForm(sashForm, SWT.VERTICAL);
-		rightPart.setLayout(new GridLayout(1, false));
+		rightPart.setLayout(new FillLayout(SWT.VERTICAL));
 		bundleClasspathViewer = createTableViewer(rightPart, toolkit,
 				Messages.RouterDependenciesEditor_classpathSec,
 				IDependencyItem.CLASS_PATH, true);
 		requireBundleViewer = createTableViewer(rightPart, toolkit,
 				Messages.RouterDependenciesEditor_requireBundleSec,
 				IDependencyItem.REQUIRE_BUNDLE, false);
-	
+
+        top.setContent(sashForm);
+
 		toolkit.adapt(rightPart);
 		toolkit.adapt(leftPart);
 		toolkit.adapt(sashForm);
-		toolkit.adapt(composite);
 
 		top.setExpandHorizontal(true);
 		top.setExpandVertical(true);
 
-		Point minSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point minSize = sashForm.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		top.setMinSize(minSize.x, minSize.y);
 		
 		//create status
 		Composite statusComposite = toolkit.createComposite(parent);
-		statusComposite.setLayout(new GridLayout(3, false));
+		statusComposite.setLayout(new GridLayout(2, false));
 		statusComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		statusLabel = toolkit.createLabel(statusComposite, ""); //$NON-NLS-1$
+
+		statusLabel = toolkit.createLabel(statusComposite, null);
 		statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (isReadOnly()) {
 			statusLabel.setText(Messages.RouterDependenciesEditor_itemIsLockedByOther);
 		}
-		
-		toolkit.createLabel(statusComposite, "|"); //$NON-NLS-1$
-		
-		Label shortCuts = toolkit.createLabel(statusComposite, "", SWT.SHADOW_OUT); //$NON-NLS-1$
-		shortCuts.setText(Messages.RouterDependenciesEditor_KeyBindingw);
-		
+
+		Label shortCuts = toolkit.createLabel(statusComposite, Messages.RouterDependenciesEditor_KeyBindingw, SWT.SHADOW_OUT);
+		shortCuts.setEnabled(false);
+
 		// add filter listener
 		filterText.addModifyListener(new ModifyListener() {
 
@@ -193,16 +172,10 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 			public void modifyText(ModifyEvent e) {
 				Text t = (Text) e.widget;
 				final String filterString = t.getText().trim();
-				t.getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						importPackageViewer.setFilterString(filterString);
-						requireBundleViewer.setFilterString(filterString);
-						bundleClasspathViewer.setFilterString(filterString);
-						exportPackageViewer.setFilterString(filterString);
-					}
-				});
+				importPackageViewer.setFilterString(filterString);
+				requireBundleViewer.setFilterString(filterString);
+				bundleClasspathViewer.setFilterString(filterString);
+				exportPackageViewer.setFilterString(filterString);
 			}
 		});
 
@@ -212,16 +185,10 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 			public void widgetSelected(SelectionEvent e) {
 				Button b = (Button) e.widget;
 				final boolean show = b.getSelection();
-				b.getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						importPackageViewer.setShowBuiltIn(!show);
-						requireBundleViewer.setShowBuiltIn(!show);
-						bundleClasspathViewer.setShowBuiltIn(!show);
-						exportPackageViewer.setShowBuiltIn(!show);
-					}
-				});
+				importPackageViewer.setShowBuiltIn(!show);
+				requireBundleViewer.setShowBuiltIn(!show);
+				bundleClasspathViewer.setShowBuiltIn(!show);
+				exportPackageViewer.setShowBuiltIn(!show);
 			}
 		});
 
@@ -261,29 +228,19 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
     }
 
 	private void updateInput() {
-		UIJob job = new UIJob(getSite().getShell().getDisplay(),
-				Messages.RouterDependenciesEditor_refreshing) {
+		// re-calculate all datas
+        final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) fromEditorInput());
+		// set datas
+		importPackageViewer.getTableViewer().setInput(resolver.getImportPackages());
+		requireBundleViewer.getTableViewer().setInput(resolver.getRequireBundles());
+		bundleClasspathViewer.getTableViewer().setInput(resolver.getBundleClasspaths());
+		exportPackageViewer.getTableViewer().setInput(resolver.getExportPackages());
 
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				// re-calculate all datas
-                final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) fromEditorInput());
-				// set datas
-				importPackageViewer.getTableViewer().setInput(resolver.getImportPackages());
-				requireBundleViewer.getTableViewer().setInput(resolver.getRequireBundles());
-				bundleClasspathViewer.getTableViewer().setInput(resolver.getBundleClasspaths());
-				exportPackageViewer.getTableViewer().setInput(resolver.getExportPackages());
-
-				// show datas
-				importPackageViewer.getTableViewer().refresh();
-				requireBundleViewer.getTableViewer().refresh();
-				bundleClasspathViewer.getTableViewer().refresh();
-				exportPackageViewer.getTableViewer().refresh();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
+		// show datas
+		importPackageViewer.getTableViewer().refresh();
+		requireBundleViewer.getTableViewer().refresh();
+		bundleClasspathViewer.getTableViewer().refresh();
+		exportPackageViewer.getTableViewer().refresh();
 	}
 
 	private FilterTableViewerAdapter createTableViewer(Composite parent, FormToolkit toolkit, String title, int type, boolean isCheck) {

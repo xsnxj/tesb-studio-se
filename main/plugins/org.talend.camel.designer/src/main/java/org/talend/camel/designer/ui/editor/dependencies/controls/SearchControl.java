@@ -7,6 +7,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -17,17 +19,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.talend.camel.designer.ui.editor.dependencies.controls.ImageControl;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class SearchControl extends Composite implements PaintListener {
 
 	private Text text;
 
 	private int arcSize = 18;
-	
+
 	private int marginHorizon = 5;
 
-	private ImageControl clear;
+	private ToolBar clear;
 
 	private Color backgroundColor;
 
@@ -56,15 +59,16 @@ public class SearchControl extends Composite implements PaintListener {
 			}
 		});
 		
-		clear = new ImageControl(this, SWT.NONE);
-		clear.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				text.setText("");
-			}
-		});
-		
-		Point computeSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		clear = new ToolBar(this, SWT.FLAT);
+		ToolItem item = new ToolItem(clear, SWT.PUSH);
+		item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                text.setText("");
+            }
+        });
+
+		Point computeSize = clear.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		int height = computeSize.y+2;
 		arcSize = height > arcSize ?height:arcSize;
 
@@ -144,10 +148,10 @@ public class SearchControl extends Composite implements PaintListener {
 	}
 
 	public void setActiveImage(Image activeImage) {
-		clear.setActiveImage(activeImage);
+	    clear.getItem(0).setHotImage(activeImage);
 	}
 
 	public void setDeactiveImage(Image deactiveImage) {
-		clear.setDeactiveImage(deactiveImage);
+	    clear.getItem(0).setImage(deactiveImage);
 	}
 }

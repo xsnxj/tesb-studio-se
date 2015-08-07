@@ -13,6 +13,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -45,53 +47,38 @@ public class CamelDependenciesPanel extends Composite implements SelectionListen
 
 	private Collection<IRouterDependenciesChangedListener> listeners = new ArrayList<IRouterDependenciesChangedListener>();
 
-	public CamelDependenciesPanel(Composite parent, int type,
-			FormToolkit toolkit, boolean isReadOnly) {
+	public CamelDependenciesPanel(Composite parent, int type, FormToolkit toolkit, boolean isReadOnly) {
 		super(parent, SWT.NONE);
 		this.type = type;
 
 		setLayout(new GridLayout(2, false));
 //		setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		Table table = toolkit.createTable(this, SWT.BORDER | SWT.MULTI
-//				| SWT.V_SCROLL | SWT.H_SCROLL | style);
-//		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-//        if (isReadOnly) {
-////          table.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
-//            table.setEnabled(false);
-//        } else {
-//    		table.addSelectionListener(new SelectionAdapter() {
-//    			
-//    			@Override
-//    			public void widgetSelected(SelectionEvent e) {
-//    				if(e.detail == SWT.CHECK){
-//    					((IDependencyItem)e.item.getData()).setChecked(((TableItem)e.item).getChecked());
-//    					fireDependenciesChangedListener();
-//    				}
-//    			}
-//    		});
-//    		table.addKeyListener(new KeyAdapter() {
-//    			@Override
-//    			public void keyPressed(KeyEvent e) {
-//    				if (e.stateMask == SWT.NONE) {
-//    					if (remBtn != null && remBtn.isEnabled()
-//    							&& e.keyCode == SWT.DEL) {
-//    						removeItems();
-//    					} else if (e.keyCode == SWT.INSERT) {
-//    						addNewItem();
-//    					} else if (editBtn != null && editBtn.isEnabled()
-//    							&& e.keyCode == SWT.F2) {
-//    						editSelected();
-//    					}
-//    				}
-//    			}
-//    		});
-//		}
-
 		tableViewer = createTableViewer();
 		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 10));
+        tableViewer.addSelectionChangedListener(this);
+
+        if (isReadOnly) {
+            // table.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+            tableViewer.getTable().setEnabled(false);
+        } else {
+            tableViewer.getTable().addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.stateMask == SWT.NONE) {
+                        if (remBtn != null && remBtn.isEnabled() && e.keyCode == SWT.DEL) {
+                            removeItems();
+                        } else if (e.keyCode == SWT.INSERT) {
+                            addNewItem();
+                        } else if (editBtn != null && editBtn.isEnabled() && e.keyCode == SWT.F2) {
+                            editSelected();
+                        }
+                    }
+                }
+            });
+        }
+
 		filterTableViewerAdapter = new FilterTableViewerAdapter(tableViewer);
-		tableViewer.addSelectionChangedListener(this);
 
 		createButtonComposite(toolkit);
 
@@ -307,68 +294,55 @@ public class CamelDependenciesPanel extends Composite implements SelectionListen
 		}
 	}
 
-	@Override
-	public void selectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection selection = (IStructuredSelection) event
-				.getSelection();
-		if(selection == null || selection.isEmpty()){
-			if(remBtn !=null)
-				remBtn.setEnabled(false);
-			if(upBtn!=null)
-				upBtn.setEnabled(false);
-			if(downBtn!=null)
-				downBtn.setEnabled(false);
-			if(editBtn!=null)
-				editBtn.setEnabled(false);
-			return;
-		}
+    @Override
+    public void selectionChanged(SelectionChangedEvent event) {
+        final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+        if (selection == null || selection.isEmpty()) {
+            if (remBtn != null) {
+                remBtn.setEnabled(false);
+            }
+            if (upBtn != null) {
+                upBtn.setEnabled(false);
+            }
+            if (downBtn != null) {
+                downBtn.setEnabled(false);
+            }
+            if (editBtn != null) {
+                editBtn.setEnabled(false);
+            }
+            return;
+        }
 
-		int nonBuiltInCount = 0;
-		Collection<? extends IDependencyItem> input = (Collection<? extends IDependencyItem>) tableViewer.getInput();
-		for (IDependencyItem item : input) {
-			if(!item.isBuiltIn()){
-				nonBuiltInCount++;
-			}
-		}
+        boolean hasBuiltIn = false;
+        Iterator<?> iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            IDependencyItem next = (IDependencyItem) iterator.next();
+            if (((IDependencyItem) next).isBuiltIn()) {
+                hasBuiltIn = true;
+                break;
+            }
+        }
 
-		boolean hasBuiltIn = false;
-		Iterator<?> iterator = selection.iterator();
-		while (iterator.hasNext()){
-			Object next = iterator.next();
-			if(next!=null && next instanceof IDependencyItem){
-				if(((IDependencyItem)next).isBuiltIn()){
-					hasBuiltIn = true;
-					break;
-				}
-			}
-		}
+        if (remBtn != null) {
+            remBtn.setEnabled(!hasBuiltIn);
+        }
 
-		if(remBtn!=null){
-			if (hasBuiltIn) {
-				remBtn.setEnabled(false);
-			} else {
-				remBtn.setEnabled(true);
-			}
-		}
-		
-		if(editBtn!=null){
-			if (hasBuiltIn || selection.size() > 1) {
-				editBtn.setEnabled(false);
-			} else {
-				editBtn.setEnabled(true);
-			}
-		}
-		
-		if(upBtn!=null && downBtn !=null){
-			if(hasBuiltIn || selection.size()>1 || nonBuiltInCount < 2){
-				upBtn.setEnabled(false);
-				downBtn.setEnabled(false);
-			}else {
-				upBtn.setEnabled(true);
-				downBtn.setEnabled(true);
-			}
-		}
-	}
+        if (editBtn != null) {
+            editBtn.setEnabled(!hasBuiltIn && selection.size() == 1);
+        }
+
+        if (upBtn != null && downBtn != null) {
+            int nonBuiltInCount = 0;
+            for (IDependencyItem item : (Collection<? extends IDependencyItem>) tableViewer.getInput()) {
+                if (!item.isBuiltIn()) {
+                    nonBuiltInCount++;
+                }
+            }
+            boolean state = !hasBuiltIn && selection.size() == 1 && nonBuiltInCount > 1;
+            upBtn.setEnabled(state);
+            downBtn.setEnabled(state);
+        }
+    }
 
     protected TableViewer createTableViewer() {
         return new TableViewer(this);
