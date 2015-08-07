@@ -90,15 +90,16 @@ public final class CamelFeatureUtil {
         if (!libraryName.endsWith(".jar")) {
             return libraryName;
         }
+        int index = 0;
         int lastIndexOf;
-        while ((lastIndexOf = libraryName.lastIndexOf('-')) != -1) {
+        while ((lastIndexOf = libraryName.indexOf('-', index + 1)) != -1) {
             char ch = libraryName.charAt(lastIndexOf + 1);
-            libraryName = libraryName.substring(0, lastIndexOf);
+            index = lastIndexOf;
             if (Character.isDigit(ch)) {
                 break;
             }
         }
-        return libraryName;
+        return index != 0 ? libraryName.substring(0, index) : libraryName;
     }
 
 	private static void addNodesSpecialFeatures(Collection<FeatureModel> features, ProcessType processType) {
