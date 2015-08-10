@@ -41,7 +41,7 @@ public class ExRequireBundle extends AbstractExPredicator<RequireBundle, Require
 		RequireBundle requireBundle = new RequireBundle();
 		requireBundle.setBuiltIn(true);
 		requireBundle.setName(bundleName);
-		requireBundle.setVersionRange(versionRange);
+		requireBundle.setVersion(versionRange);
 		requireBundle.setOptional(isOptional);
 		return requireBundle;
 	}

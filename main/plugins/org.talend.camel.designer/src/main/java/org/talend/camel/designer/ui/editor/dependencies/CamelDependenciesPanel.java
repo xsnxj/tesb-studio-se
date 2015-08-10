@@ -23,9 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.talend.camel.designer.ui.editor.dependencies.dialog.NewExportPackageDialog;
 import org.talend.camel.designer.ui.editor.dependencies.dialog.NewOrEditDependencyDialog;
-import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
 
@@ -129,31 +127,6 @@ public class CamelDependenciesPanel extends Composite implements SelectionListen
 	}
 
 	private void editSelected() {
-		switch (type) {
-		case IDependencyItem.REQUIRE_BUNDLE:
-		case IDependencyItem.IMPORT_PACKAGE:
-			editRequiredItem();
-			break;
-		case IDependencyItem.EXPORT_PACKAGE:
-			editExportPackage();
-		default:
-			break;
-		}
-	}
-
-	private void editExportPackage() {
-		ExportPackage selected = (ExportPackage) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), selected, (Collection<ExportPackage>) tableViewer.getInput());
-		if(Dialog.OK == dialog.open()){
-			ExportPackage exportPackage = dialog.getExportPackage();
-			selected.setName(exportPackage.getName());
-			selected.setVersion(exportPackage.getVersion());
-			tableViewer.update(selected, null);
-			fireDependenciesChangedListener();
-		}
-	}
-
-	private void editRequiredItem() {
 		final OsgiDependencies selected =
 		    (OsgiDependencies) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 		final NewOrEditDependencyDialog dialog =
@@ -165,7 +138,7 @@ public class CamelDependenciesPanel extends Composite implements SelectionListen
 //			selected.setMaxVersion(item.getMaxVersion());
 //			selected.setMinVersion(item.getMinVersion());
 			selected.setOptional(item.isOptional());
-			selected.setVersionRange(item.getVersionRange());
+			selected.setVersion(item.getVersion());
 //			selected.setIncludeMinimum(item.getIncludeMinimum());
 //			selected.setIncludeMaximum(item.getIncludeMaximum());
 			tableViewer.update(selected, null);
@@ -252,34 +225,6 @@ public class CamelDependenciesPanel extends Composite implements SelectionListen
 	}
 
 	private void addNewItem() {
-		switch (type) {
-		case IDependencyItem.IMPORT_PACKAGE:
-		case IDependencyItem.REQUIRE_BUNDLE:
-			addNewRequiredItem();
-			break;
-		case IDependencyItem.EXPORT_PACKAGE:
-			addNewExportPackage();
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void addNewExportPackage() {
-	    Collection<ExportPackage> input = (Collection<ExportPackage>) tableViewer.getInput();
-		NewExportPackageDialog dialog = new NewExportPackageDialog(getShell(), input);
-		if(Dialog.OK == dialog.open()){
-			ExportPackage exportPackage = dialog.getExportPackage();
-			input.add(exportPackage);
-			tableViewer.refresh();
-			tableViewer.setSelection(new StructuredSelection(exportPackage));
-			tableViewer.getTable().showSelection();
-			tableViewer.getTable().setFocus();
-			fireDependenciesChangedListener();
-		}
-	}
-
-	private void addNewRequiredItem() {
 	    final Collection<OsgiDependencies> input = (Collection<OsgiDependencies>) tableViewer.getInput();
 		NewOrEditDependencyDialog dialog = new NewOrEditDependencyDialog(
 				input, getShell(), type);

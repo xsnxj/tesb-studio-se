@@ -5,32 +5,17 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.talend.camel.designer.ui.editor.dependencies.messages"; //$NON-NLS-1$
 	public static String EditDependenciesContextualAction_ActionName;
-	public static String NewDependencyItemDialog_addImportPackage;
-	public static String NewDependencyItemDialog_addRequireBundle;
-	public static String NewDependencyItemDialog_addRequireBundleMsg;
-	public static String NewDependencyItemDialog_editImportPackageMsg;
-	public static String NewDependencyItemDialog_editImportPackageTitle;
-	public static String NewDependencyItemDialog_editRequireBundleMsg;
-	public static String NewDependencyItemDialog_editRequireBundleTitle;
+	public static String NewDependencyItemDialog_ImportPackage;
+	public static String NewDependencyItemDialog_RequireBundle;
+    public static String NewDependencyItemDialog_ExportPackage;
+    public static String NewDependencyItemDialog_addTitle;
+    public static String NewDependencyItemDialog_addMsg;
+    public static String NewDependencyItemDialog_editTitle;
+    public static String NewDependencyItemDialog_editMsg;
 	public static String NewDependencyItemDialog_existCheckMessage;
-	public static String NewDependencyItemDialog_importPackage;
-	public static String NewDependencyItemDialog_importPackageMessage;
 	public static String NewDependencyItemDialog_name;
-	public static String NewDependencyItemDialog_nameIsNullMessage;
 	public static String NewDependencyItemDialog_optional;
-	public static String NewDependencyItemDialog_requireBundle;
-	public static String NewExportPackageDialog_addMsg;
-	public static String NewExportPackageDialog_addTitle;
-	public static String NewExportPackageDialog_dialogTitle;
-	public static String NewExportPackageDialog_editMsg;
-	public static String NewExportPackageDialog_editTitle;
-	public static String NewExportPackageDialog_name;
-	public static String NewExportPackageDialog_nameAlreadyExist;
-	public static String NewExportPackageDialog_nameNullError;
-	public static String NewExportPackageDialog_versionInvalidError;
-	public static String NewOrEditDependencyDialog_nameInvalidMsg;
-	public static String RelativeEditorsSaveDialog_saveEditorsMsg;
-	public static String RelativeEditorsSaveDialog_saveEditorsTitle;
+	public static String NewDependencyItemDialog_nameInvalidMsg;
 	public static String RouterDependenciesEditor_classpathSec;
 	public static String RouterDependenciesEditor_exportPackage;
 	public static String RouterDependenciesEditor_filterLabel;
@@ -40,7 +25,6 @@ public class Messages extends NLS {
 	public static String RouterDependenciesEditor_KeyBindingw;
 	public static String RouterDependenciesEditor_multiItemsSelectedStatusMsg;
 	public static String RouterDependenciesEditor_refreshDependenciesTooltip;
-	public static String RouterDependenciesEditor_refreshing;
 	public static String RouterDependenciesEditor_requireBundleSec;
 	public static String RouterDependenciesPanel_addBtn;
 	public static String RouterDependenciesPanel_deleteMsg;
@@ -53,7 +37,6 @@ public class Messages extends NLS {
 	public static String RouterDependenciesPanel_upBtn;
 
 	public static String DependencyVersionDialog_versionRangeError;
-	public static String NewExportPackageDialog_exportGroupText;
 	public static String NewOrEditDependencyDialog_properties;
 
 	public static String DependenceVersionPart_groupText;

@@ -38,7 +38,7 @@ public class ExImportPackage extends AbstractExPredicator<ImportPackage, ImportP
 	public ImportPackage toTargetIgnorePredicates() {
 		ImportPackage importPackage = new ImportPackage();
 		importPackage.setBuiltIn(true);
-		importPackage.setVersionRange(versionRange);
+		importPackage.setVersion(versionRange);
 		importPackage.setName(packageName);
 		importPackage.setOptional(isOptional);
 		return importPackage;

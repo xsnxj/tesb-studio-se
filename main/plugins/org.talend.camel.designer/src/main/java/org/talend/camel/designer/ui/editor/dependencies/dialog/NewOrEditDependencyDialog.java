@@ -1,5 +1,6 @@
 package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.talend.camel.designer.ui.editor.dependencies.Messages;
+import org.talend.designer.camel.dependencies.core.model.ExportPackage;
 import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
@@ -85,10 +87,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		this.origin = sourceItem;
 		this.type = type;
 
-		fVersionPart = new DependencyVersionPart(true);
-		if (null != origin) {
-			fVersionPart.setVersion(origin.getVersionRange());
-		}
+		boolean versionRange = true;
         switch (type) {
         case IDependencyItem.IMPORT_PACKAGE:
             item = new ImportPackage();
@@ -96,9 +95,17 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         case IDependencyItem.REQUIRE_BUNDLE:
             item = new RequireBundle();
             break;
+        case IDependencyItem.EXPORT_PACKAGE:
+            item = new ExportPackage();
+            versionRange = false;
+            break;
         default:
             item = null;
             break;
+        }
+        fVersionPart = new DependencyVersionPart(versionRange);
+        if (null != origin) {
+            fVersionPart.setVersion(origin.getVersion());
         }
 	}
 
@@ -111,28 +118,28 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		fVersionPart.setVersion(version);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createDialogArea(Composite parent) {
-        boolean isNew = (origin == null);
-		switch (type) {
-		case IDependencyItem.IMPORT_PACKAGE:
-            setTitle(Messages.NewDependencyItemDialog_importPackage);
-			getShell().setText(isNew ? Messages.NewDependencyItemDialog_addImportPackage
-			    : Messages.NewDependencyItemDialog_editImportPackageTitle);
-			setMessage(isNew ? Messages.NewDependencyItemDialog_importPackageMessage
-			    : Messages.NewDependencyItemDialog_editImportPackageMsg);
-			break;
-		case IDependencyItem.REQUIRE_BUNDLE:
-            setTitle(Messages.NewDependencyItemDialog_requireBundle);
-			getShell().setText(isNew ? Messages.NewDependencyItemDialog_addRequireBundle
-			    : Messages.NewDependencyItemDialog_editRequireBundleTitle);
-			setMessage(isNew ? Messages.NewDependencyItemDialog_addRequireBundleMsg
-			    : Messages.NewDependencyItemDialog_editRequireBundleMsg);
-			break;
-		}
+    private static String getItemName(int type) {
+        switch (type) {
+        case IDependencyItem.IMPORT_PACKAGE:
+            return Messages.NewDependencyItemDialog_ImportPackage;
+        case IDependencyItem.REQUIRE_BUNDLE:
+            return Messages.NewDependencyItemDialog_RequireBundle;
+        case IDependencyItem.EXPORT_PACKAGE:
+            return Messages.NewDependencyItemDialog_ExportPackage;
+        default:
+            return null;
+        }
+    }
+
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        final String name = getItemName(type);
+        final boolean isNew = (origin == null);
+        getShell().setText(name);
+        setTitle(MessageFormat.format(isNew ? Messages.NewDependencyItemDialog_addTitle
+            : Messages.NewDependencyItemDialog_editTitle, name));
+        setMessage(MessageFormat.format(isNew ? Messages.NewDependencyItemDialog_addMsg
+            : Messages.NewDependencyItemDialog_editMsg, name));
 
         parent.setLayout(new GridLayout());
 
@@ -140,31 +147,35 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         c.setLayout(new GridLayout(2, false));
         c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		new Label(c, SWT.NONE).setText(Messages.NewDependencyItemDialog_name);
-		fNameText = new Text(c, SWT.BORDER);
-		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        new Label(c, SWT.NONE).setText(Messages.NewDependencyItemDialog_name);
+        fNameText = new Text(c, SWT.BORDER);
+        fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Group propertiesGroup = new Group(parent, SWT.NONE);
-        propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(Messages.NewOrEditDependencyDialog_properties);
-		propertiesGroup.setLayout(new GridLayout());
-		fOptionalBtn = new Button(propertiesGroup, SWT.CHECK);
-		fOptionalBtn.setText(Messages.NewDependencyItemDialog_optional);
+        if (type != IDependencyItem.EXPORT_PACKAGE) {
+            Group propertiesGroup = new Group(parent, SWT.NONE);
+            propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            propertiesGroup.setText(Messages.NewOrEditDependencyDialog_properties);
+            propertiesGroup.setLayout(new GridLayout());
+            fOptionalBtn = new Button(propertiesGroup, SWT.CHECK);
+            fOptionalBtn.setText(Messages.NewDependencyItemDialog_optional);
+        }
 
-		fVersionPart.createVersionFields(parent, true, true);
+        fVersionPart.createVersionFields(parent, true, true);
 
-		preloadFields();
-		addListeners();
-		return c;
-	}
+        preloadFields();
+        addListeners();
+        return c;
+    }
 
 	/**
 	 * Preload fields.
 	 */
 	private void preloadFields() {
 		if (null != origin) {
-			fNameText.setText(origin.getName() == null ? "" : origin.getName()); //$NON-NLS-1$
-			fOptionalBtn.setSelection(origin.isOptional());
+			fNameText.setText(origin.getName());
+			if (null != fOptionalBtn) {
+	            fOptionalBtn.setSelection(origin.isOptional());
+			}
 		}
 		fNameText.selectAll();
 		fNameText.setFocus();
@@ -182,13 +193,15 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		};
 		fNameText.addModifyListener(modifyListener);
 
-		SelectionListener selectionListener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				getButton(OK).setEnabled(validate());
-			}
-		};
-		fOptionalBtn.addSelectionListener(selectionListener);
+        SelectionListener selectionListener = new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                getButton(OK).setEnabled(validate());
+            }
+        };
+		if (null != fOptionalBtn) {
+	        fOptionalBtn.addSelectionListener(selectionListener);
+		}
 
 		fVersionPart.addListeners(modifyListener, selectionListener);
 	}
@@ -211,7 +224,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			return false;
 		}
         item.setName(getDependencyName());
-        item.setVersionRange(getVersion());
+        item.setVersion(getVersion());
         item.setOptional(getOptional());
 		if (getDependencyItem().strictEqual(origin)) {
 			setErrorMessage(null);
@@ -264,7 +277,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @return the optional
 	 */
 	private boolean getOptional() {
-		return fOptionalBtn.getSelection();
+		return (null != fOptionalBtn) ? fOptionalBtn.getSelection() : false;
 	}
 
 	/**
@@ -283,7 +296,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 			}
 		}
 		if (!NAME_PATTERN.matcher(name).matches()) {
-			return Messages.NewOrEditDependencyDialog_nameInvalidMsg;
+			return Messages.NewDependencyItemDialog_nameInvalidMsg;
 		}
 		return null;
 	}
