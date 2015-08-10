@@ -421,11 +421,6 @@
             id="jdom"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jdom}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-jxl}"
-            id="jxl"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jxl}"
-            bundleID="" />
 
         <libraryNeededGroup
                 description="camel-flatpack"
@@ -434,7 +429,6 @@
             <library id="camel-flatpack" />
             <library id="flatpack" />
             <library id="jdom" />
-            <library id="jxl" />
         </libraryNeededGroup>
 
     </extension>
