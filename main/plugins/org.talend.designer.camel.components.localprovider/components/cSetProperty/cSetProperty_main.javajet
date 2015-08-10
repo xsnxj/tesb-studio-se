@@ -1,0 +1,51 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+
+	List<Map<String, String>> tableValues =
+    (List<Map<String,String>>)ElementParameterParser.getObjectValue(
+        node,
+        "__VALUES__"
+    );
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+		 	for(Map<String, String> propertiesMap: tableValues){
+		 			String propertyName = propertiesMap.get("NAME");
+		 			String propertyLanguage = propertiesMap.get("LANGUAGE");
+		 			String propertyExpression = propertiesMap.get("EXPRESSION");
+		 			if("correlation".equals(propertyLanguage)){
+%>
+						.setProperty(<%=propertyName%>).simple("${in.header.CamelCxfMessage[CorrelationID]}", String.class)
+
+<%		 			}else if("bean".equals(propertyLanguage)){
+%>
+						.setProperty(<%=propertyName%>).method(<%=propertyExpression%>)
+<%
+		 			}else if("xpath".equals(propertyLanguage) && "true".equals(useNamespaces)){
+%>
+						.setProperty(<%=propertyName%>).<%=propertyLanguage%>(<%=propertyExpression%>, <%=cid%>NSMap)
+<%
+		 			}else if(!"none".equals(propertyLanguage)) {
+%>
+						.setProperty(<%=propertyName%>).<%=propertyLanguage%>(<%=propertyExpression%>)
+<%
+					}else{
+%>
+						.setProperty(<%=propertyName%>).<%=propertyExpression%>
+<%
+					}
+		 	}
+	}
+%>

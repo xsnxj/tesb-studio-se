@@ -984,13 +984,24 @@ if (isProvider) {
 %>
 		}
 <%
-	}else if("cSetHeader".equals(nodeComponentName)){
-		String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
-		if(!"true".equals(useNamespaces)){
-			continue;
-		}
-		String cid = node.getUniqueName();
-		List<Map<String, String>> namespaceValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__NAMESPACES__");
+    }else if("cSetHeader".equals(nodeComponentName) || "cSetProperty".equals(nodeComponentName)){
+        String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+        if(!"true".equals(useNamespaces)){
+            continue;
+        }
+        List<Map<String, String>> tableValues =
+            (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__VALUES__");
+        boolean hasXPath = false;
+        for(Map<String, String> propertiesMap: tableValues){
+            String propertyLanguage = propertiesMap.get("LANGUAGE");
+            if ("xpath".equals(propertyLanguage)) {
+                hasXPath = true;
+                break;
+            }
+        }
+        if (hasXPath) {
+            String cid = node.getUniqueName();
+            List<Map<String, String>> namespaceValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__NAMESPACES__");
 %>
 		Map<String, String> <%=cid%>NSMap = new HashMap<String, String>();
 		{
@@ -1004,7 +1015,7 @@ if (isProvider) {
 			}
 %>
 		}
-<%
+<%      }
 	}else if("cTalendJob".equals(nodeComponentName)){
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	String cid = node.getUniqueName();
