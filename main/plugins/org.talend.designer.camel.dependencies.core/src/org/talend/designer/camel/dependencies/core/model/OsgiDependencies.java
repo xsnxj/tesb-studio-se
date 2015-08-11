@@ -65,7 +65,7 @@ public abstract class OsgiDependencies extends AbstractDependencyItem {
 
     public boolean strictEqual(final OsgiDependencies obj) {
         return equals(obj) && (isOptional == obj.isOptional())
-            && (version == null && obj.version == null) && (version != null && version.equals(obj.version));
+            && ((version == null && obj.version == null) || (version != null && version.equals(obj.version)));
     }
 
     @Override
