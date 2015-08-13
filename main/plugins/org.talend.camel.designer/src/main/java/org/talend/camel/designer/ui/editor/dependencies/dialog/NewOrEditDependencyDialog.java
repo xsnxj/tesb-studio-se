@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -12,7 +11,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -23,11 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.talend.camel.designer.ui.editor.dependencies.Messages;
-import org.talend.designer.camel.dependencies.core.model.ExportPackage;
-import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
-import org.talend.designer.camel.dependencies.core.model.ImportPackage;
-import org.talend.designer.camel.dependencies.core.model.OsgiDependencies;
-import org.talend.designer.camel.dependencies.core.model.RequireBundle;
+import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 
 /**
  * Dialog for create/edit bundle/package dependency.
@@ -39,13 +33,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	private static final Pattern NAME_PATTERN = Pattern.compile("[^\\s;=\"\\[\\]\\(\\),:|]+"); //$NON-NLS-1$
 
 	/** The input. */
-	private final Collection<? extends IDependencyItem> input;
+	private final Collection<? extends ManifestItem> input;
 
 	/** The origin. */
-	private final OsgiDependencies origin;
+	private final ManifestItem origin;
 
     /** The type. */
-    private final int type;
+    private final String type;
 
 	/** The name text. */
 	private Text fNameText;
@@ -56,7 +50,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	/** The version part. */
 	private DependencyVersionPart fVersionPart;
 
-    private final OsgiDependencies item;
+    private final ManifestItem item;
 
     /**
 	 * Instantiates a new new or edit dependency dialog. 
@@ -66,7 +60,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @param parentShell the parent shell
 	 * @param type the type
 	 */
-	public NewOrEditDependencyDialog(Collection<? extends IDependencyItem> input, Shell parentShell, int type) {
+	public NewOrEditDependencyDialog(Collection<? extends ManifestItem> input, Shell parentShell, String type) {
 		this(input, null, parentShell, type);
 	}
 
@@ -79,61 +73,24 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @param parentShell the parent shell
 	 * @param type the type
 	 */
-	public NewOrEditDependencyDialog(Collection<? extends IDependencyItem> input,
-			OsgiDependencies sourceItem, Shell parentShell, int type) {
+	public NewOrEditDependencyDialog(Collection<? extends ManifestItem> input,
+			ManifestItem sourceItem, Shell parentShell, String type) {
 		super(parentShell);
 
 		this.input = input;
 		this.origin = sourceItem;
 		this.type = type;
 
-		boolean versionRange = true;
-        switch (type) {
-        case IDependencyItem.IMPORT_PACKAGE:
-            item = new ImportPackage();
-            break;
-        case IDependencyItem.REQUIRE_BUNDLE:
-            item = new RequireBundle();
-            break;
-        case IDependencyItem.EXPORT_PACKAGE:
-            item = new ExportPackage();
-            versionRange = false;
-            break;
-        default:
-            item = null;
-            break;
-        }
-        fVersionPart = new DependencyVersionPart(versionRange);
+        item = ManifestItem.newItem(type);
+        fVersionPart = new DependencyVersionPart(type != ManifestItem.EXPORT_PACKAGE);
         if (null != origin) {
             fVersionPart.setVersion(origin.getVersion());
         }
 	}
 
-	/**
-	 * Sets the version.
-	 *
-	 * @param version the new version
-	 */
-	public void setVersion(String version) {
-		fVersionPart.setVersion(version);
-	}
-
-    private static String getItemName(int type) {
-        switch (type) {
-        case IDependencyItem.IMPORT_PACKAGE:
-            return Messages.NewDependencyItemDialog_ImportPackage;
-        case IDependencyItem.REQUIRE_BUNDLE:
-            return Messages.NewDependencyItemDialog_RequireBundle;
-        case IDependencyItem.EXPORT_PACKAGE:
-            return Messages.NewDependencyItemDialog_ExportPackage;
-        default:
-            return null;
-        }
-    }
-
     @Override
     protected Control createDialogArea(Composite parent) {
-        final String name = getItemName(type);
+        final String name = type;
         final boolean isNew = (origin == null);
         getShell().setText(name);
         setTitle(MessageFormat.format(isNew ? Messages.NewDependencyItemDialog_addTitle
@@ -151,7 +108,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         fNameText = new Text(c, SWT.BORDER);
         fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        if (type != IDependencyItem.EXPORT_PACKAGE) {
+        if (type != ManifestItem.EXPORT_PACKAGE) {
             Group propertiesGroup = new Group(parent, SWT.NONE);
             propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             propertiesGroup.setText(Messages.NewOrEditDependencyDialog_properties);
@@ -185,7 +142,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * Adds the listeners.
 	 */
 	private void addListeners() {
-		ModifyListener modifyListener = new ModifyListener() {
+		final ModifyListener modifyListener = new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				getButton(OK).setEnabled(validate());
@@ -193,7 +150,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		};
 		fNameText.addModifyListener(modifyListener);
 
-        SelectionListener selectionListener = new SelectionAdapter() {
+        final SelectionListener selectionListener = new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 getButton(OK).setEnabled(validate());
@@ -214,10 +171,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	private boolean validate() {
 	    String errorMessage = validateName();
 		if (null == errorMessage) {
-		    IStatus status = fVersionPart.validateFullVersionRangeText();
-	        if (!status.isOK()) {
-	            errorMessage = status.getMessage();
-	        }
+		    errorMessage = fVersionPart.validateFullVersionRangeText();
 		}
 		if (null != errorMessage) {
 			setErrorMessage(errorMessage);
@@ -226,7 +180,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         item.setName(getDependencyName());
         item.setVersion(getVersion());
         item.setOptional(getOptional());
-		if (getDependencyItem().strictEqual(origin)) {
+        if (item.equals(origin) && (item.isOptional() == origin.isOptional())
+                && ((item.getVersion() == null && origin.getVersion() == null)
+                    || (item.getVersion() != null && item.getVersion().equals(origin.getVersion())))) {
 			setErrorMessage(null);
 			// nothing changes.
 			return false;
@@ -249,17 +205,8 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 *
 	 * @return the dependency item
 	 */
-	public OsgiDependencies getDependencyItem() {
+	public ManifestItem getManifestItem() {
         return item;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		Point computeSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		computeSize.x += 100;
-		return computeSize;
 	}
 
 	/**
@@ -290,7 +237,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 		if (origin != null && name.equals(origin.getName())) {
 			return null;
 		}
-		for (IDependencyItem o : input) {
+		for (ManifestItem o : input) {
 			if (name.equals(o.getName())) {
 				return Messages.NewDependencyItemDialog_existCheckMessage;
 			}
@@ -307,6 +254,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @return the version
 	 */
 	public String getVersion() {
-		return fVersionPart.getVersion();
+	    final String version = fVersionPart.getVersion();
+		return (null != version && !version.isEmpty()) ? version : null;
 	}
 }

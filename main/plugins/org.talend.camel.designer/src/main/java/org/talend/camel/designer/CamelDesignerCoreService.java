@@ -15,7 +15,6 @@ package org.talend.camel.designer;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +53,7 @@ import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
-import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
+import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.CodeGeneratorActivator;
@@ -315,23 +314,10 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         manifestElement.addAttribute(QName.get("space", Namespace.XML_NAMESPACE), "preserve");
 
         final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) item);
-        manifestElement.addElement("Import-package").addText(getDependencyItems(resolver.getImportPackages()));
-        manifestElement.addElement("Export-package").addText(getDependencyItems(resolver.getExportPackages()));
-        manifestElement.addElement("Required-bundle").addText(getDependencyItems(resolver.getRequireBundles()));
-        manifestElement.addElement("Bundle-classpath").addText(getDependencyItems(resolver.getBundleClasspaths()));
-    }
-
-    private static String getDependencyItems(Collection<? extends IDependencyItem> dependencyItems) {
-        StringBuilder sb = new StringBuilder();
-        for (IDependencyItem item : dependencyItems) {
-            String text = item.toString();
-            if (null == text) {
-                continue;
-            }
-            sb.append(text);
-            sb.append("\n");
-        }
-        return sb.toString();
+        manifestElement.addElement(ManifestItem.IMPORT_PACKAGE).addText(resolver.getManifestImportPackage('\n'));
+        manifestElement.addElement(ManifestItem.EXPORT_PACKAGE).addText(resolver.getManifestExportPackage('\n'));
+        manifestElement.addElement(ManifestItem.REQUIRE_BUNDLE).addText(resolver.getManifestRequireBundle('\n'));
+        manifestElement.addElement(ManifestItem.BUNDLE_CLASSPATH).addText(resolver.getManifestBundleClasspath('\n'));
     }
 
     private void addSpringContent(Item item, Element jobElement) {

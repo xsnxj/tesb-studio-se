@@ -1,22 +1,16 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-public class ImportPackage extends OsgiDependencies {
+import org.osgi.framework.Constants;
 
-    public ImportPackage() {
-        super();
-    }
+public class ImportPackage extends ManifestItem {
 
-    public ImportPackage(String inputString) {
-        super(inputString);
+    @Override
+    public String getVersionAttribute() {
+        return Constants.VERSION_ATTRIBUTE;
     }
 
     @Override
-    public int getType() {
-        return IMPORT_PACKAGE;
-    }
-
-    @Override
-    protected String getVersionPrefix() {
-        return "version";
+    public String getHeader() {
+        return Constants.IMPORT_PACKAGE;
     }
 }

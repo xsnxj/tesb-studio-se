@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,9 +24,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.framework.Version;
-import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.dependencies.Messages;
-import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
 
 /**
  * Use to create UI part to set/get dependency version.
@@ -195,64 +191,46 @@ public class DependencyVersionPart {
 	/**
 	 * Validate version.
 	 * 
-	 * @param text
-	 *            the text
-	 * @param textWidget
-	 *            the text widget
+	 * @param versionString
+	 *            the versionString
 	 * @return the i status
 	 */
-	private IStatus validateVersion(String text, Text textWidget) {
-		if (text.length() == 0) {
-			return Status.OK_STATUS;
-		}
-		final String errorMessage = VersionValidateUtil.validateVersion(text);
-		if (errorMessage != null) {
-//			String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
-			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
-					IStatus.ERROR, errorMessage, null);
-		}
-
-		return Status.OK_STATUS;
-	}
+    private static String validateVersion(String versionString) {
+        if (versionString.isEmpty()) {
+            return null;
+        }
+        try {
+            Version.parseVersion(versionString);
+        } catch (IllegalArgumentException e) {
+            // String errorMessage =
+            // Messages.DependencyVersionPart_InvalidVersionFormat;
+            return e.getMessage();
+        }
+        return null;
+    }
 
 	/**
 	 * Validate version range.
 	 * 
 	 * @return the i status
 	 */
-	private IStatus validateVersionRange() {
+	private String validateVersionRange() {
 		if ((!fRangeAllowed && getMinVersion().length() == 0)
 				|| (fRangeAllowed && (getMinVersion().length() == 0 || getMaxVersion()
 						.length() == 0))) {
 			fIsRanged = false;
-			return Status.OK_STATUS;
+			return null;
 		}
 
-		String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
+//		String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
 
-		Version v1;
-		Version v2;
-		try {
-			v1 = new Version(getMinVersion());
-		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
-					IStatus.ERROR, errorMessage, null);
-		}
-		if (!fRangeAllowed) // version created fine
-			return Status.OK_STATUS;
-
-		try {
-			v2 = new Version(getMaxVersion());
-		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID,
-					IStatus.ERROR, errorMessage, null);
-		}
+		final Version v1 = new Version(getMinVersion());
+		final Version v2 = new Version(getMaxVersion());
 		if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
 			fIsRanged = v1.compareTo(v2) != 0;
-			return Status.OK_STATUS;
+			return null;
 		}
-		return new Status(IStatus.ERROR, CamelDesignerPlugin.PLUGIN_ID, IStatus.ERROR,
-				Messages.DependencyVersionDialog_versionRangeError, null);
+		return Messages.DependencyVersionDialog_versionRangeError;
 	}
 
 	/**
@@ -261,11 +239,11 @@ public class DependencyVersionPart {
 	 * @return an OK status if all versions are valid, otherwise the status's
 	 *         message will contain an error message.
 	 */
-	public IStatus validateFullVersionRangeText() {
-		IStatus status = validateVersion(getMinVersion(), fMinVersionText);
-		if (status.isOK())
-			status = validateVersion(getMaxVersion(), fMaxVersionText);
-		if (status.isOK())
+	public String validateFullVersionRangeText() {
+		String status = validateVersion(getMinVersion());
+		if (status == null)
+			status = validateVersion(getMaxVersion());
+		if (status == null)
 			status = validateVersionRange();
 		return status;
 	}

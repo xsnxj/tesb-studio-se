@@ -57,7 +57,7 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 							String[] names = StringUtils.split(evtValue, ';');
 							for (String name : names) {
 								BundleClasspath bundleClasspath = new BundleClasspath();
-								bundleClasspath.setChecked(isChecked);
+								bundleClasspath.setOptional(!isChecked);
 								bundleClasspath.setBuiltIn(true);
 								bundleClasspath.setName(name);
 								bundleClasspaths.add(bundleClasspath);
@@ -70,7 +70,7 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 						String evtValue = evt.getValue();
 						BundleClasspath bundleClasspath = new BundleClasspath();
 						bundleClasspath.setBuiltIn(true);
-						bundleClasspath.setChecked(isChecked);
+						bundleClasspath.setOptional(!isChecked);
 						bundleClasspath.setName(evtValue);
 						bundleClasspaths.add(bundleClasspath);
 					}

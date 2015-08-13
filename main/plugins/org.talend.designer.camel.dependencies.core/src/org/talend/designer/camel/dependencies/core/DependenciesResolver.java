@@ -21,8 +21,8 @@ import org.talend.designer.camel.dependencies.core.ext.ExRequireBundle;
 import org.talend.designer.camel.dependencies.core.ext.ExtensionPointsReader;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
-import org.talend.designer.camel.dependencies.core.model.IDependencyItem;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
+import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
 import org.talend.designer.core.model.components.EParameterName;
@@ -38,23 +38,10 @@ public class DependenciesResolver {
      * @author liugang
      *
      */
-    private static final Comparator<IDependencyItem> SORTER = new Comparator<IDependencyItem>() {
+    private static final Comparator<ManifestItem> SORTER = new Comparator<ManifestItem>() {
         @Override
-        public int compare(IDependencyItem e1, IDependencyItem e2) {
-//            if (e1.equals(e2)) {
-//                return 0;
-//            }
-//            boolean builtIn1 = e1.isBuiltIn();
-//            boolean builtIn2 = e2.isBuiltIn();
-//            if (builtIn1 && builtIn2) {
-                return e1.getLabel().compareTo(e2.getLabel());
-//            }
-//            if (builtIn1 && !builtIn2) {
-//                return -1;
-//            } else if (!builtIn1 && builtIn2) {
-//                return 1;
-//            }
-//            return 0;
+        public int compare(ManifestItem e1, ManifestItem e2) {
+              return e1.toString().compareTo(e2.toString());
         }
     };
 
@@ -190,7 +177,7 @@ public class DependenciesResolver {
                     }
                     bcp.addRelativeComponent(uniqueName);
                     if (userBundleClasspaths.contains(bcp)) {
-                        bcp.setChecked(true);
+                        bcp.setOptional(false);
                     }
                 }
             }
@@ -273,4 +260,19 @@ public class DependenciesResolver {
 		return exportPackages;
 	}
 
+    public String getManifestBundleClasspath(char separator) {
+        return DependenciesCoreUtil.toManifestString(bundleClasspaths, separator, true);
+    }
+
+    public String getManifestRequireBundle(char separator) {
+        return DependenciesCoreUtil.toManifestString(requireBundles, separator, true);
+    }
+
+    public String getManifestImportPackage(char separator) {
+        return DependenciesCoreUtil.toManifestString(importPackages, separator, true);
+    }
+
+    public String getManifestExportPackage(char separator) {
+        return DependenciesCoreUtil.toManifestString(exportPackages, separator, true);
+    }
 }

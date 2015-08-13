@@ -21,22 +21,6 @@ import org.osgi.framework.Version;
 public class VersionValidateUtil {
 
 	/**
-	 * Validate version.
-	 * 
-	 * @param versionString
-	 *            the version string
-	 * @return the i status
-	 */
-	public static String validateVersion(String versionString) {
-		try {
-			Version.parseVersion(versionString);
-		} catch (IllegalArgumentException e) {
-			return e.getMessage();
-		}
-		return null;
-	}
-
-	/**
 	 * Try to get valid version range.
 	 * 
 	 * @param minV
@@ -65,7 +49,7 @@ public class VersionValidateUtil {
 	public static String tryToGetValidVersionRange(String minV, String maxV,
 			boolean minI, boolean maxI) {
 		if (minV == null) {
-			return Version.emptyVersion.toString();
+			return null;
 		}
 		if (minV.equals(maxV)) {
 			minI = maxI = true;

@@ -1,22 +1,16 @@
 package org.talend.designer.camel.dependencies.core.model;
 
-public class RequireBundle extends OsgiDependencies {
+import org.osgi.framework.Constants;
 
-    public RequireBundle() {
-        super();
-    }
+public class RequireBundle extends ManifestItem {
 
-    public RequireBundle(String inputString) {
-        super(inputString);
+    @Override
+    public String getVersionAttribute() {
+        return Constants.BUNDLE_VERSION_ATTRIBUTE;
     }
 
     @Override
-    protected String getVersionPrefix() {
-        return "bundle-version";
-    }
-
-    @Override
-    public int getType() {
-        return REQUIRE_BUNDLE;
+    public String getHeader() {
+        return Constants.REQUIRE_BUNDLE;
     }
 }
