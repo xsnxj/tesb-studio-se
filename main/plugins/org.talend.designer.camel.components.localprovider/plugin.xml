@@ -44,18 +44,6 @@
             uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-pool-1.6.jar"
             bundleID="" />
 
-        <!-- ${tesb-httpclient} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
-            name="httpclient-4.2.5.jar"
-            id="httpclient"
-            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.2.5.jar"
-            bundleID="" />
-        <!-- ${tesb-httpcore} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
-            name="httpcore-4.2.5.jar"
-            id="httpcore"
-            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.2.5.jar"
-            bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-activemq-all}"
             id="activemq-all"

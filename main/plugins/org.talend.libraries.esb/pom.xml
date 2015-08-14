@@ -244,6 +244,21 @@
 		<artifactId>cxf-rt-rs-security-xml</artifactId>
 		<version>${cxf.version}</version>
 	</dependency>
+	<dependency>
+		<groupId>org.apache.cxf</groupId>
+		<artifactId>cxf-rt-transports-http-hc</artifactId>
+		<version>${cxf.version}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.slf4j</groupId>
+				<artifactId>*</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
 	<!-- providers -->
 	<dependency>
 		<groupId>org.apache.cxf</groupId>

@@ -301,6 +301,54 @@
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-httpclient}"
+            id="httpclient"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpclient}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-httpcore}"
+            id="httpcore"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpcore}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="httpclient"
+                id="httpclient"
+                name="httpclient">
+            <library id="httpclient" />
+            <library id="httpcore" />
+            <library id="commons-codec" />
+            <library id="commons-logging" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-cxf-rt-transports-http-hc}"
+            id="cxf-rt-transports-http-hc"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-http-hc}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-httpcore-nio}"
+            id="httpcore-nio"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpcore-nio}"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-httpasyncclient}"
+            id="httpasyncclient"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpasyncclient}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="cxf-rt-transports-http-hc"
+                id="cxf-rt-transports-http-hc"
+                name="cxf-rt-transports-http-hc">
+            <library id="cxf-rt-transports-http-hc" />
+            <group id="slf4j" />
+            <group id="httpclient" />
+            <library id="httpcore-nio" />
+            <library id="httpasyncclient" />
+        </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-rs-client}"
             id="cxf-rt-rs-client"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-rs-client}"

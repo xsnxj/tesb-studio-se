@@ -279,9 +279,7 @@
             <IMPORT MODULE="commons-pool" MVN="${mvn-commons-pool}" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 
-            <IMPORT MODULE="httpclient" MVN="${mvn-httpclient}"
-                    REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="httpcore" MVN="${mvn-httpcore}"
+            <IMPORT MODULE_GROUP="httpclient"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
             <IMPORT MODULE="xstream" MVN="${mvn-xstream}"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />

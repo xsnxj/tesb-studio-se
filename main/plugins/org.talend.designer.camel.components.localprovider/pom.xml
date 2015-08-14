@@ -39,8 +39,6 @@
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
         <mvn-commons-lang>mvn:commons-lang/commons-lang/2.6</mvn-commons-lang>
         <mvn-commons-pool>mvn:commons-pool/commons-pool/1.6</mvn-commons-pool>
-        <mvn-httpcore>mvn:org.apache.httpcomponents/httpcore/4.2.5</mvn-httpcore>
-        <mvn-httpclient>mvn:org.apache.httpcomponents/httpclient/4.2.5</mvn-httpclient>
     </properties>
 
     <dependencies>
