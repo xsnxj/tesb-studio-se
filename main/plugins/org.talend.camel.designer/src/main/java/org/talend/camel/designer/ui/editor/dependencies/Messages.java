@@ -46,6 +46,12 @@ public class Messages extends NLS {
 	public static String DependencyVersionPart_comboInclusive;
 	public static String DependencyVersionPart_comboExclusive;
 	public static String DependencyVersionPart_InvalidVersionFormat;
+    public static String ManageRouteResourceDialog_routeCol;
+    public static String ManageRouteResourceDialog_Version;
+    public static String ManageRouteResourceDialog_Type;
+    public static String ManageRouteResourceDialog_Path;
+    public static String ManageRouteResourceDialog_CopyPath;
+    public static String ManageRouteResourceDialog_usedBy;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

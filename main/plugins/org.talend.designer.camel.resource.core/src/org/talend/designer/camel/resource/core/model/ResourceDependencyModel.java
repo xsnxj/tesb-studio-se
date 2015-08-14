@@ -192,4 +192,9 @@ public class ResourceDependencyModel {
 		return refNodes;
 	}
 
+    @Override
+    public String toString() {
+        return getItem().getProperty().getDisplayName();
+    }
+
 }

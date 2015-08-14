@@ -7,9 +7,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -17,7 +14,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,7 +42,7 @@ import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 
-public class CamelDependenciesEditor extends EditorPart implements IRouterDependenciesChangedListener {
+public class CamelDependenciesEditor extends EditorPart implements IRouterDependenciesChangedListener, IMessagePart {
 
     private final CommandStack commandStack;
     private final boolean isReadOnly;
@@ -58,21 +54,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 	private CamelDependenciesPanel bundleClasspathViewer;
 	private CamelDependenciesPanel importPackageViewer;
 	private CamelDependenciesPanel exportPackageViewer;
-
-	private final ISelectionChangedListener selectionChangedListener = new ISelectionChangedListener() {
-        @Override
-        public void selectionChanged(SelectionChangedEvent event) {
-            IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-            int size = selection.size();
-            if (size == 0) {
-                setStatus(null);
-            } else if (selection.size() == 1) {
-                setStatus(((ManifestItem) selection.getFirstElement()).getDescription());
-            } else {
-                setStatus(size + Messages.RouterDependenciesEditor_multiItemsSelectedStatusMsg);
-            }
-        }
-    };
+	private ManageRouteResourcePanel manageRouteResourcePanel;
 
 	public CamelDependenciesEditor(final AbstractMultiPageTalendEditor editor, boolean isReadOnly) {
 	    commandStack = editor.getTalendEditor().getCommandStack();
@@ -118,29 +100,26 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		// create data tables
         ScrolledComposite top = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         top.setLayoutData(new GridData(GridData.FILL_BOTH));
-		SashForm sashForm = new SashForm(top, SWT.NONE);
+		SashForm mainForm = new SashForm(top, SWT.VERTICAL);
 
-		SashForm leftPart = new SashForm(sashForm, SWT.VERTICAL);
-		leftPart.setLayout(new FillLayout(SWT.VERTICAL));
-		importPackageViewer = createTableViewer(leftPart, toolkit,
-				Messages.RouterDependenciesEditor_importPackageSec,
-				ManifestItem.IMPORT_PACKAGE);
-		exportPackageViewer = createTableViewer(leftPart, toolkit,
-				Messages.RouterDependenciesEditor_exportPackage, ManifestItem.EXPORT_PACKAGE);
+        SashForm topPart = new SashForm(mainForm, SWT.HORIZONTAL);
+        importPackageViewer = createTableViewer(topPart, toolkit, Messages.RouterDependenciesEditor_importPackageSec,
+            ManifestItem.IMPORT_PACKAGE);
+        bundleClasspathViewer = createTableViewer(topPart, toolkit, Messages.RouterDependenciesEditor_classpathSec,
+            ManifestItem.BUNDLE_CLASSPATH);
 
-		SashForm rightPart = new SashForm(sashForm, SWT.VERTICAL);
-		rightPart.setLayout(new FillLayout(SWT.VERTICAL));
-		bundleClasspathViewer = createTableViewer(rightPart, toolkit,
-				Messages.RouterDependenciesEditor_classpathSec,
-				ManifestItem.BUNDLE_CLASSPATH);
-		requireBundleViewer = createTableViewer(rightPart, toolkit,
-				Messages.RouterDependenciesEditor_requireBundleSec,
-				ManifestItem.REQUIRE_BUNDLE);
+        SashForm centerPart = new SashForm(mainForm, SWT.HORIZONTAL);
+        exportPackageViewer = createTableViewer(centerPart, toolkit, Messages.RouterDependenciesEditor_exportPackage,
+            ManifestItem.EXPORT_PACKAGE);
+        requireBundleViewer = createTableViewer(centerPart, toolkit,
+            Messages.RouterDependenciesEditor_requireBundleSec, ManifestItem.REQUIRE_BUNDLE);
 
-        top.setContent(sashForm);
+        manageRouteResourcePanel = createResourceTableViewer(mainForm, toolkit, "Resources");
+
 		top.setExpandHorizontal(true);
 		top.setExpandVertical(true);
-		top.setMinSize(sashForm.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        top.setContent(mainForm);
+		top.setMinSize(mainForm.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 		//create status
 		Composite statusComposite = toolkit.createComposite(parent);
@@ -165,6 +144,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 				requireBundleViewer.setFilterString(filterString);
 				bundleClasspathViewer.setFilterString(filterString);
 				exportPackageViewer.setFilterString(filterString);
+				manageRouteResourcePanel.setFilterString(filterString);
 			}
 		});
 
@@ -177,6 +157,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 				requireBundleViewer.setShowBuiltIn(!show);
 				bundleClasspathViewer.setShowBuiltIn(!show);
 				exportPackageViewer.setShowBuiltIn(!show);
+                manageRouteResourcePanel.setShowBuiltIn(!show);
 			}
 		});
 
@@ -191,10 +172,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		updateInput();
 	}
 
-	public void setStatus(String message){
-//		if (isReadOnly()) {
-//			return;
-//		}
+	public void setMessage(String message){
 		if(message == null){
 			message = ""; //$NON-NLS-1$
 		}
@@ -223,20 +201,31 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
         requireBundleViewer.setInput(resolver.getRequireBundles());
         bundleClasspathViewer.setInput(resolver.getBundleClasspaths());
         exportPackageViewer.setInput(resolver.getExportPackages());
+        manageRouteResourcePanel.setInput(fromEditorInput());
     }
 
-	private CamelDependenciesPanel createTableViewer(Composite parent, FormToolkit toolkit, String title, String type) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
-		section.setText(title);
-		final CamelDependenciesPanel c = (type == ManifestItem.BUNDLE_CLASSPATH)
-		    ? new CheckedCamelDependenciesPanel(section, type, toolkit, isReadOnly())
-		    : new CamelDependenciesPanel(section, type, toolkit, isReadOnly());
-		section.setClient(c);
-		toolkit.adapt(c);
-		c.addDependenciesChangedListener(this);
-		c.addSelectionChangedListener(selectionChangedListener);
-		return c;
-	}
+    private CamelDependenciesPanel createTableViewer(Composite parent, FormToolkit toolkit, String title, String type) {
+        Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+        section.setText(title);
+        final CamelDependenciesPanel c = (type == ManifestItem.BUNDLE_CLASSPATH)
+            ? new CheckedCamelDependenciesPanel(section, type, isReadOnly(), this)
+            : new CamelDependenciesPanel(section, type, isReadOnly(), this);
+        section.setClient(c);
+        toolkit.adapt(c);
+        c.addDependenciesChangedListener(this);
+        return c;
+    }
+
+    private ManageRouteResourcePanel createResourceTableViewer(Composite parent, FormToolkit toolkit, String title) {
+        Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+        section.setText(title);
+
+        final ManageRouteResourcePanel c = new ManageRouteResourcePanel(section, isReadOnly(), this);
+
+        section.setClient(c);
+        toolkit.adapt(c);
+        return c;
+    }
 
     @Override
 	public void dependencesChanged() {

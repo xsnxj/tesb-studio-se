@@ -151,18 +151,21 @@ public class DependenciesCoreUtil {
         final Object data = map.get(header);
         if (null != data) {
             final Collection<ManifestItem> list = new ArrayList<ManifestItem>();
-            try {
-                for (ManifestElement me : ManifestElement.parseHeader(header, data.toString())) {
-                    final ManifestItem item = ManifestItem.newItem(header);
-                    item.setName(me.getValue());
-                    item.setVersion(me.getAttribute(item.getVersionAttribute()));
-                    item.setOptional(Constants.RESOLUTION_OPTIONAL.equals(
-                        me.getDirective(Constants.RESOLUTION_DIRECTIVE)));
-                    item.setDescription(MessageFormat.format(Messages.DependenciesCoreUtil_userDefined, header));
-                    list.add(item);
+            final String s = data.toString();
+            if (!s.isEmpty()) {
+                try {
+                    for (ManifestElement me : ManifestElement.parseHeader(header, data.toString())) {
+                        final ManifestItem item = ManifestItem.newItem(header);
+                        item.setName(me.getValue());
+                        item.setVersion(me.getAttribute(item.getVersionAttribute()));
+                        item.setOptional(Constants.RESOLUTION_OPTIONAL.equals(
+                            me.getDirective(Constants.RESOLUTION_DIRECTIVE)));
+                        item.setDescription(MessageFormat.format(Messages.DependenciesCoreUtil_userDefined, header));
+                        list.add(item);
+                    }
+                } catch (BundleException e) {
+                    ExceptionHandler.process(e);
                 }
-            } catch (BundleException e) {
-                ExceptionHandler.process(e);
             }
             return list;
         }

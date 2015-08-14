@@ -14,7 +14,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 
 /**
@@ -36,8 +35,8 @@ public class CheckedCamelDependenciesPanel extends CamelDependenciesPanel {
     private ToolItem selectAll;
 	private ToolItem deselectAll;
 
-    public CheckedCamelDependenciesPanel(Composite parent, String type, FormToolkit toolkit, boolean isReadOnly) {
-        super(parent, type, toolkit, isReadOnly);
+    public CheckedCamelDependenciesPanel(Composite parent, String type, boolean isReadOnly, final IMessagePart messagePart) {
+        super(parent, type, isReadOnly, messagePart);
 
         selectAll.setEnabled(!isReadOnly);
         deselectAll.setEnabled(!isReadOnly);

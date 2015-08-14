@@ -12,30 +12,22 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.talend.camel.designer.CamelDesignerPlugin;
+import org.talend.camel.designer.ui.editor.dependencies.controls.SearchCellLabelProvider;
 import org.talend.camel.designer.ui.editor.dependencies.dialog.NewOrEditDependencyDialog;
 import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 
@@ -44,15 +36,8 @@ import org.talend.designer.camel.dependencies.core.model.ManifestItem;
  */
 public class CamelDependenciesPanel extends Composite {
 
-    // hightlight of filterString
-    private static Color hightLight = null;
-    // builtIn font
-    private static Font builtInFont = null;
-
     protected final TableViewer tableViewer;
-
-    private String filterString;
-    private boolean showBuiltIn = true;
+    private final SearchCellLabelProvider labelProvider;
 
     private final String type;
 
@@ -65,7 +50,7 @@ public class CamelDependenciesPanel extends Composite {
     private final Collection<IRouterDependenciesChangedListener> listeners =
         new ArrayList<IRouterDependenciesChangedListener>();
 
-    public CamelDependenciesPanel(Composite parent, String type, FormToolkit toolkit, boolean isReadOnly) {
+    public CamelDependenciesPanel(Composite parent, String type, boolean isReadOnly, final IMessagePart messagePart) {
 		super(parent, SWT.NONE);
 		this.type = type;
 
@@ -82,6 +67,14 @@ public class CamelDependenciesPanel extends Composite {
                 @Override
                 public void selectionChanged(SelectionChangedEvent event) {
                     final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                    int size = selection.size();
+                    if (size == 0) {
+                        messagePart.setMessage(null);
+                    } else if (selection.size() == 1) {
+                        messagePart.setMessage(((ManifestItem) selection.getFirstElement()).getDescription());
+                    } else {
+                        messagePart.setMessage(size + Messages.RouterDependenciesEditor_multiItemsSelectedStatusMsg);
+                    }
                     if (selection == null || selection.isEmpty()) {
                         if (remBtn != null) {
                             remBtn.setEnabled(false);
@@ -144,19 +137,10 @@ public class CamelDependenciesPanel extends Composite {
             });
         }
 
-        Display display = tableViewer.getTable().getDisplay();
-        if (hightLight == null) {
-            hightLight = display.getSystemColor(SWT.COLOR_YELLOW);
-        }
-        if (builtInFont == null) {
-            FontData[] fontData = tableViewer.getTable().getFont().getFontData();
-            fontData[0].setStyle(fontData[0].getStyle() | SWT.ITALIC);
-            builtInFont = new Font(display, fontData[0]);
-        }
 
-        tableViewer.setLabelProvider(new DependenciesTableLabelProvider());
+        labelProvider = new DependenciesTableLabelProvider(tableViewer);
+        tableViewer.setLabelProvider(labelProvider);
         tableViewer.setContentProvider(new ArrayContentProvider());
-        tableViewer.addFilter(new DependencesTableFilter());
 
         ToolBar tb = new ToolBar(this, SWT.FLAT | SWT.VERTICAL);
         tb.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -168,13 +152,13 @@ public class CamelDependenciesPanel extends Composite {
 	}
 
     public void setFilterString(String filterString) {
-        this.filterString = filterString;
+        labelProvider.setFilterString(filterString);
         tableViewer.refresh();
         tableViewer.getTable().redraw();
     }
 
     public void setShowBuiltIn(boolean showBuiltIn) {
-        this.showBuiltIn = showBuiltIn;
+        labelProvider.setShowBuiltIn(showBuiltIn);
         tableViewer.refresh();
     }
 
@@ -361,30 +345,13 @@ public class CamelDependenciesPanel extends Composite {
         }
     }
 
-    /**
-     * filter according to the filterString and show BuiltIn items or not
-     * @author liugang
-     *
-     */
-    private class DependencesTableFilter extends ViewerFilter {
+    private class DependenciesTableLabelProvider extends SearchCellLabelProvider {
 
-        @Override
-        public boolean select(Viewer viewer, Object parentElement, Object element) {
-            if (!showBuiltIn) {
-                if (((ManifestItem) element).isBuiltIn()) {
-                    return false;
-                }
-            }
-            if (filterString == null || filterString.isEmpty()) {
-                return true;
-            }
-            return ((ManifestItem) element).toString().contains(filterString);
+        public DependenciesTableLabelProvider(final StructuredViewer structuredViewer) {
+            super(structuredViewer);
         }
 
-    }
-
-    private class DependenciesTableLabelProvider extends StyledCellLabelProvider {
-
+        @Override
         public Image getImage(Object element) {
             switch (((ManifestItem) element).getHeader()) {
             case ManifestItem.IMPORT_PACKAGE:
@@ -404,29 +371,11 @@ public class CamelDependenciesPanel extends Composite {
             }
         }
 
-//        @Override
-        public Font getFont(Object element) {
-            if (((ManifestItem) element).isBuiltIn()) {
-                return builtInFont;
-            }
-            return null;
+        @Override
+        protected boolean isBuiltIn(Object element) {
+            return ((ManifestItem) element).isBuiltIn();
         }
 
-        @Override
-        public void update(ViewerCell cell) {
-            ManifestItem item = (ManifestItem) cell.getElement();
-            final String text = item.toString();
-            cell.setText(text);
-            cell.setImage(getImage(item));
-            cell.setFont(getFont(item));
-            if (filterString != null && !filterString.isEmpty()) {
-                int filterIndex = text.indexOf(filterString);
-                StyleRange styleRange = new StyleRange(filterIndex, filterString.length(), null, hightLight);
-                cell.setStyleRanges(new StyleRange[] { styleRange });
-            } else {
-                cell.setStyleRanges(null);
-            }
-        }
     }
 
 }
