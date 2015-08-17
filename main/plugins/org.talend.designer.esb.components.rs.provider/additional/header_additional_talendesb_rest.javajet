@@ -36,7 +36,6 @@
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
-boolean patchExist = false;
 
 List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
 if (!httpRequestComponentsList.isEmpty()) {
@@ -983,9 +982,8 @@ if (null != conns && !conns.isEmpty()) {
 			}
 		}
 %>
-<% if ("PATCH".equals(httpVerb)) {
-	patchExist = true;%>
-    @<%=httpVerb%>()
+<% if ("PATCH".equals(httpVerb)) {%>
+    @org.apache.cxf.jaxrs.ext.<%=httpVerb%>()
 <%} else {%>
     @javax.ws.rs.<%=httpVerb%>()
 <%}%>
@@ -1114,15 +1112,6 @@ if (contentTypes.containsKey(produces)) {
 	}
 }
 %>
-
-<% 
-if (patchExist) { %>
-	@ java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
-	@ java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-	@ javax.ws.rs.HttpMethod("PATCH")
-	public @interface PATCH { 
-	}
-<% } %>
 	public javax.ws.rs.core.Response handleWrongRequest(
 			org.apache.cxf.jaxrs.ext.MessageContext context, int status, String error) {
 
