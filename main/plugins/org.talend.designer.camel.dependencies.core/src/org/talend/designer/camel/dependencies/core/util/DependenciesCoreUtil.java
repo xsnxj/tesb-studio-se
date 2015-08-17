@@ -19,7 +19,7 @@ import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 public class DependenciesCoreUtil {
 
     @Deprecated
-    private static final String DELIMITER = "|"; //$NON-NLS-1$
+    private static final String DELIMITER = "\\|"; //$NON-NLS-1$
     @Deprecated
     private static final String ID_PREFIX = "org.talend.designer.camel.dependencies.core."; //$NON-NLS-1$
     @Deprecated
