@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.camel.resource.handlers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class ESBResourcesItemRelationshipHandler extends AbstractJobItemRelation
 		if (processType == null) {
 			return Collections.emptySet();
 		}
-		Set<ResourceDependencyModel> depModels = RouteResourceUtil.getResourceDependencies(baseItem);
+		Collection<ResourceDependencyModel> depModels = RouteResourceUtil.getResourceDependencies(baseItem);
 		Set<Relation> relationSet = new HashSet<Relation>();
 		for (ResourceDependencyModel depModel : depModels) {
 			Item item = depModel.getItem();

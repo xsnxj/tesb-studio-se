@@ -14,15 +14,14 @@ package org.talend.designer.camel.resource.core.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -32,21 +31,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
-import org.talend.core.model.properties.ByteArray;
-import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -77,70 +77,6 @@ public class RouteResourceUtil {
     private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
 
     public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
-
-    /**
-     * Copy route resource
-     * 
-     * @param item
-     * @throws CoreException
-     */
-    public static void copyResources(FileItem item) throws CoreException {
-
-        IFolder folder = getRouteResourceFolder();
-        if (folder == null) {
-            return;
-        }
-        File resFolder = folder.getLocation().toFile();
-        if (!resFolder.exists()) {
-            resFolder.mkdirs();
-        }
-
-        ByteArray content = item.getContent();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getInnerContent());
-
-        IFile resFile = folder.getFile(item.getProperty().getLabel());
-
-        File file = resFile.getLocation().toFile();
-        if (file.exists()) {
-            file.delete();
-        }
-        folder.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-        resFile.create(inputStream, true, new NullProgressMonitor());
-    }
-
-    /**
-     * Delete route resource
-     * 
-     * @param item
-     * @throws CoreException
-     */
-    public static void deleteResources(FileItem item) throws CoreException {
-
-        IFolder folder = getRouteResourceFolder();
-        if (folder == null) {
-            return;
-        }
-
-        File resFolder = folder.getLocation().toFile();
-        if (!resFolder.exists()) {
-            return;
-        }
-        IFile resFile = folder.getFile(item.getProperty().getLabel());
-        resFile.getLocation().toFile().delete();
-        folder.refreshLocal(IResource.DEPTH_ONE, new NullProgressMonitor());
-    }
-
-    private static IFolder getRouteResourceFolder() {
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-            IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
-                    IRunProcessService.class);
-            ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
-            if (talendProcessJavaProject != null) {
-                return talendProcessJavaProject.getSrcFolder().getFolder(RouteResourceItem.ROUTE_RESOURCES_FOLDER);
-            }
-        }
-        return null;
-    }
 
     /**
      * Get source file of Item.
@@ -189,32 +125,23 @@ public class RouteResourceUtil {
      * @param routeItem
      * @param models
      */
-    public static void saveResourceDependency(Item routeItem, Set<ResourceDependencyModel> models) {
-        EMap additionalProperties = routeItem.getProperty().getAdditionalProperties();
-
-        if (additionalProperties != null) {
-            StringBuffer sb = new StringBuffer();
-            for (ResourceDependencyModel item : models) {
-                if (item.isBuiltIn()) {
-                    continue;
-                }
-                sb.append(item.getItem().getProperty().getId());
-                sb.append(RouteResourceUtil.SLASH_TAG);
-                sb.append(item.getSelectedVersion());
+    public static void saveResourceDependency(Map<Object, Object> map, Collection<ResourceDependencyModel> models) {
+        final StringBuilder sb = new StringBuilder();
+        for (ResourceDependencyModel item : models) {
+            if (item.isBuiltIn()) {
+                continue;
+            }
+            if (sb.length() != 0) {
                 sb.append(RouteResourceUtil.COMMA_TAG);
             }
-            if (sb.length() > 0) {
-                String string = sb.substring(0, sb.length() - 1);
-                additionalProperties.put(ROUTE_RESOURCES_PROP, string);
-            } else {
-                additionalProperties.put(ROUTE_RESOURCES_PROP, "");
-            }
+            sb.append(item.getItem().getProperty().getId());
+            sb.append(RouteResourceUtil.SLASH_TAG);
+            sb.append(item.getSelectedVersion());
         }
-
-        try {
-            ProxyRepositoryFactory.getInstance().save(routeItem, false);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
+        if (sb.length() > 0) {
+            map.put(ROUTE_RESOURCES_PROP, sb.toString());
+        } else {
+            map.remove(ROUTE_RESOURCES_PROP);
         }
     }
 
@@ -223,46 +150,40 @@ public class RouteResourceUtil {
      * @param routeItem
      * @param models
      */
-    public static Set<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
+    public static Collection<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
 
-        Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
-        Property property = routeItem.getProperty();
-
-        EMap additionalProperties = property.getAdditionalProperties();
-        if (additionalProperties != null) {
-            Object resourcesObj = additionalProperties.get(ROUTE_RESOURCES_PROP);
-            if (resourcesObj != null) {
-                String[] resourceIds = resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG);
-                for (String id : resourceIds) {
-                    String[] parts = id.split(RouteResourceUtil.REPACE_SLASH_TAG);
-                    if (parts.length != 2) {
-                        continue;
-                    }
-                    String idPart = parts[0];
-                    String versionPart = parts[1];
-
-                    try {
-                        IRepositoryViewObject rvo = null;
-                        if (RouteResourceUtil.LATEST_VERSION.equals(versionPart)) {
-                            rvo = ProxyRepositoryFactory.getInstance().getLastVersion(idPart);
-                        } else {
-                            rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(idPart, versionPart, false);
-                        }
-                        if (rvo != null) {
-                            Item item = rvo.getProperty().getItem();
-                            ResourceDependencyModel model = new ResourceDependencyModel((RouteResourceItem) item);
-                            model.setSelectedVersion(versionPart);
-                            model.setBuiltIn(false);
-                            models.add(model);
-                        }
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
+        Collection<ResourceDependencyModel> models =
+            new HashSet<ResourceDependencyModel>(getBuiltInResourceDependencies(routeItem));
+        Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
+        if (resourcesObj != null) {
+            String[] resourceIds = resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG);
+            for (String id : resourceIds) {
+                String[] parts = id.split(REPACE_SLASH_TAG);
+                if (parts.length != 2) {
+                    continue;
                 }
+                String idPart = parts[0];
+                String versionPart = parts[1];
 
+                try {
+                    IRepositoryViewObject rvo = null;
+                    if (RouteResourceUtil.LATEST_VERSION.equals(versionPart)) {
+                        rvo = ProxyRepositoryFactory.getInstance().getLastVersion(idPart);
+                    } else {
+                        rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(idPart, versionPart, false);
+                    }
+                    if (rvo != null) {
+                        Item item = rvo.getProperty().getItem();
+                        ResourceDependencyModel model = new ResourceDependencyModel((RouteResourceItem) item);
+                        model.setSelectedVersion(versionPart);
+                        model.setBuiltIn(false);
+                        models.add(model);
+                    }
+                } catch (PersistenceException e) {
+                    ExceptionHandler.process(e);
+                }
             }
         }
-        models.addAll(getBuiltInResourceDependencies(routeItem));
         return models;
     }
 
@@ -376,7 +297,7 @@ public class RouteResourceUtil {
                 }
                 if (!duplicated) {
                     // New id
-                    newStoreValue = resourcesObj + "," + newModelId + SLASH_TAG + model.getSelectedVersion();
+                    newStoreValue = resourcesObj + COMMA_TAG + newModelId + SLASH_TAG + model.getSelectedVersion();
                 }
             } else {
                 newStoreValue = newModelId + SLASH_TAG + model.getSelectedVersion();
@@ -417,116 +338,122 @@ public class RouteResourceUtil {
         return null;
     }
 
-    /**
-     * Clear route resources before running
-     */
-    public static void clearRouteResources() {
+    public static Collection<IPath> synchronizeRouteResource(Item item) {
         if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-            return;
+            return null;
         }
-        IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+        final IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
                 IRunProcessService.class);
-        ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+        final ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
         if (talendProcessJavaProject == null) {
-            return;
+            return null;
         }
-        File localFile = getResourceDescFile();
-        IFolder srcFolder = talendProcessJavaProject.getSrcFolder();
 
-        Set<String> resFileNames = new HashSet<String>();
-        try {
+        final Collection<IPath> result = new ArrayList<IPath>();
+        // https://jira.talendforge.org/browse/TESB-7893
+        // add spring file
+        final IPath springFilePath = talendProcessJavaProject.getSrcFolder().getLocation().append(
+                "/META-INF/spring/" + item.getProperty().getLabel().toLowerCase() + ".xml");
+        result.add(springFilePath);
+
+        final IFolder routeResourceFolder = talendProcessJavaProject.getResourcesFolder();
+        // Clear route resources before running
+        final IFile resourceDescFile = talendProcessJavaProject.getProject().getFile(ROUTE_RESOURCES_DESC_FILE);
+        if (resourceDescFile.exists()) {
             InputStream fileInputStream = null;
-            BufferedReader reader = null;
             try {
-                if (!localFile.exists()) {
-                    localFile.createNewFile();
+                fileInputStream = resourceDescFile.getContents();
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Delete resources
+                    final IFile resFile = routeResourceFolder.getFile(new Path(line));
+                    if (resFile.exists()) {
+                        resFile.delete(true, null);
+                    }
                 }
-                fileInputStream = new FileInputStream(localFile);
-                reader = new BufferedReader(new InputStreamReader(fileInputStream, "utf-8"));
-                String line = reader.readLine();
-                while (line != null) {
-                    resFileNames.add(line);
-                    line = reader.readLine();
-
-                }
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Delete resources
-        for (String name : resFileNames) {
-            IFile resFile = srcFolder.getFile(new Path(name));
-            if (resFile.exists()) {
-                try {
-                    resFile.delete(true, new NullProgressMonitor());
-                } catch (CoreException e) {
-                    e.printStackTrace();
+                if (null != fileInputStream) {
+                    try {
+                        fileInputStream.close();
+                    } catch (IOException e) {
+                        // nothing
+                    }
                 }
             }
         }
 
-    }
-
-    private static File getResourceDescFile() {
-        if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-            return null;
+        final StringBuilder buffer = new StringBuilder();
+        for (ResourceDependencyModel model : getResourceDependencies(item)) {
+            IFile file = copyResources(routeResourceFolder, model);
+            if (file != null) {
+                result.add(file.getLocation());
+                buffer.append(model.getClassPathUrl()).append("\n");
+            }
         }
-        IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
-                IRunProcessService.class);
-        ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
-        if (talendProcessJavaProject == null) {
-            return null;
-        }
-        File localFile = talendProcessJavaProject.getProject().getFile(ROUTE_RESOURCES_DESC_FILE).getLocation().toFile();
 
-        return localFile;
+        // Add resources to .route_resources file
+        final InputStream is = new ByteArrayInputStream(buffer.toString().getBytes());
+        try {
+            if (resourceDescFile.exists()) {
+                resourceDescFile.setContents(is, 0, null);
+            } else {
+                resourceDescFile.create(is, true, null);
+            }
+        } catch (CoreException e) {
+            ExceptionHandler.process(e);
+        }
+
+        return result;
     }
 
     /**
-     * Add resources to .route_resources file
+     * Copy route resource
      * 
-     * @param models
+     * @param model
+     * @throws CoreException
      */
-    public static void addRouteResourcesDesc(Set<ResourceDependencyModel> models) {
+    private static IFile copyResources(final IFolder folder, final ResourceDependencyModel model) {
+        final RouteResourceItem item = model.getItem();
+        EList<?> referenceResources = item.getReferenceResources();
+        if (referenceResources.isEmpty()) {
+            return null;
+        }
+        final ReferenceFileItem refFile = (ReferenceFileItem) referenceResources.get(0);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(refFile.getContent().getInnerContent());
 
-        File localFile = getResourceDescFile();
-        if (localFile == null) {
-            return;
-        }
-        StringBuffer buffer = new StringBuffer();
-        for (ResourceDependencyModel model : models) {
-            buffer.append(model.getClassPathUrl()).append("\n");
-        }
+        final IFile classpathFile = folder.getFile(new Path(model.getClassPathUrl()));
 
         try {
-            OutputStream outputStream = null;
-            OutputStreamWriter writer = null;
-            try {
-                outputStream = new FileOutputStream(localFile);
-                writer = new OutputStreamWriter(outputStream, "utf-8");
-                writer.write(buffer.toString());
-                writer.flush();
-            } finally {
-                if (writer != null) {
-                    writer.close();
+            if (classpathFile.exists()) {
+                classpathFile.setContents(inputStream, 0, null);
+            } else {
+                if (!classpathFile.getParent().exists()) {
+                    prepareFolder((IFolder) classpathFile.getParent());
                 }
-                if (outputStream != null) {
-                    outputStream.close();
-                }
+                classpathFile.create(inputStream, true, null);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (CoreException e) {
+            ExceptionHandler.process(e);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                // nothing
+            }
         }
+        return classpathFile;
     }
 
+    private static void prepareFolder(IFolder folder) throws CoreException {
+        IContainer parent = folder.getParent();
+        if (IResource.FOLDER == parent.getType()) {
+            prepareFolder((IFolder) parent);
+        }
+        if (!folder.exists()) {
+            folder.create(true, true, null);
+        }
+    }
 }

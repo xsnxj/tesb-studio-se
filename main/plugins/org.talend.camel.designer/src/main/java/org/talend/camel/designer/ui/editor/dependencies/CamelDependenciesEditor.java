@@ -1,10 +1,8 @@
 package org.talend.camel.designer.ui.editor.dependencies;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.swt.SWT;
@@ -29,7 +27,6 @@ import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
-import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.ui.editor.JobEditorInput;
@@ -40,6 +37,7 @@ import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.camel.dependencies.core.model.RequireBundle;
 import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 
 public class CamelDependenciesEditor extends EditorPart implements IRouterDependenciesChangedListener, IMessagePart {
@@ -164,7 +162,8 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		refreshBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				refreshDependencies();
+//	          setDirty(false);
+		        updateInput();
 			}
 		});
 
@@ -180,15 +179,6 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		statusLabel.setToolTipText(message);
 	}
 
-	protected void refreshDependencies() {
-		try {
-			updateInput();
-//			setDirty(false);
-		} catch (Exception e) {
-            ExceptionHandler.process(e);
-		}
-	}
-
     private ProcessItem fromEditorInput() {
         return (ProcessItem) ((CamelProcessEditorInput) getEditorInput()).getItem();
     }
@@ -201,18 +191,17 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
         requireBundleViewer.setInput(resolver.getRequireBundles());
         bundleClasspathViewer.setInput(resolver.getBundleClasspaths());
         exportPackageViewer.setInput(resolver.getExportPackages());
-        manageRouteResourcePanel.setInput(fromEditorInput());
+        manageRouteResourcePanel.setInput(RouteResourceUtil.getResourceDependencies(fromEditorInput()));
     }
 
     private CamelDependenciesPanel createTableViewer(Composite parent, FormToolkit toolkit, String title, String type) {
         Section section = toolkit.createSection(parent, Section.TITLE_BAR);
         section.setText(title);
         final CamelDependenciesPanel c = (type == ManifestItem.BUNDLE_CLASSPATH)
-            ? new CheckedCamelDependenciesPanel(section, type, isReadOnly(), this)
-            : new CamelDependenciesPanel(section, type, isReadOnly(), this);
+            ? new CheckedCamelDependenciesPanel(section, type, isReadOnly(), this, this)
+            : new CamelDependenciesPanel(section, type, isReadOnly(), this, this);
         section.setClient(c);
         toolkit.adapt(c);
-        c.addDependenciesChangedListener(this);
         return c;
     }
 
@@ -220,7 +209,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
         Section section = toolkit.createSection(parent, Section.TITLE_BAR);
         section.setText(title);
 
-        final ManageRouteResourcePanel c = new ManageRouteResourcePanel(section, isReadOnly(), this);
+        final ManageRouteResourcePanel c = new ManageRouteResourcePanel(section, isReadOnly(), this, this);
 
         section.setClient(c);
         toolkit.adapt(c);
@@ -228,44 +217,39 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
     }
 
     @Override
-	public void dependencesChanged() {
+	public void dependencesChanged(Composite source) {
 //		setDirty(true);
-		doSave(new NullProgressMonitor());
+        final Command cmd;
+        if (source == manageRouteResourcePanel) {
+            cmd = new Command() {
+                @Override
+                public void execute() {
+                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
+                    RouteResourceUtil.saveResourceDependency(process.getAdditionalProperties(),
+                        manageRouteResourcePanel.getInput());
+                }
+            };
+        } else {
+            cmd = new Command() {
+                @Override
+                public void execute() {
+                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
+                    //save all datas
+                    DependenciesCoreUtil.saveToMap(process.getAdditionalProperties(),
+                            (Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
+                            (Collection<ImportPackage>) importPackageViewer.getInput(),
+                            (Collection<RequireBundle>) requireBundleViewer.getInput(),
+                            (Collection<ExportPackage>)exportPackageViewer.getInput());
+                }
+            };
+        }
+        commandStack.execute(cmd);
+//		doSave(new NullProgressMonitor());
 	}
 
     @Override
 	public void doSave(IProgressMonitor monitor) {
-		try {
-            //record process editor dirty signal first
-		    commandStack.execute(new Command() {
-                @Override
-                public void execute() {
-                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
-                    saveToMap(process.getAdditionalProperties());
-                    // update ProcessItem for unsaved editor
-//                        saveToMap(process.getProperty().getAdditionalProperties().map());
-                }
-            });
-//            } else {
-                //check editor and update the input source before saving
-//                saveToMap(((CamelProcessEditorInput) getEditorInput()).getLoadedProcess().getAdditionalProperties());
-                // save model
-//                ProxyRepositoryFactory.getInstance().save(processItem);
-
-//            firePropertyChange(PROP_DIRTY);
-		} catch (Exception e) {
-		    ExceptionHandler.process(e);
-		}
 	}
-
-    private void saveToMap(Map<Object, Object> additionalProperties) {
-        //save all datas
-        DependenciesCoreUtil.saveToMap(additionalProperties,
-                (Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
-                (Collection<ImportPackage>) importPackageViewer.getInput(),
-                (Collection<RequireBundle>) requireBundleViewer.getInput(),
-                (Collection<ExportPackage>)exportPackageViewer.getInput());
-    }
 
 	@Override
 	public boolean isDirty() {

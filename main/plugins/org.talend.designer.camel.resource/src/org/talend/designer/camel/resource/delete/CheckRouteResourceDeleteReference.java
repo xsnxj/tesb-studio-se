@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.camel.resource.delete;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +53,7 @@ public class CheckRouteResourceDeleteReference extends
 			for (IRepositoryViewObject obj : allRoutes) {
 				Property property = obj.getProperty();
 				Item routeItem = property.getItem();
-				Set<ResourceDependencyModel> models = RouteResourceUtil
+				Collection<ResourceDependencyModel> models = RouteResourceUtil
 						.getResourceDependencies(routeItem);
 				for (ResourceDependencyModel model : models) {
 

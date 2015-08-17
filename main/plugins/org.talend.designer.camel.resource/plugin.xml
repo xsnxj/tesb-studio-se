@@ -21,13 +21,6 @@
          
    <extension
          point="org.talend.core.repositoryContextualsActions">
-      <Action
-            class="org.talend.designer.camel.resource.ui.actions.ManageRouteResourcesAction"
-            id="org.talend.designer.camel.resource.ManageRouteResourcesAction"
-            level="20"
-            name="Manage Route Resources">
-              
-      </Action>
        <Action
                   class="org.talend.designer.camel.resource.ui.actions.CreateRouteResourceAction"
                   id="org.talend.designer.camel.resource.CreateRouteResource"

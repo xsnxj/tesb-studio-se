@@ -35,8 +35,9 @@ public class CheckedCamelDependenciesPanel extends CamelDependenciesPanel {
     private ToolItem selectAll;
 	private ToolItem deselectAll;
 
-    public CheckedCamelDependenciesPanel(Composite parent, String type, boolean isReadOnly, final IMessagePart messagePart) {
-        super(parent, type, isReadOnly, messagePart);
+    public CheckedCamelDependenciesPanel(Composite parent, String type, boolean isReadOnly,
+        final IMessagePart messagePart, final IRouterDependenciesChangedListener dependenciesChangedListener) {
+        super(parent, type, isReadOnly, messagePart, dependenciesChangedListener);
 
         selectAll.setEnabled(!isReadOnly);
         deselectAll.setEnabled(!isReadOnly);

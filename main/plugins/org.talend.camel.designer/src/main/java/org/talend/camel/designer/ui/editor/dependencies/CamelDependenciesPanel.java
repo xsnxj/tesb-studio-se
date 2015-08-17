@@ -1,6 +1,5 @@
 package org.talend.camel.designer.ui.editor.dependencies;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +39,7 @@ public class CamelDependenciesPanel extends Composite {
     private final SearchCellLabelProvider labelProvider;
 
     private final String type;
+    private final IRouterDependenciesChangedListener dependenciesChangedListener;
 
     private ToolItem addBtn;
     private ToolItem remBtn;
@@ -47,12 +47,11 @@ public class CamelDependenciesPanel extends Composite {
     private ToolItem upBtn;
     private ToolItem downBtn;
 
-    private final Collection<IRouterDependenciesChangedListener> listeners =
-        new ArrayList<IRouterDependenciesChangedListener>();
-
-    public CamelDependenciesPanel(Composite parent, String type, boolean isReadOnly, final IMessagePart messagePart) {
+    public CamelDependenciesPanel(Composite parent, String type, boolean isReadOnly, final IMessagePart messagePart,
+        final IRouterDependenciesChangedListener dependenciesChangedListener) {
 		super(parent, SWT.NONE);
 		this.type = type;
+		this.dependenciesChangedListener = dependenciesChangedListener;
 
 		setLayout(new GridLayout(2, false));
 
@@ -171,18 +170,8 @@ public class CamelDependenciesPanel extends Composite {
         return (Collection<? extends ManifestItem>) tableViewer.getInput();
     }
 
-	public void addDependenciesChangedListener(IRouterDependenciesChangedListener l) {
-		listeners.add(l);
-	}
-
-	public void removeDependenciesChangedListener(IRouterDependenciesChangedListener l) {
-		listeners.remove(l);
-	}
-
 	protected void fireDependenciesChangedListener() {
-		for (IRouterDependenciesChangedListener l : listeners) {
-			l.dependencesChanged();
-		}
+	    dependenciesChangedListener.dependencesChanged(this);
 	}
 
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {

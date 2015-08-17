@@ -52,6 +52,8 @@ public class Messages extends NLS {
     public static String ManageRouteResourceDialog_Path;
     public static String ManageRouteResourceDialog_CopyPath;
     public static String ManageRouteResourceDialog_usedBy;
+    public static String ManageRouteResourceDialog_copyTitle;
+    public static String ManageRouteResourceDialog_copyMsg;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -14,11 +14,10 @@ package org.talend.camel.designer.ui.editor.dependencies;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -37,6 +36,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -44,7 +45,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -52,9 +52,7 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchCellLabelProvider;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.repository.model.RepositoryNode;
 
 /**
@@ -67,19 +65,21 @@ public class ManageRouteResourcePanel extends Composite {
     private static final int COL_VERSION = 1;
     private static final int COL_PATH = 2;
 
-	private ToolItem addBtn, delBtn, copyBtn;
-
-	private TableViewer resourcesTV;
+	private final TableViewer resourcesTV;
     private final SearchCellLabelProvider labelProvider;
+    private final IRouterDependenciesChangedListener dependenciesChangedListener;
 
-	public ManageRouteResourcePanel(Composite parent, boolean isReadOnly, final IMessagePart messagePart) {
+    private final ToolItem addBtn, delBtn, copyBtn;
+
+	public ManageRouteResourcePanel(Composite parent, boolean isReadOnly, final IMessagePart messagePart,
+	    final IRouterDependenciesChangedListener dependenciesChangedListener) {
 		super(parent, SWT.NONE);
+		this.dependenciesChangedListener = dependenciesChangedListener;
 
 		setLayout(new GridLayout(2, false));
 
-        resourcesTV = new TableViewer(this, SWT.BORDER | SWT.SINGLE
-                | SWT.FULL_SELECTION);
-        Table table = resourcesTV.getTable();
+        resourcesTV = new TableViewer(this, /*SWT.FLAT |*/ SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+        final Table table = resourcesTV.getTable();
         resourcesTV.getTable().setEnabled(!isReadOnly);
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -125,9 +125,23 @@ public class ManageRouteResourcePanel extends Composite {
                     copyBtn.setEnabled(item != null);
                 }
             });
+            resourcesTV.getTable().addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.stateMask == SWT.NONE) {
+                        if (delBtn.isEnabled() && e.keyCode == SWT.DEL) {
+                            deleteData();
+                        } else if (e.keyCode == SWT.INSERT) {
+                            addData();
+                        } else if (copyBtn.isEnabled() && e.keyCode == SWT.CR) {
+                            copyPath();
+                        }
+                    }
+                }
+            });
         }
 
-        ToolBar tb = new ToolBar(this, SWT.FLAT | SWT.VERTICAL);
+        final ToolBar tb = new ToolBar(this, SWT.FLAT | SWT.VERTICAL);
         tb.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
         addBtn = new ToolItem(tb, SWT.PUSH);
@@ -144,11 +158,28 @@ public class ManageRouteResourcePanel extends Composite {
         copyBtn.setText(Messages.ManageRouteResourceDialog_CopyPath);
         copyBtn.setEnabled(false);
 
-        initListeners();
+        if (!isReadOnly) {
+            final SelectionListener selectionListener = new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    if (e.getSource() == addBtn) {
+                        addData();
+                    } else if (e.getSource() == delBtn) {
+                        deleteData();
+                    } else if (e.getSource() == copyBtn) {
+                        copyPath();
+                    }
+                }
+            };
+
+            addBtn.addSelectionListener(selectionListener);
+            delBtn.addSelectionListener(selectionListener);
+            copyBtn.addSelectionListener(selectionListener);
+        }
 	}
 
-    public void setInput(ProcessItem item) {
-        resourcesTV.setInput(RouteResourceUtil.getResourceDependencies(item));
+    public void setInput(Collection<ResourceDependencyModel> input) {
+        resourcesTV.setInput(input);
     }
 
     public void setFilterString(String filterString) {
@@ -166,12 +197,13 @@ public class ManageRouteResourcePanel extends Composite {
         return (Collection<ResourceDependencyModel>) resourcesTV.getInput();
     }
 
-	protected void addData() {
+    protected void fireDependenciesChangedListener() {
+        dependenciesChangedListener.dependencesChanged(this);
+    }
 
-		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(
-				Display.getCurrent().getActiveShell());
-		int open = dialog.open();
-		if (open == Dialog.OK) {
+	protected void addData() {
+		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(getShell());
+		if (Dialog.OK == dialog.open()) {
 			RepositoryNode result = dialog.getResult();
 			Item item = result.getObject().getProperty().getItem();
 			if (item instanceof RouteResourceItem) {
@@ -188,57 +220,23 @@ public class ManageRouteResourcePanel extends Composite {
 				getInput().add(model);
 				resourcesTV.refresh();
 				resourcesTV.setSelection(new StructuredSelection(model));
+				fireDependenciesChangedListener();
 			}
 		}
-
-	}
-
-//	@Override
-	// TODO: save
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.OK_ID) {
-			Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
-			models.addAll(getInput());
-//			RouteResourceUtil.saveResourceDependency(item, models);
-		}
-//		super.buttonPressed(buttonId);
-	}
-
-	private void initListeners() {
-
-        final SelectionListener selectionListener = new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (e.getSource() == addBtn) {
-                    addData();
-                } else if (e.getSource() == delBtn) {
-                    deleteData();
-                } else if (e.getSource() == copyBtn) {
-                    copyPath();
-                }
-            }
-        };
-
-        addBtn.addSelectionListener(selectionListener);
-		delBtn.addSelectionListener(selectionListener);
-		copyBtn.addSelectionListener(selectionListener);
 	}
 
 	/**
 	 * Copy class path
 	 */
 	protected void copyPath() {
-		ResourceDependencyModel item = getSelectedItem();
+		final ResourceDependencyModel item = getSelectedItem();
 		if (item != null) {
-			Clipboard clipboard = new Clipboard(copyBtn.getDisplay());
+			Clipboard clipboard = new Clipboard(getDisplay());
 			clipboard.setContents(new String[] { item.getClassPathUrl() },
 					new Transfer[] { TextTransfer.getInstance() });
-			//TODO:
-//			MessageDialog.openInformation(getShell(), Messages.getString("ManageRouteResourceDialog.copyOK"), //$NON-NLS-1$
-//					"'" + item.getClassPathUrl() //$NON-NLS-1$
-//							+ Messages.getString("ManageRouteResourceDialog.copy1")); //$NON-NLS-1$
+			MessageDialog.openInformation(getShell(), Messages.ManageRouteResourceDialog_copyTitle,
+					MessageFormat.format(Messages.ManageRouteResourceDialog_copyMsg, item.getClassPathUrl()));
 		}
-
 	}
 
 	protected void deleteData() {
@@ -246,6 +244,7 @@ public class ManageRouteResourcePanel extends Composite {
 		if (item != null) {
 		    getInput().remove(item);
 			resourcesTV.refresh();
+            fireDependenciesChangedListener();
 		}
 	}
 
