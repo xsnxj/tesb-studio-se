@@ -19,10 +19,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -151,13 +150,11 @@ public class RouteResourceUtil {
      * @param models
      */
     public static Collection<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
-
-        Collection<ResourceDependencyModel> models =
-            new HashSet<ResourceDependencyModel>(getBuiltInResourceDependencies(routeItem));
-        Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
+        final Collection<ResourceDependencyModel> models =
+            new ArrayList<ResourceDependencyModel>(getBuiltInResourceDependencies(routeItem));
+        final Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
         if (resourcesObj != null) {
-            String[] resourceIds = resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG);
-            for (String id : resourceIds) {
+            for (String id : resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG)) {
                 String[] parts = id.split(REPACE_SLASH_TAG);
                 if (parts.length != 2) {
                     continue;
@@ -166,15 +163,15 @@ public class RouteResourceUtil {
                 String versionPart = parts[1];
 
                 try {
-                    IRepositoryViewObject rvo = null;
+                    final IRepositoryViewObject rvo;
                     if (RouteResourceUtil.LATEST_VERSION.equals(versionPart)) {
                         rvo = ProxyRepositoryFactory.getInstance().getLastVersion(idPart);
                     } else {
                         rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(idPart, versionPart, false);
                     }
                     if (rvo != null) {
-                        Item item = rvo.getProperty().getItem();
-                        ResourceDependencyModel model = new ResourceDependencyModel((RouteResourceItem) item);
+                        final ResourceDependencyModel model =
+                            new ResourceDependencyModel((RouteResourceItem) rvo.getProperty().getItem());
                         model.setSelectedVersion(versionPart);
                         model.setBuiltIn(false);
                         models.add(model);
@@ -192,39 +189,17 @@ public class RouteResourceUtil {
      * 
      * @param models
      */
-    public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
-
-        Property property = routeItem.getProperty();
+    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
         // Changed for TDI-24563
         // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
-        Process process = getProcessFromItem(property.getItem());
+        final Process process = getProcessFromItem(routeItem.getProperty().getItem());
         if (process == null) {
-            return new HashSet<ResourceDependencyModel>();
+            return Collections.emptySet();
         }
         process.loadXmlFile();
-        List<? extends INode> nodes = process.getGraphicalNodes();
-        Set<ResourceDependencyModel> models = getBuiltInResourceDependencies(nodes);
+        Collection<ResourceDependencyModel> models = getBuiltInResourceDependencies(process.getGraphicalNodes());
         process.dispose();
         return models;
-    }
-
-    /**
-     * @param routeItem
-     * 
-     * @param models
-     */
-    public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(IRepositoryViewObject node) {
-        Property property = node.getProperty();
-        // Changed for TDI-24563
-        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
-        Item item = property.getItem();
-        Process process = getProcessFromItem(item);
-        if (process == null) {
-            return new HashSet<ResourceDependencyModel>();
-        }
-        process.loadXmlFile();
-        List<? extends INode> nodes = process.getGraphicalNodes();
-        return getBuiltInResourceDependencies(nodes);
     }
 
     private static Process getProcessFromItem(Item item) {
@@ -245,27 +220,23 @@ public class RouteResourceUtil {
      * 
      * @param models
      */
-    public static Set<ResourceDependencyModel> getBuiltInResourceDependencies(List<? extends INode> nodes) {
-
-        Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(Collection<? extends INode> nodes) {
+        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
         for (INode node : nodes) {
-            Set<ResourceDependencyModel> resourceModels = ResourceCheckExtensionPointManager.INSTANCE.getResourceModel(node);
-            boolean isContained = false;
+            Collection<ResourceDependencyModel> resourceModels =
+                ResourceCheckExtensionPointManager.INSTANCE.getResourceModel(node);
             // Merge and add
             for (ResourceDependencyModel rdm : resourceModels) {
-                for (ResourceDependencyModel model : models) {
-                    if (model.equals(rdm)) {
-                        model.getRefNodes().addAll(rdm.getRefNodes());
-                        isContained = true;
-                        break;
+                if (!models.add(rdm)) {
+                    for (ResourceDependencyModel model : models) {
+                        if (model.equals(rdm)) {
+                            model.getRefNodes().addAll(rdm.getRefNodes());
+                            break;
+                        }
                     }
-                }
-                if (!isContained) {
-                    models.add(rdm);
                 }
             }
         }
-
         return models;
     }
 
