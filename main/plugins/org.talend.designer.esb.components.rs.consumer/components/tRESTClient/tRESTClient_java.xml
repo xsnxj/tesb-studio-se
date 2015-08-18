@@ -47,6 +47,7 @@
 				<ITEM NAME="GET" VALUE="GET" />
 				<ITEM NAME="POST" VALUE="POST" />
 				<ITEM NAME="PUT" VALUE="PUT" />
+				<ITEM NAME="PATCH" VALUE="PATCH" />
 				<ITEM NAME="DELETE" VALUE="DELETE" />
 			</ITEMS>
 		</PARAMETER>
@@ -281,6 +282,7 @@
 
             <IMPORT MODULE_GROUP="security-common"
                     REQUIRED="true" />
+            <IMPORT MODULE_GROUP="cxf-rt-transports-http-hc" REQUIRED_IF="(METHOD == 'PATCH')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
