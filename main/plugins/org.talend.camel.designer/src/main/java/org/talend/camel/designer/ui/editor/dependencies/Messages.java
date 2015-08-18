@@ -4,7 +4,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.talend.camel.designer.ui.editor.dependencies.messages"; //$NON-NLS-1$
-	public static String EditDependenciesContextualAction_ActionName;
+	public static String CamelDependenciesEditor_Resources;
+    public static String EditDependenciesContextualAction_ActionName;
 	public static String NewDependencyItemDialog_ImportPackage;
 	public static String NewDependencyItemDialog_RequireBundle;
     public static String NewDependencyItemDialog_ExportPackage;

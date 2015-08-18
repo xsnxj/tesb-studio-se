@@ -100,6 +100,9 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
         top.setLayoutData(new GridData(GridData.FILL_BOTH));
 		SashForm mainForm = new SashForm(top, SWT.VERTICAL);
 
+        manageRouteResourcePanel =
+            createResourceTableViewer(mainForm, toolkit, Messages.CamelDependenciesEditor_Resources);
+
         SashForm topPart = new SashForm(mainForm, SWT.HORIZONTAL);
         importPackageViewer = createTableViewer(topPart, toolkit, Messages.RouterDependenciesEditor_importPackageSec,
             ManifestItem.IMPORT_PACKAGE);
@@ -111,8 +114,6 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
             ManifestItem.EXPORT_PACKAGE);
         requireBundleViewer = createTableViewer(centerPart, toolkit,
             Messages.RouterDependenciesEditor_requireBundleSec, ManifestItem.REQUIRE_BUNDLE);
-
-        manageRouteResourcePanel = createResourceTableViewer(mainForm, toolkit, "Resources");
 
 		top.setExpandHorizontal(true);
 		top.setExpandVertical(true);
