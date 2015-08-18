@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.camel.resource.core.extension;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -184,57 +186,42 @@ public class ResourceCheckExtensionPointManager {
 
 	}
 
-	public Set<ResourceDependencyModel> getResourceModel(INode node) {
-		Set<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
-		String name = node.getComponent().getName();
-		Set<ExResourceParamModel> resourceParams = extensionMap.get(name);
-		if (resourceParams == null) {
-			return models;
-		}
-		for (ExResourceParamModel model : resourceParams) {
-			boolean eualate = model.eualate(node);
-			if (eualate) {
-				String paramName = model.getParamName();
-				ResourceDependencyModel denpModel = createDenpendencyModel(
-						paramName, node);
-				if(denpModel == null){
-					continue;
-				}
-				boolean isContained = false;
-				for (ResourceDependencyModel rdm : models) {
-					if (rdm.equals(denpModel)) {
-						rdm.getRefNodes().add(node.getUniqueName());
-						isContained = true;
-						break;
-					}
-				}
-				if (!isContained) {
-					denpModel.getRefNodes().add(node.getUniqueName());
-					models.add(denpModel);
-				}
-			}
-		}
-		return models;
-	}
+    public Collection<ResourceDependencyModel> getResourceModel(INode node) {
+        final Collection<ExResourceParamModel> resourceParams = extensionMap.get(node.getComponent().getName());
+        if (resourceParams == null) {
+            return Collections.emptyList();
+        }
+        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+        for (ExResourceParamModel model : resourceParams) {
+            if (model.eualate(node)) {
+                final ResourceDependencyModel denpModel = createDenpendencyModel(model.getParamName(), node);
+                if (denpModel != null) {
+                    models.add(denpModel);
+                }
+            }
+        }
+        return models;
+    }
 
-	/**
-	 * Create ResourceDependencyModel
-	 * 
-	 * @param paramName
-	 * @param node
-	 * @return
-	 */
-	private ResourceDependencyModel createDenpendencyModel(String paramName,
-			INode node) {
-		IElementParameter idParam = node.getElementParameter(paramName + ":"
-				+ EParameterName.ROUTE_RESOURCE_TYPE_ID);
-		IElementParameter versionParam = node.getElementParameter(paramName
-				+ ":" + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
-		Object idObj = idParam.getValue();
-		Object versionObj = versionParam.getValue();
-
-		return RouteResourceUtil.createDependency((String) idObj,
-				(String) versionObj);
-	}
+    /**
+     * Create ResourceDependencyModel
+     * 
+     * @param paramName
+     * @param node
+     * @return
+     */
+    private static ResourceDependencyModel createDenpendencyModel(String paramName, final INode node) {
+        final IElementParameter idParam =
+            node.getElementParameter(paramName + ':' + EParameterName.ROUTE_RESOURCE_TYPE_ID);
+        final IElementParameter versionParam =
+            node.getElementParameter(paramName + ':' + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
+        final ResourceDependencyModel model =
+            RouteResourceUtil.createDependency((String) idParam.getValue(), (String)  versionParam.getValue());
+        if (null != model) {
+            model.setBuiltIn(true);
+            model.getRefNodes().add(node.getUniqueName());
+        }
+        return model;
+    }
 
 }

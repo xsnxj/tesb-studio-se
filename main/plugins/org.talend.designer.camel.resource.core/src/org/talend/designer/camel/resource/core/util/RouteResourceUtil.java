@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
@@ -44,7 +43,6 @@ import org.talend.core.model.general.Project;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -150,38 +148,23 @@ public class RouteResourceUtil {
      * @param models
      */
     public static Collection<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
-        final Collection<ResourceDependencyModel> models =
-            new ArrayList<ResourceDependencyModel>(getBuiltInResourceDependencies(routeItem));
+        final Collection<ResourceDependencyModel> builtInModels = getBuiltInResourceDependencies(routeItem);
         final Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
         if (resourcesObj != null) {
+            final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
             for (String id : resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG)) {
-                String[] parts = id.split(REPACE_SLASH_TAG);
-                if (parts.length != 2) {
-                    continue;
-                }
-                String idPart = parts[0];
-                String versionPart = parts[1];
-
-                try {
-                    final IRepositoryViewObject rvo;
-                    if (RouteResourceUtil.LATEST_VERSION.equals(versionPart)) {
-                        rvo = ProxyRepositoryFactory.getInstance().getLastVersion(idPart);
-                    } else {
-                        rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(idPart, versionPart, false);
-                    }
-                    if (rvo != null) {
-                        final ResourceDependencyModel model =
-                            new ResourceDependencyModel((RouteResourceItem) rvo.getProperty().getItem());
-                        model.setSelectedVersion(versionPart);
-                        model.setBuiltIn(false);
+                final String[] parts = id.split(REPACE_SLASH_TAG);
+                if (parts.length == 2) {
+                    final ResourceDependencyModel model = createDependency(parts[0], parts[1]);
+                    if (!builtInModels.contains(model)) {
                         models.add(model);
                     }
-                } catch (PersistenceException e) {
-                    ExceptionHandler.process(e);
                 }
             }
+            return models;
+        } else {
+            return builtInModels;
         }
-        return models;
     }
 
     /**
@@ -197,7 +180,24 @@ public class RouteResourceUtil {
             return Collections.emptySet();
         }
         process.loadXmlFile();
-        Collection<ResourceDependencyModel> models = getBuiltInResourceDependencies(process.getGraphicalNodes());
+
+        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+        for (INode node : process.getGraphicalNodes()) {
+            final Collection<ResourceDependencyModel> resourceModels =
+                ResourceCheckExtensionPointManager.INSTANCE.getResourceModel(node);
+            // Merge and add
+            for (ResourceDependencyModel rdm : resourceModels) {
+                if (!models.add(rdm)) {
+                    for (ResourceDependencyModel model : models) {
+                        if (model.equals(rdm)) {
+                            model.getRefNodes().addAll(rdm.getRefNodes());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         process.dispose();
         return models;
     }
@@ -216,95 +216,27 @@ public class RouteResourceUtil {
     }
 
     /**
-     * @param nodes
-     * 
-     * @param models
-     */
-    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(Collection<? extends INode> nodes) {
-        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
-        for (INode node : nodes) {
-            Collection<ResourceDependencyModel> resourceModels =
-                ResourceCheckExtensionPointManager.INSTANCE.getResourceModel(node);
-            // Merge and add
-            for (ResourceDependencyModel rdm : resourceModels) {
-                if (!models.add(rdm)) {
-                    for (ResourceDependencyModel model : models) {
-                        if (model.equals(rdm)) {
-                            model.getRefNodes().addAll(rdm.getRefNodes());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return models;
-    }
-
-    /**
-     * 
-     * @param routeItem
-     * @param model
-     */
-    public static void addResourceDependency(Item routeItem, ResourceDependencyModel model) {
-        Property property = routeItem.getProperty();
-        String newModelId = model.getItem().getProperty().getId();
-        String newStoreValue = "";
-        EMap additionalProperties = property.getAdditionalProperties();
-        if (additionalProperties != null) {
-            String resourcesObj = (String) additionalProperties.get(ROUTE_RESOURCES_PROP);
-            if (resourcesObj != null) {
-                boolean duplicated = false;
-                String[] resourceIdVersions = resourcesObj.split(COMMA_TAG);
-                for (String idVersion : resourceIdVersions) {
-                    String[] parts = idVersion.split(REPACE_SLASH_TAG);
-                    String idPart = parts[0];
-
-                    // Id duplicate
-                    if (model.getItem().getProperty().getId().equals(idPart)) {
-                        String newId = idPart + SLASH_TAG + model.getSelectedVersion();
-                        newStoreValue = resourcesObj.toString().replace(idVersion, newId);
-                        duplicated = true;
-                    }
-                }
-                if (!duplicated) {
-                    // New id
-                    newStoreValue = resourcesObj + COMMA_TAG + newModelId + SLASH_TAG + model.getSelectedVersion();
-                }
-            } else {
-                newStoreValue = newModelId + SLASH_TAG + model.getSelectedVersion();
-            }
-            additionalProperties.put(ROUTE_RESOURCES_PROP, newStoreValue);
-        }
-        try {
-            ProxyRepositoryFactory.getInstance().save(routeItem, false);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * 
      * @param id
      * @param version
      * @return
      */
     public static ResourceDependencyModel createDependency(String id, String version) {
-        IRepositoryViewObject rvo = null;
         try {
+            final IRepositoryViewObject rvo;
             if (RouteResourceUtil.LATEST_VERSION.equals(version)) {
                 rvo = ProxyRepositoryFactory.getInstance().getLastVersion(id);
             } else {
                 rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(id, version, true);
             }
+            if (rvo != null) {
+                final ResourceDependencyModel model =
+                    new ResourceDependencyModel((RouteResourceItem) rvo.getProperty().getItem());
+                model.setSelectedVersion(version);
+                return model;
+            }
         } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
-        if (rvo != null) {
-            Item item = rvo.getProperty().getItem();
-            ResourceDependencyModel resourceDependencyModel = new ResourceDependencyModel((RouteResourceItem) item);
-            resourceDependencyModel.setSelectedVersion(version);
-            resourceDependencyModel.setBuiltIn(true);
-            return resourceDependencyModel;
+            ExceptionHandler.process(e);
         }
         return null;
     }

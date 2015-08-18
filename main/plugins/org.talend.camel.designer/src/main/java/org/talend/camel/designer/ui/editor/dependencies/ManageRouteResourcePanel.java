@@ -204,8 +204,7 @@ public class ManageRouteResourcePanel extends Composite {
 	protected void addData() {
 		RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(getShell());
 		if (Dialog.OK == dialog.open()) {
-			RepositoryNode result = dialog.getResult();
-			Item item = result.getObject().getProperty().getItem();
+			Item item = dialog.getResult().getObject().getProperty().getItem();
 			if (item instanceof RouteResourceItem) {
 				for (ResourceDependencyModel rsmodel : getInput()) {
 					if (rsmodel.getItem().getProperty().getId()

@@ -38,15 +38,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
-import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.process.EParameterFieldType;
@@ -57,8 +51,6 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
@@ -470,21 +462,6 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
             }
             combo.setText(strValue);
             combo.setVisible(true);
-        }
-
-    }
-
-    private void refreshItemeProperty(IRepositoryViewObject repositoryObject) {
-
-        IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-        if (activeEditor != null && activeEditor instanceof CamelMultiPageTalendEditor) {
-            CamelMultiPageTalendEditor camelEdtior = (CamelMultiPageTalendEditor) activeEditor;
-            IEditorInput editorInput = camelEdtior.getEditorInput();
-            CamelProcessEditorInput input = (CamelProcessEditorInput) editorInput;
-            Item item = input.getItem();
-            ResourceDependencyModel model = new ResourceDependencyModel((RouteResourceItem) repositoryObject.getProperty()
-                    .getItem());
-            RouteResourceUtil.addResourceDependency(item, model);
         }
 
     }
