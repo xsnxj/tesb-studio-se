@@ -39,16 +39,36 @@ public class DependenciesCoreUtil {
         Collection<RequireBundle> requiredBundles,
         Collection<ExportPackage> exportPackages) {
         map.remove(BUNDLE_CLASSPATH_ID);
-        map.put(ManifestItem.BUNDLE_CLASSPATH, toManifestString(bundleClasspaths));
+        String result = toManifestString(bundleClasspaths);
+        if (result.isEmpty()) {
+            map.remove(ManifestItem.BUNDLE_CLASSPATH);
+        } else {
+            map.put(ManifestItem.BUNDLE_CLASSPATH, result);
+        }
 
         map.remove(IMPORT_PACKAGE_ID);
-        map.put(ManifestItem.IMPORT_PACKAGE, toManifestString(importPackages));
+        result = toManifestString(importPackages);
+        if (result.isEmpty()) {
+            map.remove(ManifestItem.IMPORT_PACKAGE);
+        } else {
+            map.put(ManifestItem.IMPORT_PACKAGE, result);
+        }
 
         map.remove(REQUIRE_BUNDLE_ID);
-        map.put(ManifestItem.REQUIRE_BUNDLE, toManifestString(requiredBundles));
+        result = toManifestString(requiredBundles);
+        if (result.isEmpty()) {
+            map.remove(ManifestItem.REQUIRE_BUNDLE);
+        } else {
+            map.put(ManifestItem.REQUIRE_BUNDLE, result);
+        }
 
         map.remove(EXPORT_PACKAGE_ID);
-        map.put(ManifestItem.EXPORT_PACKAGE, toManifestString(exportPackages));
+        result = toManifestString(exportPackages);
+        if (result.isEmpty()) {
+            map.remove(ManifestItem.EXPORT_PACKAGE);
+        } else {
+            map.put(ManifestItem.EXPORT_PACKAGE, result);
+        }
     }
 
     public static Collection<ImportPackage> getStoredImportPackages(Map<?, ?> map) {
