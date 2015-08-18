@@ -12,7 +12,7 @@
   <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <camel.version>2.15.2</camel.version>
+        <camel.version>2.15.3</camel.version>
         <activemq.version>5.11.2</activemq.version>
         <spring.osgi.version>1.2.1</spring.osgi.version>
         <!-- camel-groovy -->
@@ -387,4 +387,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>apache-staging</id>
+            <url>http://repository.apache.org/content/groups/staging/</url>
+            <name>Apache Staging Repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>
