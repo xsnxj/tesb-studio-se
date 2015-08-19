@@ -40,9 +40,10 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class EditRouteResourceAction extends AContextualAction {
 
-//	private Properties params;
-
 	public EditRouteResourceAction() {
+        setText(Messages.getString("EditRouteResourceAction_Title"));
+        setToolTipText(Messages.getString("EditRouteResourceAction_Tooltip"));
+        setImageDescriptor(RouteResourceActivator.createImageDesc("icons/edit-resource.png"));
 	}
 
 	/*
@@ -75,22 +76,6 @@ public class EditRouteResourceAction extends AContextualAction {
 		return RouteResourceItem.class;
 	}
 
-//	private ISelection getSelectedObject() {
-//		if (params == null) {
-//			return getSelection();
-//		} else {
-//			RepositoryNode repositoryNode = RepositoryNodeUtilities
-//					.getRepositoryNode(params.getProperty("nodeId"), false); //$NON-NLS-1$
-//			IRepositoryView viewPart = getViewPart();
-//			if (repositoryNode != null && viewPart != null) {
-//				RepositoryNodeUtilities.expandParentNode(viewPart,
-//						repositoryNode);
-//				return new StructuredSelection(repositoryNode);
-//			}
-//			return null;
-//		}
-//	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -100,11 +85,8 @@ public class EditRouteResourceAction extends AContextualAction {
 	 * org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(TreeViewer viewer, IStructuredSelection selection) {
-		boolean canWork = !selection.isEmpty() && selection.size() == 1;
-		IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-		if (factory.isUserReadOnlyOnCurrentProject()) {
-			canWork = false;
-		}
+        boolean canWork = !selection.isEmpty() && (selection.size() == 1)
+            && !ProxyRepositoryFactory.getInstance().isUserReadOnlyOnCurrentProject();
 		if (canWork) {
 			Object o = selection.getFirstElement();
 			RepositoryNode node = (RepositoryNode) o;
@@ -146,12 +128,6 @@ public class EditRouteResourceAction extends AContextualAction {
 
 		}
 		setEnabled(canWork);
-
-		this.setText(Messages.getString("EditRouteResourceAction_Title"));
-		this.setToolTipText(Messages
-				.getString("EditRouteResourceAction_Tooltip"));
-		this.setImageDescriptor(RouteResourceActivator
-				.createImageDesc("icons/edit-resource.png"));
 	}
 
 	/**
