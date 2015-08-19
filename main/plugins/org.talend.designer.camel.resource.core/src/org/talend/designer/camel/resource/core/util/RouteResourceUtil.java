@@ -149,9 +149,9 @@ public class RouteResourceUtil {
      */
     public static Collection<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
         final Collection<ResourceDependencyModel> builtInModels = getBuiltInResourceDependencies(routeItem);
+        final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
         final Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
         if (resourcesObj != null) {
-            final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
             for (String id : resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG)) {
                 final String[] parts = id.split(REPACE_SLASH_TAG);
                 if (parts.length == 2) {
@@ -161,10 +161,8 @@ public class RouteResourceUtil {
                     }
                 }
             }
-            return models;
-        } else {
-            return builtInModels;
         }
+        return models;
     }
 
     /**

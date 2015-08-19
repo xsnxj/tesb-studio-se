@@ -16,17 +16,17 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -53,7 +53,6 @@ import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchCellLabelProvider;
 import org.talend.core.model.properties.Item;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
-import org.talend.repository.model.RepositoryNode;
 
 /**
  * @author xpli
@@ -289,9 +288,9 @@ public class ManageRouteResourcePanel extends Composite {
         }
     }
 
-    private static class ResourceEditingSupport extends EditingSupport {
+    private class ResourceEditingSupport extends EditingSupport {
 
-        private ComboBoxCellEditor comboBoxCellEditor;
+        private ComboBoxViewerCellEditor comboBoxCellEditor;
 
         public ResourceEditingSupport(ColumnViewer viewer) {
             super(viewer);
@@ -299,36 +298,35 @@ public class ManageRouteResourcePanel extends Composite {
 
         @Override
         protected void setValue(Object element, Object value) {
-            ResourceDependencyModel model = (ResourceDependencyModel) element;
-            model.setSelectedVersion(model.getVersions().get(
-                    (Integer) value));
-            getViewer().refresh(element);
+            final ResourceDependencyModel model = (ResourceDependencyModel) element;
+            if (!model.getSelectedVersion().equals(value)) {
+                model.setSelectedVersion((String) value);
+                getViewer().update(element, null);
+                fireDependenciesChangedListener();
+            }
         }
 
         @Override
         protected Object getValue(Object element) {
-            ResourceDependencyModel model = (ResourceDependencyModel) element;
-            return model.getVersions().indexOf(model.getSelectedVersion());
+            return ((ResourceDependencyModel) element).getSelectedVersion();
         }
 
         @Override
         protected CellEditor getCellEditor(Object element) {
             // http://jira.talendforge.org/browse/TESB-6584 Xiaopeng Li
-            ResourceDependencyModel model = (ResourceDependencyModel) element;
-            String[] array = model.getVersions().toArray(new String[0]);
             if (comboBoxCellEditor == null) {
-                comboBoxCellEditor = new ComboBoxCellEditor(
-                    (Composite) getViewer().getControl(), array, SWT.READ_ONLY | SWT.CENTER);
-            } else {
-                comboBoxCellEditor.setItems(array);
+                comboBoxCellEditor = new ComboBoxViewerCellEditor(
+                    (Composite) getViewer().getControl(), SWT.READ_ONLY | SWT.CENTER);
+                comboBoxCellEditor.setLabelProvider(new LabelProvider());
+                comboBoxCellEditor.setContentProvider(new ArrayContentProvider());
             }
+            comboBoxCellEditor.setInput(((ResourceDependencyModel) element).getVersions());
             return comboBoxCellEditor;
         }
 
         @Override
         protected boolean canEdit(Object element) {
-            ResourceDependencyModel model = (ResourceDependencyModel) element;
-            return !model.isBuiltIn();
+            return !((ResourceDependencyModel) element).isBuiltIn();
         }
     }
 
