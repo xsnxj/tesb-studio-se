@@ -35,3 +35,4 @@ Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.ui.wizards.actions,
  org.talend.camel.designer.util
 Bundle-Vendor: .Talend SA.
+Import-Package: org.eclipse.jdt.core

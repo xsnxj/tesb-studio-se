@@ -2,8 +2,9 @@ package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -27,10 +28,6 @@ import org.talend.designer.camel.dependencies.core.model.ManifestItem;
  * Dialog for create/edit bundle/package dependency.
  */
 public class NewOrEditDependencyDialog extends TitleAreaDialog {
-
-	// name regular expression
-	/** The Constant NAME_PATTERN. */
-	private static final Pattern NAME_PATTERN = Pattern.compile("[^\\s;=\"\\[\\]\\(\\),:|]+"); //$NON-NLS-1$
 
 	/** The input. */
 	private final Collection<? extends ManifestItem> input;
@@ -233,7 +230,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @return the i status
 	 */
 	public String validateName() {
-		String name = getDependencyName();
+		final String name = getDependencyName();
 		if (origin != null && name.equals(origin.getName())) {
 			return null;
 		}
@@ -242,8 +239,9 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 				return Messages.NewDependencyItemDialog_existCheckMessage;
 			}
 		}
-		if (!NAME_PATTERN.matcher(name).matches()) {
-			return Messages.NewDependencyItemDialog_nameInvalidMsg;
+		final IStatus status = JavaConventions.validatePackageName(name);
+		if (!status.isOK()) {
+			return status.getMessage();
 		}
 		return null;
 	}
@@ -257,4 +255,5 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	    final String version = fVersionPart.getVersion();
 		return (null != version && !version.isEmpty()) ? version : null;
 	}
+
 }
