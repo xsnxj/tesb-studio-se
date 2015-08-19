@@ -99,7 +99,7 @@ public class ManageRouteResourcePanel extends Composite {
 
         labelProvider = new ResourceLabelProvider(resourcesTV);
         resourcesTV.setLabelProvider(labelProvider);
-        resourcesTV.setContentProvider(new ArrayContentProvider());
+        resourcesTV.setContentProvider(ArrayContentProvider.getInstance());
 
         table.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -318,7 +318,7 @@ public class ManageRouteResourcePanel extends Composite {
                 comboBoxCellEditor = new ComboBoxViewerCellEditor(
                     (Composite) getViewer().getControl(), SWT.READ_ONLY | SWT.CENTER);
                 comboBoxCellEditor.setLabelProvider(new LabelProvider());
-                comboBoxCellEditor.setContentProvider(new ArrayContentProvider());
+                comboBoxCellEditor.setContentProvider(ArrayContentProvider.getInstance());
             }
             comboBoxCellEditor.setInput(((ResourceDependencyModel) element).getVersions());
             return comboBoxCellEditor;

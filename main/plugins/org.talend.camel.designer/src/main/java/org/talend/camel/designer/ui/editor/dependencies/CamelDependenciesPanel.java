@@ -139,7 +139,7 @@ public class CamelDependenciesPanel extends Composite {
 
         labelProvider = new DependenciesTableLabelProvider(tableViewer);
         tableViewer.setLabelProvider(labelProvider);
-        tableViewer.setContentProvider(new ArrayContentProvider());
+        tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
         ToolBar tb = new ToolBar(this, SWT.FLAT | SWT.VERTICAL);
         tb.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
