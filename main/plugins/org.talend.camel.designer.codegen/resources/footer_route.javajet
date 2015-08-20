@@ -74,63 +74,41 @@ if(librariesSb.length()>0){
 	if(stats) { %>
 
 		// add statistics which shows on the connection
-		final routines.system.CamelStat runStat = new routines.system.CamelStat(camelContext);
-		<%
-		for (INode node : processNodes) {
-			if (node.isActivate()) {
-				for(int i=0; i<node.getIncomingConnections().size(); i++) {
-%>
-		runStat.addConnectionMapping("<%=node.getUniqueName()%>", "<%=node.getIncomingConnections().get(i).getUniqueName()%>");
-<%
-				}
-			}
-		}
-%>
-
-		runStat.initStatisticsInterceptor();
-
+		final routines.system.RunStat runStat = new routines.system.RunStat();
 		runStat.openSocket(true);
 		runStat.setAllPID(pid, pid, pid, jobName);
 		runStat.startThreadStat(clientHost, portStats);
-		runStat.updateStatOnJob(routines.system.RunStat.JOBSTART, "");
+		runStat.updateStatOnJob(routines.system.RunStat.JOBSTART, null);
 
-		new Thread(new MyStatThread(runStat)).start();
-<% } //if stats %>
-
-	}
-
-<% if(stats) { %>
-
-	class MyStatThread implements Runnable {
-
-		routines.system.CamelStat stats;
-
-		public MyStatThread(routines.system.CamelStat stats) {
-			this.stats = stats;
-		}
-
-		public void run() {
-			while (true) {
-				try {
+		final Map<String, String> targetNodeToConnectionMap = new HashMap<String, String>();
 <%
 		for (INode node : processNodes) {
 			if (node.isActivate()) {
-				for(int i=0; i<node.getIncomingConnections().size(); i++) {
+				for (org.talend.core.model.process.IConnection conn : node.getIncomingConnections()) {
 %>
-					stats.updateStatOnConnection("<%=node.getIncomingConnections().get(i).getUniqueName()%>", 1, "<%=node.getUniqueName()%>");
+		targetNodeToConnectionMap.put("<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
+        runStat.updateStatOnConnection("<%=conn.getUniqueName()%>", routines.system.RunStat.RUNNING, 0);
 <%
 				}
 			}
 		}
 %>
-					Thread.sleep(1000);
-				} catch (java.lang.Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+        camelContext.addInterceptStrategy(new org.apache.camel.spi.InterceptStrategy() {
+            public org.apache.camel.Processor wrapProcessorInInterceptors(CamelContext context, final org.apache.camel.model.ProcessorDefinition<?> node,
+                final org.apache.camel.Processor target, org.apache.camel.Processor nextTarget) throws Exception {
+                return new org.apache.camel.processor.DelegateAsyncProcessor(target) {
+                    public boolean process(org.apache.camel.Exchange exchange, org.apache.camel.AsyncCallback callback) {
+                        final String connection = targetNodeToConnectionMap.get(node.getId());
+                        if (null != connection) {
+                            runStat.updateStatOnConnection(targetNodeToConnectionMap.get(node.getId()), routines.system.RunStat.RUNNING, 1);
+                        }
+                        return super.process(exchange, callback);
+                    }
+                };
+            }
+        });
 <% } //if stats %>
+	}
 
 };
     // init uriMap first
