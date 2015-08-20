@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
@@ -240,6 +241,9 @@ public class RouteResourceUtil {
     }
 
     public static Collection<IPath> synchronizeRouteResource(Item item) {
+        if (!(item instanceof CamelProcessItem)) {
+            return null;
+        }
         if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
             return null;
         }
@@ -249,13 +253,6 @@ public class RouteResourceUtil {
         if (talendProcessJavaProject == null) {
             return null;
         }
-
-        final Collection<IPath> result = new ArrayList<IPath>();
-        // https://jira.talendforge.org/browse/TESB-7893
-        // add spring file
-        final IPath springFilePath = talendProcessJavaProject.getSrcFolder().getLocation().append(
-                "/META-INF/spring/" + item.getProperty().getLabel().toLowerCase() + ".xml");
-        result.add(springFilePath);
 
         final IFolder routeResourceFolder = talendProcessJavaProject.getResourcesFolder();
         // Clear route resources before running
@@ -286,6 +283,24 @@ public class RouteResourceUtil {
             }
         }
 
+        final Collection<IPath> result = new ArrayList<IPath>();
+        // https://jira.talendforge.org/browse/TESB-7893
+        // add spring file
+        final IFolder metaInf = routeResourceFolder.getFolder("META-INF/spring/");
+        try {
+            prepareFolder(metaInf);
+            final IFile spring = metaInf.getFile(item.getProperty().getLabel().toLowerCase() + ".xml");
+            final InputStream inputStream = new ByteArrayInputStream(((CamelProcessItem) item).getSpringContent().getBytes());
+            if (spring.exists()) {
+                spring.setContents(inputStream, 0, null);
+            } else {
+                spring.create(inputStream, true, null);
+            }
+            result.add(spring.getLocation());
+        } catch (CoreException e) {
+            ExceptionHandler.process(e);
+        }
+        
         final StringBuilder buffer = new StringBuilder();
         for (ResourceDependencyModel model : getResourceDependencies(item)) {
             IFile file = copyResources(routeResourceFolder, model);
@@ -323,7 +338,7 @@ public class RouteResourceUtil {
             return null;
         }
         final ReferenceFileItem refFile = (ReferenceFileItem) referenceResources.get(0);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(refFile.getContent().getInnerContent());
+        final InputStream inputStream = new ByteArrayInputStream(refFile.getContent().getInnerContent());
 
         final IFile classpathFile = folder.getFile(new Path(model.getClassPathUrl()));
 

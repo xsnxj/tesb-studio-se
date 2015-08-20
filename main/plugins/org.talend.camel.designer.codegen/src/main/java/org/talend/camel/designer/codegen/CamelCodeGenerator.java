@@ -102,12 +102,6 @@ public class CamelCodeGenerator implements ICodeGenerator {
 	}
 
 	@Override
-	public String generateSpringContent() throws CodeGeneratorException {
-		// a route job always has spring content
-		return process.getSpringContent();
-	}
-
-	@Override
 	public String generateComponentCodeWithRows(String nodeName, IAloneProcessNodeConfigurer nodeConfigurer) {
 		// TODO do more check if it invoked for route. Need do more checks.
 		throw new IllegalAccessError("method not support for route job. ");

@@ -43,16 +43,6 @@ public class RouteProcess extends Process {
         return "org.talend.esb.help.";
     }
 
-    // ADDED for TESB-7887 By GangLiu
-    /*
-     * only routeBuilder needs spring
-     */
-    @Override
-    public boolean needsSpring() {
-        return true;
-    }
-
-    @Override
     public String getSpringContent() {
         return springContent;
     }

@@ -12,9 +12,7 @@
 // ============================================================================
 package org.talend.camel.designer;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.dom4j.Element;
 import org.dom4j.Namespace;
@@ -139,33 +137,9 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return isCamelEditor;
     }
 
-    public List<IPath> synchronizeRouteResource(Item item) {
-
-        List<IPath> paths = new ArrayList<IPath>();
-
-        if (!(item instanceof CamelProcessItem)) {
-            return paths;
-        }
-
-        Collection<IPath> resources = RouteResourceUtil.synchronizeRouteResource(item);
-        if (null != resources) {
-            paths.addAll(RouteResourceUtil.synchronizeRouteResource(item));
-        }
-//        forceBuildProject();
-
-        return paths;
+    public Collection<IPath> synchronizeRouteResource(Item item) {
+        return RouteResourceUtil.synchronizeRouteResource(item);
     }
-
-    /**
-     * Build project
-     */
-//    private void forceBuildProject() {
-//        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-//            IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
-//                    IRunProcessService.class);
-//            processService.buildJavaProject();
-//        }
-//    }
 
     public boolean isRouteBuilderNode(INode node) {
         return ComponentCategory.CATEGORY_4_CAMEL.getName().equals(node.getProcess().getComponentsType());
