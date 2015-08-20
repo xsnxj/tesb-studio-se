@@ -26,11 +26,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.talend.camel.repository.feature"
-         version="0.0.0"
-         search-location="self"/>
-
-   <includes
          id="org.talend.rcp.feature"
          version="0.0.0"
          search-location="self"/>
