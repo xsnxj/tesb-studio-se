@@ -51,7 +51,6 @@ public class TreeCodePartBuilder extends AbstractProcessPartBuilder {
 			CloseBlocksCodeArgument closeBlocksArgument = new CloseBlocksCodeArgument();
 			closeBlocksArgument.setBlocksCodeToClose(node.getBlocksCodeToClose());
 			appendTyped(ECamelTemplate.CLOSE_BLOCKS_CODE, closeBlocksArgument);
-			appendTyped(ECamelTemplate.CLOSE_BLOCKS_CODE, closeBlocksArgument);
 		}
 		return this;
 	}

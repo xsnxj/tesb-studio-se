@@ -13,7 +13,6 @@
 package org.talend.camel.designer.codegen.partgen;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.talend.core.model.process.IConnection;
@@ -35,49 +34,46 @@ import org.talend.core.model.process.INode;
 public class CamelConnectionTagGenerator {
 
 	private final static String EMPTY_STRING = "";
-	private final static CamelConnectionTagGenerator INSTANCE = new CamelConnectionTagGenerator();
 
-	private abstract class TagGenerator {
+	private static abstract class TagGenerator {
 		String generateStartTag(INode node, IConnection conn) {
-			return EMPTY_STRING;
+			return null;
 		}
 
 		String generateEndTag(INode node, IConnection conn) {
-			return EMPTY_STRING;
+			return null;
 		};
 	}
 
-	private Map<String, TagGenerator> generators;
+	@SuppressWarnings("serial")
+    private final static Map<String, TagGenerator> GENERATORS = new HashMap<String, TagGenerator>() {{
+        // Fix [TESB-12471], the only connection is LOOP, then append .end()
+        put("cLoop", new TagGenerator() {
+            public String generateEndTag(INode node, IConnection conn) {
+                if (conn.getConnectorName().equals("LOOP")) {
+                    if (node.getOutgoingCamelSortedConnections().size() == 1) {
+                        return ".end()";
+                    }
+                }
+                return null;
+            }
+        });
+	}};
 
 	private CamelConnectionTagGenerator() {
-		generators = new HashMap<String, TagGenerator>();
-
-		// Fix [TESB-12471], the only connection is LOOP, then append .end()
-		generators.put("cLoop", new TagGenerator() {
-			public String generateEndTag(INode node, IConnection conn) {
-				if (conn.getConnectorName().equals("LOOP")) {
-					List<? extends IConnection> outs = node
-							.getOutgoingCamelSortedConnections();
-					if (outs.size() == 1) {
-						return ".end()";
-					}
-				}
-				return null;
-			}
-		});
 	}
 
 	public static String generateEndTag(INode node, IConnection connection) {
-		return INSTANCE.generateTag(node, connection, false);
+		return generateTag(node, connection, false);
 	}
 
 	public static String generateStartTag(INode node, IConnection connection) {
-		return INSTANCE.generateTag(node, connection, true);
+		return generateTag(node, connection, true);
 	}
 
-	private String generateTag(INode node, IConnection conn, boolean isStartTag) {
-		String result = EMPTY_STRING;
-		TagGenerator generator = generators.get(node.getComponent().getName());
+	private static String generateTag(INode node, IConnection conn, boolean isStartTag) {
+		String result = null;
+		final TagGenerator generator = GENERATORS.get(node.getComponent().getName());
 		if (generator != null) {
 			if (isStartTag) {
 				result = generator.generateStartTag(node, conn);

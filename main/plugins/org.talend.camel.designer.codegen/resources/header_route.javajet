@@ -777,18 +777,15 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
 
 %>
 
-	private Map<String, String> uriMap;
+	private final Map<String, String> uriMap = new HashMap<String, String>();
 
 	public Map<String,String> getUriMap() {
 		return this.uriMap;
 	}
 
 	public void loadCustomUriMap(Map<String,String> newMap) {
-		if(newMap == null) {
-			return;
-		}
-		for(Map.Entry<String, String> entry: newMap.entrySet()) {
-			uriMap.put(entry.getKey(), entry.getValue());
+		if (newMap != null) {
+			uriMap.putAll(newMap);
 		}
 	}
 
@@ -796,8 +793,6 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
 	* the readContextValues(contextName) may have to invoked first before this
 	*/
 	public void initUriMap() {
-		uriMap = new HashMap<String, String>();
-
 <%
 String cid = "";
 String componentName = "";
