@@ -12,13 +12,9 @@
 // ============================================================================
 package org.talend.camel.designer.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.commons.ui.runtime.repository.IExtendRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -51,8 +47,7 @@ public class CamelExtendBeansNode implements IExtendRepositoryNode {
      * @see org.talend.core.repository.IExtendRepositoryNode#getChildren()
      */
     public Object[] getChildren() {
-        List<RepositoryNode> children = new ArrayList<RepositoryNode>();
-        return children.toArray(new RepositoryNode[0]);
+        return null;
     }
 
 }
