@@ -12,11 +12,9 @@
 // ============================================================================
 package org.talend.designer.camel.resource.core.util;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,8 +69,6 @@ public class RouteResourceUtil {
     private static final String REPACE_SLASH_TAG = "\\|";
 
     public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
-
-    private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
 
     public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
 
@@ -255,33 +251,6 @@ public class RouteResourceUtil {
         }
 
         final IFolder routeResourceFolder = talendProcessJavaProject.getResourcesFolder();
-        // Clear route resources before running
-        final IFile resourceDescFile = talendProcessJavaProject.getProject().getFile(ROUTE_RESOURCES_DESC_FILE);
-        if (resourceDescFile.exists()) {
-            InputStream fileInputStream = null;
-            try {
-                fileInputStream = resourceDescFile.getContents();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Delete resources
-                    final IFile resFile = routeResourceFolder.getFile(new Path(line));
-                    if (resFile.exists()) {
-                        resFile.delete(true, null);
-                    }
-                }
-            } catch (Exception e) {
-                ExceptionHandler.process(e);
-            } finally {
-                if (null != fileInputStream) {
-                    try {
-                        fileInputStream.close();
-                    } catch (IOException e) {
-                        // nothing
-                    }
-                }
-            }
-        }
 
         final Collection<IPath> result = new ArrayList<IPath>();
         // https://jira.talendforge.org/browse/TESB-7893
@@ -300,26 +269,12 @@ public class RouteResourceUtil {
         } catch (CoreException e) {
             ExceptionHandler.process(e);
         }
-        
-        final StringBuilder buffer = new StringBuilder();
+
         for (ResourceDependencyModel model : getResourceDependencies(item)) {
             IFile file = copyResources(routeResourceFolder, model);
             if (file != null) {
                 result.add(file.getLocation());
-                buffer.append(model.getClassPathUrl()).append("\n");
             }
-        }
-
-        // Add resources to .route_resources file
-        final InputStream is = new ByteArrayInputStream(buffer.toString().getBytes());
-        try {
-            if (resourceDescFile.exists()) {
-                resourceDescFile.setContents(is, 0, null);
-            } else {
-                resourceDescFile.create(is, true, null);
-            }
-        } catch (CoreException e) {
-            ExceptionHandler.process(e);
         }
 
         return result;
