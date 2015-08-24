@@ -54,7 +54,7 @@ public class JetUtil {
 			}
 		}
 		if (jetBean.getJetPluginRepository() == null) {
-			jetBean.setJetPluginRepository(Activator.PLUGIN_ID);
+			jetBean.setJetPluginRepository(Activator.getDefault().getBundle().getSymbolicName());
 		}
 		return jetBean;
 	}

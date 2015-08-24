@@ -11,7 +11,6 @@ import org.talend.camel.designer.codegen.jet.JetUtil;
 import org.talend.commons.utils.PasswordEncryptUtil;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextParameter;
-import org.talend.designer.codegen.CodeGeneratorActivator;
 import org.talend.designer.codegen.config.CodeGeneratorArgument;
 import org.talend.designer.codegen.config.JetBean;
 import org.talend.designer.codegen.exception.CodeGeneratorException;
@@ -42,8 +41,6 @@ public class ContextPartGenerator extends ArgumentBuilderHolder implements PartG
 		codeGenArgument.setNode(listParametersCopy);
 
 		JetBean jetBean = JetUtil.createJetBean(codeGenArgument);
-		jetBean.setJetPluginRepository(CodeGeneratorActivator.PLUGIN_ID);
-
 		jetBean.setTemplateRelativeUri(ECamelTemplate.CONTEXT.getTemplateURL());
 		return JetUtil.jetGenerate(jetBean);
 	}

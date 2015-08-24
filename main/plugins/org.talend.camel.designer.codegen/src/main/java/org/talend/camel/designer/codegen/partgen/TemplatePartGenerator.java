@@ -104,7 +104,6 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		codeGenArgument.setIncomingName(incomingName);
 
 		JetBean jetBean = JetUtil.createJetBean(codeGenArgument);
-
 		jetBean.setTemplateRelativeUri(type.getTemplateURL());
 		return JetUtil.jetGenerate(jetBean);
 	}
