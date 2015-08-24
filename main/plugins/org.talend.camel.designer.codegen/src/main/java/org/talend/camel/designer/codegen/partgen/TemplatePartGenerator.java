@@ -27,7 +27,7 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		case HEADER_ROUTE:
 		case CAMEL_HEADER:
 		case CAMEL_FOOTER: {
-			Object[] args = { process, VersionUtils.getVersion(), /* exportAsOSGI= */"false" };
+			Object[] args = { process, VersionUtils.getVersion() };
 			return generateTypedComponentCode(template, wrapToVector(args));
 		}
 		case FOOTER_ROUTE:
