@@ -96,14 +96,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return CamelRepositoryNodeType.repositoryDocumentationsType;
     }
 
-    public ProcessType getCamelProcessType(Item item) {
-        if (item instanceof CamelProcessItem) {
-            CamelProcessItem camelItem = (CamelProcessItem) item;
-            return camelItem.getProcess();
-        }
-        return null;
-    }
-
     public boolean isInstanceofCamelRoutes(Item item) {
         if (item instanceof CamelProcessItem) {
             return true;
