@@ -85,7 +85,7 @@
 			// for fix [TESB-15654], Set custom server port for cFTP
 %>
 			private org.apache.camel.component.file.remote.RemoteFileEndpoint<?> getFtpEndpoint(
-					String uri, String server, int port, String username, String password,
+					String uri, String server, Integer port, String username, String password,
 					String directory) {
 				org.apache.camel.component.file.remote.RemoteFileEndpoint<?> endpoint;
 				endpoint = (org.apache.camel.component.file.remote.RemoteFileEndpoint<?>) endpoint(uri);
@@ -94,7 +94,7 @@
 				configuration.setUsername(username);
 				configuration.setPassword(password);
 				configuration.setHost(server);
-				configuration.setPort(port);
+				configuration.setPort(port.intValue());
 				configuration.setDirectory(directory);
 				return endpoint;
 			}
@@ -928,7 +928,7 @@ if (isProvider) {
 				password = null;
 			}
 			String ftpServer = ElementParameterParser.getValue(node, "__SERVER__");
-			int ftpPort = Integer.parseInt(TalendQuoteUtils.removeQuotes(ElementParameterParser.getValue(node, "__PORT__")));
+			String ftpPort = TalendQuoteUtils.removeQuotes(ElementParameterParser.getValue(node, "__PORT__"));
 			String directory = ElementParameterParser.getValue(node, "__DIRECTORY__");
 			if("".trim().equals(directory)){
 				directory = null;
