@@ -206,6 +206,7 @@
 							Object object = properties.get(org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT);
 							if (object != null && object instanceof org.apache.cxf.ws.security.trust.STSClient) {
 								((org.apache.cxf.ws.security.trust.STSClient) object).setOnBehalfOf(samlToken);
+								properties.put(org.apache.cxf.ws.security.SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT, false);
 							}
 						}
 					}
