@@ -87,7 +87,7 @@ public abstract class AbstractBeanAction extends AContextualAction {
         }
 
         if (!found) {
-            routineSynchronizer.syncBean(beanItem, true);
+            routineSynchronizer.syncRoutine(beanItem, true);
             IFile file = routineSynchronizer.getFile(beanItem);
             if (file == null) {
                 return null;

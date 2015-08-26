@@ -30,7 +30,6 @@ import org.talend.commons.utils.VersionUtils;
 import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
-import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -59,30 +58,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     public void syncAllRoutines() throws SystemException {
         // TODO Auto-generated method stub
 
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.designer.codegen.ITalendSynchronizer#syncAllBeans()
-     */
-    @Override
-    public void syncAllBeans() throws SystemException {
-        // TODO Auto-generated method stub
-        for (IRepositoryViewObject routine : getBeans()) {
-            BeanItem beanItem = (BeanItem) routine.getProperty().getItem();
-            // syncRoutine(routineItem, true);
-            syncBean(beanItem, true);
-        }
-    }
-
-    @Override
-    public void syncAllBeansForLogOn() throws SystemException {
-        for (IRepositoryViewObject routine : getBeans()) {
-            BeanItem beanItem = (BeanItem) routine.getProperty().getItem();
-            // syncRoutine(routineItem, true);
-            syncBean(beanItem, true, true);
-        }
     }
 
     /*
@@ -119,17 +94,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     /*
      * (non-Jsdoc)
      * 
-     * @see org.talend.designer.codegen.ITalendSynchronizer#getProcessFile(org.talend.core.model.process.JobInfo)
-     */
-    @Override
-    public IFile getProcessFile(JobInfo jobInfo) throws SystemException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
      * @see
      * org.talend.designer.codegen.ITalendSynchronizer#deleteBeanfile(org.talend.core.model.repository.IRepositoryViewObject
      * )
@@ -143,73 +107,57 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     /*
      * (non-Jsdoc)
      * 
-     * @see
-     * org.talend.designer.codegen.AbstractRoutineSynchronizer#doSyncRoutine(org.talend.core.model.properties.RoutineItem
-     * , boolean)
-     */
-    @Override
-    protected void doSyncRoutine(RoutineItem routineItem, boolean copyToTemp) throws SystemException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
      * @see org.talend.designer.codegen.AbstractRoutineSynchronizer#doSyncBean(org.talend.core.model.properties.Item,
      * boolean)
      */
     @Override
-    protected void doSyncBean(Item item, boolean copyToTemp) throws SystemException {
-        if (item instanceof BeanItem) {
-            BeanItem beanItem = (BeanItem) item;
-            FileOutputStream fos = null;
-            try {
-                IFile file = getBeanFile(beanItem);
-                if (file == null) {
+    protected void doSyncRoutine(RoutineItem routineItem, boolean copyToTemp) throws SystemException {
+        FileOutputStream fos = null;
+        try {
+            IFile file = getBeanFile(routineItem);
+            if (file == null) {
+                return;
+            }
+            if (routineItem.getProperty().getModificationDate() != null) {
+                long modificationItemDate = routineItem.getProperty().getModificationDate().getTime();
+                long modificationFileDate = file.getModificationStamp();
+                if (modificationItemDate <= modificationFileDate) {
                     return;
                 }
-                if (beanItem.getProperty().getModificationDate() != null) {
-                    long modificationItemDate = beanItem.getProperty().getModificationDate().getTime();
-                    long modificationFileDate = file.getModificationStamp();
-                    if (modificationItemDate <= modificationFileDate) {
-                        return;
-                    }
-                } else {
-                    beanItem.getProperty().setModificationDate(new Date());
-                }
+            } else {
+                routineItem.getProperty().setModificationDate(new Date());
+            }
 
-                if (copyToTemp) {
-                    String beanContent = new String(beanItem.getContent().getInnerContent());
-                    // see 14713
-                    String version = VersionUtils.getVersion();
-                    if (beanContent.contains("%GENERATED_LICENSE%")) { //$NON-NLS-1$
-                        IService service = GlobalServiceRegister.getDefault().getService(IBrandingService.class);
-                        if (service instanceof AbstractBrandingService) {
-                            String routineHeader = ((AbstractBrandingService) service).getRoutineLicenseHeader(version);
-                            beanContent = beanContent.replace("%GENERATED_LICENSE%", routineHeader); //$NON-NLS-1$
-                        }
-                    }// end
-                    String label = beanItem.getProperty().getLabel();
-                    if (!label.equals(ITalendSynchronizer.BEAN_TEMPLATE) && beanContent != null) {
-                        beanContent = beanContent.replaceAll(ITalendSynchronizer.BEAN_TEMPLATE, label);
-                        File f = file.getLocation().toFile();
-                        fos = new FileOutputStream(f);
-                        fos.write(beanContent.getBytes());
-                        fos.close();
+            if (copyToTemp) {
+                String beanContent = new String(routineItem.getContent().getInnerContent());
+                // see 14713
+                String version = VersionUtils.getVersion();
+                if (beanContent.contains("%GENERATED_LICENSE%")) { //$NON-NLS-1$
+                    IService service = GlobalServiceRegister.getDefault().getService(IBrandingService.class);
+                    if (service instanceof AbstractBrandingService) {
+                        String routineHeader = ((AbstractBrandingService) service).getRoutineLicenseHeader(version);
+                        beanContent = beanContent.replace("%GENERATED_LICENSE%", routineHeader); //$NON-NLS-1$
                     }
-                }
-                file.refreshLocal(1, null);
-            } catch (CoreException e) {
-                throw new SystemException(e);
-            } catch (IOException e) {
-                throw new SystemException(e);
-            } finally {
-                try {
+                }// end
+                String label = routineItem.getProperty().getLabel();
+                if (!label.equals(ITalendSynchronizer.BEAN_TEMPLATE) && beanContent != null) {
+                    beanContent = beanContent.replaceAll(ITalendSynchronizer.BEAN_TEMPLATE, label);
+                    File f = file.getLocation().toFile();
+                    fos = new FileOutputStream(f);
+                    fos.write(beanContent.getBytes());
                     fos.close();
-                } catch (Exception e) {
-                    // ignore me even if i'm null
                 }
+            }
+            file.refreshLocal(1, null);
+        } catch (CoreException e) {
+            throw new SystemException(e);
+        } catch (IOException e) {
+            throw new SystemException(e);
+        } finally {
+            try {
+                fos.close();
+            } catch (Exception e) {
+                // ignore me even if i'm null
             }
         }
     }
