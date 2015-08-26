@@ -21,7 +21,7 @@
         <xstream.version>1.4.7</xstream.version>
         <xpp3.version>1.1.6</xpp3.version>
         <!-- camel-amqp -->
-        <qpid-amqp.version>0.32</qpid-amqp.version>
+        <qpid-amqp.version>0.28</qpid-amqp.version>
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
         <!-- camel-mqtt -->
         <mqtt-client.version>1.10</mqtt-client.version>
