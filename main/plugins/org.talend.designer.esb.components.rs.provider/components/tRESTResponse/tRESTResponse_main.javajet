@@ -83,18 +83,64 @@ for (Map<String, String> header : headers) { %>
 			restResponse_<%=cid%>.put("drop.json.root.element", Boolean.valueOf(<%=ElementParameterParser.getValue(node,"__UNWRAP_JSON_RESPONSE__")%>));
 			globalMap.put("restResponse", restResponse_<%=cid%>);
 		} else {
+			java.util.Map<String, Object> restRequest_<%=cid%> = (java.util.Map<String, Object>) globalMap.get("restRequest");
+			org.apache.cxf.jaxrs.ext.MessageContext messageContext_<%=cid%> = (org.apache.cxf.jaxrs.ext.MessageContext) restRequest_<%=cid%>.get("MESSAGE_CONTEXT");
+
+			javax.ws.rs.core.MediaType responseMediaType_<%=cid%> = null;
 			if (!responseAlreadySent_<%=cid%>) {
-				java.util.Map<String, Object> restRequest_<%=cid%> = (java.util.Map<String, Object>) globalMap.get("restRequest");
-				org.apache.cxf.jaxrs.ext.MessageContext messageContext_<%=cid%> = (org.apache.cxf.jaxrs.ext.MessageContext) restRequest_<%=cid%>.get("MESSAGE_CONTEXT");
+				org.apache.cxf.jaxrs.utils.JAXRSUtils.getCurrentMessage().getExchange().put(StreamingDOM4JProvider.SUPRESS_XML_DECLARATION, true);
+
 				messageContext_<%=cid%>.put(org.apache.cxf.message.Message.RESPONSE_CODE, restProviderStatusCode_<%=cid%>);
 				javax.ws.rs.core.MultivaluedMap<String, String> headersMultivaluedMap_<%=cid%> = new org.apache.cxf.jaxrs.impl.MetadataMap<String, String>();
 				for (java.util.Map.Entry<String, String> multivaluedHeader : restProviderResponseHeaders_<%=cid%>.entrySet()) {
 					headersMultivaluedMap_<%=cid%>.putSingle(multivaluedHeader.getKey(), multivaluedHeader.getValue());
 				}
 				messageContext_<%=cid%>.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headersMultivaluedMap_<%=cid%>);
+
+				// String responseContentType_<%=cid%> = (String) messageContext_<%=cid%>.get(org.apache.cxf.message.Message.CONTENT_TYPE);
+				String responseContentType_<%=cid%> = (String) org.apache.cxf.jaxrs.utils.JAXRSUtils.getCurrentMessage().getExchange().get(org.apache.cxf.message.Message.CONTENT_TYPE);
+				if (null == responseContentType_<%=cid%>) {
+					// this should not be needed, just in case. set it to the first value in the sorted list returned from HttpHeaders
+					responseMediaType_<%=cid%> = messageContext_<%=cid%>.getHttpHeaders().getAcceptableMediaTypes().get(0);
+				} else {
+					responseMediaType_<%=cid%> = org.apache.cxf.jaxrs.utils.JAXRSUtils.toMediaType(responseContentType_<%=cid%>);
+				}
+				globalMap.put("restResponseMediaType", responseMediaType_<%=cid%>);
+
+				String responseMediaSubType_<%=cid%> = responseMediaType_<%=cid%>.getSubtype();
+				if (responseMediaSubType_<%=cid%>.equals("xml") || responseMediaSubType_<%=cid%>.endsWith("+xml")) {
+					outputStream_<%=cid%>.write("<wrapper>".getBytes());
+					globalMap.put("restResponseWrappingClosure", "</wrapper>");
+				}
+				if (responseMediaSubType_<%=cid%>.equals("json") || responseMediaSubType_<%=cid%>.endsWith("+json")) {
+					outputStream_<%=cid%>.write("[".getBytes());
+					globalMap.put("restResponseWrappingClosure", "]");
+				}
+
 				globalMap.put("restResponse", true);
+			} else {
+				responseMediaType_<%=cid%> = (javax.ws.rs.core.MediaType) globalMap.get("restResponseMediaType");
 			}
-			outputStream_<%=cid%>.write(String.valueOf(restProviderResponse_<%=cid%>).getBytes());
+
+			if (null != restProviderResponse_<%=cid%>) {
+				String responseMediaSubType_<%=cid%> = responseMediaType_<%=cid%>.getSubtype();
+				if (responseMediaSubType_<%=cid%>.equals("json") || responseMediaSubType_<%=cid%>.endsWith("+json")) {
+					if (globalMap.containsKey("restResponseJsonStarted")) {
+						outputStream_<%=cid%>.write(",".getBytes());
+					} else {
+						globalMap.put("restResponseJsonStarted", true);
+					}
+				}
+
+				Class<? extends Object> responseBodyClass_<%=cid%> = restProviderResponse_<%=cid%>.getClass();
+				javax.ws.rs.ext.Providers messageBodyProviders_<%=cid%> = messageContext_<%=cid%>.getProviders();
+				javax.ws.rs.ext.MessageBodyWriter messageBodyWriter_<%=cid%> = messageBodyProviders_<%=cid%>.getMessageBodyWriter(
+						responseBodyClass_<%=cid%>, responseBodyClass_<%=cid%>, null, responseMediaType_<%=cid%>);
+				messageBodyWriter_<%=cid%>.writeTo(restProviderResponse_<%=cid%>, responseBodyClass_<%=cid%>, responseBodyClass_<%=cid%>,
+						new java.lang.annotation.Annotation[] {}, responseMediaType_<%=cid%>, null, outputStream_<%=cid%>);
+			}
+			// initial variant
+			//outputStream_<%=cid%>.write(String.valueOf(restProviderResponse_<%=cid%>).getBytes());
 			outputStream_<%=cid%>.flush();
 		}
 	}
