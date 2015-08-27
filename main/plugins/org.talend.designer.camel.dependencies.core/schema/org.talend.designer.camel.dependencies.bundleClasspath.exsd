@@ -111,7 +111,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="checked" type="boolean">
+         <attribute name="optional" type="boolean">
             <annotation>
                <documentation>
                   true by default

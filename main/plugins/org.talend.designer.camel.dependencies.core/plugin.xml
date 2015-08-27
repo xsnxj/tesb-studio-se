@@ -16,73 +16,33 @@
             packageName="javax.xml.namespace">
       </importPackage>
       <importPackage
-            optional="true"
-            packageName="javax.xml.ws">
-      </importPackage>
-      <importPackage
-            optional="true"
-            packageName="javax.jws">
-      </importPackage>
-      <importPackage
-            optional="true"
-            packageName="javax.jws.soap">
-      </importPackage>
-      <importPackage
-            optional="true"
-            packageName="org.slf4j">
-      </importPackage>
-      <importPackage
-            optional="true"
-            packageName="org.apache.commons.logging">
-      </importPackage>
-      <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.builder">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.impl">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.management">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.model">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.osgi">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.spi">
       </importPackage>
       <importPackage
-            maxVersion="3"
-            minVersion="2.7"
             packageName="org.apache.camel.view">
       </importPackage>
       <importPackage
-            maxVersion="2"
-            minVersion="1.5"
             packageName="org.osgi.framework">
       </importPackage>
       <importPackage
-            maxVersion="2.0.0"
-            minVersion="1.0.0"
             packageName="org.osgi.service.blueprint">
       </importPackage>
       <importPackage
@@ -97,8 +57,6 @@
                packageName="org.apache.cxf.feature">
          </importPackage>
          <importPackage
-               maxVersion="6.0.0"
-               minVersion="2.0.0"
                packageName="org.talend.esb.servicelocator.cxf">
             <predicate
                   attributeName="ENABLE_SL"
@@ -106,8 +64,6 @@
             </predicate>
          </importPackage>
          <importPackage
-               maxVersion="6.0.0"
-               minVersion="2.0.0"
                packageName="org.talend.esb.sam.agent.feature">
             <predicate
                   attributeName="ENABLE_SAM"
@@ -513,7 +469,7 @@
          point="org.talend.designer.camel.dependencies.bundleClasspath">
       <classpath
             attributeName="DRIVER_JAR"
-            checked="false"
+            optional="true"
             componentName="cConfig">
       </classpath>
       <classpath
@@ -542,7 +498,7 @@
       </classpath>
       <classpath
             attributeName="LIBRARY"
-            checked="false"
+            optional="true"
             componentName="cMessagingEndpoint">
          <predicate
                attributeName="USE_CUSTOM_COMPONENT"

@@ -1,8 +1,8 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.EList;
@@ -10,15 +10,28 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public abstract class AbstractExPredicator<T, K> {
+public abstract class AbstractExPredicator<T> {
 
-	private Set<ExPredicate> predicates = new HashSet<ExPredicate>();
+    String name;
+    boolean isOptional;
+	private final Collection<ExPredicate> predicates = new HashSet<ExPredicate>();
+
+    void setName(String name) {
+        this.name = name;
+    }
+
+    void setOptional(boolean isOptional) {
+        this.isOptional = isOptional;
+    }
 
 	void addPredicate(ExPredicate predicate) {
 		predicates.add(predicate);
 	}
 
 	private boolean satisfy(NodeType n) {
+	    if (predicates.isEmpty()) {
+	        return true;
+	    }
 		EList<?> parameters = n.getElementParameter();
 		String componentName = n.getComponentName();
 		for (ExPredicate p : predicates) {
@@ -189,11 +202,4 @@ public abstract class AbstractExPredicator<T, K> {
 
 	protected abstract T to(NodeType t);
 
-	/**
-	 * only used to Import-Package and Require-Bundle for Bundle-classpath, it's
-	 * not supported all predicates will be ignore
-	 * 
-	 * @return
-	 */
-	public abstract K toTargetIgnorePredicates();
 }

@@ -54,13 +54,13 @@ public class DependenciesResolver {
 
 	public DependenciesResolver(final ProcessItem item) {
         for (ExRequireBundle rb: ExtensionPointsReader.INSTANCE.getRequireBundlesForAll()) {
-            RequireBundle target = rb.toTargetIgnorePredicates();
+            RequireBundle target = rb.toTargets(null);
             target.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
             requireBundles.add(target);
         }
 
         for (ExImportPackage ip: ExtensionPointsReader.INSTANCE.getImportPackagesForAll()) {
-            ImportPackage target = ip.toTargetIgnorePredicates();
+            ImportPackage target = ip.toTargets(null);
             target.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
             importPackages.add(target);
         }
@@ -72,15 +72,15 @@ public class DependenciesResolver {
         handleAllConnections(item);
 
         Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
-        Collection<RequireBundle> customRequireBundles = new ArrayList<RequireBundle>(requireBundles);
-        Collection<ExportPackage> customExportPackages = new ArrayList<ExportPackage>(exportPackages);
-
         customImportPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
-        customRequireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
-        customExportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
-
         importPackages = customImportPackages;
+
+        Collection<RequireBundle> customRequireBundles = new ArrayList<RequireBundle>(requireBundles);
+        customRequireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
         requireBundles = customRequireBundles;
+
+        Collection<ExportPackage> customExportPackages = new ArrayList<ExportPackage>(exportPackages);
+        customExportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
         exportPackages = customExportPackages;
 	}
 
@@ -162,7 +162,7 @@ public class DependenciesResolver {
         Set<ExBundleClasspath> bcs = ExtensionPointsReader.INSTANCE.getBundleClasspaths().get(componentName);
         if (bcs != null) {
             for (ExBundleClasspath bc : bcs) {
-                Set<BundleClasspath> targets = bc.toTargets(n);
+                Collection<BundleClasspath> targets = bc.toTargets(n);
                 if (targets == null) {
                     continue;
                 }
@@ -218,7 +218,7 @@ public class DependenciesResolver {
 				continue;
 			}
 			for(ExImportPackage eip : languageImportSet){
-				importPackages.add(eip.toTargetIgnorePredicates());
+				importPackages.add(eip.toTargets(null));
 			}
 		}
 	}

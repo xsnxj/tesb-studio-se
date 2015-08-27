@@ -7,11 +7,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.talend.designer.camel.dependencies.core.util.VersionValidateUtil;
 
 public class ExtensionPointsReader {
 
-	private static final String CHECKED = "checked"; //$NON-NLS-1$
 	private static final String COMPONENT = "component"; //$NON-NLS-1$
 	private static final String REGEX = "regex"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VALUE = "attributeValue"; //$NON-NLS-1$
@@ -21,8 +19,6 @@ public class ExtensionPointsReader {
 	private static final String ATTRIBUTE_NAME = "attributeName"; //$NON-NLS-1$
 	private static final String IMPORT_PACKAGE = "importPackage"; //$NON-NLS-1$
 	private static final String OPTIONAL = "optional"; //$NON-NLS-1$
-	private static final String MIN_VERSION = "minVersion"; //$NON-NLS-1$
-	private static final String MAX_VERSION = "maxVersion"; //$NON-NLS-1$
 	private static final String PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 	private static final String COMPONENT_NAME = "componentName"; //$NON-NLS-1$
 
@@ -63,23 +59,23 @@ public class ExtensionPointsReader {
 //        
         Set<ExImportPackage> groovySet = new HashSet<ExImportPackage>();
         ExImportPackage importPackage = new ExImportPackage();
-        importPackage.setPackageName("groovy.lang");
+        importPackage.setName("groovy.lang");
         groovySet.add(importPackage);
         
         importPackage = new ExImportPackage();
-        importPackage.setPackageName("org.codehaus.groovy.runtime");
+        importPackage.setName("org.codehaus.groovy.runtime");
         groovySet.add(importPackage);
         
         importPackage = new ExImportPackage();
-        importPackage.setPackageName("org.codehaus.groovy.runtime.callsite");
+        importPackage.setName("org.codehaus.groovy.runtime.callsite");
         groovySet.add(importPackage);
         
         importPackage = new ExImportPackage();
-        importPackage.setPackageName("org.codehaus.groovy.runtime.typehandling");
+        importPackage.setName("org.codehaus.groovy.runtime.typehandling");
         groovySet.add(importPackage);
         
         importPackage = new ExImportPackage();
-        importPackage.setPackageName("org.codehaus.groovy.reflection");
+        importPackage.setName("org.codehaus.groovy.reflection");
         groovySet.add(importPackage);
        
         languageImportPackages.put("groovy", groovySet);
@@ -89,45 +85,18 @@ public class ExtensionPointsReader {
 		IConfigurationElement[] configurationElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						BUNDLE_CLASSPATH_EXT);
-		if (configurationElements == null || configurationElements.length == 0) {
-			return;
-		}
 		for (IConfigurationElement e : configurationElements) {
-			String attrName = e.getAttribute(ATTRIBUTE_NAME);
-			String cmpName = e.getAttribute(COMPONENT_NAME);
-			String isChecked = e.getAttribute(CHECKED);
-			Set<ExBundleClasspath> attributeSet = componentBundleClasspaths
-					.get(cmpName);
-			if (attributeSet == null) {
-				attributeSet = new HashSet<ExBundleClasspath>();
-				componentBundleClasspaths.put(cmpName, attributeSet);
-			}
+			final String cmpName = e.getAttribute(COMPONENT_NAME);
+            final ExBundleClasspath bc = new ExBundleClasspath();
+            bc.setName(e.getAttribute(ATTRIBUTE_NAME));
+            bc.setOptional(Boolean.parseBoolean(e.getAttribute(OPTIONAL)));
+            parsePredicates(bc, e);
 
-			ExBundleClasspath bc = new ExBundleClasspath();
-			bc.setAttributeName(attrName);
-			
-			if("true".equals(isChecked)){ //$NON-NLS-1$
-				bc.setChecked(true);
-			}else if("false".equals(isChecked)){ //$NON-NLS-1$
-				bc.setChecked(false);
-			}
-
-			IConfigurationElement[] predicates = e.getChildren(PREDICATE);
-			if (predicates != null) {
-				for (IConfigurationElement pe : predicates) {
-					String name = pe.getAttribute(ATTRIBUTE_NAME);
-					String value = pe.getAttribute(ATTRIBUTE_VALUE);
-					String isRegex = pe.getAttribute(REGEX);
-					ExPredicate exPredicate = new ExPredicate();
-					exPredicate.setAttributeName(name);
-					exPredicate.setAttributeValue(value);
-					if ("true".equals(isRegex)) { //$NON-NLS-1$
-						exPredicate.setRegex(true);
-					}
-					bc.addPredicate(exPredicate);
-				}
-			}
-
+            Set<ExBundleClasspath> attributeSet = componentBundleClasspaths.get(cmpName);
+            if (attributeSet == null) {
+                attributeSet = new HashSet<ExBundleClasspath>();
+                componentBundleClasspaths.put(cmpName, attributeSet);
+            }
 			attributeSet.add(bc);
 		}
 	}
@@ -136,9 +105,6 @@ public class ExtensionPointsReader {
 		IConfigurationElement[] configurationElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						IMPORT_PACKAGE_EXT);
-		if (configurationElements == null || configurationElements.length == 0) {
-			return;
-		}
 		for (IConfigurationElement e : configurationElements) {
 			String name = e.getName();
 			if (name.equals(COMPONENT)) {
@@ -164,37 +130,11 @@ public class ExtensionPointsReader {
 
 	private ExImportPackage createImportPackageFrom(IConfigurationElement p) {
 		String packageName = p.getAttribute(PACKAGE_NAME);
-		String maxVersion = p.getAttribute(MAX_VERSION);
-		String minVersion = p.getAttribute(MIN_VERSION);
-		String optional = p.getAttribute(OPTIONAL);
 
 		ExImportPackage importPackage = new ExImportPackage();
-		importPackage.setPackageName(packageName);
-		if (maxVersion != null && !"".equals(maxVersion)) { //$NON-NLS-1$
-//			importPackage.setMaxVersion(maxVersion);
-		}
-		if (minVersion != null && !"".equals(minVersion)) { //$NON-NLS-1$
-//			importPackage.setMinVersion(minVersion);
-		}
-		if (optional != null) {
-			importPackage.setOptional(Boolean.getBoolean(optional));
-		}
-
-		IConfigurationElement[] predicates = p.getChildren(PREDICATE);
-		if (predicates != null) {
-			for (IConfigurationElement pe : predicates) {
-				String name = pe.getAttribute(ATTRIBUTE_NAME);
-				String value = pe.getAttribute(ATTRIBUTE_VALUE);
-				String isRegex = pe.getAttribute(REGEX);
-				ExPredicate exPredicate = new ExPredicate();
-				exPredicate.setAttributeName(name);
-				exPredicate.setAttributeValue(value);
-				if ("true".equals(isRegex)) { //$NON-NLS-1$
-					exPredicate.setRegex(true);
-				}
-				importPackage.addPredicate(exPredicate);
-			}
-		}
+		importPackage.setName(packageName);
+		importPackage.setOptional(Boolean.parseBoolean(p.getAttribute(OPTIONAL)));
+        parsePredicates(importPackage, p);
 		return importPackage;
 	}
 
@@ -229,36 +169,24 @@ public class ExtensionPointsReader {
 
 	private ExRequireBundle createRequireBundleFrom(IConfigurationElement b) {
 		String bundleName = b.getAttribute(BUNDLE_NAME);
-		String maxVersion = b.getAttribute(MAX_VERSION);
-		String minVersion = b.getAttribute(MIN_VERSION);
-		String optional = b.getAttribute(OPTIONAL);
 
 		ExRequireBundle requireBundle = new ExRequireBundle();
-		requireBundle.setBundleName(bundleName);
-		requireBundle.setVersionRange(VersionValidateUtil.tryToGetValidVersionRange(minVersion, maxVersion));
-		
-		
-		if (optional != null) {
-			requireBundle.setOptional(Boolean.getBoolean(optional));
-		}
-
-		IConfigurationElement[] predicates = b.getChildren(PREDICATE);
-		if (predicates != null) {
-			for (IConfigurationElement pe : predicates) {
-				String name = pe.getAttribute(ATTRIBUTE_NAME);
-				String value = pe.getAttribute(ATTRIBUTE_VALUE);
-				String isRegex = pe.getAttribute(REGEX);
-				ExPredicate exPredicate = new ExPredicate();
-				exPredicate.setAttributeName(name);
-				exPredicate.setAttributeValue(value);
-				if ("true".equals(isRegex)) { //$NON-NLS-1$
-					exPredicate.setRegex(true);
-				}
-				requireBundle.addPredicate(exPredicate);
-			}
-		}
+		requireBundle.setName(bundleName);
+        requireBundle.setOptional(Boolean.parseBoolean(b.getAttribute(OPTIONAL)));
+        parsePredicates(requireBundle, b);
 		return requireBundle;
 	}
+
+    private static void parsePredicates(final AbstractExPredicator<?> abstractExPredicator,
+        final IConfigurationElement element) {
+        for (final IConfigurationElement pe : element.getChildren(PREDICATE)) {
+            final ExPredicate exPredicate = new ExPredicate();
+            exPredicate.setAttributeName(pe.getAttribute(ATTRIBUTE_NAME));
+            exPredicate.setAttributeValue(pe.getAttribute(ATTRIBUTE_VALUE));
+            exPredicate.setRegex(Boolean.parseBoolean(pe.getAttribute(REGEX)));
+            abstractExPredicator.addPredicate(exPredicate);
+        }
+    }
 
 	public Set<ExImportPackage> getImportPackagesForAll() {
 		return importPackagesForAll;

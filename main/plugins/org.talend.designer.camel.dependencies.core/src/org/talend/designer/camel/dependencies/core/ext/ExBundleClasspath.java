@@ -1,8 +1,7 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.EList;
@@ -11,37 +10,17 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>, BundleClasspath> {
-
-	private String attributeName;
-	
-	private boolean isChecked = true;
+public class ExBundleClasspath extends AbstractExPredicator<Collection<BundleClasspath>> {
 
 	ExBundleClasspath() {
 	}
-	
-	public void setChecked(boolean isChecked) {
-		this.isChecked = isChecked;
-	}
-	
-	public boolean isChecked() {
-		return isChecked;
-	}
-
-	void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
-	}
-
-	String getAttributeName() {
-		return attributeName;
-	}
 
 	@Override
-	protected Set<BundleClasspath> to(NodeType t) {
-		Set<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
+	protected Collection<BundleClasspath> to(NodeType t) {
+	    Collection<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
 		for (Object e : t.getElementParameter()) {
 			ElementParameterType p = (ElementParameterType) e;
-			if (attributeName.equals(p.getName())) {
+			if (name.equals(p.getName())) {
 				EList<?> elementValue = p.getElementValue();
 				if (elementValue.isEmpty()) {
 					String evtValue = p.getValue();
@@ -57,7 +36,7 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 							String[] names = StringUtils.split(evtValue, ';');
 							for (String name : names) {
 								BundleClasspath bundleClasspath = new BundleClasspath();
-								bundleClasspath.setOptional(!isChecked);
+								bundleClasspath.setOptional(isOptional);
 								bundleClasspath.setBuiltIn(true);
 								bundleClasspath.setName(name);
 								bundleClasspaths.add(bundleClasspath);
@@ -70,7 +49,7 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 						String evtValue = evt.getValue();
 						BundleClasspath bundleClasspath = new BundleClasspath();
 						bundleClasspath.setBuiltIn(true);
-						bundleClasspath.setOptional(!isChecked);
+						bundleClasspath.setOptional(isOptional);
 						bundleClasspath.setName(evtValue);
 						bundleClasspaths.add(bundleClasspath);
 					}
@@ -78,12 +57,7 @@ public class ExBundleClasspath extends AbstractExPredicator<Set<BundleClasspath>
 			}
 		}
 
-		return Collections.unmodifiableSet(bundleClasspaths);
-	}
-
-	@Override
-	public BundleClasspath toTargetIgnorePredicates() {
-		throw new UnsupportedOperationException();
+		return bundleClasspaths;
 	}
 
 }
