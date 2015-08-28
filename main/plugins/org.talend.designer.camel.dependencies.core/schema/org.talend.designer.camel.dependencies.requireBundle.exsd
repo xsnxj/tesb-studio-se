@@ -75,13 +75,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="regex" type="boolean">
-            <annotation>
-               <documentation>
-                  this used to indicate the attributeValue is a Regular Expression or not. false is by default.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -108,7 +101,7 @@
          <sequence>
             <element ref="predicate" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="bundleName" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   

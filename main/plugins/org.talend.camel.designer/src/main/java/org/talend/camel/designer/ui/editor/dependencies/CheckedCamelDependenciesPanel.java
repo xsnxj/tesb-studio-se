@@ -28,7 +28,7 @@ public class CheckedCamelDependenciesPanel extends CamelDependenciesPanel {
         }
         @Override
         public boolean isGrayed(Object element) {
-            return false;
+            return ((ManifestItem) element).isBuiltIn();
         }
     };
 
@@ -47,14 +47,15 @@ public class CheckedCamelDependenciesPanel extends CamelDependenciesPanel {
         boolean hasChanged = false;
         Collection<? extends ManifestItem> input = getInput();
         for (ManifestItem bcp : input) {
-            if (!bcp.isOptional() == state) {
+            if (bcp.isBuiltIn() || !bcp.isOptional() == state) {
                 continue;
             }
             hasChanged = true;
             bcp.setOptional(!state);
+            ((CheckboxTableViewer) tableViewer).setChecked(bcp, state);
         }
         if (hasChanged) {
-            ((CheckboxTableViewer) tableViewer).setAllChecked(state);
+            //((CheckboxTableViewer) tableViewer).setAllChecked(state);
             fireDependenciesChangedListener();
         }
     }
@@ -67,8 +68,12 @@ public class CheckedCamelDependenciesPanel extends CamelDependenciesPanel {
         viewer.addCheckStateListener(new ICheckStateListener() {
             @Override
             public void checkStateChanged(CheckStateChangedEvent event) {
-                ((ManifestItem) event.getElement()).setOptional(!event.getChecked());
-                fireDependenciesChangedListener();
+                if (((ManifestItem) event.getElement()).isBuiltIn()) {
+                    viewer.setChecked(event.getElement(), !event.getChecked()); 
+                } else {
+                    ((ManifestItem) event.getElement()).setOptional(!event.getChecked());
+                    fireDependenciesChangedListener();
+                }
             }
         });
         return viewer;

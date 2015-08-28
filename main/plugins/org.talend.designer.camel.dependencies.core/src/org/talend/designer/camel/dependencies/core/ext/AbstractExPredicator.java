@@ -1,205 +1,74 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public abstract class AbstractExPredicator<T> {
+abstract class AbstractExPredicator<T> {
 
-    String name;
-    boolean isOptional;
-	private final Collection<ExPredicate> predicates = new HashSet<ExPredicate>();
+    private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
-    void setName(String name) {
-        this.name = name;
+    private final Map<String, String> predicates = new HashMap<String, String>();
+
+    void addPredicate(String name, String value) {
+        predicates.put(name, value);
     }
 
-    void setOptional(boolean isOptional) {
-        this.isOptional = isOptional;
+    private boolean satisfy(NodeType n) {
+        if (predicates.isEmpty()) {
+            return true;
+        }
+        final Collection<?> parameters = n.getElementParameter();
+        for (Map.Entry<String, String> predicate : predicates.entrySet()) {
+            String attributeName = predicate.getKey();
+            final String attributeValue = predicate.getValue();
+
+            final String[] segments = attributeName.split(SEPARATOR);
+            String valueName = null;
+            if (segments.length > 1) {
+                attributeName = segments[0];
+                valueName = segments[1];
+            }
+            for (Object o : parameters) {
+                final ElementParameterType ept = (ElementParameterType) o;
+                if (ept.getName().equals(attributeName)) {
+                    if (null == valueName) {
+                        if (!attributeValue.equals(ept.getValue())) {
+                            return false;
+                        }
+                    } else {
+                        boolean found = false;
+                        for (Object e : ept.getElementValue()) {
+                            final ElementValueType evt = (ElementValueType) e;
+                            if (valueName.equals(evt.getElementRef())) {
+                                if (attributeValue.equals(evt.getValue())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found) {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return true;
     }
 
-	void addPredicate(ExPredicate predicate) {
-		predicates.add(predicate);
-	}
+    public T toTargets(NodeType t) {
+        if (satisfy(t)) {
+            return to(t);
+        }
+        return null;
+    }
 
-	private boolean satisfy(NodeType n) {
-	    if (predicates.isEmpty()) {
-	        return true;
-	    }
-		EList<?> parameters = n.getElementParameter();
-		String componentName = n.getComponentName();
-		for (ExPredicate p : predicates) {
-			String attributeName = p.getAttributeName();
-			String attributeValue = p.getAttributeValue();
-			/*
-			 * LOG: if no name or value, the predicate will be ignored
-			 */
-			if (attributeValue == null || attributeName == null) {
-//				System.out.println(componentName + " ignored: " + attributeName
-//						+ ", " + attributeValue);
-				continue;
-			}
-			boolean regex = p.isRegex();
-			boolean matched = false;
-			String[] segments = attributeName.split("\\.");
-			/*
-			 * a single attribute
-			 */
-			if (segments.length == 1) {
-				matched = searchFromSingle(componentName, attributeName,
-						attributeValue, regex, parameters);
-			} else if (segments.length == 2) {
-				matched = searchFromComplex(componentName, segments,
-						attributeValue, regex, parameters);
-			}
-
-			/*
-			 * LOG: if the attribute didn't find, then ignore it
-			 */
-			if (!matched) {
-//				System.out.println(componentName + ": Attribute "
-//						+ attributeName + " doesn't match the expect value "
-//						+ attributeValue);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private boolean searchFromComplex(String componentName, String[] segments,
-			String attributeValue, boolean regex, EList<?> parameters) {
-		String parentAttrName = segments[0];
-		String childAttrName = segments[1];
-		boolean found = false;
-		for (Object o : parameters) {
-			ElementParameterType ept = (ElementParameterType) o;
-			/*
-			 * if not parent, then continue
-			 */
-			if (!ept.getName().equals(parentAttrName)) {
-				continue;
-			}
-			/*
-			 * if not a complex value, then continue
-			 */
-			List<?> elementValues = ept.getElementValue();
-			if (elementValues == null) {
-				continue;
-			}
-			for (Object e : elementValues) {
-				/*
-				 * if not a complex type, then continue
-				 */
-				if (!(e instanceof ElementValueType)) {
-					continue;
-				}
-				/*
-				 * if not child, then continue
-				 */
-				ElementValueType evt = (ElementValueType) e;
-				if (!childAttrName.equals(evt.getElementRef())) {
-					continue;
-				}
-				found = true;
-				String value = evt.getValue();
-				/**
-				 * if didn't find currently, then continue
-				 */
-				if (regex) {
-					if (value == null) {
-						continue;
-					} else {
-						if (!Pattern.matches(attributeValue, value.trim())) {
-							continue;
-						}
-
-					}
-				}
-				/*
-				 * else compare value
-				 */
-				else if (!attributeValue.equals(value)) {
-					continue;
-				}
-				//else return true
-				return true;
-			}
-			break;
-		}
-		/*
-		 * LOG: if the attribute didn't find, then ignore it
-		 * else return false;
-		 */
-		if (!found) {
-//			System.out.println(componentName + " didn't find: "
-//					+ parentAttrName + "." + childAttrName);
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	protected boolean searchFromSingle(String componentName,
-			String attributeName, String attributeValue, boolean regex,
-			EList<?> parameters) {
-		boolean found = false;
-		for (Object o : parameters) {
-			ElementParameterType ept = (ElementParameterType) o;
-			if (!ept.getName().equals(attributeName)) {
-				continue;
-			}
-			found = true;
-			String value = ept.getValue();
-			/**
-			 * if it's regex
-			 */
-			if (regex) {
-				if (value == null) {
-					return false;
-				} else {
-					if (!Pattern.matches(attributeValue, value.trim())) {
-						return false;
-					}else{
-						return true;
-					}
-
-				}
-			}
-			/*
-			 * else compare value
-			 */
-			else if (!attributeValue.equals(value)) {
-				return false;
-			}else{
-				return true;
-			}
-		}
-		/*
-		 * LOG: if the attribute didn't find, then ignore it
-		 * else return false;
-		 */
-		if (!found) {
-//			System.out
-//					.println(componentName + " didn't find: " + attributeName);
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	public T toTargets(NodeType t) {
-		if (satisfy(t)) {
-			return to(t);
-		}
-		return null;
-	}
-
-	protected abstract T to(NodeType t);
+    protected abstract T to(NodeType t);
 
 }

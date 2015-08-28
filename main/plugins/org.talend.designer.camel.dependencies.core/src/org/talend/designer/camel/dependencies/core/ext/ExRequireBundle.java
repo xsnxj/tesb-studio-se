@@ -5,16 +5,16 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
 public class ExRequireBundle extends AbstractExPredicator<RequireBundle> {
 
-	ExRequireBundle() {
-	}
+    private final RequireBundle requireBundle = new RequireBundle();
 
-	protected RequireBundle to(NodeType t) {
-        RequireBundle requireBundle = new RequireBundle();
+    ExRequireBundle(String name, boolean isOptional) {
         requireBundle.setBuiltIn(true);
         requireBundle.setName(name);
-        //requireBundle.setVersion(versionRange);
         requireBundle.setOptional(isOptional);
+    }
+
+    protected RequireBundle to(NodeType t) {
         return requireBundle;
-	}
+    }
 
 }

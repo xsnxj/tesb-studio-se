@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.talend.core.model.process.EConnectionType;
@@ -48,7 +47,7 @@ public class DependenciesResolver {
     private Collection<ImportPackage> importPackages = new TreeSet<ImportPackage>(SORTER);
     private Collection<RequireBundle> requireBundles = new TreeSet<RequireBundle>(SORTER);
     private Collection<BundleClasspath> bundleClasspaths = new TreeSet<BundleClasspath>(SORTER);
-    private Collection<ExportPackage> exportPackages = new TreeSet<ExportPackage>(SORTER);
+    private final Collection<ExportPackage> exportPackages = new ArrayList<ExportPackage>();
 
     private Collection<BundleClasspath> userBundleClasspaths;
 
@@ -60,16 +59,17 @@ public class DependenciesResolver {
         }
 
         for (ExImportPackage ip: ExtensionPointsReader.INSTANCE.getImportPackagesForAll()) {
-            ImportPackage target = ip.toTargets(null);
-            target.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
-            importPackages.add(target);
+            for (ImportPackage importPackage : ip.toTargets(null)) {
+                importPackage.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
+                importPackages.add(importPackage);
+            }
         }
 
         final Map<?, ?> additionProperties = item.getProperty().getAdditionalProperties().map();
         userBundleClasspaths = DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties);
 
-        handleAllNodes(item);
-        handleAllConnections(item);
+        handleAllNodes(item.getProcess().getNode());
+        handleAllConnections(item.getProcess().getConnection());
 
         Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
         customImportPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
@@ -79,68 +79,67 @@ public class DependenciesResolver {
         customRequireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
         requireBundles = customRequireBundles;
 
-        Collection<ExportPackage> customExportPackages = new ArrayList<ExportPackage>(exportPackages);
-        customExportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
-        exportPackages = customExportPackages;
+        String version = item.getProperty().getVersion();
+        if (RelationshipItemBuilder.LATEST_VERSION.equals(version)) {
+            try {
+                version = ProxyRepositoryFactory.getInstance().getLastVersion(item.getProperty().getId()).getVersion();
+            } catch (Exception e) {
+            }
+        }
+        String routePackageName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), version);
+        final ExportPackage exportPackage = new ExportPackage();
+        exportPackage.setName(JavaResourcesHelper.getProjectFolderName(item) + '.' + routePackageName);
+        exportPackage.setBuiltIn(true);
+        exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
+        exportPackages.add(exportPackage);
+        exportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
 	}
 
-	/**
-	 * most of the datas of a node are coming from extension point
-	 * except the cTalendJob
-	 */
-	private void handleAllNodes(ProcessItem item) {
-		for (Object o : item.getProcess().getNode()) {
-			if (!(o instanceof NodeType)) {
-				continue;
-			}
-			NodeType n = (NodeType) o;
-			if(!isActivate(n)){
-				continue;
-			}
-			handleNode(n);
-		}
-
-		String version = item.getProperty().getVersion();
-		if (RelationshipItemBuilder.LATEST_VERSION.equals(version)) {
-			try {
-				version = ProxyRepositoryFactory.getInstance().getLastVersion(item.getProperty().getId()).getVersion();
-			} catch (Exception e) {
-			}
-		}
-		if (version != null) {
-	        String routePackageName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), version);
-			ExportPackage exportPackage = new ExportPackage();
-			exportPackage.setName(JavaResourcesHelper.getProjectFolderName(item) + '.' + routePackageName);
-			exportPackage.setBuiltIn(true);
-			exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
-			exportPackages.add(exportPackage);
-		}
-	}
+    /**
+     * most of the datas of a node are coming from extension point except the
+     * cTalendJob
+     */
+    private void handleAllNodes(Collection<?> nodes) {
+        for (Object o : nodes) {
+            if (!(o instanceof NodeType)) {
+                continue;
+            }
+            NodeType n = (NodeType) o;
+            if (!isActivate(n)) {
+                continue;
+            }
+            handleNode(n);
+        }
+    }
 
     private void handleNode(NodeType n) {
-        final String uniqueName = ElementParameterParser.getUNIQUENAME(n);
         final String componentName = n.getComponentName();
+        final String uniqueName = ElementParameterParser.getUNIQUENAME(n);
 
-        final Set<ExImportPackage> ips = ExtensionPointsReader.INSTANCE.getComponentImportPackages().get(componentName);
+        final Collection<ExImportPackage> ips =
+            ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(componentName);
         if (ips != null) {
             for (ExImportPackage ip : ips) {
-                ImportPackage target = ip.toTargets(n);
-                if (target == null) {
+                Collection<ImportPackage> targets = ip.toTargets(n);
+                if (targets == null) {
                     continue;
                 }
-                if (!importPackages.add(target)) {
-                    for (ImportPackage obj : importPackages) {
-                        if (target.equals(obj)) {
-                            target = obj;
-                            break;
+                for (ImportPackage importPackage : targets) {
+                    if (!importPackages.add(importPackage)) {
+                        for (ImportPackage obj : importPackages) {
+                            if (importPackage.equals(obj)) {
+                                importPackage = obj;
+                                break;
+                            }
                         }
                     }
+                    importPackage.addRelativeComponent(uniqueName);
                 }
-                target.addRelativeComponent(uniqueName);
             }
         }
 
-        Set<ExRequireBundle> rbs = ExtensionPointsReader.INSTANCE.getComponentRequireBundles().get(componentName);
+        final Collection<ExRequireBundle> rbs =
+            ExtensionPointsReader.INSTANCE.getRequireBundlesForComponent(componentName);
         if (rbs != null) {
             for (ExRequireBundle rb : rbs) {
                 RequireBundle target = rb.toTargets(n);
@@ -159,7 +158,8 @@ public class DependenciesResolver {
             }
         }
 
-        Set<ExBundleClasspath> bcs = ExtensionPointsReader.INSTANCE.getBundleClasspaths().get(componentName);
+        final Collection<ExBundleClasspath> bcs =
+            ExtensionPointsReader.INSTANCE.getBundleClasspathsForComponent(componentName);
         if (bcs != null) {
             for (ExBundleClasspath bc : bcs) {
                 Collection<BundleClasspath> targets = bc.toTargets(n);
@@ -176,15 +176,15 @@ public class DependenciesResolver {
                         }
                     }
                     bcp.addRelativeComponent(uniqueName);
-                    if (userBundleClasspaths.contains(bcp)) {
-                        bcp.setOptional(false);
+                    if (!bcp.isBuiltIn()) {
+                        bcp.setOptional(!userBundleClasspaths.contains(bcp));
                     }
                 }
             }
         }
     }
 
-    private boolean isActivate(NodeType node) {
+    private static boolean isActivate(NodeType node) {
         for (Object obj : node.getElementParameter()) {
             ElementParameterType cpType = (ElementParameterType) obj;
             if ("ACTIVATE".equals(cpType.getName())) {
@@ -198,9 +198,8 @@ public class DependenciesResolver {
 	 * special for ROUTE_WHEN connection case
 	 * we need to handle it specially according the selected language
 	 */
-	private void handleAllConnections(ProcessItem item) {
-		Map<String, Set<ExImportPackage>> languageImportPackages = ExtensionPointsReader.INSTANCE.getLanguageImportPackages();
-		for (Object next : item.getProcess().getConnection()) {
+	private void handleAllConnections(Collection<?> connections) {
+		for (Object next : connections) {
 			if(next == null || !(next instanceof ConnectionType)){
 				continue;
 			}
@@ -213,12 +212,13 @@ public class DependenciesResolver {
 			if(languageName == null){
 				continue;
 			}
-			Set<ExImportPackage> languageImportSet = languageImportPackages.get(languageName);
-			if(languageImportSet == null){
+	        Collection<ExImportPackage> languageImportPackages =
+	            ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(languageName);
+			if(languageImportPackages == null){
 				continue;
 			}
-			for(ExImportPackage eip : languageImportSet){
-				importPackages.add(eip.toTargets(null));
+			for(ExImportPackage eip : languageImportPackages){
+				importPackages.addAll(eip.toTargets(null));
 			}
 		}
 	}
@@ -244,21 +244,21 @@ public class DependenciesResolver {
 		return null;
 	}
 
-	public Collection<BundleClasspath> getBundleClasspaths() {
-		return bundleClasspaths;
-	}
+    public Collection<BundleClasspath> getBundleClasspaths() {
+        return bundleClasspaths;
+    }
 
-	public Collection<RequireBundle> getRequireBundles() {
-		return requireBundles;
-	}
+    public Collection<RequireBundle> getRequireBundles() {
+        return requireBundles;
+    }
 
-	public Collection<ImportPackage> getImportPackages() {
-		return importPackages;
-	}
+    public Collection<ImportPackage> getImportPackages() {
+        return importPackages;
+    }
 
-	public Collection<ExportPackage> getExportPackages() {
-		return exportPackages;
-	}
+    public Collection<ExportPackage> getExportPackages() {
+        return exportPackages;
+    }
 
     public String getManifestBundleClasspath(char separator) {
         return DependenciesCoreUtil.toManifestString(bundleClasspaths, separator, true);

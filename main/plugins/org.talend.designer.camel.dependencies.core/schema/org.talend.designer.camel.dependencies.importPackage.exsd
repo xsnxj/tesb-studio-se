@@ -79,7 +79,7 @@
          <sequence minOccurs="0" maxOccurs="1">
             <element ref="predicate" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="packageName" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -120,13 +120,6 @@
             <annotation>
                <documentation>
                   
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="regex" type="boolean">
-            <annotation>
-               <documentation>
-                  this used to indicate the attributeValue is a Regular Expression or not. false is by default.
                </documentation>
             </annotation>
          </attribute>
