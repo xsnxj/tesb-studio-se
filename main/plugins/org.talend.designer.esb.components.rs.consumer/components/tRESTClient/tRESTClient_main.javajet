@@ -417,13 +417,14 @@ try {
 			}
 			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
 
-			String errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
+			String errorMessage_<%=cid%> = null;
+			try {
+				errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
+			} catch (Exception exe_<%=cid%>) {
+				// ignore
+			}
 			if (null == errorMessage_<%=cid%> || 0 == errorMessage_<%=cid%>.trim().length()) {
-				try {
-					errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
-				} catch (Exception exe_<%=cid%>) {
-					// ignore
-				}
+				errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
 			}
 			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
 
