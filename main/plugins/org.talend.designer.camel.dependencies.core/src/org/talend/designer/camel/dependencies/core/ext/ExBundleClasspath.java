@@ -11,7 +11,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
 public class ExBundleClasspath extends AbstractExPredicator<Collection<BundleClasspath>> {
 
-    private static final String SEPARATOR = ";"; //$NON-NLS-1$
+    private static final String SEPARATOR = ","; //$NON-NLS-1$
 
     private final String name;
     private final boolean isOptional;
@@ -23,10 +23,10 @@ public class ExBundleClasspath extends AbstractExPredicator<Collection<BundleCla
 
     @Override
     protected Collection<BundleClasspath> to(NodeType t) {
+        final Collection<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
         for (Object e : t.getElementParameter()) {
             final ElementParameterType p = (ElementParameterType) e;
             if (name.equals(p.getName())) {
-                final Collection<BundleClasspath> bundleClasspaths = new HashSet<BundleClasspath>();
                 final EList<?> elementValue = p.getElementValue();
                 if (elementValue.isEmpty()) {
                     String evtValue = p.getValue();
@@ -38,28 +38,30 @@ public class ExBundleClasspath extends AbstractExPredicator<Collection<BundleCla
                             evtValue = evtValue.substring(0, evtValue.length() - 1);
                         }
                         if (!evtValue.isEmpty()) {
-                            for (String name : evtValue.split(SEPARATOR)) {
-                                BundleClasspath bundleClasspath = new BundleClasspath();
-                                bundleClasspath.setBuiltIn(!isOptional);
-                                bundleClasspath.setName(name);
-                                bundleClasspaths.add(bundleClasspath);
-                            }
+                            bundleClasspaths.add(createBundleClasspath(evtValue));
                         }
                     }
                 } else {
                     for (Object pv : p.getElementValue()) {
                         ElementValueType evt = (ElementValueType) pv;
-                        String evtValue = evt.getValue();
-                        BundleClasspath bundleClasspath = new BundleClasspath();
-                        bundleClasspath.setBuiltIn(!isOptional);
-                        bundleClasspath.setName(evtValue);
-                        bundleClasspaths.add(bundleClasspath);
+                        bundleClasspaths.add(createBundleClasspath(evt.getValue()));
                     }
                 }
                 return bundleClasspaths;
             }
         }
-        return null;
+        // no param - libs itself
+        for (String lib : name.split(SEPARATOR)) {
+            bundleClasspaths.add(createBundleClasspath(lib));
+        }
+        return bundleClasspaths;
+    }
+
+    private BundleClasspath createBundleClasspath(String lib) {
+        final BundleClasspath bundleClasspath = new BundleClasspath();
+        bundleClasspath.setBuiltIn(!isOptional);
+        bundleClasspath.setName(lib);
+        return bundleClasspath;
     }
 
 }

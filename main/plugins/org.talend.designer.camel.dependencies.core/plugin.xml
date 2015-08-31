@@ -308,13 +308,6 @@
                 attributeValue="true">
             </predicate>
         </classpath>
-        <classpath name="cMQConnectionFactory"
-            parameter="AMQP_DRIVER_JAR">
-            <predicate
-                attributeName="MQ_TYPE"
-                attributeValue="AMQP">
-            </predicate>
-        </classpath>
     </extension>
 
 </plugin>

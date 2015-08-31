@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.talend.core.components_provider">
-      <ComponentsProvider
+    <extension point="org.talend.core.components_provider">
+        <ComponentsProvider
             class="org.talend.designer.camel.components.localprovider.CamelLocalComponentsProvider"
             folderName="components"
             id="org.talend.designer.camel.components.localprovider.CamelLocalComponentsProvider">
-      </ComponentsProvider>
-   </extension>
-   <extension
-         point="org.talend.core.runtime.service">
-      <Service
+        </ComponentsProvider>
+    </extension>
+    <extension point="org.talend.core.runtime.service">
+        <Service
             class="org.talend.designer.camel.components.localprovider.CamelLocalProviderService"
             serviceId="ILocalProviderService">
-      </Service>
-   </extension>
-   <extension
-         point="org.talend.core.external_component">
-      <ExternalComponent
+        </Service>
+    </extension>
+    <extension point="org.talend.core.external_component">
+        <ExternalComponent
             class="org.talend.designer.esb.webservice.WebServiceNode">
-      </ExternalComponent>
-   </extension>
+        </ExternalComponent>
+    </extension>
+
+    <extension point="org.talend.designer.camel.dependencies.bundleClasspath">
+        <classpath name="cMQConnectionFactory"
+            parameter="${tesb-qpid-amqp-1-0-common},${tesb-qpid-amqp-1-0-client},${tesb-qpid-amqp-1-0-client-jms}">
+            <predicate
+                attributeName="MQ_TYPE"
+                attributeValue="AMQP">
+            </predicate>
+        </classpath>
+    </extension>
 
     <extension point="org.talend.core.runtime.librariesNeeded">
 
