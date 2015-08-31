@@ -13,6 +13,7 @@
 package org.talend.designer.camel.resource.handler;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
@@ -50,19 +51,18 @@ public class RouteResourceImportHandler extends ImportRepTypeHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.repository.items.importexport.handlers.imports.ImportBasicHandler#getReferenceItemPath(org.eclipse
-     * .core.runtime.IPath, org.talend.core.model.properties.ReferenceFileItem)
-     */
+
     @Override
     protected IPath getReferenceItemPath(IPath importItemPath, ReferenceFileItem rfItem) {
         // TESB-16314 Log error in case of the import file does not exists.
         IPath filePath = super.getReferenceItemPath(importItemPath, rfItem);
         if (!filePath.toFile().exists()) {
-            log.error("File with the name " + filePath.lastSegment() + " does not exits."); //$NON-NLS-1$
+            String portableString = importItemPath.toPortableString();
+            String substring = portableString.substring(0, portableString.lastIndexOf('_'));
+            filePath = new Path(substring);
+            if (!filePath.toFile().exists()) {
+                log.error("File with the name " + filePath.lastSegment() + " does not exits."); //$NON-NLS-1$
+            }
         }
         return filePath;
     }
