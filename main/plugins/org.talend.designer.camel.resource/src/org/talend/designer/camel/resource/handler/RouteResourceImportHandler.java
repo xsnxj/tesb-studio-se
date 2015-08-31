@@ -12,7 +12,11 @@
 // ============================================================================
 package org.talend.designer.camel.resource.handler;
 
+import org.eclipse.core.runtime.IPath;
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
+import org.talend.repository.items.importexport.handlers.model.ImportItem;
 
 /**
  * DOC ggu class global comment. Detailled comment
@@ -24,6 +28,43 @@ public class RouteResourceImportHandler extends ImportRepTypeHandler {
      */
     public RouteResourceImportHandler() {
         super();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.repository.items.importexport.handlers.imports.ImportBasicHandler#beforeCreatingItem(org.talend.repository
+     * .items.importexport.handlers.model.ImportItem)
+     */
+    @Override
+    protected void beforeCreatingItem(ImportItem importItem) {
+        Property property = importItem.getProperty();
+        if (property != null) {
+            for (Object itemRefObj : property.getItem().getReferenceResources()) {
+                ReferenceFileItem refItem = (ReferenceFileItem) itemRefObj;
+                if (refItem.getName() != null) {
+                    refItem.setName(null);
+                }
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.repository.items.importexport.handlers.imports.ImportBasicHandler#getReferenceItemPath(org.eclipse
+     * .core.runtime.IPath, org.talend.core.model.properties.ReferenceFileItem)
+     */
+    @Override
+    protected IPath getReferenceItemPath(IPath importItemPath, ReferenceFileItem rfItem) {
+        // TESB-16314 Log error in case of the import file does not exists.
+        IPath filePath = super.getReferenceItemPath(importItemPath, rfItem);
+        if (!filePath.toFile().exists()) {
+            log.error("File with the name " + filePath.lastSegment() + " does not exits."); //$NON-NLS-1$
+        }
+        return filePath;
     }
 
 }
