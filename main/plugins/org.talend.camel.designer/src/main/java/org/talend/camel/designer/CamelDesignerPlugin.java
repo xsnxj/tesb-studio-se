@@ -7,9 +7,6 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.talend.core.GlobalServiceRegister;
-import org.talend.core.IService;
-import org.talend.designer.runprocess.IRunProcessService;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -76,11 +73,6 @@ public class CamelDesignerPlugin extends AbstractUIPlugin {
      */
     public static ImageDescriptor getImageDescriptor(String path) {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
-
-    public IRunProcessService getRunProcessService() {
-        IService service = GlobalServiceRegister.getDefault().getService(IRunProcessService.class);
-        return (IRunProcessService) service;
     }
 
     @Override

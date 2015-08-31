@@ -18,12 +18,10 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.talend.camel.core.model.camelProperties.BeanItem;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.utils.VersionUtils;
@@ -31,16 +29,14 @@ import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
-import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.ui.branding.AbstractBrandingService;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.codegen.AbstractRoutineSynchronizer;
 import org.talend.designer.codegen.ITalendSynchronizer;
-import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryNodeUtilities;
 
@@ -58,37 +54,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     public void syncAllRoutines() throws SystemException {
         // TODO Auto-generated method stub
 
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.designer.codegen.ITalendSynchronizer#getFile(org.talend.core.model.properties.Item)
-     */
-    @Override
-    public IFile getFile(Item item) throws SystemException {
-        if (item instanceof BeanItem) {
-            return getBeanFile(item);
-        } else if (item instanceof CamelProcessItem) {
-            return getCamelProcessFile((CamelProcessItem) item);
-        }
-        return null;
-    }
-
-    private IFile getCamelProcessFile(CamelProcessItem item) throws SystemException {
-        IRunProcessService service = CamelDesignerPlugin.getDefault().getRunProcessService();
-        ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
-        if (talendProcessJavaProject == null) {
-            return null;
-        }
-        IFolder srcFolder = talendProcessJavaProject.getSrcFolder();
-
-        String projectFolderName = JavaResourcesHelper.getProjectFolderName(item);
-
-        String folderName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), item.getProperty().getVersion());
-        IFile file = srcFolder.getFile(projectFolderName + '/' + folderName + '/' + item.getProperty().getLabel()
-                + JavaUtils.JAVA_EXTENSION);
-        return file;
     }
 
     /*
@@ -114,7 +79,7 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     protected void doSyncRoutine(RoutineItem routineItem, boolean copyToTemp) throws SystemException {
         FileOutputStream fos = null;
         try {
-            IFile file = getBeanFile(routineItem);
+            IFile file = getRoutineFile(routineItem);
             if (file == null) {
                 return;
             }
@@ -184,39 +149,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     public void renameRoutineClass(RoutineItem routineItem) {
         // TODO Auto-generated method stub
 
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see
-     * org.talend.designer.codegen.AbstractRoutineSynchronizer#renameBeanClass(org.talend.core.model.properties.Item)
-     */
-    @Override
-    public void renameBeanClass(Item beanItem) {
-        if (beanItem == null) {
-            return;
-        }
-        if (beanItem instanceof BeanItem) {
-            BeanItem item = (BeanItem) beanItem;
-            String routineContent = new String(item.getContent().getInnerContent());
-            String label = item.getProperty().getLabel();
-            //
-            String regexp = "public(\\s)+class(\\s)+\\w+(\\s)+\\{";//$NON-NLS-1$
-            routineContent = routineContent.replaceFirst(regexp, "public class " + label + " {");//$NON-NLS-1$//$NON-NLS-2$
-            item.getContent().setInnerContent(routineContent.getBytes());
-        }
-    }
-
-    private IFile getBeanFile(Item beanItem) throws SystemException {
-        IRunProcessService service = CamelDesignerPlugin.getDefault().getRunProcessService();
-        ITalendProcessJavaProject talendProcessJavaProject = service.getTalendProcessJavaProject();
-        if (talendProcessJavaProject == null) {
-            return null;
-        }
-        IFolder beanFolder = talendProcessJavaProject.getSrcSubFolder(null, JavaUtils.JAVA_BEANS_DIRECTORY);
-        IFile file = beanFolder.getFile(beanItem.getProperty().getLabel() + JavaUtils.JAVA_EXTENSION);
-        return file;
     }
 
     /*
