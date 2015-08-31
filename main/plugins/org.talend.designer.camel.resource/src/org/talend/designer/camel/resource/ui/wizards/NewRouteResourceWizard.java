@@ -132,7 +132,7 @@ public class NewRouteResourceWizard extends Wizard {
 		URL url = mainPage.getUrl();
 		Path p = new Path(property.getLabel());
 		String itemName = p.removeFileExtension().lastSegment();
-        String refName = item.getProperty().getLabel() + LOW_DASH + VersionUtils.DEFAULT_VERSION;
+        // String refName = item.getProperty().getLabel() + LOW_DASH + VersionUtils.DEFAULT_VERSION;
 		String fileExtension = null;
 		if (url != null) {
 			p = new Path(url.getPath());
@@ -177,7 +177,7 @@ public class NewRouteResourceWizard extends Wizard {
 				.createReferenceFileItem();
 		refItem.setContent(byteArray);
 		refItem.setExtension(fileExtension);
-        refItem.setName(refName);
+        // refItem.setName(refName);
 
 		item.setName(itemName);
 

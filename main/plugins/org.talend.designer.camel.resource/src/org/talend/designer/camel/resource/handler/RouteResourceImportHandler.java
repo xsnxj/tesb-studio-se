@@ -12,7 +12,10 @@
 // ============================================================================
 package org.talend.designer.camel.resource.handler;
 
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.properties.ReferenceFileItem;
 import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler;
+import org.talend.repository.items.importexport.handlers.model.ImportItem;
 
 /**
  * DOC ggu class global comment. Detailled comment
@@ -24,6 +27,22 @@ public class RouteResourceImportHandler extends ImportRepTypeHandler {
      */
     public RouteResourceImportHandler() {
         super();
+    }
+
+    /*
+     * TESB-16305: Set null for reference item name on importing
+     */
+    @Override
+    protected void beforeCreatingItem(ImportItem importItem) {
+        Property property = importItem.getProperty();
+        if (property != null) {
+            for (Object itemRefObj : property.getItem().getReferenceResources()) {
+                ReferenceFileItem refItem = (ReferenceFileItem) itemRefObj;
+                if (refItem.getName() != null) {
+                    refItem.setName(null);
+                }
+            }
+        }
     }
 
 }
