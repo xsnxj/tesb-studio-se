@@ -20,6 +20,7 @@ import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.repository.i18n.Messages;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.EditPropertiesAction;
@@ -58,7 +59,8 @@ public class ServiceEditPropertiesAction extends EditPropertiesAction {
      * @param node
      * @return
      */
-    protected IEditorPart getCorrespondingEditor(RepositoryNode node) {
+    @Override
+    protected IEditorPart getCorrespondingEditor(IRepositoryNode node) {
 
         return super.getCorrespondingEditor(node);
     }

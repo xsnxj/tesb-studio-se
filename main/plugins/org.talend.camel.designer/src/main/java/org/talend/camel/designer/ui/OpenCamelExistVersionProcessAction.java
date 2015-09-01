@@ -16,14 +16,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -44,13 +41,15 @@ import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.services.IUIRefresher;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
+import org.talend.repository.ui.actions.EditPropertiesAction;
 
 /**
  * DOC xye class global comment. Detailled comment
  */
-public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesAction {
+public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
 
     private static final String ACTION_LABEL = Messages.getString("OpenExistVersionProcess.open"); //$NON-NLS-1$
 
@@ -74,7 +73,7 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
         RepositoryObject repositoryObj = new RepositoryObject(node.getObject().getProperty());
         repositoryObj.setRepositoryNode(node.getObject().getRepositoryNode());
         OpenCamelExistVersionProcessWizard wizard = new OpenCamelExistVersionProcessWizard(repositoryObj);
-        PropertyManagerWizardDialog dialog = new PropertyManagerWizardDialog(Display.getCurrent().getActiveShell(), wizard);
+        WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard);
         dialog.setHelpAvailable(false);
         dialog.setPageSize(300, 250);
         dialog.setTitle(Messages.getString("OpenExistVersionProcess.open.dialog")); //$NON-NLS-1$
@@ -90,26 +89,8 @@ public class OpenCamelExistVersionProcessAction extends EditCamelPropertiesActio
         }
     }
 
-    public class PropertyManagerWizardDialog extends WizardDialog {
-
-        /**
-         * DOC xye PropertyManagerWizardDialog constructor comment.
-         * 
-         * @param parentShell
-         * @param newWizard
-         */
-        public PropertyManagerWizardDialog(Shell parentShell, IWizard newWizard) {
-            super(parentShell, newWizard);
-        }
-
-        public Button getFinishButton() {
-            return getButton(IDialogConstants.FINISH_ID);
-        }
-
-    }
-
     @Override
-    protected IEditorPart getCorrespondingEditor(RepositoryNode node) {
+    protected IEditorPart getCorrespondingEditor(IRepositoryNode node) {
         IEditorReference[] eidtors = getActivePage().getEditorReferences();
 
         for (IEditorReference eidtor : eidtors) {

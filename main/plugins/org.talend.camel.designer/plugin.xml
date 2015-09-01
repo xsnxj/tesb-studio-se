@@ -63,13 +63,6 @@
                   name="Create process">
             </Action>
             <Action
-                  class="org.talend.camel.designer.ui.EditCamelPropertiesAction"
-                  id="org.talend.camel.designer.ui.EditCamelPropertiesAction"
-                  isPropertiesAction="true"
-                  level="12"
-                  name="Edit properties">
-            </Action>
-            <Action
                   class="org.talend.camel.designer.ui.OpenCamelExistVersionProcessAction"
                   id="org.talend.camel.designer.ui.OpenCamelExistVersionProcessAction"
                   isReadAction="true"
