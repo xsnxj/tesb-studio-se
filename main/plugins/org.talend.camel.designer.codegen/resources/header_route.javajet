@@ -147,6 +147,10 @@ public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilde
 	}
 
 	public void setArguments(Map<String, String> arguments) {
+		final String newContext = arguments.remove("context");
+		if (null != newContext) {
+			contextStr = newContext;
+		}
 		context_param.putAll(arguments);
 		readContextValues(contextStr);
 	}
