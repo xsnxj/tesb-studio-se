@@ -776,20 +776,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
 
 	private final Map<String, String> uriMap = new HashMap<String, String>();
 
-	public Map<String,String> getUriMap() {
-		return this.uriMap;
-	}
-
-	public void loadCustomUriMap(Map<String,String> newMap) {
-		if (newMap != null) {
-			uriMap.putAll(newMap);
-		}
-	}
-
-	/*
-	* the readContextValues(contextName) may have to invoked first before this
-	*/
-	public void initUriMap() {
+	private void initUriMap() {
 <%
 String cid = "";
 String componentName = "";
