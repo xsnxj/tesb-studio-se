@@ -11,9 +11,9 @@
 		org.talend.core.model.utils.JavaResourcesHelper
 		java.util.Map
 		org.talend.core.model.process.ElementParameterParser
-	" 
+	"
 	class="Footer" 
-	skeleton="footer_java.skeleton"	
+	skeleton="footer_java.skeleton"
 %>
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
@@ -21,15 +21,27 @@
     IProcess process = (IProcess)v.get(0);
 
 	List<? extends INode> processNodes = (List<? extends INode>) process.getGeneratingNodes();
-	List<IContextParameter> params = new ArrayList<IContextParameter>();
-    params=process.getContextManager().getDefaultContext().getContextParameterList();
+	List<IContextParameter> params = process.getContextManager().getDefaultContext().getContextParameterList();
     String jobFolderName = JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
-	
+
 	boolean stats = codeGenArgument.isStatistics();
-	
 %>
 
-protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+		}
+		private org.apache.camel.main.Main main = null;
+		private void run() throws java.lang.Exception{
+
+			main = new org.apache.camel.main.Main(){
+
+		protected CamelContext createContext() {
+			org.apache.camel.osgi.SpringCamelContextFactory contextFactory = new org.apache.camel.osgi.SpringCamelContextFactory();
+			contextFactory.setApplicationContext(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
+			final org.apache.camel.impl.DefaultCamelContext camelContext = contextFactory.createContext();
+			camelContext.setName("<%=process.getName()%>-ctx");
+            return camelContext;
+		}
+
+	protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
 		super.postProcessCamelContext(camelContext);
 		// add notifier
 		java.util.Set<JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
@@ -111,9 +123,6 @@ if(librariesSb.length()>0){
 	}
 
 };
-    // init uriMap first
-    initUriMap();
-
     //add route
     main.addRouteBuilder(this);
 
@@ -249,7 +258,7 @@ for (IContextParameter ctxParam : params) {
 	* read context values from specified context
 	* @parameter contextName : the name of context while will be used
 	*/
-	public void readContextValues(String contextName){
+	private void readContextValues(String contextName){
 		try {
 			java.io.InputStream inContext = <%=process.getName()%>.class.getClassLoader().getResourceAsStream("<%=codeGenArgument.getCurrentProjectName().toLowerCase() %>/<%=jobFolderName %>/contexts/"+contextName+".properties");
 

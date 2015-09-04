@@ -67,7 +67,8 @@
                 </predicate>
             </importPackage>
             <importPackage
-                name="org.apache.cxf.interceptor.security">
+                name="org.apache.cxf.interceptor.security,
+                    org.springframework.beans.factory.config">
                 <predicate
                     attributeName="ENABLE_SECURITY"
                     attributeValue="true">

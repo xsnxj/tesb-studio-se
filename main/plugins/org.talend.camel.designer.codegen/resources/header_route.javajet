@@ -145,20 +145,18 @@ package <%= packageName %>;
  */
 public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
 
-<%
-	for (INode node : graphicalNodes) {
-		Object value = node.getPropertyValue("STARTABLE");
-		if (null != value && (Boolean) value) {
-%>
 	private org.osgi.framework.BundleContext bundleContext;
 
 	public void setBundleContext(org.osgi.framework.BundleContext bundleContext) {
 		this.bundleContext = bundleContext;
 	}
-<%
-            break;
-		}
+
+	public void setArguments(Map<String, String> arguments) {
+		context_param.putAll(arguments);
+		readContextValues(contextStr);
 	}
+
+<%
 
     boolean hasSam = false;
     boolean hasCorrelationID = false;
