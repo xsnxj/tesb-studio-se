@@ -58,7 +58,7 @@ public final class CamelFeatureUtil {
 
     @SuppressWarnings("serial")
     private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
-        put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
+        //put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
         put("camel-http", new FeatureModel[] { new FeatureModel("camel-http"), new FeatureModel("http") });
         put("activemq-all", new FeatureModel[] { new FeatureModel("activemq"), new FeatureModel("activemq-camel") });
         put("tdm-camel", new FeatureModel[] { new FeatureModel("talend-data-mapper") });
