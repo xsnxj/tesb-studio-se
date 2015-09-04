@@ -75,18 +75,13 @@ package <%= packageName %>;
 */
 	importsSet.add("import java.util.HashMap");
 	importsSet.add("import java.util.Map");
-	importsSet.add("import javax.xml.bind.JAXBException");
-	importsSet.add("import javax.xml.namespace.QName");
 	importsSet.add("import routines.TalendString");
 	importsSet.add("import routines.system.api.TalendESBRoute");
 	importsSet.add("import routines.*");
 	importsSet.add("import routines.system.*");
-	importsSet.add("import java.text.ParseException");
 	importsSet.add("import org.apache.camel.CamelContext");
 	importsSet.add("import java.util.Properties");
-	importsSet.add("import org.apache.camel.management.JmxNotificationEventNotifier");
-	importsSet.add("import java.util.Set");
-	
+
 	String headerImports = ElementParameterParser.getValue(process, "__HEADER_IMPORT__");
 	if(headerImports!=null && !"".equals(headerImports.trim())){
 		String[] imports = headerImports.split(";");

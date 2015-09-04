@@ -44,9 +44,9 @@
 	protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
 		super.postProcessCamelContext(camelContext);
 		// add notifier
-		java.util.Set<JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
+		java.util.Set<org.apache.camel.management.JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
 				.getRegistry().findByType(
-						JmxNotificationEventNotifier.class);
+						org.apache.camel.management.JmxNotificationEventNotifier.class);
 		if (jmxEventNotifiers != null && !jmxEventNotifiers.isEmpty()) {
 			camelContext.getManagementStrategy().addEventNotifier(
 					jmxEventNotifiers.iterator().next());
@@ -287,7 +287,7 @@ for (IContextParameter ctxParam : params) {
 				
 			    context.<%=ctxParam.getName()%>=(java.util.Date)(new java.text.SimpleDateFormat(context_<%=ctxParam.getName()%>_pattern).parse(context_<%=ctxParam.getName()%>_value));
 			   
-			}catch(ParseException e)
+			}catch(java.text.ParseException e)
 			{
 			    context.<%=ctxParam.getName()%>=null;
 			}
