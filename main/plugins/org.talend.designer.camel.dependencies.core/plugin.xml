@@ -15,31 +15,22 @@
     <extension point="org.talend.designer.camel.dependencies.importPackage">
 
         <importPackage
-            name="javax.xml.bind,
-                javax.xml.bind.annotation,
-                javax.xml.namespace,
-                org.apache.camel,
+            name="org.apache.camel,
                 org.apache.camel.builder,
                 org.apache.camel.impl,
                 org.apache.camel.management,
                 org.apache.camel.model,
                 org.apache.camel.osgi,
                 org.apache.camel.spi,
-                org.apache.camel.view,
                 org.osgi.framework,
-                org.osgi.service.blueprint,
                 routines.system.api"
         />
 
         <component componentName="cCXF">
             <importPackage
-                name="org.apache.camel.component.cxf,
-                   org.apache.cxf.feature,
-                   org.apache.cxf.configuration,
-                   org.apache.cxf.bus.osgi,
-                   META-INF.cxf,
-                   org.apache.cxf.bus.spring,
-                   org.springframework.osgi.context.support"
+                name="javax.xml.namespace,
+                    org.apache.camel.component.cxf,
+                    org.apache.camel.component.cxf.common.header"
             />
             <importPackage
                 name="org.talend.esb.servicelocator.cxf">
@@ -89,6 +80,20 @@
         </component>
 
         <component componentName="cCXFRS">
+            <importPackage
+                name="javax.ws.rs,
+                    javax.ws.rs.core,
+                    javax.ws.rs.ext,
+                    javax.xml.stream,
+                    javax.xml.transform,
+                    org.apache.camel.component.cxf,
+                    org.apache.camel.component.cxf.jaxrs,
+                    org.apache.cxf.jaxrs,
+                    org.apache.cxf.jaxrs.lifecycle,
+                    org.apache.cxf.jaxrs.provider,
+                    org.apache.cxf.jaxrs.utils,
+                    org.apache.cxf.staxutils"
+            />
             <importPackage
                 name="org.talend.esb.authorization.xacml.rt.pep">
                 <predicate
@@ -268,11 +273,11 @@
         </component>
     </extension>
 
-    <extension point="org.talend.designer.camel.dependencies.requireBundle">
+    <!--extension point="org.talend.designer.camel.dependencies.requireBundle">
         <requireBundle
             name="org.apache.camel.camel-core">
         </requireBundle>
-    </extension>
+    </extension-->
 
     <extension point="org.talend.designer.camel.dependencies.bundleClasspath">
         <classpath name="cConfig"
