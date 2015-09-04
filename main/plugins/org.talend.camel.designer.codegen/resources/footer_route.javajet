@@ -51,40 +51,8 @@
 			camelContext.getManagementStrategy().addEventNotifier(
 					jmxEventNotifiers.iterator().next());
 		}
-
 <%
-StringBuilder librariesSb = new StringBuilder();
-for (INode node : processNodes) {
-	if (node.isActivate()) {
-		if (node.getComponent().getName().equals("cMessagingEndpoint")) {
-			List<Map<String, String>> dependencies = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__HOTLIBS__");
-			for(Map<String, String> dependencie : dependencies){
-				String librarieJar = dependencie.get("LIBPATH");
-				librariesSb.append("\"");
-				librariesSb.append(librarieJar);
-				librariesSb.append("\",");
-			}
-		}
-	}
-}
-if(librariesSb.length()>0){
-%>
-		// add external libraries
-		java.net.URLClassLoader sysloader = (java.net.URLClassLoader) ClassLoader.getSystemClassLoader();
-		java.lang.reflect.Method method = java.net.URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { java.net.URL.class });
-		method.setAccessible(true);
-		String[] libPaths = new String[] {<%=librariesSb.toString()%>};
-		for (String lib : libPaths) {
-			String separator = System.getProperty("path.separator");
-			String[] jarFiles = lib.split(separator);
-			for (String jarFile : jarFiles) {
-				method.invoke(sysloader, new Object[] { new java.io.File(jarFile).toURL() });
-			}
-		}
-<%
-}
 	if(stats) { %>
-
 		// add statistics which shows on the connection
 		final routines.system.RunStat runStat = new routines.system.RunStat();
 		runStat.openSocket(true);
