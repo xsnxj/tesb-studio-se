@@ -39,10 +39,8 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="CONNECTION_FACOTRY_CONFIGURATION" FIELD="ROUTE_COMPONENT_TYPE"
+            FILTER="cMQConnectionFactory&amp;MQ_TYPE == 'AMQP'"
 			NUM_ROW="12">
-			<ITEMS>
-			<ITEM NAME="cMQConnectionFactory" VALUE="cMQConnectionFactory" FILTER="MQ_TYPE == 'AMQP'"></ITEM>
-			</ITEMS>
 		</PARAMETER>
 	</PARAMETERS>
 

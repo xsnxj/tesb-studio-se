@@ -32,8 +32,7 @@ public abstract class AbstractRouteItemComponentMigrationTask extends
 	 */
 	protected static class UtilTool{
 		public static ElementParameterType findParameterType(NodeType node, String paramName) {
-			List<?> params = node.getElementParameter();
-			for (Object param : params) {
+			for (Object param : node.getElementParameter()) {
 				ElementParameterType paramType = (ElementParameterType) param;
 				if(paramType.getName().equals(paramName)) {
 					return paramType;

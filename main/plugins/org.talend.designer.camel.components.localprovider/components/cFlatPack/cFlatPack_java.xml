@@ -28,13 +28,10 @@
 
 	<PARAMETERS>	
 		<!-- USE EXIST ,provider -->
-		<PARAMETER NAME="EXIST_ENDPOINT" FIELD="ROUTE_COMPONENT_TYPE"
+		<PARAMETER NAME="EXIST_ENDPOINT" FIELD="ROUTE_COMPONENT_TYPE" FILTER="cFlatPack"
 			NUM_ROW="6" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
-			<ITEMS>
-			<ITEM NAME="cFlatPack" VALUE="cFlatPack" FILTER="#LINK@CONNECTOR.IN.ANY == '0'"></ITEM>
-			</ITEMS>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="WARNING" FIELD="LABEL" NUM_ROW="5" SHOW_IF="#LINK@CONNECTOR.IN.ANY == '0'">
 			<DEFAULT>*Note: See the website http://flatpack.sourceforge.net/documentation/index.html for the full documentation on PZMAP file configuration.</DEFAULT>
 		</PARAMETER>		
