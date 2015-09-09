@@ -878,8 +878,7 @@ if (isProvider) {
 <%
 			}
             //cMQConnectionFactory http://jira.talendforge.org/browse/TESB-4860
-			List<? extends INode> jmsCFNodes = process.getNodesOfType("cMQConnectionFactory");
-			for(INode node: jmsCFNodes){
+			for (INode node: process.getNodesOfType("cMQConnectionFactory")) {
 				NodeParamsHelper helper = new NodeParamsHelper(node);
 				//Use transaction http://jira.talendforge.org/browse/TESB-5160 By LiXiaopeng
 				String useTransaction = ElementParameterParser.getValue(node, "__USE_TRANSACTION__");
@@ -887,95 +886,79 @@ if (isProvider) {
 				if("true".equals(useTransaction)){
 					transactedMethodStr = "Transacted";
 				}
-			
+			    final String cid = node.getUniqueName();
 				//Component Name
-				String name = node.getUniqueName().replace("_", "");
+				String name = cid.replace("_", "");
 				name = "\"" + name + "\"";
-				    // ElementParameterParser.getValue(node, "__NAME__").trim();
-    				//Remove unnecessary subfix
-    				//name += "+";
-    				//name += ElementParameterParser.getValue(node, "__SUBFIX__").trim();
 			
 				//ActiveMQ
 				String mqType = ElementParameterParser.getValue(node, "__MQ_TYPE__");
 				if("ActiveMQ".equals(mqType)){
 					String amqUri = ElementParameterParser.getValue(node, "__AMQ_BROKER_URI__").trim();
-					
+				    String useActiveMQAuth = ElementParameterParser.getValue(node, "__AMQ_AUTH__");
+    				if ("true".equals(useActiveMQAuth)) {
+    					String username = ElementParameterParser.getValue(node, "__AMQ_USERNAME__");
+    					String passwordFieldName = "__AMQ_PASSWORD__";
 %>
-					
-				{
+    					<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+    					javax.jms.ConnectionFactory jmsConnectionFactory_<%=cid%> =
+    					    new org.apache.activemq.ActiveMQConnectionFactory( <%=username%>, decryptedPassword_<%=cid%> ,<%=amqUri%>);
 <%
-				String useActiveMQAuth = ElementParameterParser.getValue(node, "__AMQ_AUTH__");
-				if ("true".equals(useActiveMQAuth)){
-					String username = ElementParameterParser.getValue(node, "__AMQ_USERNAME__");
-					String cid = node.getUniqueName();
-					String passwordFieldName = "__AMQ_PASSWORD__";
-%>				
-					<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-					
-					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory( <%=username%>, decryptedPassword_<%=cid%> ,<%=amqUri%>);
-<%				
-				}else{
+    				} else {
 %>
-					javax.jms.ConnectionFactory jmsConnectionFactory = new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
-<%						
-				}
-%>
-
+    					javax.jms.ConnectionFactory jmsConnectionFactory_<%=cid%> =
+    					    new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
 <%
-				String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
-				if("true".equals(amqPool)){
-				     String amq_pool_max_connections = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_CONNECTIONS__").trim();
-				     String amq_pool_max_active = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_ACTIVE__").trim();
-				     String amq_pool_idle_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_IDLE_TIMEOUT__").trim();
-				     String amq_pool_expiry_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_EXPIRY_TIMEOUT__").trim();
-				     
-				     if(amq_pool_max_connections.startsWith("\"")){
-						 amq_pool_max_connections = amq_pool_max_connections.substring(1);
-					 }
-					 if(amq_pool_max_connections.endsWith("\"")){
-						 amq_pool_max_connections = amq_pool_max_connections.substring(0, amq_pool_max_connections.length() - 1);
-					 }
-				     if(amq_pool_max_active.startsWith("\"")){
-						 amq_pool_max_active = amq_pool_max_active.substring(1);
-					 }
-					 if(amq_pool_max_active.endsWith("\"")){
-						 amq_pool_max_active = amq_pool_max_active.substring(0, amq_pool_max_active.length() - 1);
-					 }
-				     if(amq_pool_idle_timeout.startsWith("\"")){
-						 amq_pool_idle_timeout = amq_pool_idle_timeout.substring(1);
-					 }
-					 if(amq_pool_idle_timeout.endsWith("\"")){
-						 amq_pool_idle_timeout = amq_pool_idle_timeout.substring(0, amq_pool_idle_timeout.length() - 1);
-					 }
-				     if(amq_pool_expiry_timeout.startsWith("\"")){
-						 amq_pool_expiry_timeout = amq_pool_expiry_timeout.substring(1);
-					 }
-					 if(amq_pool_expiry_timeout.endsWith("\"")){
-						 amq_pool_expiry_timeout = amq_pool_expiry_timeout.substring(0, amq_pool_expiry_timeout.length() - 1);
-					 }
+    				}
+    				String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
+    				if("true".equals(amqPool)){
+    				     String amq_pool_max_connections = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_CONNECTIONS__").trim();
+    				     String amq_pool_max_active = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_ACTIVE__").trim();
+    				     String amq_pool_idle_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_IDLE_TIMEOUT__").trim();
+    				     String amq_pool_expiry_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_EXPIRY_TIMEOUT__").trim();
+    
+    				     if(amq_pool_max_connections.startsWith("\"")){
+    						amq_pool_max_connections = amq_pool_max_connections.substring(1);
+    					}
+    					if(amq_pool_max_connections.endsWith("\"")){
+    						amq_pool_max_connections = amq_pool_max_connections.substring(0, amq_pool_max_connections.length() - 1);
+    					}
+    				    if(amq_pool_max_active.startsWith("\"")){
+    						amq_pool_max_active = amq_pool_max_active.substring(1);
+    					}
+    					if(amq_pool_max_active.endsWith("\"")){
+    						amq_pool_max_active = amq_pool_max_active.substring(0, amq_pool_max_active.length() - 1);
+    					}
+    				    if(amq_pool_idle_timeout.startsWith("\"")){
+    						amq_pool_idle_timeout = amq_pool_idle_timeout.substring(1);
+    					}
+    					if(amq_pool_idle_timeout.endsWith("\"")){
+    						amq_pool_idle_timeout = amq_pool_idle_timeout.substring(0, amq_pool_idle_timeout.length() - 1);
+    					}
+    				    if(amq_pool_expiry_timeout.startsWith("\"")){
+    						 amq_pool_expiry_timeout = amq_pool_expiry_timeout.substring(1);
+    					}
+    					if(amq_pool_expiry_timeout.endsWith("\"")){
+    						amq_pool_expiry_timeout = amq_pool_expiry_timeout.substring(0, amq_pool_expiry_timeout.length() - 1);
+    					}
 %>
-				org.apache.activemq.pool.PooledConnectionFactory pooledConnectionFactory_<%=node.getUniqueName()%> 
-					= new org.apache.activemq.pool.PooledConnectionFactory();
-				pooledConnectionFactory_<%=node.getUniqueName()%>.setConnectionFactory(jmsConnectionFactory);
-				pooledConnectionFactory_<%=node.getUniqueName()%>.setExpiryTimeout(<%=amq_pool_expiry_timeout%>L);
-				pooledConnectionFactory_<%=node.getUniqueName()%>.setIdleTimeout(<%=amq_pool_idle_timeout%>);
-				pooledConnectionFactory_<%=node.getUniqueName()%>.setMaxConnections(<%=amq_pool_max_connections%>);
-				pooledConnectionFactory_<%=node.getUniqueName()%>.setMaximumActiveSessionPerConnection(<%=amq_pool_max_active%>);
-				camelContext.addComponent(<%=name%>,
-					org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=node.getUniqueName()%>));	
+        				org.apache.activemq.pool.PooledConnectionFactory pooledConnectionFactory_<%=node.getUniqueName()%> 
+        					= new org.apache.activemq.pool.PooledConnectionFactory();
+        				pooledConnectionFactory_<%=cid%>.setConnectionFactory(jmsConnectionFactory_<%=cid%>);
+        				pooledConnectionFactory_<%=cid%>.setExpiryTimeout(<%=amq_pool_expiry_timeout%>L);
+        				pooledConnectionFactory_<%=cid%>.setIdleTimeout(<%=amq_pool_idle_timeout%>);
+        				pooledConnectionFactory_<%=cid%>.setMaxConnections(<%=amq_pool_max_connections%>);
+        				pooledConnectionFactory_<%=cid%>.setMaximumActiveSessionPerConnection(<%=amq_pool_max_active%>);
+        				camelContext.addComponent(<%=name%>,
+        					org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=cid%>));	
 <%
-					 
-				}else{
-%>				
-				camelContext.addComponent(<%=name%>,
-					org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
-<%				
-				    }
+    				} else {
 %>
-				}
+        				camelContext.addComponent(<%=name%>,
+        					org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
 <%
-				}else if("WebSphere MQ".equals(mqType)){
+    				}
+				} else if ("WebSphere MQ".equals(mqType)) {
 					String wmqServer = ElementParameterParser.getValue(node, "__WQM_SEVER__");
 					String wmqPort = ElementParameterParser.getValue(node, "__WMQ_PORT__");
 					String wmqTransportType = ElementParameterParser.getValue(node, "__WMQ_TRANSPORT_TYPE__");
@@ -1023,7 +1006,6 @@ if (isProvider) {
        				connectionFactoryAdapter<%=node.getUniqueName()%>.setUsername(<%=username%>);
        				
                     <%
-                    String cid = node.getUniqueName();
                     String passwordFieldName = "__WMQ_PASSWORD__";
                     %>
                     
@@ -1040,7 +1022,6 @@ if (isProvider) {
 					}
 <%
 				}else if("AMQP".equals(mqType)){
-					String cid = node.getUniqueName();
 					String host = helper.getStringParam("__AMQP_BROKER_URI__");
 					boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
 					boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTH__");
@@ -1067,34 +1048,22 @@ if (isProvider) {
 						ep.append(port);
 					}
 %>				
-				{
-					try{
-						camelContext.addComponent(<%=name%>,
-								new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
-						//((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
-					}catch(Exception e){
-						throw new RuntimeException(e);
-					}
-					
-				}
+					camelContext.addComponent(<%=name%>,
+							new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+					//((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
 <%
-				}else if("MQTT".equals(mqType)){
-					String cid = node.getUniqueName();
+				} else if("MQTT".equals(mqType)) {
 					String host = helper.getStringParam("__MQTT_HOST__");
 					String port = helper.getStringParam("__MQTT_PORT__");
 					boolean useSSL = helper.getBoolParam("__MQTT_SSL__");
 					String brokerUri = "\""+(useSSL?"ssl":"tcp") + "://\"+" + host + "+\":\"+" + port;
-%>				
-				{	
-					 org.apache.camel.component.mqtt.MQTTComponent mqttComponent = new org.apache.camel.component.mqtt.MQTTComponent(){
+%>
+					 org.apache.camel.component.mqtt.MQTTComponent mqttComponent_<%=cid%> = new org.apache.camel.component.mqtt.MQTTComponent(){
 						 @Override
 							protected org.apache.camel.Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 							 org.apache.camel.component.mqtt.MQTTEndpoint endpoint = 
 									 (org.apache.camel.component.mqtt.MQTTEndpoint) super.createEndpoint(uri, remaining, parameters);
 							 org.apache.camel.component.mqtt.MQTTConfiguration config = endpoint.getConfiguration();
-							 
-							 
-							 
 <%
                 String useActiveMQTTAuth = ElementParameterParser.getValue(node, "__MQTT_AUTH__");
                 if ("true".equals(useActiveMQTTAuth)){
@@ -1107,17 +1076,16 @@ if (isProvider) {
 <%              
                 }
 %>
-							 config.setHost(<%=brokerUri%>);
-							 config.setConnectAttemptsMax(<%=helper.getStringParam("__MQTT_CONNECT_ATTEMPTS__")%>);
-							 config.setReconnectAttemptsMax(<%=helper.getStringParam("__MQTT_RECONNECT_ATTEMPTS__")%>);
-							 config.setReconnectDelay(<%=helper.getStringParam("__MQTT_RECONNECT_DELAY__")%>);
-							 config.setQualityOfService("<%=helper.getStringParam("__MQTT_QOS__")%>");
-							 config.setConnectWaitInSeconds(<%=helper.getStringParam("__MQTT_CONNECT_WAIT_IN_SECONDS__")%>);
-							 config.setDisconnectWaitInSeconds(<%=helper.getStringParam("__MQTT_DISCONNECT_WAIT_IN_SECONDS__")%>);
-							 config.setSendWaitInSeconds(<%=helper.getStringParam("__MQTT_SEND_WAIT_IN_SECONDS__")%>);
-							 
-							 <%if("true".equals(helper.getStringParam("__MQTT_SSL__"))){%>
-							 	javax.net.ssl.TrustManagerFactory tmf = javax.net.ssl.TrustManagerFactory
+							config.setHost(<%=brokerUri%>);
+							config.setConnectAttemptsMax(<%=helper.getStringParam("__MQTT_CONNECT_ATTEMPTS__")%>);
+							config.setReconnectAttemptsMax(<%=helper.getStringParam("__MQTT_RECONNECT_ATTEMPTS__")%>);
+							config.setReconnectDelay(<%=helper.getStringParam("__MQTT_RECONNECT_DELAY__")%>);
+							config.setQualityOfService("<%=helper.getStringParam("__MQTT_QOS__")%>");
+							config.setConnectWaitInSeconds(<%=helper.getStringParam("__MQTT_CONNECT_WAIT_IN_SECONDS__")%>);
+							config.setDisconnectWaitInSeconds(<%=helper.getStringParam("__MQTT_DISCONNECT_WAIT_IN_SECONDS__")%>);
+							config.setSendWaitInSeconds(<%=helper.getStringParam("__MQTT_SEND_WAIT_IN_SECONDS__")%>);
+							<%if("true".equals(helper.getStringParam("__MQTT_SSL__"))){%>
+								javax.net.ssl.TrustManagerFactory tmf = javax.net.ssl.TrustManagerFactory
 								.getInstance(javax.net.ssl.TrustManagerFactory
 										.getDefaultAlgorithm());
 	
@@ -1133,18 +1101,16 @@ if (isProvider) {
 								javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
 								sslContext.init(null, tmf.getTrustManagers(), new java.security.SecureRandom());
 								config.setSslContext(sslContext);
-							 <%}%>
-							 
-							 return endpoint;
-							}
+							<%}%>
+							return endpoint;
+						}
 					 };
-					camelContext.addComponent(<%=name%>,mqttComponent);
-				}
+					camelContext.addComponent(<%=name%>, mqttComponent_<%=cid%>);
 <%
-				}else if("Other".equals(mqType)){
+				} else if ("Other".equals(mqType)) {
 %>
 					{
-					  javax.jms.ConnectionFactory jmsConnectionFactory;
+					    javax.jms.ConnectionFactory jmsConnectionFactory;
 						<%=ElementParameterParser.getValue(node, "__OTHER_CODE__")%>
 						camelContext.addComponent(<%=name%>,
 							org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
