@@ -140,13 +140,10 @@ package <%= packageName %>;
  */
 public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
 
-	private org.osgi.framework.BundleContext bundleContext;
-
-	public void setBundleContext(org.osgi.framework.BundleContext bundleContext) {
-		this.bundleContext = bundleContext;
-	}
+	private boolean inOSGi;
 
 	public void setArguments(Map<String, String> arguments) {
+	    inOSGi = true;
 		final String newContext = arguments.remove("context");
 		if (null != newContext) {
 			contextStr = newContext;
@@ -722,7 +719,7 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 		}
 %>
 	public String getCXFRSEndpointAddress(String endpointUrl) {
-		if(bundleContext != null) {
+		if (inOSGi) {
 			if (endpointUrl != null && !endpointUrl.trim().isEmpty() && !endpointUrl.contains("://")) {
 				if (endpointUrl.startsWith("/services")) {
 					endpointUrl = endpointUrl.substring("/services".length());

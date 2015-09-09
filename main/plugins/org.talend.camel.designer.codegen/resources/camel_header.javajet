@@ -711,7 +711,7 @@ if (isProvider) {
 <%
                         } else if ("SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
-                            if (bundleContext == null) {
+                            if (!inOSGi) {
                                 throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
                             }
                             org.apache.cxf.ws.security.trust.STSClient stsClient =
@@ -742,7 +742,7 @@ if (isProvider) {
                     factory_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAMESPACE__")%>,
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>));
-                    if (null == bundleContext) {
+                    if (!inOSGi) {
                         factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
                     }
 <%
@@ -1259,7 +1259,7 @@ if (isProvider) {
 %>
 				// Add Service Locator Service to <%=endpointVar%>
 				org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
-				if (null == bundleContext) {
+				if (!inOSGi) {
 					<%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 				}
 				<% if (!customProperties.isEmpty()) { %>
