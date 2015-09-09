@@ -860,16 +860,14 @@ for (INode node : graphicalNodes) {
 				uri = uri + sb.toString();
 			}
 		}
-	}else if("cDirectVM".equals(componentName)){
+	} else if("cDirectVM".equals(componentName)) {
 		boolean inputName= getBoolValue(node, "____INPUT_ENDPOINT_NAME____");
-		boolean isProducer = node.getIncomingConnections().size()>0;
-		
+		boolean isProducer = !node.getIncomingConnections().isEmpty();
 		INode consumerNode = node;
 		if(isProducer && !inputName){
-			String desNodeName= (String)getValue(node, "____ROUTE_COMPONENT_TYPE_ID____");
+			String desNodeName= (String)getValue(node, "____EXIST_ENDPOINT____");
 			if(desNodeName!=null){
-				List<? extends INode> allNodes = node.getProcess().getGraphicalNodes();
-				for(INode aNode : allNodes){
+				for(INode aNode : node.getProcess().getGraphicalNodes()){
 					if(aNode.getUniqueName().equals(desNodeName)){
 						consumerNode=aNode;
 						break;
@@ -877,19 +875,13 @@ for (INode node : graphicalNodes) {
 				}
 			}
 		}
-		
-		String endpointName=getValue(consumerNode, "__ENDPOINT_NAME__");
-		
-		uri="\"direct-vm:\"+" + endpointName;
-		
+		uri="\"direct-vm:\"+" + getValue(consumerNode, "__ENDPOINT_NAME__");
 		if(isProducer){
-			boolean isBlock= getBoolValue(node, "____BLOCK____");
-			if(isBlock){
+			if(getBoolValue(node, "____BLOCK____")){
 				uri += "+\"?block=true&timeout="+getValue(consumerNode, "__TIMEOUT__")+"\"";
 			}
 		}
-			
-	}else if("cTimer".equals(componentName)){
+	} else if("cTimer".equals(componentName)) {
 		uri = "\"timer:\"+\""+node.getUniqueName()+"\"";
 		StringBuilder sb = new StringBuilder();
 		String period = ElementParameterParser.getValue(node, "__PERIOD__");
@@ -1116,70 +1108,32 @@ for (INode node : graphicalNodes) {
 		}
 		uri = fragments.toString();
 
-	} else if("cJMS".equals(componentName)) {
+	} else if("cJMS".equals(componentName) || "cAMQP".equals(componentName)) {
 		//http://jira.talendforge.org/browse/TESB-4861
-		String name = ElementParameterParser.getValue(node, "__ROUTE_COMPONENT_TYPE_ID__");
-		if (name == null || name.equals("")) {
-			name = "jms";
-		}
-		name = name.replace("_", "");
-		name = "\"" + name + "\"";
-		//String name = ElementParameterParser.getValue(node, "__NAME__").trim();
-		//Remove unnecessary subfix
-		//name += "+";
-		//name += ElementParameterParser.getValue(node, "__SUBFIX__").trim();
+		String name = ElementParameterParser.getValue(node, "__CONNECTION_FACOTRY_CONFIGURATION__");
 		String type = ElementParameterParser.getValue(node, "__TYPE__");
 		String destination = ElementParameterParser.getValue(node, "__DESTINATION__").trim();
 
-		boolean hasOptions = false;
-
 		StringBuffer sb = new StringBuffer();
-		sb.append(name).append("+\":" + type + ":\"").append("+" + destination);
+		sb.append("\"").append(name.replace("_", "")).append("\"")
+		    .append("+\":").append(type).append(":\"")
+		    .append("+" + destination);
 
+        boolean hasOptions = false;
 		List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__URI_OPTIONS__");
 		for (Map<String, String> map : tableValues) {
 			String argName = map.get("NAME").trim();
 			String argValue = map.get("VALUE").trim();
-
 			if (!hasOptions) {
-				sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
+				sb.append("+\"?\"+");
 				hasOptions = true;
 			} else {
-				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+				sb.append("+\"&\"+");
 			}
+			sb.append(argName).append("+\"=\"+").append(argValue);
 		}
 
 		uri = sb.toString();
-	} else if("cAMQP".equals(componentName)) {
-		String name = ElementParameterParser.getValue(node, "__ROUTE_COMPONENT_TYPE_ID__");
-		if (name == null || name.equals("")) {
-			name = "amqp";
-		}
-		name = name.replace("_", "");
-		name = "\"" + name + "\"";
-		String type = ElementParameterParser.getValue(node, "__TYPE__");
-		String destination = ElementParameterParser.getValue(node, "__DESTINATION__").trim();
-
-		boolean hasOptions = false;
-
-		StringBuffer sb = new StringBuffer();
-		sb.append(name).append("+\":" + type + "://\"").append("+" + destination);
-
-		List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__URI_OPTIONS__");
-		for (Map<String, String> map : tableValues) {
-			String argName = map.get("NAME").trim();
-			String argValue = map.get("VALUE").trim();
-
-			if (!hasOptions) {
-				sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
-				hasOptions = true;
-			} else {
-				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-			}
-		}
-
-		uri = sb.toString();
-
 	} else if ("cLog".equals(componentName)) {
 		String useLogEIP = ElementParameterParser.getValue(node, "__USE_LOGEIP__");
 		if ("true".equals(useLogEIP)) {
@@ -1345,16 +1299,14 @@ for (INode node : graphicalNodes) {
 		uri = sb.toString();
 	} else if ("cMQTT".equals(componentName)) {
 		CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
-		
-		String factoryCompName =  helper.getStringParam("__ROUTE_COMPONENT_TYPE_ID__");
-		factoryCompName = factoryCompName.replace("_", "");
-		eb.setComponent(factoryCompName);
+
+		String factoryCompName =  helper.getStringParam("__CONNECTION_FACTORY_CONFIGURATION__");
+		eb.setComponent(factoryCompName.replace("_", ""));
 
 		eb.setName("\""+cid+"\"");
 
 		String topicName = helper.getStringParam("__TOPIC_NAME__");
-		List< ? extends IConnection> conns = node.getIncomingConnections();
-		if(conns.size()>0) {
+		if(!node.getIncomingConnections().isEmpty()) {
 			eb.addParam("publishTopicName", topicName);
 		} else {
 			eb.addParam("subscribeTopicName", topicName);
