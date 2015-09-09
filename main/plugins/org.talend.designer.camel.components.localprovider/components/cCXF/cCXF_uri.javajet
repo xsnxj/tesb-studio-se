@@ -30,7 +30,7 @@ if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SL__"))
 		&&  (!useServiceRegistry)) {
 	if (!conns.isEmpty()) {
 		// consumer role
-		url = "((null == bundleContext) ? " + url + " : \"locator://locator/\")";
+		url = "\"locator://locator/\"";
 	}
 }
 
