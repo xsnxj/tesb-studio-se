@@ -93,11 +93,11 @@
             id="spring-tx"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-tx}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+        <!--libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-spring-osgi-core}"
             id="spring-osgi-core"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-osgi-core}"
-            bundleID="" />
+            bundleID="" /-->
         <libraryNeeded context="plugin:org.eclipse.osgi"
             name="org.eclipse.osgi_3.10.1.v20140909-1633.jar"
             id="org.eclipse.osgi"

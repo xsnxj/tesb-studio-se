@@ -26,76 +26,79 @@
 
 	boolean stats = codeGenArgument.isStatistics();
 %>
-
-		}
-		private org.apache.camel.main.Main main = null;
-		private void run() throws java.lang.Exception{
-
-			main = new org.apache.camel.main.Main(){
-
-		protected CamelContext createContext() {
-			org.apache.camel.osgi.SpringCamelContextFactory contextFactory = new org.apache.camel.osgi.SpringCamelContextFactory();
-			contextFactory.setApplicationContext(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
-			final org.apache.camel.impl.DefaultCamelContext camelContext = contextFactory.createContext();
-			camelContext.setName("<%=process.getName()%>-ctx");
-            return camelContext;
-		}
-
-	protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
-		super.postProcessCamelContext(camelContext);
-		// add notifier
-		java.util.Set<org.apache.camel.management.JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
-				.getRegistry().findByType(
-						org.apache.camel.management.JmxNotificationEventNotifier.class);
-		if (jmxEventNotifiers != null && !jmxEventNotifiers.isEmpty()) {
-			camelContext.getManagementStrategy().addEventNotifier(
-					jmxEventNotifiers.iterator().next());
-		}
-<%
-	if(stats) { %>
-		// add statistics which shows on the connection
-		final routines.system.RunStat runStat = new routines.system.RunStat();
-		runStat.openSocket(true);
-		runStat.setAllPID(pid, pid, pid, jobName);
-		runStat.startThreadStat(clientHost, portStats);
-		runStat.updateStatOnJob(routines.system.RunStat.JOBSTART, null);
-
-		final Map<String, String> targetNodeToConnectionMap = new HashMap<String, String>();
-<%
-		for (INode node : processNodes) {
-			if (node.isActivate()) {
-				for (org.talend.core.model.process.IConnection conn : node.getIncomingConnections()) {
-%>
-		targetNodeToConnectionMap.put("<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
-        runStat.updateStatOnConnection("<%=conn.getUniqueName()%>", routines.system.RunStat.BEGIN, 0);
-<%
-				}
-			}
-		}
-%>
-        camelContext.addInterceptStrategy(new org.apache.camel.spi.InterceptStrategy() {
-            public org.apache.camel.Processor wrapProcessorInInterceptors(CamelContext context, final org.apache.camel.model.ProcessorDefinition<?> node,
-                final org.apache.camel.Processor target, org.apache.camel.Processor nextTarget) throws Exception {
-                return new org.apache.camel.processor.DelegateAsyncProcessor(target) {
-                    public boolean process(org.apache.camel.Exchange exchange, org.apache.camel.AsyncCallback callback) {
-                        final String connection = targetNodeToConnectionMap.get(node.getId());
-                        if (null != connection) {
-                            runStat.updateStatOnConnection(targetNodeToConnectionMap.get(node.getId()), routines.system.RunStat.RUNNING, 1);
-                        }
-                        return super.process(exchange, callback);
-                    }
-                };
-            }
-        });
-<% } //if stats %>
 	}
 
-};
-    //add route
-    main.addRouteBuilder(this);
+	private org.apache.camel.main.Main main;
 
-	main.run();
-}
+    private void run() throws java.lang.Exception {
+        main = new org.apache.camel.main.Main() {
+
+            protected CamelContext createContext() {
+                final org.apache.camel.impl.DefaultCamelContext camelContext =
+                    new org.apache.camel.spring.SpringCamelContext(
+                        new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
+                camelContext.setName("<%=process.getName()%>-ctx");
+                // add notifier
+                java.util.Collection<org.apache.camel.management.JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
+                        .getRegistry().findByType(
+                                org.apache.camel.management.JmxNotificationEventNotifier.class);
+                if (jmxEventNotifiers != null && !jmxEventNotifiers.isEmpty()) {
+                    camelContext.getManagementStrategy().addEventNotifier(
+                            jmxEventNotifiers.iterator().next());
+                }
+<%
+    if(stats) {
+%>
+                // add statistics which shows on the connection
+                final routines.system.RunStat runStat = new routines.system.RunStat();
+                runStat.openSocket(true);
+                runStat.setAllPID(pid, pid, pid, jobName);
+                try {
+                    runStat.startThreadStat(clientHost, portStats);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                runStat.updateStatOnJob(routines.system.RunStat.JOBSTART, null);
+
+                final Map<String, String> targetNodeToConnectionMap = new HashMap<String, String>();
+<%
+                for (INode node : processNodes) {
+                    if (node.isActivate()) {
+                        for (org.talend.core.model.process.IConnection conn : node.getIncomingConnections()) {
+%>
+                targetNodeToConnectionMap.put("<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
+                runStat.updateStatOnConnection("<%=conn.getUniqueName()%>", routines.system.RunStat.BEGIN, 0);
+<%
+                        }
+                    }
+                }
+%>
+                camelContext.addInterceptStrategy(new org.apache.camel.spi.InterceptStrategy() {
+                    public org.apache.camel.Processor wrapProcessorInInterceptors(CamelContext context, final org.apache.camel.model.ProcessorDefinition<?> node,
+                        final org.apache.camel.Processor target, org.apache.camel.Processor nextTarget) throws Exception {
+                        return new org.apache.camel.processor.DelegateAsyncProcessor(target) {
+                            public boolean process(org.apache.camel.Exchange exchange, org.apache.camel.AsyncCallback callback) {
+                                final String connection = targetNodeToConnectionMap.get(node.getId());
+                                if (null != connection) {
+                                    runStat.updateStatOnConnection(targetNodeToConnectionMap.get(node.getId()), routines.system.RunStat.RUNNING, 1);
+                                }
+                                return super.process(exchange, callback);
+                            }
+                        };
+                    }
+                });
+<%
+} //if stats
+%>
+                return camelContext;
+            }
+        };
+
+        //add route
+        main.addRouteBuilder(this);
+    
+        main.run();
+    }
 
 	public void stop() throws java.lang.Exception {
 		if(main != null) {
