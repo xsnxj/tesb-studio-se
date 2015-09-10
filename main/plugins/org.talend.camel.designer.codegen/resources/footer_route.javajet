@@ -67,12 +67,14 @@
                         for (org.talend.core.model.process.IConnection conn : node.getIncomingConnections()) {
 %>
                 targetNodeToConnectionMap.put("<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
-                runStat.updateStatOnConnection("<%=conn.getUniqueName()%>", routines.system.RunStat.BEGIN, 0);
 <%
                         }
                     }
                 }
 %>
+                for (String connection : targetNodeToConnectionMap.values()) {
+                    runStat.updateStatOnConnection(connection, routines.system.RunStat.BEGIN, 0);
+                }
                 camelContext.addInterceptStrategy(new org.apache.camel.spi.InterceptStrategy() {
                     public org.apache.camel.Processor wrapProcessorInInterceptors(CamelContext context, final org.apache.camel.model.ProcessorDefinition<?> node,
                         final org.apache.camel.Processor target, org.apache.camel.Processor nextTarget) throws Exception {
