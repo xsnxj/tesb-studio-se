@@ -43,7 +43,6 @@ import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.designer.core.ICamelDesignerCoreService;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment

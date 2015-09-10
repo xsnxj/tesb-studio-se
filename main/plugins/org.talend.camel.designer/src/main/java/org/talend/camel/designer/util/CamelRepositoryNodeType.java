@@ -26,34 +26,34 @@ public interface CamelRepositoryNodeType {
 
     String BEANS = "BEANS";
 
-	String ROUTE_RESOURCES = "ROUTE_RESOURCES";
-	
-	String ROUTE_DOCUMENTATIONS = "ROUTE_DOCS";
-	
-	String ROUTE_DOCUMENTATION = "ROUTE_DOC";
+    String ROUTE_RESOURCES = "ROUTE_RESOURCES";
 
-    ERepositoryObjectType repositoryRoutesType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
-            ERepositoryObjectType.class, ROUTES);
+    String ROUTE_DOCUMENTATIONS = "ROUTE_DOCS";
 
-    ERepositoryObjectType repositoryBeansType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
-            ERepositoryObjectType.class, BEANS);
+    String ROUTE_DOCUMENTATION = "ROUTE_DOC";
 
-	ERepositoryObjectType repositoryRouteResourceType = (ERepositoryObjectType) ERepositoryObjectType
-			.valueOf(ERepositoryObjectType.class, ROUTE_RESOURCES);
-	
-	ERepositoryObjectType repositoryDocumentationsType = (ERepositoryObjectType) ERepositoryObjectType
-			.valueOf(ERepositoryObjectType.class, ROUTE_DOCUMENTATIONS);
-	
-	ERepositoryObjectType repositoryDocumentationType = (ERepositoryObjectType) ERepositoryObjectType
-			.valueOf(ERepositoryObjectType.class, ROUTE_DOCUMENTATION);
-	
-	//repository type and folder name Map
-	Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>(){{
-		put(repositoryBeansType, "Bean");
-		put(repositoryRouteResourceType, "Resource");
-		put(repositoryRoutesType, "Route");
-		put(repositoryDocumentationsType, "Route_Docs");
-		put(repositoryDocumentationType, "Route_Doc");
-	}};
+    ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, ROUTES);
+
+    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, BEANS);
+
+    ERepositoryObjectType repositoryRouteResourceType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
+        ROUTE_RESOURCES);
+
+    ERepositoryObjectType repositoryDocumentationsType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
+        ROUTE_DOCUMENTATIONS);
+
+    ERepositoryObjectType repositoryDocumentationType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
+        ROUTE_DOCUMENTATION);
+
+    // repository type and folder name Map
+    Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>() {
+        {
+            put(repositoryBeansType, "Bean");
+            put(repositoryRouteResourceType, "Resource");
+            put(repositoryRoutesType, "Route");
+            put(repositoryDocumentationsType, "Route_Docs");
+            put(repositoryDocumentationType, "Route_Doc");
+        }
+    };
 
 }

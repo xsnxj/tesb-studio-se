@@ -18,27 +18,17 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.talend.camel.core.model.camelProperties.BeanItem;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.utils.VersionUtils;
-import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
-import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
-import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.ui.branding.AbstractBrandingService;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.designer.codegen.AbstractRoutineSynchronizer;
 import org.talend.designer.codegen.ITalendSynchronizer;
-import org.talend.repository.ProjectManager;
-import org.talend.repository.model.RepositoryNodeUtilities;
 
 /**
  * DOC guanglong.du class global comment. Detailled comment
@@ -52,19 +42,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
      */
     @Override
     public void syncAllRoutines() throws SystemException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see
-     * org.talend.designer.codegen.ITalendSynchronizer#deleteBeanfile(org.talend.core.model.repository.IRepositoryViewObject
-     * )
-     */
-    @Override
-    public void deleteBeanfile(IRepositoryViewObject objToDelete) {
         // TODO Auto-generated method stub
 
     }
@@ -149,42 +126,6 @@ public class CamelJavaRoutesSychronizer extends AbstractRoutineSynchronizer {
     public void renameRoutineClass(RoutineItem routineItem) {
         // TODO Auto-generated method stub
 
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see
-     * org.talend.designer.codegen.ITalendSynchronizer#getRoutinesFile(org.talend.core.model.properties.RoutineItem)
-     */
-    @Override
-    public IFile getRoutinesFile(Item item) throws SystemException {
-        try {
-            if (item instanceof BeanItem) {
-                BeanItem routineItem = (BeanItem) item;
-                ProjectManager projectManager = ProjectManager.getInstance();
-                org.talend.core.model.properties.Project project = projectManager.getProject(routineItem);
-                IProject iProject = ResourcesPlugin.getWorkspace().getRoot().getProject(project.getTechnicalLabel());
-                String repositoryPath = ERepositoryObjectType.getFolderName(CamelRepositoryNodeType.repositoryBeansType);
-                String folderPath = RepositoryNodeUtilities.getPath(routineItem.getProperty().getId()).toString();
-                String fileName = routineItem.getProperty().getLabel() + '_' + routineItem.getProperty().getVersion()
-                        + JavaUtils.ITEM_EXTENSION;
-                String path = null;
-                if (folderPath != null && folderPath.trim().length() > 0) {
-                    path = repositoryPath + '/' + folderPath + '/' + fileName;
-                } else {
-                    path = repositoryPath + '/' + fileName;
-                }
-
-                IFile file = iProject.getFile(path);
-                return file;
-            }
-
-        } catch (Exception e) {
-            throw new SystemException(e);
-        }
-
-        return null;
     }
 
 }
