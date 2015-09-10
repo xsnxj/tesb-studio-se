@@ -18,6 +18,7 @@
             name="org.apache.camel,
                 org.apache.camel.builder,
                 org.apache.camel.impl,
+                org.apache.camel.main,
                 org.apache.camel.management,
                 org.apache.camel.model,
                 org.apache.camel.spi,
