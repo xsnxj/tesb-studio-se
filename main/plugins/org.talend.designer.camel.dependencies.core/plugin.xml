@@ -20,9 +20,8 @@
                 org.apache.camel.impl,
                 org.apache.camel.management,
                 org.apache.camel.model,
-                org.apache.camel.osgi,
                 org.apache.camel.spi,
-                org.osgi.framework,
+                org.apache.camel.spring,
                 routines.system.api"
         />
 
