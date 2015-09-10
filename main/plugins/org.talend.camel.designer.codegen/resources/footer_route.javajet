@@ -24,7 +24,7 @@
 	List<IContextParameter> params = process.getContextManager().getDefaultContext().getContextParameterList();
     String jobFolderName = JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
 
-	boolean stats = codeGenArgument.isStatistics();
+	final boolean stats = codeGenArgument.isStatistics();
 %>
 	}
 
@@ -47,12 +47,12 @@
                             jmxEventNotifiers.iterator().next());
                 }
 <%
-    if(stats) {
+    if (stats) {
 %>
                 // add statistics which shows on the connection
                 final routines.system.RunStat runStat = new routines.system.RunStat();
                 runStat.openSocket(true);
-                runStat.setAllPID(pid, pid, pid, jobName);
+                runStat.setAllPID(pid, pid, pid, "<%=codeGenArgument.getJobName() %>");
                 try {
                     runStat.startThreadStat(clientHost, portStats);
                 } catch (Exception e) {
@@ -154,46 +154,36 @@ for (IContextParameter ctxParam : params) {
 %>
 	}
 
+	private String contextStr = "Default";
 	private final ContextProperties context = new ContextProperties();
-	
-	//private final String jobVersion = "<%=process.getVersion() %>";
-	private final String jobName = "<%=codeGenArgument.getJobName() %>";
-	//private final String projectName = "<%=codeGenArgument.getCurrentProjectName() %>";
-	
-	public Integer errorCode = null;
-	
-	public boolean watch = false;
-	//portStats is null, it means don't execute the statistics
-	public Integer portStats = null;
-	public int portTraces = 4334;
-	public String clientHost;
-	public String defaultClientHost = "localhost";
-	public String contextStr = "Default";
-	public String pid = "0";
-	public long startTime = 0;
-	
-	private Properties context_param = new Properties();
-    public Map<String, Object> parentContextMap = new HashMap<String, Object>();
-    
-    public static void main(String[] args){
-    	final <%=process.getName() %> <%=process.getName() %>Class = new <%=process.getName() %>();
-    
-        int exitCode = <%=process.getName() %>Class.runJobInTOS(args);
-         
-         if(exitCode==1)
-       System.exit(exitCode);
-    }    
-   
- 
-    public String[][] runJob(String[] args) {  
-    
-		int exitCode = runJobInTOS(args);
-		String[][] bufferValue = new String[][] { { Integer.toString(exitCode) } };
-		return bufferValue;
+
+<%
+    if(stats) {
+%>
+	private int portStats = -1;
+	private String clientHost = "localhost";
+	private String pid;
+<%
     }
-    
-    public int runJobInTOS(String[] args) {	
-	
+%>
+
+	private final Properties context_param = new Properties();
+
+    public static void main(String[] args){
+        int exitCode = new <%=process.getName() %>().runJobInTOS(args);
+        if(exitCode != 0) {
+            System.exit(exitCode);
+        }
+    }
+
+    @Override
+    public String[][] runJob(String[] args) {
+		int exitCode = runJobInTOS(args);
+		return new String[][] { { Integer.toString(exitCode) } };
+    }
+
+    @Override
+    public int runJobInTOS(String[] args) {
 		String lastStr = "";
         for (String arg : args) {
         	if (arg.equalsIgnoreCase("--context_param")) {
@@ -205,18 +195,20 @@ for (IContextParameter ctxParam : params) {
                 lastStr = "";
             }
         }
-		
-		if(clientHost == null) {
-    		clientHost = defaultClientHost;
-    	}
-    	
-    	if(pid == null || "0".equals(pid)) {
+
+<%
+    if (stats) {
+%>
+    	if(pid == null) {
 	    	pid = TalendString.getAsciiRandomString(6);
 	    }
+<%
+    }
+%>
 
 		//read context values
 		readContextValues(contextStr);
-		
+
 		try {
 			run();
 		} catch (java.lang.Exception e) {
@@ -226,7 +218,7 @@ for (IContextParameter ctxParam : params) {
 		}
 		return 0;
 	}
-	
+
 	/**
 	* read context values from specified context
 	* @parameter contextName : the name of context while will be used
@@ -320,50 +312,33 @@ for (IContextParameter ctxParam : params) {
     		System.err.println("Could not load context "+contextName);
     		ie.printStackTrace();
     	}
-    	
-    	
-		// get context value from parent directly
-		if (parentContextMap != null && !parentContextMap.isEmpty()) {
-<% 
-			for (IContextParameter ctxParam :params){
-				//about the type, they are same as header.javajet
-				String typeToGenerate = "String";
-				if(ctxParam.getType().equals("id_List Of Value") || ctxParam.getType().equals("id_File") || ctxParam.getType().equals("id_Directory")){
-					typeToGenerate = "String";
-				}else{			 
-					typeToGenerate = JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true);
-				}
-%>				if (parentContextMap.containsKey("<%=ctxParam.getName()%>")) {
-				context.<%=ctxParam.getName()%> = (<%=typeToGenerate %>) parentContextMap.get("<%=ctxParam.getName()%>");
-			}
-<%
-		}
-%>
-		}    
 	}
 
 	private void evalParam(String arg) {
-	if (arg.startsWith("--watch")) {
-    		watch = true;
-    	} else if (arg.startsWith("--stat_port=")) {
-			String portStatsStr = arg.substring(12);
-			if (portStatsStr != null && !portStatsStr.equals("null")) {
-				portStats = Integer.parseInt(portStatsStr);
-			}    		
-    	} else if (arg.startsWith("--trace_port=")) {
-    		portTraces = Integer.parseInt(arg.substring(13));
-    	} else if (arg.startsWith("--client_host=")) {
-    		clientHost = arg.substring(14);
-    	} else if (arg.startsWith("--context=")) {
-    		contextStr = arg.substring(10);
-    	}if (arg.startsWith("--pid=")) {
-    		pid = arg.substring(6);
-    	} else if (arg.startsWith("--context_param")) {   		 
-            String keyValue = arg.substring(16);           
+        if (arg.startsWith("--context=")) {
+            contextStr = arg.substring(10);
+        }else if (arg.startsWith("--context_param")) {
+            String keyValue = arg.substring(16);
             int index = -1;
             if (keyValue != null && (index = keyValue.indexOf('=')) > -1) {
                 context_param.put(keyValue.substring(0, index), keyValue.substring(index + 1));
             }
-    	}	
+        }
+<%
+    if (stats) {
+%>
+        else if (arg.startsWith("--stat_port=")) {
+			String portStatsStr = arg.substring(12);
+			if (portStatsStr != null && !portStatsStr.equals("null")) {
+				portStats = Integer.parseInt(portStatsStr);
+			}
+    	} else if (arg.startsWith("--client_host=")) {
+    		clientHost = arg.substring(14);
+    	} else if (arg.startsWith("--pid=")) {
+    		pid = arg.substring(6);
+    	}
+<%
+    }
+%>
 	}
 }

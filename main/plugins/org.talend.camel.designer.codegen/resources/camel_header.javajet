@@ -579,6 +579,7 @@ if (isProvider) {
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
 }//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
+            @Override
 			public void configure() throws java.lang.Exception {
 				final /*org.apache.camel.model.Model*/CamelContext camelContext = getContext();
 				final org.apache.camel.impl.SimpleRegistry registry = new org.apache.camel.impl.SimpleRegistry();
@@ -1546,10 +1547,9 @@ if (isProvider) {
 		}
 <%      }
 	}else if("cTalendJob".equals(nodeComponentName)){
-	List< ? extends IConnection> conns = node.getIncomingConnections();
-	String cid = node.getUniqueName();
-	List<Map<String, String>> contextParams = null;
-	if(conns.size()>0) {
+	if (!node.getIncomingConnections().isEmpty()) {
+        String cid = node.getUniqueName();
+        List<Map<String, String>> contextParams = null;
 		String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
 		// when propagateHeader parameter will be removed the https://github.com/Talend/tesb-rt-se/blob/master/camel-talendjob/src/main/java/org/talend/camel/TalendProducer.java
 		// have to be changed - remove populateTalendContextParamsWithCamelHeaders(exchange, args);
