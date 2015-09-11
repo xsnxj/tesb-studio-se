@@ -243,7 +243,7 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
                     fileEditorInput = new RepositoryEditorInput(file, businessProcessItem);
                 } else if (item instanceof BeanItem) {
                     BeanItem routineItem = (BeanItem) item;
-                    ITalendSynchronizer routineSynchronizer = codeGenService.createCamelBeanSynchronizer();
+                    ITalendSynchronizer routineSynchronizer = codeGenService.createRoutineSynchronizer();
                     IFile file = routineSynchronizer.getFile(routineItem);
                     ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                     String lastVersion = factory.getLastVersion(routineItem.getProperty().getId()).getVersion();

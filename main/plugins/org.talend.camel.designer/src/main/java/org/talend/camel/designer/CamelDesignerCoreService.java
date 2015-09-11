@@ -41,7 +41,6 @@ import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
-import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.designer.core.ICamelDesignerCoreService;
 
 /**
@@ -114,10 +113,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
             return true;
         }
         return false;
-    }
-
-    public ITalendSynchronizer createCamelJavaSynchronizer() {
-        return new CamelJavaRoutesSychronizer();
     }
 
     public boolean isCamelMulitPageEditor(IEditorPart editor) {

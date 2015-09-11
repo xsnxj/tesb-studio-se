@@ -63,7 +63,7 @@ public abstract class AbstractBeanAction extends AContextualAction {
 
         ECodeLanguage lang = ((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
                 .getProject().getLanguage();
-        ITalendSynchronizer routineSynchronizer = service.createCamelBeanSynchronizer();
+        ITalendSynchronizer routineSynchronizer = service.createRoutineSynchronizer();
 
         // check if the related editor is open.
         IWorkbenchPage page = getActivePage();
