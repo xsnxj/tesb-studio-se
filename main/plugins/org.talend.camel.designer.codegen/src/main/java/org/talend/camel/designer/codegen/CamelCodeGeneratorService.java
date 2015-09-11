@@ -56,11 +56,6 @@ public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
     }
 
     @Override
-    public ITalendSynchronizer createCamelBeanSynchronizer() {
-        return null;
-    }
-
-    @Override
     public boolean isInitializingJet() {
         return !CodeGeneratorEmittersPoolFactory.isInitialized() && CodeGeneratorEmittersPoolFactory.isInitializeStart();
     }
