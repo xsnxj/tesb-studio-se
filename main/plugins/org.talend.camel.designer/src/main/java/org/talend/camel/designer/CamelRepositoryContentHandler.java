@@ -88,38 +88,30 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
      * org.talend.core.model.properties.Item, int, org.eclipse.core.runtime.IPath)
      */
     public Resource create(IProject project, Item item, int classifierID, IPath path) throws PersistenceException {
-
-        Resource itemResource = null;
-        ERepositoryObjectType type;
+        ERepositoryObjectType type = null;
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
-            type = CamelRepositoryNodeType.repositoryRoutesType;
-            itemResource = create(project, (CamelProcessItem) item, path, type);
-            Resource screenshotsResource = createScreenshotResource(project, item, path, type);
-            xmiResourceManager.saveResource(screenshotsResource);
-            return itemResource;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
+            return create(project, (CamelProcessItem)item, path, CamelRepositoryNodeType.repositoryRoutesType);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
             type = CamelRepositoryNodeType.repositoryBeansType;
-            itemResource = create(project, (FileItem) item, path, type);
-            return itemResource;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             type = CamelRepositoryNodeType.repositoryRouteResourceType;
-            itemResource = create(project, (FileItem) item, path, type);
-            return itemResource;
+        } else if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM){
+            type = CamelRepositoryNodeType.repositoryDocumentationType;
         }
-        if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM){
-        	type = CamelRepositoryNodeType.repositoryDocumentationType;
-        	itemResource = create(project, (FileItem)item, path, type);
-        	return itemResource;
+        if (null != type) {
+            return create(project, (FileItem)item, path, type);
         }
         return null;
     }
 
-    // TODO refer to LocalRepositoryFactory
-    private Resource createScreenshotResource(IProject project, Item item, IPath path, ERepositoryObjectType type)
-            throws PersistenceException {
-        Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path, type, false);
+    @Override
+    public Resource createScreenShotResource(IProject project, Item item, int classifierID, IPath path)
+        throws PersistenceException {
+        if (!(item instanceof CamelProcessItem)) {
+            return null;
+        }
+        Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path,
+            CamelRepositoryNodeType.repositoryRoutesType, false);
         itemResource.getContents().addAll(((CamelProcessItem) item).getProcess().getScreenshots());
 
         return itemResource;
