@@ -17,17 +17,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,7 +36,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
@@ -48,6 +45,7 @@ import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
+import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -56,10 +54,11 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  * DOC x class global comment. Detailled comment <br/>
  * 
  */
-@SuppressWarnings("restriction")
-public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsExportWizardPage {
+public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizardPage {
 
     private static final String EXPORTTYPE_KAR = Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ExportKar");//$NON-NLS-1$
+    // dialog store id constants
+    private static final String STORE_DESTINATION_NAMES_ID = "JavaJobScriptsExportWizardPage.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
     protected Combo exportTypeCombo;
 
@@ -72,144 +71,35 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     protected Composite destinationNameFieldInnerComposite;
 
     public JavaCamelJobScriptsExportWSWizardPage(IStructuredSelection selection) {
-        super(selection);
+        super("JavaCamelJobScriptsExportWSWizardPage", selection);
     }
 
     @Override
-    public void createControl(Composite parent) {
-
-        initializeDialogUnits(parent);
-        GridLayout layout = new GridLayout();
-
-        // if (exportTypeFixed == null || !exportTypeFixed.equals(CamelExportType.EXPORTTYPE_JBOSSESB.label)) {
-        SashForm sash = createExportTree(parent);
-
-        pageComposite = new Group(sash, 0);
-        pageComposite.setLayout(layout);
-        pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-        pageComposite.setFont(parent.getFont());
-        setControl(sash);
-        sash.setWeights(new int[] { 0, 1, 23 });
-        // } else {
-        // pageComposite = new Group(parent, 0);
-        // pageComposite.setLayout(layout);
-        // pageComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-        // pageComposite.setFont(parent.getFont());
-        // setControl(parent);
-        // }
-        layout = new GridLayout();
-        destinationNameFieldComposite = new Composite(pageComposite, SWT.NONE);
-        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-        destinationNameFieldComposite.setLayoutData(gridData);
-        destinationNameFieldComposite.setLayout(layout);
-
-        destinationNameFieldInnerComposite = new Composite(destinationNameFieldComposite, SWT.NONE);
-        gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-        destinationNameFieldInnerComposite.setLayoutData(gridData);
-        destinationNameFieldInnerComposite.setLayout(layout);
-
-        createDestinationGroup(destinationNameFieldInnerComposite);
-        // createExportTree(pageComposite);
-        if (!isMultiNodes()) {
-            createJobVersionGroup(pageComposite);
-        }
-
-        createExportTypeGroup(pageComposite);
-
-        createOptionsGroupButtons(pageComposite);
-
-        restoreResourceSpecificationWidgetValues(); // ie.- local
-
-        updateWidgetEnablements();
-        setPageComplete(determinePageCompletion());
-
-        giveFocusToDestination();
-
-    }
-
-    protected void createExportTypeGroup(Composite parent) {
+    protected void createUnzipOptionGroup(Composite parent) {
         // options group
         Group optionsGroup = new Group(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         optionsGroup.setLayout(layout);
         optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
         optionsGroup.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.BuildType")); //$NON-NLS-1$
-        optionsGroup.setFont(parent.getFont());
 
-        optionsGroup.setLayout(new GridLayout(1, true));
+        optionsGroup.setLayout(new GridLayout(2, false));
 
-        Composite left = new Composite(optionsGroup, SWT.NONE);
-        left.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
-        left.setLayout(new GridLayout(3, false));
-
-        Label label = new Label(left, SWT.NONE);
+        Label label = new Label(optionsGroup, SWT.NONE);
         label.setText(Messages.getString("JavaJobScriptsExportWSWizardPage.BuildLabel")); //$NON-NLS-1$
 
-        exportTypeCombo = new Combo(left, SWT.PUSH);
-        GridData gd = new GridData();
-        gd.horizontalSpan = 1;
-        exportTypeCombo.setLayoutData(gd);
+        exportTypeCombo = new Combo(optionsGroup, SWT.PUSH);
 
         // TESB-5328
-        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.POJO + ".hide")) { //$NON-NLS-1$ //$NON-NLS-2$
-        // exportTypeCombo.add(CamelExportType.EXPORTTYPE_POJO.label);
-        // }
-
-        // TESB-3222 Remove unnecessary export type in export wizard page LiXiaopeng
-        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSWAR + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-        // exportTypeCombo.add(CamelExportType.EXPORTTYPE_WSWAR.label);
-        // }
-        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.WSZIP + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-        // exportTypeCombo.add(CamelExportType.EXPORTTYPE_WSZIP.label);
-        // }
-        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.JBOSSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-        // exportTypeCombo.add(CamelExportType.EXPORTTYPE_JBOSSESB.label);
-        // }
-        //        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.PETALSESB + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-        // exportTypeCombo.add(CamelExportType.EXPORTTYPE_PETALSESB.label);
-        // }
-        if (!Boolean.getBoolean("talend.export.route.2." + JavaJobScriptsExportWSWizardPage.JobExportType.OSGI + ".hide")) {//$NON-NLS-1$ //$NON-NLS-2$
-            // TESB-5328
-            // exportTypeCombo.add(CamelExportType.EXPORTTYPE_OSGI.label);
-            exportTypeCombo.add(EXPORTTYPE_KAR);
-            exportTypeCombo.setEnabled(false); // only can export kar file
-        }
-
-        // exportTypeCombo.add("JBI (JSR 208)");
-
+        exportTypeCombo.add(EXPORTTYPE_KAR);
+        exportTypeCombo.setEnabled(false); // only can export kar file
         exportTypeCombo.setText(EXPORTTYPE_KAR);
-        // if (exportTypeFixed != null) {
-        // left.setVisible(false);
-        // optionsGroup.setVisible(false);
-        // exportTypeCombo.setText(exportTypeFixed);
-        // }
+    }
 
-        exportTypeCombo.addSelectionListener(new SelectionListener() {
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-
-            }
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                destinationNameFieldInnerComposite.dispose();
-                GridLayout layout = new GridLayout();
-                destinationNameFieldInnerComposite = new Composite(destinationNameFieldComposite, SWT.NONE);
-                GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-                destinationNameFieldInnerComposite.setLayoutData(gridData);
-                destinationNameFieldInnerComposite.setLayout(layout);
-                createDestinationGroup(destinationNameFieldInnerComposite);
-
-                destinationNameFieldComposite.layout();
-
-                optionsGroupComposite.dispose();
-                createOptionsGroupButtons(pageComposite);
-
-                pageComposite.layout();
-                checkExport();
-            }
-        });
+    @Override
+    public void createOptions(final Composite optionsGroup, Font font) {
+        createOptionsForKar(optionsGroup);
+        restoreWidgetValuesForKar();
     }
 
     /*
@@ -324,23 +214,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     }
 
     @Override
-    protected void internalSaveWidgetValues() {
-        // update directory names history
-        IDialogSettings settings = getDialogSettings();
-        if (settings != null) {
-            String[] directoryNames = new String[1];
-            String destinationValue = manager.getDestinationPath();
-            if (destinationValue != null) {
-                IPath path = Path.fromOSString(destinationValue);
-                destinationValue = path.removeLastSegments(1).toOSString();
-            }
-            directoryNames[0] = destinationValue;
-
-            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
-        }
-    }
-
-    @Override
     protected Map<ExportChoice, Object> getExportChoiceMap() {
         Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
         exportChoiceMap.put(ExportChoice.needJobItem, false);
@@ -356,44 +229,13 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         return exportChoiceMap;
     }
 
-    protected void createOptionsGroupButtons(Composite parent) {
-
-        GridLayout layout = new GridLayout();
-        optionsGroupComposite = new Composite(parent, SWT.NONE);
-        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-        gridData.heightHint = 200;
-        optionsGroupComposite.setLayoutData(gridData);
-        optionsGroupComposite.setLayout(layout);
-        // options group
-        Group optionsGroup = new Group(optionsGroupComposite, SWT.NONE);
-
-        optionsGroup.setLayout(layout);
-
-        optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-
-        optionsGroup.setText(IDEWorkbenchMessages.WizardExportPage_options);
-        optionsGroup.setFont(parent.getFont());
-
-        Font font = optionsGroup.getFont();
-        optionsGroup.setLayout(new GridLayout(1, true));
-
-        Composite left = new Composite(optionsGroup, SWT.NONE);
-        gridData = new GridData(SWT.LEFT, SWT.TOP, true, false);
-        left.setLayoutData(gridData);
-        left.setLayout(new GridLayout(3, true));
-
-        createOptionsForKar(left, font);
-        restoreWidgetValuesForKar();
-    }
-
-    private void createOptionsForKar(Composite optionsGroup, Font font) {
+    private void createOptionsForKar(Composite optionsGroup) {
         if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
             return;
         }
 
         addBSButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-        addBSButton.setText("Add maven script"); //$NON-NLS-1$
-        addBSButton.setFont(font);
+        addBSButton.setText("Add maven script");
         addBSButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -440,7 +282,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
     @Override
     protected ExportTreeViewer getExportTree() {
         return new ExportCamelTreeViewer(selection, this) {
-
             @Override
             protected void checkSelection() {
                 JavaCamelJobScriptsExportWSWizardPage.this.checkExport();
@@ -463,7 +304,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
             this.setPageComplete(false);
             noError = false;
         }
-
         return noError;
     }
 
@@ -502,6 +342,63 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JavaCamelJobScriptsEx
         manager.setDestinationPath(destinationKar);
         saveWidgetValues();
         return true;
+    }
+
+    /**
+     * Hook method for saving widget values for restoration by the next instance of this class.
+     */
+    @Override
+    protected void internalSaveWidgetValues() {
+        // update directory names history
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
+            if (directoryNames == null) {
+                directoryNames = new String[0];
+            }
+
+            directoryNames = addToHistory(directoryNames, getDestinationValue());
+            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+        }
+    }
+//    @Override
+//    protected void internalSaveWidgetValues() {
+//        // update directory names history
+//        IDialogSettings settings = getDialogSettings();
+//        if (settings != null) {
+//            String[] directoryNames = new String[1];
+//            String destinationValue = manager.getDestinationPath();
+//            if (destinationValue != null) {
+//                IPath path = Path.fromOSString(destinationValue);
+//                destinationValue = path.removeLastSegments(1).toOSString();
+//            }
+//            directoryNames[0] = destinationValue;
+//
+//            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+//        }
+//    }
+
+    /**
+     * Hook method for restoring widget values to the values that they held last time this wizard was used to
+     * completion.
+     */
+    @Override
+    protected void restoreWidgetValues() {
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            String[] directoryNames = settings.getArray(STORE_DESTINATION_NAMES_ID);
+            if (directoryNames != null && directoryNames.length > 0) {
+                for (String directoryName : directoryNames) {
+                    addDestinationItem(directoryName);
+                }
+            }
+            setDefaultDestination();
+        }
+    }
+
+    @Override
+    protected String getProcessType() {
+        return "Route";
     }
 
 }

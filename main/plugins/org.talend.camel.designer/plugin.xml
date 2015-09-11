@@ -73,7 +73,7 @@
                   class="org.talend.camel.designer.ui.ExporCameltJobScriptAction"
                   id="org.talend.repository.ui.actions.exportjobscript"
                   level="99"
-                  name="Export job scripts">
+                  name="Build Route">
             </Action>
             <Action
                   class="org.talend.camel.designer.ui.bean.CreateCamelBean"
