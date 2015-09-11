@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;

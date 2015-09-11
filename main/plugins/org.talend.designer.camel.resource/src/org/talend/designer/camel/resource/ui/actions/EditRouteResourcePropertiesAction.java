@@ -15,7 +15,7 @@ package org.talend.designer.camel.resource.ui.actions;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;

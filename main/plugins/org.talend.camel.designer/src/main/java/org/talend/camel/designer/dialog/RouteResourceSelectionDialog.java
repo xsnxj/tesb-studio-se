@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.viewer.ui.provider.RepositoryViewerProvider;

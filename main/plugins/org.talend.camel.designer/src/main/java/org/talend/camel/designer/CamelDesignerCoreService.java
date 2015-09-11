@@ -27,7 +27,7 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.ui.CreateCamelProcess;
 import org.talend.camel.designer.ui.bean.CreateCamelBean;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.IConnection;

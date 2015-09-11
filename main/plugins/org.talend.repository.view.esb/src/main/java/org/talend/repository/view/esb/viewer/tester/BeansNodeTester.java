@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.repository.view.esb.viewer.tester;
 
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.tester.AbstractNodeTester;
 

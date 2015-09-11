@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;

@@ -3,18 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ESB
 Bundle-SymbolicName: org.talend.repository.view.esb;singleton:=true
 Bundle-Version: 6.1.0.qualifier
-Bundle-Activator: org.talend.repository.view.esb.ESBRepositoryViewPlugin
 Bundle-Vendor: .Talend.
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.expressions;visibility:=reexport,
- org.eclipse.ui,
- org.eclipse.ui.navigator,
- org.talend.commons.ui,
+Require-Bundle: org.talend.commons.ui,
  org.talend.core.runtime,
  org.talend.core.repository,
- org.talend.repository.view;visibility:=reexport,
- org.talend.camel.designer,
- org.talend.commons.runtime
+ org.talend.repository.view,
+ org.talend.camel.model
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.repository.view.esb.viewer.action

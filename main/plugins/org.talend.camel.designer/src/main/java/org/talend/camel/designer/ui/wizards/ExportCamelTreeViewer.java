@@ -13,7 +13,7 @@
 package org.talend.camel.designer.ui.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;

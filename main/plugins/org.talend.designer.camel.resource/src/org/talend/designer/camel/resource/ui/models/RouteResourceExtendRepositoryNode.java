@@ -15,7 +15,6 @@ package org.talend.designer.camel.resource.ui.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.commons.ui.runtime.repository.IExtendRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -25,12 +24,6 @@ import org.talend.repository.model.RepositoryNode;
  * 
  */
 public class RouteResourceExtendRepositoryNode implements IExtendRepositoryNode {
-
-	/**
-	 * 
-	 */
-	public RouteResourceExtendRepositoryNode() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +41,8 @@ public class RouteResourceExtendRepositoryNode implements IExtendRepositoryNode 
 	 * @see org.talend.core.repository.IExtendRepositoryNode#getNodeImage()
 	 */
 	public IImage getNodeImage() {
-		return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+	    // TODO: is this image used?
+		return null;//ECamelCoreImage.ROUTE_RESOURCE_ICON;
 	}
 
 	/*

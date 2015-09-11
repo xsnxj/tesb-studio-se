@@ -7,7 +7,6 @@ Bundle-Activator: org.talend.designer.camel.resource.RouteResourceActivator
 Require-Bundle: org.talend.commons.ui,
  org.talend.core,
  org.talend.core.repository,
- org.talend.camel.designer,
  org.talend.camel.model,
  org.talend.metadata.managment.ui,
  org.talend.repository,

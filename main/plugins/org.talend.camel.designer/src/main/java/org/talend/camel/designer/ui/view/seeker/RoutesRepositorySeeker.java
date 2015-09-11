@@ -14,7 +14,7 @@ package org.talend.camel.designer.ui.view.seeker;
 
 import java.util.List;
 
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.seeker.AbstractRepoViewSeeker;
 

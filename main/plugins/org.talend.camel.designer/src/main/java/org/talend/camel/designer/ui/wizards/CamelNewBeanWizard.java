@@ -23,8 +23,8 @@ import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.ECamelCoreImage;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.RuntimeExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.utils.VersionUtils;
@@ -110,7 +110,6 @@ public class CamelNewBeanWizard extends Wizard {
     /**
      * @see org.eclipse.jface.wizard.Wizard#performFinish()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public boolean performFinish() {
         IProxyRepositoryFactory repositoryFactory = ProxyRepositoryFactory.getInstance();

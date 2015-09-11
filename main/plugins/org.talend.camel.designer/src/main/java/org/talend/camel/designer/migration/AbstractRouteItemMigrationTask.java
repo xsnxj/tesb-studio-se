@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
-import org.talend.camel.designer.util.CamelRepositoryNodeType;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.migration.AbstractItemMigrationTask;
 import org.talend.core.model.properties.Item;

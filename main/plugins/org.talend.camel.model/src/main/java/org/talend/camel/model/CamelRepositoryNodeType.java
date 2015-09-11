@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.camel.designer.util;
+package org.talend.camel.model;
 
 import java.util.HashMap;
 import java.util.Map;
