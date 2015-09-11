@@ -23,7 +23,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
-import org.talend.camel.designer.ui.wizards.OpenAnotherVersionPage;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
@@ -51,7 +50,7 @@ import org.talend.repository.model.RepositoryNode;
  */
 public class OpenAnotherVersionResrouceWizard extends Wizard {
 
-	OpenAnotherVersionPage mainPage = null;
+    OpenAnotherVersionPage mainPage = null;
 
 	private final IRepositoryViewObject repoObject;
 
