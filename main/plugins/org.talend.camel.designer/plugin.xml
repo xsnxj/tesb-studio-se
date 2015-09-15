@@ -9,30 +9,6 @@
       </Service>
    </extension>
 
- <extension
-               point="org.talend.core.repository.repository_node_provider">
-            <repositoryNode
-                  class="org.talend.camel.designer.model.CamelExtendRoutesNode"
-                  folder="routes"
-                  isResouce="true"
-                  key="Routes"
-                  label="Routes"
-                  ordinal="1"
-                  products="CAMEL"
-                  type="ROUTES">
-            </repositoryNode>
-            <repositoryNode
-                  class="org.talend.camel.designer.model.CamelExtendBeansNode"
-                  folder="code/beans"
-                  isResouce="true"
-                  key="Beans"
-                  label="Beans"
-                  parentNodeType="CODE"
-                  products="CAMEL"
-                  type="BEANS">
-            </repositoryNode>
-         </extension>
- 
    <extension
                point="org.talend.core.repositoryContextualsActions">
             <Action

@@ -58,7 +58,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     }
 
     public String getDeleteFolderName(ERepositoryObjectType type) {
-        return CamelRepositoryNodeType.AllRouteRespositoryTypes.get(type);
+        return type.getKey();
     }
 
     /*

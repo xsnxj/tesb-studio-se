@@ -12,8 +12,8 @@
 // ============================================================================
 package org.talend.camel.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
 
 import org.talend.core.model.repository.ERepositoryObjectType;
 
@@ -39,14 +39,14 @@ public interface CamelRepositoryNodeType {
         "ROUTELET"); //$NON-NLS-1$
 
     // repository type and folder name Map
-    Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>() {
+    Collection<ERepositoryObjectType> AllRouteRespositoryTypes = new HashSet<ERepositoryObjectType>() {
         {
-            put(repositoryBeansType, "Bean");
-            put(repositoryRouteResourceType, "Resource");
-            put(repositoryRoutesType, "Route");
-            put(repositoryDocumentationsType, "Route_Docs");
-            put(repositoryDocumentationType, "Route_Doc");
-            put(repositoryRouteletType, "Routelet");
+            add(repositoryBeansType);
+            add(repositoryRouteResourceType);
+            add(repositoryRoutesType);
+            add(repositoryDocumentationsType);
+            add(repositoryDocumentationType);
+            add(repositoryRouteletType);
         }
     };
 

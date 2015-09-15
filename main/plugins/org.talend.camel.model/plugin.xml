@@ -17,5 +17,30 @@
             class="org.talend.camel.core.model.camelProperties.util.CamelPropertiesResourceFactoryImpl"/>
    </extension>
 
+    <extension point="org.talend.core.repository.repository_node_provider">
+        <repositoryNode
+            folder="routes"
+            isResouce="true"
+            key="Route"
+            label="Routes"
+            ordinal="1"
+            products="CAMEL"
+            type="ROUTES" />
+        <repositoryNode
+            folder="code/beans"
+            isResouce="true"
+            key="Bean"
+            label="Beans"
+            parentNodeType="CODE"
+            products="CAMEL"
+            type="BEANS" />
+        <repositoryNode
+            folder="routelets"
+            isResouce="true"
+            key="Routelet"
+            label="Routelets"
+            products="CAMEL"
+            type="ROUTELET" />
+    </extension>
 
 </plugin>
