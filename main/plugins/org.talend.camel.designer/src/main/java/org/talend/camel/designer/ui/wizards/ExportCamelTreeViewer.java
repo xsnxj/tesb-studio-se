@@ -257,9 +257,7 @@ public class ExportCamelTreeViewer extends ExportTreeViewer {
 
     @Override
     protected ERepositoryObjectType getCheckingType() {
-        ERepositoryObjectType repositoryNodeType = (ERepositoryObjectType) ERepositoryObjectType.valueOf(
-                ERepositoryObjectType.class, CamelRepositoryNodeType.ROUTES);
-        return repositoryNodeType;
+        return CamelRepositoryNodeType.repositoryRoutesType;
     }
 
     // private void checkSelection() {

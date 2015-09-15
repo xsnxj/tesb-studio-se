@@ -86,11 +86,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
 
     @Override
     public IRepositoryNode getProcessNode() {
-        ERepositoryObjectType repositoryNodeType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
-                CamelRepositoryNodeType.ROUTES);
-        IRepositoryNode repositoryNode = ProjectRepositoryNode.getInstance().getRootRepositoryNode(repositoryNodeType);
-
-        return repositoryNode;
+        return ProjectRepositoryNode.getInstance().getRootRepositoryNode(CamelRepositoryNodeType.repositoryRoutesType);
     }
 
     /*

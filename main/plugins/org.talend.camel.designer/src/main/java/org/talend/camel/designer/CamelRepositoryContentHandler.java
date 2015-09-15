@@ -68,7 +68,7 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     }
 
     public boolean isRepObjType(ERepositoryObjectType type) {
-        return (null != CamelRepositoryNodeType.AllRouteRespositoryTypes.get(type));
+        return CamelRepositoryNodeType.AllRouteRespositoryTypes.containsKey(type);
     }
 
     @Override

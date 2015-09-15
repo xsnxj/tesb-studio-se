@@ -48,8 +48,6 @@ import org.talend.designer.core.ICamelDesignerCoreService;
  */
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
-    // private XmiResourceManager xmiResourceManager = new XmiResourceManager();
-
     /*
      * (non-Jsdoc)
      * 

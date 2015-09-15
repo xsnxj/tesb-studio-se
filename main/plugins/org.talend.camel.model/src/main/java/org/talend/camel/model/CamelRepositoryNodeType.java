@@ -22,28 +22,21 @@ import org.talend.core.model.repository.ERepositoryObjectType;
  */
 public interface CamelRepositoryNodeType {
 
-    String ROUTES = "ROUTES";
+    ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "ROUTES"); //$NON-NLS-1$
 
-    String BEANS = "BEANS";
-
-    String ROUTE_RESOURCES = "ROUTE_RESOURCES";
-
-    String ROUTE_DOCUMENTATIONS = "ROUTE_DOCS";
-
-    String ROUTE_DOCUMENTATION = "ROUTE_DOC";
-
-    ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, ROUTES);
-
-    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, BEANS);
+    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "BEANS"); //$NON-NLS-1$
 
     ERepositoryObjectType repositoryRouteResourceType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
-        ROUTE_RESOURCES);
+        "ROUTE_RESOURCES"); //$NON-NLS-1$
 
     ERepositoryObjectType repositoryDocumentationsType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
-        ROUTE_DOCUMENTATIONS);
+        "ROUTE_DOCS"); //$NON-NLS-1$
 
     ERepositoryObjectType repositoryDocumentationType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
-        ROUTE_DOCUMENTATION);
+        "ROUTE_DOC"); //$NON-NLS-1$
+
+    ERepositoryObjectType repositoryRouteletType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
+        "ROUTELET"); //$NON-NLS-1$
 
     // repository type and folder name Map
     Map<ERepositoryObjectType, String> AllRouteRespositoryTypes = new HashMap<ERepositoryObjectType, String>() {
@@ -53,6 +46,7 @@ public interface CamelRepositoryNodeType {
             put(repositoryRoutesType, "Route");
             put(repositoryDocumentationsType, "Route_Docs");
             put(repositoryDocumentationType, "Route_Doc");
+            put(repositoryRouteletType, "Routelet");
         }
     };
 
