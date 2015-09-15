@@ -116,11 +116,11 @@ public class CamelPropertiesSwitch<T> extends Switch<T>{
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CamelPropertiesPackage.ROUTELET: {
-				Routelet routelet = (Routelet)theEObject;
-				T result = caseRoutelet(routelet);
-				if (result == null) result = caseJobletProcessItem(routelet);
-				if (result == null) result = caseItem(routelet);
+			case CamelPropertiesPackage.ROUTELET_PROCESS_ITEM: {
+				RouteletProcessItem routeletProcessItem = (RouteletProcessItem)theEObject;
+				T result = caseRouteletProcessItem(routeletProcessItem);
+				if (result == null) result = caseJobletProcessItem(routeletProcessItem);
+				if (result == null) result = caseItem(routeletProcessItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -189,17 +189,17 @@ public class CamelPropertiesSwitch<T> extends Switch<T>{
 	}
 
 				/**
-	 * Returns the result of interpreting the object as an instance of '<em>Routelet</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Routelet Process Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Routelet</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Routelet Process Item</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseRoutelet(Routelet object) {
+	public T caseRouteletProcessItem(RouteletProcessItem object) {
 		return null;
 	}
 

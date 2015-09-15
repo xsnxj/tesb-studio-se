@@ -60,13 +60,13 @@ public interface CamelPropertiesFactory extends EFactory {
 	RouteDocumentItem createRouteDocumentItem();
 
 				/**
-	 * Returns a new object of class '<em>Routelet</em>'.
+	 * Returns a new object of class '<em>Routelet Process Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Routelet</em>'.
+	 * @return a new object of class '<em>Routelet Process Item</em>'.
 	 * @generated
 	 */
-	Routelet createRoutelet();
+	RouteletProcessItem createRouteletProcessItem();
 
 				/**
 	 * Returns the package supported by this factory.

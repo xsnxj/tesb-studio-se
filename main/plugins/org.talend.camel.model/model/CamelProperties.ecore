@@ -13,5 +13,5 @@
   <eClassifiers xsi:type="ecore:EClass" name="RouteDocumentItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//DocumentationItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingExtension" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Routelet" eSuperTypes="../../org.talend.model/model/properties.ecore#//JobletProcessItem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RouteletProcessItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//JobletProcessItem"/>
 </ecore:EPackage>

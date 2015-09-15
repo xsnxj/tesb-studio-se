@@ -16,9 +16,8 @@ import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
-import org.talend.camel.core.model.camelProperties.Routelet;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 import org.talend.core.model.properties.PropertiesPackage;
-import org.talend.designer.joblet.model.JobletPackage;
 
 /**
  * <!-- begin-user-doc --> An implementation of the model <b>Package</b>. <!-- end-user-doc -->
@@ -56,7 +55,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass routeletEClass = null;
+	private EClass routeletProcessItemEClass = null;
 
 				/**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
@@ -182,7 +181,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		routeDocumentItemEClass = createEClass(ROUTE_DOCUMENT_ITEM);
 		createEAttribute(routeDocumentItemEClass, ROUTE_DOCUMENT_ITEM__BINDING_EXTENSION);
 
-		routeletEClass = createEClass(ROUTELET);
+		routeletProcessItemEClass = createEClass(ROUTELET_PROCESS_ITEM);
 	}
 
     /**
@@ -219,7 +218,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		camelProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getProcessItem());
 		routeResourceItemEClass.getESuperTypes().add(thePropertiesPackage.getFileItem());
 		routeDocumentItemEClass.getESuperTypes().add(thePropertiesPackage.getDocumentationItem());
-		routeletEClass.getESuperTypes().add(thePropertiesPackage.getJobletProcessItem());
+		routeletProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getJobletProcessItem());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(beanItemEClass, BeanItem.class, "BeanItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -233,7 +232,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		initEClass(routeDocumentItemEClass, RouteDocumentItem.class, "RouteDocumentItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRouteDocumentItem_BindingExtension(), theXMLTypePackage.getString(), "bindingExtension", null, 0, 1, RouteDocumentItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(routeletEClass, Routelet.class, "Routelet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(routeletProcessItemEClass, RouteletProcessItem.class, "RouteletProcessItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -275,8 +274,8 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getRoutelet() {
-		return routeletEClass;
+	public EClass getRouteletProcessItem() {
+		return routeletProcessItemEClass;
 	}
 
 } // CamelPropertiesPackageImpl

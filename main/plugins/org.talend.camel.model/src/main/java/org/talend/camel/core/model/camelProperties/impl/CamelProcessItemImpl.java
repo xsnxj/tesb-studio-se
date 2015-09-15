@@ -30,7 +30,7 @@ public class CamelProcessItemImpl extends ProcessItemImpl implements CamelProces
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String SPRING_CONTENT_EDEFAULT = null;
+	protected static final String SPRING_CONTENT_EDEFAULT = "";
 	/**
 	 * The cached value of the '{@link #getSpringContent() <em>Spring Content</em>}' attribute.
 	 * <!-- begin-user-doc -->

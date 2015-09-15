@@ -96,8 +96,8 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
 				return createRouteDocumentItemAdapter();
 			}
 			@Override
-			public Adapter caseRoutelet(Routelet object) {
-				return createRouteletAdapter();
+			public Adapter caseRouteletProcessItem(RouteletProcessItem object) {
+				return createRouteletProcessItemAdapter();
 			}
 			@Override
 			public Adapter caseItem(Item object) {
@@ -200,16 +200,16 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
 	}
 
 				/**
-	 * Creates a new adapter for an object of class '{@link org.talend.camel.core.model.camelProperties.Routelet <em>Routelet</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.talend.camel.core.model.camelProperties.RouteletProcessItem <em>Routelet Process Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.talend.camel.core.model.camelProperties.Routelet
+	 * @see org.talend.camel.core.model.camelProperties.RouteletProcessItem
 	 * @generated
 	 */
-	public Adapter createRouteletAdapter() {
+	public Adapter createRouteletProcessItemAdapter() {
 		return null;
 	}
 

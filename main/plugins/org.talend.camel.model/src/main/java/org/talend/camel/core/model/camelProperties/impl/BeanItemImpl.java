@@ -37,23 +37,23 @@ import org.talend.designer.core.model.utils.emf.component.IMPORTType;
  */
 public class BeanItemImpl extends RoutineItemImpl implements BeanItem {
     /**
-     * <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
-     */
+	 * @generated
+	 */
     protected BeanItemImpl() {
-        super();
-    }
+		super();
+	}
 
     /**
-     * <!-- begin-user-doc -->
+	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
-     */
+	 * @generated
+	 */
     @Override
     protected EClass eStaticClass() {
-        return CamelPropertiesPackage.Literals.BEAN_ITEM;
-    }
+		return CamelPropertiesPackage.Literals.BEAN_ITEM;
+	}
     
     /**
      * <!-- begin-user-doc -->

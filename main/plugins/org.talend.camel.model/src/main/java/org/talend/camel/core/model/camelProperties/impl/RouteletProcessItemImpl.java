@@ -5,27 +5,26 @@ package org.talend.camel.core.model.camelProperties.impl;
 import org.eclipse.emf.ecore.EClass;
 
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
-import org.talend.camel.core.model.camelProperties.Routelet;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 
 import org.talend.core.model.properties.impl.JobletProcessItemImpl;
-import org.talend.designer.joblet.model.impl.JobletProcessImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Routelet</b></em>'.
+ * An implementation of the model object '<em><b>Routelet Process Item</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class RouteletImpl extends JobletProcessItemImpl implements Routelet {
+public class RouteletProcessItemImpl extends JobletProcessItemImpl implements RouteletProcessItem {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected RouteletImpl() {
+	protected RouteletProcessItemImpl() {
 		super();
 	}
 
@@ -36,7 +35,7 @@ public class RouteletImpl extends JobletProcessItemImpl implements Routelet {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return CamelPropertiesPackage.Literals.ROUTELET;
+		return CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM;
 	}
 
-} //RouteletImpl
+} //RouteletProcessItemImpl

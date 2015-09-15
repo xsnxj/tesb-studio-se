@@ -66,7 +66,7 @@ public class CamelPropertiesFactoryImpl extends EFactoryImpl implements CamelPro
 			case CamelPropertiesPackage.CAMEL_PROCESS_ITEM: return createCamelProcessItem();
 			case CamelPropertiesPackage.ROUTE_RESOURCE_ITEM: return createRouteResourceItem();
 			case CamelPropertiesPackage.ROUTE_DOCUMENT_ITEM: return createRouteDocumentItem();
-			case CamelPropertiesPackage.ROUTELET: return createRoutelet();
+			case CamelPropertiesPackage.ROUTELET_PROCESS_ITEM: return createRouteletProcessItem();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -117,9 +117,9 @@ public class CamelPropertiesFactoryImpl extends EFactoryImpl implements CamelPro
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Routelet createRoutelet() {
-		RouteletImpl routelet = new RouteletImpl();
-		return routelet;
+	public RouteletProcessItem createRouteletProcessItem() {
+		RouteletProcessItemImpl routeletProcessItem = new RouteletProcessItemImpl();
+		return routeletProcessItem;
 	}
 
 				/**

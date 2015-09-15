@@ -498,14 +498,14 @@ public interface CamelPropertiesPackage extends EPackage {
 
 
 				/**
-	 * The meta object id for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletImpl <em>Routelet</em>}' class.
+	 * The meta object id for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletProcessItemImpl <em>Routelet Process Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.talend.camel.core.model.camelProperties.impl.RouteletImpl
-	 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRoutelet()
+	 * @see org.talend.camel.core.model.camelProperties.impl.RouteletProcessItemImpl
+	 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRouteletProcessItem()
 	 * @generated
 	 */
-	int ROUTELET = 4;
+	int ROUTELET_PROCESS_ITEM = 4;
 
 				/**
 	 * The feature id for the '<em><b>Property</b></em>' reference.
@@ -514,7 +514,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__PROPERTY = PropertiesPackage.JOBLET_PROCESS_ITEM__PROPERTY;
+	int ROUTELET_PROCESS_ITEM__PROPERTY = PropertiesPackage.JOBLET_PROCESS_ITEM__PROPERTY;
 
 				/**
 	 * The feature id for the '<em><b>State</b></em>' reference.
@@ -523,7 +523,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__STATE = PropertiesPackage.JOBLET_PROCESS_ITEM__STATE;
+	int ROUTELET_PROCESS_ITEM__STATE = PropertiesPackage.JOBLET_PROCESS_ITEM__STATE;
 
 				/**
 	 * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -532,7 +532,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__PARENT = PropertiesPackage.JOBLET_PROCESS_ITEM__PARENT;
+	int ROUTELET_PROCESS_ITEM__PARENT = PropertiesPackage.JOBLET_PROCESS_ITEM__PARENT;
 
 				/**
 	 * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
@@ -541,7 +541,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__REFERENCE_RESOURCES = PropertiesPackage.JOBLET_PROCESS_ITEM__REFERENCE_RESOURCES;
+	int ROUTELET_PROCESS_ITEM__REFERENCE_RESOURCES = PropertiesPackage.JOBLET_PROCESS_ITEM__REFERENCE_RESOURCES;
 
 				/**
 	 * The feature id for the '<em><b>File Extension</b></em>' attribute.
@@ -550,7 +550,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__FILE_EXTENSION = PropertiesPackage.JOBLET_PROCESS_ITEM__FILE_EXTENSION;
+	int ROUTELET_PROCESS_ITEM__FILE_EXTENSION = PropertiesPackage.JOBLET_PROCESS_ITEM__FILE_EXTENSION;
 
 				/**
 	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
@@ -559,7 +559,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__NEED_VERSION = PropertiesPackage.JOBLET_PROCESS_ITEM__NEED_VERSION;
+	int ROUTELET_PROCESS_ITEM__NEED_VERSION = PropertiesPackage.JOBLET_PROCESS_ITEM__NEED_VERSION;
 
 				/**
 	 * The feature id for the '<em><b>Joblet Process</b></em>' reference.
@@ -568,7 +568,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__JOBLET_PROCESS = PropertiesPackage.JOBLET_PROCESS_ITEM__JOBLET_PROCESS;
+	int ROUTELET_PROCESS_ITEM__JOBLET_PROCESS = PropertiesPackage.JOBLET_PROCESS_ITEM__JOBLET_PROCESS;
 
 				/**
 	 * The feature id for the '<em><b>Icon</b></em>' reference.
@@ -577,17 +577,16 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET__ICON = PropertiesPackage.JOBLET_PROCESS_ITEM__ICON;
+	int ROUTELET_PROCESS_ITEM__ICON = PropertiesPackage.JOBLET_PROCESS_ITEM__ICON;
 
 				/**
-	 * The number of structural features of the '<em>Routelet</em>' class.
+	 * The number of structural features of the '<em>Routelet Process Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_FEATURE_COUNT = PropertiesPackage.JOBLET_PROCESS_ITEM_FEATURE_COUNT + 0;
-
+	int ROUTELET_PROCESS_ITEM_FEATURE_COUNT = PropertiesPackage.JOBLET_PROCESS_ITEM_FEATURE_COUNT + 0;
 
 				/**
 	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.BeanItem <em>Bean Item</em>}'.
@@ -663,14 +662,14 @@ public interface CamelPropertiesPackage extends EPackage {
 	EAttribute getRouteDocumentItem_BindingExtension();
 
 				/**
-	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.Routelet <em>Routelet</em>}'.
+	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.RouteletProcessItem <em>Routelet Process Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Routelet</em>'.
-	 * @see org.talend.camel.core.model.camelProperties.Routelet
+	 * @return the meta object for class '<em>Routelet Process Item</em>'.
+	 * @see org.talend.camel.core.model.camelProperties.RouteletProcessItem
 	 * @generated
 	 */
-	EClass getRoutelet();
+	EClass getRouteletProcessItem();
 
 				/**
 	 * Returns the factory that creates the instances of the model.
@@ -759,14 +758,14 @@ public interface CamelPropertiesPackage extends EPackage {
 		EAttribute ROUTE_DOCUMENT_ITEM__BINDING_EXTENSION = eINSTANCE.getRouteDocumentItem_BindingExtension();
 
 								/**
-		 * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletImpl <em>Routelet</em>}' class.
+		 * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletProcessItemImpl <em>Routelet Process Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.talend.camel.core.model.camelProperties.impl.RouteletImpl
-		 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRoutelet()
+		 * @see org.talend.camel.core.model.camelProperties.impl.RouteletProcessItemImpl
+		 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRouteletProcessItem()
 		 * @generated
 		 */
-		EClass ROUTELET = eINSTANCE.getRoutelet();
+		EClass ROUTELET_PROCESS_ITEM = eINSTANCE.getRouteletProcessItem();
 
     }
 
