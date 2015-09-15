@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.talend.camel.model;singleton:=true
 Bundle-Version: 6.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.talend.model,
  org.talend.core.runtime
 Bundle-ActivationPolicy: lazy

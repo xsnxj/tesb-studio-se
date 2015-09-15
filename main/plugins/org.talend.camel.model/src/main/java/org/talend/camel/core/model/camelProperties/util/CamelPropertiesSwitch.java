@@ -8,6 +8,8 @@ package org.talend.camel.core.model.camelProperties.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
+import org.talend.camel.core.model.camelProperties.*;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
@@ -16,8 +18,11 @@ import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.core.model.properties.DocumentationItem;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
+import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
+import org.talend.designer.joblet.model.JobletProcess;
 
 /**
  * <!-- begin-user-doc --> The <b>Switch</b> for the model's inheritance
@@ -29,7 +34,7 @@ import org.talend.core.model.properties.RoutineItem;
  * @see org.talend.camel.core.model.camelProperties.CamelPropertiesPackage
  * @generated
  */
-public class CamelPropertiesSwitch<T>{
+public class CamelPropertiesSwitch<T> extends Switch<T>{
     /**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -58,6 +63,7 @@ public class CamelPropertiesSwitch<T>{
 	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
+	@Override
 	protected boolean isSwitchFor(EPackage ePackage) {
 		return ePackage == modelPackage;
 	}
@@ -73,6 +79,7 @@ public class CamelPropertiesSwitch<T>{
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
 	 * @generated
 	 */
+	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 			case CamelPropertiesPackage.BEAN_ITEM: {
@@ -106,6 +113,14 @@ public class CamelPropertiesSwitch<T>{
 				if (result == null) result = caseDocumentationItem(routeDocumentItem);
 				if (result == null) result = caseFileItem(routeDocumentItem);
 				if (result == null) result = caseItem(routeDocumentItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CamelPropertiesPackage.ROUTELET: {
+				Routelet routelet = (Routelet)theEObject;
+				T result = caseRoutelet(routelet);
+				if (result == null) result = caseJobletProcessItem(routelet);
+				if (result == null) result = caseItem(routelet);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -170,6 +185,21 @@ public class CamelPropertiesSwitch<T>{
 	 * @generated
 	 */
 	public T caseRouteDocumentItem(RouteDocumentItem object) {
+		return null;
+	}
+
+				/**
+	 * Returns the result of interpreting the object as an instance of '<em>Routelet</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Routelet</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseRoutelet(Routelet object) {
 		return null;
 	}
 
@@ -249,6 +279,21 @@ public class CamelPropertiesSwitch<T>{
 	}
 
 				/**
+	 * Returns the result of interpreting the object as an instance of '<em>Joblet Process Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Joblet Process Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseJobletProcessItem(JobletProcessItem object) {
+		return null;
+	}
+
+				/**
 	 * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
 	 * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -259,6 +304,7 @@ public class CamelPropertiesSwitch<T>{
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */
+	@Override
 	public T defaultCase(EObject object) {
 		return null;
 	}

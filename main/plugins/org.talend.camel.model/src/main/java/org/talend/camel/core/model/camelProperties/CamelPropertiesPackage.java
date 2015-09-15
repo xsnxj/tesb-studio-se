@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.talend.core.model.properties.PropertiesPackage;
+import org.talend.designer.joblet.model.JobletPackage;
 
 /**
  * <!-- begin-user-doc --> The <b>Package</b> for the model. It contains
@@ -497,6 +498,98 @@ public interface CamelPropertiesPackage extends EPackage {
 
 
 				/**
+	 * The meta object id for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletImpl <em>Routelet</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.talend.camel.core.model.camelProperties.impl.RouteletImpl
+	 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRoutelet()
+	 * @generated
+	 */
+	int ROUTELET = 4;
+
+				/**
+	 * The feature id for the '<em><b>Property</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__PROPERTY = PropertiesPackage.JOBLET_PROCESS_ITEM__PROPERTY;
+
+				/**
+	 * The feature id for the '<em><b>State</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__STATE = PropertiesPackage.JOBLET_PROCESS_ITEM__STATE;
+
+				/**
+	 * The feature id for the '<em><b>Parent</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__PARENT = PropertiesPackage.JOBLET_PROCESS_ITEM__PARENT;
+
+				/**
+	 * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__REFERENCE_RESOURCES = PropertiesPackage.JOBLET_PROCESS_ITEM__REFERENCE_RESOURCES;
+
+				/**
+	 * The feature id for the '<em><b>File Extension</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__FILE_EXTENSION = PropertiesPackage.JOBLET_PROCESS_ITEM__FILE_EXTENSION;
+
+				/**
+	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__NEED_VERSION = PropertiesPackage.JOBLET_PROCESS_ITEM__NEED_VERSION;
+
+				/**
+	 * The feature id for the '<em><b>Joblet Process</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__JOBLET_PROCESS = PropertiesPackage.JOBLET_PROCESS_ITEM__JOBLET_PROCESS;
+
+				/**
+	 * The feature id for the '<em><b>Icon</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET__ICON = PropertiesPackage.JOBLET_PROCESS_ITEM__ICON;
+
+				/**
+	 * The number of structural features of the '<em>Routelet</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROUTELET_FEATURE_COUNT = PropertiesPackage.JOBLET_PROCESS_ITEM_FEATURE_COUNT + 0;
+
+
+				/**
 	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.BeanItem <em>Bean Item</em>}'.
 	 * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -568,6 +661,16 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRouteDocumentItem_BindingExtension();
+
+				/**
+	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.Routelet <em>Routelet</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Routelet</em>'.
+	 * @see org.talend.camel.core.model.camelProperties.Routelet
+	 * @generated
+	 */
+	EClass getRoutelet();
 
 				/**
 	 * Returns the factory that creates the instances of the model.
@@ -654,6 +757,16 @@ public interface CamelPropertiesPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ROUTE_DOCUMENT_ITEM__BINDING_EXTENSION = eINSTANCE.getRouteDocumentItem_BindingExtension();
+
+								/**
+		 * The meta object literal for the '{@link org.talend.camel.core.model.camelProperties.impl.RouteletImpl <em>Routelet</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.talend.camel.core.model.camelProperties.impl.RouteletImpl
+		 * @see org.talend.camel.core.model.camelProperties.impl.CamelPropertiesPackageImpl#getRoutelet()
+		 * @generated
+		 */
+		EClass ROUTELET = eINSTANCE.getRoutelet();
 
     }
 
