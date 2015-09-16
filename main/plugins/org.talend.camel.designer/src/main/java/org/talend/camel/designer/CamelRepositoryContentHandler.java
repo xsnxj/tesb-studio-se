@@ -68,7 +68,7 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     }
 
     public boolean isRepObjType(ERepositoryObjectType type) {
-        return CamelRepositoryNodeType.AllRouteRespositoryTypes.contains(type);
+        return true;
     }
 
     @Override
@@ -203,6 +203,8 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
             return ECamelCoreImage.BEAN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+        } else if (type == CamelRepositoryNodeType.repositoryDocumentationsType) {
+        	return ECoreImage.FOLDER_OPEN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
         	return ECoreImage.DOCUMENTATION_ICON;
         }

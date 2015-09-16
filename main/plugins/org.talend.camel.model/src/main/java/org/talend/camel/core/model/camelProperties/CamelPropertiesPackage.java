@@ -10,7 +10,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.talend.core.model.properties.PropertiesPackage;
-import org.talend.designer.joblet.model.JobletPackage;
 
 /**
  * <!-- begin-user-doc --> The <b>Package</b> for the model. It contains
