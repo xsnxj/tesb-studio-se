@@ -18,14 +18,11 @@ import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
-import org.talend.camel.designer.ui.CreateCamelProcess;
-import org.talend.camel.designer.ui.bean.CreateCamelBean;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.components.ComponentCategory;
@@ -48,31 +45,8 @@ import org.talend.designer.core.ICamelDesignerCoreService;
  */
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.designer.core.ICamelDesignerCoreService#getCreateProcessAction (boolean)
-     */
-    public IAction getCreateProcessAction(boolean isToolbar) {
-        return new CreateCamelProcess(isToolbar);
-    }
-
     public String getDeleteFolderName(ERepositoryObjectType type) {
         return type.getKey();
-    }
-
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.designer.core.ICamelDesignerCoreService#getCreateBeanAction (boolean)
-     */
-    public IAction getCreateBeanAction(boolean isToolbar) {
-        // TODO Auto-generated method stub
-        return new CreateCamelBean(isToolbar);
-    }
-
-    public ERepositoryObjectType getRoutes() {
-        return CamelRepositoryNodeType.repositoryRoutesType;
     }
 
     public ERepositoryObjectType getBeansType() {

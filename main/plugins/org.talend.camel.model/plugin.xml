@@ -25,7 +25,7 @@
             label="Routes"
             ordinal="1"
             products="CAMEL"
-            type="ROUTES" />
+            type="ROUTE" />
         <repositoryNode
             folder="code/beans"
             isResouce="true"

@@ -19,7 +19,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
  */
 public interface CamelRepositoryNodeType {
 
-    ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "ROUTES"); //$NON-NLS-1$
+    ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.PROCESS_ROUTE;
 
     ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "BEANS"); //$NON-NLS-1$
 

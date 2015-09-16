@@ -96,8 +96,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
      */
     @Override
     protected void doRun() {
-        IRepositoryNode node = null;
-        CamelNewProcessWizard processWizard = null;
+        final CamelNewProcessWizard processWizard;
         if (isToolbar()) {
             processWizard = new CamelNewProcessWizard(null);
         } else {
@@ -106,10 +105,9 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
                 return;
             }
             Object obj = ((IStructuredSelection) selection).getFirstElement();
-            node = (IRepositoryNode) obj;
 
             IRepositoryService service = DesignerPlugin.getDefault().getRepositoryService();
-            IPath path = service.getRepositoryPath(node);
+            IPath path = service.getRepositoryPath((IRepositoryNode) obj);
             if (RepositoryConstants.isSystemFolder(path.toString())) {
                 // Not allowed to create in system folder.
                 return;
