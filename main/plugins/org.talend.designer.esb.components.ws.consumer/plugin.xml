@@ -699,6 +699,7 @@
                 id="correlationid-policy"
                 name="correlationid-policy">
             <group id="cxf-rt-ws-policy" />
+            <group id="cxf-rt-bindings-soap" />
             <library id="correlationid-policy" />
             <library id="commons-jxpath" />
         </libraryNeededGroup>
