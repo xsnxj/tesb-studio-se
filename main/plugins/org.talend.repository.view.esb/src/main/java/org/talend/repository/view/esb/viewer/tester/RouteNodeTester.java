@@ -10,26 +10,27 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.services.ui.viewer.tester;
+package org.talend.repository.view.esb.viewer.tester;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.tester.AbstractNodeTypeTester;
 
 /**
  * DOC ggu class global comment. Detailled comment
  */
-public class ServicesNodeTester extends AbstractNodeTypeTester {
+public class RouteNodeTester extends AbstractNodeTypeTester {
 
     @SuppressWarnings("serial")
     private static final Map<String, ERepositoryObjectType> PROPERTY_MAPPING = new HashMap<String, ERepositoryObjectType>() {
         {
-            put("isServicesNode", ESBRepositoryNodeType.SERVICES); //$NON-NLS-1$
-            put("isServicesPortNode", ESBRepositoryNodeType.SERVICEPORT); //$NON-NLS-1$
-            put("isServicesOperationNode", ESBRepositoryNodeType.SERVICESOPERATION); //$NON-NLS-1$
+            put("isRoutesTopNode", CamelRepositoryNodeType.repositoryRoutesType); //$NON-NLS-1$
+            put("isBeans", CamelRepositoryNodeType.repositoryBeansType); //$NON-NLS-1$
+            put("isRouteResourceNode", CamelRepositoryNodeType.repositoryRouteResourceType); //$NON-NLS-1$
+            put("isRouteletNode", CamelRepositoryNodeType.repositoryRouteletType); //$NON-NLS-1$
         }
     };
 

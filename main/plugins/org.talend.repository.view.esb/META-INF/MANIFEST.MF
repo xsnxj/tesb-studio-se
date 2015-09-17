@@ -11,4 +11,3 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.repository.view,
  org.talend.camel.model
 Bundle-ActivationPolicy: lazy
-Export-Package: org.talend.repository.view.esb.viewer.action

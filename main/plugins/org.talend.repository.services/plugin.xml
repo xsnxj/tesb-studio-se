@@ -192,6 +192,7 @@
 				type="org.talend.repository.model.RepositoryNode">
 		</propertyTester>
 	</extension>
+
  <extension
        point="org.eclipse.ui.preferencePages">
     <page
