@@ -5,8 +5,8 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.talend.repository.view.esb.viewer.content.RoutesContentProvider"
-            id="org.talend.repository.viewer.esb.routes"
+            contentProvider="org.talend.repository.view.route.viewer.content.RoutesContentProvider"
+            id="org.talend.repository.view.route.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="%NavigatorContent.routes" >
          <triggerPoints>
@@ -23,7 +23,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRoutesTopNode">
+                        property="org.talend.repository.node.route.isRoutesTopNode">
                   </test>
                </and>
             </or>
@@ -35,7 +35,7 @@
                </instanceof>
                <test
                      forcePluginActivation="true"
-                     property="org.talend.repository.node.isRoutesTopNode">
+                     property="org.talend.repository.node.route.isRoutesTopNode">
                </test>
             </and>
          </possibleChildren>
@@ -49,7 +49,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRoutesTopNode">
+                        property="org.talend.repository.node.route.isRoutesTopNode">
                   </test>
                   <not>
                      <test
@@ -64,8 +64,8 @@
 
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.talend.repository.view.esb.viewer.content.RouteletContentProvider"
-            id="org.talend.repository.viewer.esb.routelet"
+            contentProvider="org.talend.repository.view.route.viewer.content.RouteletContentProvider"
+            id="org.talend.repository.view.route.routelet"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Routelet" >
          <triggerPoints>
@@ -82,7 +82,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRouteletNode">
+                        property="org.talend.repository.node.route.isRouteletNode">
                   </test>
                </and>
             </or>
@@ -94,7 +94,7 @@
                </instanceof>
                <test
                      forcePluginActivation="true"
-                     property="org.talend.repository.node.isRouteletNode">
+                     property="org.talend.repository.node.route.isRouteletNode">
                </test>
             </and>
          </possibleChildren>
@@ -108,7 +108,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRouteletNode">
+                        property="org.talend.repository.node.route.isRouteletNode">
                   </test>
                   <not>
                      <test
@@ -123,8 +123,8 @@
 
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.talend.repository.view.esb.viewer.content.BeansContentProvider"
-            id="org.talend.repository.viewer.esb.beans"
+            contentProvider="org.talend.repository.view.route.viewer.content.BeansContentProvider"
+            id="org.talend.repository.view.route.beans"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="%NavigatorContent.beans" >
          <triggerPoints>
@@ -135,7 +135,7 @@
                <or>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isBeans">
+                        property="org.talend.repository.node.route.isBeans">
                   </test>
                   <test
                         forcePluginActivation="true"
@@ -151,7 +151,7 @@
                </instanceof>
                <test
                      forcePluginActivation="true"
-                     property="org.talend.repository.node.isBeans">
+                     property="org.talend.repository.node.route.isBeans">
                </test>
             </and>
          </possibleChildren>
@@ -165,7 +165,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isBeans">
+                        property="org.talend.repository.node.route.isBeans">
                   </test>
                   <not>
                      <test
@@ -179,8 +179,8 @@
       </navigatorContent>
       <navigatorContent
             activeByDefault="true"
-            contentProvider="org.talend.repository.view.esb.viewer.content.RouteResourceContentProvider"
-            id="org.talend.repository.viewer.esb.route_resource"
+            contentProvider="org.talend.repository.view.route.viewer.content.RouteResourceContentProvider"
+            id="org.talend.repository.view.route.route_resource"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Route Resources" >
          <triggerPoints>
@@ -197,7 +197,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRouteResourceNode">
+                        property="org.talend.repository.node.route.isRouteResourceNode">
                   </test>
                </and>
             </or>
@@ -209,7 +209,7 @@
                </instanceof>
                <test
                      forcePluginActivation="true"
-                     property="org.talend.repository.node.isRouteResourceNode">
+                     property="org.talend.repository.node.route.isRouteResourceNode">
                </test>
             </and>
          </possibleChildren>
@@ -223,7 +223,7 @@
                   </instanceof>
                   <test
                         forcePluginActivation="true"
-                        property="org.talend.repository.node.isRouteResourceNode">
+                        property="org.talend.repository.node.route.isRouteResourceNode">
                   </test>
                   <not>
                      <test
@@ -240,16 +240,16 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.talend.repository.view.esb.viewer.tester.RouteNodeTester"
-            id="org.talend.repository.node.tester.routes"
-            namespace="org.talend.repository.node"
+            class="org.talend.repository.view.route.viewer.tester.RouteNodeTester"
+            id="org.talend.repository.node.route.tester"
+            namespace="org.talend.repository.node.route"
             properties="isRoutesTopNode,isBeans,isRouteResourceNode,isRouteletNode"
             type="org.talend.repository.model.RepositoryNode">
       </propertyTester>
    </extension>
 
     <extension point="org.talend.core.repository.repository_content">
-        <RepositoryContent class="org.talend.repository.view.esb.viewer.content.CamelRepositoryContentHandler" />
+        <RepositoryContent class="org.talend.repository.view.route.viewer.content.CamelRepositoryContentHandler" />
     </extension>
 
    <extension
@@ -258,7 +258,7 @@
             viewerId="org.talend.repository.cnf.view">
          <includes>
             <contentExtension
-                  pattern="org.talend.repository.viewer.esb.*">
+                  pattern="org.talend.repository.view.route.*">
             </contentExtension>
          </includes>
       </viewerContentBinding>
@@ -271,7 +271,7 @@
             perspectiveId="org.talend.camel.perspective">
          <includes>
             <contentExtension
-                  pattern="org.talend.repository.viewer.esb.*">
+                  pattern="org.talend.repository.view.route.*">
             </contentExtension>
             <contentExtension
                   pattern="org.talend.repository.viewer.root.contexts">
@@ -295,7 +295,7 @@
             perspectiveId="org.talend.rcp.perspective">
          <excludes>
             <contentExtension
-                  pattern="org.talend.repository.viewer.esb.*">
+                  pattern="org.talend.repository.view.route.*">
             </contentExtension>
          </excludes>
       </perspectiveFilter>
@@ -311,4 +311,12 @@
             type="CONTEXT">
       </extraProducts>
    </extension>
+
+    <extension point="org.talend.core.repositoryContextualsActions">
+        <Action
+            class="org.talend.repository.view.actions.CreateRouteletProcess"
+            id="org.talend.repository.view.actions.CreateRouteletProcess"
+            level="10" />
+    </extension>
+
 </plugin>

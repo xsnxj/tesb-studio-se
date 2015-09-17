@@ -10,14 +10,14 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.view.esb.viewer.content;
+package org.talend.repository.view.route.viewer.content;
 
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.repository.model.ProjectRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.viewer.content.ProjectRepoDirectChildrenNodeContentProvider;
+import org.talend.repository.viewer.content.code.AbstractCodeContentProvider;
 
-public class RoutesContentProvider extends ProjectRepoDirectChildrenNodeContentProvider {
+public class BeansContentProvider extends AbstractCodeContentProvider {
 
     /*
      * (non-Javadoc)
@@ -28,6 +28,6 @@ public class RoutesContentProvider extends ProjectRepoDirectChildrenNodeContentP
      */
     @Override
     protected RepositoryNode getTopLevelNodeFromProjectRepositoryNode(ProjectRepositoryNode projectNode) {
-        return projectNode.getRootRepositoryNode(CamelRepositoryNodeType.repositoryRoutesType);
+        return projectNode.getRootRepositoryNode(CamelRepositoryNodeType.repositoryBeansType);
     }
 }

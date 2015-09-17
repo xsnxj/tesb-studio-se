@@ -18,18 +18,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.talend.camel.designer.i18n.Messages;
@@ -42,23 +36,16 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.commons.ui.runtime.image.OverlayImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.utils.RepositoryManagerHelper;
-import org.talend.core.repository.model.ProjectRepositoryNode;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.action.CreateProcess;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
-import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.ui.views.IRepositoryView;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
@@ -74,7 +61,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         super();
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(ImageProvider.getImage(ECamelCoreImage.ROUTE_ICON)));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
     }
 
     public CreateCamelProcess(boolean isToolbar) {
@@ -83,15 +70,10 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
     }
 
     @Override
-    public IRepositoryNode getProcessNode() {
-        return ProjectRepositoryNode.getInstance().getRootRepositoryNode(CamelRepositoryNodeType.repositoryRoutesType);
+    public ERepositoryObjectType getProcessType() {
+        return CamelRepositoryNodeType.repositoryRoutesType;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.Action#run()
-     */
     @Override
     protected void doRun() {
         final CamelNewProcessWizard processWizard;
@@ -142,43 +124,6 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
-    @Override
-    public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = !selection.isEmpty() && selection.size() == 1;
-        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        if (factory.isUserReadOnlyOnCurrentProject()) {
-            canWork = false;
-        }
-        if (canWork) {
-            Object o = selection.getFirstElement();
-            RepositoryNode node = (RepositoryNode) o;
-            switch (node.getType()) {
-            case SIMPLE_FOLDER:
-            case SYSTEM_FOLDER:
-                ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
-                if (nodeType != CamelRepositoryNodeType.repositoryRoutesType) {
-                    canWork = false;
-                }
-                if (node.getObject() != null && node.getObject().isDeleted()) {
-                    canWork = false;
-                }
-                break;
-            default:
-                canWork = false;
-            }
-            if (canWork && !ProjectManager.getInstance().isInCurrentMainProject(node)) {
-                canWork = false;
-            }
-        }
-        setEnabled(canWork);
-    }
-
-    /*
      * only use for creating a process in the intro by url
      */
     @Override
@@ -193,45 +138,9 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         }
     }
 
-    private void selectRootObject(Properties params) {
-
-        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (null == workbenchWindow) {
-            return;
-        }
-        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-        if (null == workbenchPage) {
-            return;
-        }
-
-        IPerspectiveDescriptor currentPerspective = workbenchPage.getPerspective();
-        if (!IBrandingConfiguration.PERSPECTIVE_CAMEL_ID.equals(currentPerspective.getId())) {
-            // show Mediation perspective
-            try {
-                workbenchWindow.getWorkbench().showPerspective(IBrandingConfiguration.PERSPECTIVE_CAMEL_ID, workbenchWindow);
-                workbenchPage = workbenchWindow.getActivePage();
-            } catch (WorkbenchException e) {
-                ExceptionHandler.process(e);
-                return;
-            }
-        }
-
-        IRepositoryView view = RepositoryManagerHelper.getRepositoryView();
-        if (view != null) {
-            Object type = params.get("type");
-            if (CamelRepositoryNodeType.repositoryRoutesType.name().equals(type)) {
-                RepositoryNode processNode = ((ProjectRepositoryNode) view.getRoot())
-                        .getRootRepositoryNode(CamelRepositoryNodeType.repositoryRoutesType);
-
-                if (processNode != null) {
-                    setWorkbenchPart(view);
-                    final StructuredViewer viewer = view.getViewer();
-                    if (viewer instanceof TreeViewer) {
-                        ((TreeViewer) viewer).expandToLevel(processNode, 1);
-                    }
-                    viewer.setSelection(new StructuredSelection(processNode));
-                }
-            }
-        }
+    @Override
+    protected String getPerspectiveId() {
+        return IBrandingConfiguration.PERSPECTIVE_CAMEL_ID;
     }
+
 }
