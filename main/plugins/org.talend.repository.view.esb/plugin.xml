@@ -9,8 +9,7 @@
             icon="icons/routes.png"
             id="org.talend.repository.viewer.esb.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="%NavigatorContent.routes"
-            priority="higher" >
+            name="%NavigatorContent.routes" >
          <triggerPoints>
             <or>
                <adapt
@@ -70,8 +69,7 @@
             icon="icons/routelet.png"
             id="org.talend.repository.viewer.esb.routelet"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="Routelet"
-            priority="high" >
+            name="Routelet" >
          <triggerPoints>
             <or>
                <adapt

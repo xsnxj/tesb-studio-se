@@ -39,6 +39,7 @@
             isResouce="true"
             key="Routelet"
             label="Routelets"
+            ordinal="2"
             products="CAMEL"
             type="ROUTELET" />
     </extension>
