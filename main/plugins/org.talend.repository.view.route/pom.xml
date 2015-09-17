@@ -7,6 +7,6 @@
     <version>6.1.0-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
-  <artifactId>org.talend.repository.view.esb.nl</artifactId>
+  <artifactId>org.talend.repository.view.route</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>

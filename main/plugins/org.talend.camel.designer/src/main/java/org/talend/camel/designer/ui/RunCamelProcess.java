@@ -39,7 +39,7 @@ public class RunCamelProcess extends AContextualAction {
         super();
         this.setText(LABEL);
         this.setToolTipText(LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
     }
 
     /*

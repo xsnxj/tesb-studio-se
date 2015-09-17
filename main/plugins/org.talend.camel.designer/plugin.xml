@@ -80,7 +80,7 @@
             class="org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor"
             contributorClass="org.talend.designer.core.ui.MultiPageEditorContributor"
             default="false"
-            icon="icons/empty.gif"
+            icon="icons/routes_editor.png"
             id="org.talend.camel.designer.core.ui.CamelMultiPageTalendEditor"
             name="Mediation">
       </editor>
@@ -89,7 +89,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.talend.camel.designer.CamelPerspectiveFactory"
-            icon="icons/routes_icon.png"
+            icon="icons/routes.png"
             id="org.talend.camel.perspective"
             name="Mediation">
       </perspective>
@@ -111,12 +111,7 @@
          -->
       </perspectiveExtension>
    </extension>
-   <extension
-         point="org.talend.core.repository.repository_content">
-      <RepositoryContent
-            class="org.talend.camel.designer.CamelRepositoryContentHandler">
-      </RepositoryContent>
-   </extension>
+
    <extension
          point="org.talend.core.talendperspectives">
       <TalendPerspective
@@ -317,7 +312,7 @@
                  allowMultiple="false"
                  category="org.talend.core.root"
                  class="org.talend.camel.designer.ui.view.SpringConfigurationView"
-                 icon="icons/route-resource.png"
+                 icon="icons/resource.png"
                  id="org.talend.camel.designer.spring.view"
                  name="%spring.view.name"
                  restorable="true">

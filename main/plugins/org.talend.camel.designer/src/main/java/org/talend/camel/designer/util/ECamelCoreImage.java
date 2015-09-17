@@ -18,17 +18,13 @@ import org.talend.commons.ui.runtime.image.IImage;
  * DOC guanglong.du class global comment. Detailled comment
  */
 public enum ECamelCoreImage implements IImage {
-    ROUTE_RESOURCE_ICON("/icons/route-resource.png"), //$NON-NLS-1$
+    ROUTE_ICON("/icons/routes.png"), //$NON-NLS-1$
+    ROUTELET_ICON("/icons/routelet.png"), //$NON-NLS-1$
+    RESOURCE_ICON("/icons/resource.png"), //$NON-NLS-1$
     BEAN_ICON("/icons/bean.gif"), //$NON-NLS-1$
-    ROUTES_ICON("/icons/routes_icon.png"), //$NON-NLS-1$
-    ROUTES_ICON_EDITOR("/icons/routes_icon_editor.png"), //$NON-NLS-1$
-    BEAN_WIZ("/icons/bean_wiz.png");
+    ROUTE_EDITOR_ICON("/icons/routes_editor.png"); //$NON-NLS-1$
 
     private String path;
-
-    ECamelCoreImage() {
-        this.path = "/icons/unknown.gif"; //$NON-NLS-1$
-    }
 
     ECamelCoreImage(String path) {
         this.path = path;

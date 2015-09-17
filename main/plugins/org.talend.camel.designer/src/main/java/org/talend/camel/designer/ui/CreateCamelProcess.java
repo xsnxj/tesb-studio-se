@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -75,8 +74,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         super();
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
-        Image folderImg = ImageProvider.getImage(ECamelCoreImage.ROUTES_ICON);
-        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(folderImg));
+        this.setImageDescriptor(OverlayImageProvider.getImageWithNew(ImageProvider.getImage(ECamelCoreImage.ROUTE_ICON)));
     }
 
     public CreateCamelProcess(boolean isToolbar) {

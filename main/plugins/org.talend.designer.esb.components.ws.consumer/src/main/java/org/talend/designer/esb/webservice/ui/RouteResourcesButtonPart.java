@@ -39,7 +39,7 @@ public class RouteResourcesButtonPart extends AbstractButtonPart<RouteResourceSe
 
 	@Override
 	protected Image getImage() {
-		return getImageFromBundle("org.talend.designer.camel.resource", "icons/route-resource.png");
+		return getImageFromBundle("org.talend.designer.camel.resource", "icons/resource.png");
 	}
 
 	@Override

@@ -77,7 +77,7 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
         super();
         this.setText(EDIT_LABEL);
         this.setToolTipText(EDIT_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
     }
 
     /*

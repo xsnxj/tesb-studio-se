@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.camel.designer;
+package org.talend.repository.view.esb.viewer.content;
 
 import java.util.List;
 
@@ -198,11 +198,13 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     @Override
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == CamelRepositoryNodeType.repositoryRoutesType) {
-            return ECamelCoreImage.ROUTES_ICON;
+            return ECamelCoreImage.ROUTE_ICON;
+        } else if (type == CamelRepositoryNodeType.repositoryRouteletType) {
+            return ECamelCoreImage.ROUTELET_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             return ECamelCoreImage.BEAN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
-            return ECamelCoreImage.ROUTE_RESOURCE_ICON;
+            return ECamelCoreImage.RESOURCE_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryDocumentationsType) {
         	return ECoreImage.FOLDER_OPEN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
@@ -221,6 +223,8 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         Item item = null;
         if (type == CamelRepositoryNodeType.repositoryRoutesType) {
             item = CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
+        } else if (type == CamelRepositoryNodeType.repositoryRouteletType) {
+            item = CamelPropertiesFactory.eINSTANCE.createRouteletProcessItem();
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {
             item = CamelPropertiesFactory.eINSTANCE.createBeanItem();
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
@@ -234,15 +238,14 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     public ERepositoryObjectType getRepositoryObjectType(Item item) {
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
             return CamelRepositoryNodeType.repositoryRoutesType;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
+            return CamelRepositoryNodeType.repositoryRouteletType;
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
             return CamelRepositoryNodeType.repositoryBeansType;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             return CamelRepositoryNodeType.repositoryRouteResourceType;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
-        	return CamelRepositoryNodeType.repositoryDocumentationType;
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
+            return CamelRepositoryNodeType.repositoryDocumentationType;
         }
         return null;
     }

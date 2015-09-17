@@ -6,7 +6,6 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.talend.repository.view.esb.viewer.content.RoutesContentProvider"
-            icon="icons/routes.png"
             id="org.talend.repository.viewer.esb.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="%NavigatorContent.routes" >
@@ -66,7 +65,6 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.talend.repository.view.esb.viewer.content.RouteletContentProvider"
-            icon="icons/routelet.png"
             id="org.talend.repository.viewer.esb.routelet"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Routelet" >
@@ -126,7 +124,6 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.talend.repository.view.esb.viewer.content.BeansContentProvider"
-            icon="icons/beans.gif"
             id="org.talend.repository.viewer.esb.beans"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="%NavigatorContent.beans" >
@@ -183,7 +180,6 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.talend.repository.view.esb.viewer.content.RouteResourceContentProvider"
-            icon="icons/resource.gif"
             id="org.talend.repository.viewer.esb.route_resource"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
             name="Route Resources" >
@@ -251,6 +247,10 @@
             type="org.talend.repository.model.RepositoryNode">
       </propertyTester>
    </extension>
+
+    <extension point="org.talend.core.repository.repository_content">
+        <RepositoryContent class="org.talend.repository.view.esb.viewer.content.CamelRepositoryContentHandler" />
+    </extension>
 
    <extension
          point="org.eclipse.ui.navigator.viewer">

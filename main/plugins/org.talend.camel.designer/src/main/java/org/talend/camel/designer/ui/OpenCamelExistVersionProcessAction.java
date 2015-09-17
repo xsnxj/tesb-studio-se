@@ -58,7 +58,7 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
 
         this.setText(ACTION_LABEL);
         this.setToolTipText(ACTION_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTES_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
     }
 
     @Override

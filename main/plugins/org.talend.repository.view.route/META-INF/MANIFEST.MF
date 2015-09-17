@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ESB
-Bundle-SymbolicName: org.talend.repository.view.esb;singleton:=true
+Bundle-SymbolicName: org.talend.repository.view.route;singleton:=true
 Bundle-Version: 6.1.0.qualifier
 Bundle-Vendor: .Talend.
 Bundle-Localization: plugin
@@ -9,5 +9,6 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.core.runtime,
  org.talend.core.repository,
  org.talend.repository.view,
- org.talend.camel.model
+ org.talend.camel.model,
+ org.talend.camel.designer
 Bundle-ActivationPolicy: lazy

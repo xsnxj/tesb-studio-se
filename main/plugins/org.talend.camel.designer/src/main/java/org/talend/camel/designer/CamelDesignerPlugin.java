@@ -1,5 +1,7 @@
 package org.talend.camel.designer;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
@@ -13,8 +15,7 @@ import org.osgi.framework.BundleContext;
  */
 public class CamelDesignerPlugin extends AbstractUIPlugin {
 
-    // The plug-in ID
-    public static final String PLUGIN_ID = "org.talend.camel.designer"; //$NON-NLS-1$
+    public static final String BEAN_WIZ_ICON = "icons/bean_wiz.png"; //$NON-NLS-1$
 
     public static final String DEPEN_ICON = "icons/dependencies/dependencies.gif"; //$NON-NLS-1$
     public static final String IMPORT_PKG_ICON = "icons/dependencies/importPackage.gif"; //$NON-NLS-1$
@@ -30,27 +31,11 @@ public class CamelDesignerPlugin extends AbstractUIPlugin {
     // The shared instance
     private static CamelDesignerPlugin plugin;
 
-    /**
-     * The constructor
-     */
-    public CamelDesignerPlugin() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-     */
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-     */
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
@@ -65,46 +50,45 @@ public class CamelDesignerPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
+    @Override
+    protected void initializeImageRegistry(ImageRegistry reg) {
+        super.initializeImageRegistry(reg);
+        reg.put(BEAN_WIZ_ICON, createImageDescriptor(BEAN_WIZ_ICON).createImage());
+
+        reg.put(DEPEN_ICON, createImageDescriptor(DEPEN_ICON).createImage());
+        reg.put(BUNDLE_CP_ICON, createImageDescriptor(BUNDLE_CP_ICON).createImage());
+        reg.put(REQUIRE_BD_ICON, createImageDescriptor(REQUIRE_BD_ICON).createImage());
+        reg.put(IMPORT_PKG_ICON, createImageDescriptor(IMPORT_PKG_ICON).createImage());
+        reg.put(REFRESH_ICON, createImageDescriptor(REFRESH_ICON).createImage());
+        reg.put(GRAY_REM_ICON, createImageDescriptor(GRAY_REM_ICON).createImage());
+        reg.put(HIGHLIGHT_REM_ICON, createImageDescriptor(HIGHLIGHT_REM_ICON).createImage());
+        reg.put(OPTIONAL_OVERLAY_ICON, createImageDescriptor(OPTIONAL_OVERLAY_ICON).createImage());
+        reg.put(IMPORT_PACKAGE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(IMPORT_PKG_ICON)));
+        reg.put(REQUIRE_BUNDLE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(REQUIRE_BD_ICON)));
+    }
+
     /**
      * Returns an image descriptor for the image file at the given plug-in relative path
      * 
      * @param path the path
      * @return the image descriptor
      */
-    public static ImageDescriptor getImageDescriptor(String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
-
-    @Override
-    protected void initializeImageRegistry(ImageRegistry reg) {
-        super.initializeImageRegistry(reg);
-        reg.put(DEPEN_ICON, getImageDescriptor(DEPEN_ICON).createImage());
-        reg.put(BUNDLE_CP_ICON, getImageDescriptor(BUNDLE_CP_ICON)
-                .createImage());
-        reg.put(REQUIRE_BD_ICON, getImageDescriptor(REQUIRE_BD_ICON)
-                .createImage());
-        reg.put(IMPORT_PKG_ICON, getImageDescriptor(IMPORT_PKG_ICON)
-                .createImage());
-        reg.put(REFRESH_ICON, getImageDescriptor(REFRESH_ICON)
-                .createImage());
-        reg.put(GRAY_REM_ICON, getImageDescriptor(GRAY_REM_ICON)
-                .createImage());
-        reg.put(HIGHLIGHT_REM_ICON, getImageDescriptor(HIGHLIGHT_REM_ICON)
-                .createImage());
-        reg.put(OPTIONAL_OVERLAY_ICON, getImageDescriptor(OPTIONAL_OVERLAY_ICON)
-                .createImage());
-        reg.put(IMPORT_PACKAGE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(IMPORT_PKG_ICON)));
-        reg.put(REQUIRE_BUNDLE_OVERLAY_ICON, getOptionalOverlayIcon(getImage(REQUIRE_BD_ICON)));
+    private static ImageDescriptor createImageDescriptor(String path) {
+        return ImageDescriptor.createFromURL(FileLocator.find(getDefault().getBundle(), new Path(path), null));
     }
 
     private static Image getOptionalOverlayIcon(Image base) {
-        DecorationOverlayIcon decorationOverlayIcon = new DecorationOverlayIcon(
-                base, getImageDescriptor(OPTIONAL_OVERLAY_ICON),
-                IDecoration.TOP_LEFT);
+        DecorationOverlayIcon decorationOverlayIcon = new DecorationOverlayIcon(base,
+            createImageDescriptor(OPTIONAL_OVERLAY_ICON), IDecoration.TOP_LEFT);
         return decorationOverlayIcon.createImage();
     }
 
     public static Image getImage(String path) {
         return getDefault().getImageRegistry().get(path);
     }
+
+    public static ImageDescriptor getImageDescriptor(String path) {
+        return getDefault().getImageRegistry().getDescriptor(path);
+    }
+
 }
