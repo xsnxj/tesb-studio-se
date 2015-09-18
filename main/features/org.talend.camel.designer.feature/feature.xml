@@ -92,7 +92,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.talend.repository.view.esb.nl"
+         id="org.talend.repository.view.route.nl"
          download-size="0"
          install-size="0"
          version="0.0.0"
