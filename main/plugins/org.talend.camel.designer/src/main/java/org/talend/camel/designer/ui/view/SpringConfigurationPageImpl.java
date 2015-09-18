@@ -1,7 +1,6 @@
 package org.talend.camel.designer.ui.view;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
@@ -14,7 +13,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.Page;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.CamelDesignerMessages;
@@ -22,16 +20,16 @@ import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.camel.designer.util.CamelSpringUtil;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 
-public class SpringConfigurationPageImpl extends Page implements
-		ISpringConfigurationPage, IPageBookViewPage {
+public class SpringConfigurationPageImpl extends Page {
 
-	private RouteProcess process;
-	private Composite composite;
-	private AbstractTalendEditor editor;
-	private StyledText springText;
+    private final CommandStack commandStack;
+    private final RouteProcess process;
+
+    private Composite composite;
+    private StyledText springText;
 
 	public SpringConfigurationPageImpl(AbstractTalendEditor abstractTalendEditor) {
-		this.editor = abstractTalendEditor;
+		this.commandStack = abstractTalendEditor.getCommandStack();
 		this.process = (RouteProcess) abstractTalendEditor.getProcess();
 	}
 
@@ -72,7 +70,7 @@ public class SpringConfigurationPageImpl extends Page implements
 
 		springText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				editor.getCommandStack().execute(
+				commandStack.execute(
 						new ChangeSpringConfigurationCommand(
 								((StyledText) e.widget).getText(), process));
 			}
@@ -83,26 +81,9 @@ public class SpringConfigurationPageImpl extends Page implements
 		return composite;
 	}
 
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-
-	}
-
-	public ISelection getSelection() {
-		return null;
-	}
-
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-
-	}
-
-	public void setSelection(ISelection selection) {
-
-	}
-
 	@Override
-	public void setFocus() {
-
-	}
+    public void setFocus() {
+        springText.setFocus();
+    }
 
 }

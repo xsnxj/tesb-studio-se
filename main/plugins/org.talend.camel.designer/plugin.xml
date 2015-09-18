@@ -323,16 +323,6 @@
            </view>
         </extension>
         <extension
-              point="org.eclipse.core.runtime.adapters">
-           <factory
-                 adaptableType="org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor"
-                 class="org.talend.camel.designer.ui.view.SpringViewAdapterFactory">
-              <adapter
-                    type="org.talend.camel.designer.ui.view.ISpringConfigurationPage">
-              </adapter>
-           </factory>
-        </extension>
-        <extension
               point="org.talend.core.repository.repoViewLinker">
            <linker
                  class="org.talend.camel.designer.ui.view.link.CamelProcessRepoViewLinker"
