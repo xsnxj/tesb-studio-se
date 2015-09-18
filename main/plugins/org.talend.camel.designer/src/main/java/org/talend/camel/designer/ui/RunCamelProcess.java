@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.designer.core.debug.JobLaunchShortcutManager;
@@ -39,7 +40,7 @@ public class RunCamelProcess extends AContextualAction {
         super();
         this.setText(LABEL);
         this.setToolTipText(LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
     }
 
     /*

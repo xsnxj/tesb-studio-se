@@ -513,7 +513,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__PROPERTY = PropertiesPackage.JOBLET_PROCESS_ITEM__PROPERTY;
+	int ROUTELET_PROCESS_ITEM__PROPERTY = PropertiesPackage.PROCESS_ITEM__PROPERTY;
 
 				/**
 	 * The feature id for the '<em><b>State</b></em>' reference.
@@ -522,7 +522,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__STATE = PropertiesPackage.JOBLET_PROCESS_ITEM__STATE;
+	int ROUTELET_PROCESS_ITEM__STATE = PropertiesPackage.PROCESS_ITEM__STATE;
 
 				/**
 	 * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -531,7 +531,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__PARENT = PropertiesPackage.JOBLET_PROCESS_ITEM__PARENT;
+	int ROUTELET_PROCESS_ITEM__PARENT = PropertiesPackage.PROCESS_ITEM__PARENT;
 
 				/**
 	 * The feature id for the '<em><b>Reference Resources</b></em>' reference list.
@@ -540,7 +540,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__REFERENCE_RESOURCES = PropertiesPackage.JOBLET_PROCESS_ITEM__REFERENCE_RESOURCES;
+	int ROUTELET_PROCESS_ITEM__REFERENCE_RESOURCES = PropertiesPackage.PROCESS_ITEM__REFERENCE_RESOURCES;
 
 				/**
 	 * The feature id for the '<em><b>File Extension</b></em>' attribute.
@@ -549,7 +549,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__FILE_EXTENSION = PropertiesPackage.JOBLET_PROCESS_ITEM__FILE_EXTENSION;
+	int ROUTELET_PROCESS_ITEM__FILE_EXTENSION = PropertiesPackage.PROCESS_ITEM__FILE_EXTENSION;
 
 				/**
 	 * The feature id for the '<em><b>Need Version</b></em>' attribute.
@@ -558,25 +558,16 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__NEED_VERSION = PropertiesPackage.JOBLET_PROCESS_ITEM__NEED_VERSION;
+	int ROUTELET_PROCESS_ITEM__NEED_VERSION = PropertiesPackage.PROCESS_ITEM__NEED_VERSION;
 
 				/**
-	 * The feature id for the '<em><b>Joblet Process</b></em>' reference.
+	 * The feature id for the '<em><b>Process</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM__JOBLET_PROCESS = PropertiesPackage.JOBLET_PROCESS_ITEM__JOBLET_PROCESS;
-
-				/**
-	 * The feature id for the '<em><b>Icon</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ROUTELET_PROCESS_ITEM__ICON = PropertiesPackage.JOBLET_PROCESS_ITEM__ICON;
+	int ROUTELET_PROCESS_ITEM__PROCESS = PropertiesPackage.PROCESS_ITEM__PROCESS;
 
 				/**
 	 * The number of structural features of the '<em>Routelet Process Item</em>' class.
@@ -585,7 +576,7 @@ public interface CamelPropertiesPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ROUTELET_PROCESS_ITEM_FEATURE_COUNT = PropertiesPackage.JOBLET_PROCESS_ITEM_FEATURE_COUNT + 0;
+	int ROUTELET_PROCESS_ITEM_FEATURE_COUNT = PropertiesPackage.PROCESS_ITEM_FEATURE_COUNT + 0;
 
 				/**
 	 * Returns the meta object for class '{@link org.talend.camel.core.model.camelProperties.BeanItem <em>Bean Item</em>}'.

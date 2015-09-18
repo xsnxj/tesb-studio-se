@@ -248,10 +248,6 @@
       </propertyTester>
    </extension>
 
-    <extension point="org.talend.core.repository.repository_content">
-        <RepositoryContent class="org.talend.repository.view.route.viewer.content.CamelRepositoryContentHandler" />
-    </extension>
-
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewerContentBinding

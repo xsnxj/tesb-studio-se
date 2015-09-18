@@ -3,6 +3,7 @@
 package org.talend.camel.core.model.camelProperties;
 
 import org.talend.core.model.properties.JobletProcessItem;
+import org.talend.core.model.properties.ProcessItem;
 
 /**
  * <!-- begin-user-doc -->
@@ -14,5 +15,5 @@ import org.talend.core.model.properties.JobletProcessItem;
  * @model
  * @generated
  */
-public interface RouteletProcessItem extends JobletProcessItem {
+public interface RouteletProcessItem extends ProcessItem {
 } // RouteletProcessItem

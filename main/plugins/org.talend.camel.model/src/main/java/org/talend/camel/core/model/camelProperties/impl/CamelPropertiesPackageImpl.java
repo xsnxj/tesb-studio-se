@@ -218,7 +218,7 @@ public class CamelPropertiesPackageImpl extends EPackageImpl implements CamelPro
 		camelProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getProcessItem());
 		routeResourceItemEClass.getESuperTypes().add(thePropertiesPackage.getFileItem());
 		routeDocumentItemEClass.getESuperTypes().add(thePropertiesPackage.getDocumentationItem());
-		routeletProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getJobletProcessItem());
+		routeletProcessItemEClass.getESuperTypes().add(thePropertiesPackage.getProcessItem());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(beanItemEClass, BeanItem.class, "BeanItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

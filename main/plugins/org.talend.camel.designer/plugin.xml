@@ -9,6 +9,10 @@
       </Service>
    </extension>
 
+    <extension point="org.talend.core.repository.repository_content">
+        <RepositoryContent class="org.talend.camel.designer.CamelRepositoryContentHandler" />
+    </extension>
+
    <extension
                point="org.talend.core.repositoryContextualsActions">
             <Action

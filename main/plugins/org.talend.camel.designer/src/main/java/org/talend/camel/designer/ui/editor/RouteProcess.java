@@ -55,12 +55,16 @@ public class RouteProcess extends Process {
      * used to load spring content when opening Editor
      */
     private final void loadSpringContent() {
-        springContent = ((CamelProcessItem) getProperty().getItem()).getSpringContent();
+        if (getProperty().getItem() instanceof CamelProcessItem) {
+            springContent = ((CamelProcessItem) getProperty().getItem()).getSpringContent();
+        }
     }
 
     @Override
     public ProcessType saveXmlFile() throws IOException {
-        ((CamelProcessItem) getProperty().getItem()).setSpringContent(springContent);
+        if (getProperty().getItem() instanceof CamelProcessItem) {
+            ((CamelProcessItem) getProperty().getItem()).setSpringContent(springContent);
+        }
         return super.saveXmlFile();
     }
     // END ADDED for TESB-7887

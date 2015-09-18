@@ -18,7 +18,6 @@ import org.talend.commons.ui.runtime.image.IImage;
  * DOC guanglong.du class global comment. Detailled comment
  */
 public enum ECamelCoreImage implements IImage {
-    ROUTE_ICON("/icons/routes.png"), //$NON-NLS-1$
     ROUTELET_ICON("/icons/routelet.png"), //$NON-NLS-1$
     RESOURCE_ICON("/icons/resource.png"), //$NON-NLS-1$
     BEAN_ICON("/icons/bean.gif"), //$NON-NLS-1$

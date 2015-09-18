@@ -30,12 +30,13 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.wizards.CamelNewProcessWizard;
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
@@ -61,7 +62,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         super();
         this.setText(CREATE_LABEL);
         this.setToolTipText(CREATE_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
     }
 
     public CreateCamelProcess(boolean isToolbar) {
@@ -101,20 +102,8 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
             if (processWizard.getProcess() == null) {
                 return;
             }
-
-            CamelProcessEditorInput fileEditorInput;
             try {
-                // Set readonly to false since created job will always be editable.
-                fileEditorInput = new CamelProcessEditorInput(processWizard.getProcess(), false, true, false);
-
-                IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(fileEditorInput.getItem()
-                        .getProperty().getId(), false);
-                fileEditorInput.setRepositoryNode(repositoryNode);
-
-                IWorkbenchPage page = getActivePage();
-                page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
-                // // use project setting true
-                // ProjectSettingManager.defaultUseProjectSetting(fileEditorInput.getLoadedProcess());
+                openEditor(processWizard.getProcess());
             } catch (PartInitException e) {
                 ExceptionHandler.process(e);
             } catch (PersistenceException e) {
@@ -123,6 +112,19 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         }
     }
 
+    protected final void openEditor(ProcessItem processItem) throws PersistenceException, PartInitException {
+        // Set readonly to false since created job will always be editable.
+        CamelProcessEditorInput fileEditorInput = new CamelProcessEditorInput(processItem, false, true, false);
+
+        IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(fileEditorInput.getItem()
+                .getProperty().getId(), false);
+        fileEditorInput.setRepositoryNode(repositoryNode);
+
+        IWorkbenchPage page = getActivePage();
+        page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
+        // // use project setting true
+        // ProjectSettingManager.defaultUseProjectSetting(fileEditorInput.getLoadedProcess());
+    }
     /*
      * only use for creating a process in the intro by url
      */

@@ -33,11 +33,11 @@ import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -69,15 +69,13 @@ public class EditCamelProcess extends AbstractProcessAction implements IIntroAct
 
     private final String OPEN_LABEL = Messages.getString("EditProcess.openJob"); //$NON-NLS-1$
 
-    private static final String DBPROJECT_LABEL = "teneo";
-
     private Properties params;
 
     public EditCamelProcess() {
         super();
         this.setText(EDIT_LABEL);
         this.setToolTipText(EDIT_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
     }
 
     /*

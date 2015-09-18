@@ -10,15 +10,13 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.camel.designer.ui.wizards;
+package org.talend.repository.view.actions.wizards;
 
 import org.eclipse.core.runtime.IPath;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
-import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.util.CamelSpringUtil;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
+import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
-import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
@@ -26,17 +24,17 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.designer.core.ui.wizards.NewProcessWizard;
 import org.talend.designer.core.ui.wizards.NewProcessWizardPage;
 
-public class CamelNewProcessWizard extends NewProcessWizard {
+public class NewRouteletWizard extends NewProcessWizard {
 
-    public CamelNewProcessWizard(IPath path) {
+    public NewRouteletWizard(IPath path) {
         super(path);
 
-        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
+        setDefaultPageImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTELET_ICON));
     }
 
     @Override
     protected ProcessItem createNewProcessItem() {
-        return CamelPropertiesFactory.eINSTANCE.createCamelProcessItem();
+        return CamelPropertiesFactory.eINSTANCE.createRouteletProcessItem();
     }
 
     @Override
@@ -44,23 +42,16 @@ public class CamelNewProcessWizard extends NewProcessWizard {
         final NewProcessWizardPage page = new NewProcessWizardPage(property, destinationPath) {
             @Override
             public ERepositoryObjectType getRepositoryObjectType() {
-                return CamelRepositoryNodeType.repositoryRoutesType;
+                return CamelRepositoryNodeType.repositoryRouteletType;
             }
         };
-        page.setTitle(Messages.getString("NewProcessWizard.title")); //$NON-NLS-1$
-        page.setDescription(Messages.getString("NewProcessWizard.description")); //$NON-NLS-1$
+        page.setTitle("New Routelet");
+        page.setDescription("Add a Routelet in the repository");
         return page;
     }
 
     @Override
-    protected void createProcessItem() {
-        //ADDED for TESB-7887 By GangLiu
-        getProcess().setSpringContent(CamelSpringUtil.getDefaultContent(getProcess()));
-        super.createProcessItem();
-    }
-
-    @Override
-    public CamelProcessItem getProcess() {
-        return (CamelProcessItem) super.getProcess();
+    public RouteletProcessItem getProcess() {
+        return (RouteletProcessItem) super.getProcess();
     }
 }

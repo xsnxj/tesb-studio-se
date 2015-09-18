@@ -120,10 +120,6 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
 				return createDocumentationItemAdapter();
 			}
 			@Override
-			public Adapter caseJobletProcessItem(JobletProcessItem object) {
-				return createJobletProcessItemAdapter();
-			}
-			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -280,20 +276,6 @@ public class CamelPropertiesAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createDocumentationItemAdapter() {
-		return null;
-	}
-
-				/**
-	 * Creates a new adapter for an object of class '{@link org.talend.core.model.properties.JobletProcessItem <em>Joblet Process Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.talend.core.model.properties.JobletProcessItem
-	 * @generated
-	 */
-	public Adapter createJobletProcessItemAdapter() {
 		return null;
 	}
 

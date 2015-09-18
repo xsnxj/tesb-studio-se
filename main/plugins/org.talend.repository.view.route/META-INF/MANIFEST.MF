@@ -13,5 +13,6 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.camel.designer,
  org.talend.designer.core,
  org.eclipse.ui.intro,
- org.talend.core.ui
+ org.talend.core.ui,
+ org.talend.metadata.managment.ui
 Bundle-ActivationPolicy: lazy

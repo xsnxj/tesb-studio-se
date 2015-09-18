@@ -31,10 +31,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
-import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.CommonsPlugin;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
+import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.repository.RepositoryObject;
@@ -58,7 +58,7 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
 
         this.setText(ACTION_LABEL);
         this.setToolTipText(ACTION_LABEL);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECamelCoreImage.ROUTE_ICON));
+        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
     }
 
     @Override

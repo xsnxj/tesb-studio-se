@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.view.route.viewer.content;
+package org.talend.camel.designer;
 
 import java.util.List;
 
@@ -25,6 +25,7 @@ import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.ExceptionHandler;
@@ -34,6 +35,7 @@ import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Status;
 import org.talend.core.model.repository.AbstractRepositoryContentHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -90,7 +92,9 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     public Resource create(IProject project, Item item, int classifierID, IPath path) throws PersistenceException {
         ERepositoryObjectType type = null;
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
-            return create(project, (CamelProcessItem)item, path, CamelRepositoryNodeType.repositoryRoutesType);
+            return create(project, (ProcessItem) item, path, CamelRepositoryNodeType.repositoryRoutesType);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
+                return create(project, (ProcessItem) item, path, CamelRepositoryNodeType.repositoryRouteletType);
         } else if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
             type = CamelRepositoryNodeType.repositoryBeansType;
         } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
@@ -107,17 +111,22 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     @Override
     public Resource createScreenShotResource(IProject project, Item item, int classifierID, IPath path)
         throws PersistenceException {
-        if (!(item instanceof CamelProcessItem)) {
-            return null;
+        ERepositoryObjectType type = null;
+        if (item instanceof CamelProcessItem) {
+            type = CamelRepositoryNodeType.repositoryRoutesType;
+        } else if (item instanceof RouteletProcessItem) {
+            type = CamelRepositoryNodeType.repositoryRouteletType;
         }
-        Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path,
-            CamelRepositoryNodeType.repositoryRoutesType, false);
-        itemResource.getContents().addAll(((CamelProcessItem) item).getProcess().getScreenshots());
-
-        return itemResource;
+        if (null != type) {
+            Resource itemResource = xmiResourceManager.createScreenshotResource(project, item, path,
+                CamelRepositoryNodeType.repositoryRoutesType, false);
+            itemResource.getContents().addAll(((ProcessItem) item).getProcess().getScreenshots());
+            return itemResource;
+        }
+        return null;
     }
 
-    private Resource create(IProject project, CamelProcessItem item, IPath path, ERepositoryObjectType type)
+    private Resource create(IProject project, ProcessItem item, IPath path, ERepositoryObjectType type)
             throws PersistenceException {
         Resource itemResource = xmiResourceManager.createItemResource(project, item, path, type, false);
         itemResource.getContents().add(item.getProcess());
@@ -177,7 +186,7 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         }
         return itemResource;
     }
-    
+
     private Resource saveFile(FileItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
 
@@ -198,7 +207,7 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     @Override
     public IImage getIcon(ERepositoryObjectType type) {
         if (type == CamelRepositoryNodeType.repositoryRoutesType) {
-            return ECamelCoreImage.ROUTE_ICON;
+            return ECoreImage.ROUTES_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryRouteletType) {
             return ECamelCoreImage.ROUTELET_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryBeansType) {

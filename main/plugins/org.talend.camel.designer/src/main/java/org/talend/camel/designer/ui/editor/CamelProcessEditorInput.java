@@ -12,8 +12,8 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.core.ui.projectsetting.ProjectSettingManager;
@@ -23,16 +23,16 @@ import org.talend.designer.core.ui.projectsetting.ProjectSettingManager;
  */
 public class CamelProcessEditorInput extends JobEditorInput {
 
-    public CamelProcessEditorInput(CamelProcessItem item, boolean load, Boolean lastVersion, Boolean readonly)
+    public CamelProcessEditorInput(ProcessItem item, boolean load, Boolean lastVersion, Boolean readonly)
             throws PersistenceException {
         super(item, load, lastVersion, readonly);
     }
 
-    public CamelProcessEditorInput(CamelProcessItem processItem, boolean load) throws PersistenceException {
-        this(processItem, load, null, null);
-    }
+//    public CamelProcessEditorInput(CamelProcessItem processItem, boolean load) throws PersistenceException {
+//        this(processItem, load, null, null);
+//    }
 
-    public CamelProcessEditorInput(CamelProcessItem processItem, boolean load, Boolean lastVersion) throws PersistenceException {
+    public CamelProcessEditorInput(ProcessItem processItem, boolean load, Boolean lastVersion) throws PersistenceException {
         this(processItem, load, lastVersion, null);
     }
 
