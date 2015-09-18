@@ -19,12 +19,6 @@ import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 
-/**
- * DOC smallet class global comment. Detailled comment <br/>
- * 
- * $Id: EditProcess.java 52559 2010-12-13 04:14:06Z nrousseau $
- * 
- */
 public class EditRouteletProcess extends EditCamelProcess {
 
     private final String EDIT_LABEL = "Edit Routelet";

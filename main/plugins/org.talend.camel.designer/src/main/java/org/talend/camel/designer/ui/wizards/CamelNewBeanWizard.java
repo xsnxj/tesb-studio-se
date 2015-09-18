@@ -100,7 +100,7 @@ public class CamelNewBeanWizard extends Wizard {
     public void addPages() {
         mainPage = new CamelNewBeanWizardPage(property, path);
         addPage(mainPage);
-        setWindowTitle(Messages.getString("NewBeanWizard.title")); //$NON-NLS-1$
+        setWindowTitle(mainPage.getTitle());
         setDefaultPageImageDescriptor(CamelDesignerPlugin.getImageDescriptor(CamelDesignerPlugin.BEAN_WIZ_ICON));
     }
 
