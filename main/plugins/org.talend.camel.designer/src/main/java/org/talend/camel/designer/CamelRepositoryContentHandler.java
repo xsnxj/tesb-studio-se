@@ -63,7 +63,8 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
     
     @Override
     public boolean isProcess(Item item) {
-        if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
+        if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM
+            /*|| item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM*/) {
             return true;
         }
         return false;
@@ -94,7 +95,7 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
             return create(project, (ProcessItem) item, path, CamelRepositoryNodeType.repositoryRoutesType);
         } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
-                return create(project, (ProcessItem) item, path, CamelRepositoryNodeType.repositoryRouteletType);
+            return create(project, (ProcessItem) item, path, CamelRepositoryNodeType.repositoryRouteletType);
         } else if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
             type = CamelRepositoryNodeType.repositoryBeansType;
         } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
@@ -146,27 +147,21 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
      * @see org.talend.core.repository.IRepositoryContentHandler#save(org.talend.core.model.properties.Item)
      */
     public Resource save(Item item) throws PersistenceException {
-        Resource itemResource = null;
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
-            itemResource = saveRoute((CamelProcessItem) item);
-            return itemResource;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
-            itemResource = saveFile((BeanItem) item);
-            return itemResource;
-        }
-        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
-            itemResource = saveFile((RouteResourceItem) item);
-            return itemResource;
-        }
-        if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
-        	itemResource = saveFile((RouteDocumentItem)item);
-        	return itemResource;
+            return saveRoute((ProcessItem) item);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
+            return saveRoute((ProcessItem) item);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM) {
+            return saveFile((BeanItem) item);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
+            return saveFile((RouteResourceItem) item);
+        } else if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
+            return saveFile((RouteDocumentItem)item);
         }
         return null;
     }
 
-    private Resource saveRoute(CamelProcessItem item) {
+    private Resource saveRoute(ProcessItem item) {
         Resource itemResource = xmiResourceManager.getItemResource(item);
         itemResource.getContents().clear();
         itemResource.getContents().add(item.getProcess());
@@ -175,16 +170,16 @@ public class CamelRepositoryContentHandler extends AbstractRepositoryContentHand
 
     @Override
     public Resource saveScreenShots(Item item) throws PersistenceException {
-    	if(!(item instanceof CamelProcessItem)){
-    		return null;
-    	}
-        Resource itemResource = xmiResourceManager.getScreenshotResource(item, true, true);
-        EMap screenshots =  ((CamelProcessItem) item).getProcess().getScreenshots();
-        if (screenshots != null && !screenshots.isEmpty()) {
-            itemResource.getContents().clear();
-            itemResource.getContents().addAll(EcoreUtil.copyAll(screenshots));
+        if (item instanceof CamelProcessItem || item instanceof RouteletProcessItem) {
+            Resource itemResource = xmiResourceManager.getScreenshotResource(item, true, true);
+            EMap screenshots =  ((ProcessItem) item).getProcess().getScreenshots();
+            if (screenshots != null && !screenshots.isEmpty()) {
+                itemResource.getContents().clear();
+                itemResource.getContents().addAll(EcoreUtil.copyAll(screenshots));
+            }
+            return itemResource;
         }
-        return itemResource;
+        return null;
     }
 
     private Resource saveFile(FileItem item) {

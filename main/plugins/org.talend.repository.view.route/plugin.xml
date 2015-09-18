@@ -313,6 +313,11 @@
             class="org.talend.repository.view.actions.CreateRouteletProcess"
             id="org.talend.repository.view.actions.CreateRouteletProcess"
             level="10" />
+        <Action
+            class="org.talend.repository.view.actions.EditRouteletProcess"
+            id="org.talend.repository.view.actions.EditRouteletProcess"
+            isEditAction="true"
+            level="10" />
     </extension>
 
 </plugin>
