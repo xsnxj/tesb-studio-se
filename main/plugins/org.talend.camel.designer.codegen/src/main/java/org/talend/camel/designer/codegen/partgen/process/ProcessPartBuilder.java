@@ -49,7 +49,6 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 	public AbstractProcessPartBuilder appendContent() throws CodeGeneratorException {
 		appendTyped(ECamelTemplate.HEADER_ROUTE);
 		if (hasSubTrees()) {
-			appendTyped(ECamelTemplate.SUBPROCESS_HEADER_ROUTE, getFirstSubTree());
 			appendTyped(ECamelTemplate.CAMEL_HEADER);
 
 			for (NodesSubTree subTree : sortedFilteredSubTrees) {
@@ -57,8 +56,6 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 			}
 
 			appendTyped(ECamelTemplate.CAMEL_FOOTER);
-			// Close the last route in the CamelContext
-			appendTyped(ECamelTemplate.SUBPROCESS_FOOTER_ROUTE, getLastSubTree());
 		}
 
 		appendTyped(ECamelTemplate.FOOTER_ROUTE);
@@ -70,17 +67,17 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 		return subTrees != null && !subTrees.isEmpty();
 	}
 
-	private NodesSubTree getFirstSubTree() {
-		return subTrees.get(0);
-	}
+//	private NodesSubTree getFirstSubTree() {
+//		return subTrees.get(0);
+//	}
 
-	private NodesSubTree getLastSubTree() {
-		NodesSubTree lastSubTree = sortedFilteredSubTrees.get(sortedFilteredSubTrees.size() - 1);
-		if (lastSubTree == null) {
-			lastSubTree = getFirstSubTree();
-		}
-		return lastSubTree;
-	}
+//	private NodesSubTree getLastSubTree() {
+//		NodesSubTree lastSubTree = sortedFilteredSubTrees.get(sortedFilteredSubTrees.size() - 1);
+//		if (lastSubTree == null) {
+//			lastSubTree = getFirstSubTree();
+//		}
+//		return lastSubTree;
+//	}
 
 	private static boolean subTreePostpositive(INode subProcessStartNode) {
 		return NodeUtil.isMessagingFamilyStartNode(subProcessStartNode);

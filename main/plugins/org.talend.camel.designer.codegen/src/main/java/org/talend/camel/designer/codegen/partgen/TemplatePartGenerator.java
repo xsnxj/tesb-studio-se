@@ -31,11 +31,9 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 			return generateTypedComponentCode(template, wrapToVector(args));
 		}
 		case FOOTER_ROUTE:
-			return generateTypedComponentCode(template, wrapToVector(process, rootNodes));
+			return generateTypedComponentCode(template, wrapToVector(process, null != process.getSpringContent()));
 
 		case PROCESSINFO:
-		case SUBPROCESS_FOOTER_ROUTE:
-		case SUBPROCESS_HEADER_ROUTE:
 			return generateTypedComponentCode(template, params[0]);
 
 		case CLOSE_BLOCKS_CODE: {
