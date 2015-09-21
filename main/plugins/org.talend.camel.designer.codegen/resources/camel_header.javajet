@@ -943,7 +943,7 @@ if (isProvider) {
     						amq_pool_expiry_timeout = amq_pool_expiry_timeout.substring(0, amq_pool_expiry_timeout.length() - 1);
     					}
 %>
-        				org.apache.activemq.pool.PooledConnectionFactory pooledConnectionFactory_<%=node.getUniqueName()%> 
+        				org.apache.activemq.pool.PooledConnectionFactory pooledConnectionFactory_<%=cid%> 
         					= new org.apache.activemq.pool.PooledConnectionFactory();
         				pooledConnectionFactory_<%=cid%>.setConnectionFactory(jmsConnectionFactory_<%=cid%>);
         				pooledConnectionFactory_<%=cid%>.setExpiryTimeout(<%=amq_pool_expiry_timeout%>L);
@@ -1002,9 +1002,9 @@ if (isProvider) {
 <%					
 					}else{
 %>
-					org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter connectionFactoryAdapter<%=node.getUniqueName()%> 
+					org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter connectionFactoryAdapter<%=cid%> 
 							= new org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter();
-       				connectionFactoryAdapter<%=node.getUniqueName()%>.setUsername(<%=username%>);
+       				connectionFactoryAdapter<%=cid%>.setUsername(<%=username%>);
        				
                     <%
                     String passwordFieldName = "__WMQ_PASSWORD__";
@@ -1012,11 +1012,11 @@ if (isProvider) {
                     
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
                            				
-      				connectionFactoryAdapter<%=node.getUniqueName()%>.setPassword(decryptedPassword_<%=cid%>);
-       				connectionFactoryAdapter<%=node.getUniqueName()%>.setTargetConnectionFactory(jmsConnectionFactory);
+      				connectionFactoryAdapter<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
+       				connectionFactoryAdapter<%=cid%>.setTargetConnectionFactory(jmsConnectionFactory);
        
 					camelContext.addComponent(<%=name%>,
-						org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=node.getUniqueName()%>));
+						org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
 <%						
 					}					
 %>
@@ -1593,14 +1593,13 @@ if (isProvider) {
 %>
 			org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
 			    (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+<%=executionContextVariable%>+"&propagateHeader=<%=propagateHeader%>");
-<%			
+<%
 			} else {
 %>
 			org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
 			    (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
-<%			
-			}			
-						
+<%
+			}
 		}
 		int contextParamsSize = contextParams.size();
 		if(contextParamsSize > 0){
