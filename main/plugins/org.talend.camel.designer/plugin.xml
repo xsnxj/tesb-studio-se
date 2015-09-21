@@ -372,7 +372,7 @@
                     class="org.talend.camel.designer.ui.view.handler.RouteImportHandler">
                  <parameter
                        name="type"
-                       value="ROUTES">
+                       value="ROUTE">
                  </parameter>
               </importItemsHandler>
            </importItemsProvider>
@@ -401,7 +401,7 @@
            <RepositorySupportType
                  name="Supported Type">
               <RepositoryType
-                    type="ROUTES">
+                    type="ROUTE">
               </RepositoryType>
            </RepositorySupportType>
         </extension>
