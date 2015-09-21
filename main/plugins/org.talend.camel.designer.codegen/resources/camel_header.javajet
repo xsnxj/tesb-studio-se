@@ -291,7 +291,7 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
 				authorizationPolicy.setAuthorizationType(type);
 				authorizationPolicy.setUserName(username);
 				authorizationPolicy.setPassword(password);
-				cxfEndpoint.getProperties(true).put(org.apache.cxf.configuration.security.AuthorizationPolicy.class.getName(), authorizationPolicy));
+				cxfEndpoint.setProperties(java.util.Collections.<String, Object>singletonMap(org.apache.cxf.configuration.security.AuthorizationPolicy.class.getName(), authorizationPolicy));
 			}
 <%
 			}
@@ -310,7 +310,7 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
 			private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
 				org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 				validator.setContextName("karaf");
-				cxfEndpoint.getProperties(true).put(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator));
+				cxfEndpoint.setProperties(java.util.Collections.<String, Object>singletonMap(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator));
 				cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policyProvider.getUsernamePolicy(cxfEndpoint.getBus())));
 			}
 <%
