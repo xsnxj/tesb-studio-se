@@ -234,7 +234,7 @@
 					if (!isProvider&&token!=null &&
 							(org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])
 									|| org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_DIGEST.equals(token[0]))) {
-						addHttpAuthConsumer(cxfEndpoint, isProvider, token[0], token[1], token[2]);
+						addHttpAuthConsumer(cxfEndpoint, token[0], token[1], token[2]);
 					}
 <%
 				}
