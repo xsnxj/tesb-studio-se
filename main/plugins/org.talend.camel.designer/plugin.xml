@@ -405,4 +405,23 @@
               </RepositoryType>
            </RepositorySupportType>
         </extension>
+
+    <extension point="org.talend.core.component_definition">
+        <ComponentDefinition
+            class="org.talend.camel.designer.ui.routelet.RouteletComponent"
+            pluginId="org.talend.camel.designer">
+        </ComponentDefinition>
+    </extension>
+
+    <extension point="org.talend.core.external_component">
+        <ExternalComponent class="org.talend.camel.designer.ui.routelet.RouteletExternalNode" />
+    </extension>
+
+    <extension point="org.talend.designer.core.process_provider">
+        <ProcessProvider
+            class="org.talend.camel.designer.ui.routelet.RouteletProcessProvider"
+            pluginId="org.talend.camel.designer">
+        </ProcessProvider>
+    </extension>
+
 </plugin>

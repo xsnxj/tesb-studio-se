@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.talend.camel.designer;singleton:=true
 Bundle-Version: 6.1.0.qualifier
 Bundle-Activator: org.talend.camel.designer.CamelDesignerPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.apache.commons.collections,
- org.talend.commons.ui,
+Require-Bundle: org.talend.commons.ui,
  org.talend.camel.model,
  org.talend.core,
  org.talend.core.ui,
@@ -14,18 +13,17 @@ Require-Bundle: org.apache.commons.collections,
  org.eclipse.ui.intro,
  org.talend.repository,
  org.talend.core.repository,
- org.talend.metadata.managment.ui,
  org.talend.designer.core,
  org.eclipse.debug.ui,
  org.talend.librariesmanager,
- org.talend.designer.codegen,
  org.talend.designer.camel.resource.core,
  org.talend.resources,
  org.talend.designer.publish.core,
  org.talend.libraries.dom4j-jaxen,
  org.talend.repository.items.importexport,
  org.talend.designer.camel.dependencies.core,
- org.talend.designer.maven
+ org.talend.designer.maven,
+ org.talend.metadata.managment.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.migration,
@@ -35,4 +33,5 @@ Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.util,
  org.talend.camel.designer.ui
 Bundle-Vendor: .Talend SA.
-Import-Package: org.eclipse.jdt.core
+Import-Package: org.eclipse.jdt.core,
+ org.apache.commons.collections
