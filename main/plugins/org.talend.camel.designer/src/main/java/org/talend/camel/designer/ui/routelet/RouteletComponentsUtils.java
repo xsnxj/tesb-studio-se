@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
+import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.runtime.model.emf.EmfHelper;
@@ -37,24 +39,8 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 
 public class RouteletComponentsUtils {
 
-    // 4.Load Joblet Component:
-
-    private static RouteletComponent createRouteletComponent() {
-        IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                IComponentsFactory.COMPONENT_DEFINITION);
-        for (IConfigurationElement configElement : configElements) {
-            try {
-                Object execObj = configElement.createExecutableExtension("class"); //$NON-NLS-1$
-                if (execObj instanceof RouteletComponent) {
-                    return (RouteletComponent) execObj.getClass().newInstance();
-                }
-            } catch (Exception ex) {
-                // ex.printStackTrace();
-                ExceptionHandler.process(ex);
-            }
-        }
-        return null;
-    }
+    private static final String ATTR_PID = "pluginId"; //$NON-NLS-1$
+    private static final String ATTR_PID_VALUE = CamelDesignerPlugin.getDefault().getBundle().getSymbolicName();
 
     private static List<IComponent> routeletComponents = null;
 
@@ -89,28 +75,15 @@ public class RouteletComponentsUtils {
 
         try {
             IProxyRepositoryFactory factory = CorePlugin.getDefault().getRepositoryService().getProxyRepositoryFactory();
-            List<IRepositoryViewObject> all = factory.getAll(CamelRepositoryNodeType.repositoryRouteletType);
-
-            List<IRepositoryViewObject> list = new ArrayList<IRepositoryViewObject>();
-            List<Project> projectList = ProjectManager.getInstance().getAllReferencedProjects();
-            for (Project project : projectList) {
+            final List<IRepositoryViewObject> list = new ArrayList<IRepositoryViewObject>(
+                factory.getAll(CamelRepositoryNodeType.repositoryRouteletType));
+            for (Project project : ProjectManager.getInstance().getAllReferencedProjects()) {
                 list.addAll(factory.getAll(project, CamelRepositoryNodeType.repositoryRouteletType, false));
             }
 
-            if (list.size() > 0) {
-                all.addAll(list);
-            }
-
-            List<String> jobletLabels = new ArrayList<String>();
-            for (IRepositoryViewObject repositoryObject : all) {
-                Property property = repositoryObject.getProperty();
-                jobletLabels.add(property.getLabel());
-            }
-            // sortJobletList(jobletLabels, all);
-
             // bug 6158
             Set<String> existCNames = existComponents.keySet();
-            for (IRepositoryViewObject repositoryObject : all) {
+            for (IRepositoryViewObject repositoryObject : list) {
                 Property property = repositoryObject.getProperty();
                 boolean alreadyLoadedAndUpToDate = false;
                 List<IComponent> componentsToUpdate = new ArrayList<IComponent>();
@@ -162,6 +135,19 @@ public class RouteletComponentsUtils {
         } catch (Exception ex) {
             ExceptionHandler.process(ex);
         }
+    }
+
+    private static RouteletComponent createRouteletComponent() throws CoreException {
+        for (IConfigurationElement configElement :
+            Platform.getExtensionRegistry().getConfigurationElementsFor(IComponentsFactory.COMPONENT_DEFINITION)) {
+            if (ATTR_PID_VALUE.equals(configElement.getAttribute(ATTR_PID))) {
+                final Object execObj = configElement.createExecutableExtension("class"); //$NON-NLS-1$
+                if (execObj instanceof RouteletComponent) {
+                    return (RouteletComponent) execObj;
+                }
+            }
+        }
+        return null;
     }
 
 }

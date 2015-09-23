@@ -11,10 +11,6 @@ import org.talend.repository.model.RepositoryNode;
 
 public class RouteProcessConvertServiceImpl implements IProcessConvertService {
 
-    public RouteProcessConvertServiceImpl() {
-        // TODO Auto-generated constructor stub
-    }
-
     public IProcess getProcessFromItem(Item item, boolean loadScreenshots) {
         if (CamelProcessItemImpl.class == item.getClass()) {
             RouteProcess process = null;

@@ -70,8 +70,6 @@ public class RouteletComponent implements IComponent {
 
     private ImageDescriptor icon16;
 
-    private static final String ROUTELET = "Routelet "; //$NON-NLS-1$
-
     private IProcess2 routeletProcess;
 
     private Date lastUpdated;
@@ -478,7 +476,7 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public List<IMultipleComponentManager> getMultipleComponentManagers() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /*
@@ -694,9 +692,8 @@ public class RouteletComponent implements IComponent {
 //        retrieveJobletProcess(property, false);
 //    }
 
-    private void retrieveJobletProcess(Property property, boolean firstLoad) {
+    private void retrieveRouteletProcess(Property property, boolean firstLoad) {
         try {
-
             if (!CommonsPlugin.isHeadless() && PlatformUI.isWorkbenchRunning()) {
                 // if there is any editor opened for this joblet, don't reload the property
                 final List<IEditorReference> list = new ArrayList<IEditorReference>();
@@ -720,7 +717,8 @@ public class RouteletComponent implements IComponent {
                         // same process.
                         routeletProcess = openedProcess;
                         routeletProcess.loadXmlFile(false);
-                        routeletProcess.setProperty(null); // no need to keep emf object in memory
+                        // cause NPE
+//                        routeletProcess.setProperty(null); // no need to keep emf object in memory
                         return;
                     }
                 }
@@ -736,7 +734,8 @@ public class RouteletComponent implements IComponent {
             }
             routeletProcess = new RouteProcess(propertyToLoad);
             routeletProcess.loadXmlFile(false);
-            routeletProcess.setProperty(null); // no need to keep emf object in memory
+            // cause NPE
+//            routeletProcess.setProperty(null); // no need to keep emf object in memory
             EObject parent = propertyToLoad.getItem().getParent();
             if (parent != null) {
                 ((FolderItem) parent).getChildren().remove(propertyToLoad.getItem());
@@ -878,7 +877,7 @@ public class RouteletComponent implements IComponent {
     @Override
     public IProcess getProcess() {
         if (routeletProcess == null) {
-            retrieveJobletProcess(getProperty(), true);
+            retrieveRouteletProcess(getProperty(), true);
         }
         return routeletProcess;
     }
