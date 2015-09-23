@@ -240,13 +240,13 @@
 				}
 				if(hasCXFUsernameTokenConsumer){
 %>
-				if(!isProvider&&token!=null&&token.length>=3&&"UsernameToken".equals(token[0])){
-					addUsernameTokenConsumer(cxfEndpoint, token[1], token[2]);
-				}
+    				if(!isProvider&&token!=null&&token.length>=3&&"UsernameToken".equals(token[0])){
+    					addUsernameTokenConsumer(cxfEndpoint, token[1], token[2]);
+    				}
 <%
 				}
 if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFHTTPAuthProvider || hasCXFRegistryProvider || hasCXFRegistryConsumer){%>
-				if (null != policyProvider) {
+				if (inOSGi) {
 <%
 					if(hasCXFHTTPAuthProvider){
 %>
