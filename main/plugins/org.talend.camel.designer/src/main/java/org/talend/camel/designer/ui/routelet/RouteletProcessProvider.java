@@ -787,9 +787,9 @@ public class RouteletProcessProvider extends AbstractProcessProvider {
             IRepositoryViewObject specificVersion = null;
             // get the latest joblet item.
             if (version == null || version.equals(RelationshipItemBuilder.LATEST_VERSION)) {
-                specificVersion = getLastVersion(ProjectManager.getInstance().getCurrentProject(), component.getJobletId());
+                specificVersion = getLastVersion(ProjectManager.getInstance().getCurrentProject(), component.getRouteletId());
             } else {
-                specificVersion = getSpecificVersion(ProjectManager.getInstance().getCurrentProject(), component.getJobletId(),
+                specificVersion = getSpecificVersion(ProjectManager.getInstance().getCurrentProject(), component.getRouteletId(),
                         version);
             }
             if (specificVersion != null) {

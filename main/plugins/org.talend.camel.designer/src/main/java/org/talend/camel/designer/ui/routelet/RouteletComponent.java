@@ -56,7 +56,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.ElementParameter;
 import org.talend.designer.core.model.components.NodeConnector;
-import org.talend.designer.core.model.components.NodeReturn;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 
@@ -91,66 +90,16 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public List<? extends INodeConnector> createConnectors(INode node) {
-        List<INodeConnector> listConnector = new ArrayList<INodeConnector>();
-        INodeConnector nodeConnector;
-        int nbInput = 0;
-
-        int jobletNbInput = 0;
-
-        for (int i = 0; i < EConnectionType.values().length; i++) {
-            EConnectionType currentType = EConnectionType.values()[i];
-
-            if ((currentType == EConnectionType.FLOW_REF) || (currentType == EConnectionType.FLOW_MERGE)) {
-                continue;
-            }
-            boolean exists = false;
-            for (INodeConnector curNodeConn : listConnector) {
-                if (curNodeConn.getDefaultConnectionType().equals(currentType)) {
-                    exists = true;
-                }
-            }
-            if (!exists) { // will add by default all connectors not defined in
-                // the xml files
-                nodeConnector = new NodeConnector(node);
-                nodeConnector.setDefaultConnectionType(currentType);
-                nodeConnector.setName(currentType.getName());
-                nodeConnector.setBaseSchema(currentType.getName());
-                nodeConnector.addConnectionProperty(currentType, currentType.getRGB(), currentType.getDefaultLineStyle());
-                nodeConnector.setLinkName(currentType.getDefaultLinkName());
-                nodeConnector.setMenuName(currentType.getDefaultMenuName());
-                int allowLinkNumber = currentType == EConnectionType.ON_SUBJOB_OK
-                        || currentType == EConnectionType.ON_SUBJOB_ERROR || currentType == EConnectionType.ON_COMPONENT_OK
-                        || currentType == EConnectionType.ON_COMPONENT_ERROR || currentType == EConnectionType.RUN_IF ? 1 : 0;
-
-                // If joblet include input nodes, then only allow main flow connection, else allow all orchestration
-                // connections, see feature 5166
-                nodeConnector.setMaxLinkInput(jobletNbInput > 0 ? 0 : allowLinkNumber);
-                nodeConnector.setMinLinkInput(0);
-
-                nodeConnector.setMaxLinkOutput(allowLinkNumber);
-                nodeConnector.setMinLinkOutput(0);
-                if (currentType == EConnectionType.FLOW_MAIN) {
-                    nodeConnector.addConnectionProperty(EConnectionType.FLOW_REF, EConnectionType.FLOW_REF.getRGB(),
-                            EConnectionType.FLOW_REF.getDefaultLineStyle());
-                    nodeConnector.addConnectionProperty(EConnectionType.FLOW_MERGE, EConnectionType.FLOW_MERGE.getRGB(),
-                            EConnectionType.FLOW_MERGE.getDefaultLineStyle());
-                }
-                listConnector.add(nodeConnector);
-            }
+        final List<INodeConnector> listConnector = new ArrayList<INodeConnector>();
+        for (EConnectionType currentType : EConnectionType.values()) {
+            final INodeConnector nodeConnector = new NodeConnector(node);
+            nodeConnector.setDefaultConnectionType(currentType);
+            nodeConnector.setMaxLinkInput(0);
+            nodeConnector.setMinLinkInput(0);
+            nodeConnector.setMaxLinkOutput(0);
+            nodeConnector.setMinLinkOutput(0);
+            listConnector.add(nodeConnector);
         }
-
-        INodeConnector mainConnector = null;
-        for (INodeConnector connector : listConnector) {
-            if (connector.getDefaultConnectionType().equals(EConnectionType.FLOW_MAIN)) {
-                mainConnector = connector;
-            }
-        }
-
-        mainConnector.setMaxLinkInput(nbInput);
-        mainConnector.setMinLinkInput(nbInput);
-        mainConnector.setMaxLinkOutput(0);
-        mainConnector.setMinLinkOutput(0);
-
         return listConnector;
     }
 
@@ -211,13 +160,13 @@ public class RouteletComponent implements IComponent {
 
         param = new ElementParameter(node);
         param.setName(EParameterName.STARTABLE.getName());
-        Boolean startable = Boolean.TRUE;
-        IElementParameter elementParameter = getProcess().getElementParameter(EParameterName.STARTABLE.getName());
-        if (elementParameter != null) {
-            startable = (Boolean) elementParameter.getValue();
-        }
+//        Boolean startable = Boolean.TRUE;
+//        IElementParameter elementParameter = getProcess().getElementParameter(EParameterName.STARTABLE.getName());
+//        if (elementParameter != null) {
+//            startable = (Boolean) elementParameter.getValue();
+//        }
 
-        param.setValue(startable);
+        param.setValue(false); // startable
         param.setDisplayName(EParameterName.STARTABLE.getDisplayName());
         param.setFieldType(EParameterFieldType.CHECK);
         param.setCategory(EComponentCategory.MAIN);
@@ -248,29 +197,29 @@ public class RouteletComponent implements IComponent {
         param.setShow(false);
         listParam.add(param);
 
-        param = new ElementParameter(node);
-        param.setName(EParameterName.SUBTREE_START.getName());
-        param.setValue(new Boolean(startable));
-        param.setDisplayName(EParameterName.SUBTREE_START.getDisplayName());
-        param.setFieldType(EParameterFieldType.CHECK);
-        param.setCategory(EComponentCategory.TECHNICAL);
-        param.setNumRow(5);
-        param.setReadOnly(true);
-        param.setRequired(false);
-        param.setShow(false);
-        listParam.add(param);
-
-        param = new ElementParameter(node);
-        param.setName(EParameterName.END_OF_FLOW.getName());
-        param.setValue(new Boolean(startable));
-        param.setDisplayName(EParameterName.END_OF_FLOW.getDisplayName());
-        param.setFieldType(EParameterFieldType.CHECK);
-        param.setCategory(EComponentCategory.TECHNICAL);
-        param.setNumRow(5);
-        param.setReadOnly(true);
-        param.setRequired(false);
-        param.setShow(false);
-        listParam.add(param);
+//        param = new ElementParameter(node);
+//        param.setName(EParameterName.SUBTREE_START.getName());
+//        param.setValue(new Boolean(startable));
+//        param.setDisplayName(EParameterName.SUBTREE_START.getDisplayName());
+//        param.setFieldType(EParameterFieldType.CHECK);
+//        param.setCategory(EComponentCategory.TECHNICAL);
+//        param.setNumRow(5);
+//        param.setReadOnly(true);
+//        param.setRequired(false);
+//        param.setShow(false);
+//        listParam.add(param);
+//
+//        param = new ElementParameter(node);
+//        param.setName(EParameterName.END_OF_FLOW.getName());
+//        param.setValue(new Boolean(startable));
+//        param.setDisplayName(EParameterName.END_OF_FLOW.getDisplayName());
+//        param.setFieldType(EParameterFieldType.CHECK);
+//        param.setCategory(EComponentCategory.TECHNICAL);
+//        param.setNumRow(5);
+//        param.setReadOnly(true);
+//        param.setRequired(false);
+//        param.setShow(false);
+//        listParam.add(param);
 
         // hywang add for feature 6549
         List<String> allVersionArray = new ArrayList<String>();
@@ -379,7 +328,7 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public List<? extends INodeReturn> createReturns() {
-        return new ArrayList<NodeReturn>();
+        return Collections.emptyList();
     }
 
     /*
@@ -389,7 +338,7 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public List<ECodePart> getAvailableCodeParts() {
-        return new ArrayList<ECodePart>();
+        return Collections.emptyList();
     }
 
     /*
@@ -465,7 +414,7 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public List<ModuleNeeded> getModulesNeeded() {
-        return new ArrayList<ModuleNeeded>();
+        return Collections.emptyList();
         // return new ArrayList<ModuleNeeded>(JavaProcessUtil.getNeededModules(getJobletGEFProcess(), true));
     }
 
@@ -527,20 +476,6 @@ public class RouteletComponent implements IComponent {
     /*
      * (non-Javadoc)
      * 
-     * @see org.talend.core.model.components.IComponent#getTranslatedName()
-     */
-    public String getTranslatedName() {
-//        switch (this.jobletNodeType) {
-//        case ELEMENT:
-            return routeletProcessName;
-//        default:
-//            return jobletNodeType.getDisplayName();
-//        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.talend.core.model.components.IComponent#getVersion()
      */
     @Override
@@ -590,15 +525,6 @@ public class RouteletComponent implements IComponent {
      */
     @Override
     public boolean isMultiplyingOutputs() {
-        return Boolean.FALSE;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.components.IComponent#isMultiplyingOutputs()
-     */
-    public Boolean isSubtreeWithLoop() {
         return Boolean.FALSE;
     }
 
@@ -981,7 +907,7 @@ public class RouteletComponent implements IComponent {
      * 
      * @return the routeletId
      */
-    public String getJobletId() {
+    public String getRouteletId() {
         return this.routeletId;
     }
 
