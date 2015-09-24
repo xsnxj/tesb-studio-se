@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
@@ -269,7 +270,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion)
             throws InvocationTargetException, InterruptedException {
-        JobJavaScriptOSGIForESBManager talendJobManager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
+        JobJavaScriptOSGIForESBManager talendJobManager = new RouteJavaScriptOSGIForESBManager(getExportChoice(), null, null,
                 IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);

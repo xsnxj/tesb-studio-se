@@ -23,7 +23,8 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.repository.items.importexport,
  org.talend.designer.camel.dependencies.core,
  org.talend.designer.maven,
- org.talend.metadata.managment.ui
+ org.talend.metadata.managment.ui,
+ biz.aQute.bndlib
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.migration,

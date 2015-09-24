@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+           http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+
+    <osgix:cm-properties id="${name}.properties" persistent-id="${name}" />
+
+#if ($hasCXFSamlProvider)
+#[[
+    <osgix:cm-properties id="org.talend.esb.job.service" persistent-id="org.talend.esb.job.service" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="org.talend.esb.job.service" />
+        <property name="placeholderPrefix" value="$service{" />
+    </bean>
+]]#
+#end
+#if ($hasCXFRSSamlProviderAuthz)
+#[[
+    <osgix:cm-properties id="org.talend.esb.authorization.pep" persistent-id="org.talend.esb.authorization.pep" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="org.talend.esb.authorization.pep" />
+        <property name="placeholderPrefix" value="$pep{" />
+    </bean>
+]]#
+#end
+#if ($hasCXFSamlConsumer)
+#[[
+    <osgix:cm-properties id="org.talend.esb.job.client" persistent-id="org.talend.esb.job.client" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties" ref="org.talend.esb.job.client" />
+        <property name="placeholderPrefix" value="$client{" />
+    </bean>
+]]#
+#end
+
+	<bean id="route" class="${className}">
+        <!--osgix:managed-properties persistent-id="${name}" update-strategy="bean-managed" update-method="setArguments" /-->
+		<property name="arguments" ref="${name}.properties" />
+		<!-- ESB Features For CXF -->
+#if ($useSAM)
+		<property name="eventFeature">
+			<osgi:reference interface="org.talend.esb.sam.agent.feature.EventFeature" />
+		</property>
+#end
+#if ($hasCXFComponent && ($hasCXFUsernameToken || $hasCXFSamlConsumer || $hasCXFSamlProvider))
+#[[
+        <property name="policyProvider">
+            <osgi:reference interface="org.talend.esb.security.policy.PolicyProvider" />
+        </property>
+]]#
+#end
+#if ($hasCXFSamlProvider)
+#[[
+        <property name="securityProps" >
+            <map>
+                <entry key="security.signature.properties" value="$service{security.signature.properties}" />
+                <entry key="security.signature.username" value="$service{security.signature.username}" />
+                <entry key="security.signature.password" value="$service{security.signature.password}" />
+            </map>
+        </property>
+]]#
+#end
+#if ($hasCXFSamlConsumer)
+#[[
+        <property name="clientProperties">
+            <map>
+                <entry key="security.signature.properties" value="$client{security.signature.properties}" />
+                <entry key="security.signature.username" value="$client{security.signature.username}" />
+                <entry key="security.signature.password" value="$client{security.signature.password}" />
+            </map>
+        </property>
+]]#
+#end
+#if ($hasCXFRSSamlProviderAuthz)
+#[[
+		<property name="authorizationInterceptor">
+			<bean class="org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor">
+				<property name="pdpAddress" value="$pep{tesb.pdp.address}"/>
+			</bean>
+		</property>
+]]#
+#end
+
+#if (!$dataSources.isEmpty())
+		<property name="dataSources">
+			<map>
+#foreach ($alias in $dataSources)
+				<entry key="${alias}">
+					<osgi:reference interface="javax.sql.DataSource" filter="(osgi.jndi.service.name=${alias})" />
+				</entry>
+#end ## end data sources aliases loop
+			</map>
+		</property>
+#end
+	</bean>
+
+    <camel:camelContext id="${name}">
+        <camel:routeBuilder ref="route" />
+    </camel:camelContext>
+
+</beans>
