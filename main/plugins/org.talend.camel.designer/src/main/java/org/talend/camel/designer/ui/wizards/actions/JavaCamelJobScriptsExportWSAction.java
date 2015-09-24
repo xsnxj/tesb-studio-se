@@ -15,6 +15,7 @@ package org.talend.camel.designer.ui.wizards.actions;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.camel.designer.util.CamelFeatureUtil;
+import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.properties.ProcessItem;
@@ -30,6 +32,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.publish.core.models.BundleModel;
@@ -135,6 +138,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 featuresModel.setContexts(JobContextUtils.getContextsMap(routeProcess));
 
                 exportAllReferenceJobs(routeProcess);
+                exportAllReferenceRoutelets(routeProcess);
             }
 
             processResults(featuresModel, monitor);
@@ -211,10 +215,53 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
 
+    private void exportAllReferenceRoutelets(ProcessItem routeProcess) throws InvocationTargetException, InterruptedException {
+        for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
+            final ElementParameterType version =
+                EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE_VERSION.getName(), node);
+            if (null != version) {
+                final String routeletId = node.getComponentName();
+                String routeletVersion = version.getValue();
+                final IRepositoryNode referencedRouteletNode;
+                try {
+                    referencedRouteletNode = getRouteletRepositoryNode(routeletId);
+                } catch (PersistenceException e) {
+                    throw new InvocationTargetException(e);
+                }
+                if (RelationshipItemBuilder.LATEST_VERSION.equals(routeletVersion)) {
+                    routeletVersion = referencedRouteletNode.getObject().getVersion();
+                }
+
+                final File routeletFile;
+                try {
+                    routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
+                } catch (IOException e) {
+                    throw new InvocationTargetException(e);
+                }
+                BundleModel jobModel = new BundleModel(getGroupId(), routeletId, getArtifactVersion(), routeletFile);
+                if (featuresModel.addBundle(jobModel)) {
+                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion);
+                    final ProcessItem routeletProcess = (ProcessItem) referencedRouteletNode.getObject().getProperty().getItem();
+                    CamelFeatureUtil.addFeatureAndBundles(routeletProcess, featuresModel);
+                }
+            }
+        }
+    }
+
     private static IRepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
         for (IRepositoryViewObject job : ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS)) {
             if (job.getId().equals(jobId)) {
                 return new RepositoryNode(job, null, ENodeType.REPOSITORY_ELEMENT);
+            }
+        }
+        return null;
+    }
+
+    private static IRepositoryNode getRouteletRepositoryNode(String routeletName) throws PersistenceException {
+        for (IRepositoryViewObject routelet : ProxyRepositoryFactory.getInstance().getAll(
+            CamelRepositoryNodeType.repositoryRouteletType)) {
+            if (routelet.getLabel().equals(routeletName)) {
+                return new RepositoryNode(routelet, null, ENodeType.REPOSITORY_ELEMENT);
             }
         }
         return null;

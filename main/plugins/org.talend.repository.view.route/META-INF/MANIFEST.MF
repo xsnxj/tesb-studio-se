@@ -5,14 +5,8 @@ Bundle-SymbolicName: org.talend.repository.view.route;singleton:=true
 Bundle-Version: 6.1.0.qualifier
 Bundle-Vendor: .Talend.
 Bundle-Localization: plugin
-Require-Bundle: org.talend.commons.ui,
- org.talend.core.runtime,
+Require-Bundle: org.talend.core.runtime,
  org.talend.core.repository,
  org.talend.repository.view,
- org.talend.camel.model,
- org.talend.camel.designer,
- org.talend.designer.core,
- org.eclipse.ui.intro,
- org.talend.core.ui,
- org.talend.metadata.managment.ui
+ org.talend.camel.model
 Bundle-ActivationPolicy: lazy

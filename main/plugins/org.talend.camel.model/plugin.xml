@@ -34,14 +34,6 @@
             parentNodeType="CODE"
             products="CAMEL"
             type="BEANS" />
-        <repositoryNode
-            folder="routelets"
-            isResouce="true"
-            key="Routelet"
-            label="Routelets"
-            ordinal="2"
-            products="CAMEL"
-            type="ROUTELET" />
     </extension>
 
 </plugin>

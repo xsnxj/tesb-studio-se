@@ -34,6 +34,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
@@ -237,7 +238,12 @@ public class RouteResourceUtil {
     }
 
     public static Collection<IPath> synchronizeRouteResource(Item item) {
-        if (!(item instanceof CamelProcessItem)) {
+        final boolean routelet;
+        if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
+            routelet = false;
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
+            routelet = true;
+        } else {
             return null;
         }
         if (!GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
@@ -255,19 +261,21 @@ public class RouteResourceUtil {
         final Collection<IPath> result = new ArrayList<IPath>();
         // https://jira.talendforge.org/browse/TESB-7893
         // add spring file
-        final IFolder metaInf = routeResourceFolder.getFolder("META-INF/spring/");
-        try {
-            prepareFolder(metaInf);
-            final IFile spring = metaInf.getFile(item.getProperty().getLabel().toLowerCase() + ".xml");
-            final InputStream inputStream = new ByteArrayInputStream(((CamelProcessItem) item).getSpringContent().getBytes());
-            if (spring.exists()) {
-                spring.setContents(inputStream, 0, null);
-            } else {
-                spring.create(inputStream, true, null);
+        if (!routelet) {
+            final IFolder metaInf = routeResourceFolder.getFolder("META-INF/spring/");
+            try {
+                prepareFolder(metaInf);
+                final IFile spring = metaInf.getFile(item.getProperty().getLabel().toLowerCase() + ".xml");
+                final InputStream inputStream = new ByteArrayInputStream(((CamelProcessItem) item).getSpringContent().getBytes());
+                if (spring.exists()) {
+                    spring.setContents(inputStream, 0, null);
+                } else {
+                    spring.create(inputStream, true, null);
+                }
+                result.add(spring.getLocation());
+            } catch (CoreException e) {
+                ExceptionHandler.process(e);
             }
-            result.add(spring.getLocation());
-        } catch (CoreException e) {
-            ExceptionHandler.process(e);
         }
 
         for (ResourceDependencyModel model : getResourceDependencies(item)) {
