@@ -10,7 +10,7 @@
             key="Resource"
             label="Resources"
             name_pattern="\w+([\.-]\w+)*"
-            ordinal="2"
+            ordinal="3"
             products="CAMEL"
             type="ROUTE_RESOURCES" />
     </extension>
