@@ -41,7 +41,7 @@
 %>
                     new org.apache.camel.spring.SpringCamelContext(
                         new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/spring/<%=process.getName().toLowerCase()%>.xml"));
-                camelContext.setName("<%=process.getName()%>-ctx");
+                camelContext.setName("<%=process.getName()%>");
                 // add notifier
                 java.util.Collection<org.apache.camel.management.JmxNotificationEventNotifier> jmxEventNotifiers = camelContext
                         .getRegistry().findByType(

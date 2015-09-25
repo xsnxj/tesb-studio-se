@@ -107,7 +107,7 @@
 #foreach ($routelet in $routelets)
     <osgi:reference id="${routelet}" interface="org.apache.camel.builder.RouteBuilder" filter="(id=${routelet})" />
 #end
-    <camel:camelContext id="${name}">
+    <camel:camelContext id="${className}">
         <camel:routeBuilder ref="route" />
 #foreach ($routelet in $routelets)
         <camel:routeBuilder ref="${routelet}" />
