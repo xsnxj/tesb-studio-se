@@ -55,7 +55,7 @@ if ("wsdlURL".equals(serviceType)) {
 		  filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
 		}else{
 			filePath =  ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__");
-			filePath = "\"classpath:" + filePath + "\"";
+			filePath = "\"classpath:/" + filePath + "\"";
 		}
 		filePath.replaceAll("\\\\","/");
 		sb.append("+").append(filePath);
