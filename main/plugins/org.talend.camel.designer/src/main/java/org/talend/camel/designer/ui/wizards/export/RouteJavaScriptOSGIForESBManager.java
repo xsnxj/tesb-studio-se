@@ -40,6 +40,7 @@ import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
@@ -52,9 +53,16 @@ import org.talend.repository.utils.TemplateProcessor;
  */
 public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBManager {
 
-    public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName, String launcher,
-            int statisticPort, int tracePort) {
-        super(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
+    private final Collection<String> routelets;
+
+    public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
+        Collection<String> routelets) {
+        super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        this.routelets = routelets;
+    }
+
+    public static String getClassName(ProcessItem processItem) {
+        return getPackageName(processItem) + PACKAGE_SEPARATOR + processItem.getProperty().getLabel();
     }
 
     protected String getIncludeRoutinesPath() {
@@ -107,13 +115,12 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
         osgiResource.addResource(FileConstants.META_INF_FOLDER_NAME + "/spring", targetFile.toURI().toURL());
     }
 
-    private static Map<String, Object> collectRouteInfo(ProcessItem processItem, IProcess process) {
+    private Map<String, Object> collectRouteInfo(ProcessItem processItem, IProcess process) {
         Map<String, Object> routeInfo = new HashMap<String, Object>();
 
         // route name and class name
-        String name = processItem.getProperty().getLabel();
-        routeInfo.put("name", name); //$NON-NLS-1$
-        routeInfo.put("className", getPackageName(processItem) + PACKAGE_SEPARATOR + name); //$NON-NLS-1$
+        routeInfo.put("name", processItem.getProperty().getLabel()); //$NON-NLS-1$
+        routeInfo.put("className", getClassName(processItem)); //$NON-NLS-1$
 
         boolean useSAM = false;
         boolean hasCXFUsernameToken = false;
@@ -181,6 +188,8 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
         // route OSGi DataSources
         routeInfo.put("dataSources", DataSourceConfig.getAliases(process)); //$NON-NLS-1$
+
+        routeInfo.put("routelets", routelets); //$NON-NLS-1$
 
         return routeInfo;
     }

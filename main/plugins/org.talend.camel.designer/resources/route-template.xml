@@ -103,8 +103,22 @@
 #end
 	</bean>
 
+#if ($routelets)
+#foreach ($routelet in $routelets)
+    <osgi:reference id="${routelet}" interface="org.apache.camel.builder.RouteBuilder" filter="(id=${routelet})" />
+#end
     <camel:camelContext id="${name}">
         <camel:routeBuilder ref="route" />
+#foreach ($routelet in $routelets)
+        <camel:routeBuilder ref="${routelet}" />
+#end
     </camel:camelContext>
+#else
+    <osgi:service interface="org.apache.camel.builder.RouteBuilder" ref="route" >
+        <service-properties>
+            <entry key="id" value="${className}"/>
+        </service-properties>
+    </osgi:service>
+#end
 
 </beans>

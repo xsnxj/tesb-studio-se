@@ -221,8 +221,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
         exportChoiceMap.put(ExportChoice.needMetaInfo, true);
         exportChoiceMap.put(ExportChoice.needContext, true);
-        exportChoiceMap.put(ExportChoice.needJobItem, false);
-        exportChoiceMap.put(ExportChoice.needSourceCode, false);
         if (addBSButton != null) {
             exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
         }
@@ -320,7 +318,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
         }
 
-        JavaCamelJobScriptsExportWSAction action = null;
+        final JavaCamelJobScriptsExportWSAction action;
         Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
         if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
                 && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
