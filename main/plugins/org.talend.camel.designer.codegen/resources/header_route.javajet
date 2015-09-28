@@ -44,8 +44,7 @@
 
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 	
-	List<? extends INode> processNodes = (List<? extends INode>) process.getGeneratingNodes();
-	List<? extends INode> graphicalNodes = (List<? extends INode>) process.getGraphicalNodes();
+	List<? extends INode> graphicalNodes = process.getGraphicalNodes();
 	boolean stats = codeGenArgument.isStatistics();
 	boolean trace = codeGenArgument.isTrace();
 	boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
