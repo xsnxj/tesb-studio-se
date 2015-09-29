@@ -1122,6 +1122,9 @@ if (isProvider) {
 			}
 %>
 
+                //read context values
+                readContextValues(contextStr);
+
 				initUriMap();
 
 <%

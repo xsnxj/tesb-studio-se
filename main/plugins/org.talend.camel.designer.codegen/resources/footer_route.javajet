@@ -75,7 +75,7 @@
                     if (node.isActivate()) {
                         for (org.talend.core.model.process.IConnection conn : node.getIncomingConnections()) {
 %>
-                targetNodeToConnectionMap.put("<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
+                targetNodeToConnectionMap.put("<%=process.getName()%>_<%=node.getUniqueName()%>", "<%=conn.getUniqueName()%>");
 <%
                         }
                     }
@@ -107,7 +107,19 @@
 
         //add route
         main.addRouteBuilder(this);
-    
+<%
+for (INode node : process.getGraphicalNodes()) {
+    if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
+        final IProcess jobletProcess = node.getComponent().getProcess();
+        String className = codeGenArgument.getCurrentProjectName().toLowerCase()
+            + '.' + JavaResourcesHelper.getJobFolderName(jobletProcess.getName(), jobletProcess.getVersion())
+            + '.' + jobletProcess.getName();
+%>
+        main.addRouteBuilder((org.apache.camel.builder.RouteBuilder) Class.forName("<%=className%>").newInstance());
+<%
+    }
+}
+%>
         main.run();
     }
 
@@ -214,10 +226,6 @@ for (IContextParameter ctxParam : params) {
 <%
     }
 %>
-
-		//read context values
-		readContextValues(contextStr);
-
 		try {
 			run();
 		} catch (java.lang.Exception e) {

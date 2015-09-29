@@ -148,7 +148,6 @@ public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilde
 			contextStr = newContext;
 		}
 		context_param.putAll(arguments);
-		readContextValues(contextStr);
 	}
 
 <%
