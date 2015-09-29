@@ -48,17 +48,13 @@ if ("wsdlURL".equals(serviceType)) {
 	if(!useServiceRegistry){
 		sb.append("+\"&" + serviceType + "=\"");
 		//http://jira.talendforge.org/browse/TESB-6226
-	    String filePath = "";
-		
-		String wsdlType = ElementParameterParser.getValue(node, "__WSDL_TYPE__");
-		if("file".equals(wsdlType)){
-		  filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
+        final String filePath;
+		if("file".equals(ElementParameterParser.getValue(node, "__WSDL_TYPE__"))){
+		    filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
 		}else{
-			filePath =  ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__");
-			filePath = "\"classpath:/" + filePath + "\"";
+			filePath = "getClass().getResource(\"/" + ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__") + "\").toString()";
 		}
-		filePath.replaceAll("\\\\","/");
-		sb.append("+").append(filePath);
+		sb.append("+").append(filePath.replaceAll("\\\\","/"));
 	} else {
 		sb.append("+\"&wsdlURL=\"");
 	}
