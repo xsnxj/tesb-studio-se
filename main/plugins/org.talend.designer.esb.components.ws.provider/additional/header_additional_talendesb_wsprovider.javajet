@@ -370,7 +370,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 
 		try {
             org.apache.cxf.binding.soap.SoapFault soapFault = new org.apache.cxf.binding.soap.SoapFault(
-                faultString, new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
+                faultString, javax.xml.soap.SOAPConstants.SOAP_RECEIVER_FAULT);
 			if (null != faultDetail) {
 				// wrap details
 				org.dom4j.Element rootElement = faultDetail.getRootElement();
