@@ -1492,7 +1492,7 @@ if (isProvider) {
 %>
 		}
 <%
-	}else if("cSetBody".equals(nodeComponentName)){
+	}else if("cSetBody".equals(nodeComponentName)) {
 		String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 		if(!"xpath".equals(language)){
 			continue;
@@ -1549,7 +1549,34 @@ if (isProvider) {
 %>
 		}
 <%      }
-	}else if("cTalendJob".equals(nodeComponentName)){
+	} else if ("cWireTap".equals(nodeComponentName) || "cLoadBalancer".equals(nodeComponentName) || "cIdempotentConsumer".equals(nodeComponentName)) {
+		String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
+		if(!"xpath".equals(language)){
+			continue;
+		}
+		String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
+		if(!"true".equals(useNamespaces)){
+			continue;
+		}
+		String cid = node.getUniqueName();
+		List<Map<String, String>> namespaceValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__NAMESPACES__");
+		if (!namespaceValues.isEmpty()) {
+%>
+		org.apache.camel.builder.xml.Namespaces <%=cid%>ns = 
+<%
+
+			String ns = "new org.apache.camel.builder.xml.Namespaces";
+			for(Map<String, String> m: namespaceValues){
+				String pre = m.get("PREFIX");
+				String uri = m.get("URI");
+%>
+				<%=ns%>(<%=pre%>, <%=uri%>);
+<%
+				ns = cid + "ns.add";
+			}
+		}
+%>
+<%	} else if("cTalendJob".equals(nodeComponentName)){
 	if (!node.getIncomingConnections().isEmpty()) {
         String cid = node.getUniqueName();
         List<Map<String, String>> contextParams = null;

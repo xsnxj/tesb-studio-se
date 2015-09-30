@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet skeleton="../common/cLanguage.skeleton"
 imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
@@ -18,6 +18,7 @@ imports="
 	String strategy = ElementParameterParser.getValue(node, "__STRATEGY__");
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	
 	String exceptionMode = ElementParameterParser.getValue(node, "__EXCEPTION_MODE__");
 	String roundRobinMode = ElementParameterParser.getValue(node, "__ROUND_ROBIN_MODE__");
@@ -40,13 +41,66 @@ imports="
 			.loadBalance().<%=strategy%>(
 <%
 				if("sticky".equals(strategy)) { //BEGIN STICKY
-					if(!("none".equals(language))) {
+					if ("el".equals(language)) {
 %>
-						<%=language%>(<%=expression%>)
+					new org.apache.camel.model.language.ELExpression(<%=expression%>)
+<%
+					} else if ("groovy".equals(language)) {
+%>
+					new org.apache.camel.model.language.GroovyExpression(<%=expression%>)
+<%
+					} else if ("javascript".equals(language)) {
+%>
+					new org.apache.camel.model.language.JavaScriptExpression(<%=expression%>)
+<%
+					} else if ("sql".equals(language)) {
+%>
+					new org.apache.camel.model.language.SqlExpression(<%=expression%>)
+<%
+					} else if ("jsonpath".equals(language)) {
+%>
+					new org.apache.camel.model.language.JsonPathExpression(<%=expression%>)
+<%
+					} else if ("jxpath".equals(language)) {
+%>
+					new org.apache.camel.model.language.JXPathExpression(<%=expression%>)
+<%
+					} else if ("mvel".equals(language)) {
+%>
+					new org.apache.camel.model.language.MvelExpression(<%=expression%>)
+<%
+					} else if ("ognl".equals(language)) {
+%>
+					new org.apache.camel.model.language.OgnlExpression(<%=expression%>)
+<%
+					} else if ("php".equals(language)) {
+%>			
+					new org.apache.camel.model.language.PhpExpression(<%=expression%>)
+<%
+					} else if ("python".equals(language)) {
+%>
+					new org.apache.camel.model.language.PythonExpression(<%=expression%>)
+<%
+					} else if ("ruby".equals(language)) {
+%>			
+					new org.apache.camel.model.language.RubyExpression(<%=expression%>)
+<%
+					} else if ("spel".equals(language)) {
+%>
+					new org.apache.camel.model.language.SpELExpression(<%=expression%>)
+<%
+					} else if ("xpath".equals(language)) {
+%>
+					<%=cid%>ns.xpath(<%=expression%>)
+<%
+					} else if ("xquery".equals(language)) {
+%>
+					new org.apache.camel.model.language.XQueryExpression(<%=expression%>)
 <%
 					} else {
+						String exp = getExpression(language, expression, cid, useNamespaces, ""); 
 %>
-						<%=expression%>
+					<%=exp%>
 <%
 					}
 				} // END STICKY

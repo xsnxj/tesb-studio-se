@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet skeleton="../common/cLanguage.skeleton"
 imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
@@ -22,6 +22,7 @@ imports="
 	String fileStore = ElementParameterParser.getValue(node, "__FILE_STORE__");
 	String eager = ElementParameterParser.getValue(node, "__EAGER__");
 	String skipDuplicate = ElementParameterParser.getValue(node, "__SKIP_DUPLICATE__");
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	
 	boolean isEager = false;
 	boolean isSkip = false;
@@ -41,15 +42,10 @@ imports="
 			.idempotentConsumer(<%=expression%>,
 <%
 		} else {
-			if(!("none".equals(language))) {
+			String exp = getExpressionDefinition(language, predicate, cid, useNamespaces, "");
 %>
-				.idempotentConsumer(<%=language%>(<%=predicate%>),
+				.idempotentConsumer(<%=exp%>,
 <%
-			} else {
-%>
-				.idempotentConsumer(<%=predicate%>,
-<%
-			}
 		} //END 2
 		
 		if("MEMORY".equals(repository)) { //BEGIN 2

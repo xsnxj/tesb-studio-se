@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet skeleton="../common/cLanguage.skeleton"
 imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
@@ -14,13 +14,12 @@ imports="
 	
 	String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expression = ElementParameterParser.getValue(node, "__EXPRESSION__");
+	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	
 	if("correlation".equals(language)){
 		language = "simple";
 		expression = "\"${in.header.CamelCxfMessage[CorrelationID]}\", String.class";
 	}
-	
-	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
 	
 	boolean useAggregationStrategy = true;
 //	boolean useAggregationStrategy = "true".equals(ElementParameterParser.getValue(node, "__USE_AGGREGATION_STRATEGY__"));
@@ -54,34 +53,15 @@ imports="
 	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
-		if(!useAggregationStrategy) {
-			if("xpath".equals(language) && "true".equals(useNamespaces)){
+		String exp = getExpression(language, expression, cid, useNamespaces, "");
+		if(!useAggregationStrategy) {			
 %>
-				.aggregate().<%=language%>(<%=expression%>, <%=cid%>NSMap)
+				.aggregate().<%=exp%>
 <%
-			}else if(!("none".equals(language))) {
-%>
-				.aggregate().<%=language%>(<%=expression%>)
-<%
-			} else {
-%>
-				.aggregate().<%=expression%>
-<%
-			}
 		} else {			
-			if("xpath".equals(language) && "true".equals(useNamespaces)){
 %>
-			.aggregate(new <%=aggregationStrategy%>()).<%=language%>(<%=expression%>, <%=cid%>NSMap)
+			.aggregate(new <%=aggregationStrategy%>()).<%=exp%>
 <%
-		}else if(!("none".equals(language))) {
-%>
-				.aggregate(new <%=aggregationStrategy%>()).<%=language%>(<%=expression%>)
-<%
-			} else {
-%>
-				.aggregate(new <%=aggregationStrategy%>()).<%=expression%>
-<%
-			}
 		}
 		
 		if(usePersistence) {

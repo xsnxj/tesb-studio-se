@@ -1,3 +1,7 @@
+<!DOCTYPE document [
+<!ENTITY languages SYSTEM "../common/languages.xml">
+<!ENTITY namespaces SYSTEM "../common/namespaces.xml">
+]>
 <COMPONENT>
 
 	<HEADER PLATEFORM="ALL" SERIAL="" VERSION="0.102" STATUS="ALPHA"
@@ -29,47 +33,17 @@
 	<PARAMETERS>
 
 		<PARAMETER NAME="LANGUAGES" FIELD="CLOSED_LIST" REQUIRED="false"
-			NUM_ROW="3">
+			NUM_ROW="1">
             <ITEMS DEFAULT="CONSTANT">
-                <ITEM NAME="NONE"       VALUE="none" />
-                <ITEM NAME="CONSTANT"   VALUE="constant" />
-                <ITEM NAME="EL"         VALUE="el" />
-                <ITEM NAME="GROOVY"     VALUE="groovy" />
-                <ITEM NAME="HEADER"     VALUE="header" />
-                <ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
-                <ITEM NAME="JOSQL"      VALUE="sql" />
-                <ITEM NAME="JSONPATH"   VALUE="jsonpath" />
-                <ITEM NAME="JXPATH"     VALUE="jxpath" />
-                <ITEM NAME="MVEL"       VALUE="mvel" />
-                <ITEM NAME="OGNL"       VALUE="ognl" />
-                <ITEM NAME="PHP"        VALUE="php" />
-                <ITEM NAME="PROPERTY"   VALUE="property" />
-                <ITEM NAME="PYTHON"     VALUE="python" />
-                <ITEM NAME="RUBY"       VALUE="ruby" />
-                <ITEM NAME="SIMPLE"     VALUE="simple" />
-                <ITEM NAME="SPEL"       VALUE="spel" />
-                <ITEM NAME="SQL"        VALUE="sql" />
-                <ITEM NAME="XPATH"      VALUE="xpath" />
-                <ITEM NAME="XQUERY"     VALUE="xquery" />
+                &languages;
             </ITEMS>
 		</PARAMETER>
 
-		<PARAMETER NAME="EXPRESSION" FIELD="TEXT" NUM_ROW="5"
+		<PARAMETER NAME="EXPRESSION" FIELD="TEXT" NUM_ROW="2" SHOW_IF="LANGUAGES != 'CORRELATION'"
 			REQUIRED="true">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="USE_NAMESPACES" FIELD="CHECK"
-			REQUIRED="true" NUM_ROW="7" SHOW_IF="LANGUAGES=='XPATH'" >
-			<DEFAULT>false</DEFAULT>
-		</PARAMETER>
-		
-		<PARAMETER NAME="NAMESPACES" FIELD="TABLE" NUM_ROW="8" NB_LINES="5"
-			REQUIRED="true" SHOW_IF="(LANGUAGES=='XPATH') AND (USE_NAMESPACES == 'true')" >
-			<ITEMS>
-				<ITEM NAME="PREFIX" VALUE="" />	
-				<ITEM NAME="URI" VALUE="" />	
-			</ITEMS>
-		</PARAMETER>
+		&namespaces;
 	</PARAMETERS>
 	
 
