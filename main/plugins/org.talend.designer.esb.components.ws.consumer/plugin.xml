@@ -300,7 +300,7 @@
             <group id="jetty-server" />
         </libraryNeededGroup>
 
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
+        <!--libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-httpclient}"
             id="httpclient"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpclient}"
@@ -309,6 +309,18 @@
             name="${tesb-httpcore}"
             id="httpcore"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-httpcore}"
+            bundleID="" /-->
+        <!-- ${tesb-httpclient} -->
+        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
+            name="httpclient-4.3.1.jar"
+            id="httpclient"
+            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.3.1.jar"
+            bundleID="" />
+        <!-- ${tesb-httpcore} -->
+        <libraryNeeded context="plugin:org.talend.libraries.apache.http"
+            name="httpcore-4.3.1.jar"
+            id="httpcore"
+            uripath="platform:/plugin/org.talend.libraries.apache.http/lib/httpcore-4.3.1.jar"
             bundleID="" />
 
         <libraryNeededGroup
