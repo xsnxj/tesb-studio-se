@@ -32,12 +32,6 @@ import org.talend.designer.core.ui.views.problems.Problems;
  */
 public class CheckCXFNodesService implements ICheckNodesService {
 
-	/**
-	 * 
-	 */
-	public CheckCXFNodesService() {
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,18 +43,12 @@ public class CheckCXFNodesService implements ICheckNodesService {
 		if (!node.getComponent().getName().equals("cCXF")) { //$NON-NLS-1$
 			return;
 		}
-		IElementParameter resourceParam = node
-				.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
-						.getName());
-		IElementParameter wsdlFileParam = node.getElementParameter("WSDL_FILE"); //$NON-NLS-1$
-		IElementParameter serviceParam = node
-				.getElementParameter("SERVICE_TYPE"); //$NON-NLS-1$
-		IElementParameter wsdlTypeParam = node.getElementParameter("WSDL_TYPE"); //$NON-NLS-1$
-		IElementParameter clazzParam = node
-				.getElementParameter("SERVICE_CLASS"); //$NON-NLS-1$
+        final IElementParameter serviceParam = node.getElementParameter("SERVICE_TYPE"); //$NON-NLS-1$
 
 		// Select WSDL
 		if (serviceParam != null && "wsdlURL".equals(serviceParam.getValue())) { //$NON-NLS-1$
+            final IElementParameter wsdlFileParam = node.getElementParameter("WSDL_FILE"); //$NON-NLS-1$
+            final IElementParameter wsdlTypeParam = node.getElementParameter("WSDL_TYPE"); //$NON-NLS-1$
 			// Select File
 			if (wsdlTypeParam != null
 					&& "file".equals(wsdlTypeParam.getValue())) { //$NON-NLS-1$
@@ -76,6 +64,8 @@ public class CheckCXFNodesService implements ICheckNodesService {
 			} // Select Repository
 			else if (wsdlTypeParam != null
 					&& "repo".equals(wsdlTypeParam.getValue())) { //$NON-NLS-1$
+                final IElementParameter resourceParam = node.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
+                    .getName());
 				// WSDL file is empty
 				String errorMessage = ""; //$NON-NLS-1$
 				if (resourceParam == null || resourceParam.getValue() == null
@@ -112,11 +102,12 @@ public class CheckCXFNodesService implements ICheckNodesService {
 		// Select Service class
 		else if (serviceParam != null
 				&& "serviceClass".equals(serviceParam.getValue())) { //$NON-NLS-1$
+            final IElementParameter clazzParam = node.getElementParameter("SERVICE_CLASS"); //$NON-NLS-1$
 			// Service class is empty
 			if (clazzParam == null || clazzParam.getValue() == null
 					|| clazzParam.getValue().toString().isEmpty()) {
 				String errorMessage = MessageFormat.format(CamelDesignerMessages.getString("CheckCXFNodesService_emptyError") //$NON-NLS-1$
-						, wsdlFileParam.getDisplayName());
+						, clazzParam.getDisplayName());
 				Problems.add(ProblemStatus.ERROR, (Element) node, errorMessage);
 			}
 		}
