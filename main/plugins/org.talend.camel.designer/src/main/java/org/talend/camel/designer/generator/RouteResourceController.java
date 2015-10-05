@@ -368,15 +368,6 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         return initialSize.y + ITabbedPropertyConstants.VSPACE;
     }
 
-    protected String getlabel(Item item) {
-        String label = item.getProperty().getDisplayName();
-        String parentPaths = item.getState().getPath();
-        if (parentPaths != null && !parentPaths.isEmpty()) {
-            label = parentPaths + "/" + label;
-        }
-        return label;
-    }
-
     public void propertyChange(PropertyChangeEvent arg0) {
 
     }
@@ -402,16 +393,20 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
                         if (value == null) {
                             labelText.setText("");
                         } else {
-                            IRepositoryViewObject lastVersion;
                             try {
-                                lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(value);
+                                final IRepositoryViewObject lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(value);
                                 if (lastVersion == null) {
                                     processTypeParameter.setValue(null);
                                     labelText.setText("");
                                 } else {
-                                    resetTextValue(lastVersion.getProperty().getItem());
+//                                    (RouteResourceItem) lastVersion.getProperty().getItem()
+//                                    labelText.setText(item.getName() + ": " + new ResourceDependencyModel(item).getClassPathUrl());
+                                    labelText.setText(lastVersion.getRepositoryObjectType().getKey()
+                                        + ": "
+                                        + param.getChildParameters()
+                                            .get(EParameterName.ROUTE_RESOURCE_TYPE_RES_URI.getName()).getValue());
                                     // version
-                                    refreshCombo(param, EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName());
+                                    refreshCombo(param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()));
                                 }
                             } catch (Exception e) {
                             }
@@ -432,12 +427,10 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
 	 * 
 	 * 
 	 */
-    private void refreshCombo(IElementParameter parentParam, final String childParamName) {
-        if (parentParam == null || childParamName == null) {
+    private void refreshCombo(IElementParameter childParameter) {
+        if (childParameter == null) {
             return;
         }
-        IElementParameter childParameter = parentParam.getChildParameters().get(childParamName);
-
         CCombo combo = (CCombo) hashCurControls.get(childParameter.getName());
 
         if (combo == null || combo.isDisposed()) {
@@ -463,14 +456,6 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
             combo.setText(strValue);
             combo.setVisible(true);
         }
-
-    }
-
-    private void resetTextValue(final Item item) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Resource: ");
-        sb.append(getlabel(item));
-        labelText.setText(sb.toString());
 
     }
 
