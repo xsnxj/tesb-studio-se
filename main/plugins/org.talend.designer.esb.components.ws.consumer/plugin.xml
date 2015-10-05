@@ -321,7 +321,7 @@
             <library id="commons-logging" />
         </libraryNeededGroup>
 
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
+        <!--libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-transports-http-hc}"
             id="cxf-rt-transports-http-hc"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-transports-http-hc}"
@@ -346,7 +346,7 @@
             <group id="httpclient" />
             <library id="httpcore-nio" />
             <library id="httpasyncclient" />
-        </libraryNeededGroup>
+        </libraryNeededGroup-->
 
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-rs-client}"
@@ -399,6 +399,12 @@
             <library id="jettison" />
             <library id="stax-api" />
         </libraryNeededGroup>
+
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-cxf-rt-rs-service-description}"
+            id="cxf-rt-rs-service-description"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-rs-service-description}"
+            bundleID="" />
 
         <!-- ${tesb-slf4j-api} -->
         <libraryNeeded context="plugin:org.talend.libraries.slf4j"
