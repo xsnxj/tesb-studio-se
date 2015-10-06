@@ -36,7 +36,6 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
@@ -64,8 +63,6 @@ import org.talend.designer.runprocess.ProcessorUtilities;
 public class RouteResourceController extends AbstractElementPropertySectionController {
 
     private static final String STRING = ":";
-
-    public static final String COMMA = ";";
 
     private Text labelText;
 
@@ -369,58 +366,43 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
     }
 
     public void propertyChange(PropertyChangeEvent arg0) {
-
     }
 
     @Override
     public void refresh(final IElementParameter param, boolean check) {
-        new Thread() {
+        updateContextList(param);
+        if (hashCurControls == null) {
+            return;
+        }
+        IElementParameter processTypeParameter = param.getChildParameters().get(
+                EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
+        String value = (String) processTypeParameter.getValue();
 
-            @Override
-            public void run() {
-
-                Display.getDefault().syncExec(new Runnable() {
-
-                    public void run() {
-                        updateContextList(param);
-                        if (hashCurControls == null) {
-                            return;
-                        }
-                        IElementParameter processTypeParameter = param.getChildParameters().get(
-                                EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
-                        String value = (String) processTypeParameter.getValue();
-
-                        if (value == null) {
-                            labelText.setText("");
-                        } else {
-                            try {
-                                final IRepositoryViewObject lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(value);
-                                if (lastVersion == null) {
-                                    processTypeParameter.setValue(null);
-                                    labelText.setText("");
-                                } else {
+        if (value == null) {
+            labelText.setText("");
+        } else {
+            try {
+                final IRepositoryViewObject lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(value);
+                if (lastVersion == null) {
+                    processTypeParameter.setValue(null);
+                    labelText.setText("");
+                } else {
 //                                    (RouteResourceItem) lastVersion.getProperty().getItem()
 //                                    labelText.setText(item.getName() + ": " + new ResourceDependencyModel(item).getClassPathUrl());
-                                    labelText.setText(lastVersion.getRepositoryObjectType().getKey()
-                                        + ": "
-                                        + param.getChildParameters()
-                                            .get(EParameterName.ROUTE_RESOURCE_TYPE_RES_URI.getName()).getValue());
-                                    // version
-                                    refreshCombo(param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()));
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-
-                        if (elem != null && elem instanceof Node) {
-                            ((Node) elem).checkAndRefreshNode();
-                        }
-                    }
-                });
-
+                    labelText.setText(lastVersion.getRepositoryObjectType().getKey()
+                        + ": "
+                        + param.getChildParameters()
+                            .get(EParameterName.ROUTE_RESOURCE_TYPE_RES_URI.getName()).getValue());
+                    // version
+                    refreshCombo(param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()));
+                }
+            } catch (Exception e) {
             }
-        }.start();
+        }
 
+        if (elem != null && elem instanceof Node) {
+            ((Node) elem).checkAndRefreshNode();
+        }
     }
 
     /**
@@ -493,59 +475,49 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if(strJobId == null){
         	return;
         }
-        
+
         // for version type
-        List<String> versionNameList = new ArrayList<String>();
-        List<String> versionValueList = new ArrayList<String>();
-        versionNameList.add(RelationshipItemBuilder.LATEST_VERSION);
-        versionValueList.add(RelationshipItemBuilder.LATEST_VERSION);
+        final List<String> versions = new ArrayList<String>();
+        versions.add(RelationshipItemBuilder.LATEST_VERSION);
 
-        Item item = null;
-        StringBuffer labels = new StringBuffer("");
+//        StringBuffer labels = new StringBuffer("");
         List<IRepositoryViewObject> allVersion = new ArrayList<IRepositoryViewObject>();
-        String[] strJobIds = strJobId.split(COMMA);
-        for (int i = 0; i < strJobIds.length; i++) {
-            String id = strJobIds[i];
-            if (StringUtils.isNotEmpty(id)) {
-                allVersion = ProcessorUtilities.getAllVersionObjectById(id);
+        if (StringUtils.isNotEmpty(strJobId)) {
+            allVersion = ProcessorUtilities.getAllVersionObjectById(strJobId);
 
-                // IRepositoryObject lastVersionObject = null;
-                String label = null;
-                if (allVersion != null) {
-                    String oldVersion = null;
-                    for (IRepositoryViewObject obj : allVersion) {
-                        String version = obj.getVersion();
-                        if (oldVersion == null) {
-                            oldVersion = version;
-                        }
-                        if (VersionUtils.compareTo(version, oldVersion) >= 0) {
-                            item = obj.getProperty().getItem();
-                            // lastVersionObject = obj;
-                        }
+            // IRepositoryObject lastVersionObject = null;
+//            Item item = null;
+            String label = null;
+            if (allVersion != null) {
+                String oldVersion = null;
+                for (IRepositoryViewObject obj : allVersion) {
+                    String version = obj.getVersion();
+                    if (oldVersion == null) {
                         oldVersion = version;
-                        versionNameList.add(version);
-                        versionValueList.add(version);
                     }
-                    label = item.getProperty().getLabel();
-                    if (i > 0) {
-                        labels.append(COMMA);
-                    }
-                    labels.append(label);
-                    // IPath path =
-                    // RepositoryNodeUtilities.getPath(lastVersionObject);
-                    // if (path != null) {
-                    // label = path.toString() + IPath.SEPARATOR + label;
-                    // }
-                } else {
-                    final String parentName = processParam.getName() + ":"; //$NON-NLS-1$
-                    elem.setPropertyValue(parentName + jobNameParam.getName(), ""); //$NON-NLS-1$
+//                    if (VersionUtils.compareTo(version, oldVersion) >= 0) {
+//                        item = obj.getProperty().getItem();
+//                        // lastVersionObject = obj;
+//                    }
+                    oldVersion = version;
+                    versions.add(version);
                 }
+//                label = item.getProperty().getLabel();
+//                labels.append(label);
+                // IPath path =
+                // RepositoryNodeUtilities.getPath(lastVersionObject);
+                // if (path != null) {
+                // label = path.toString() + IPath.SEPARATOR + label;
+                // }
+            } else {
+                final String parentName = processParam.getName() + ":"; //$NON-NLS-1$
+                elem.setPropertyValue(parentName + jobNameParam.getName(), ""); //$NON-NLS-1$
             }
         }
-        jobNameParam.setLabelFromRepository(labels.toString());
+//        jobNameParam.setLabelFromRepository(labels.toString());
 
-        setProcessTypeRelatedValues(processParam, versionNameList, versionValueList,
-                EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName(), null);
+        setProcessTypeRelatedValues(processParam, versions.toArray(new String[versions.size()]),
+                EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName(), RelationshipItemBuilder.LATEST_VERSION);
 
     }
 
@@ -554,12 +526,11 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
 	 * 
 	 * 
 	 */
-    private void setProcessTypeRelatedValues(IElementParameter parentParam, List<String> nameList, List<String> valueList,
+    private void setProcessTypeRelatedValues(IElementParameter parentParam, String[] valueList,
             final String childName, final String defaultValue) {
         if (parentParam == null || childName == null) {
             return;
         }
-        final String fullChildName = parentParam.getName() + ":" + childName; //$NON-NLS-1$
         IElementParameter childParam = parentParam.getChildParameters().get(childName);
 
         IElementParameter jobNameParam = parentParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
@@ -569,30 +540,24 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
                 childParam.setValue(null);
             }
         }
-        if (nameList == null) {
-            childParam.setListItemsDisplayName(new String[0]);
-        } else {
-            childParam.setListItemsDisplayName(nameList.toArray(new String[0]));
-        }
-        if (valueList == null) {
-            childParam.setListItemsValue(new String[0]);
-        } else {
-            childParam.setListItemsValue(valueList.toArray(new String[0]));
-        }
+
+        childParam.setListItemsDisplayName(valueList);
+        childParam.setListItemsValue(valueList);
 
         if (elem != null) {
-            if (valueList != null && !valueList.contains(childParam.getValue())) {
-                if (nameList != null && nameList.size() > 0) {
-                    // set default value
-                    if (defaultValue != null) {
-                        childParam.setValue(defaultValue);
-                    } else {
-                        elem.setPropertyValue(fullChildName, valueList.get(valueList.size() - 1));
-                    }
-                }
-            } else {
+            final String fullChildName = parentParam.getName() + ':' + childName;
+//            if (valueList != null && Arrays.!valueList.contains(childParam.getValue())) {
+//                if (nameList != null && nameList.size() > 0) {
+//                    // set default value
+//                    if (defaultValue != null) {
+//                        childParam.setValue(defaultValue);
+//                    } else {
+//                        elem.setPropertyValue(fullChildName, valueList.get(valueList.size() - 1));
+//                    }
+//                }
+//            } else {
                 elem.setPropertyValue(fullChildName, childParam.getValue());
-            }
+//            }
         }
     }
 }

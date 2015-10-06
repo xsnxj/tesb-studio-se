@@ -28,14 +28,11 @@ import aQute.bnd.osgi.Analyzer;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.emf.common.util.EMap;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
-import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.core.ICamelDesignerCoreService;
@@ -204,18 +201,15 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
             throws IOException {
         final DependenciesResolver resolver = new DependenciesResolver(processItem);
-        final StringBuilder exportPackage = new StringBuilder(resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
         //exportPackage.append(getPackageName(processItem));
         // Add Route Resource Export packages
         // http://jira.talendforge.org/browse/TESB-6227
-        for (String routeResourcePackage : addAdditionalExportPackages(processItem)) {
-            exportPackage.append(MANIFEST_ITEM_SEPARATOR).append(routeResourcePackage);
-        }
+
         // add manifest items
         analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, resolver.getManifestRequireBundle(MANIFEST_ITEM_SEPARATOR));
         analyzer.setProperty(Analyzer.IMPORT_PACKAGE,
             resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR) + ",*;resolution:=optional"); //$NON-NLS-1$
-        analyzer.setProperty(Analyzer.EXPORT_PACKAGE, exportPackage.toString());
+        analyzer.setProperty(Analyzer.EXPORT_PACKAGE, resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
 
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
             IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
@@ -234,38 +228,6 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
                 libResource.addResources(list);
             }
         }
-    }
-
-    /**
-     * Add route resource packages.
-     */
-    private Collection<String> addAdditionalExportPackages(ProcessItem item) {
-        Collection<String> pkgs = new HashSet<String>();
-        EMap<?, ?> additionalProperties = item.getProperty().getAdditionalProperties();
-        if (additionalProperties != null) {
-            Object resourcesObj = additionalProperties.get("ROUTE_RESOURCES_PROP");
-            if (resourcesObj != null) {
-                String[] resourceIds = resourcesObj.toString().split(",");
-                for (String id : resourceIds) {
-                    try {
-                        IRepositoryViewObject rvo = ProxyRepositoryFactory.getInstance().getLastVersion(id);
-                        if (rvo != null) {
-                            String path = rvo.getProperty().getItem().getState().getPath();
-                            String exportPkg;
-                            if (path != null && !path.isEmpty()) {
-                                exportPkg = "route_resources." + path.replace("/", ".");
-                            } else {
-                                exportPkg = "route_resources";
-                            }
-                            pkgs.add(exportPkg);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return pkgs;
     }
 
 }
