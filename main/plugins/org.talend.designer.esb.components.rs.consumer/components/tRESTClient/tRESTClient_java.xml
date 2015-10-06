@@ -282,7 +282,6 @@
 
             <IMPORT MODULE_GROUP="security-common"
                     REQUIRED="true" />
-            <IMPORT MODULE_GROUP="cxf-rt-transports-http-hc" REQUIRED_IF="(METHOD == 'PATCH')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
