@@ -368,8 +368,8 @@ try {
 		<% } else if ("PUT".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else if ("PATCH".equals(method)) { %>
-			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getRequestContext()
-            .put(org.apache.cxf.transport.http.asyncclient.AsyncHTTPConduit.USE_ASYNC,true);
+     		org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getRequestContext()
+            .put("use.httpurlconnection.method.reflection", true);
             responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
