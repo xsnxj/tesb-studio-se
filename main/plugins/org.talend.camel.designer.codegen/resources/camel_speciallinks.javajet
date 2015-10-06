@@ -1,6 +1,7 @@
-<%@ jet
+<%@ jet skeleton="@{org.talend.designer.camel.components.localprovider}/components/common/cLanguage.skeleton"
 	imports="
 		org.talend.core.model.process.IProcess
+		org.talend.core.model.process.IElement
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection 
 		org.talend.core.model.process.EConnectionType
@@ -56,14 +57,25 @@ if(connsIf.size()>0) {
 					previousCon = c;
 					previousOrder = tmp;
 				}
-			} 
+			}
+			String cid = currentConnection.getUniqueName();
+			String type = currentConnection.getRouteConnectionType();
+			String exp;
+			if ("xpath".equals(type)) {
+				IElement element = (IElement) currentConnection;
+				String useNamespaces = ElementParameterParser.getValue(element, "__USE_NAMESPACES__");
+            	exp = getExpression(languageType, condition, cid, useNamespaces, "");
+			} else {
+				exp = getExpression(languageType, condition, cid, "false", "");
+			}
+            
 			if(previousCon != null && "true".equals(previousCon.getEndChoice())){
 %>
 				.endChoice()
 <%
 			}
 %>
-			.when().<%=expression%>
+			.when().<%=exp%>
 <%
 		}
 	} else if(connsIf.get(0).getLineStyle()==EConnectionType.ROUTE_OTHER) {

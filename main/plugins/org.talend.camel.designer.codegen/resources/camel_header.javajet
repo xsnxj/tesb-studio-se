@@ -6,6 +6,7 @@
 		java.util.Map
 		org.talend.core.GlobalServiceRegister
 		org.talend.core.model.process.IProcess
+		org.talend.core.model.process.IElement
 		org.talend.core.model.process.INode
 		org.talend.core.model.process.IConnection
 		org.talend.core.model.process.EConnectionType
@@ -1467,7 +1468,34 @@ if (isProvider) {
 %>
 		}
 <%
-	}else if("cRecipientList".equals(nodeComponentName)||"cSplitter".equals(nodeComponentName)){
+	} else if("cMessageRouter".equals(nodeComponentName)){
+		IElement element = null;
+		for (IConnection param : node.getOutgoingConnections()) {
+			String ct = param.getRouteConnectionType();
+			
+			if ("xpath".equals(ct)) {
+				element = (IElement) param;
+				String language = ElementParameterParser.getValue(element, "__ROUTETYPE__");
+				String useNamespaces = ElementParameterParser.getValue(element, "__USE_NAMESPACES__");
+				String cid = param.getUniqueName();
+				List<Map<String, String>> namespaceValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(element, "__NAMESPACES__");
+%>			
+				Map<String, String> <%=cid%>NSMap = new HashMap<String, String>();
+				{
+<%
+			for(Map<String, String> m: namespaceValues){
+				String pre = m.get("PREFIX");
+				String uri = m.get("URI");
+%>
+				<%=cid%>NSMap.put(<%=pre%>, <%=uri%>);
+<%
+			}
+%>
+				}
+<%
+			}
+		}
+	} else if("cRecipientList".equals(nodeComponentName)||"cSplitter".equals(nodeComponentName)){
 		String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
 		if(!"xpath".equals(language)){
 			continue;
