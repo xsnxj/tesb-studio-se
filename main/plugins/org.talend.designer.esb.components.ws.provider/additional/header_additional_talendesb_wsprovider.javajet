@@ -271,6 +271,12 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 			org.apache.cxf.staxutils.StaxUtils.copy(request, os);
 			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
 					.read(new java.io.ByteArrayInputStream(os.toByteArray()));
+			try {
+    			 globalMap.put("SOAPVersion_<%=cid%>", 
+				 ((org.apache.cxf.binding.soap.SoapMessage)org.apache.cxf.phase.PhaseInterceptorChain.getCurrentMessage()).getVersion());
+				} catch (Exception e) {
+		    	 globalMap.put("SOAPVersion_<%=cid%>", org.apache.cxf.binding.soap.Soap12.getInstance());
+			}
 
 			java.util.Map<String, Object> esbRequest = new java.util.HashMap<String, Object>();
 			esbRequest.put(ESBProviderCallback.HEADERS_SOAP, context.getMessageContext().get(org.apache.cxf.headers.Header.HEADER_LIST));
@@ -367,10 +373,20 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	}
 
 	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {
-
+        org.apache.cxf.binding.soap.SoapFault soapFault = null;
 		try {
-            org.apache.cxf.binding.soap.SoapFault soapFault = new org.apache.cxf.binding.soap.SoapFault(
-                faultString, new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
+     		org.apache.cxf.binding.soap.SoapVersion soapVersion = null;
+		    try { 
+	            soapVersion = (org.apache.cxf.binding.soap.SoapVersion)globalMap.get("SOAPVersion_<%=cid%>");
+            } catch (Exception e) {
+    			soapVersion = org.apache.cxf.binding.soap.Soap12.getInstance();
+			}
+            if (soapVersion instanceof org.apache.cxf.binding.soap.Soap11) { 
+                soapFault = new org.apache.cxf.binding.soap.SoapFault(faultString, new javax.xml.namespace.QName(javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Server.businessFault"));
+            } else {
+     			soapFault = new org.apache.cxf.binding.soap.SoapFault(faultString, javax.xml.soap.SOAPConstants.SOAP_RECEIVER_FAULT);
+			}
+
 			if (null != faultDetail) {
 				// wrap details
 				org.dom4j.Element rootElement = faultDetail.getRootElement();
