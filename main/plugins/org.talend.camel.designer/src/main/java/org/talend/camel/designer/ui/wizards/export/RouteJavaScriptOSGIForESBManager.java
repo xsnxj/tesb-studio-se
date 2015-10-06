@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -192,6 +193,11 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
         routeInfo.put("routelets", routelets); //$NON-NLS-1$
 
         return routeInfo;
+    }
+
+    @Override
+    protected Set<String> getCompiledModuleNames() {
+        return Collections.emptySet();
     }
 
     @Override
