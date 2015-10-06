@@ -5,13 +5,6 @@
     <extension-point id="org.talend.designer.camel.dependencies.bundleClasspath" name="Camel Bundle Classpath" schema="schema/org.talend.designer.camel.dependencies.bundleClasspath.exsd"/>
     <extension-point id="org.talend.designer.camel.dependencies.requireBundle" name="Require Bundle" schema="schema/org.talend.designer.camel.dependencies.requireBundle.exsd"/>
 
-    <extension point="org.talend.core.runtime.service">
-        <Service
-            class="org.talend.designer.camel.dependencies.core.OsgiDependenciesService"
-            serviceId="IOsgiDependenciesService">
-        </Service>
-    </extension>
-
     <extension point="org.talend.designer.camel.dependencies.importPackage">
 
         <importPackage

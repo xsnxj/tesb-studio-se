@@ -4,14 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.osgi.framework.Constants;
-import org.talend.core.IOsgiDependenciesService;
 
 public abstract class ManifestItem {
 
-    public static final String IMPORT_PACKAGE = IOsgiDependenciesService.IMPORT_PACKAGE;
-    public static final String REQUIRE_BUNDLE = IOsgiDependenciesService.REQUIRE_BUNDLE;
-    public static final String EXPORT_PACKAGE = IOsgiDependenciesService.EXPORT_PACKAGE;
-    public static final String BUNDLE_CLASSPATH = IOsgiDependenciesService.BUNDLE_CLASSPATH;
+    public static final String IMPORT_PACKAGE = Constants.IMPORT_PACKAGE;
+    public static final String REQUIRE_BUNDLE = Constants.REQUIRE_BUNDLE;
+    public static final String EXPORT_PACKAGE = Constants.EXPORT_PACKAGE;
+    public static final String BUNDLE_CLASSPATH = Constants.BUNDLE_CLASSPATH;
 
     public static final String RESOLUTION_DIRECTIVE_OPTIONAL =
         Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL; //$NON-NLS-1$

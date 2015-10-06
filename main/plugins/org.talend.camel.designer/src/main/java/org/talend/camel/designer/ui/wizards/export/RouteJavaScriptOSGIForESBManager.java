@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.EMap;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.IOsgiDependenciesService;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
@@ -37,6 +36,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.core.ICamelDesignerCoreService;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -197,56 +197,35 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     @Override
     protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
             throws IOException {
-        StringBuilder exportPackage = new StringBuilder();
-        exportPackage.append(getPackageName(processItem));
+        final DependenciesResolver resolver = new DependenciesResolver(processItem);
+        final StringBuilder exportPackage = new StringBuilder(resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
+        //exportPackage.append(getPackageName(processItem));
         // Add Route Resource Export packages
         // http://jira.talendforge.org/browse/TESB-6227
         for (String routeResourcePackage : addAdditionalExportPackages(processItem)) {
-            exportPackage.append(',').append(routeResourcePackage);
+            exportPackage.append(MANIFEST_ITEM_SEPARATOR).append(routeResourcePackage);
         }
+        // add manifest items
+        analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, resolver.getManifestRequireBundle(MANIFEST_ITEM_SEPARATOR));
+        analyzer.setProperty(Analyzer.IMPORT_PACKAGE,
+            resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR) + ",*;resolution:=optional"); //$NON-NLS-1$
+        analyzer.setProperty(Analyzer.EXPORT_PACKAGE, exportPackage.toString());
 
-        IPath libPath = null;
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
             IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
                     IRunProcessService.class);
             ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
             if (talendProcessJavaProject != null) {
-                libPath = talendProcessJavaProject.getLibFolder().getLocation();
-            }
-        }
-        if (libPath == null) {
-            return;
-        }
-        IOsgiDependenciesService dependenciesService = (IOsgiDependenciesService) GlobalServiceRegister.getDefault().getService(
-                IOsgiDependenciesService.class);
-        if (dependenciesService != null) {
-            Map<String, String> bundleDependences = dependenciesService.getBundleDependences(processItem);
-            // process external libs
-            String externalLibs = bundleDependences.get(IOsgiDependenciesService.BUNDLE_CLASSPATH);
-            String[] libs = externalLibs.split(Character.toString(IOsgiDependenciesService.ITEM_SEPARATOR));
-            Set<URL> list = new HashSet<URL>();
-            for (String s : libs) {
-                if (s.isEmpty()) {
-                    continue;
+                final IPath libPath = talendProcessJavaProject.getLibFolder().getLocation();
+                // process external libs
+                final List<URL> list = new ArrayList<URL>();
+                for (String s : resolver.getManifestBundleClasspath(MANIFEST_ITEM_SEPARATOR)
+                    .split(Character.toString(MANIFEST_ITEM_SEPARATOR))) {
+                    if (!s.isEmpty()) {
+                        list.add(libPath.append(s).toFile().toURI().toURL());
+                    }
                 }
-                IPath path = libPath.append(s);
-                URL url = path.toFile().toURI().toURL();
-                list.add(url);
-            }
-            libResource.addResources(new ArrayList<URL>(list));
-
-            // add manifest items
-            String requireBundles = bundleDependences.get(IOsgiDependenciesService.REQUIRE_BUNDLE);
-            if (requireBundles != null && !"".equals(requireBundles)) {
-                analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, requireBundles);
-            }
-            String importPackages = bundleDependences.get(IOsgiDependenciesService.IMPORT_PACKAGE);
-            if (importPackages != null && !"".equals(importPackages)) {
-                analyzer.setProperty(Analyzer.IMPORT_PACKAGE, importPackages + ",*;resolution:=optional"); //$NON-NLS-1$
-            }
-            String exportPackages = bundleDependences.get(IOsgiDependenciesService.EXPORT_PACKAGE);
-            if (exportPackages != null && !"".equals(exportPackages)) {
-                analyzer.setProperty(Analyzer.EXPORT_PACKAGE, exportPackages);
+                libResource.addResources(list);
             }
         }
     }
