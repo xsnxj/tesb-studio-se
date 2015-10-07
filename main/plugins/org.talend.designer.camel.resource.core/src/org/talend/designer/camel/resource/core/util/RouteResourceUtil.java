@@ -154,7 +154,7 @@ public class RouteResourceUtil {
                 final String[] parts = id.split(REPACE_SLASH_TAG);
                 if (parts.length == 2) {
                     final ResourceDependencyModel model = createDependency(parts[0], parts[1]);
-                    if (!builtInModels.contains(model)) {
+                    if (null != model && !builtInModels.contains(model)) {
                         models.add(model);
                     }
                 }
