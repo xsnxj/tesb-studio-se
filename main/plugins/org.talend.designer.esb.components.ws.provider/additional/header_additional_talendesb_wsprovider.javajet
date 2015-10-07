@@ -317,10 +317,10 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 		} catch (Exception e) {
 			// second try (via content type)
 			try {
-				String contentType = (java.util.Map<java.lang.String, java.util.List<java.lang.String>>)
+				String contentType = ((java.util.Map<java.lang.String, java.util.List<java.lang.String>>)
 						context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS))
 								.get("content-type").get(0);
-				if (javax.xml.soap.SOAPConstants.SOAP_1_1_CONTENT_TYPE.equals(contentType)) {
+				if (contentType.contains(javax.xml.soap.SOAPConstants.SOAP_1_1_CONTENT_TYPE)) {
 					soapVersion = org.apache.cxf.binding.soap.Soap11.getInstance();
 				}
 			} catch (Exception ee) {
@@ -414,7 +414,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 		}
 	}
 
-	private org.w3c.dom.Document convertDocument(org.dom4j.Document document) {
+     private org.w3c.dom.Document convertDocument(org.dom4j.Document document) throws Exception{
 		// A special version of DOMWriter that does not write xmlns:foo attributes
 		org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
 			protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
