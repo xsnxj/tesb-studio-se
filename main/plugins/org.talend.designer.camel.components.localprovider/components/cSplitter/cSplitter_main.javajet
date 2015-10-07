@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet skeleton="../common/cLanguage.skeleton"
 imports="
     org.talend.core.model.process.INode 
     org.talend.core.model.process.ElementParameterParser 
@@ -29,26 +29,12 @@ imports="
 	
 	String timeout=ElementParameterParser.getValue(node, "__TIMEOUT__");
 	boolean hasTimeout=(timeout!=null&&timeout.matches("\\s*\\d+\\s*"));
-	
+	String exp = getExpression(language, expression, cid, useNamespaces, resultClassType);
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.split(
+		.split().<%=exp%>
 <%
-			if("none".equals(language)){
-				//inorder expression for former migrate
-				%><%=expression%>)<%
-			}else{
-				//fill postorder expression
-				%>).<%=language%>(<%=expression%><%
-				if("xpath".equals(language)){
-					if(useResultClassType){%>,<%=resultClassType%><%	}
-					if("true".equals(useNamespaces)){%>,<%=cid%>NSMap<%		}
-				}
-				//close expression
-				%>)<%
-			}
-			//then wait other postorder options.
 		if(useStrategy){			%>.aggregationStrategyRef(<%=aggregationStrategy%>)<%	}
 		if(arallelProcessing){		%>.parallelProcessing()<%								}
 		if(stopOnException){		%>.stopOnException()<%									}
