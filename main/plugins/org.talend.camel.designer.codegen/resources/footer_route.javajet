@@ -23,7 +23,6 @@
 
 	List<? extends INode> processNodes = (List<? extends INode>) process.getGeneratingNodes();
 	List<IContextParameter> params = process.getContextManager().getDefaultContext().getContextParameterList();
-    String jobFolderName = JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
 
 	final boolean stats = codeGenArgument.isStatistics();
 %>
@@ -110,12 +109,9 @@
 <%
 for (INode node : process.getGraphicalNodes()) {
     if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
-        final IProcess jobletProcess = node.getComponent().getProcess();
-        String className = codeGenArgument.getCurrentProjectName().toLowerCase()
-            + '.' + JavaResourcesHelper.getJobFolderName(jobletProcess.getName(), jobletProcess.getVersion())
-            + '.' + jobletProcess.getName();
 %>
-        main.addRouteBuilder((org.apache.camel.builder.RouteBuilder) Class.forName("<%=className%>").newInstance());
+        main.addRouteBuilder(
+            (org.apache.camel.builder.RouteBuilder) Class.forName("<%=JavaResourcesHelper.getJobClassName((org.talend.core.model.process.IProcess2) node.getComponent().getProcess())%>").newInstance());
 <%
     }
 }
@@ -242,7 +238,7 @@ for (IContextParameter ctxParam : params) {
 	*/
 	private void readContextValues(String contextName){
 		try {
-			java.io.InputStream inContext = <%=process.getName()%>.class.getClassLoader().getResourceAsStream("<%=codeGenArgument.getCurrentProjectName().toLowerCase() %>/<%=jobFolderName %>/contexts/"+contextName+".properties");
+			java.io.InputStream inContext = <%=process.getName()%>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
 
 			if (inContext!=null) {
 	    		context.load(inContext);

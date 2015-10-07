@@ -45,11 +45,11 @@
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 	
 	List<? extends INode> graphicalNodes = process.getGraphicalNodes();
-	boolean stats = codeGenArgument.isStatistics();
-	boolean trace = codeGenArgument.isTrace();
-	boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
-	List<IContextParameter> params = new ArrayList<IContextParameter>();
-	params=process.getContextManager().getDefaultContext().getContextParameterList();
+	//boolean stats = codeGenArgument.isStatistics();
+	//boolean trace = codeGenArgument.isTrace();
+	//boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
+	//List<IContextParameter> params = new ArrayList<IContextParameter>();
+	//params=process.getContextManager().getDefaultContext().getContextParameterList();
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -59,10 +59,8 @@ if (service instanceof AbstractBrandingService) {
 <%
 }
 
-	String jobFolderName = JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
-	String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName;
 %>
-package <%= packageName %>;
+package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurrentProjectName(), process.getName(), process.getVersion()) %>;
 
 <%
 	java.util.Set<String> importsSet = new java.util.TreeSet<String>();
