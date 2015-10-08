@@ -208,13 +208,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             	jobArtifactVersion += "-SNAPSHOT";
             }
             String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getGroupId(), routeName+"_"+jobName, getArtifactVersion(), jobFile);
+            BundleModel jobModel = new BundleModel(getGroupId() + '.' + routeName, jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-            		exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
-            				jobName, jobVersion,
-            				routeNode.getObject().getProperty().getDisplayName(),
-            				version
-            				);
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
+                    .getObject().getProperty().getDisplayName(), version);
             }
         }
     }
