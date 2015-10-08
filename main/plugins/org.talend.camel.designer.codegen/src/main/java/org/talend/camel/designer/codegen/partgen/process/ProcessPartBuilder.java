@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.codegen.partgen.process;
 
 import java.util.ArrayList;
@@ -7,6 +19,7 @@ import java.util.List;
 import org.talend.camel.designer.codegen.config.ECamelTemplate;
 import org.talend.camel.designer.codegen.partgen.PartGeneratorManager;
 import org.talend.camel.designer.codegen.util.NodeUtil;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.designer.codegen.config.NodesSubTree;
 import org.talend.designer.codegen.config.NodesTree;
@@ -80,8 +93,10 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 //	}
 
 	private static boolean subTreePostpositive(INode subProcessStartNode) {
-		return NodeUtil.isMessagingFamilyStartNode(subProcessStartNode);
-	}
+        IElementParameter family = subProcessStartNode.getElementParameter("FAMILY"); //$NON-NLS-1$
+        // https://jira.talendforge.org/browse/TESB-16530
+        return subProcessStartNode.isStart() && null != family && !"Exception Handling".equals(family.getValue());
+    }
 
 	private static boolean subTreeNeedSkip(INode subProcessStartNode) {
 		return NodeUtil.isConfigComponentNode(subProcessStartNode);

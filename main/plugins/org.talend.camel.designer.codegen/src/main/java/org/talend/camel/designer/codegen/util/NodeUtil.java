@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.codegen.util;
 
 import java.util.ArrayList;
@@ -10,7 +22,6 @@ import org.talend.core.model.components.IComponent;
 import org.talend.core.model.components.IComponentFileNaming;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.IConnection;
-import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.temp.ECodePart;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
@@ -92,14 +103,6 @@ public class NodeUtil {
             }
         }
         return false;
-    }
-
-    public static boolean isMessagingFamilyStartNode(INode node) {
-        if (node == null) {
-            return false;
-        }
-        IElementParameter family = node.getElementParameter("FAMILY");
-        return node.isStart() && null != family && "Messaging".equals(family.getValue());
     }
 
     public static boolean isConfigComponentNode(INode subProcessStartNode) {
