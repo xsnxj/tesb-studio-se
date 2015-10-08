@@ -139,7 +139,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
         for (ResourceDependencyModel resource : RouteResourceUtil.getResourceDependencies(item)) {
             Element resourceElement = resourcesElement.addElement("Resource");
-            resourceElement.addAttribute("name", resource.getFileName());
+            resourceElement.addAttribute("name", resource.toString());
             resourceElement.addAttribute("version", resource.getSelectedVersion());
             resourceElement.addAttribute("path", resource.getClassPathUrl());
         }
