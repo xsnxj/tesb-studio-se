@@ -212,7 +212,7 @@ public class ResourceCheckExtensionPointManager {
      */
     private static ResourceDependencyModel createDenpendencyModel(String paramName, final INode node) {
         final IElementParameter idParam =
-            node.getElementParameter(paramName + ':' + EParameterName.ROUTE_RESOURCE_TYPE_ID);
+            node.getElementParameter(paramName);
         final IElementParameter versionParam =
             node.getElementParameter(paramName + ':' + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
         final ResourceDependencyModel model =

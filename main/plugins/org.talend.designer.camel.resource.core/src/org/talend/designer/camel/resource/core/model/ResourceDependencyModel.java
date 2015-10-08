@@ -18,11 +18,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 
@@ -89,32 +88,7 @@ public class ResourceDependencyModel {
      * @return the classPathUrl
      */
     public String getClassPathUrl() {
-        final String path = item.getState().getPath();
-        if (path != null && !path.isEmpty()) {
-            return path + '/' + getFileName();
-        } else {
-            return getFileName();
-        }
-    }
-
-    /**
-     * Get file name
-     * 
-     * @return
-     */
-    public String getFileName() {
-        final String label = item.getProperty().getLabel();
-        if (RouteResourceUtil.LATEST_VERSION.equals(selectedVersion)) {
-            return label;
-        }
-        final IPath path = new Path(label);
-        final String fileExtension = path.getFileExtension();
-        String fileName = path.removeFileExtension().toPortableString();
-        fileName += '_' + selectedVersion;
-        if (fileExtension != null && !fileExtension.isEmpty()) {
-            fileName += '.' + fileExtension;
-        }
-        return fileName;
+        return JavaResourcesHelper.getResouceClasspath(item, selectedVersion);
     }
 
     /**

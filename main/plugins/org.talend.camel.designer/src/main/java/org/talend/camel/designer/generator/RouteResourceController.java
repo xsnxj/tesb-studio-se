@@ -38,10 +38,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
+import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
@@ -50,7 +50,10 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.creator.SelectAllTextControlCreator;
@@ -61,8 +64,6 @@ import org.talend.designer.runprocess.ProcessorUtilities;
  * 
  */
 public class RouteResourceController extends AbstractElementPropertySectionController {
-
-    private static final String STRING = ":";
 
     private Text labelText;
 
@@ -80,9 +81,19 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
             // do nothing.
         }
 
-        public void widgetSelected(SelectionEvent e) {
-            Command cmd = createCommand(e);
-            executeCommand(cmd);
+        public void widgetSelected(SelectionEvent selectionEvent) {
+            final PropertyChangeCommand cmd;
+            if (selectionEvent.getSource() instanceof Button) {
+                cmd = createButtonCommand((Button) selectionEvent.getSource());
+            } else if (selectionEvent.getSource() instanceof CCombo) {
+                cmd = createComboCommand((CCombo) selectionEvent.getSource());
+            } else {
+                cmd = null;
+            }
+            if (cmd != null) {
+                cmd.setUpdate(true);
+                executeCommand(cmd);
+            }
         }
     };
 
@@ -95,7 +106,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
      * @param source
      * @return
      */
-    private Command createButtonCommand(Button button) {
+    private PropertyChangeCommand createButtonCommand(Button button) {
         RouteResourceSelectionDialog dialog = new RouteResourceSelectionDialog(button.getShell());
 
         selectNodeIfExists(button, dialog);
@@ -110,17 +121,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
             String id = item.getProperty().getId();
             String paramName = (String) button.getData(PARAMETER_NAME);
 
-            return new RouteResourceChangeCommand(elem, paramName, id);
-        }
-        return null;
-    }
-
-    private Command createCommand(SelectionEvent selectionEvent) {
-        if (selectionEvent.getSource() instanceof Button) {
-            return createButtonCommand((Button) selectionEvent.getSource());
-        }
-        if (selectionEvent.getSource() instanceof CCombo) {
-            return createComboCommand((CCombo) selectionEvent.getSource());
+            return new PropertyChangeCommand(elem, paramName, id);
         }
         return null;
     }
@@ -131,23 +132,23 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
      * @param source
      * @return
      */
-    private Command createComboCommand(CCombo combo) {
+    private PropertyChangeCommand createComboCommand(CCombo combo) {
         String paramName = (String) combo.getData(PARAMETER_NAME);
 
         IElementParameter param = elem.getElementParameter(paramName);
 
         String value = combo.getText();
 
-        for (int j = 0; j < param.getListItemsValue().length; j++) {
-            if (combo.getText().equals(param.getListItemsDisplayName()[j])) {
-                value = (String) param.getListItemsValue()[j];
-            }
-        }
+//        for (int j = 0; j < param.getListItemsValue().length; j++) {
+//            if (combo.getText().equals(param.getListItemsDisplayName()[j])) {
+//                value = (String) param.getListItemsValue()[j];
+//            }
+//        }
         if (value.equals(param.getValue())) {
             return null;
         }
 
-        return new RouteResourceChangeCommand(elem, paramName, value);
+        return new PropertyChangeCommand(elem, paramName, value);
     }
 
     @Override
@@ -156,8 +157,6 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         this.curParameter = param;
         this.paramFieldType = param.getFieldType();
         FormData data;
-
-        IElementParameter processTypeParameter = param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
 
         final DecoratedField dField = new DecoratedField(subComposite, SWT.BORDER | SWT.READ_ONLY,
                 new SelectAllTextControlCreator());
@@ -225,7 +224,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         btn.setImage(ImageProvider.getImage(CoreUIPlugin.getImageDescriptor(DOTS_BUTTON)));
 
         btn.addSelectionListener(listenerSelection);
-        btn.setData(PARAMETER_NAME, param.getName() + STRING + processTypeParameter.getName());
+        btn.setData(PARAMETER_NAME, param.getName());
         btn.setEnabled(!param.isReadOnly());
         data = new FormData();
         data.left = new FormAttachment(cLayout, 0);
@@ -234,7 +233,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         data.height = STANDARD_HEIGHT - 2;
         btn.setLayoutData(data);
 
-        hashCurControls.put(param.getName() + STRING + processTypeParameter.getName(), labelText);
+        hashCurControls.put(param.getName(), labelText);
         Point initialSize = dField.getLayoutControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
         Control lastControlUsed = btn;
         lastControlUsed = addVersionCombo(subComposite,
@@ -374,29 +373,20 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if (hashCurControls == null) {
             return;
         }
-        IElementParameter processTypeParameter = param.getChildParameters().get(
-                EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
-        String value = (String) processTypeParameter.getValue();
-
-        if (value == null) {
+        final String resourceId = (String) param.getValue();
+        if (resourceId == null) {
             labelText.setText("");
         } else {
-            try {
-                final IRepositoryViewObject lastVersion = ProxyRepositoryFactory.getInstance().getLastVersion(value);
-                if (lastVersion == null) {
-                    processTypeParameter.setValue(null);
-                    labelText.setText("");
-                } else {
-//                                    (RouteResourceItem) lastVersion.getProperty().getItem()
-//                                    labelText.setText(item.getName() + ": " + new ResourceDependencyModel(item).getClassPathUrl());
-                    labelText.setText(lastVersion.getRepositoryObjectType().getKey()
-                        + ": "
-                        + param.getChildParameters()
-                            .get(EParameterName.ROUTE_RESOURCE_TYPE_RES_URI.getName()).getValue());
-                    // version
-                    refreshCombo(param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()));
-                }
-            } catch (Exception e) {
+            final IElementParameter versionParameter =
+                param.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName());
+            final String version = (String) versionParameter.getValue();
+            final ResourceDependencyModel rdModel = RouteResourceUtil.createDependency(resourceId, version);
+            if (rdModel == null) {
+                labelText.setText("");
+            } else {
+                labelText.setText(rdModel.getClassPathUrl());
+                // version
+                refreshCombo(versionParameter);
             }
         }
 
@@ -420,23 +410,23 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         }
         Object value = childParameter.getValue();
         if (value instanceof String) {
-            String strValue = ""; //$NON-NLS-1$
-            int nbInList = 0, nbMax = childParameter.getListItemsValue().length;
-            String name = (String) value;
-            while (strValue.equals(new String("")) && nbInList < nbMax) { //$NON-NLS-1$
-                if (name.equals(childParameter.getListItemsValue()[nbInList])) {
-                    strValue = childParameter.getListItemsDisplayName()[nbInList];
-                }
-                nbInList++;
-            }
+            String version = (String) value;
+//            String strValue = ""; //$NON-NLS-1$
+//            int nbInList = 0, nbMax = childParameter.getListItemsValue().length;
+//            while (strValue.equals(new String("")) && nbInList < nbMax) { //$NON-NLS-1$
+//                if (name.equals(childParameter.getListItemsValue()[nbInList])) {
+//                    strValue = childParameter.getListItemsDisplayName()[nbInList];
+//                }
+//                nbInList++;
+//            }
             String[] paramItems = getListToDisplay(childParameter);
             String[] comboItems = combo.getItems();
 
             if (!Arrays.equals(paramItems, comboItems)) {
                 combo.setItems(paramItems);
             }
-            combo.setText(strValue);
-            combo.setVisible(true);
+            combo.setText(version);
+//            combo.setVisible(true);
         }
 
     }
@@ -470,9 +460,8 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if (processParam == null || processParam.getFieldType() != EParameterFieldType.ROUTE_RESOURCE_TYPE) {
             return;
         }
-        IElementParameter jobNameParam = processParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
-        final String strJobId = (String) jobNameParam.getValue();
-        if(strJobId == null){
+        final String resourceId = (String) processParam.getValue();
+        if(resourceId == null){
         	return;
         }
 
@@ -482,12 +471,12 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
 
 //        StringBuffer labels = new StringBuffer("");
         List<IRepositoryViewObject> allVersion = new ArrayList<IRepositoryViewObject>();
-        if (StringUtils.isNotEmpty(strJobId)) {
-            allVersion = ProcessorUtilities.getAllVersionObjectById(strJobId);
+        if (StringUtils.isNotEmpty(resourceId)) {
+            allVersion = ProcessorUtilities.getAllVersionObjectById(resourceId);
 
             // IRepositoryObject lastVersionObject = null;
 //            Item item = null;
-            String label = null;
+//            String label = null;
             if (allVersion != null) {
                 String oldVersion = null;
                 for (IRepositoryViewObject obj : allVersion) {
@@ -510,42 +499,25 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
                 // label = path.toString() + IPath.SEPARATOR + label;
                 // }
             } else {
-                final String parentName = processParam.getName() + ":"; //$NON-NLS-1$
-                elem.setPropertyValue(parentName + jobNameParam.getName(), ""); //$NON-NLS-1$
+                elem.setPropertyValue(processParam.getName(), ""); //$NON-NLS-1$
             }
         }
 //        jobNameParam.setLabelFromRepository(labels.toString());
 
-        setProcessTypeRelatedValues(processParam, versions.toArray(new String[versions.size()]),
-                EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName(), RelationshipItemBuilder.LATEST_VERSION);
+        setProcessTypeRelatedValues(processParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()),
+            versions.toArray(new String[versions.size()]),
+            RelationshipItemBuilder.LATEST_VERSION);
 
     }
 
-    /**
-	 * 
-	 * 
-	 * 
-	 */
-    private void setProcessTypeRelatedValues(IElementParameter parentParam, String[] valueList,
-            final String childName, final String defaultValue) {
-        if (parentParam == null || childName == null) {
+    private void setProcessTypeRelatedValues(IElementParameter childParam, String[] valueList, final String defaultValue) {
+        if (childParam == null) {
             return;
         }
-        IElementParameter childParam = parentParam.getChildParameters().get(childName);
-
-        IElementParameter jobNameParam = parentParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_ID.getName());
-        if (jobNameParam != null) {
-            String value = (String) jobNameParam.getValue();
-            if (value == null || "".equals(value)) { //$NON-NLS-1$
-                childParam.setValue(null);
-            }
-        }
-
         childParam.setListItemsDisplayName(valueList);
         childParam.setListItemsValue(valueList);
 
         if (elem != null) {
-            final String fullChildName = parentParam.getName() + ':' + childName;
 //            if (valueList != null && Arrays.!valueList.contains(childParam.getValue())) {
 //                if (nameList != null && nameList.size() > 0) {
 //                    // set default value
@@ -556,7 +528,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
 //                    }
 //                }
 //            } else {
-                elem.setPropertyValue(fullChildName, childParam.getValue());
+                elem.setPropertyValue(childParam.getName(), childParam.getValue());
 //            }
         }
     }

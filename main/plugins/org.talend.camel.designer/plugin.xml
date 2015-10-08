@@ -278,8 +278,17 @@
                 name="RemoveRouteComponentId"
                 version="6.1.0">
           </projecttask>
-          
-      </extension>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.1.2"
+                class="org.talend.camel.designer.migration.UpdateRouteResourceTypeMigrationTask"
+                description="Update Route Resource Type"
+                id="org.talend.camel.designer.migration.UpdateRouteResourceTypeMigrationTask"
+                name="UpdateRouteResourceTypeMigrationTask"
+                version="6.1.0">
+          </projecttask>
+    </extension>
+
         <extension
               point="org.talend.designer.core.generators">
            <generator

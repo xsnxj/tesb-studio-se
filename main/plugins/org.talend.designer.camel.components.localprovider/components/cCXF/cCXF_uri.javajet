@@ -52,7 +52,11 @@ if ("wsdlURL".equals(serviceType)) {
 		if("file".equals(ElementParameterParser.getValue(node, "__WSDL_TYPE__"))){
 		    filePath =  ElementParameterParser.getValue(node, "__WSDL_FILE__");
 		}else{
-			filePath = "getClass().getResource(\"/" + ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__") + "\").toString()";
+			filePath = "getClass().getResource(\"/"
+			    + org.talend.core.model.utils.JavaResourcesHelper.getResouceClasspath(
+			        ElementParameterParser.getValue(node, "__WSDL_FILE_REPO__"),
+			        ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_VERSION__"))
+			    + "\").toString()";
 		}
 		sb.append("+").append(filePath.replaceAll("\\\\","/"));
 	} else {

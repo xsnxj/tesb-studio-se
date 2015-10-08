@@ -16,13 +16,13 @@ import java.text.MessageFormat;
 
 import org.talend.camel.designer.i18n.CamelDesignerMessages;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.ICheckNodesService;
-import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.views.problems.Problems;
 
@@ -64,8 +64,8 @@ public class CheckCXFNodesService implements ICheckNodesService {
 			} // Select Repository
 			else if (wsdlTypeParam != null
 					&& "repo".equals(wsdlTypeParam.getValue())) { //$NON-NLS-1$
-                final IElementParameter resourceParam = node.getElementParameter(EParameterName.ROUTE_RESOURCE_TYPE_ID
-                    .getName());
+                final IElementParameter resourceParam =
+                    node.getElementParameterFromField(EParameterFieldType.ROUTE_RESOURCE_TYPE);
 				// WSDL file is empty
 				String errorMessage = ""; //$NON-NLS-1$
 				if (resourceParam == null || resourceParam.getValue() == null
