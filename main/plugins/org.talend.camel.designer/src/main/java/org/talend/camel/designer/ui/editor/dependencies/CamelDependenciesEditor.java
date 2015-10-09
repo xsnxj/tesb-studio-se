@@ -25,9 +25,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.designer.CamelDesignerPlugin;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
-import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
@@ -180,19 +178,21 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		statusLabel.setToolTipText(message);
 	}
 
-    private ProcessItem fromEditorInput() {
-        return (ProcessItem) ((CamelProcessEditorInput) getEditorInput()).getItem();
+    private JobEditorInput getJobEditorInput() {
+        return (JobEditorInput) getEditorInput();
     }
 
     private void updateInput() {
         // re-calculate all datas
-        final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) fromEditorInput());
+        final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) getJobEditorInput().getItem());
         // set datas
         importPackageViewer.setInput(resolver.getImportPackages());
         requireBundleViewer.setInput(resolver.getRequireBundles());
         bundleClasspathViewer.setInput(resolver.getBundleClasspaths());
         exportPackageViewer.setInput(resolver.getExportPackages());
-        manageRouteResourcePanel.setInput(RouteResourceUtil.getResourceDependencies(fromEditorInput()));
+
+        manageRouteResourcePanel.setInput(
+            RouteResourceUtil.getResourceDependencies(getJobEditorInput().getLoadedProcess()));
     }
 
     private CamelDependenciesPanel createTableViewer(Composite parent, FormToolkit toolkit, String title, String type) {
@@ -225,8 +225,8 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
             cmd = new Command() {
                 @Override
                 public void execute() {
-                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
-                    RouteResourceUtil.saveResourceDependency(process.getAdditionalProperties(),
+                    RouteResourceUtil.saveResourceDependency(
+                        getJobEditorInput().getLoadedProcess().getAdditionalProperties(),
                         manageRouteResourcePanel.getInput());
                 }
             };
@@ -234,9 +234,9 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
             cmd = new Command() {
                 @Override
                 public void execute() {
-                    final IProcess2 process = ((JobEditorInput) getEditorInput()).getLoadedProcess();
                     //save all datas
-                    DependenciesCoreUtil.saveToMap(process.getAdditionalProperties(),
+                    DependenciesCoreUtil.saveToMap(
+                            getJobEditorInput().getLoadedProcess().getAdditionalProperties(),
                             (Collection<BundleClasspath>) bundleClasspathViewer.getInput(),
                             (Collection<ImportPackage>) importPackageViewer.getInput(),
                             (Collection<RequireBundle>) requireBundleViewer.getInput(),

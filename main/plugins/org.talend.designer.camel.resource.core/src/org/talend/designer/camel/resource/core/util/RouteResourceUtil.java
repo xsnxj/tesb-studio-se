@@ -146,101 +146,20 @@ public class RouteResourceUtil {
      * @param models
      */
     public static Collection<ResourceDependencyModel> getResourceDependencies(ProcessItem routeItem) {
-        final Collection<ResourceDependencyModel> builtInModels = getBuiltInResourceDependencies(routeItem);
-        final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
-        final Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
-        if (resourcesObj != null) {
-            for (String id : resourcesObj.toString().split(RouteResourceUtil.COMMA_TAG)) {
-                final String[] parts = id.split(REPACE_SLASH_TAG);
-                if (parts.length == 2) {
-                    final ResourceDependencyModel model = createDependency(parts[0], parts[1]);
-                    if (null != model && !builtInModels.contains(model)) {
-                        models.add(model);
-                    }
-                }
-            }
-        }
-        return models;
+        return getResourceDependencies(
+            getBuiltInResourceDependencies(routeItem),
+            (String) routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP));
     }
 
     /**
-     * @param routeItem
      * 
+     * @param routeItem
      * @param models
      */
-    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(final ProcessItem routeItem) {
-        if (!containsResourceNode(routeItem)) {
-            return Collections.emptyList();
-        }
-        // TDI-24563
-        final IProcess2 process = getProcessFromItem(routeItem);
-        if (process == null) {
-            return Collections.emptySet();
-        }
-
-        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
-        for (INode node : process.getGraphicalNodes()) {
-            final ResourceDependencyModel rdm = createDenpendencyModel(node);
-            if (null != rdm) {
-                // Merge and add
-                if (!models.add(rdm)) {
-                    for (ResourceDependencyModel model : models) {
-                        if (model.equals(rdm)) {
-                            model.getRefNodes().addAll(rdm.getRefNodes());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return models;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static boolean containsResourceNode(final ProcessItem routeItem) {
-        for (NodeType node : (Collection<NodeType>) routeItem.getProcess().getNode()) {
-            for (ElementParameterType param : (Collection<ElementParameterType>) node.getElementParameter()) {
-                if (EParameterFieldType.ROUTE_RESOURCE_TYPE.getName().equals(param.getField())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static IProcess2 getProcessFromItem(ProcessItem item) {
-        final IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
-            .getService(IDesignerCoreService.class);
-        if (designerCoreService != null) {
-            return (IProcess2) designerCoreService.getProcessFromItem(item);
-        }
-        return null;
-    }
-
-    /**
-     * Create ResourceDependencyModel
-     * 
-     * @param paramName
-     * @param node
-     * @return
-     */
-    private static ResourceDependencyModel createDenpendencyModel(final INode node) {
-        if (!node.isActivate()) {
-            return null;
-        }
-        final IElementParameter idParam = node.getElementParameterFromField(EParameterFieldType.ROUTE_RESOURCE_TYPE);
-        if (null == idParam || !idParam.isShow(node.getElementParameters())) {
-            return null;
-        }
-        final IElementParameter versionParam =
-            node.getElementParameter(idParam.getName() + ':' + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
-        final ResourceDependencyModel model =
-            RouteResourceUtil.createDependency((String) idParam.getValue(), (String)  versionParam.getValue());
-        if (null != model) {
-            model.setBuiltIn(true);
-            model.getRefNodes().add(node.getUniqueName());
-        }
-        return model;
+    public static Collection<ResourceDependencyModel> getResourceDependencies(IProcess2 process) {
+        return getResourceDependencies(
+            getBuiltInResourceDependencies(process),
+            (String) process.getAdditionalProperties().get(ROUTE_RESOURCES_PROP));
     }
 
     /**
@@ -318,6 +237,116 @@ public class RouteResourceUtil {
         }
 
         return result;
+    }
+
+    /**
+     * 
+     * @param routeItem
+     * @param models
+     */
+    private static Collection<ResourceDependencyModel> getResourceDependencies(
+        Collection<ResourceDependencyModel> builtInModels, String userResources) {
+        final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
+        if (userResources != null) {
+            for (String id : userResources.split(RouteResourceUtil.COMMA_TAG)) {
+                final String[] parts = id.split(REPACE_SLASH_TAG);
+                if (parts.length == 2) {
+                    final ResourceDependencyModel model = createDependency(parts[0], parts[1]);
+                    if (null != model && !builtInModels.contains(model)) {
+                        models.add(model);
+                    }
+                }
+            }
+        }
+        return models;
+    }
+
+    /**
+     * @param routeItem
+     * 
+     * @param models
+     */
+    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(final ProcessItem routeItem) {
+        if (!containsResourceNode(routeItem)) {
+            return Collections.emptyList();
+        }
+        // TDI-24563
+        final IProcess2 process = getProcessFromItem(routeItem);
+        if (process == null) {
+            return Collections.emptySet();
+        }
+        return getBuiltInResourceDependencies(process);
+    }
+
+    /**
+     * @param routeItem
+     * 
+     * @param models
+     */
+    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(final IProcess2 process) {
+        final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
+        for (INode node : process.getGraphicalNodes()) {
+            final ResourceDependencyModel rdm = createDenpendencyModel(node);
+            if (null != rdm) {
+                // Merge and add
+                if (!models.add(rdm)) {
+                    for (ResourceDependencyModel model : models) {
+                        if (model.equals(rdm)) {
+                            model.getRefNodes().addAll(rdm.getRefNodes());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return models;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static boolean containsResourceNode(final ProcessItem routeItem) {
+        for (NodeType node : (Collection<NodeType>) routeItem.getProcess().getNode()) {
+            for (ElementParameterType param : (Collection<ElementParameterType>) node.getElementParameter()) {
+                if (EParameterFieldType.ROUTE_RESOURCE_TYPE.getName().equals(param.getField())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static IProcess2 getProcessFromItem(ProcessItem item) {
+        final IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
+            .getService(IDesignerCoreService.class);
+        if (designerCoreService != null) {
+            return (IProcess2) designerCoreService.getProcessFromItem(item);
+        }
+        return null;
+    }
+
+    /**
+     * Create ResourceDependencyModel
+     * 
+     * @param paramName
+     * @param node
+     * @return
+     */
+    private static ResourceDependencyModel createDenpendencyModel(final INode node) {
+        if (!node.isActivate()) {
+            return null;
+        }
+        final IElementParameter idParam = node.getElementParameterFromField(EParameterFieldType.ROUTE_RESOURCE_TYPE);
+        if (null == idParam || !idParam.isShow(node.getElementParameters())) {
+            return null;
+        }
+        final IElementParameter versionParam =
+            node.getElementParameter(idParam.getName() + ':' + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
+        final ResourceDependencyModel model =
+            RouteResourceUtil.createDependency((String) idParam.getValue(), (String)  versionParam.getValue());
+        if (null != model) {
+            model.setBuiltIn(true);
+            model.getRefNodes().add(node.getUniqueName());
+        }
+        return model;
     }
 
     /**
