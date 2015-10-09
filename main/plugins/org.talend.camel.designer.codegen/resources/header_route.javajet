@@ -1461,7 +1461,11 @@ for (INode node : graphicalNodes) {
 		if ("file".equals(pzmap_filetype)) {
 			filePath = "\"file://\"+" + ElementParameterParser.getValue(node, "__PZMAP_FILENAME__");
 		} else {
-			filePath = "\"classpath:" + ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_RES_URI__") + '"';
+			filePath = "\"classpath:"
+			    + org.talend.core.model.utils.JavaResourcesHelper.getResouceClasspath(
+                    ElementParameterParser.getValue(node, "__PZMAP_FILE_REPO__"),
+                    ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_VERSION__"))
+			    + '"';
 		}
 		sb.append("+").append(filePath.replaceAll("\\\\","/"));
 

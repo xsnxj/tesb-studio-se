@@ -65,7 +65,6 @@
    <element name="resourceParameter">
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
-            <element ref="enablement"/>
          </sequence>
          <attribute name="parameterName" type="string" use="required">
             <annotation>
@@ -74,96 +73,6 @@
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="attribute">
-      <complexType>
-         <attribute name="parameterName" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parameterValue" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="regularExpresson" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="enablement">
-      <annotation>
-         <documentation>
-            This element is used to define the enablement for the extension.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="attribute"/>
-         </choice>
-      </complexType>
-   </element>
-
-   <element name="and">
-      <annotation>
-         <documentation>
-            This element represent a boolean AND operation on the result of evaluating its two sub-element expressions.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice minOccurs="2" maxOccurs="unbounded">
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="attribute"/>
-         </choice>
-      </complexType>
-   </element>
-
-   <element name="or">
-      <annotation>
-         <documentation>
-            This element represent a boolean OR operation on the result of evaluating its two sub-element expressions.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice minOccurs="2" maxOccurs="unbounded">
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="attribute"/>
-         </choice>
-      </complexType>
-   </element>
-
-   <element name="not">
-      <annotation>
-         <documentation>
-            This element represent a boolean NOT operation on the result of evaluating its sub-element expressions.
-         </documentation>
-      </annotation>
-      <complexType>
-         <choice>
-            <element ref="and"/>
-            <element ref="or"/>
-            <element ref="not"/>
-            <element ref="attribute"/>
-         </choice>
       </complexType>
    </element>
 

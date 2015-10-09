@@ -12,52 +12,31 @@
 // ============================================================================
 package org.talend.designer.camel.resource.core.extension;
 
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 
 /**
  * @author xpli
- *
+ * 
  */
 public class ExResourceParamModel {
 
-	private String paramName;
+    private final String paramName;
 
-	private ExExpressionModel express;
+    public ExResourceParamModel(String paramName) {
+        this.paramName = paramName;
+    }
 
-	/**
-	 * @return the express
-	 */
-	public ExExpressionModel getExpress() {
-		return express;
-	}
+    public String getParamName() {
+        return paramName;
+    }
 
-	/**
-	 * @param express
-	 *            the express to set
-	 */
-	public void setExpress(ExExpressionModel express) {
-		this.express = express;
-	}
+    public boolean eualate(INode node) {
+        final IElementParameter parameter = node.getElementParameter(paramName);
+        if (parameter != null) {
+            return parameter.isShow(node.getElementParameters());
+        }
+        return false;
+    }
 
-	public boolean eualate(INode node) {
-		if (express == null) {
-			return true;
-		}
-		return express.evalute(node);
-	}
-
-	/**
-	 * @return the paramName
-	 */
-	public String getParamName() {
-		return paramName;
-	}
-
-	/**
-	 * @param paramName
-	 *            the paramName to set
-	 */
-	public void setParamName(String paramName) {
-		this.paramName = paramName;
-	}
 }

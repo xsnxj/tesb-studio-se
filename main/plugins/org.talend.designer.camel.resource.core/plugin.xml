@@ -2,29 +2,16 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="org.talend.designer.camel.resource.RouteResourceCheck" name="Route Resource Check" schema="schema/routeResourceCheck.exsd"/>
-   <extension
-         point="org.talend.designer.camel.resource.RouteResourceCheck">
-      <component
-            componentName="cCXF">
-         <resourceParameter
-               parameterName="WSDL_FILE_REPO">
-            <enablement>
-               <and>
-                  <attribute
-                        parameterName="SERVICE_TYPE"
-                        parameterValue="wsdlURL"
-                        regularExpresson="false">
-                  </attribute>
-                  <attribute
-                        parameterName="WSDL_TYPE"
-                        parameterValue="repo"
-                        regularExpresson="false">
-                  </attribute>
-               </and>
-            </enablement>
-         </resourceParameter>
+
+   <extension point="org.talend.designer.camel.resource.RouteResourceCheck">
+      <component componentName="cCXF">
+         <resourceParameter parameterName="WSDL_FILE_REPO" />
+      </component>
+      <component componentName="cFlatPack">
+         <resourceParameter parameterName="PZMAP_FILE_REPO" />
       </component>
    </extension>
+
    <extension
          point="org.talend.core.runtime.itemRelationship">
       <itemHandler
