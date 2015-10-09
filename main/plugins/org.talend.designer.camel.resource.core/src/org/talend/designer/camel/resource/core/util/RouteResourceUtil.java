@@ -40,6 +40,8 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.Project;
+import org.talend.core.model.process.EParameterFieldType;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
@@ -48,9 +50,9 @@ import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
-import org.talend.designer.camel.resource.core.extension.ResourceCheckExtensionPointManager;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.core.IDesignerCoreService;
+import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.ProjectManager;
@@ -69,9 +71,7 @@ public class RouteResourceUtil {
 
     private static final String REPACE_SLASH_TAG = "\\|";
 
-    public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
-
-    public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
+    private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
 
     /**
      * Get source file of Item.
@@ -179,10 +179,9 @@ public class RouteResourceUtil {
 
         final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
         for (INode node : process.getGraphicalNodes()) {
-            final Collection<ResourceDependencyModel> resourceModels =
-                ResourceCheckExtensionPointManager.INSTANCE.getResourceModel(node);
-            // Merge and add
-            for (ResourceDependencyModel rdm : resourceModels) {
+            final ResourceDependencyModel rdm = createDenpendencyModel(node);
+            if (null != rdm) {
+                // Merge and add
                 if (!models.add(rdm)) {
                     for (ResourceDependencyModel model : models) {
                         if (model.equals(rdm)) {
@@ -197,6 +196,30 @@ public class RouteResourceUtil {
         process.dispose();
         return models;
     }
+
+    /**
+     * Create ResourceDependencyModel
+     * 
+     * @param paramName
+     * @param node
+     * @return
+     */
+    private static ResourceDependencyModel createDenpendencyModel(final INode node) {
+        final IElementParameter idParam = node.getElementParameterFromField(EParameterFieldType.ROUTE_RESOURCE_TYPE);
+        if (null == idParam || !idParam.isShow(node.getElementParameters())) {
+            return null;
+        }
+        final IElementParameter versionParam =
+            node.getElementParameter(idParam.getName() + ':' + EParameterName.ROUTE_RESOURCE_TYPE_VERSION);
+        final ResourceDependencyModel model =
+            RouteResourceUtil.createDependency((String) idParam.getValue(), (String)  versionParam.getValue());
+        if (null != model) {
+            model.setBuiltIn(true);
+            model.getRefNodes().add(node.getUniqueName());
+        }
+        return model;
+    }
+
 
     private static Process getProcessFromItem(Item item) {
         IProcess process = null;
@@ -220,7 +243,7 @@ public class RouteResourceUtil {
     public static ResourceDependencyModel createDependency(String id, String version) {
         try {
             final IRepositoryViewObject rvo;
-            if (RouteResourceUtil.LATEST_VERSION.equals(version)) {
+            if (ResourceDependencyModel.LATEST_VERSION.equals(version)) {
                 rvo = ProxyRepositoryFactory.getInstance().getLastVersion(id);
             } else {
                 rvo = ProxyRepositoryFactory.getInstance().getSpecificVersion(id, version, true);

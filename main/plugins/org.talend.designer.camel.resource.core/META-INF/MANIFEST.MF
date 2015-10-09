@@ -3,15 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: org.talend.designer.camel.resource.core;singleton:=true
 Bundle-Version: 6.1.0.qualifier
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.talend.model,
- org.talend.core.runtime,
- org.talend.core,
- org.talend.core.ui,
+Require-Bundle: org.talend.core,
  org.talend.designer.core,
- org.eclipse.ui,
- org.eclipse.core.runtime;resolution:=optional,
  org.talend.camel.model,
  org.talend.core.repository
 Bundle-ActivationPolicy: lazy

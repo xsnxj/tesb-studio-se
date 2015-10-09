@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -31,9 +32,11 @@ import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
  */
 public class ResourceDependencyModel {
 
+    public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
+
     private final RouteResourceItem item;
 
-    private String selectedVersion = RouteResourceUtil.LATEST_VERSION;
+    private String selectedVersion = LATEST_VERSION;
 
     /**
      * Built in type can not be deleted.
@@ -103,7 +106,7 @@ public class ResourceDependencyModel {
             }
         } catch (PersistenceException e) {
         }
-        versions.add(RouteResourceUtil.LATEST_VERSION);
+        versions.add(LATEST_VERSION);
         Collections.sort(versions);
         return versions;
     }
