@@ -35,12 +35,6 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
-		<!--
-		<PARAMETER NAME="PROPERTY" FIELD="PROPERTY_TYPE" SHOW="true" NUM_ROW="1" REPOSITORY_VALUE="WEBSERVICE" />
-
-		<PARAMETER NAME="REPOSITORY_ALLOW_AUTO_SWITCH" FIELD="CHECK" SHOW="false" REQUIRED="true" NUM_ROW="1" />
-		-->
-
 		<PARAMETER NAME="SERVICE_CONFIGURATION" FIELD="EXTERNAL" NUM_ROW="10" />
 
 		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="28">
@@ -66,11 +60,11 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="SERVICE_LOCATOR" FIELD="CHECK" NUM_ROW="40"
-		        SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')" >
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="SERVICE_LOCATOR_STRATEGY" FIELD="CLOSED_LIST" NUM_ROW="40"
-				 SHOW="false">
+				SHOW="false">
 			<ITEMS DEFAULT="SERVICE_LOCATOR_STRATEGY_DEFAULT">
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_DEFAULT" VALUE="Default" />
 				<ITEM NAME="SERVICE_LOCATOR_STRATEGY_EVEN_DISTRIBUTION" VALUE="EvenDistribution" />
@@ -79,28 +73,29 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="SERVICE_ACTIVITY_MONITOR" FIELD="CHECK" NUM_ROW="41"
-				SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="USE_SR" FIELD="CHECK" REQUIRED="true" NUM_ROW="9"
-				 SHOW_IF=" IS_STUDIO_EE_VERSION == 'true' ">
+				SHOW_IF="IS_STUDIO_EE_VERSION == 'true'">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-		<PARAMETER NAME="AUTHENTICATION_LABEL"  FIELD="LABEL" NUM_ROW="44"
+		<PARAMETER NAME="AUTHENTICATION_LABEL" FIELD="LABEL" NUM_ROW="44"
 				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')" />
 		<PARAMETER NAME="AUTH_PROPAGATE" FIELD="CHECK" REQUIRED="true" NUM_ROW="46"
-				 REPOSITORY_VALUE="AUTH_PROPAGATE"
+				REPOSITORY_VALUE="AUTH_PROPAGATE"
 				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="44"  DYNAMIC_SETTINGS="true"
-				 SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+		<PARAMETER NAME="NEED_AUTH" FIELD="CHECK" REQUIRED="true" NUM_ROW="44" DYNAMIC_SETTINGS="true"
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_TYPE" FIELD="CLOSED_LIST" NUM_ROW="44" DYNAMIC_SETTINGS="true"
-				 SHOW_IF="((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+						AND ((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))">
 			<ITEMS DEFAULT="SECURITY_SAML">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
 				<ITEM NAME="SECURITY_DIGEST" VALUE="DIGEST" />
@@ -109,86 +104,98 @@
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="PROPAGATE_TYPE" FIELD="CLOSED_LIST" NUM_ROW="44"
-				 SHOW_IF="(((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND (AUTH_TYPE == 'SAML'))
-					AND
-					((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false'))">
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+						AND (
+							((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+							AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+						)">
 			<ITEMS DEFAULT="PROPAGATE_NONE">
 				<ITEM NAME="PROPAGATE_NONE" VALUE="NONE"/>
 				<ITEM NAME="PROPAGATE_U_P" VALUE="U_P" />
 				<ITEM NAME="PROPAGATE_CERT" VALUE="CERT" />
 			</ITEMS>
 		</PARAMETER>
-		<PARAMETER NAME="PROPAGATE_U_P_LABEL"  FIELD="LABEL" NUM_ROW="45"
-				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
-								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
-							) AND
-							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_U_P'))
-						 ) AND
-						 (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
+		<PARAMETER NAME="PROPAGATE_U_P_LABEL" FIELD="LABEL" NUM_ROW="45"
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+						AND (
+							((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
+							AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+							AND (PROPAGATE_TYPE == 'U_P')
+						)">
 		</PARAMETER>
-		<PARAMETER NAME="PROPAGATE_CERT_LABEL"  FIELD="LABEL" NUM_ROW="45"
-				SHOW_IF="(	(	(NEED_AUTH == 'true') AND
-								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
-							) AND
-							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
-						 ) AND
-						 (((USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')))">
+		<PARAMETER NAME="PROPAGATE_CERT_LABEL" FIELD="LABEL" NUM_ROW="45"
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
+						AND (
+							((NEED_AUTH == 'true') AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
+							AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+							AND (PROPAGATE_TYPE == 'CERT')
+						)">
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_ALIAS" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
-				 REPOSITORY_VALUE="AUTH_ALIAS"
-				SHOW_IF="(	(	((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND
-								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
-							) AND
-							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE == 'PROPAGATE_CERT'))
-						 ) OR
-						 (	((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')) AND
-						 	(AUTH_PROPAGATE == 'true')
-						 )">
+				REPOSITORY_VALUE="AUTH_ALIAS"
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true') AND (AUTH_PROPAGATE == 'true'))
+						OR (
+							((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+							AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+							AND (PROPAGATE_TYPE == 'CERT')
+						)">
 			<DEFAULT>"alias"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_USERNAME" FIELD="TEXT" REQUIRED="true" NUM_ROW="46"
-				 REPOSITORY_VALUE="AUTH_USERNAME"
-				SHOW_IF="(	(	((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND
-								((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false'))
-							) AND
-							((AUTH_TYPE != SECURITY_SAML) OR (PROPAGATE_TYPE != 'PROPAGATE_CERT'))
-						 ) OR
-						 (((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true')))">
+				REPOSITORY_VALUE="AUTH_USERNAME"
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))
+						OR (
+							((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+							AND (
+								((AUTH_TYPE == 'BASIC') AND (AUTH_TYPE == 'DIGEST') AND (AUTH_TYPE == 'TOKEN'))
+								OR (
+									(AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+									AND (PROPAGATE_TYPE != 'CERT')
+								)
+							)
+						)">
 			<DEFAULT>"username"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="AUTH_PASSWORD" FIELD="PASSWORD" REQUIRED="true" NUM_ROW="46"
-				 REPOSITORY_VALUE="AUTH_PASSWORD"
-				SHOW_IF="(((NEED_AUTH == 'true')OR((NEED_AUTH != 'true')AND(NEED_AUTH != 'false'))) AND ((IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')))
-						 OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+				REPOSITORY_VALUE="AUTH_PASSWORD"
+				SHOW_IF="((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))
+						OR ((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))">
 			<DEFAULT>"password"</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" NUM_ROW="47"
-				 SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'false')
+						AND ((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+						AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-
-		<PARAMETER NAME="AUTHORIZATION_LABEL"  FIELD="LABEL" NUM_ROW="47" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')" />
-
+		<PARAMETER NAME="AUTHORIZATION_LABEL" FIELD="LABEL" NUM_ROW="47"
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true')" />
 		<PARAMETER NAME="ROLE" FIELD="TEXT" NUM_ROW="48"
-				 SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (((NEED_AUTH == 'true') AND (NEED_AUTHORIZATION == 'true') AND
-				(AUTH_TYPE == 'SECURITY_SAML')) OR
-				(USE_SR == 'true'))">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (
+							(USE_SR == 'true') OR (
+								((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+								AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
+								AND (NEED_AUTHORIZATION == 'true')
+							)
+						)">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="NEED_ENCRYPTION" FIELD="CHECK" NUM_ROW="49"
-				 SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_SAML') AND (USE_SR == 'false')">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'false')
+						AND ((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
+						AND (AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="USE_BUSINESS_CORRELATION" FIELD="CHECK" NUM_ROW="52"
-				 SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false') ">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-
 		<PARAMETER NAME="CORRELATION_VALUE" FIELD="TEXT" NUM_ROW="53"
-				 SHOW_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((USE_SR == 'true') AND (IS_STUDIO_EE_VERSION == 'true'))">
+				SHOW_IF="(USE_BUSINESS_CORRELATION == 'true')
+						 OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
@@ -197,7 +204,7 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="ESB_ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="12"
-				SHOW_IF="(USE_SR == 'false') OR (IS_STUDIO_EE_VERSION == 'false')">
+				SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (USE_SR == 'false')">
 			<DEFAULT>"http://www.webservicex.net/globalweather.asmx"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="ENDPOINT" FIELD="TEXT" REQUIRED="true" NUM_ROW="62"
@@ -243,17 +250,17 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-        <PARAMETER NAME="FOLLOW_REDIRECTS" FIELD="CHECK" REQUIRED="true" NUM_ROW="15">
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="REDIRECT_NON_SAME_HOST" FIELD="CHECK" REQUIRED="true" NUM_ROW="15"
-                SHOW_IF="FOLLOW_REDIRECTS == 'true'">
-            <DEFAULT>false</DEFAULT>
-        </PARAMETER>
+		<PARAMETER NAME="FOLLOW_REDIRECTS" FIELD="CHECK" REQUIRED="true" NUM_ROW="15">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
+		<PARAMETER NAME="REDIRECT_NON_SAME_HOST" FIELD="CHECK" REQUIRED="true" NUM_ROW="15"
+				SHOW_IF="FOLLOW_REDIRECTS == 'true'">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
 
 		<PARAMETER NAME="SERVICE_LOCATOR_CUSTOM_PROPERTIES" FIELD="TABLE" NUM_ROW="20"
 				REQUIRED="false" NB_LINES="5"
-				SHOW_IF="(SERVICE_LOCATOR == 'true')">
+				SHOW_IF="SERVICE_LOCATOR == 'true'">
 			<ITEMS>
 				<ITEM NAME="PROP_NAME" FIELD="TEXT" VALUE='"new custom property name"'/>
 				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
@@ -267,7 +274,7 @@
 				<ITEM NAME="PROP_VALUE" FIELD="TEXT" VALUE='"new custom property value"'/>
 			</ITEMS>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="CONNECTION_TIMEOUT" FIELD="TEXT" REQUIRED="true" NUM_ROW="40">
 			<DEFAULT>30</DEFAULT>
 		</PARAMETER>
@@ -280,6 +287,7 @@
 		<PARAMETER NAME="RECEIVE_TIMEOUT_DESC" FIELD="LABEL" REQUIRED="true" NUM_ROW="40">
 			<DEFAULT>(Studio Only, See Doc for Runtime)</DEFAULT>
 		</PARAMETER>
+
 		<PARAMETER NAME="NEED_SSL_TO_TRUSTSERVER" FIELD="CHECK" REQUIRED="true" NUM_ROW="50">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -297,7 +305,7 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_HOST" FIELD="TEXT" NUM_ROW="60"
-				 REPOSITORY_VALUE="PROXY_HOST" NOT_SHOW_IF="USE_PROXY == 'false'">
+				REPOSITORY_VALUE="PROXY_HOST" NOT_SHOW_IF="USE_PROXY == 'false'">
 			<DEFAULT>"61.163.92.4"</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="PROXY_PORT" FIELD="TEXT" NUM_ROW="60"
@@ -312,7 +320,7 @@
 				REPOSITORY_VALUE="PROXY_PASSWORD" NOT_SHOW_IF="USE_PROXY == 'false'">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="WSDL_CONTENT" FIELD="TEXT" REQUIRED="false" NUM_ROW="80" SHOW="false">
 		</PARAMETER>
 	</ADVANCED_PARAMETERS>
@@ -320,24 +328,25 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-            <IMPORT MODULE="dom4j" MVN="${mvn-dom4j}" REQUIRED="true" />
-            <IMPORT MODULE_GROUP="cxf-core" REQUIRED="true" />
-            <IMPORT MODULE_GROUP="cxf-rt-frontend-jaxws" REQUIRED="true" />
+			<IMPORT MODULE="dom4j" MVN="${mvn-dom4j}" REQUIRED="true" />
 
-            <IMPORT MODULE_GROUP="spring-context"
-                    REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+			<IMPORT MODULE_GROUP="cxf-core" REQUIRED="true" />
+			<IMPORT MODULE_GROUP="cxf-rt-frontend-jaxws" REQUIRED="true" />
 
-            <IMPORT MODULE_GROUP="locator"
-                    REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
+			<IMPORT MODULE_GROUP="spring-context"
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
 
-            <IMPORT MODULE_GROUP="sam-agent"
-                    REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
+			<IMPORT MODULE_GROUP="locator"
+					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
-            <IMPORT MODULE_GROUP="correlationid-policy"
-                    REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
+			<IMPORT MODULE_GROUP="sam-agent"
+					REQUIRED_IF="SERVICE_ACTIVITY_MONITOR == 'true'" />
 
-            <IMPORT MODULE_GROUP="cxf-rt-ws-security" REQUIRED="true" />
-                    <!--REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'SECURITY_TOKEN')" /-->
+			<IMPORT MODULE_GROUP="correlationid-policy"
+					REQUIRED_IF="(USE_BUSINESS_CORRELATION == 'true') OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))" />
+
+			<IMPORT MODULE_GROUP="cxf-rt-ws-security" REQUIRED="true" />
+					<!--REQUIRED_IF="(NEED_AUTH == 'true') AND (AUTH_TYPE == 'TOKEN')" /-->
 		</IMPORTS>
 	</CODEGENERATION>
 
