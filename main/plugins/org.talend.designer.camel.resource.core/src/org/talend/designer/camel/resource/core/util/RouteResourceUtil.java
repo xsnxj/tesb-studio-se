@@ -43,17 +43,17 @@ import org.talend.core.model.general.Project;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
-import org.talend.core.model.process.IProcess;
-import org.talend.core.model.properties.Item;
+import org.talend.core.model.process.IProcess2;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.ReferenceFileItem;
-import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
-import org.talend.designer.core.ui.editor.process.Process;
+import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.ProjectManager;
 
@@ -145,7 +145,7 @@ public class RouteResourceUtil {
      * @param routeItem
      * @param models
      */
-    public static Collection<ResourceDependencyModel> getResourceDependencies(Item routeItem) {
+    public static Collection<ResourceDependencyModel> getResourceDependencies(ProcessItem routeItem) {
         final Collection<ResourceDependencyModel> builtInModels = getBuiltInResourceDependencies(routeItem);
         final Collection<ResourceDependencyModel> models = new ArrayList<ResourceDependencyModel>(builtInModels);
         final Object resourcesObj = routeItem.getProperty().getAdditionalProperties().get(ROUTE_RESOURCES_PROP);
@@ -168,14 +168,15 @@ public class RouteResourceUtil {
      * 
      * @param models
      */
-    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(Item routeItem) {
-        // Changed for TDI-24563
-        // Process process = new org.talend.designer.core.ui.editor.process.Process(property);
-        final Process process = getProcessFromItem(routeItem.getProperty().getItem());
+    private static Collection<ResourceDependencyModel> getBuiltInResourceDependencies(final ProcessItem routeItem) {
+        if (!containsResourceNode(routeItem)) {
+            return Collections.emptyList();
+        }
+        // TDI-24563
+        final IProcess2 process = getProcessFromItem(routeItem);
         if (process == null) {
             return Collections.emptySet();
         }
-        process.loadXmlFile();
 
         final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
         for (INode node : process.getGraphicalNodes()) {
@@ -192,9 +193,28 @@ public class RouteResourceUtil {
                 }
             }
         }
-
-        process.dispose();
         return models;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static boolean containsResourceNode(final ProcessItem routeItem) {
+        for (NodeType node : (Collection<NodeType>) routeItem.getProcess().getNode()) {
+            for (ElementParameterType param : (Collection<ElementParameterType>) node.getElementParameter()) {
+                if (EParameterFieldType.ROUTE_RESOURCE_TYPE.getName().equals(param.getField())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static IProcess2 getProcessFromItem(ProcessItem item) {
+        final IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault()
+            .getService(IDesignerCoreService.class);
+        if (designerCoreService != null) {
+            return (IProcess2) designerCoreService.getProcessFromItem(item);
+        }
+        return null;
     }
 
     /**
@@ -205,6 +225,9 @@ public class RouteResourceUtil {
      * @return
      */
     private static ResourceDependencyModel createDenpendencyModel(final INode node) {
+        if (!node.isActivate()) {
+            return null;
+        }
         final IElementParameter idParam = node.getElementParameterFromField(EParameterFieldType.ROUTE_RESOURCE_TYPE);
         if (null == idParam || !idParam.isShow(node.getElementParameters())) {
             return null;
@@ -218,20 +241,6 @@ public class RouteResourceUtil {
             model.getRefNodes().add(node.getUniqueName());
         }
         return model;
-    }
-
-
-    private static Process getProcessFromItem(Item item) {
-        IProcess process = null;
-        IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister.getDefault().getService(
-                IDesignerCoreService.class);
-        if (designerCoreService != null) {
-            process = designerCoreService.getProcessFromItem(item);
-        }
-        if (process != null && process instanceof Process) {
-            return (Process) process;
-        }
-        return null;
     }
 
     /**
@@ -260,7 +269,7 @@ public class RouteResourceUtil {
         return null;
     }
 
-    public static Collection<IPath> synchronizeRouteResource(Item item) {
+    public static Collection<IPath> synchronizeRouteResource(final ProcessItem item) {
         final boolean routelet;
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
             routelet = false;

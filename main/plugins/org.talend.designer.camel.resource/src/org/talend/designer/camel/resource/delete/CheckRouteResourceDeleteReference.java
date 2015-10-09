@@ -20,6 +20,7 @@ import java.util.Set;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.AbstractCheckDeleteItemReference;
@@ -54,7 +55,7 @@ public class CheckRouteResourceDeleteReference extends
 				Property property = obj.getProperty();
 				Item routeItem = property.getItem();
 				Collection<ResourceDependencyModel> models = RouteResourceUtil
-						.getResourceDependencies(routeItem);
+						.getResourceDependencies((ProcessItem) routeItem);
 				for (ResourceDependencyModel model : models) {
 
 					if (nodeItem.getProperty().getId()

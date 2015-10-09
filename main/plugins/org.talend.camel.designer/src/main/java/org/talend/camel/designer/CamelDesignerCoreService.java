@@ -96,7 +96,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     }
 
     public Collection<IPath> synchronizeRouteResource(Item item) {
-        return RouteResourceUtil.synchronizeRouteResource(item);
+        return RouteResourceUtil.synchronizeRouteResource((ProcessItem) item);
     }
 
     public boolean isRouteBuilderNode(INode node) {
@@ -137,7 +137,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     private void addResourcesContent(Item item, Element jobElement) {
         Element resourcesElement = jobElement.addElement("RouteResources");
 
-        for (ResourceDependencyModel resource : RouteResourceUtil.getResourceDependencies(item)) {
+        for (ResourceDependencyModel resource : RouteResourceUtil.getResourceDependencies((ProcessItem) item)) {
             Element resourceElement = resourcesElement.addElement("Resource");
             resourceElement.addAttribute("name", resource.toString());
             resourceElement.addAttribute("version", resource.getSelectedVersion());
