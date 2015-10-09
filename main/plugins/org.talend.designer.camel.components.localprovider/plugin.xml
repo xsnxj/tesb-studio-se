@@ -62,7 +62,7 @@
             id="camel-core"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-core}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
+        <!--libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-jaxb-impl}"
             id="jaxb-impl"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
@@ -71,7 +71,7 @@
             name="${tesb-jaxb-core}"
             id="jaxb-core"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-core}"
-            bundleID="" />
+            bundleID="" /-->
 
         <libraryNeededGroup
                 description="camel-core"

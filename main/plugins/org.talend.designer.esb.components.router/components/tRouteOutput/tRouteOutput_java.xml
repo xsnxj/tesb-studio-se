@@ -51,7 +51,7 @@
 	</ADVANCED_PARAMETERS>
 	<CODEGENERATION>
 		<IMPORTS>
-            <!-- camel-core & dom4j already in system routines deps -->
+            <IMPORT MODULE_GROUP="camel-core" REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS>
