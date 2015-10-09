@@ -124,15 +124,14 @@ public class ResourceDependencyModel {
     public boolean equals(Object obj) {
         if (obj instanceof ResourceDependencyModel) {
             final ResourceDependencyModel model = (ResourceDependencyModel) obj;
-            return model.getItem().getProperty().getId().equals(item.getProperty().getId())
-                && model.getSelectedVersion().equals(selectedVersion);
+            return model.getItem().getProperty().getId().equals(item.getProperty().getId());
         }
         return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return item.getProperty().getId().hashCode() * 31 + selectedVersion.hashCode();
+        return item.getProperty().getId().hashCode();
     }
 
 }
