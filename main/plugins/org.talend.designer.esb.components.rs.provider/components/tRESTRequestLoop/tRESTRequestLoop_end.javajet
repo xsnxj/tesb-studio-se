@@ -10,8 +10,12 @@
 	String cid = node.getUniqueName();
 	cid = cid.replaceAll("_Loop", "");
 %>
-	} catch (Exception e_<%=cid%>) {
-		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
+	} catch (Throwable e_<%=cid%>) {
+        if (e_<%=cid%> instanceof Exception) {
+			new TalendException((Exception) e_<%=cid%>, currentComponent, globalMap).printStackTrace();
+        } else {
+			new TalendException(new RuntimeException (e_<%=cid%>), currentComponent, globalMap).printStackTrace();
+       	}
 		if(!globalMap.containsKey("restResponse")){
 			java.util.Map<String, Object> restFault_<%=cid%> = new java.util.HashMap<String, Object>();
 			restFault_<%=cid%>.put("STATUS", 500);
