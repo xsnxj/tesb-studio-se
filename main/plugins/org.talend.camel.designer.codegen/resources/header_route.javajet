@@ -1492,20 +1492,9 @@ for (INode node : graphicalNodes) {
 	} else {
 		continue;
 	}
-	if(statements != null) {
-%>
-		{
-			<%=statements%>
-<%
-	}
 %>
 		uriMap.put("<%=cid%>", <%=uri%>);
 <%
-	if(statements != null) {
-		statements = null;//reset then another node.
-%>
-		}
-<%
-}}
+}
 %>
 	}

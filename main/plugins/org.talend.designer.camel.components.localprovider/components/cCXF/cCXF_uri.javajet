@@ -80,14 +80,8 @@ if(!portName.isEmpty() && !portName.equals("\"\"")) {
 }
 String operationName = helper.getVisibleStringParam("__OPERATION_NAME__").trim();
 if(!operationName.isEmpty() && !operationName.equals("") && !operationName.equals("\"\"") ) {
-	StringBuilder stmt = new StringBuilder();
-	stmt.append("final javax.xml.namespace.QName operation = javax.xml.namespace.QName.valueOf(")
-		.append(operationName)
-		.append(");\n");
-	statements = stmt.toString();
-	sb.append("+ (operation == null?\"\":(")
-	.append("\"&defaultOperationNamespace=\"+operation.getNamespaceURI()")
-	.append("+\"&defaultOperationName=\"+operation.getLocalPart()))");
+	sb.append("+\"&defaultOperationNamespace=\"+javax.xml.namespace.QName.valueOf(").append(operationName).append(").getNamespaceURI()")
+	.append("+\"&defaultOperationName=\"+javax.xml.namespace.QName.valueOf(").append(operationName).append(").getLocalPart()");
 }
 
 List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");

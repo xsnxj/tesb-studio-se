@@ -32,63 +32,61 @@
 	IProcess process = (IProcess) v.get(0);
 
 %>
-			private String propertyToString(Object obj){
-				if(obj!=null && obj instanceof java.util.Date){
-					return String.format("yyyy-MM-dd HH:mm:ss;%tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS",obj);
-				}else{
-					return String.valueOf(obj);
-				}
-			}
+	private String propertyToString(Object obj){
+		if(obj!=null && obj instanceof java.util.Date){
+			return String.format("yyyy-MM-dd HH:mm:ss;%tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS",obj);
+		}else{
+			return String.valueOf(obj);
+		}
+	}
 
 <%
-			List<? extends INode> cMailNodes = process.getNodesOfType("cMail");
-			if(cMailNodes.size() > 0){
+	if(!process.getNodesOfType("cMail").isEmpty()) {
 %>
-				private org.apache.camel.component.mail.MailEndpoint getMailEndpoint(
-						String uri, String username, String password, String subject,
-						String from, String to, String cc, String bcc) {
-					org.apache.camel.component.mail.MailEndpoint endpoint = (org.apache.camel.component.mail.MailEndpoint) endpoint(uri);
-					org.apache.camel.component.mail.MailConfiguration configuration = endpoint.getConfiguration();
-					configuration.setUsername(username);
-					configuration.setPassword(password);
-					configuration.setSubject(subject);
-					if(null != from && !"".equals(from)){
-						configuration.setFrom(from);
-					}
-					if(null != to && !"".equals(to)){
-						configuration.setTo(to);
-					}
-					if(null != cc && !"".equals(cc)){
-						configuration.setCC(cc);
-					}
-					if(null != bcc && !"".equals(bcc)){
-						configuration.setBCC(bcc);
-					}
-					return endpoint;
-				}
-<%
+		private org.apache.camel.component.mail.MailEndpoint getMailEndpoint(
+				String uri, String username, String password, String subject,
+				String from, String to, String cc, String bcc) {
+			org.apache.camel.component.mail.MailEndpoint endpoint = (org.apache.camel.component.mail.MailEndpoint) endpoint(uri);
+			org.apache.camel.component.mail.MailConfiguration configuration = endpoint.getConfiguration();
+			configuration.setUsername(username);
+			configuration.setPassword(password);
+			configuration.setSubject(subject);
+			if(null != from && !"".equals(from)){
+				configuration.setFrom(from);
 			}
+			if(null != to && !"".equals(to)){
+				configuration.setTo(to);
+			}
+			if(null != cc && !"".equals(cc)){
+				configuration.setCC(cc);
+			}
+			if(null != bcc && !"".equals(bcc)){
+				configuration.setBCC(bcc);
+			}
+			return endpoint;
+		}
+<%
+	}
 
-			List<? extends INode> cFtpNodes = process.getNodesOfType("cFtp");
-			if(cFtpNodes.size() > 0){
-			// for fix [TESB-15654], Set custom server port for cFTP
+	if (!process.getNodesOfType("cFtp").isEmpty()) {
+	// for fix [TESB-15654], Set custom server port for cFTP
 %>
-			private org.apache.camel.component.file.remote.RemoteFileEndpoint<?> getFtpEndpoint(
-					String uri, String server, Integer port, String username, String password,
-					String directory) {
-				org.apache.camel.component.file.remote.RemoteFileEndpoint<?> endpoint;
-				endpoint = (org.apache.camel.component.file.remote.RemoteFileEndpoint<?>) endpoint(uri);
-				org.apache.camel.component.file.remote.RemoteFileConfiguration configuration = endpoint
-						.getConfiguration();
-				configuration.setUsername(username);
-				configuration.setPassword(password);
-				configuration.setHost(server);
-				configuration.setPort(port.intValue());
-				configuration.setDirectory(directory);
-				return endpoint;
-			}
+		private org.apache.camel.component.file.remote.RemoteFileEndpoint<?> getFtpEndpoint(
+				String uri, String server, Integer port, String username, String password,
+				String directory) {
+			org.apache.camel.component.file.remote.RemoteFileEndpoint<?> endpoint;
+			endpoint = (org.apache.camel.component.file.remote.RemoteFileEndpoint<?>) endpoint(uri);
+			org.apache.camel.component.file.remote.RemoteFileConfiguration configuration = endpoint
+					.getConfiguration();
+			configuration.setUsername(username);
+			configuration.setPassword(password);
+			configuration.setHost(server);
+			configuration.setPort(port.intValue());
+			configuration.setDirectory(directory);
+			return endpoint;
+		}
 <%
-			}
+	}
 
 			boolean hasCXFSamlTokenProvider = false;
 			boolean hasCXFSamlTokenConsumer = false;
