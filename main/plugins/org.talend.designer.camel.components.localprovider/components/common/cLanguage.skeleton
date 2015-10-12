@@ -5,11 +5,17 @@ public class CLASS {
 			return "method(" + expression + ")";
 		} else if ("correlation".equals(language)) {
 			return "simple(\"${in.header.CamelCxfMessage[CorrelationID]}\", String.class)";
-		} else if ("xpath".equals(language) && "true".equals(useNamespacess)) {
-			if (resultClassType != null && !resultClassType.isEmpty()) {
-				return language + "(" + expression + ", "  + resultClassType + ", " + cidd + "NSMap)";
-			} else {
+		} else if ("xpath".equals(language)) {
+			if ("true".equals(useNamespacess)) {
+				if (resultClassType != null && !resultClassType.isEmpty()) {
+					return language + "(" + expression + ", "  + resultClassType + ", " + cidd + "NSMap)";
+				}
 				return language + "(" + expression + ", " + cidd + "NSMap)";
+			} else {
+				if (resultClassType != null && !resultClassType.isEmpty()) {
+					return language + "(" + expression + ", "  + resultClassType + ")";
+				}
+				return language + "(" + expression +")";
 			}
 		} else if(!"none".equals(language)) {
 			return language + "(" + expression + ")";
@@ -44,7 +50,14 @@ public class CLASS {
 		} else if ("spel".equals(language)) {
 			return "new org.apache.camel.model.language.SpELExpression(" + expression + ")";
 		} else if ("xpath".equals(language)) {
-			return cidd + "ns.xpath(" + expression + ")";
+			if ("true".equals(useNamespacess)) {
+				if (resultClassType != null && !resultClassType.isEmpty()) {
+					return cidd + "ns.xpath(" + expression + ", "  + resultClassType + ")";
+				}
+				return cidd + "ns.xpath(" + expression + ")";
+			} else {
+				return "new org.apache.camel.model.language.XPathExpression(" + expression + ")";
+			}
 		} else if ("xquery".equals(language)) {
 			return "new org.apache.camel.model.language.XQueryExpression(" + expression + ")";
 		} else {
