@@ -15,6 +15,7 @@ package org.talend.camel.designer.ui.editor;
 import java.io.IOException;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.designer.i18n.Messages;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.properties.Property;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -68,4 +69,14 @@ public class RouteProcess extends Process {
         return super.saveXmlFile();
     }
     // END ADDED for TESB-7887
+
+    @Override
+    public String getElementName() {
+        // MultiPageTalendEditor.Route=Route {0} {1}
+        if (getProperty().getItem() instanceof CamelProcessItem) {
+            return Messages.getString("MultiPageTalendEditor.Route"); //$NON-NLS-1$
+        } else {
+            return Messages.getString("MultiPageTalendEditor.Routelet"); //$NON-NLS-1$
+        }
+    }
 }

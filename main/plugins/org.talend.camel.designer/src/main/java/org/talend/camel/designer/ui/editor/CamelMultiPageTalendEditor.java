@@ -12,9 +12,10 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
+import java.text.MessageFormat;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.i18n.Messages;
@@ -74,7 +75,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      */
     @Override
     public void init(final IEditorSite site, final IEditorInput editorInput) throws PartInitException {
-        if (!(editorInput instanceof IFileEditorInput) && !(editorInput instanceof CamelProcessEditorInput)) {
+        if (!(editorInput instanceof CamelProcessEditorInput)) {
             throw new PartInitException(Messages.getString("MultiPageTalendEditor.InvalidInput")); //$NON-NLS-1$
         }
         super.init(site, editorInput);
@@ -87,20 +88,15 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      */
     @Override
     public void setName() {
+        super.setName();
         if (getEditorInput() == null) {
             return;
         }
-        super.setName();
-        String label = getEditorInput().getName();
-        IProcess2 process2 = this.getProcess();
-        String jobVersion = "0.1";
-        if (process2 != null) {
-            jobVersion = process2.getVersion();
-        }
         // if (getActivePage() == 1) {
-        ISVNProviderService service = null;
+        final IProcess2 process2 = this.getProcess();
         if (PluginChecker.isSVNProviderPluginLoaded()) {
-            service = (ISVNProviderService) GlobalServiceRegister.getDefault().getService(ISVNProviderService.class);
+            final ISVNProviderService service =
+                (ISVNProviderService) GlobalServiceRegister.getDefault().getService(ISVNProviderService.class);
             if (revisionChanged && service.isProjectInSvnMode()) {
                 revisionNumStr = service.getCurrentSVNRevision(process2);
                 revisionChanged = false;
@@ -109,21 +105,15 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
                 }
             }
         }
-        String title = "MultiPageTalendEditor.Route";
 
+        final String itemName = process2.getElementName();
+        final String label = getEditorInput().getName();
+        final String jobVersion = (process2 != null) ? process2.getVersion() : "0.1";
+        String title = MessageFormat.format("{0} {1} {2}", itemName, label, jobVersion); //$NON-NLS-1$
         if (revisionNumStr != null) {
-            setPartName(Messages.getString(title, label, jobVersion) + revisionNumStr);
-        } else {
-            setPartName(Messages.getString(title, label, jobVersion));
+            title += revisionNumStr;
         }
-    }
-
-    public void setName(String RevisionNumStr) {
-        super.setName();
-        String label = getEditorInput().getName();
-        String jobVersion = this.getProcess().getVersion();
-        setPartName(Messages.getString("MultiPageTalendEditor.Route", label, jobVersion) + RevisionNumStr); //$NON-NLS-1$
-        revisionNumStr = RevisionNumStr;
+        setPartName(title);
     }
 
     @Override
