@@ -1443,58 +1443,14 @@ for (INode node : graphicalNodes) {
 		}
 		uri = sb.toString();
 	} else if ("cFlatPack".equals(componentName)) {
-		if(node.getIncomingConnections().size()>0){
-			continue;//is productor node. use exist endpoint.
-		}
-		StringBuilder sb = new StringBuilder("\"flatpack:");
-		boolean isfixed = getBoolValue(node, "__ISFIXED__");
-		boolean isdelimited = getBoolValue(node, "__ISDELIMITED__");
-		if (isfixed){
-			sb.append("fixed:");
-		} else if (isdelimited) {
-			sb.append("delim:");
-		}
-		sb.append('"');
 		
-		final String filePath;
-		String pzmap_filetype = ElementParameterParser.getValue(node, "__PZMAP_FILETYPE__");
-		if ("file".equals(pzmap_filetype)) {
-			filePath = "\"file://\"+" + ElementParameterParser.getValue(node, "__PZMAP_FILENAME__");
-		} else {
-			filePath = "\"classpath:"
-			    + org.talend.core.model.utils.JavaResourcesHelper.getResouceClasspath(
-                    ElementParameterParser.getValue(node, "__PZMAP_FILE_REPO__"),
-                    ElementParameterParser.getValue(node, "__ROUTE_RESOURCE_TYPE_VERSION__"))
-			    + '"';
-		}
-		sb.append("+").append(filePath.replaceAll("\\\\","/"));
-
-		boolean splitRows = getBoolValue(node, "__SPLIT_ROWS__");
-		boolean allowShortLines = getBoolValue(node, "__ALLOW_SHORT_LINES__");
-		boolean ignoreExtraColumns = getBoolValue(node, "__IGNORE_EXTRA_COLUMNS__");
-	
-		appendParamWhenNotDefault(sb, "splitRows", splitRows, true);
-		appendParamWhenNotDefault(sb, "allowShortLines", allowShortLines, false);
-		appendParamWhenNotDefault(sb, "ignoreExtraColumns", ignoreExtraColumns, false);
-	
-		if (isdelimited) {
-			String textQualifier = ElementParameterParser.getValue(node, "__TEXT_QUALIFIER__");
-			appendParamWhenNotDefaultNorEmpty(sb, "textQualifier", textQualifier, "\"");
-
-			String delimiter = ElementParameterParser.getValue(node, "__TEXT_DELIMITER__");
-			appendParamWhenNotDefaultNorEmpty(sb, "delimiter", delimiter, ",");
-
-			boolean ignoreFirstRecord = getBoolValue(node, "__IGNORE_FIRST_RECORD__");
-			appendParamWhenNotDefault(sb, "ignoreFirstRecord", ignoreFirstRecord, true);
-		}
-
-		uri = getURI(sb);
 	} else {
 		continue;
 	}
+	if (uri != null && !uri.isEmpty()) {
 %>
 		uriMap.put("<%=cid%>", <%=uri%>);
-<%
+<%	}
 }
 %>
 	}
