@@ -27,8 +27,137 @@ imports="
 //    	cid = (String)param.getValue()+"_"+cid;	
 //    }
     
+	String resourceUri = ElementParameterParser.getValue(node, "__URI__");
 	
-    String uriRef = "uriMap.get(\"" + cid + "\")";
+	StringBuffer sb = new StringBuffer();
+
+
+	boolean hasParam = resourceUri==null?false:resourceUri.contains("?");
+	
+	if("true".equals(isServer)){
+		sb.append("\"jetty://\"+");
+		sb.append(resourceUri);
+		String disableStream = ElementParameterParser.getValue(node, "__DISABLE_STREAM__");
+		String sessionSupport = ElementParameterParser.getValue(node, "__SESSION_SUPPORT__");
+		String chunked = ElementParameterParser.getValue(node, "__CHUNKED__");
+		String enableJmx = ElementParameterParser.getValue(node, "__ENABLEJMX__");
+		String matchOnUriPrefix = ElementParameterParser.getValue(node, "__MATCH_ON_URI_PREFIX__");
+		String traceEnable = ElementParameterParser.getValue(node, "__TRACE_ENABLE__");
+		String useContinuation = ElementParameterParser.getValue(node, "__USE_CONTINUATION__");
+		
+		if("true".equals(disableStream)){
+			if(hasParam){
+				sb.append("+\"&disableStreamCache=true\"");
+			}else{
+				sb.append("+\"?disableStreamCache=true\"");
+			}
+			hasParam = true;
+		}
+		
+		if("true".equals(sessionSupport)){
+			if(hasParam){
+				sb.append("+\"&sessionSupport=true\"");
+			}else{
+				sb.append("+\"?sessionSupport=true\"");
+			}
+			hasParam = true;
+		}
+		
+		if("false".equals(chunked)){
+			if(hasParam){
+				sb.append("+\"&chunked=false\"");
+			}else{
+				sb.append("+\"?chunked=false\"");
+			}
+			hasParam = true;
+		}
+		
+		if("true".equals(enableJmx)){
+			if(hasParam){
+				sb.append("+\"&enableJmx=true\"");
+			}else{
+				sb.append("+\"?enableJmx=true\"");
+			}
+			hasParam = true;
+		}
+		
+		if("true".equals(matchOnUriPrefix)){
+			if(hasParam){
+				sb.append("+\"&matchOnUriPrefix=true\"");
+			}else{
+				sb.append("+\"?matchOnUriPrefix=true\"");
+			}
+			hasParam = true;
+		}
+		
+		if("true".equals(traceEnable)){
+			if(hasParam){
+				sb.append("+\"&traceEnabled=true\"");
+			}else{
+				sb.append("+\"?traceEnabled=true\"");
+			}
+			hasParam = true;
+		}
+		
+		if("false".equals(useContinuation)){
+			if(hasParam){
+				sb.append("+\"&useContinuation=false\"");
+			}else{
+				sb.append("+\"?useContinuation=false\"");
+			}
+			hasParam = true;
+		}
+		
+		List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
+		for (Map<String, String> map : arguments) {
+			String argName = map.get("KEY").trim();
+			String argValue = map.get("VALUE").trim();
+
+			if (hasParam) {
+				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+			} else {
+				sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
+				hasParam = true;
+			}
+		}
+		
+	}else{
+		sb.append(resourceUri);
+		String method = ElementParameterParser.getValue(node, "__METHOD__");
+		if("GET".equals(method)||"HEAD".equals(method) || "DELETE".equals(method)){
+			List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
+			String encodeCharset = ElementParameterParser.getValue(node, "__ENCODER_CHARSET__");
+
+			for (Map<String, String> map : parameters) {
+				String argName = map.get("KEY").trim();
+				String argValue = map.get("VALUE").trim();
+				try{
+					if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
+						argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
+						argName = "\""+argName+"\"";
+					}else{
+						argName = URLEncoder.encode(argName,encodeCharset);
+					}
+					if(argValue.startsWith("\"")&&argValue.endsWith("\"")&&argValue.length()>=2){
+						argValue = URLEncoder.encode(argValue.substring(1, argValue.length()-1),encodeCharset);
+						argValue = "\""+argValue+"\"";
+					}else{
+						argValue = URLEncoder.encode(argValue,encodeCharset);
+					}
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				if (hasParam) {
+					sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+				} else {
+					sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
+					hasParam = true;
+				}
+			}
+		}
+
+	}
+	String uriRef = sb.toString();
     
     if("true".equals(isServer)){
     	List< ? extends IConnection> conns = node.getIncomingConnections();
@@ -43,17 +172,17 @@ imports="
     	}
     	
     }else{
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb1 = new StringBuilder();
 		
 		String method = ElementParameterParser.getValue(node, "__METHOD__");
 		String contentType = ElementParameterParser.getValue(node, "__CONTENT_TYPE__");
 		
-		sb.append(".setHeader(\"");
-		sb.append("CamelHttpMethod");
-		sb.append("\",");
-		sb.append("constant(\"");
-		sb.append(method);
-		sb.append("\"))");
+		sb1.append(".setHeader(\"");
+		sb1.append("CamelHttpMethod");
+		sb1.append("\",");
+		sb1.append("constant(\"");
+		sb1.append(method);
+		sb1.append("\"))");
 		
 		String formStyle = ElementParameterParser.getValue(node, "__FORM_CONTENT__");
 		String plainTextStyle = ElementParameterParser.getValue(node, "__PLAIN_TEXT__");
@@ -67,22 +196,22 @@ imports="
 		}
 		if(("POST".equals(method)||"PUT".equals(method))){
 			if("true".equals(plainTextStyle)||"true".equals(noContentStyle)){
-				sb.append(".setHeader(\"Content-Type\", constant("+ contentType + "))");
+				sb1.append(".setHeader(\"Content-Type\", constant("+ contentType + "))");
 				if("true".equals(plainTextStyle)){
 					String plainTextContent = ElementParameterParser.getValue(node, "__PLAIN_TEXT_CONTENT__");
-					sb.append(".setBody(");
-					sb.append("constant(");
-					sb.append(plainTextContent);
-					sb.append("))");
+					sb1.append(".setBody(");
+					sb1.append("constant(");
+					sb1.append(plainTextContent);
+					sb1.append("))");
 				}
 			}else if("true".equals(formStyle)){
 				// content-type of form is "application/x-www-form-urlencoded"
-				sb.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
+				sb1.append(".setHeader(\"Content-Type\", constant(\"application/x-www-form-urlencoded\"))");
 				List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
 				String encodeCharset = ElementParameterParser.getValue(node, "__ENCODER_CHARSET__");
-				boolean hasParam = false;
-				sb.append(".setBody(");
-				sb.append("constant(");
+				hasParam = false;
+				sb1.append(".setBody(");
+				sb1.append("constant(");
 				for (Map<String, String> map : parameters) {
 					String argName = map.get("KEY").trim();
 					String argValue = map.get("VALUE").trim();
@@ -103,13 +232,13 @@ imports="
 						e.printStackTrace();
 					}
 					if (hasParam) {
-						sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+						sb1.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
 					} else {
-						sb.append(argName + "+\"=\"+" + argValue);
+						sb1.append(argName + "+\"=\"+" + argValue);
 						hasParam = true;
 					}
 				}
-				sb.append("))");
+				sb1.append("))");
 			}
 		}
 		
@@ -118,17 +247,17 @@ imports="
 		for (Map<String, String> map : arguments) {
 			String argName = map.get("KEY").trim();
 			String argValue = map.get("VALUE").trim();
-			sb.append(".setHeader(");
-			sb.append(argName);
-			sb.append(",");
-			sb.append("constant(");
-			sb.append(argValue);
-			sb.append("))");
+			sb1.append(".setHeader(");
+			sb1.append(argName);
+			sb1.append(",");
+			sb1.append("constant(");
+			sb1.append(argValue);
+			sb1.append("))");
 		}
 
 
 %>
-		<%=sb.toString()%>.to(<%=uriRef%>)
+		<%=sb1.toString()%>.to(<%=uriRef%>)
 <%
     }
 %>
