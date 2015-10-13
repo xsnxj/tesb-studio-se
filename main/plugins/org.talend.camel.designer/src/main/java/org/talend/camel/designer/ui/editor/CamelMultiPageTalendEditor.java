@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.dependencies.CamelDependenciesEditor;
@@ -26,6 +27,10 @@ import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.process.IProcess2;
+import org.talend.core.model.properties.Item;
+import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryContentHandler;
+import org.talend.core.model.repository.RepositoryContentManager;
 import org.talend.core.services.ISVNProviderService;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
@@ -66,7 +71,17 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      */
     @Override
     protected IImage getEditorTitleImage() {
-        return ECamelCoreImage.ROUTE_EDITOR_ICON;
+        final Item item = ((CamelProcessEditorInput) getEditorInput()).getItem();
+        if (item instanceof CamelProcessItem) {
+            return ECamelCoreImage.ROUTE_EDITOR_ICON;
+        }
+        for (final IRepositoryContentHandler handler : RepositoryContentManager.getHandlers()) {
+            final ERepositoryObjectType type = handler.getRepositoryObjectType(item);
+            if (null != type) {
+                return handler.getIcon(type);
+            }
+        }
+        return super.getEditorTitleImage();
     }
 
     /**

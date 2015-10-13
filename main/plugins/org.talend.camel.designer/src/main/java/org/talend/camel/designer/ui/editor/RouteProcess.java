@@ -72,7 +72,6 @@ public class RouteProcess extends Process {
 
     @Override
     public String getElementName() {
-        // MultiPageTalendEditor.Route=Route {0} {1}
         if (getProperty().getItem() instanceof CamelProcessItem) {
             return Messages.getString("MultiPageTalendEditor.Route"); //$NON-NLS-1$
         } else {
