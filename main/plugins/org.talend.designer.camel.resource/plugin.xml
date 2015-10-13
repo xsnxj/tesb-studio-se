@@ -84,4 +84,13 @@
       </importItemsProvider>
    </extension>
 
+   <extension
+         point="org.talend.core.runtime.itemRelationship">
+      <itemHandler
+            class="org.talend.designer.camel.resource.handler.ResourcesItemRelationshipHandler"
+            id="org.talend.designer.camel.resource.itemHandler.resourceType"
+            name="Resource Type">
+      </itemHandler>
+   </extension>
+
 </plugin>

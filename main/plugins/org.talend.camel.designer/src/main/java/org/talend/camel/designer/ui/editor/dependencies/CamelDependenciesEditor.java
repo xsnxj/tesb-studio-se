@@ -27,6 +27,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
@@ -228,6 +229,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
                     RouteResourceUtil.saveResourceDependency(
                         getJobEditorInput().getLoadedProcess().getAdditionalProperties(),
                         manageRouteResourcePanel.getInput());
+                    RelationshipItemBuilder.getInstance().addOrUpdateItem(getJobEditorInput().getItem());
                 }
             };
         } else {
