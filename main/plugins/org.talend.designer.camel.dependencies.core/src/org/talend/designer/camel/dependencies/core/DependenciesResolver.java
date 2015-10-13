@@ -86,9 +86,8 @@ public class DependenciesResolver {
             } catch (Exception e) {
             }
         }
-        String routePackageName = JavaResourcesHelper.getJobFolderName(item.getProperty().getLabel(), version);
         final ExportPackage exportPackage = new ExportPackage();
-        exportPackage.setName(JavaResourcesHelper.getProjectFolderName(item) + '.' + routePackageName);
+        exportPackage.setName(JavaResourcesHelper.getJobClassPackageName(item));
         exportPackage.setBuiltIn(true);
         exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
         exportPackages.add(exportPackage);
