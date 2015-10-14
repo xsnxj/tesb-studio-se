@@ -455,7 +455,7 @@ if(hasCXFRegistryProvider){
 		org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
 		jaasUTValidator.setContextName("karaf");
 		// set endpoint properties
-		final String userName = securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
+		final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
 		final Map<String, Object> endpointProps = new HashMap<String, Object>();
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
 		endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
