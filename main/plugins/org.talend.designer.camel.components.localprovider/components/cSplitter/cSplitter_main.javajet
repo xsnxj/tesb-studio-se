@@ -33,7 +33,7 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.split().<%=exp%>
+		.split(<%=exp%>)
 <%
 		if(useStrategy){			%>.aggregationStrategyRef(<%=aggregationStrategy%>)<%	}
 		if(arallelProcessing){		%>.parallelProcessing()<%								}
