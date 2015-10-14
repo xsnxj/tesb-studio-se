@@ -55,7 +55,7 @@ public class DependencyVersionPart {
 	private boolean fIsRanged;
 
 	/** The range allowed. */
-	private boolean fRangeAllowed;
+	private final boolean fRangeAllowed;
 
 	/**
 	 * Instantiates a new dependency version part. Support single version input
@@ -215,19 +215,16 @@ public class DependencyVersionPart {
 	 * @return the i status
 	 */
 	private String validateVersionRange() {
-		if ((!fRangeAllowed && getMinVersion().length() == 0)
-				|| (fRangeAllowed && (getMinVersion().length() == 0 || getMaxVersion()
-						.length() == 0))) {
+		if (!fRangeAllowed) {
 			fIsRanged = false;
 			return null;
 		}
 
-//		String errorMessage = Messages.DependencyVersionPart_InvalidVersionFormat;
-
 		final Version v1 = new Version(getMinVersion());
 		final Version v2 = new Version(getMaxVersion());
-		if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
-			fIsRanged = v1.compareTo(v2) != 0;
+		final int c = v1.compareTo(v2);
+		if (c == 0 || c < 0) {
+			fIsRanged = c != 0;
 			return null;
 		}
 		return Messages.DependencyVersionDialog_versionRangeError;
