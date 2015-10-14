@@ -35,7 +35,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
-import org.talend.designer.core.ICamelDesignerCoreService;
+import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IProcessor;
@@ -93,13 +93,9 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
         // http://jira.talendforge.org/browse/TESB-6437
         // https://jira.talendforge.org/browse/TESB-7893
-        ICamelDesignerCoreService camelService = (ICamelDesignerCoreService) GlobalServiceRegister.getDefault().getService(
-                ICamelDesignerCoreService.class);
-        if (camelService != null) {
-            for (IPath path : camelService.synchronizeRouteResource(processItem)) {
-                osgiResource.addResource(path.removeLastSegments(1).makeRelativeTo(srcPath).toString(), path.toFile().toURI()
-                        .toURL());
-            }
+        for (IPath path : RouteResourceUtil.synchronizeRouteResource(processItem)) {
+            osgiResource.addResource(path.removeLastSegments(1).makeRelativeTo(srcPath).toString(), path.toFile().toURI()
+                    .toURL());
         }
     }
 

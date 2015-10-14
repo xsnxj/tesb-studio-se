@@ -12,17 +12,13 @@
 // ============================================================================
 package org.talend.camel.designer;
 
-import java.util.Collection;
-
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorPart;
-import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.components.ComponentCategory;
@@ -45,18 +41,17 @@ import org.talend.designer.core.ICamelDesignerCoreService;
  */
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
+    @Override
     public String getDeleteFolderName(ERepositoryObjectType type) {
         return type.getKey();
     }
 
+    @Override
     public ERepositoryObjectType getBeansType() {
         return CamelRepositoryNodeType.repositoryBeansType;
     }
 
-    public ERepositoryObjectType getResourcesType() {
-        return CamelRepositoryNodeType.repositoryRouteResourceType;
-    }
-
+    @Override
     public ERepositoryObjectType getRouteDocType() {
         return CamelRepositoryNodeType.repositoryDocumentationType;
     }
@@ -66,43 +61,39 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return CamelRepositoryNodeType.repositoryDocumentationsType;
     }
 
+    @Override
     public boolean isInstanceofCamelRoutes(Item item) {
-        if (item instanceof CamelProcessItem) {
-            return true;
-        }
-        return false;
+        return item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM
+            || item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM;
     }
 
+    @Override
     public boolean isInstanceofCamelBeans(Item item) {
-        if (item instanceof BeanItem) {
-            return true;
-        }
-        return false;
+        return item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM;
     }
 
+    @Override
     public boolean isInstanceofCamel(Item item) {
-        if (item instanceof BeanItem || item instanceof CamelProcessItem || item instanceof RouteResourceItem) {
-            return true;
-        }
-        return false;
+        return isInstanceofCamelRoutes(item) || isInstanceofCamelBeans(item)
+            || item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM;
     }
 
+    @Override
     public boolean isCamelMulitPageEditor(IEditorPart editor) {
-        boolean isCamelEditor = false;
-        if (editor instanceof CamelMultiPageTalendEditor) {
-            isCamelEditor = true;
-        }
-        return isCamelEditor;
+        return editor instanceof CamelMultiPageTalendEditor;
     }
 
-    public Collection<IPath> synchronizeRouteResource(Item item) {
-        return RouteResourceUtil.synchronizeRouteResource((ProcessItem) item);
+    @Override
+    public void synchronizeRouteResource(ProcessItem item) {
+        RouteResourceUtil.synchronizeRouteResource(item);
     }
 
+    @Override
     public boolean isRouteBuilderNode(INode node) {
         return ComponentCategory.CATEGORY_4_CAMEL.getName().equals(node.getProcess().getComponentsType());
     }
 
+    @Override
     public boolean canCreateNodeOnLink(IConnection connection, INode node) {
         INodeConnector connector = node.getConnectorFromType(EConnectionType.ROUTE);
         if (connector.getMaxLinkOutput() > 0) {
@@ -115,6 +106,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return false;
     }
 
+    @Override
     public EConnectionType getTargetConnectionType(INode node) {
         INodeConnector connector = node.getConnectorFromType(EConnectionType.ROUTE);
         if (connector.getMaxLinkOutput() > 0) {
