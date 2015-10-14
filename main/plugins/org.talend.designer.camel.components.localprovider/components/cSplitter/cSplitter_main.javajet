@@ -33,8 +33,15 @@ imports="
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-		.split(<%=exp%>)
+		.split(
 <%
+		if("none".equals(language)){
+			//inorder expression for former migrate
+			%><%=exp%>)<%
+		}else{
+			//fill postorder expression
+			%>).<%=exp%><%
+		}
 		if(useStrategy){			%>.aggregationStrategyRef(<%=aggregationStrategy%>)<%	}
 		if(arallelProcessing){		%>.parallelProcessing()<%								}
 		if(stopOnException){		%>.stopOnException()<%									}
