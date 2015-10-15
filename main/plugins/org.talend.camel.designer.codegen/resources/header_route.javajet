@@ -1291,23 +1291,7 @@ for (INode node : graphicalNodes) {
 		//sb.append("+\"");
 		uri = sb.toString();
 	} else if ("cMQTT".equals(componentName)) {
-		CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
-
-		String factoryCompName =  helper.getStringParam("__CONNECTION_FACTORY_CONFIGURATION__");
-		eb.setComponent(factoryCompName.replace("_", ""));
-
-		eb.setName("\""+cid+"\"");
-
-		String topicName = helper.getStringParam("__TOPIC_NAME__");
-		if(!node.getIncomingConnections().isEmpty()) {
-			eb.addParam("publishTopicName", topicName);
-		} else {
-			eb.addParam("subscribeTopicName", topicName);
-		}
-
-		List<Map<String, String>> tableValues = getObjectValue(node, "__URI_OPTIONS__");
-		eb.addParams(tableValues);
-		uri = eb.build();
+		
 	} else if ("cHttp".equals(componentName)) {
 
 	} else if ("cFlatPack".equals(componentName)) {
