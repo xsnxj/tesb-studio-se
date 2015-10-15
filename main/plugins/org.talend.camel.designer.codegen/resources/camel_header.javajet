@@ -588,6 +588,9 @@ if (isProvider) {
 				compositeRegistry.addRegistry(registry);
 				((org.apache.camel.impl.DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
 
+                //read context values
+                readContextValues(contextStr);
+
 <%
 			//process cConfig components first 
 			List<? extends INode> camelContextNodes = process.getNodesOfType("cConfig");
@@ -1120,9 +1123,6 @@ if (isProvider) {
 			
 			}
 %>
-
-                //read context values
-                readContextValues(contextStr);
 
 				initUriMap();
 
