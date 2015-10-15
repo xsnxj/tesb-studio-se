@@ -215,14 +215,12 @@ public class DependencyVersionPart {
 	 * @return the i status
 	 */
 	private String validateVersionRange() {
-		if (!fRangeAllowed) {
+		if (!fRangeAllowed
+		    || getMinVersion().isEmpty() || getMinVersion().isEmpty()) {
 			fIsRanged = false;
 			return null;
 		}
-
-		final Version v1 = new Version(getMinVersion());
-		final Version v2 = new Version(getMaxVersion());
-		final int c = v1.compareTo(v2);
+		final int c = new Version(getMinVersion()).compareTo(new Version(getMaxVersion()));
 		if (c == 0 || c < 0) {
 			fIsRanged = c != 0;
 			return null;
@@ -295,7 +293,7 @@ public class DependencyVersionPart {
 	private String extractSingleVersionFromText() {
 		if (!fRangeAllowed)
 			return getMinVersion();
-		if (getMinVersion().length() == 0)
+		if (getMinVersion().isEmpty())
 			return getMaxVersion();
 		return getMinVersion();
 	}
@@ -306,7 +304,6 @@ public class DependencyVersionPart {
 	 * @return the version
 	 */
 	public String getVersion() {
-		String version;
 		if (fIsRanged) {
 			// if versions are equal they must be inclusive for a range to be
 			// valid
@@ -319,25 +316,19 @@ public class DependencyVersionPart {
 				minI = maxI = true;
 			VersionRange versionRange = new VersionRange(new Version(minV),
 					minI, new Version(maxV), maxI);
-			if (versionRange.equals(VersionRange.emptyRange)) {
-				version = "";
-			} else {
-				version = versionRange.toString();
+			if (!versionRange.equals(VersionRange.emptyRange)) {
+				return versionRange.toString();
 			}
 		} else {
 			String singleversion = extractSingleVersionFromText();
-			if (singleversion == null || singleversion.length() == 0)
-				version = "";
-			else {
+			if (!singleversion.isEmpty()) {
 				Version versionBean = new Version(singleversion);
-				if (versionBean.equals(Version.emptyVersion)) {
-					version = "";
-				} else {
-					version = versionBean.toString();
+				if (!versionBean.equals(Version.emptyVersion)) {
+					return versionBean.toString();
 				}
 			}
 		}
-		return version;
+		return null;
 	}
 
 	/**

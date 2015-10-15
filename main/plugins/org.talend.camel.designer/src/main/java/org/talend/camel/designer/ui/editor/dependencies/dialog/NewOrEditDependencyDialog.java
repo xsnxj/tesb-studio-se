@@ -252,8 +252,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 	 * @return the version
 	 */
 	public String getVersion() {
-	    final String version = fVersionPart.getVersion();
-		return (null != version && !version.isEmpty()) ? version : null;
+		return fVersionPart.getVersion();
 	}
 
 }
