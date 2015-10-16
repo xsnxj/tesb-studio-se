@@ -5,6 +5,7 @@ imports="
     org.talend.core.model.process.IConnection
     org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.designer.codegen.config.CamelEndpointBuilder
     java.util.List
     java.util.Map
     java.io.UnsupportedEncodingException
@@ -14,7 +15,7 @@ imports="
 <%
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode) codeGenArgument.getArgument();
-    
+    CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
     String isServer = ElementParameterParser.getValue(node, "__SERVER__");
     
     String cid = node.getUniqueName();
@@ -35,8 +36,8 @@ imports="
 	boolean hasParam = resourceUri==null?false:resourceUri.contains("?");
 	
 	if("true".equals(isServer)){
-		sb.append("\"jetty://\"+");
-		sb.append(resourceUri);
+		builder.setComponent("jetty");
+		builder.setName(resourceUri);
 		String disableStream = ElementParameterParser.getValue(node, "__DISABLE_STREAM__");
 		String sessionSupport = ElementParameterParser.getValue(node, "__SESSION_SUPPORT__");
 		String chunked = ElementParameterParser.getValue(node, "__CHUNKED__");
@@ -46,83 +47,43 @@ imports="
 		String useContinuation = ElementParameterParser.getValue(node, "__USE_CONTINUATION__");
 		
 		if("true".equals(disableStream)){
-			if(hasParam){
-				sb.append("+\"&disableStreamCache=true\"");
-			}else{
-				sb.append("+\"?disableStreamCache=true\"");
-			}
-			hasParam = true;
+			builder.addParam("disableStreamCache", "\"true\"");
 		}
 		
 		if("true".equals(sessionSupport)){
-			if(hasParam){
-				sb.append("+\"&sessionSupport=true\"");
-			}else{
-				sb.append("+\"?sessionSupport=true\"");
-			}
-			hasParam = true;
+			builder.addParam("sessionSupport", "\"true\"");
 		}
 		
 		if("false".equals(chunked)){
-			if(hasParam){
-				sb.append("+\"&chunked=false\"");
-			}else{
-				sb.append("+\"?chunked=false\"");
-			}
-			hasParam = true;
+			builder.addParam("chunked", "\"false\"");
 		}
 		
 		if("true".equals(enableJmx)){
-			if(hasParam){
-				sb.append("+\"&enableJmx=true\"");
-			}else{
-				sb.append("+\"?enableJmx=true\"");
-			}
-			hasParam = true;
+			builder.addParam("enableJmx", "\"true\"");
 		}
 		
 		if("true".equals(matchOnUriPrefix)){
-			if(hasParam){
-				sb.append("+\"&matchOnUriPrefix=true\"");
-			}else{
-				sb.append("+\"?matchOnUriPrefix=true\"");
-			}
-			hasParam = true;
+			builder.addParam("matchOnUriPrefix", "\"true\"");
 		}
 		
 		if("true".equals(traceEnable)){
-			if(hasParam){
-				sb.append("+\"&traceEnabled=true\"");
-			}else{
-				sb.append("+\"?traceEnabled=true\"");
-			}
-			hasParam = true;
+			builder.addParam("traceEnable", "\"true\"");
 		}
 		
 		if("false".equals(useContinuation)){
-			if(hasParam){
-				sb.append("+\"&useContinuation=false\"");
-			}else{
-				sb.append("+\"?useContinuation=false\"");
-			}
-			hasParam = true;
+			builder.addParam("useContinuation", "\"false\"");
 		}
 		
 		List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__HEADERS__");
 		for (Map<String, String> map : arguments) {
 			String argName = map.get("KEY").trim();
 			String argValue = map.get("VALUE").trim();
-
-			if (hasParam) {
-				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-			} else {
-				sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
-				hasParam = true;
-			}
+			builder.addParam(argName.substring(1, argName.length()-1), argValue);
 		}
 		
 	}else{
 		sb.append(resourceUri);
+		builder.setName(resourceUri);
 		String method = ElementParameterParser.getValue(node, "__METHOD__");
 		if("GET".equals(method)||"HEAD".equals(method) || "DELETE".equals(method)){
 			List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
@@ -134,7 +95,6 @@ imports="
 				try{
 					if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
 						argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
-						argName = "\""+argName+"\"";
 					}else{
 						argName = URLEncoder.encode(argName,encodeCharset);
 					}
@@ -147,17 +107,12 @@ imports="
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
-				if (hasParam) {
-					sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-				} else {
-					sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
-					hasParam = true;
-				}
+				builder.addParam(argName, argValue);
 			}
 		}
 
 	}
-	String uriRef = sb.toString();
+	String uriRef = builder.build();
     
     if("true".equals(isServer)){
     	List< ? extends IConnection> conns = node.getIncomingConnections();
@@ -173,7 +128,6 @@ imports="
     	
     }else{
 		StringBuilder sb1 = new StringBuilder();
-		
 		String method = ElementParameterParser.getValue(node, "__METHOD__");
 		String contentType = ElementParameterParser.getValue(node, "__CONTENT_TYPE__");
 		

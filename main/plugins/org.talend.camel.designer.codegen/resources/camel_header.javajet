@@ -41,32 +41,6 @@
 	}
 
 <%
-	if(!process.getNodesOfType("cMail").isEmpty()) {
-%>
-		private org.apache.camel.component.mail.MailEndpoint getMailEndpoint(
-				String uri, String username, String password, String subject,
-				String from, String to, String cc, String bcc) {
-			org.apache.camel.component.mail.MailEndpoint endpoint = (org.apache.camel.component.mail.MailEndpoint) endpoint(uri);
-			org.apache.camel.component.mail.MailConfiguration configuration = endpoint.getConfiguration();
-			configuration.setUsername(username);
-			configuration.setPassword(password);
-			configuration.setSubject(subject);
-			if(null != from && !"".equals(from)){
-				configuration.setFrom(from);
-			}
-			if(null != to && !"".equals(to)){
-				configuration.setTo(to);
-			}
-			if(null != cc && !"".equals(cc)){
-				configuration.setCC(cc);
-			}
-			if(null != bcc && !"".equals(bcc)){
-				configuration.setBCC(bcc);
-			}
-			return endpoint;
-		}
-<%
-	}
 
 	if (!process.getNodesOfType("cFtp").isEmpty()) {
 	// for fix [TESB-15654], Set custom server port for cFTP
@@ -1323,25 +1297,11 @@ if (isProvider) {
 <%
 
 	}else if("cMail".equals(nodeComponentName)){
-			String mailEndpointVar = "mail_" + node.getUniqueName();
 			String cid = node.getUniqueName();
-//			IElementParameter labelParam = node.getElementParameter("LABEL");
-//			if(labelParam != null && !"__UNIQUE_NAME__".equals(labelParam.getValue())){
-//				cid = (String)labelParam.getValue()+"_"+cid;
-//			}
-			String uriRef = "uriMap.get(\"" + cid + "\")";
-
-			String userName = ElementParameterParser.getValue(node, "__USERNAME__");
-			String subject = ElementParameterParser.getValue(node, "__SUBJECT__");
-			String from = ElementParameterParser.getValue(node, "__FROM__");
-			String to = ElementParameterParser.getValue(node, "__TO__");
-			String cc = ElementParameterParser.getValue(node, "__CC__");
-			String bcc = ElementParameterParser.getValue(node, "__BCC__");
 			String passwordFieldName = "__PASSWORD__";
 %>
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 			
-			org.apache.camel.component.mail.MailEndpoint <%=mailEndpointVar%> = getMailEndpoint(<%=uriRef%>, <%=userName%>, decryptedPassword_<%=cid%>, <%=subject%>, <%=from%>, <%=to%>, <%=cc%>, <%=bcc%>);
 <%	}else if("cAggregate".equals(nodeComponentName)){
 				boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
 				String repository = ElementParameterParser.getValue(node, "__REPOSITORY__");
