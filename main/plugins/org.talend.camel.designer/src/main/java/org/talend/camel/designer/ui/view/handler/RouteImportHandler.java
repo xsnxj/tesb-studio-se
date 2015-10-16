@@ -22,39 +22,14 @@ import org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHa
 import org.talend.repository.items.importexport.handlers.model.ImportItem;
 import org.talend.repository.items.importexport.manager.ResourcesManager;
 
-/**
- * DOC ggu class global comment. Detailled comment
- */
 public class RouteImportHandler extends ImportRepTypeHandler {
 
-    /**
-     * DOC ggu RouteImportHandler constructor comment.
-     */
-    public RouteImportHandler() {
-        super();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler#createItemResource(org.eclipse
-     * .emf.common.util.URI)
-     */
     @Override
     protected Resource createItemResource(URI pathUri) {
         // maybe, because it's same job,joblet
         return new TalendXMIResource(pathUri);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.repository.items.importexport.handlers.imports.ImportRepTypeHandler#copyReferenceFiles(org.talend
-     * .repository.items.importexport.ui.wizard.imports.managers.ResourcesManager,
-     * org.talend.repository.items.importexport.ui.wizard.imports.models.ItemRecord)
-     */
     @Override
     protected boolean copyReferenceFiles(ResourcesManager resManager, ImportItem selectedItemRecord) throws IOException {
         HandlerUtil.copyScreenshotFile(resManager, selectedItemRecord);
