@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer;
 
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
@@ -11,9 +23,9 @@ import org.talend.repository.model.RepositoryNode;
 
 public class RouteProcessConvertServiceImpl implements IProcessConvertService {
 
+    @Override
     public IProcess getProcessFromItem(Item item, boolean loadScreenshots) {
-        if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM
-            || item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM) {
+        if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
             final RouteProcess process = new RouteProcess(item.getProperty());
             process.loadXmlFile(loadScreenshots);
             return process;
@@ -21,64 +33,38 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.IProcessConvertService#convertToProcess(org.talend.core.model.properties.Item,
-     * org.talend.core.model.repository.IRepositoryViewObject)
-     */
+    @Override
     public Item convertToProcess(Item item, IRepositoryViewObject repViewObject) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.IProcessConvertService#convertFromProcess(org.talend.core.model.properties.Item,
-     * org.talend.core.model.repository.IRepositoryViewObject)
-     */
+    @Override
     public Item convertFromProcess(Item item, IRepositoryViewObject repViewObject) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.IProcessConvertService#isOriginalItemDeleted()
-     */
+    @Override
     public boolean isOriginalItemDeleted() {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.IProcessConvertService#isNewItemCreated()
-     */
+    @Override
     public boolean isNewItemCreated() {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.IProcessConvertService#getConverterType()
-     */
+    @Override
     public ProcessConverterType getConverterType() {
         return ProcessConverterType.CONVERTER_FOR_ROUTE;
     }
 
+    @Override
     public Item convertFromProcess(Item item, IRepositoryViewObject repViewObject, RepositoryNode targetNode) {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public Item convertToProcess(Item item, IRepositoryViewObject repViewObject, RepositoryNode targetNode) {
-        // TODO Auto-generated method stub
         return null;
     }
 
