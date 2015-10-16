@@ -78,4 +78,10 @@ public class RouteProcess extends Process {
             return Messages.getString("MultiPageTalendEditor.Routelet"); //$NON-NLS-1$
         }
     }
+
+    @Override
+    public boolean isSubjobEnabled() {
+        return false;
+    }
+
 }
