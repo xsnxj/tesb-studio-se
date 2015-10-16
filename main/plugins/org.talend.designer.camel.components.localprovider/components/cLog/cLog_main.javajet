@@ -5,6 +5,7 @@ imports="
     org.talend.core.model.process.IConnection
     org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.designer.codegen.config.CamelEndpointBuilder
     java.util.List
     java.util.Map
     java.io.UnsupportedEncodingException
@@ -33,9 +34,47 @@ imports="
 		.log(org.apache.camel.LoggingLevel.<%=level%>,<%=logName%>,<%=message%>)
 <%
 	}else{
-    	String uriRef = "uriMap.get(\"" + cid + "\")";
+		CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
+		builder.setComponent("log");
+		builder.useDoubleSlash(false);
+		String logName = ElementParameterParser.getValue(node, "__LOGGING_CATEGORY__");
+		if(logName != null) {
+			builder.setName(logName);
+		}
+
+		String level = ElementParameterParser.getValue(node, "__LEVEL_TYPE__");
+		builder.addParam("level", "\"" + level +"\"");
+
+		String isSize = ElementParameterParser.getValue(node, "__GROUP_SIZE__");
+		String isInterval = ElementParameterParser.getValue(node, "__GROUP_INTERVAL__");
+		String isFormat = ElementParameterParser.getValue(node, "__FORMAT__");
+
+		if ("true".equals(isSize)) {
+			String groupSize = ElementParameterParser.getValue(node, "__SIZE__");
+			builder.addParam("groupSize", "\"" + groupSize + "\"");
+		} else if ("true".equals(isInterval)) {
+			String interval = ElementParameterParser.getValue(node, "__INTERVAL__");
+			builder.addParam("groupInterval", "\"" + interval + "\"");
+			String delay = ElementParameterParser.getValue(node, "__DELAY__");
+			if (!"0".equals(delay)) {
+				builder.addParam("groupDelay", "\"" + delay + "\"");
+			}
+			String activeOnly = ElementParameterParser.getValue(node, "__ACTIVE_ONLY__");
+			if (!"true".equals(activeOnly)) {
+				builder.addParam("groupActiveOnly", "\"" + activeOnly + "\"");
+			}
+		} else if ("true".equals(isFormat)) {
+			List<Map<String, String>> formatValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ARGUMENTS__");
+			for (Map<String, String> map : formatValues) {
+				String argName = map.get("NAME").trim();
+				String argValue = map.get("VALUE").trim();
+				builder.addParam("\"+" + argName + "+\"", argValue);
+			}
+		}
+	
+    	String uri = builder.build();
 %>
-		.to(<%=uriRef%>)
+		.to(<%=uri%>)
 <%
 	}
 %>

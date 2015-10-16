@@ -1128,53 +1128,6 @@ for (INode node : graphicalNodes) {
 
 		uri = sb.toString();
 	} else if ("cLog".equals(componentName)) {
-		String useLogEIP = ElementParameterParser.getValue(node, "__USE_LOGEIP__");
-		if ("true".equals(useLogEIP)) {
-			continue;
-		}
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("\"log:");
-		String logName = ElementParameterParser.getValue(node, "__LOGGING_CATEGORY__");
-		if(logName != null) {
-			sb.append("\"+").append(logName).append("+\"");
-		}
-
-		String level = ElementParameterParser.getValue(node, "__LEVEL_TYPE__");
-		sb.append("?").append("level=").append(level);
-
-		String isSize = ElementParameterParser.getValue(node, "__GROUP_SIZE__");
-		String isInterval = ElementParameterParser.getValue(node, "__GROUP_INTERVAL__");
-		String isFormat = ElementParameterParser.getValue(node, "__FORMAT__");
-
-		if ("true".equals(isSize)) {
-			String groupSize = ElementParameterParser.getValue(node, "__SIZE__");
-			sb.append("&groupSize=").append(groupSize).append("\"");
-		} else if ("true".equals(isInterval)) {
-			String interval = ElementParameterParser.getValue(node, "__INTERVAL__");
-			sb.append("&groupInterval=").append(interval);
-			String delay = ElementParameterParser.getValue(node, "__DELAY__");
-			if (!"0".equals(delay)) {
-				sb.append("&groupDelay=").append(delay);
-			}
-			String activeOnly = ElementParameterParser.getValue(node, "__ACTIVE_ONLY__");
-			if (!"true".equals(activeOnly)) {
-				sb.append("&groupActiveOnly=").append(activeOnly);
-			}
-			sb.append("\"");
-		} else if ("true".equals(isFormat)) {
-			sb.append("\"");
-			List<Map<String, String>> formatValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ARGUMENTS__");
-			for (Map<String, String> map : formatValues) {
-				String argName = map.get("NAME").trim();
-				String argValue = map.get("VALUE").trim();
-				sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-			}
-		} else {
-			sb.append("\"");
-		}
-
-		uri = sb.toString();
 
 	} else if ("cMail".equals(componentName)) {
 
