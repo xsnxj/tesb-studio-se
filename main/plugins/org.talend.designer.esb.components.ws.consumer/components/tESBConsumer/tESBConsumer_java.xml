@@ -147,7 +147,7 @@
 						OR (
 							((NEED_AUTH == 'true') OR ((NEED_AUTH != 'true') AND (NEED_AUTH != 'false')))
 							AND (
-								((AUTH_TYPE == 'BASIC') AND (AUTH_TYPE == 'DIGEST') AND (AUTH_TYPE == 'TOKEN'))
+								((AUTH_TYPE == 'BASIC') OR (AUTH_TYPE == 'DIGEST') OR (AUTH_TYPE == 'TOKEN'))
 								OR (
 									(AUTH_TYPE != 'BASIC') AND (AUTH_TYPE != 'DIGEST') AND (AUTH_TYPE != 'TOKEN')
 									AND (PROPAGATE_TYPE != 'CERT')
