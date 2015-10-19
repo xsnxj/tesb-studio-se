@@ -1053,53 +1053,6 @@ for (INode node : graphicalNodes) {
 
         uri = sb.toString();
 	} else if ("cFtp".equals(componentName)) {
-		String type = ElementParameterParser.getValue(node, "__TYPE__");
-		String username = ElementParameterParser.getValue(node, "__USERNAME__");
-		String server = ElementParameterParser.getValue(node, "__SERVER__");
-		String port = ElementParameterParser.getValue(node, "__PORT__");
-		String password = ElementParameterParser.getValue(node, "__PASSWORD__");
-		String directory = ElementParameterParser.getValue(node, "__DIRECTORY__");
-
-		StringBuffer fragments = new StringBuffer();
-		fragments.append("\"" + type + "://\"");
-		fragments.append("+\"");
-		fragments.append("ftpServer");
-		fragments.append(".");
-		fragments.append(cid);
-		fragments.append("\"");
-
-/*		if (username.trim().length() > 0) {
-			fragments.append("+" + username.trim()).append("+\"@\"");
-		}
-
-		fragments.append("+" + server.trim());
-*/
-		if (port.trim().length() > 0) {
-			fragments.append("+\":\"").append("+" + port.trim());
-		}
-/*
-		if (directory.trim().length() > 0) {
-			fragments.append("+\"/\"").append("+" + directory.trim());
-		}
-*/
-		boolean hasArg = false;
-/*		if (password.trim().length() > 0) {
-			hasArg = true;
-			fragments.append("+\"?password=\"+" + password);
-		}
-*/
-		List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");
-		for (Map<String, String> map : tableValues) {
-			String argName = map.get("NAME").trim();
-			String argValue = map.get("VALUE").trim();
-			if (!hasArg) {
-				fragments.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
-				hasArg = true;
-			} else {
-				fragments.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
-			}
-		}
-		uri = fragments.toString();
 
 	} else if("cJMS".equals(componentName) || "cAMQP".equals(componentName)) {
 		//http://jira.talendforge.org/browse/TESB-4861
