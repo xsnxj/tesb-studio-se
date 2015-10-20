@@ -795,18 +795,7 @@ for (INode node : graphicalNodes) {
 	if ("cMessagingEndpoint".equals(componentName)) {
 		uri = ElementParameterParser.getValue(node, "__URI__");
 	}else if("cDirect".equals(componentName)){
-		if(node.getIncomingConnections().size()>0){
-			continue;//is productor node. use exist endpoint.
-		}
-		String directName=getValue(node, "__NAME__");
-		uri="\"direct:\"+"+directName;
-		StringBuilder sb=new StringBuilder();
-		List<Map<String, String>> tableValues = getObjectValue(node, "__ADVARGUMENTS__");
-		appendTableParams(sb,tableValues);
-		if(sb.length()>0){
-			sb.setCharAt(sb.indexOf("&"),'?');
-			uri = uri + sb.toString();
-		}
+		
 	}else if("cVM".equals(componentName)||"cSEDA".equals(componentName)){
 		
 	} else if("cDirectVM".equals(componentName)) {

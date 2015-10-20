@@ -29,12 +29,11 @@ imports="
 		}
 	}
 	
-	String endpointName = ElementParameterParser.getValue(node, "__NAME__");
 	String componentName = node.getComponent().getName();
 
 	builder.setComponent("cVM".equals(componentName) ? "vm":"seda");
 	builder.useDoubleSlash(false);
-	builder.setName(endpointName);
+	builder.setName(ElementParameterParser.getValue(consumerNode, "__NAME__"));
 	if(!inputName){
 		//consumer
 		boolean  specifySize = ElementParameterParser.getBooleanValue(node, "__SPECIFY_SIZE__");
