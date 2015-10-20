@@ -3,8 +3,6 @@ package org.talend.designer.camel.dependencies.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -98,17 +96,24 @@ public class DependenciesResolver {
      * most of the datas of a node are coming from extension point except the
      * cTalendJob
      */
-    private void handleAllNodes(Collection<?> nodes) {
-        for (Object o : nodes) {
-            if (!(o instanceof NodeType)) {
-                continue;
+    private void handleAllNodes(Collection<NodeType> nodes) {
+        for (NodeType n : nodes) {
+            if (isActivate(n)) {
+                handleNode(n);
             }
-            NodeType n = (NodeType) o;
-            if (!isActivate(n)) {
-                continue;
-            }
-            handleNode(n);
         }
+    }
+
+    private static <T extends ManifestItem> T addItem(Collection<T> items, T newItem) {
+        if (!items.add(newItem)) {
+            for (T obj : items) {
+                if (newItem.equals(obj)) {
+                    newItem = obj;
+                    break;
+                }
+            }
+        }
+        return newItem;
     }
 
     private void handleNode(NodeType n) {
@@ -119,20 +124,11 @@ public class DependenciesResolver {
             ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(componentName);
         if (ips != null) {
             for (ExImportPackage ip : ips) {
-                Collection<ImportPackage> targets = ip.toTargets(n);
-                if (targets == null) {
-                    continue;
-                }
-                for (ImportPackage importPackage : targets) {
-                    if (!importPackages.add(importPackage)) {
-                        for (ImportPackage obj : importPackages) {
-                            if (importPackage.equals(obj)) {
-                                importPackage = obj;
-                                break;
-                            }
-                        }
+                final Collection<ImportPackage> targets = ip.toTargets(n);
+                if (targets != null) {
+                    for (ImportPackage importPackage : targets) {
+                        addItem(importPackages, importPackage).addRelativeComponent(uniqueName);
                     }
-                    importPackage.addRelativeComponent(uniqueName);
                 }
             }
         }
@@ -141,19 +137,10 @@ public class DependenciesResolver {
             ExtensionPointsReader.INSTANCE.getRequireBundlesForComponent(componentName);
         if (rbs != null) {
             for (ExRequireBundle rb : rbs) {
-                RequireBundle target = rb.toTargets(n);
-                if (target == null) {
-                    continue;
+                final RequireBundle target = rb.toTargets(n);
+                if (target != null) {
+                    addItem(requireBundles, target).addRelativeComponent(uniqueName);
                 }
-                if (!requireBundles.add(target)) {
-                    for (RequireBundle obj : requireBundles) {
-                        if (target.equals(obj)) {
-                            target = obj;
-                            break;
-                        }
-                    }
-                }
-                target.addRelativeComponent(uniqueName);
             }
         }
 
@@ -161,22 +148,14 @@ public class DependenciesResolver {
             ExtensionPointsReader.INSTANCE.getBundleClasspathsForComponent(componentName);
         if (bcs != null) {
             for (ExBundleClasspath bc : bcs) {
-                Collection<BundleClasspath> targets = bc.toTargets(n);
-                if (targets == null) {
-                    continue;
-                }
-                for (BundleClasspath bcp : targets) {
-                    if (!bundleClasspaths.add(bcp)) {
-                        for (BundleClasspath obj : bundleClasspaths){
-                            if (bcp.equals(obj)) {
-                                bcp = obj;
-                                break;
-                            }
+                final Collection<BundleClasspath> targets = bc.toTargets(n);
+                if (targets != null) {
+                    for (BundleClasspath bcp : targets) {
+                        bcp = addItem(bundleClasspaths, bcp);
+                        bcp.addRelativeComponent(uniqueName);
+                        if (!bcp.isBuiltIn()) {
+                            bcp.setOptional(!userBundleClasspaths.contains(bcp));
                         }
-                    }
-                    bcp.addRelativeComponent(uniqueName);
-                    if (!bcp.isBuiltIn()) {
-                        bcp.setOptional(!userBundleClasspaths.contains(bcp));
                     }
                 }
             }
@@ -186,62 +165,53 @@ public class DependenciesResolver {
     private static boolean isActivate(NodeType node) {
         for (Object obj : node.getElementParameter()) {
             ElementParameterType cpType = (ElementParameterType) obj;
-            if ("ACTIVATE".equals(cpType.getName())) {
+            if ("ACTIVATE".equals(cpType.getName())) { //$NON-NLS-1$
                 return Boolean.parseBoolean(cpType.getValue());
             }
         }
         return true;
     }
 
-	/**
-	 * special for ROUTE_WHEN connection case
-	 * we need to handle it specially according the selected language
-	 */
-	private void handleAllConnections(Collection<?> connections) {
-		for (Object next : connections) {
-			if(next == null || !(next instanceof ConnectionType)){
-				continue;
-			}
-			ConnectionType connection = (ConnectionType) next;
-			String connectorName = connection.getConnectorName();
-			if(!EConnectionType.ROUTE_WHEN.getName().equals(connectorName)){
-				continue;
-			}
-			String languageName = handleROUTEWHENconnection(connection);
-			if(languageName == null){
-				continue;
-			}
-	        Collection<ExImportPackage> languageImportPackages =
-	            ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(languageName);
-			if(languageImportPackages == null){
-				continue;
-			}
-			for(ExImportPackage eip : languageImportPackages){
-				importPackages.addAll(eip.toTargets(null));
-			}
-		}
-	}
+    /**
+     * special for ROUTE_WHEN connection case we need to handle it specially
+     * according the selected language
+     */
+    private void handleAllConnections(Collection<ConnectionType> connections) {
+        for (ConnectionType connection : connections) {
+            String connectorName = connection.getConnectorName();
+            if (!EConnectionType.ROUTE_WHEN.getName().equals(connectorName)) {
+                continue;
+            }
+            String languageName = handleROUTEWHENconnection(connection.getElementParameter());
+            if (languageName != null) {
+                final Collection<ExImportPackage> languageImportPackages =
+                    ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(languageName);
+                if (languageImportPackages != null) {
+                    for (ExImportPackage eip : languageImportPackages) {
+//                        importPackages.addAll(eip.toTargets(null));
+                        final Collection<ImportPackage> targets = eip.toTargets(null);
+                        if (targets != null) {
+                            for (ImportPackage importPackage : targets) {
+                                addItem(importPackages, importPackage).addRelativeComponent(connection.getLabel());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	private String handleROUTEWHENconnection(ConnectionType connection) {
-		List<?> elementParameter = connection.getElementParameter();
-		Iterator<?> iterator = elementParameter.iterator();
-		while(iterator.hasNext()){
-			Object next = iterator.next();
-			if(next == null || !(next instanceof ElementParameterType)){
-				continue;
-			}
-			ElementParameterType ept = (ElementParameterType) next;
-			if(!EParameterName.ROUTETYPE.getName().equals(ept.getName())){
-				continue;
-			}
-			String value = ept.getValue();
-			if(value==null){
-				continue;
-			}
-			return value;
-		}
-		return null;
-	}
+    private String handleROUTEWHENconnection(Collection<ElementParameterType> connectionParameters) {
+        for (ElementParameterType ept : connectionParameters) {
+            if (EParameterName.ROUTETYPE.getName().equals(ept.getName())) {
+                String value = ept.getValue();
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
 
     public Collection<BundleClasspath> getBundleClasspaths() {
         return bundleClasspaths;

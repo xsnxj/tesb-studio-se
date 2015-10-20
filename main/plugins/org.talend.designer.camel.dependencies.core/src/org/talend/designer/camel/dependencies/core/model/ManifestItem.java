@@ -85,7 +85,7 @@ public abstract class ManifestItem {
         } else if (relativeComponents.isEmpty()) {
             return description;
         } else {
-            return "Relative Components: " + relativeComponents.toString(); //$NON-NLS-1$
+            return "Relative Components: " + relativeComponents.toString();
         }
     }
 
