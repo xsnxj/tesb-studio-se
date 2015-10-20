@@ -1089,6 +1089,9 @@ if (isProvider) {
 	if("cCXF".equals(nodeComponentName)){
 			IElementParameter param = node.getElementParameter("LABEL");
 			String cid = node.getUniqueName();
+			NodeParamsHelper helper = new NodeParamsHelper(node);
+			String uri = "";
+			String statements = null;
 			// http://jira.talendforge.org/browse/TESB-5241
 			/*
 			 * change to use label + unique to make it unique but readable
@@ -1097,11 +1100,11 @@ if (isProvider) {
 //				cid = (String)param.getValue()+"_"+cid;
 //			}
 			String endpointVar = "endpoint_" + node.getUniqueName();
-			String uriRef = "uriMap.get(\"" + cid + "\")";
+			%><%@ include file="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cCXF/cCXF_uri.javajet"%><%
 			String formatType = ElementParameterParser.getValue(node, "__DATAFORMAT__");
 
 			boolean useRegistry = false;
-			boolean useSecurity = false;
+			useSecurity = false;
 			if(!"RAW".equals(formatType) && !"CXF_MESSAGE".equals(formatType)){
 				if(isStudioEEVersion){
 					useRegistry = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_REGISTRY__"));
@@ -1168,7 +1171,7 @@ if (isProvider) {
 			}
 %>
 				// CXF endpoint for <%=cid%>
-				org.apache.camel.component.cxf.CxfEndpoint <%=endpointVar%> = getCxfEndpoint(<%=uriRef%>, <%=isProvider%>, <%=isUseAuthorization%>, <%=isUsePropagateSamlAP%>, <%=securityToken%>
+				org.apache.camel.component.cxf.CxfEndpoint <%=endpointVar%> = getCxfEndpoint(<%=uri%>, <%=isProvider%>, <%=isUseAuthorization%>, <%=isUsePropagateSamlAP%>, <%=securityToken%>
 <%
 				if((useSecurity || useRegistry) && !isProvider){
 %>

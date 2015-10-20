@@ -6,6 +6,7 @@ imports="
     org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
     org.talend.designer.codegen.config.NodeParamsHelper
+    org.talend.designer.codegen.config.CamelEndpointBuilder
     java.util.List
 "
 %>
@@ -15,12 +16,28 @@ imports="
 	String cid = node.getUniqueName();
 
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+	CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
 
-	String uri = cid;
+	builder.setComponent("cxfrs://bean");
+	builder.setName("\"" + node.getUniqueName() + "\"");
+
+    builder.addParam("loggingFeatureEnabled", "\"" + (String) ElementParameterParser.getValue(node, "__LOG_MESSAGES__") + "\"");
+
+    java.util.List<java.util.Map<String, String>> tableValues = (java.util.List<java.util.Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");
+    for (java.util.Map<String, String> map : tableValues) {
+        String argName = map.get("NAME").trim();
+        String argValue = map.get("VALUE").trim();
+        if(argName.startsWith("\"") && argName.endsWith("\"") && argName.length() >= 2) {
+			argName = argName.substring(1, argName.length() - 1);
+		}
+		builder.addParam(argName, argValue);
+    }
+
+    String uri = builder.build();
 
 	if (node.getIncomingConnections().isEmpty()) {
 %>
-		from(uriMap.get("<%=uri%>"))
+		from(<%=uri%>)
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
 					org.apache.camel.Message inMessage = exchange.getIn();
@@ -58,7 +75,7 @@ imports="
 				}
 			})
 <% } %>
-		.inOut(uriMap.get("<%=uri%>"))
+		.inOut(<%=uri%>)
 <%
 	}
 %>
