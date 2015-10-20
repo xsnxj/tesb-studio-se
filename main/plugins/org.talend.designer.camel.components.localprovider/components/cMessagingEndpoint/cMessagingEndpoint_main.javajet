@@ -22,16 +22,16 @@ imports="
 //	if(param != null && !"__UNIQUE_NAME__".equals(param.getValue())){
 //		cid = (String)param.getValue()+"_"+cid;	
 //	}
+	String uri = ElementParameterParser.getValue(node, "__URI__");
 	
-	String uriRef = "uriMap.get(\"" + cid + "\")";
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
-			.to(<%=uriRef%>)
+			.to(<%=uri%>)
 <%
 	} else {
 %>
-		from(<%=uriRef%>)
+		from(<%=uri%>)
 <%
 	}
 %>

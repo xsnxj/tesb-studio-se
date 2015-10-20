@@ -793,7 +793,7 @@ for (INode node : graphicalNodes) {
 	componentName = node.getComponent().getName();
 	uri = "";
 	if ("cMessagingEndpoint".equals(componentName)) {
-		uri = ElementParameterParser.getValue(node, "__URI__");
+		
 	}else if("cDirect".equals(componentName)){
 		
 	}else if("cVM".equals(componentName)||"cSEDA".equals(componentName)){
