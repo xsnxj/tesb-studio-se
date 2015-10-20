@@ -875,63 +875,7 @@ for (INode node : graphicalNodes) {
 			}
 		}
 	} else if("cTimer".equals(componentName)) {
-		uri = "\"timer:\"+\""+node.getUniqueName()+"\"";
-		StringBuilder sb = new StringBuilder();
-		String period = ElementParameterParser.getValue(node, "__PERIOD__");
-		if(period!=null && !period.trim().equals("") && !"1000".equals(period)){
-			sb.append("+\"?period=\"+");
-			sb.append(period);
-		}
-		String repeat = ElementParameterParser.getValue(node, "__REPEATCOUNT__");
-		if(repeat!=null && !repeat.trim().equals("") && !"0".equals(repeat)){
-			if(sb.length()==0){
-				sb.append("+\"?repeatCount=\"+");
-				sb.append(repeat);
-			}else{
-				sb.append("+\"&repeatCount=\"+");
-				sb.append(repeat);
-			}
-		}
-		String delay = ElementParameterParser.getValue(node, "__DELAY__");
-		if(delay!=null && !delay.trim().equals("")){
-			if(sb.length()==0){
-				sb.append("+\"?delay=\"+");
-				sb.append(delay);
-			}else{
-				sb.append("+\"&delay=\"+");
-				sb.append(delay);
-			}
-		}
-		String fixedRate = ElementParameterParser.getValue(node, "__FIXEDRATE__");
-		if("true".equals(fixedRate)){
-			if(sb.length()==0){
-				sb.append("+\"?fixedRate=true\"");
-			}else{
-				sb.append("+\"&fixedRate=true\"");
-			}
-		}
-		String daemon = ElementParameterParser.getValue(node, "__DAEMON__");
-		if("false".equals(daemon)){
-			if(sb.length()==0){
-				sb.append("+\"?daemon=false\"");
-			}else{
-				sb.append("+\"&daemon=false\"");
-			}
-		}
-		String setTime = ElementParameterParser.getValue(node, "__SET_TIME__");
-		if("true".equals(setTime)){
-			String time = ElementParameterParser.getValue(node, "__TIME__");
-			if(sb.length()==0){
-				sb.append("+\"?time=\"+");
-				sb.append(time);
-			}else{
-				sb.append("+\"&time=\"+");
-				sb.append(time);
-			}
-		}
-		if(sb.length()>0){
-			uri = uri + sb.toString();
-		}
+		
 	}else if("cDataset".equals(componentName)){
 		
 	} else if ("cFile".equals(componentName)) {
