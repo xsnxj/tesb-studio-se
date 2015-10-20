@@ -933,57 +933,7 @@ for (INode node : graphicalNodes) {
 			uri = uri + sb.toString();
 		}
 	}else if("cDataset".equals(componentName)){
-		uri = "\"dataset:\"+"+ElementParameterParser.getValue(node, "__DATASET_NAME__");
-		StringBuilder sb = new StringBuilder();
-		String produceDelay = ElementParameterParser.getValue(node, "__PRODUCE_DELAY__");
-		if(produceDelay!=null && !produceDelay.trim().equals("") && !"3".equals(produceDelay)){
-			sb.append("+\"?produceDelay=\"+");
-			sb.append(produceDelay);
-		}
-		String consumeDelay = ElementParameterParser.getValue(node, "__CONSUME_DELAY__");
-		if(consumeDelay!=null && !consumeDelay.trim().equals("") && !"0".equals(consumeDelay)){
-			if(sb.length()==0){
-				sb.append("+\"?consumeDelay=\"+");
-				sb.append(consumeDelay);
-			}else{
-				sb.append("+\"&consumeDelay=\"+");
-				sb.append(consumeDelay);
-			}
-		}
-		String preloadSize = ElementParameterParser.getValue(node, "__PRELOAD_SIZE__");
-		if(preloadSize!=null && !preloadSize.trim().equals("") && !"0".equals(preloadSize)){
-			if(sb.length()==0){
-				sb.append("+\"?preloadSize=\"+");
-				sb.append(preloadSize);
-			}else{
-				sb.append("+\"&preloadSize=\"+");
-				sb.append(preloadSize);
-			}
-		}
-		String initialDelay = ElementParameterParser.getValue(node, "__INITIAL_DELAY__");
-		if(initialDelay!=null && !initialDelay.trim().equals("") && !"1000".equals(initialDelay)){
-			if(sb.length()==0){
-				sb.append("+\"?initialDelay=\"+");
-				sb.append(initialDelay);
-			}else{
-				sb.append("+\"&initialDelay=\"+");
-				sb.append(initialDelay);
-			}
-		}
-		String minRate = ElementParameterParser.getValue(node, "__MIN_RATE__");
-		if(minRate!=null && !minRate.trim().equals("") && !"0".equals(minRate)){
-			if(sb.length()==0){
-				sb.append("+\"?minRate=\"+");
-				sb.append(minRate);
-			}else{
-				sb.append("+\"&minRate=\"+");
-				sb.append(minRate);
-			}
-		}
 		
-		if(sb.length()>0){
-			uri = uri + sb.toString();
-		}
 	} else if ("cFile".equals(componentName)) {
 
 	} else if ("cCXF".equals(componentName)) {
