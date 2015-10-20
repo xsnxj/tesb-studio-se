@@ -854,26 +854,7 @@ for (INode node : graphicalNodes) {
 			}
 		}
 	} else if("cDirectVM".equals(componentName)) {
-		boolean inputName= getBoolValue(node, "____INPUT_ENDPOINT_NAME____");
-		boolean isProducer = !node.getIncomingConnections().isEmpty();
-		INode consumerNode = node;
-		if(isProducer && !inputName){
-			String desNodeName= (String)getValue(node, "____EXIST_ENDPOINT____");
-			if(desNodeName!=null){
-				for(INode aNode : node.getProcess().getGraphicalNodes()){
-					if(aNode.getUniqueName().equals(desNodeName)){
-						consumerNode=aNode;
-						break;
-					}
-				}
-			}
-		}
-		uri="\"direct-vm:\"+" + getValue(consumerNode, "__ENDPOINT_NAME__");
-		if(isProducer){
-			if(getBoolValue(node, "____BLOCK____")){
-				uri += "+\"?block=true&timeout="+getValue(consumerNode, "__TIMEOUT__")+"\"";
-			}
-		}
+		
 	} else if("cTimer".equals(componentName)) {
 		
 	}else if("cDataset".equals(componentName)){
