@@ -808,51 +808,7 @@ for (INode node : graphicalNodes) {
 			uri = uri + sb.toString();
 		}
 	}else if("cVM".equals(componentName)||"cSEDA".equals(componentName)){
-		boolean inputName=getBoolValue(node, "____INPUT_ENDPOINT_NAME____");
-		if(node.getIncomingConnections().size()>0 && (!inputName)){
-			continue;//is productor node. and use exist endpoint.
-		}
-		String endpointName=getValue(node, "__NAME__");
-		uri="\""
-			+ ("cVM".equals(componentName) ? "vm":"seda" )
-			+ ":\"+" + endpointName;
-		if(!inputName){
-			//consumer
-			StringBuilder sb=new StringBuilder();
-			boolean  specifySize=getBoolValue(node, "__SPECIFY_SIZE__");
-			if(specifySize){
-				String size=getValue(node, "__SIZE__");
-				appendParamWhenNotDefaultNorEmpty(sb,"size",size,"0");
-			}
-			String concurCnsmrs=getValue(node, "__CONCURRENT_CONSUMERS__");
-			appendParamWhenNotDefaultNorEmpty(sb,"concurrentConsumers",concurCnsmrs,"1");
-
-			String waitForTaskToComplete=getValue(node, "__WAIT_FOR_TASK_TO_COMPLETE__");
-			appendParamWhenNotDefaultNorEmpty(sb,"waitForTaskToComplete",waitForTaskToComplete,"\"IfReplyExpected\"");
-
-			String timeout=getValue(node, "__TIMEOUT__");
-			appendParamWhenNotDefaultNorEmpty(sb,"timeout",timeout,"30000");
-
-			String multipleConsumers=getValue(node, "__MULTIPLE_CONSUMERS__");
-			appendParamWhenNotDefaultNorEmpty(sb,"multipleConsumers",multipleConsumers,"false");
-
-			String limitConcurrentConsumers=getValue(node, "__LIMIT_CONCURRENT_CONSUMERS__");
-			appendParamWhenNotDefaultNorEmpty(sb,"limitConcurrentConsumers",limitConcurrentConsumers,"true");
-
-			String blockWhenFull=getValue(node, "__BLOCK_WHEN_FULL__");
-			appendParamWhenNotDefaultNorEmpty(sb,"blockWhenFull",blockWhenFull,"false");
-
-			String pollTimeout=getValue(node, "__POLLTIMEOUT__");
-			appendParamWhenNotDefaultNorEmpty(sb,"pollTimeout",pollTimeout,"1000");
-
-			List<Map<String, String>> tableValues = getObjectValue(node, "__ADVARGUMENTS__");
-			appendTableParams(sb,tableValues);
-			
-			if(sb.length()>0){
-				sb.setCharAt(sb.indexOf("&"),'?');
-				uri = uri + sb.toString();
-			}
-		}
+		
 	} else if("cDirectVM".equals(componentName)) {
 		
 	} else if("cTimer".equals(componentName)) {
