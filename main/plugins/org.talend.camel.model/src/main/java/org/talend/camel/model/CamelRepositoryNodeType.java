@@ -21,7 +21,7 @@ public interface CamelRepositoryNodeType {
 
     ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.PROCESS_ROUTE;
 
-    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "BEANS"); //$NON-NLS-1$
+    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.PROCESS_ROUTELET;
 
     ERepositoryObjectType repositoryRouteResourceType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
         "ROUTE_RESOURCES"); //$NON-NLS-1$
