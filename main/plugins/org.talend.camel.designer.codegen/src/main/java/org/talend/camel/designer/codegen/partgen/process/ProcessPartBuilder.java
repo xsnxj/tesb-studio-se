@@ -62,13 +62,9 @@ public class ProcessPartBuilder extends AbstractProcessPartBuilder {
 	public AbstractProcessPartBuilder appendContent() throws CodeGeneratorException {
 		appendTyped(ECamelTemplate.HEADER_ROUTE);
 		if (hasSubTrees()) {
-			appendTyped(ECamelTemplate.CAMEL_HEADER);
-
 			for (NodesSubTree subTree : sortedFilteredSubTrees) {
 				appendSubTree(subTree);
 			}
-
-			appendTyped(ECamelTemplate.CAMEL_FOOTER);
 		}
 
 		appendTyped(ECamelTemplate.FOOTER_ROUTE);

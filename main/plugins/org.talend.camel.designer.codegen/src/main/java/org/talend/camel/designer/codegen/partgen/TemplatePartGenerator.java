@@ -24,9 +24,7 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 
 	public CharSequence generatePart(ECamelTemplate template, Object... params) throws CodeGeneratorException {
 		switch (template) {
-		case HEADER_ROUTE:
-		case CAMEL_HEADER:
-		case CAMEL_FOOTER: {
+		case HEADER_ROUTE: {
 			Object[] args = { process, VersionUtils.getVersion() };
 			return generateTypedComponentCode(template, wrapToVector(args));
 		}
