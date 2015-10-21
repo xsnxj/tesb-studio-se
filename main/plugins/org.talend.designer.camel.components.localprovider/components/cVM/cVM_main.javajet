@@ -31,7 +31,7 @@ imports="
 	
 	String componentName = node.getComponent().getName();
 
-	builder.setComponent("cVM".equals(componentName) ? "vm":"seda");
+	builder.setComponent("vm");
 	builder.useDoubleSlash(false);
 	builder.setName(ElementParameterParser.getValue(consumerNode, "__NAME__"));
 	if(!inputName){

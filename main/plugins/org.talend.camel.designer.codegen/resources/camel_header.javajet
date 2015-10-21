@@ -1075,11 +1075,7 @@ if (isProvider) {
 				}
 			
 			}
-%>
-
-				initUriMap();
-
-<%
+			
 	List< ? extends INode> processNodes = (List< ? extends INode>)process.getGraphicalNodes();
 	for (INode node : processNodes) {
 			if (!node.isActivate()) {
