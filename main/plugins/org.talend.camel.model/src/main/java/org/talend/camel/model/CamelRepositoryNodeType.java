@@ -21,13 +21,12 @@ public interface CamelRepositoryNodeType {
 
     ERepositoryObjectType repositoryRoutesType = ERepositoryObjectType.PROCESS_ROUTE;
 
-    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.PROCESS_ROUTELET;
+    ERepositoryObjectType repositoryRouteletType = ERepositoryObjectType.PROCESS_ROUTELET;
+
+    ERepositoryObjectType repositoryBeansType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "BEANS"); //$NON-NLS-1$
 
     ERepositoryObjectType repositoryRouteResourceType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
         "ROUTE_RESOURCES"); //$NON-NLS-1$
-
-    ERepositoryObjectType repositoryRouteletType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
-        "ROUTELET"); //$NON-NLS-1$
 
     ERepositoryObjectType repositoryDocumentationsType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class,
         "ROUTE_DOCS"); //$NON-NLS-1$
