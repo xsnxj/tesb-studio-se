@@ -1,4 +1,4 @@
-<%@ jet skeleton="header_route.skeleton"
+<%@jet
 	package="org.talend.designer.codegen.translators"
 	imports="
 		java.util.List
