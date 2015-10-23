@@ -107,7 +107,7 @@
         //add route
         main.addRouteBuilder(this);
 <%
-for (INode node : process.getGraphicalNodes()) {
+for (INode node : process.getGeneratingNodes()) {
     if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
 %>
         main.addRouteBuilder(
