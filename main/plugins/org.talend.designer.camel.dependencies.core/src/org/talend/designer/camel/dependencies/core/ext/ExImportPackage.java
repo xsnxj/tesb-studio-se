@@ -3,10 +3,11 @@ package org.talend.designer.camel.dependencies.core.ext;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.talend.core.model.process.INode;
 import org.talend.designer.camel.dependencies.core.model.ImportPackage;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class ExImportPackage extends AbstractExPredicator<Collection<ImportPackage>> {
+class ExImportPackage extends ExManifestItem<ImportPackage> {
 
     private static final String SEPARATOR = ","; //$NON-NLS-1$
 
@@ -22,7 +23,13 @@ public class ExImportPackage extends AbstractExPredicator<Collection<ImportPacka
         }
     }
 
+    @Override
     protected Collection<ImportPackage> to(NodeType t) {
+        return importPackages;
+    }
+
+    @Override
+    protected Collection<ImportPackage> to(INode node) {
         return importPackages;
     }
 

@@ -26,7 +26,6 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.EditorPart;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.ui.editor.dependencies.controls.SearchControl;
-import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
@@ -166,9 +165,6 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 		        updateInput();
 			}
 		});
-
-		// update all tables input
-		updateInput();
 	}
 
 	public void setMessage(String message){
@@ -185,7 +181,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 
     private void updateInput() {
         // re-calculate all datas
-        final DependenciesResolver resolver = new DependenciesResolver((ProcessItem) getJobEditorInput().getItem());
+        final DependenciesResolver resolver = new DependenciesResolver(getJobEditorInput().getLoadedProcess());
         // set datas
         importPackageViewer.setInput(resolver.getImportPackages());
         requireBundleViewer.setInput(resolver.getRequireBundles());
@@ -271,6 +267,8 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 	@Override
 	public void setFocus() {
 //		importPackageViewer.getTableViewer().getTable().setFocus();
+        // update all tables input
+        updateInput();
 	}
 
     private boolean isReadOnly() {
