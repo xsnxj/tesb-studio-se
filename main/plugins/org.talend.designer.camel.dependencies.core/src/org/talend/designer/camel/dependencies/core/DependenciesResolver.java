@@ -8,13 +8,14 @@ import java.util.TreeSet;
 
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.ElementParameterParser;
+import org.talend.core.model.process.IConnection;
+import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
+import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.dependencies.core.ext.ExBundleClasspath;
-import org.talend.designer.camel.dependencies.core.ext.ExImportPackage;
-import org.talend.designer.camel.dependencies.core.ext.ExRequireBundle;
 import org.talend.designer.camel.dependencies.core.ext.ExtensionPointsReader;
 import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
 import org.talend.designer.camel.dependencies.core.model.ExportPackage;
@@ -50,30 +51,26 @@ public class DependenciesResolver {
     private Collection<BundleClasspath> userBundleClasspaths;
 
 	public DependenciesResolver(final ProcessItem item) {
-        for (ExRequireBundle rb: ExtensionPointsReader.INSTANCE.getRequireBundlesForAll()) {
-            RequireBundle target = rb.toTargets(null);
-            target.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
-            requireBundles.add(target);
+        for (ImportPackage importPackage : ExtensionPointsReader.INSTANCE.getImportPackages((NodeType) null)) {
+            importPackage.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
+            importPackages.add(importPackage);
         }
-
-        for (ExImportPackage ip: ExtensionPointsReader.INSTANCE.getImportPackagesForAll()) {
-            for (ImportPackage importPackage : ip.toTargets(null)) {
-                importPackage.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
-                importPackages.add(importPackage);
-            }
+        for (RequireBundle requireBundle : ExtensionPointsReader.INSTANCE.getRequireBundles((NodeType) null)) {
+            requireBundle.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
+            requireBundles.add(requireBundle);
         }
 
         final Map<?, ?> additionProperties = item.getProperty().getAdditionalProperties().map();
         userBundleClasspaths = DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties);
 
-        handleAllNodes(item.getProcess().getNode());
-        handleAllConnections(item.getProcess().getConnection());
+        handleAllNodeTypes(item.getProcess().getNode());
+        handleAllConnectionTypes(item.getProcess().getConnection());
 
-        Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
+        final Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
         customImportPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
         importPackages = customImportPackages;
 
-        Collection<RequireBundle> customRequireBundles = new ArrayList<RequireBundle>(requireBundles);
+        final Collection<RequireBundle> customRequireBundles = new ArrayList<RequireBundle>(requireBundles);
         customRequireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
         requireBundles = customRequireBundles;
 
@@ -90,81 +87,48 @@ public class DependenciesResolver {
         exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
         exportPackages.add(exportPackage);
         exportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
-	}
-
-    /**
-     * most of the datas of a node are coming from extension point except the
-     * cTalendJob
-     */
-    private void handleAllNodes(Collection<NodeType> nodes) {
-        for (NodeType n : nodes) {
-            if (isActivate(n)) {
-                handleNode(n);
-            }
-        }
     }
 
-    private static <T extends ManifestItem> T addItem(Collection<T> items, T newItem) {
-        if (!items.add(newItem)) {
-            for (T obj : items) {
-                if (newItem.equals(obj)) {
-                    newItem = obj;
-                    break;
-                }
+    public DependenciesResolver(final IProcess2 process) {
+        for (ImportPackage importPackage : ExtensionPointsReader.INSTANCE.getImportPackages((INode) null)) {
+            importPackage.setDescription(Messages.ExDependenciesResolver_commonImportPackage);
+            importPackages.add(importPackage);
+        }
+        for (RequireBundle requireBundle : ExtensionPointsReader.INSTANCE.getRequireBundles((INode) null)) {
+            requireBundle.setDescription(Messages.ExDependenciesResolver_commonRequireBundle);
+            requireBundles.add(requireBundle);
+        }
+
+        final Map<?, ?> additionProperties = process.getAdditionalProperties();
+        userBundleClasspaths = DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties);
+
+        handleAllNodes(process.getGraphicalNodes());
+
+        Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
+        customImportPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
+        importPackages = customImportPackages;
+
+        Collection<RequireBundle> customRequireBundles = new ArrayList<RequireBundle>(requireBundles);
+        customRequireBundles.addAll(DependenciesCoreUtil.getStoredRequireBundles(additionProperties));
+        requireBundles = customRequireBundles;
+
+        String version = process.getVersion();
+        if (RelationshipItemBuilder.LATEST_VERSION.equals(version)) {
+            try {
+                version = ProxyRepositoryFactory.getInstance().getLastVersion(process.getId()).getVersion();
+            } catch (Exception e) {
             }
         }
-        return newItem;
+        final ExportPackage exportPackage = new ExportPackage();
+        exportPackage.setName(JavaResourcesHelper.getJobClassPackageName(process.getProperty().getItem()));
+        exportPackage.setBuiltIn(true);
+        exportPackage.setDescription(Messages.ExDependenciesResolver_generatedPackage);
+        exportPackages.add(exportPackage);
+        exportPackages.addAll(DependenciesCoreUtil.getStoredExportPackages(additionProperties));
     }
 
-    private void handleNode(NodeType n) {
-        final String componentName = n.getComponentName();
-        final String uniqueName = ElementParameterParser.getUNIQUENAME(n);
-
-        final Collection<ExImportPackage> ips =
-            ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(componentName);
-        if (ips != null) {
-            for (ExImportPackage ip : ips) {
-                final Collection<ImportPackage> targets = ip.toTargets(n);
-                if (targets != null) {
-                    for (ImportPackage importPackage : targets) {
-                        addItem(importPackages, importPackage).addRelativeComponent(uniqueName);
-                    }
-                }
-            }
-        }
-
-        final Collection<ExRequireBundle> rbs =
-            ExtensionPointsReader.INSTANCE.getRequireBundlesForComponent(componentName);
-        if (rbs != null) {
-            for (ExRequireBundle rb : rbs) {
-                final RequireBundle target = rb.toTargets(n);
-                if (target != null) {
-                    addItem(requireBundles, target).addRelativeComponent(uniqueName);
-                }
-            }
-        }
-
-        final Collection<ExBundleClasspath> bcs =
-            ExtensionPointsReader.INSTANCE.getBundleClasspathsForComponent(componentName);
-        if (bcs != null) {
-            for (ExBundleClasspath bc : bcs) {
-                final Collection<BundleClasspath> targets = bc.toTargets(n);
-                if (targets != null) {
-                    for (BundleClasspath bcp : targets) {
-                        bcp = addItem(bundleClasspaths, bcp);
-                        bcp.addRelativeComponent(uniqueName);
-                        if (!bcp.isBuiltIn()) {
-                            bcp.setOptional(!userBundleClasspaths.contains(bcp));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isActivate(NodeType node) {
-        for (Object obj : node.getElementParameter()) {
-            ElementParameterType cpType = (ElementParameterType) obj;
+    private static boolean isActivate(final Collection<ElementParameterType> parameters) {
+        for (ElementParameterType cpType : parameters) {
             if ("ACTIVATE".equals(cpType.getName())) { //$NON-NLS-1$
                 return Boolean.parseBoolean(cpType.getValue());
             }
@@ -173,27 +137,84 @@ public class DependenciesResolver {
     }
 
     /**
+     * most of the datas of a node are coming from extension point except the
+     * cTalendJob
+     */
+    private void handleAllNodeTypes(final Collection<NodeType> nodes) {
+        for (NodeType n : nodes) {
+            if (isActivate(n.getElementParameter())) {
+                handleNode(n);
+            }
+        }
+    }
+
+    private void handleAllNodes(final Collection<? extends INode> nodes) {
+        for (INode n : nodes) {
+            if (n.isActivate()) {
+                handleNode(n);
+                handleAllConnections(n.getOutgoingConnections());
+            }
+        }
+    }
+
+    private static <T extends ManifestItem> T addItem(final Collection<T> items, final T newItem) {
+        if (!items.add(newItem)) {
+            for (T obj : items) {
+                if (newItem.equals(obj)) {
+                    return obj;
+                }
+            }
+        }
+        return newItem;
+    }
+
+    private void handleNode(final NodeType n) {
+        final String uniqueName = ElementParameterParser.getUNIQUENAME(n);
+        for (ImportPackage importPackage : ExtensionPointsReader.INSTANCE.getImportPackages(n)) {
+            addItem(importPackages, importPackage).addRelativeComponent(uniqueName);
+        }
+        for (RequireBundle requireBundle : ExtensionPointsReader.INSTANCE.getRequireBundles(n)) {
+            addItem(requireBundles, requireBundle).addRelativeComponent(uniqueName);
+        }
+        for (BundleClasspath bcp : ExtensionPointsReader.INSTANCE.getBundleClasspaths(n)) {
+            bcp = addItem(bundleClasspaths, bcp);
+            bcp.addRelativeComponent(uniqueName);
+            if (!bcp.isBuiltIn()) {
+                bcp.setOptional(!userBundleClasspaths.contains(bcp));
+            }
+        }
+    }
+
+    private void handleNode(final INode n) {
+        final String uniqueName = n.getUniqueName();
+        for (ImportPackage importPackage : ExtensionPointsReader.INSTANCE.getImportPackages(n)) {
+            addItem(importPackages, importPackage).addRelativeComponent(uniqueName);
+        }
+        for (RequireBundle requireBundle : ExtensionPointsReader.INSTANCE.getRequireBundles(n)) {
+            addItem(requireBundles, requireBundle).addRelativeComponent(uniqueName);
+        }
+        for (BundleClasspath bcp : ExtensionPointsReader.INSTANCE.getBundleClasspaths(n)) {
+            bcp = addItem(bundleClasspaths, bcp);
+            bcp.addRelativeComponent(uniqueName);
+            if (!bcp.isBuiltIn()) {
+                bcp.setOptional(!userBundleClasspaths.contains(bcp));
+            }
+        }
+    }
+
+    /**
      * special for ROUTE_WHEN connection case we need to handle it specially
      * according the selected language
      */
-    private void handleAllConnections(Collection<ConnectionType> connections) {
+    private void handleAllConnectionTypes(Collection<ConnectionType> connections) {
         for (ConnectionType connection : connections) {
-            String connectorName = connection.getConnectorName();
-            if (!EConnectionType.ROUTE_WHEN.getName().equals(connectorName)) {
-                continue;
-            }
-            String languageName = handleROUTEWHENconnection(connection.getElementParameter());
-            if (languageName != null) {
-                final Collection<ExImportPackage> languageImportPackages =
-                    ExtensionPointsReader.INSTANCE.getImportPackagesForComponent(languageName);
-                if (languageImportPackages != null) {
-                    for (ExImportPackage eip : languageImportPackages) {
-//                        importPackages.addAll(eip.toTargets(null));
-                        final Collection<ImportPackage> targets = eip.toTargets(null);
-                        if (targets != null) {
-                            for (ImportPackage importPackage : targets) {
-                                addItem(importPackages, importPackage).addRelativeComponent(connection.getLabel());
-                            }
+            if (isActivate(connection.getElementParameter())) {
+                if (EConnectionType.ROUTE_WHEN.getName().equals(connection.getConnectorName())) {
+                    final String languageName = handleROUTEWHENconnection(connection.getElementParameter());
+                    if (languageName != null) {
+                        for (ImportPackage importPackage :
+                            ExtensionPointsReader.INSTANCE.getImportPackages(languageName)) {
+                            addItem(importPackages, importPackage).addRelativeComponent(connection.getLabel());
                         }
                     }
                 }
@@ -201,13 +222,26 @@ public class DependenciesResolver {
         }
     }
 
-    private String handleROUTEWHENconnection(Collection<ElementParameterType> connectionParameters) {
+    private void handleAllConnections(Collection<? extends IConnection> connections) {
+        for (IConnection connection : connections) {
+            if (connection.isActivate()) {
+                if (EConnectionType.ROUTE_WHEN == connection.getLineStyle()) {
+                    final IElementParameter ep = connection.getElementParameter(EParameterName.ROUTETYPE.getName());
+                    if (null != ep) {
+                        for (ImportPackage importPackage :
+                            ExtensionPointsReader.INSTANCE.getImportPackages(ep.getValue().toString())) {
+                            addItem(importPackages, importPackage).addRelativeComponent(connection.getName());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static String handleROUTEWHENconnection(final Collection<ElementParameterType> connectionParameters) {
         for (ElementParameterType ept : connectionParameters) {
             if (EParameterName.ROUTETYPE.getName().equals(ept.getName())) {
-                String value = ept.getValue();
-                if (value != null) {
-                    return value;
-                }
+                return ept.getValue();
             }
         }
         return null;

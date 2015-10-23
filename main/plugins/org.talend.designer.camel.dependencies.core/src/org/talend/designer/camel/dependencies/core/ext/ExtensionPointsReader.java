@@ -2,11 +2,19 @@ package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.talend.core.model.process.INode;
+import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
+import org.talend.designer.camel.dependencies.core.model.ImportPackage;
+import org.talend.designer.camel.dependencies.core.model.ManifestItem;
+import org.talend.designer.camel.dependencies.core.model.RequireBundle;
+import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
 public class ExtensionPointsReader {
 
@@ -29,12 +37,6 @@ public class ExtensionPointsReader {
 
     private final Map<String, Collection<ExBundleClasspath>> componentBundleClasspaths =
         new HashMap<String, Collection<ExBundleClasspath>>();
-    /*
-     * for languages, please check init(INode, INode, EConnectionType, String, String, String, boolean)
-     * of org.talend.designer.core.ui.editor.connections.Connection, and see the EConnectionType.ROUTE_WHEN case
-     */
-//    String[] languages = { "constant", "el", "groovy", "header", "javaScript", "jxpath", "mvel", "ognl", "php", "property",
-//            "python", "ruby", "simple", "spel", "sql", "xpath", "xquery" };
     private final Map<String, Collection<ExImportPackage>> componentImportPackages =
         new HashMap<String, Collection<ExImportPackage>>();
     private final Map<String, Collection<ExRequireBundle>> componentRequireBundles =
@@ -122,31 +124,75 @@ public class ExtensionPointsReader {
         return requireBundle;
     }
 
-    private static void parsePredicates(final AbstractExPredicator<?> abstractExPredicator,
+    private static void parsePredicates(final ExManifestItem<?> abstractExPredicator,
         final IConfigurationElement element) {
         for (final IConfigurationElement pe : element.getChildren(PREDICATE)) {
             abstractExPredicator.addPredicate(pe.getAttribute(ATTRIBUTE_NAME), pe.getAttribute(ATTRIBUTE_VALUE));
         }
     }
 
-    public Collection<ExImportPackage> getImportPackagesForAll() {
-        return importPackagesForAll;
+    public Collection<ImportPackage> getImportPackages(String componentName) {
+        return getManifestItems(componentImportPackages.get(componentName), (NodeType) null);
     }
 
-    public Collection<ExRequireBundle> getRequireBundlesForAll() {
-        return requireBundlesForAll;
+    public Collection<ImportPackage> getImportPackages(final NodeType nodeType) {
+        if (null != nodeType) {
+            return getManifestItems(componentImportPackages.get(nodeType.getComponentName()), nodeType);
+        }
+        return getManifestItems(importPackagesForAll, nodeType);
     }
 
-    public Collection<ExBundleClasspath> getBundleClasspathsForComponent(String name) {
-        return componentBundleClasspaths.get(name);
+    public Collection<RequireBundle> getRequireBundles(final NodeType nodeType) {
+        if (null != nodeType) {
+            return getManifestItems(componentRequireBundles.get(nodeType.getComponentName()), nodeType);
+        }
+        return getManifestItems(requireBundlesForAll, nodeType);
     }
 
-    public Collection<ExImportPackage> getImportPackagesForComponent(String name) {
-        return componentImportPackages.get(name);
+    public Collection<BundleClasspath> getBundleClasspaths(final NodeType nodeType) {
+        return getManifestItems(componentBundleClasspaths.get(nodeType.getComponentName()), nodeType);
     }
 
-    public Collection<ExRequireBundle> getRequireBundlesForComponent(String name) {
-        return componentRequireBundles.get(name);
+    public Collection<ImportPackage> getImportPackages(final INode node) {
+        if (null != node) {
+            return getManifestItems(componentImportPackages.get(node.getComponent().getName()), node);
+        }
+        return getManifestItems(importPackagesForAll, node);
+    }
+
+    public Collection<RequireBundle> getRequireBundles(final INode node) {
+        if (null != node) {
+            return getManifestItems(componentRequireBundles.get(node.getComponent().getName()), node);
+        }
+        return getManifestItems(requireBundlesForAll, node);
+    }
+
+    public Collection<BundleClasspath> getBundleClasspaths(final INode node) {
+        return getManifestItems(componentBundleClasspaths.get(node.getComponent().getName()), node);
+    }
+
+    private static <T extends ManifestItem> Collection<T> getManifestItems(
+        final Collection<? extends ExManifestItem<T>> exManifestItems, final NodeType nodeType) {
+        if (exManifestItems != null) {
+            final Collection<T> result = new HashSet<>();
+            for (ExManifestItem<T> ip : exManifestItems) {
+                result.addAll(ip.toTargets(nodeType));
+            }
+            return result;
+        }
+        return Collections.emptyList();
+    }
+
+    private static <T extends ManifestItem> Collection<T> getManifestItems(
+        final Collection<? extends ExManifestItem<T>> exManifestItems, final INode node) {
+        if (exManifestItems != null) {
+            final Collection<T> result = new HashSet<>();
+            for (ExManifestItem<T> ip : exManifestItems) {
+                result.addAll(ip.toTargets(node));
+            }
+            return result;
+        }
+        return Collections.emptyList();
     }
 
 }

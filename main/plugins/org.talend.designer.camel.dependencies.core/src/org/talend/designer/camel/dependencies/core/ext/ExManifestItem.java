@@ -1,14 +1,18 @@
 package org.talend.designer.camel.dependencies.core.ext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
+import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-abstract class AbstractExPredicator<T> {
+abstract class ExManifestItem<T extends ManifestItem> {
 
     private static final String SEPARATOR = ":"; //$NON-NLS-1$
 
@@ -18,11 +22,11 @@ abstract class AbstractExPredicator<T> {
         predicates.put(name, value);
     }
 
-    private boolean satisfy(NodeType n) {
+    private boolean satisfy(final NodeType nodeType) {
         if (predicates.isEmpty()) {
             return true;
         }
-        final Collection<?> parameters = n.getElementParameter();
+        final Collection<?> parameters = nodeType.getElementParameter();
         for (Map.Entry<String, String> predicate : predicates.entrySet()) {
             String attributeName = predicate.getKey();
             final String attributeValue = predicate.getValue();
@@ -62,13 +66,57 @@ abstract class AbstractExPredicator<T> {
         return true;
     }
 
-    public T toTargets(NodeType t) {
-        if (satisfy(t)) {
-            return to(t);
+    private boolean satisfy(final INode node) {
+        if (predicates.isEmpty()) {
+            return true;
         }
-        return null;
+        for (Map.Entry<String, String> predicate : predicates.entrySet()) {
+            String attributeName = predicate.getKey();
+            final String attributeValue = predicate.getValue();
+
+            final String[] segments = attributeName.split(SEPARATOR);
+            String valueName = null;
+            if (segments.length > 1) {
+                attributeName = segments[0];
+                valueName = segments[1];
+            }
+            final IElementParameter ep = node.getElementParameter(attributeName);
+            if (null == valueName) {
+                if (!attributeValue.equals(ep.getValue().toString())) {
+                    return false;
+                }
+            } else {
+                boolean found = false;
+                for (Map<String, String> ev : (Collection<Map<String, String>>) ep.getValue()) {
+                    if (attributeValue.equals(ev.get(valueName))) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
-    protected abstract T to(NodeType t);
+    public Collection<T> toTargets(final NodeType nodeType) {
+        if (satisfy(nodeType)) {
+            return to(nodeType);
+        }
+        return Collections.emptyList();
+    }
+
+    public Collection<T> toTargets(final INode node) {
+        if (satisfy(node)) {
+            return to(node);
+        }
+        return Collections.emptyList();
+    }
+
+    protected abstract Collection<T> to(final NodeType nodeType);
+
+    protected abstract Collection<T> to(final INode node);
 
 }

@@ -215,6 +215,9 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private void exportAllReferenceRoutelets(ProcessItem routeProcess, Collection<String> routelets) throws InvocationTargetException, InterruptedException {
         for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
+            if (!EmfModelUtils.isComponentActive(node)) {
+                continue;
+            }
             final ElementParameterType version =
                 EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE_VERSION.getName(), node);
             if (null != version) {
