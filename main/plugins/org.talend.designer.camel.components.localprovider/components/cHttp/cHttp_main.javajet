@@ -34,7 +34,7 @@ imports="
 
 
 	boolean hasParam = resourceUri==null?false:resourceUri.contains("?");
-	
+	String uri = "";
 	if("true".equals(isServer)){
 		builder.setComponent("jetty");
 		builder.setName(resourceUri);
@@ -78,12 +78,16 @@ imports="
 		for (Map<String, String> map : arguments) {
 			String argName = map.get("KEY").trim();
 			String argValue = map.get("VALUE").trim();
-			builder.addParam(argName.substring(1, argName.length()-1), argValue);
+			if(argName.startsWith("\"") && argName.endsWith("\"") && argName.length()>=2){
+				argName = argName.substring(1, argName.length() - 1);
+			} else {
+				argName = "\" + " + argName + "+ \"";
+			}
+			builder.addParam(argName, argValue);
 		}
-		
+		uri = builder.build();
 	}else{
 		sb.append(resourceUri);
-		builder.setName(resourceUri);
 		String method = ElementParameterParser.getValue(node, "__METHOD__");
 		if("GET".equals(method)||"HEAD".equals(method) || "DELETE".equals(method)){
 			List<Map<String, String>> parameters = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__PARAMETERS__");
@@ -95,6 +99,7 @@ imports="
 				try{
 					if(argName.startsWith("\"")&&argName.endsWith("\"")&&argName.length()>=2){
 						argName = URLEncoder.encode(argName.substring(1, argName.length()-1),encodeCharset);
+						argName = "\""+argName+"\"";
 					}else{
 						argName = URLEncoder.encode(argName,encodeCharset);
 					}
@@ -107,22 +112,26 @@ imports="
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
-				builder.addParam(argName, argValue);
+				if (hasParam) {
+					sb.append("+\"&\"+" + argName + "+\"=\"+" + argValue);
+				} else {
+					sb.append("+\"?\"+" + argName + "+\"=\"+" + argValue);
+					hasParam = true;
+				}
 			}
 		}
-
+		uri = sb.toString();
 	}
-	String uriRef = builder.build();
     
     if("true".equals(isServer)){
     	List< ? extends IConnection> conns = node.getIncomingConnections();
     	if(conns.size()>0){
 %>
-			.to(<%=uriRef%>)
+			.to(<%=uri%>)
 <%
     	}else{
 %>
-			from(<%=uriRef%>)
+			from(<%=uri%>)
 <%
     	}
     	
@@ -211,7 +220,7 @@ imports="
 
 
 %>
-		<%=sb1.toString()%>.to(<%=uriRef%>)
+		<%=sb1.toString()%>.to(<%=uri%>)
 <%
     }
 %>
