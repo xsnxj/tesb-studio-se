@@ -15,11 +15,9 @@ package org.talend.camel.designer;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.eclipse.ui.IEditorPart;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
-import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.EConnectionType;
@@ -76,11 +74,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     public boolean isInstanceofCamel(Item item) {
         return isInstanceofCamelRoutes(item) || isInstanceofCamelBeans(item)
             || item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM;
-    }
-
-    @Override
-    public boolean isCamelMulitPageEditor(IEditorPart editor) {
-        return editor instanceof CamelMultiPageTalendEditor;
     }
 
     @Override
