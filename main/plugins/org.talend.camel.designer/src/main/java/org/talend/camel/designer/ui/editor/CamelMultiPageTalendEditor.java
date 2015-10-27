@@ -71,17 +71,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
      */
     @Override
     protected IImage getEditorTitleImage() {
-        final Item item = ((CamelProcessEditorInput) getEditorInput()).getItem();
-        if (item instanceof CamelProcessItem) {
-            return ECamelCoreImage.ROUTE_EDITOR_ICON;
-        }
-        for (final IRepositoryContentHandler handler : RepositoryContentManager.getHandlers()) {
-            final ERepositoryObjectType type = handler.getRepositoryObjectType(item);
-            if (null != type) {
-                return handler.getIcon(type);
-            }
-        }
-        return super.getEditorTitleImage();
+        return ECamelCoreImage.ROUTE_EDITOR_ICON;
     }
 
     /**
