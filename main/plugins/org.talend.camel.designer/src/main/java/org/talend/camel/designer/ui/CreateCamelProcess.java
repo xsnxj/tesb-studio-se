@@ -112,6 +112,10 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         }
     }
 
+    protected String getEditorId() {
+        return CamelMultiPageTalendEditor.ID;
+    }
+
     protected final void openEditor(ProcessItem processItem) throws PersistenceException, PartInitException {
         // Set readonly to false since created job will always be editable.
         CamelProcessEditorInput fileEditorInput = new CamelProcessEditorInput(processItem, false, true, false);
@@ -121,7 +125,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         fileEditorInput.setRepositoryNode(repositoryNode);
 
         IWorkbenchPage page = getActivePage();
-        page.openEditor(fileEditorInput, CamelMultiPageTalendEditor.ID, true);
+        page.openEditor(fileEditorInput, getEditorId(), true);
         // // use project setting true
         // ProjectSettingManager.defaultUseProjectSetting(fileEditorInput.getLoadedProcess());
     }
