@@ -19,18 +19,14 @@ imports="
 	String language  = ElementParameterParser.getValue(node, "__LANGUAGES__");
 	String expressiontxt  = ElementParameterParser.getValue(node, "__EXPRESSIONTXT__");
 	String useNamespaces = ElementParameterParser.getValue(node, "__USE_NAMESPACES__");
-	
-%>
-	.wireTap(<%=URI%>)
-<%
 
 	if(copy_original_message){
 %>
-		.copy(true)
+		.streamCaching().wireTap(<%=URI%>).copy(true)
 <%
 	}else{
 %>
-		.copy(false)
+		.wireTap(<%=URI%>).copy(false)
 <%	
 	}
 
