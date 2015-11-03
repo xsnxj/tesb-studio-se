@@ -29,7 +29,13 @@ imports="
 	
 	String timeout=ElementParameterParser.getValue(node, "__TIMEOUT__");
 	boolean hasTimeout=(timeout!=null&&timeout.matches("\\s*\\d+\\s*"));
-	String exp = getExpression(language, expression, cid, useNamespaces, resultClassType);
+	String exp = "";
+	if (useResultClassType) {
+		exp = getExpression(language, expression, cid, useNamespaces, resultClassType);
+	} else {
+		exp = getExpression(language, expression, cid, useNamespaces, "");
+	}
+	
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	if(conns.size()>0) {
 %>
