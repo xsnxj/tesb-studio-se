@@ -139,7 +139,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 final Collection<String> routelets = new HashSet<String>();
                 exportAllReferenceRoutelets(routeProcess, routelets);
 
-                exportRouteBundle(routeNode, routeFile, version, bundleVersion, routelets);
+                exportRouteBundle(routeNode, routeFile, version, bundleVersion, routelets, null);
             }
 
             processResults(featuresModel, monitor);
@@ -160,23 +160,25 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     private void exportAllReferenceJobs(ProcessItem routeProcess) throws InvocationTargetException, InterruptedException {
-        for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(routeProcess, "cTalendJob")) {
+        for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(routeProcess, "cTalendJob")) { //$NON-NLS-1$
             String jobId = null;
             String jobVersion = null;
+            String jobContext = null;
             for (Object o : cTalendJob.getElementParameter()) {
                 if (!(o instanceof ElementParameterType)) {
                     continue;
                 }
                 ElementParameterType ept = (ElementParameterType) o;
                 String eptName = ept.getName();
-                if ("FROM_EXTERNAL_JAR".equals(eptName) && "true".equals(ept.getValue())) {
+                if ("FROM_EXTERNAL_JAR".equals(eptName) && "true".equals(ept.getValue())) { //$NON-NLS-1$
                     break;
                 }
-                if (jobId == null && "SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) {
+                if ("SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(eptName)) { //$NON-NLS-1$
                     jobId = ept.getValue();
-                }
-                if (jobVersion == null && "SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) {
+                } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) { //$NON-NLS-1$
                     jobVersion = ept.getValue();
+                } else  if ("SELECTED_JOB_NAME:PROCESS_TYPE_CONTEXT".equals(eptName)) { //$NON-NLS-1$
+                    jobContext = ept.getValue();
                 }
             }
 
@@ -185,7 +187,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
             IRepositoryNode referencedJobNode;
             try {
-                referencedJobNode = getJobRepositoryNode(jobId);
+                referencedJobNode = getJobRepositoryNode(jobId, ERepositoryObjectType.PROCESS);
             } catch (PersistenceException e) {
                 throw new InvocationTargetException(e);
             }
@@ -208,7 +210,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             BundleModel jobModel = new BundleModel(getGroupId() + '.' + routeName, jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
-                    .getObject().getProperty().getDisplayName(), version);
+                    .getObject().getProperty().getDisplayName(), version, jobContext);
             }
         }
     }
@@ -218,14 +220,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             if (!EmfModelUtils.isComponentActive(node)) {
                 continue;
             }
-            final ElementParameterType version =
-                EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE_VERSION.getName(), node);
-            if (null != version) {
-                final String routeletId = node.getComponentName();
-                String routeletVersion = version.getValue();
+            final ElementParameterType routeletId =
+                EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_PROCESS.getName(), node);
+            if (null != routeletId) {
                 final IRepositoryNode referencedRouteletNode;
                 try {
-                    referencedRouteletNode = getRouteletRepositoryNode(routeletId);
+                    referencedRouteletNode =
+                        getJobRepositoryNode(routeletId.getValue(), CamelRepositoryNodeType.repositoryRouteletType);//getRouteletRepositoryNode(routeletId);
                 } catch (PersistenceException e) {
                     throw new InvocationTargetException(e);
                 }
@@ -236,6 +237,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                     continue;
                 }
 
+                String routeletVersion =
+                    EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_VERSION.getName(), node).getValue();
                 if (RelationshipItemBuilder.LATEST_VERSION.equals(routeletVersion)) {
                     routeletVersion = referencedRouteletNode.getObject().getVersion();
                 }
@@ -246,9 +249,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
-                BundleModel jobModel = new BundleModel(getGroupId(), routeletId, getArtifactVersion(), routeletFile);
+                BundleModel jobModel = new BundleModel(getGroupId(), referencedRouteletNode.getObject().getLabel(), getArtifactVersion(), routeletFile);
                 if (featuresModel.addBundle(jobModel)) {
-                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion, null);
+                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion, null,
+                        EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(), node).getValue());
                     CamelFeatureUtil.addFeatureAndBundles(routeletProcess, featuresModel);
 
                     exportAllReferenceRoutelets(routeletProcess, routelets);
@@ -257,8 +261,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
 
-    private static IRepositoryNode getJobRepositoryNode(String jobId) throws PersistenceException {
-        for (IRepositoryViewObject job : ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS)) {
+    private static IRepositoryNode getJobRepositoryNode(String jobId, ERepositoryObjectType type) throws PersistenceException {
+        for (IRepositoryViewObject job : ProxyRepositoryFactory.getInstance().getAll(type)) {
             if (job.getId().equals(jobId)) {
                 return new RepositoryNode(job, null, ENodeType.REPOSITORY_ELEMENT);
             }
@@ -266,20 +270,20 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return null;
     }
 
-    private static IRepositoryNode getRouteletRepositoryNode(String routeletName) throws PersistenceException {
-        for (IRepositoryViewObject routelet : ProxyRepositoryFactory.getInstance().getAll(
-            CamelRepositoryNodeType.repositoryRouteletType)) {
-            if (routelet.getLabel().equals(routeletName)) {
-                return new RepositoryNode(routelet, null, ENodeType.REPOSITORY_ELEMENT);
-            }
-        }
-        return null;
-    }
+//    private static IRepositoryNode getRouteletRepositoryNode(String routeletName) throws PersistenceException {
+//        for (IRepositoryViewObject routelet : ProxyRepositoryFactory.getInstance().getAll(
+//            CamelRepositoryNodeType.repositoryRouteletType)) {
+//            if (routelet.getLabel().equals(routeletName)) {
+//                return new RepositoryNode(routelet, null, ENodeType.REPOSITORY_ELEMENT);
+//            }
+//        }
+//        return null;
+//    }
 
-    private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion, Collection<String> routelets)
-            throws InvocationTargetException, InterruptedException {
+    private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion,
+        Collection<String> routelets, String context) throws InvocationTargetException, InterruptedException {
         final JobJavaScriptOSGIForESBManager talendJobManager =
-            new RouteJavaScriptOSGIForESBManager(getExportChoice(), null, routelets);
+            new RouteJavaScriptOSGIForESBManager(getExportChoice(), context, routelets);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
@@ -290,8 +294,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath, String jobVersion,
     		String bundleName, String bundleVersion,
-    		String routeName, String routeVersion) throws InvocationTargetException, InterruptedException {
-    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice());
+    		String routeName, String routeVersion, String context) throws InvocationTargetException, InterruptedException {
+    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice(), context);
         talendJobManager.setJobVersion(jobVersion);
         talendJobManager.setBundleName(bundleName);
         talendJobManager.setBundleVersion(bundleVersion);

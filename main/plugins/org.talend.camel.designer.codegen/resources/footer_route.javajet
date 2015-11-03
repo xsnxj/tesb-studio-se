@@ -170,7 +170,7 @@ for (IContextParameter ctxParam : params) {
 %>
 	}
 
-	private String contextStr = "Default";
+	private String contextStr = "<%=codeGenArgument.getContextName() %>";
 	private final ContextProperties context = new ContextProperties();
 
 <%
