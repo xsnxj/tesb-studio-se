@@ -272,12 +272,11 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 			org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader()
 					.read(new java.io.ByteArrayInputStream(os.toByteArray()));
 
-			globalMap.put("currentMessageSoapVersion", detectSoapVersion());
-
 			java.util.Map<String, Object> esbRequest = new java.util.HashMap<String, Object>();
 			esbRequest.put(ESBProviderCallback.HEADERS_SOAP, context.getMessageContext().get(org.apache.cxf.headers.Header.HEADER_LIST));
 			esbRequest.put(ESBProviderCallback.HEADERS_HTTP, context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS));
 			esbRequest.put(ESBProviderCallback.REQUEST, requestDoc);
+
 			QueuedExchangeContextImpl<java.util.Map, org.dom4j.Document> messageExchange = messageHandler.invoke(esbRequest, <%=!isOneWay%>);
 
 <% if (isOneWay) { %>
@@ -285,7 +284,20 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 <% } else { %>
 			try {
 				if (messageExchange.isFault()) {
-					throw messageExchange.getFault();
+					Throwable throwable = messageExchange.getFault();
+					if (throwable instanceof org.apache.cxf.interceptor.Fault) {
+						org.apache.cxf.interceptor.Fault fault = (org.apache.cxf.interceptor.Fault) throwable;
+						org.apache.cxf.binding.soap.SoapVersion soapVersion = 
+								(org.apache.cxf.binding.soap.SoapVersion)
+										context.getMessageContext().get("org.apache.cxf.binding.soap.SoapVersion");
+						org.apache.cxf.binding.soap.SoapFault soapFault = org.apache.cxf.binding.soap.SoapFault.createFault(fault, soapVersion);
+						if (soapVersion instanceof org.apache.cxf.binding.soap.Soap12) {
+							soapFault.setFaultCode(org.apache.cxf.binding.soap.Soap12.getInstance().getReceiver());
+							soapFault.setSubCode(fault.getFaultCode());
+						}
+						throw soapFault;
+					}
+					throw throwable;
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
 					if (null == responseDoc) {
@@ -308,26 +320,6 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 			ex.printStackTrace();
 			throw new RuntimeException(ex);
 		}
-	}
-
-	private org.apache.cxf.binding.soap.SoapVersion detectSoapVersion() {
-		org.apache.cxf.binding.soap.SoapVersion soapVersion = org.apache.cxf.binding.soap.Soap12.getInstance();
-		try {
-			soapVersion = ((org.apache.cxf.binding.soap.SoapMessage) org.apache.cxf.phase.PhaseInterceptorChain.getCurrentMessage()).getVersion();
-		} catch (Exception e) {
-			// second try (via content type)
-			try {
-				String contentType = ((java.util.Map<java.lang.String, java.util.List<java.lang.String>>)
-						context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS))
-								.get("content-type").get(0);
-				if (contentType.contains(javax.xml.soap.SOAPConstants.SOAP_1_1_CONTENT_TYPE)) {
-					soapVersion = org.apache.cxf.binding.soap.Soap11.getInstance();
-				}
-			} catch (Exception ee) {
-				// ignore
-			}
-		}
-		return soapVersion;
 	}
 }
 
@@ -382,22 +374,16 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	}
 
 	public void sendFaultByDefault(Throwable error){
-		if(!(Boolean) globalMap.get("wsRequestReceivedAndResponseSentBack")){
+		if (!(Boolean) globalMap.get("wsRequestReceivedAndResponseSentBack")) {
 			sendFault(error);
 		}
 	}
 
 	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {
 		try {
-			javax.xml.namespace.QName faultCode = javax.xml.soap.SOAPConstants.SOAP_RECEIVER_FAULT; // SOAP 1.2
-			org.apache.cxf.binding.soap.SoapVersion soapVersion =
-					(org.apache.cxf.binding.soap.SoapVersion) globalMap.get("currentMessageSoapVersion");
-			if (soapVersion instanceof org.apache.cxf.binding.soap.Soap11) {
-				faultCode = new javax.xml.namespace.QName(javax.xml.soap.SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Server.businessFault");
-			}
+			org.apache.cxf.interceptor.Fault soapFault = new org.apache.cxf.interceptor.Fault(faultString, (java.util.ResourceBundle) null);
+			soapFault.setFaultCode(new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
 
-			org.apache.cxf.binding.soap.SoapFault soapFault = new org.apache.cxf.binding.soap.SoapFault(faultString, faultCode);
-			soapFault.setSubCode(new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
 			if (null != faultDetail) {
 				// wrap details
 				org.dom4j.Element rootElement = faultDetail.getRootElement();
@@ -414,7 +400,7 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 		}
 	}
 
-     private org.w3c.dom.Document convertDocument(org.dom4j.Document document) throws Exception{
+	private org.w3c.dom.Document convertDocument(org.dom4j.Document document) throws Exception{
 		// A special version of DOMWriter that does not write xmlns:foo attributes
 		org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
 			protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
