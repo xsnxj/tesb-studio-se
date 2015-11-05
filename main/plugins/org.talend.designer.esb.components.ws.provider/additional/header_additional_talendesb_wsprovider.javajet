@@ -284,20 +284,7 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 <% } else { %>
 			try {
 				if (messageExchange.isFault()) {
-					Throwable throwable = messageExchange.getFault();
-					if (throwable instanceof org.apache.cxf.interceptor.Fault) {
-						org.apache.cxf.interceptor.Fault fault = (org.apache.cxf.interceptor.Fault) throwable;
-						org.apache.cxf.binding.soap.SoapVersion soapVersion = 
-								(org.apache.cxf.binding.soap.SoapVersion)
-										context.getMessageContext().get("org.apache.cxf.binding.soap.SoapVersion");
-						org.apache.cxf.binding.soap.SoapFault soapFault = org.apache.cxf.binding.soap.SoapFault.createFault(fault, soapVersion);
-						if (soapVersion instanceof org.apache.cxf.binding.soap.Soap12) {
-							soapFault.setFaultCode(org.apache.cxf.binding.soap.Soap12.getInstance().getReceiver());
-							soapFault.setSubCode(fault.getFaultCode());
-						}
-						throw soapFault;
-					}
-					throw throwable;
+					throw messageExchange.getFault();
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
 					if (null == responseDoc) {
