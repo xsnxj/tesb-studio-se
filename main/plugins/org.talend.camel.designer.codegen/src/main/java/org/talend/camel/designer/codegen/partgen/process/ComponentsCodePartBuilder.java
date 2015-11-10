@@ -70,10 +70,40 @@ public class ComponentsCodePartBuilder extends AbstractProcessPartBuilder {
 				if (node.getIncomingConnections() != null && node.getIncomingConnections().size() > 0) {
 					if (!(node.getIncomingConnections().get(0).getLineStyle().equals(EConnectionType.ROUTE))) {
 						codeComponent.append(generateTypedComponentCode(ECamelTemplate.CAMEL_SPECIALLINKS));
+                    } else {
+                        // TESB-16270
+                        if ("cLoadBalancer".equals(
+                                node.getIncomingConnections().get(0).getSource().getComponent().getName())) {
+                            codeComponent.append(".pipeline()");
+                        }
 					}
 				}
 				codeComponent.append(generateComponentCode(ECodePart.MAIN));
 				codeComponent.append(manager.generateEndpointId(node));
+
+                // TESB-16270
+                if (node.getIncomingConnections() != null && node.getIncomingConnections().size() > 0
+                        && (node.getOutgoingConnections() == null
+                                || node.getOutgoingConnections().size() == 0)) {
+                    INode sourceNode = node.getIncomingConnections().get(0).getSource();
+                    INode currentNode = node;
+                    boolean hasLoadBalance = false;
+                    while (sourceNode.getIncomingConnections() != null
+                            && sourceNode.getIncomingConnections().size() > 0) {
+                        if (currentNode.getIncomingConnections().get(0).getLineStyle()
+                                .equals(EConnectionType.ROUTE)
+                                && "cLoadBalancer".equals(currentNode.getIncomingConnections().get(0)
+                                        .getSource().getComponent().getName())) {
+                            hasLoadBalance = true;
+                            break;
+                        }
+                        currentNode = sourceNode;
+                        sourceNode = sourceNode.getIncomingConnections().get(0).getSource();
+                    }
+                    if (hasLoadBalance) {
+                        codeComponent.append(".end()");
+                    }
+                }
 
 				codeComponent.append(generatesTreeCode(ECodePart.MAIN));
 			}
