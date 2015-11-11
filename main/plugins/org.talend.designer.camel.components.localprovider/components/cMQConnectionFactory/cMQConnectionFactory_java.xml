@@ -131,7 +131,7 @@
 
 		<PARAMETER NAME="WMA_JAR_LABEL" FIELD="LABEL" NUM_ROW="31"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
-			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar,com.ibm.mqjms.jar, dhbcore.jar)</DEFAULT>
+			<DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.jmqi.jar,com.ibm.mqjms.jar, dhbcore.jar, connector.jar)</DEFAULT>
 		</PARAMETER>
 
 		<PARAMETER NAME="WMQ_DRIVER_JAR" FIELD="TABLE" NUM_ROW="30"
