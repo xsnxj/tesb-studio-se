@@ -12,43 +12,23 @@
 // ============================================================================
 package org.talend.camel.designer.ui;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
-import org.talend.camel.model.CamelRepositoryNodeType;
-import org.talend.commons.CommonsPlugin;
-import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.process.IProcess2;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.services.IUIRefresher;
-import org.talend.core.ui.editor.JobEditorInput;
-import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.EditPropertiesAction;
 
-/**
- * DOC xye class global comment. Detailled comment
- */
 public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
 
     private static final String ACTION_LABEL = Messages.getString("OpenExistVersionProcess.open"); //$NON-NLS-1$
@@ -87,106 +67,6 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
                 processRoutineRenameOperation(originalName, node, path);
             }
         }
-    }
-
-    @Override
-    protected IEditorPart getCorrespondingEditor(IRepositoryNode node) {
-        IEditorReference[] eidtors = getActivePage().getEditorReferences();
-
-        for (IEditorReference eidtor : eidtors) {
-            try {
-                IEditorInput input = eidtor.getEditorInput();
-                if (!(input instanceof JobEditorInput)) {
-                    continue;
-                }
-
-                JobEditorInput repositoryInput = (JobEditorInput) input;
-                checkUnLoadedNodeForProcess(repositoryInput);
-                if (repositoryInput.getItem().equals(node.getObject().getProperty().getItem())) {
-
-                    IPath path = repositoryInput.getFile().getLocation();
-
-                    return eidtor.getEditor(false);
-                }
-            } catch (PartInitException e) {
-                continue;
-            }
-        }
-        return null;
-    }
-
-    private void checkUnLoadedNodeForProcess(JobEditorInput fileEditorInput) {
-        if (fileEditorInput == null || fileEditorInput.getLoadedProcess() == null) {
-            return;
-        }
-        IProcess2 loadedProcess = fileEditorInput.getLoadedProcess();
-        List<NodeType> unloadedNode = loadedProcess.getUnloadedNode();
-        if (unloadedNode != null && !unloadedNode.isEmpty()) {
-
-            String message = "Some Component are not loaded:\n";
-            for (int i = 0; i < unloadedNode.size(); i++) {
-                message = message + unloadedNode.get(i).getComponentName() + "\n";
-            }
-            if (!CommonsPlugin.isHeadless() && PlatformUI.isWorkbenchRunning()) {
-                Display display = Display.getCurrent();
-                if (display == null) {
-                    display = Display.getDefault();
-                }
-                if (display != null) {
-                    final Display tmpDis = display;
-                    final String tmpMess = message;
-                    display.syncExec(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            Shell shell = null;
-                            final IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-                            if (activeWorkbenchWindow != null) {
-                                shell = activeWorkbenchWindow.getShell();
-                            } else {
-                                if (tmpDis != null) {
-                                    shell = tmpDis.getActiveShell();
-                                } else {
-                                    shell = new Shell();
-                                }
-                            }
-                            MessageDialog.openWarning(shell, "Warning", tmpMess);
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    // http://jira.talendforge.org/browse/TESB-5930
-    @Override
-    public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = selection.size() == 1;
-        if (canWork) {
-            Object o = selection.getFirstElement();
-            if (o instanceof RepositoryNode) {
-                RepositoryNode node = (RepositoryNode) o;
-                switch (node.getType()) {
-                case REPOSITORY_ELEMENT:
-                    if (node.getObjectType() == CamelRepositoryNodeType.repositoryRoutesType) {
-                        canWork = true;
-                    } else {
-                        canWork = false;
-                    }
-                    break;
-                default:
-                    canWork = false;
-                    break;
-                }
-                if (canWork) {
-                    canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
-                }
-                if (canWork) {
-                    canWork = isLastVersion(node);
-                }
-            }
-        }
-        setEnabled(canWork);
     }
 
 }
