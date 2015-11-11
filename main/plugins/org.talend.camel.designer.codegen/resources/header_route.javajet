@@ -1678,7 +1678,7 @@ if (isProvider) {
                     ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setHostName(<%=wmqServer%>);
                     try {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
-                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
+                        // ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
 <%						if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
