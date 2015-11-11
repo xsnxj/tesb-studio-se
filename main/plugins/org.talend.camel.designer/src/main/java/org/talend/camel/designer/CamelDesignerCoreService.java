@@ -61,17 +61,26 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
     @Override
     public boolean isInstanceofCamelRoutes(Item item) {
+        if (item == null) {
+            return false;
+        }
         return item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM
             || item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM;
     }
 
     @Override
     public boolean isInstanceofCamelBeans(Item item) {
+        if (item == null) {
+            return false;
+        }
         return item.eClass() == CamelPropertiesPackage.Literals.BEAN_ITEM;
     }
 
     @Override
     public boolean isInstanceofCamel(Item item) {
+        if (item == null) {
+            return false;
+        }
         return isInstanceofCamelRoutes(item) || isInstanceofCamelBeans(item)
             || item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM;
     }
