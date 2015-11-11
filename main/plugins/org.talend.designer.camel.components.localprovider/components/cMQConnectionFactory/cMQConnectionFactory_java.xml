@@ -269,23 +269,27 @@
 
             <IMPORT MODULE_GROUP="camel-jms" REQUIRED="true"/>
 
-            <IMPORT MODULE="activemq-all" MVN="${mvn-activemq-all}"
+            <IMPORT MODULE="activemq-all"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ')" />
-            <IMPORT MODULE="commons-pool" MVN="${mvn-commons-pool}" 
+            <IMPORT MODULE="commons-pool" 
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (AMQ_POOL=='true')" />
 
             <IMPORT MODULE_GROUP="httpclient"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="xstream" MVN="${mvn-xstream}"
+            <IMPORT MODULE="xstream"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
-            <IMPORT MODULE="xpp3" MVN="${mvn-xpp3}"
+            <IMPORT MODULE="xpp3"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
             <IMPORT MODULE_GROUP="camel-amqp"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 
             <IMPORT MODULE_GROUP="camel-mqtt"
-                    REQUIRED_IF="(MQ_TYPE == 'MQTT')" /> 
+                    REQUIRED_IF="(MQ_TYPE == 'MQTT')" />
+
+            <IMPORT NAME="javax.transaction" MODULE="javax.transaction_1.1.1.v201105210645.jar" 
+                    UrlPath="platform:/base/plugins/javax.transaction_1.1.1.v201105210645.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'WMQ')" />
 		</IMPORTS>
 	</CODEGENERATION>
 
