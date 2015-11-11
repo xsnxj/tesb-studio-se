@@ -1653,6 +1653,7 @@ if (isProvider) {
                     String wmqPort = ElementParameterParser.getValue(node, "__WMQ_PORT__");
                     String wmqTransportType = ElementParameterParser.getValue(node, "__WMQ_TRANSPORT_TYPE__");
                     String wmqUM = ElementParameterParser.getValue(node, "__WMQ_QUEUE_MANAGER__");
+                    String wmqChannel = ElementParameterParser.getValue(node, "__WMQ_CHANNEL__");
                     
                     //Username and password, http://jira.talendforge.org/browse/TESB-4073
                     String username = ElementParameterParser.getValue(node, "__WMQ_USERNAME__");
@@ -1680,6 +1681,12 @@ if (isProvider) {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
+<%						if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
+%>
+							((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
+<%						}
+%>
+
                     } catch (javax.jms.JMSException e) {
                         e.printStackTrace();
                     }
