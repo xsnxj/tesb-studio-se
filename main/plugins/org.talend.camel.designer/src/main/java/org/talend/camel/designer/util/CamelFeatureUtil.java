@@ -67,6 +67,7 @@ public final class CamelFeatureUtil {
         put("camel-jetty-common", new FeatureModel[] { });
         put("camel-jetty8", new FeatureModel[] { });
         put("camel-jetty", new FeatureModel[] { new FeatureModel("camel-jetty9") });
+        put("camel-wmq", new FeatureModel[] { });
     }};
 
 	private static final String JAVA_SCRIPT = "javaScript"; //$NON-NLS-1$
