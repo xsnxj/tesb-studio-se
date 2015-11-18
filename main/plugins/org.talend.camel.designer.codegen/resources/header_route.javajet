@@ -1648,7 +1648,7 @@ if (isProvider) {
                             org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
 <%
                     }
-                } else if ("WebSphere MQ".equals(mqType)) {
+                } else if ("WebSphere MQ Jms".equals(mqType)) {
                     String wmqServer = ElementParameterParser.getValue(node, "__WQM_SEVER__");
                     String wmqPort = ElementParameterParser.getValue(node, "__WMQ_PORT__");
                     String wmqTransportType = ElementParameterParser.getValue(node, "__WMQ_TRANSPORT_TYPE__");

@@ -24,7 +24,8 @@
 			REQUIRED="true" READONLY="false">
 			<ITEMS DEFAULT="ACTIVEMQ">
 				<ITEM NAME="ACTIVEMQ" VALUE="ActiveMQ" />
-				<ITEM NAME="WMQ" VALUE="WebSphere MQ" />
+				<ITEM NAME="WMQ" VALUE="WebSphere MQ Jms" />
+				<ITEM NAME="WMQ_N" VALUE="WebSphere MQ Native" />
 				<ITEM NAME="AMQP" VALUE="AMQP" />
 				<ITEM NAME="MQTT" VALUE="MQTT" />
 				<ITEM NAME="OTHER" VALUE="Other" />
@@ -32,7 +33,7 @@
 		</PARAMETER>
 
 		<PARAMETER NAME="USE_TRANSACTION" FIELD="CHECK" REQUIRED="true"
-			NUM_ROW="2" SHOW_IF="(MQ_TYPE != 'AMQP') AND (MQ_TYPE != 'MQTT')">
+			NUM_ROW="2" SHOW_IF="(MQ_TYPE != 'AMQP') AND (MQ_TYPE != 'MQTT') AND (MQ_TYPE != 'WMQ_N')">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
@@ -87,7 +88,7 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>	
 
-		<!-- WebSphere MQ -->
+		<!-- WebSphere MQ Jms-->
 		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">
 			<DEFAULT>"localhost"</DEFAULT>
@@ -146,6 +147,40 @@
 			</ITEMS>
 		</PARAMETER>
 		
+		<!-- WebSphere MQ Native -->				
+		<PARAMETER NAME="WMQ_N_SEVER" FIELD="TEXT" NUM_ROW="7"
+			SHOW_IF="MQ_TYPE == 'WMQ_N'">
+			<DEFAULT>"localhost"</DEFAULT>
+		</PARAMETER>
+
+		<PARAMETER NAME="WMQ_N_PORT" FIELD="TEXT" NUM_ROW="8"
+			SHOW_IF="MQ_TYPE == 'WMQ_N'">
+			<DEFAULT>"1414"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_N_CHANNEL" FIELD="TEXT" NUM_ROW="9"
+			SHOW_IF="MQ_TYPE == 'WMQ_N'">
+			<DEFAULT>"channel.name"</DEFAULT>
+		</PARAMETER>
+		
+		<PARAMETER NAME="WMQ_N_NAME" FIELD="TEXT" NUM_ROW="10"
+			SHOW_IF="MQ_TYPE == 'WMQ_N'">
+			<DEFAULT>"default"</DEFAULT>
+		</PARAMETER>
+
+		
+		<PARAMETER NAME="WMQ_N_JAR_LABEL" FIELD="LABEL" NUM_ROW="41"
+			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ_N'">
+            <DEFAULT>(Note:Need add com.ibm.mq.jar, com.ibm.mq.commonservices.jar, com.ibm.mq.headers.jar, com.ibm.mq.jmqi.jar, connector.jar)</DEFAULT> 			
+			</PARAMETER>
+
+		<PARAMETER NAME="WMQ_N_DRIVER_JAR" FIELD="TABLE" NUM_ROW="40"
+			NB_LINES="8" REPOSITORY_VALUE="DRIVER_JAR" SHOW_IF="MQ_TYPE == 'WMQ_N'">
+			<ITEMS>
+				<ITEM NAME="JAR_NAME" FIELD="MODULE_LIST" />
+			</ITEMS>
+		</PARAMETER>
+
 		<!-- AMQP -->
 		<PARAMETER NAME="AMQP_BROKER_URI" FIELD="TEXT" NUM_ROW="4"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'AMQP'">
@@ -295,6 +330,11 @@
             <IMPORT NAME="javax.transaction" MODULE="javax.transaction_1.1.1.v201105210645.jar" 
                     UrlPath="platform:/base/plugins/javax.transaction_1.1.1.v201105210645.jar"
                     REQUIRED_IF="(MQ_TYPE == 'WMQ')" />
+
+            <IMPORT MODULE="camel-wmq-alldep-2.15.4.jar" MVN="mvn:org.talend.libraries/camel-wmq-alldep-2.15.4/6.0.0" NAME="talend-camel-wmq" 
+	            UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-wmq-alldep-2.15.4.jar"
+                    REQUIRED_IF="(MQ_TYPE == 'WMQ_N')" /> 
+
 		</IMPORTS>
 	</CODEGENERATION>
 
