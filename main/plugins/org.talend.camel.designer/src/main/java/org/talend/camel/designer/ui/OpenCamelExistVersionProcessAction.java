@@ -16,16 +16,19 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.OpenCamelExistVersionProcessWizard;
+import org.talend.camel.model.CamelRepositoryNodeType;
+import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.services.IUIRefresher;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.actions.EditPropertiesAction;
 
@@ -45,7 +48,7 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
     protected void doRun() {
         ISelection selection = getSelection();
         Object obj = ((IStructuredSelection) selection).getFirstElement();
-        RepositoryNode node = (RepositoryNode) obj;
+        IRepositoryNode node = (IRepositoryNode) obj;
 
         IPath path = RepositoryNodeUtilities.getPath(node);
         String originalName = node.getObject().getLabel();
@@ -67,6 +70,37 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
                 processRoutineRenameOperation(originalName, node, path);
             }
         }
+    }
+
+    // http://jira.talendforge.org/browse/TESB-5930
+    @Override
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = selection.size() == 1;
+        if (canWork) {
+            Object o = selection.getFirstElement();
+            if (o instanceof IRepositoryNode) {
+                IRepositoryNode node = (IRepositoryNode) o;
+                switch (node.getType()) {
+                case REPOSITORY_ELEMENT:
+                    if (node.getObjectType() == CamelRepositoryNodeType.repositoryRoutesType) {
+                        canWork = true;
+                    } else {
+                        canWork = false;
+                    }
+                    break;
+                default:
+                    canWork = false;
+                    break;
+                }
+                if (canWork) {
+                    canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
+                }
+                if (canWork) {
+                    canWork = isLastVersion(node);
+                }
+            }
+        }
+        setEnabled(canWork);
     }
 
 }
