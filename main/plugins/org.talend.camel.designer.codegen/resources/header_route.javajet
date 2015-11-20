@@ -1972,10 +1972,28 @@ if (isProvider) {
 
                 <%=endpointVar%>.getFeatures().add(locatorFeature_<%=cid%>);
 <%
-            }
+            } else if (useRegistry && !isProvider) {
+                List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
+				if (!customProperties.isEmpty()) { 
+%>
+                    java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+                    <% for (Map<String, String> custProp : customProperties) { %>
+                        slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
+                    <% } %>
+
+                    java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();					
+					if (endpointProps_<%=cid%> == null) {
+						endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();					
+					} 
+                    endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);					
+                    <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);					
+<%			
+					}
+			}
+%>
             //http://jira.talendforge.org/browse/TESB-3850
             // !"true".equals(useRegistry) - https://jira.talendforge.org/browse/TESB-10725
-
+<%
             if ("true".equals(useSAM) && !"RAW".equals(formatType) && !useRegistry) {
 %>
                 // Add Service Activity Monitor Service to <%=endpointVar%>

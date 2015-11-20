@@ -125,7 +125,7 @@ if (inputConn != null) {
         try {
             org.dom4j.Document responseDoc_<%=cid%> = null;
 
-            <% if (useSl) { %>
+            <% if ((useSl) || (useSR)){ %>
                 final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                 <%
                 for(Entry<String, String> prop : paramsHelper.getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__")) {
@@ -293,10 +293,14 @@ if (inputConn != null) {
 
                             // use Service Locator
                             put("useServiceLocator", <%=useSl%>);
-                            <% if (useSl) { %>
+                            <% if (useSl){ %>
                                 put("LocatorSelectionStrategy", "<%=paramsHelper.getStringParam("__SERVICE_LOCATOR_STRATEGY__")%>");
+                            <% } %>
+							
+                            <% if ((useSl) || (useSR)){ %>
                                 put("SL-PROPS", slCustomProps_<%=cid%>);
                             <% } %>
+
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
 
