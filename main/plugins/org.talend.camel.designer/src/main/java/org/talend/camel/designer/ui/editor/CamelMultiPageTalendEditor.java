@@ -117,15 +117,6 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
     }
 
     @Override
-    public void setName(String revisionNum) {
-        setName();
-        String label = getEditorInput().getName();
-        String jobVersion = this.getProcess().getVersion();
-        setPartName(Messages.getString("CamelMultiPageTalendEditor.job", label, jobVersion) + revisionNum); //$NON-NLS-1$
-        revisionNumStr = revisionNum;
-    }
-
-    @Override
     protected void createPage2() {
         dependenciesEditor = new CamelDependenciesEditor(this, designerEditor.isReadOnly());
         try {
