@@ -35,7 +35,7 @@ import org.talend.designer.core.ui.editor.AbstractTalendEditor;
  */
 public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
 
-    public static final String ID = "org.talend.camel.designer.core.ui.CamelMultiPageTalendEditor";
+    public static final String ID = "org.talend.camel.designer.core.ui.CamelMultiPageTalendEditor"; //$NON-NLS-1$
 
     private CamelDependenciesEditor dependenciesEditor;
 
@@ -95,8 +95,8 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
         // if (getActivePage() == 1) {
         final IProcess2 process2 = this.getProcess();
         if (PluginChecker.isSVNProviderPluginLoaded()) {
-            final ISVNProviderService service =
-                (ISVNProviderService) GlobalServiceRegister.getDefault().getService(ISVNProviderService.class);
+            final ISVNProviderService service = (ISVNProviderService) GlobalServiceRegister.getDefault().getService(
+                    ISVNProviderService.class);
             if (revisionChanged && service.isProjectInSvnMode()) {
                 revisionNumStr = service.getCurrentSVNRevision(process2);
                 revisionChanged = false;
@@ -117,11 +117,21 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
     }
 
     @Override
+    public void setName(String revisionNum) {
+        setName();
+        String label = getEditorInput().getName();
+        String jobVersion = this.getProcess().getVersion();
+        setPartName(Messages.getString("CamelMultiPageTalendEditor.job", label, jobVersion) + revisionNum); //$NON-NLS-1$
+        revisionNumStr = revisionNum;
+    }
+
+    @Override
     protected void createPage2() {
         dependenciesEditor = new CamelDependenciesEditor(this, designerEditor.isReadOnly());
         try {
             int index = addPage(dependenciesEditor, getEditorInput());
-            setPageText(index, org.talend.camel.designer.ui.editor.dependencies.Messages.EditDependenciesContextualAction_ActionName);
+            setPageText(index,
+                    org.talend.camel.designer.ui.editor.dependencies.Messages.EditDependenciesContextualAction_ActionName);
             setPageImage(index, CamelDesignerPlugin.getImage(CamelDesignerPlugin.DEPEN_ICON));
         } catch (PartInitException e) {
             ExceptionHandler.process(e);
