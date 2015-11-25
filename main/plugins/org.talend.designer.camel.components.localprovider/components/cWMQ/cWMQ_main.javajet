@@ -46,7 +46,11 @@ imports="
 						builder.addParam("queueManagerHostname", wmqnServer);					
 						builder.addParam("queueManagerChannel ", wmqnChannel);										
 					}
-					
+					if ("true".equals(ElementParameterParser.getValue(pNode, "__WMQ_N_AUTH__"))) {
+						builder.addParam("queueManagerUserID", ElementParameterParser.getValue(pNode, "__WMQ_N_USERNAME__"));
+						builder.addParam("queueManagerPassword", ElementParameterParser.getValue(pNode, "__WMQ_N_PASSWORD__"));					
+						builder.addParam("queueManagerCCSID ", ElementParameterParser.getValue(pNode, "__WMQ_N_CCSID__"));										
+					}
             }
 		}
 	
