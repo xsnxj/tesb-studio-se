@@ -18,13 +18,7 @@ import org.dom4j.QName;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
-import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
-import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.model.CamelRepositoryNodeType;
-import org.talend.commons.exception.ExceptionHandler;
-import org.talend.commons.exception.PersistenceException;
-import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.IConnection;
@@ -34,8 +28,6 @@ import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.ui.IRouteletService;
-import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
 import org.talend.designer.camel.dependencies.core.model.ManifestItem;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
@@ -46,17 +38,6 @@ import org.talend.designer.core.ICamelDesignerCoreService;
  * DOC guanglong.du class global comment. Detailled comment
  */
 public class CamelDesignerCoreService implements ICamelDesignerCoreService {
-
-    private IRouteletService routeletService;
-
-    private IRouteletService getRouteletService() {
-        if (routeletService == null) {
-            if (GlobalServiceRegister.getDefault().isServiceRegistered(IRouteletService.class)) {
-                routeletService = (IRouteletService) GlobalServiceRegister.getDefault().getService(IRouteletService.class);
-            }
-        }
-        return routeletService;
-    }
 
     @Override
     public String getDeleteFolderName(ERepositoryObjectType type) {
@@ -86,11 +67,11 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
         return isCamelRouteProcess(item) || isRouteletProcess(item);
     }
 
-    private boolean isCamelRouteProcess(Item item) {
+    public boolean isCamelRouteProcess(Item item) {
         return item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM;
     }
 
-    private boolean isRouteletProcess(Item item) {
+    public boolean isRouteletProcess(Item item) {
         return item.eClass() == CamelPropertiesPackage.Literals.ROUTELET_PROCESS_ITEM;
     }
 
@@ -186,37 +167,6 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
     @Override
     public FileItem newRouteDocumentationItem() {
         return CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
-    }
-
-    @Override
-    public JobEditorInput getRouteEditorInput(ProcessItem processItem, boolean load, Boolean lastVersion)
-            throws PersistenceException {
-        if (processItem == null) {
-            return null;
-        }
-
-        JobEditorInput editorInput = null;
-        if (isInstanceofCamelRoutes(processItem)) {
-            // both route and routelet use CamelProcessEditorInput
-            editorInput = new CamelProcessEditorInput(processItem, load, lastVersion);
-        }
-
-        return editorInput;
-    }
-
-    @Override
-    public String getRouteEditorId(ProcessItem processItem) {
-        if (processItem == null || isCamelRouteProcess(processItem)) {
-            return CamelMultiPageTalendEditor.ID;
-        } else if (isRouteletProcess(processItem)) {
-            IRouteletService service = getRouteletService();
-            if (service != null) {
-                return service.getRouteletEditorId();
-            } else {
-                ExceptionHandler.process(new Throwable(Messages.getString("CamelDesignerCoreService_noRouteletServiceFound"))); //$NON-NLS-1$
-            }
-        }
-        return null;
     }
 
 }
