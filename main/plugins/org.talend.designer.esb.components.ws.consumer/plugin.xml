@@ -207,9 +207,9 @@
             bundleID="" />
         <!-- ${tesb-commons-logging} -->
         <libraryNeeded context="plugin:org.apache.commons.logging"
-            name="org.apache.commons.logging_1.1.1.v201101211721.jar"
+            name="org.apache.commons.logging_1.2.0.jar"
             id="commons-logging"
-            uripath="platform:/base/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar"
+            uripath="platform:/base/plugins/org.apache.commons.logging_1.2.0.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-spring-expression}"
