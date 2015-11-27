@@ -45,7 +45,7 @@ public abstract class AbstractRouteItemMigrationTask extends
 	 * @see org.talend.core.model.migration.AbstractItemMigrationTask#getTypes()
 	 */
 	@Override
-	public List<ERepositoryObjectType> getTypes() {
+	public final List<ERepositoryObjectType> getTypes() {
 		return Collections
 				.singletonList(CamelRepositoryNodeType.repositoryRoutesType);
 	}
