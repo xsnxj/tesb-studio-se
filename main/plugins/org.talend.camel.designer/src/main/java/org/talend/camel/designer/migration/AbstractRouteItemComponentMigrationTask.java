@@ -16,9 +16,7 @@ import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.exception.ExceptionHandler;
-import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
-import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
 
 /**
@@ -26,78 +24,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
  */
 public abstract class AbstractRouteItemComponentMigrationTask extends
 		AbstractRouteItemMigrationTask {
-
-	/**
-	 * UtilTool to handle NodeType.
-	 */
-	protected static class UtilTool{
-		public static ElementParameterType findParameterType(NodeType node, String paramName) {
-			for (Object param : node.getElementParameter()) {
-				ElementParameterType paramType = (ElementParameterType) param;
-				if(paramType.getName().equals(paramName)) {
-					return paramType;
-				}
-			}
-			return null;
-		}
-
-		public static String getParameterValue(NodeType currentNode, String paramName) {
-			ElementParameterType param = findParameterType(currentNode,paramName);
-			if(param == null) {
-				return null;
-			}
-			return param.getValue();
-		}
-
-		/**
-		 * Replace param sub sequence.
-		 *
-		 * @return true, if rename value sub string
-		 */
-		public static boolean replaceValueSubSequence(ElementParameterType param, CharSequence oldSeq, CharSequence newSeq) {
-			String oldValue = param.getValue();
-			if(!oldValue.contains(oldSeq)) {
-				return false;
-			}
-			String newValue = oldValue.replace(oldSeq, newSeq);
-			param.setValue(newValue);
-			return true;
-		}
-
-		@SuppressWarnings("unchecked")
-		public static boolean addParameterType(NodeType node, ElementParameterType param) {
-			return node.getElementParameter().add(param);
-		}
-
-		public static boolean removeParameterType(NodeType node, ElementParameterType param) {
-			return node.getElementParameter().remove(param);
-		}
-
-		public static ElementParameterType createParameterType(String field, String name, String value) {
-	        return createParameterType(field, name, value, null);
-	    }
-
-		@SuppressWarnings("unchecked")
-		public static ElementParameterType createParameterType(String field, String name, String value, List<?> elementParameterTypes) {
-	        ElementParameterType paramType = TalendFileFactory.eINSTANCE.createElementParameterType();
-	        paramType.setField(field);
-	        paramType.setName(name);
-	        paramType.setValue(value);
-	        if (elementParameterTypes != null) {
-	            paramType.getElementValue().addAll(elementParameterTypes);
-	        }
-	        return paramType;
-	    }
-
-		public static void addParameterType(NodeType node, String field, String name, String value, List<?> elementParameterTypes) {
-			ElementParameterType paramType = createParameterType(field, name, value, elementParameterTypes);
-			addParameterType(node, paramType);
-		}
-
-		public static void addParameterType(NodeType node, String field, String name, String value) {
-			addParameterType(node, field, name, value, null);
-		}
-	}
 
 	/**
 	 * the regex patten to filter component name.

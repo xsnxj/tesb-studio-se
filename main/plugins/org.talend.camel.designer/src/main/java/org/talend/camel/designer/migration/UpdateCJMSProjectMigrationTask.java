@@ -28,8 +28,6 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.model.utils.emf.talendfile.TalendFileFactory;
 
-import static org.talend.camel.designer.migration.AbstractRouteItemComponentMigrationTask.UtilTool.*;
-
 /**
  * @author LiXiaopeng
  * Update: Removed common functions to handle NodeType to {@link AbstractRouteItemComponentMigrationTask.UtilTool} - by GaoZone.
@@ -53,25 +51,25 @@ public class UpdateCJMSProjectMigrationTask extends AbstractRouteItemMigrationTa
         nodeType.setSizeY(32);
         nodeType.setComponentName("cMQConnectionFactory");
 
-        String label = getParameterValue(currentNode, "LABEL");
+        String label = UtilTool.getParameterValue(currentNode, "LABEL");
         if (label == null || label.equals("_UNIQUE_NAME_")) {
-            label = getParameterValue(currentNode, "UNIQUE_NAME");
+            label = UtilTool.getParameterValue(currentNode, "UNIQUE_NAME");
         }
         label += "_ConnectionFacotry";
 
-        addParameterType(nodeType, "TEXT", "LABEL", label, null);
-        addParameterType(nodeType, "TEXT", "UNIQUE_NAME", label, null);
+        UtilTool.addParameterType(nodeType, "TEXT", "LABEL", label, null);
+        UtilTool.addParameterType(nodeType, "TEXT", "UNIQUE_NAME", label, null);
 
         // Don't forget set the Connection for cJMS
-        addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY_LABEL", label, null);
-        addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY", label, null);
+        UtilTool.addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY_LABEL", label, null);
+        UtilTool.addParameterType(currentNode, "TEXT", "CONNECTION_FACOTRY", label, null);
 
         for (Object e : currentNode.getElementParameter()) {
             ElementParameterType p = (ElementParameterType) e;
             if (!("UNIQUE_NAME".equals(p.getName()) || "LABEL".equals(p.getName()) || "TYPE".equals(p.getName()) || "DESTINATION"
                     .equals(p.getName()))) {
 
-                 addParameterType(nodeType, p.getField(), p.getName(), p.getValue(), p.getElementValue());
+                UtilTool.addParameterType(nodeType, p.getField(), p.getName(), p.getValue(), p.getElementValue());
             }
         }
 
