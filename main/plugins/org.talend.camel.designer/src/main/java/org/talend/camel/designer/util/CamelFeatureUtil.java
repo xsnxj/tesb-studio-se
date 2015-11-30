@@ -51,8 +51,6 @@ public final class CamelFeatureUtil {
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script"); //$NON-NLS-1$
 
-	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http"); //$NON-NLS-1$
-
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client"); //$NON-NLS-1$
 
@@ -122,19 +120,10 @@ public final class CamelFeatureUtil {
 					handleLanguagesJavascript(features, currentNode);
 				} else if ("cSetHeader".equals(componentName)) {
 					handleSetHeaderCase(features, currentNode);
-				} else if ("cMQConnectionFactory".equals(componentName)) {
-					handleMQConnectionFactory(features, currentNode);
 				}
 			}
 		}
 	}
-
-    private static void handleMQConnectionFactory(Collection<FeatureModel> features, NodeType currentNode) {
-        if ("ActiveMQ".equals(EmfModelUtils.findElementParameterByName("MQ_TYPE", currentNode).getValue())
-            && EmfModelUtils.computeCheckElementValue("IS_AMQ_HTTP_BROKER", currentNode)) {
-            features.add(FEATURE_ACTIVEMQ_OPTIONAL);
-        }
-    }
 
 	private static void addConnectionsSpecialFeatures(
 			Collection<FeatureModel> features, ProcessType processType) {
