@@ -7,6 +7,10 @@
             class="org.talend.camel.designer.CamelDesignerCoreService"
             serviceId="ICamelDesignerCoreService">
       </Service>
+      <Service
+            class="org.talend.camel.designer.CamelDesignerCoreUIService"
+            serviceId="ICamelDesignerCoreUIService">
+      </Service>
    </extension>
 
  <extension
