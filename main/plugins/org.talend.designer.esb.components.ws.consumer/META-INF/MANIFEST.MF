@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.designer.codegen,
  javax.wsdl;bundle-version="1.6.2",
  org.talend.core.ui,
- org.talend.commons.ui
+ org.talend.commons.ui,
+ org.talend.components.api
 Import-Package: org.talend.designer.core.model.components,
  org.talend.repository.services.action;resolution:=optional,
  org.talend.utils.wsdl
