@@ -269,6 +269,7 @@ public class CamelDependenciesEditor extends EditorPart implements IRouterDepend
 //		importPackageViewer.getTableViewer().getTable().setFocus();
         // update all tables input
         updateInput();
+        setMessage(null);
 	}
 
     private boolean isReadOnly() {
