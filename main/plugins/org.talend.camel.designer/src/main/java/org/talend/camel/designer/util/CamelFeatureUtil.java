@@ -51,7 +51,8 @@ public final class CamelFeatureUtil {
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT_JAVASCRIPT = new FeatureModel("camel-script-javascript"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_CAMEL_SCRIPT = new FeatureModel("camel-script"); //$NON-NLS-1$
 
-	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("activemq-http"); //$NON-NLS-1$
+	// ActiveMQ Karaf integration issue
+	private static final FeatureModel FEATURE_ACTIVEMQ_OPTIONAL = new FeatureModel("camel-http4"); //$NON-NLS-1$
 
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client"); //$NON-NLS-1$
