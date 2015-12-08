@@ -88,6 +88,18 @@
                     org.apache.cxf.staxutils"
             />
             <importPackage
+                name="org.apache.cxf.interceptor.security,
+                    org.springframework.beans.factory.config">
+                <predicate
+                    attributeName="ENABLE_SECURITY"
+                    attributeValue="true">
+                </predicate>
+                <predicate
+                    attributeName="SECURITY_TYPE"
+                    attributeValue="SAML">
+                </predicate>
+            </importPackage>
+            <importPackage
                 name="org.talend.esb.authorization.xacml.rt.pep">
                 <predicate
                     attributeName="ENABLE_SECURITY"
