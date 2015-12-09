@@ -40,15 +40,12 @@ public class RouteComponentController extends ComponentListController {
         final Collection<INode> nodeList = new ArrayList<INode>();
         for (INode node : ((INode) elem).getProcess().getNodesOfType(component)) {
             if (node.isActivate() && node.getIncomingConnections().isEmpty()) {
-                if (null != additionalFilter) {
-                    if (!Expression.evaluate(additionalFilter, node.getElementParameters())) {
-                        continue;
-                    }
+                if (null != additionalFilter && !Expression.evaluate(additionalFilter, node.getElementParameters())) {
+                    continue;
                 }
                 nodeList.add(node);
             }
         }
-        
         updateComponentList(nodeList, (INode) elem, param, isSelectDefaultItem());
     }
 

@@ -322,17 +322,15 @@ public class SpringConfigurationStyledText extends StyledText implements
 			previousChar = getTextRange(start-1, 1);
 		}
 		
-		if("/".equals(textRange) && "<".equals(previousChar)){
-			if(!isCommentBlock(start-1)){
-				String openedTag = searchNearestOpenedTag(start-2);
-				if(openedTag != null && !openedTag.isEmpty()){
-					replaceTextRange(start+length, 0 , openedTag);
-					setSelection(start + event.length + openedTag.length());
-				}
+		if("/".equals(textRange) && "<".equals(previousChar) && !isCommentBlock(start-1)){
+			String openedTag = searchNearestOpenedTag(start-2);
+			if(openedTag != null && !openedTag.isEmpty()){
+				replaceTextRange(start+length, 0 , openedTag);
+				setSelection(start + event.length + openedTag.length());
 			}
 		}
 	}
-	
+
 	private String searchNearestOpenedTag(int lastOffset) {
 		Stack<String> closeTagStack = new Stack<String>();
 		boolean hasSingleEndTag = false;
@@ -495,7 +493,7 @@ public class SpringConfigurationStyledText extends StyledText implements
 
 	}
 
-	class UndoRedoModel {
+	private static class UndoRedoModel {
 		private String content = "";
 		private int offset;
 		private int length;
@@ -526,7 +524,7 @@ public class SpringConfigurationStyledText extends StyledText implements
 		}
 	}
 
-	class XmlScanner {
+	private static class XmlScanner {
 		protected String content;
 		protected int currentPosition;
 		protected int endPosition;
@@ -595,8 +593,9 @@ public class SpringConfigurationStyledText extends StyledText implements
 								}
 								if (c != '>') {	//end of comment
 									continue;
+								} else {
+								    return COMMENT;
 								}
-								return COMMENT;
 							}
 						} else {
 							unread(c);

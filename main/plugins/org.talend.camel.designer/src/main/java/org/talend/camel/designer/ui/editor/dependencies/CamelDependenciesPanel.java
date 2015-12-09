@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.ui.editor.dependencies;
 
 import java.util.Collection;
@@ -194,25 +206,14 @@ public class CamelDependenciesPanel extends Composite {
 	}
 
 	private void moveDown() {
-		ManifestItem selected = (ManifestItem) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
-		
+		ManifestItem selected = (ManifestItem) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
 		List input = (List) tableViewer.getInput();
 		int index = input.indexOf(selected);
 		int size = input.size();
 		int targetIndex = index + 1;
-		if(selected.isBuiltIn()){
-			if(size<= targetIndex || !((ManifestItem)input.get(targetIndex)).isBuiltIn()){
-				targetIndex = 0;
-			}
-		}else{
-			if(targetIndex >= size){
-				for(int i = 0; i<size; i++){
-					if(((ManifestItem)input.get(i)).isBuiltIn()){
-						continue;
-					}
-					targetIndex = i;
-					break;
-				}
+		if (targetIndex >= size) {
+			for (targetIndex = 0; targetIndex < size && ((ManifestItem)input.get(targetIndex)).isBuiltIn(); ++targetIndex) {
 			}
 		}
 		input.remove(selected);
@@ -225,28 +226,13 @@ public class CamelDependenciesPanel extends Composite {
 
 	private void moveUp() {
 	    ManifestItem selected = (ManifestItem) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
-		
+
 		List input = (List) tableViewer.getInput();
 		int index = input.indexOf(selected);
 		int size = input.size();
 		int targetIndex = index - 1;
-		if(selected.isBuiltIn()){
-			if(targetIndex<0){
-				for(int i = 0; i<size; i++){
-					if(((ManifestItem)input.get(i)).isBuiltIn()){
-						continue;
-					}
-					targetIndex = i-1;
-					break;
-				}
-				if(targetIndex<0){
-					targetIndex = size -1;
-				}
-			}
-		}else{
-			if(targetIndex < 0 || ((ManifestItem)input.get(targetIndex)).isBuiltIn()){
-				targetIndex = size -1;
-			}
+		if (targetIndex < 0 || ((ManifestItem)input.get(targetIndex)).isBuiltIn()){
+			targetIndex = size -1;
 		}
 		input.remove(selected);
 		input.add(targetIndex, selected);

@@ -168,19 +168,17 @@ public class DependencyVersionPart {
 			fMinVersionText.setText((fVersionRange != null) ? fVersionRange
 					.getMinimum().toString() : ""); //$NON-NLS-1$
 			fMaxVersionText
-					.setText((fVersionRange != null && fVersionRange
-							.getMaximum().getMajor() != Integer.MAX_VALUE) ? fVersionRange
+					.setText(fVersionRange != null && fVersionRange
+							.getMaximum().getMajor() != Integer.MAX_VALUE ? fVersionRange
 							.getMaximum().toString() : ""); //$NON-NLS-1$
 
 			if (fVersionRange != null)
-				fMinVersionBound.select((fVersionRange.getIncludeMinimum()) ? 0
-						: 1);
+				fMinVersionBound.select(fVersionRange.getIncludeMinimum() ? 0 : 1);
 			else
 				fMinVersionBound.select(0);
 
 			if (fVersionRange != null && getMaxVersion().length() > 0)
-				fMaxVersionBound.select((fVersionRange.getIncludeMaximum()) ? 0
-						: 1);
+				fMaxVersionBound.select(fVersionRange.getIncludeMaximum() ? 0 : 1);
 			else
 				fMaxVersionBound.select(1);
 		}
@@ -216,7 +214,7 @@ public class DependencyVersionPart {
 	 */
 	private String validateVersionRange() {
 		if (!fRangeAllowed
-		    || getMinVersion().isEmpty() || getMinVersion().isEmpty()) {
+		    || getMinVersion().isEmpty() || getMaxVersion().isEmpty()) {
 			fIsRanged = false;
 			return null;
 		}

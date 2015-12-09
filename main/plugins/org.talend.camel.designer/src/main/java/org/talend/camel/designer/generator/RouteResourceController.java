@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.fieldassist.DecoratedField;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
-import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.designer.dialog.RouteResourceSelectionDialog;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -47,7 +45,6 @@ import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
@@ -184,7 +181,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if (lastControl != null) {
             data.left = new FormAttachment(lastControl, 0);
         } else {
-            data.left = new FormAttachment((((numInRow - 1) * MAX_PERCENT) / (nbInRow + 1)), 0);
+            data.left = new FormAttachment(((numInRow - 1) * MAX_PERCENT) / (nbInRow + 1), 0);
         }
         data.top = new FormAttachment(0, top);
         labelLabel.setLayoutData(data);
@@ -286,7 +283,7 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
         if (lastControl != null) {
             data.left = new FormAttachment(lastControl, 0);
         } else {
-            data.left = new FormAttachment((((numInRow - 1) * MAX_PERCENT) / nbInRow), 0);
+            data.left = new FormAttachment(((numInRow - 1) * MAX_PERCENT) / nbInRow, 0);
         }
 
         data.top = new FormAttachment(0, top);
@@ -505,12 +502,12 @@ public class RouteResourceController extends AbstractElementPropertySectionContr
 //        jobNameParam.setLabelFromRepository(labels.toString());
 
         setProcessTypeRelatedValues(processParam.getChildParameters().get(EParameterName.ROUTE_RESOURCE_TYPE_VERSION.getName()),
-            versions.toArray(new String[versions.size()]),
-            RelationshipItemBuilder.LATEST_VERSION);
+            versions.toArray(new String[versions.size()])/*,
+            RelationshipItemBuilder.LATEST_VERSION*/);
 
     }
 
-    private void setProcessTypeRelatedValues(IElementParameter childParam, String[] valueList, final String defaultValue) {
+    private void setProcessTypeRelatedValues(IElementParameter childParam, String[] valueList/*, final String defaultValue*/) {
         if (childParam == null) {
             return;
         }

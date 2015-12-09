@@ -93,7 +93,7 @@ public class OpenCamelExistVersionProcessAction extends EditPropertiesAction {
                     break;
                 }
                 if (canWork) {
-                    canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
+                    canWork = node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED;
                 }
                 if (canWork) {
                     canWork = isLastVersion(node);

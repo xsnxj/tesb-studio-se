@@ -49,8 +49,8 @@ public class SpringConfigurationView extends PageBookView {
     @Override
     protected boolean isImportant(IWorkbenchPart part) {
         // We only care about editors
-        return (part instanceof CamelMultiPageTalendEditor && null != ((RouteProcess) ((CamelMultiPageTalendEditor) part)
-            .getProcess()).getSpringContent());
+        return part instanceof CamelMultiPageTalendEditor
+            && null != ((RouteProcess) ((CamelMultiPageTalendEditor) part).getProcess()).getSpringContent();
     }
 
 }

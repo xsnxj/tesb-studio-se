@@ -46,11 +46,11 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
 
     private String EDIT_LABEL = Messages.getString("EditProcess.editBean"); //$NON-NLS-1$
 
-    private String OPEN_LABEL = Messages.getString("EditProcess.openBean"); //$NON-NLS-1$
+//    private String OPEN_LABEL = Messages.getString("EditProcess.openBean"); //$NON-NLS-1$
 
-    private static final String DBPROJECT_LABEL = "teneo";
+//    private static final String DBPROJECT_LABEL = "teneo";
 
-    private Properties params;
+//    private Properties params;
 
     public EditCamelBean() {
         super();
@@ -68,14 +68,12 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
             canWork = false;
         }
         RepositoryNode node = (RepositoryNode) selection.getFirstElement();
-        if (canWork) {
-            if (node.getObjectType() != CamelRepositoryNodeType.repositoryBeansType
-                    || !ProjectManager.getInstance().isInCurrentMainProject(node) || !isLastVersion(node)) {
-                canWork = false;
-            }
+        if (canWork && (node.getObjectType() != CamelRepositoryNodeType.repositoryBeansType
+                || !ProjectManager.getInstance().isInCurrentMainProject(node) || !isLastVersion(node))) {
+            canWork = false;
         }
         if (canWork) {
-            canWork = (factory.getStatus(node.getObject()) != ERepositoryStatus.DELETED);
+            canWork = factory.getStatus(node.getObject()) != ERepositoryStatus.DELETED;
         }
         setEnabled(canWork);
     }
@@ -103,13 +101,8 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.AContextualView#getClassForDoubleClick()
-     */
     @Override
-    public Class getClassForDoubleClick() {
+    public Class<?> getClassForDoubleClick() {
         return BeanItem.class;
     }
 
@@ -119,7 +112,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
      * @see org.eclipse.ui.intro.config.IIntroAction#run(org.eclipse.ui.intro.IIntroSite, java.util.Properties)
      */
     public void run(IIntroSite site, Properties params) {
-        this.params = params;
+//        this.params = params;
         PlatformUI.getWorkbench().getIntroManager().closeIntro(PlatformUI.getWorkbench().getIntroManager().getIntro());
         doRun();
 

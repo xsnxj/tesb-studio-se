@@ -63,11 +63,11 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
 
     @Override
     public boolean isRepObjType(ERepositoryObjectType type) {
-        return (type == CamelRepositoryNodeType.repositoryBeansType
+        return type == CamelRepositoryNodeType.repositoryBeansType
             || type == CamelRepositoryNodeType.repositoryDocumentationsType
             || type == CamelRepositoryNodeType.repositoryDocumentationType
             || type == CamelRepositoryNodeType.repositoryRouteResourceType
-            || type == CamelRepositoryNodeType.repositoryRoutesType);
+            || type == CamelRepositoryNodeType.repositoryRoutesType;
     }
 
     @Override

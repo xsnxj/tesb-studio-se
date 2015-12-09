@@ -16,16 +16,7 @@ import org.talend.designer.core.ui.views.problems.Problems;
 
 public class CheckRouteBuilderNodeService implements ICheckNodesService {
 
-	public CheckRouteBuilderNodeService() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.talend.designer.core.ICheckNodesService#checkNode(org.talend.designer
-	 * .core.ui.editor.nodes.Node)
-	 */
+    @Override
 	public void checkNode(Node node) {
 		//TESB-7698
 		IProcess process = node.getProcess();
@@ -36,7 +27,6 @@ public class CheckRouteBuilderNodeService implements ICheckNodesService {
 		
 		checkIncomingConnections(node);
 		checkSpecialComponent(node);
-		return;
 	}
 
 	private void checkIncomingConnections(Node node) {

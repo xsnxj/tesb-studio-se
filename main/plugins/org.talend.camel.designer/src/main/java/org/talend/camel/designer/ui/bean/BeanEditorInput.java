@@ -32,8 +32,8 @@ public class BeanEditorInput extends RepositoryEditorInput {
         super(file, item);
     }
 
+    @Override
     public boolean equals(final Object obj) {
-
         if (this == obj) {
             return true;
         }
@@ -49,4 +49,8 @@ public class BeanEditorInput extends RepositoryEditorInput {
         return super.equals(obj);
     }
 
+    @Override
+    public int hashCode() {
+        return getFile().hashCode();
+    }
 }

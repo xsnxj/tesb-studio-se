@@ -27,42 +27,26 @@ public class CamelComponentsHandler implements IComponentsHandler {
 
     // private List<IComponent> camelComponents = new ArrayList<IComponent>();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.components.IComponentsHandler#filterComponents(java.util.List)
-     */
     @Override
     public List<IComponent> filterComponents(List<IComponent> allComponents) {
         List<IComponent> camelComponents = new ArrayList<IComponent>();
         if (allComponents == null || allComponents.isEmpty()) {
             return camelComponents;
         }
-        String categoryName = extractComponentsCategory().getName();
+        final String categoryName = extractComponentsCategory().getName();
         for (IComponent component : allComponents) {
-            String compType = component.getPaletteType();
-            if (compType != null && categoryName.equals(compType)) {
+            if (categoryName.equals(component.getPaletteType())) {
                 camelComponents.add(component);
             }
         }
         return camelComponents;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.components.IComponentsHandler#sortComponents(java.util.List)
-     */
     @Override
     public List<IComponent> sortComponents(List<IComponent> filteredComponents) {
         return filteredComponents;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.model.components.IComponentsHandler#extractComponentsCategory()
-     */
     @Override
     public ComponentCategory extractComponentsCategory() {
         return ComponentCategory.CATEGORY_4_CAMEL;

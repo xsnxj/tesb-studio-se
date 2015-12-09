@@ -18,17 +18,12 @@ import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.model.CamelRepositoryNodeType;
-import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.model.general.Project;
-import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryNode;
 
 /**
@@ -48,29 +43,12 @@ public class ReadCamelBean extends AbstractBeanAction {// AbstractProcessAction
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.READ_ICON));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.Action#run()
-     */
+    @Override
     protected void doRun() {
         if (repositoryNode == null && getSelection() != null) {
             repositoryNode = (RepositoryNode) ((IStructuredSelection) getSelection()).getFirstElement();
         }
-        BeanItem beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
-
-        Property updatedProperty = null;
-        try {
-            updatedProperty = ProxyRepositoryFactory
-                    .getInstance()
-                    .getLastVersion(new Project(ProjectManager.getInstance().getProject(beanItem)),
-                            beanItem.getProperty().getId()).getProperty();
-
-            // repositoryNode.getObject().setProperty(updatedProperty);
-        } catch (PersistenceException e) {
-            ExceptionHandler.process(e);
-        }
-        beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
+        final BeanItem beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
         try {
             openBeanEditor(beanItem, true);
         } catch (PartInitException e) {
@@ -80,12 +58,7 @@ public class ReadCamelBean extends AbstractBeanAction {// AbstractProcessAction
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = !selection.isEmpty() && selection.size() == 1;
         if (canWork) {

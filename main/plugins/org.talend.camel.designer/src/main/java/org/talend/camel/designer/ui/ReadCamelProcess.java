@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.ui;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
@@ -20,18 +19,17 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
-import org.talend.camel.designer.ui.editor.CamelEditorUtil;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
-import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.model.repository.RepositoryManager;
 import org.talend.designer.core.ui.action.AbstractProcessAction;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 
 /**
  * DOC smallet class global comment. Detailled comment <br/>
@@ -50,16 +48,9 @@ public class ReadCamelProcess extends AbstractProcessAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.READ_ICON));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.Action#run()
-     */
+    @Override
     protected void doRun() {
-        ISelection selection = getSelection();
-        Object obj = ((IStructuredSelection) selection).getFirstElement();
-
-        RepositoryNode node = (RepositoryNode) obj;
+        final IRepositoryNode node = (IRepositoryNode) ((IStructuredSelection) getSelection()).getFirstElement();
         CamelProcessItem processItem = (CamelProcessItem) node.getObject().getProperty().getItem();
 
         IWorkbenchPage page = getActivePage();
@@ -75,41 +66,21 @@ public class ReadCamelProcess extends AbstractProcessAction {
             } else {
                 page.activate(editorPart);
             }
-        } catch (PartInitException e) {
-            MessageBoxExceptionHandler.process(e);
-        } catch (PersistenceException e) {
+        } catch (PartInitException | PersistenceException e) {
             MessageBoxExceptionHandler.process(e);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.ITreeContextualAction#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
+    @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = !selection.isEmpty() && selection.size() == 1;
         if (canWork) {
-            Object o = selection.getFirstElement();
-            RepositoryNode node = (RepositoryNode) o;
-            if (CamelEditorUtil.hasEditorOpened(node)) {
-                canWork = false;
-            } else {
-                switch (node.getType()) {
-                case REPOSITORY_ELEMENT:
-                    if (node.getObjectType() != CamelRepositoryNodeType.repositoryRoutesType) {
-                        canWork = false;
-                    }
-                    break;
-                default:
-                    canWork = false;
-                }
-            }
-            if (canWork && node.getObject() != null
-                    && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.LOCK_BY_USER) {
-                canWork = false;
-            }
+            final IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
+            canWork = node.getType() == ENodeType.REPOSITORY_ELEMENT
+                //&& node.getObject() != null
+                //&& ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.LOCK_BY_USER
+                && node.getObjectType() == CamelRepositoryNodeType.repositoryRoutesType
+                && !RepositoryManager.isOpenedItemInEditor(node.getObject());
         }
         setEnabled(canWork);
     }

@@ -101,15 +101,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         restoreWidgetValuesForKar();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWizardPage#createJobScriptsManager()
-     */
     @Override
     public JobScriptsManager createJobScriptsManager() {
-        String launcher = (launcherCombo == null || launcherCombo.isDisposed()) ? "all" : launcherCombo.getText();
-        String context = (contextCombo == null || contextCombo.isDisposed()) ? "Default" : contextCombo.getText();
+        String launcher = launcherCombo == null || launcherCombo.isDisposed() ? "all" : launcherCombo.getText();
+        String context = contextCombo == null || contextCombo.isDisposed() ? "Default" : contextCombo.getText();
         return JobScriptsManagerFactory.createManagerInstance(getExportChoiceMap(), context, launcher, IProcessor.NO_STATISTICS,
                 IProcessor.NO_TRACES, JavaJobScriptsExportWSWizardPage.JobExportType.getTypeFromString(EXPORTTYPE_KAR));
     }
@@ -244,11 +239,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                         destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
                                 + OUTPUT_FILE_SUFFIX;
                     }
-                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX)) {
-                    if (!show) {
-                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
-                                + getOutputSuffix();
-                    }
+                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX) && !show) {
+                    destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
+                            + getOutputSuffix();
                 }
                 setDestinationValue(destinationValue);
             }

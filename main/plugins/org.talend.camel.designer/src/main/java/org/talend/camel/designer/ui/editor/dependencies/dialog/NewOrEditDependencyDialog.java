@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.ui.editor.dependencies.dialog;
 
 import java.text.MessageFormat;
@@ -88,7 +100,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         final String name = type;
-        final boolean isNew = (origin == null);
+        final boolean isNew = origin == null;
         getShell().setText(name);
         setTitle(MessageFormat.format(isNew ? Messages.NewDependencyItemDialog_addTitle
             : Messages.NewDependencyItemDialog_editTitle, name));
@@ -177,14 +189,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         item.setName(getDependencyName());
         item.setVersion(getVersion());
         item.setOptional(getOptional());
-        if (item.equals(origin) && (item.isOptional() == origin.isOptional())
-                && ((item.getVersion() == null && origin.getVersion() == null)
-                    || (item.getVersion() != null && item.getVersion().equals(origin.getVersion())))) {
-			setErrorMessage(null);
+        setErrorMessage(null);
+        if (item.equals(origin) && item.isOptional() == origin.isOptional()
+                && (item.getVersion() == null && origin.getVersion() == null
+                    || item.getVersion() != null && item.getVersion().equals(origin.getVersion()))) {
 			// nothing changes.
 			return false;
 		}
-		setErrorMessage(null);
 		return true;
 	}
 

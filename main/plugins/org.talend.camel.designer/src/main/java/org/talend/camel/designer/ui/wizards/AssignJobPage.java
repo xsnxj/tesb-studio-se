@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.ui.wizards;
 
 import java.util.ArrayList;
@@ -18,15 +30,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelDesignerUtil;
-import org.talend.core.GlobalServiceRegister;
-import org.talend.core.PluginChecker;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProjectRepositoryNode;
 import org.talend.core.repository.ui.utils.RecombineRepositoryNodeUtil;
-import org.talend.core.ui.IJobletProviderService;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
@@ -46,9 +55,6 @@ public class AssignJobPage extends WizardPage {
         super(pageName);
     }
 
-    public void createContents(Composite parent) {
-    }
-
     @Override
     public void createControl(Composite parent) {
         setTitle(Messages.getString("AssignJobPage_title"));//$NON-NLS-1$
@@ -65,7 +71,7 @@ public class AssignJobPage extends WizardPage {
     }
 
     public boolean finish() {
-        dialog.okPressed();
+        dialog.finish();
         if (dialog.getResult() != null) {
             IRepositoryViewObject repositoryObject = dialog.getResult().getObject();
             final Item item = repositoryObject.getProperty().getItem();
@@ -91,14 +97,7 @@ public class AssignJobPage extends WizardPage {
 
         private List<IRepositoryNode> routeInputContainedJobs = new ArrayList<IRepositoryNode>();
 
-        private IJobletProviderService service = null;
-
         private RouteInputContainedFilter() {
-
-            if (PluginChecker.isJobLetPluginLoaded()) {
-                service = (IJobletProviderService) GlobalServiceRegister.getDefault().getService(IJobletProviderService.class);
-            }
-
             /*
              * find all RouteInput contained Jobs first
              */
@@ -227,16 +226,15 @@ public class AssignJobPage extends WizardPage {
         @Override
         protected Button getButton(int id) {
             if (id == OK) {
-                return container.getButton(IDialogConstants.FINISH_ID);
+                return container.doGetButton(IDialogConstants.FINISH_ID);
             } else if (id == CANCEL) {
-                return container.getButton(IDialogConstants.CANCEL_ID);
+                return container.doGetButton(IDialogConstants.CANCEL_ID);
             }
             return super.getButton(id);
         }
 
-        @Override
-        public void okPressed() {
-            super.okPressed();
+        public void finish() {
+            okPressed();
         }
     }
 }

@@ -21,7 +21,6 @@ import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.ui.editor.RepositoryEditorInput;
-import org.talend.designer.core.ui.MultiPageTalendEditor;
 import org.talend.designer.core.ui.wizards.OpenExistVersionProcessWizard;
 import org.talend.repository.model.RepositoryNode;
 
