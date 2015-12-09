@@ -287,14 +287,11 @@ public class RouteResourceUtil {
         final Collection<ResourceDependencyModel> models = new HashSet<ResourceDependencyModel>();
         for (INode node : process.getGraphicalNodes()) {
             final ResourceDependencyModel rdm = createDenpendencyModel(node);
-            if (null != rdm) {
-                // Merge and add
-                if (!models.add(rdm)) {
-                    for (ResourceDependencyModel model : models) {
-                        if (model.equals(rdm)) {
-                            model.getRefNodes().addAll(rdm.getRefNodes());
-                            break;
-                        }
+            if (null != rdm && !models.add(rdm)) { // Merge and add
+                for (ResourceDependencyModel model : models) {
+                    if (model.equals(rdm)) {
+                        model.getRefNodes().addAll(rdm.getRefNodes());
+                        break;
                     }
                 }
             }
@@ -361,12 +358,9 @@ public class RouteResourceUtil {
         if (referenceResources.isEmpty()) {
             return null;
         }
-        final ReferenceFileItem refFile = (ReferenceFileItem) referenceResources.get(0);
-        final InputStream inputStream = new ByteArrayInputStream(refFile.getContent().getInnerContent());
-
         final IFile classpathFile = folder.getFile(new Path(model.getClassPathUrl()));
-
-        try {
+        final ReferenceFileItem refFile = (ReferenceFileItem) referenceResources.get(0);
+        try (final InputStream inputStream = new ByteArrayInputStream(refFile.getContent().getInnerContent())) {
             if (classpathFile.exists()) {
                 classpathFile.setContents(inputStream, 0, null);
             } else {
@@ -375,15 +369,10 @@ public class RouteResourceUtil {
                 }
                 classpathFile.create(inputStream, true, null);
             }
-        } catch (CoreException e) {
+        } catch (CoreException | IOException e) {
             ExceptionHandler.process(e);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                // nothing
-            }
         }
+
         return classpathFile;
     }
 

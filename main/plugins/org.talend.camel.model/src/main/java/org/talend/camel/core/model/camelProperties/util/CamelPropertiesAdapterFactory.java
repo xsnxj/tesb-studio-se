@@ -10,19 +10,17 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
-import org.talend.camel.core.model.camelProperties.*;
-import org.talend.core.model.properties.DocumentationItem;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
+import org.talend.core.model.properties.DocumentationItem;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.designer.joblet.model.JobletProcess;
 
 /**
  * <!-- begin-user-doc --> The <b>Adapter Factory</b> for the model. It provides

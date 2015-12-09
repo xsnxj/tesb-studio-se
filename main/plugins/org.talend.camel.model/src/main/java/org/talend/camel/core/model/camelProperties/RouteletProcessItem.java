@@ -2,7 +2,6 @@
  */
 package org.talend.camel.core.model.camelProperties;
 
-import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.core.model.properties.ProcessItem;
 
 /**

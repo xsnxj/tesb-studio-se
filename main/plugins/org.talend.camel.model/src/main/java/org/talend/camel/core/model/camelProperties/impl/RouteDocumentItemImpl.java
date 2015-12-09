@@ -3,14 +3,10 @@
 package org.talend.camel.core.model.camelProperties.impl;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
-
 import org.talend.core.model.properties.impl.DocumentationItemImpl;
 
 /**

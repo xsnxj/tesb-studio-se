@@ -251,19 +251,36 @@
 		</resource>
     </resources>
 
-	<pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.6.1</version>
-			</plugin>
-		</plugins>
-	</pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.6.1</version>
+				</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-pmd-plugin</artifactId>
+						<version>3.5</version>
+						<executions>
+							<execution>
+								<id>validate</id>
+								<phase>test</phase>
+								<goals>
+									<goal>pmd</goal>
+									<goal>check</goal>
+									<!--goal>cpd</goal>
+									<goal>cpd-check</goal-->
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+			</plugins>
+		</pluginManagement>
   </build>
 </project>

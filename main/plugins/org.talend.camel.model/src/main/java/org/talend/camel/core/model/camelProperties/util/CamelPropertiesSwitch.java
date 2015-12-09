@@ -9,20 +9,17 @@ package org.talend.camel.core.model.camelProperties.util;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
-import org.talend.camel.core.model.camelProperties.*;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 import org.talend.core.model.properties.DocumentationItem;
 import org.talend.core.model.properties.FileItem;
 import org.talend.core.model.properties.Item;
-import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.RoutineItem;
-import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
-import org.talend.designer.joblet.model.JobletProcess;
 
 /**
  * <!-- begin-user-doc --> The <b>Switch</b> for the model's inheritance

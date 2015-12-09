@@ -19,12 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
-import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 
 /**
  * @author xpli
@@ -105,6 +105,7 @@ public class ResourceDependencyModel {
                 versions.add(obj.getVersion());
             }
         } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
         }
         versions.add(LATEST_VERSION);
         Collections.sort(versions);

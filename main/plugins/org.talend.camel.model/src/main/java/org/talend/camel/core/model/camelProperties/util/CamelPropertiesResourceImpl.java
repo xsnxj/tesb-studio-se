@@ -7,7 +7,6 @@
 package org.talend.camel.core.model.camelProperties.util;
 
 import org.eclipse.emf.common.util.URI;
-
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceImpl;
 
 /**

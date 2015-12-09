@@ -3,11 +3,8 @@
 package org.talend.camel.core.model.camelProperties.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
-
-import org.talend.core.model.properties.impl.JobletProcessItemImpl;
 import org.talend.core.model.properties.impl.ProcessItemImpl;
 
 /**

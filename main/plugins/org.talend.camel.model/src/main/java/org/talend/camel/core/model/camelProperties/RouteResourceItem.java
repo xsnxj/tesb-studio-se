@@ -52,6 +52,6 @@ public interface RouteResourceItem extends FileItem {
 	 */
 	void setBindingExtension(String value);
 
-	public static final String ROUTE_RESOURCES_FOLDER = "route_resources";
+	String ROUTE_RESOURCES_FOLDER = "route_resources";
 
 } // RouteResourceItem

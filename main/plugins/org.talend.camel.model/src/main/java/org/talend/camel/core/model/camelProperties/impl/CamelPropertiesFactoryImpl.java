@@ -11,12 +11,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.talend.camel.core.model.camelProperties.*;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesFactory;
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.RouteDocumentItem;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 
 /**
  * <!-- begin-user-doc -->

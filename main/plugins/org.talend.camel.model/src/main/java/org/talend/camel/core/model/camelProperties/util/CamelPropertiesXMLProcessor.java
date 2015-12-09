@@ -9,11 +9,8 @@ package org.talend.camel.core.model.camelProperties.util;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.resource.Resource;
-
 import org.eclipse.emf.ecore.xmi.util.XMLProcessor;
-
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
 
 /**
@@ -31,7 +28,7 @@ public class CamelPropertiesXMLProcessor extends XMLProcessor {
 	 * @generated
 	 */
     public CamelPropertiesXMLProcessor() {
-		super((EPackage.Registry.INSTANCE));
+		super(EPackage.Registry.INSTANCE);
 		CamelPropertiesPackage.eINSTANCE.eClass();
 	}
     
