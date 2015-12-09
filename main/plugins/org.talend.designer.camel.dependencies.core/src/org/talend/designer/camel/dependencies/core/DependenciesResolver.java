@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IConnection;
@@ -78,7 +80,8 @@ public class DependenciesResolver {
         if (RelationshipItemBuilder.LATEST_VERSION.equals(version)) {
             try {
                 version = ProxyRepositoryFactory.getInstance().getLastVersion(item.getProperty().getId()).getVersion();
-            } catch (Exception e) {
+            } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
             }
         }
         final ExportPackage exportPackage = new ExportPackage();
@@ -116,7 +119,8 @@ public class DependenciesResolver {
         if (RelationshipItemBuilder.LATEST_VERSION.equals(version)) {
             try {
                 version = ProxyRepositoryFactory.getInstance().getLastVersion(process.getId()).getVersion();
-            } catch (Exception e) {
+            } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
             }
         }
         final ExportPackage exportPackage = new ExportPackage();
@@ -208,14 +212,13 @@ public class DependenciesResolver {
      */
     private void handleAllConnectionTypes(Collection<ConnectionType> connections) {
         for (ConnectionType connection : connections) {
-            if (isActivate(connection.getElementParameter())) {
-                if (EConnectionType.ROUTE_WHEN.getName().equals(connection.getConnectorName())) {
-                    final String languageName = handleROUTEWHENconnection(connection.getElementParameter());
-                    if (languageName != null) {
-                        for (ImportPackage importPackage :
-                            ExtensionPointsReader.INSTANCE.getImportPackages(languageName)) {
-                            addItem(importPackages, importPackage).addRelativeComponent(connection.getLabel());
-                        }
+            if (isActivate(connection.getElementParameter())
+                && EConnectionType.ROUTE_WHEN.getName().equals(connection.getConnectorName())) {
+                final String languageName = handleROUTEWHENconnection(connection.getElementParameter());
+                if (languageName != null) {
+                    for (ImportPackage importPackage :
+                        ExtensionPointsReader.INSTANCE.getImportPackages(languageName)) {
+                        addItem(importPackages, importPackage).addRelativeComponent(connection.getLabel());
                     }
                 }
             }
@@ -224,14 +227,13 @@ public class DependenciesResolver {
 
     private void handleAllConnections(Collection<? extends IConnection> connections) {
         for (IConnection connection : connections) {
-            if (connection.isActivate()) {
-                if (EConnectionType.ROUTE_WHEN == connection.getLineStyle()) {
-                    final IElementParameter ep = connection.getElementParameter(EParameterName.ROUTETYPE.getName());
-                    if (null != ep) {
-                        for (ImportPackage importPackage :
-                            ExtensionPointsReader.INSTANCE.getImportPackages(ep.getValue().toString())) {
-                            addItem(importPackages, importPackage).addRelativeComponent(connection.getName());
-                        }
+            if (connection.isActivate()
+                && EConnectionType.ROUTE_WHEN == connection.getLineStyle()) {
+                final IElementParameter ep = connection.getElementParameter(EParameterName.ROUTETYPE.getName());
+                if (null != ep) {
+                    for (ImportPackage importPackage :
+                        ExtensionPointsReader.INSTANCE.getImportPackages(ep.getValue().toString())) {
+                        addItem(importPackages, importPackage).addRelativeComponent(connection.getName());
                     }
                 }
             }

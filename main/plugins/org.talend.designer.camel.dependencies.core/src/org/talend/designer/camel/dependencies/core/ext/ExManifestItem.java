@@ -48,11 +48,9 @@ abstract class ExManifestItem<T extends ManifestItem> {
                         boolean found = false;
                         for (Object e : ept.getElementValue()) {
                             final ElementValueType evt = (ElementValueType) e;
-                            if (valueName.equals(evt.getElementRef())) {
-                                if (attributeValue.equals(evt.getValue())) {
-                                    found = true;
-                                    break;
-                                }
+                            if (valueName.equals(evt.getElementRef())&& attributeValue.equals(evt.getValue())) {
+                                found = true;
+                                break;
                             }
                         }
                         if (!found) {
