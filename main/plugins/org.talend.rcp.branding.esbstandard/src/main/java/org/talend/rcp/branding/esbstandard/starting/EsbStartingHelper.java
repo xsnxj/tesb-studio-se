@@ -24,9 +24,9 @@ import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
+import org.talend.core.ui.branding.StartingConstants;
 import org.talend.rcp.branding.esbstandard.Activator;
 import org.talend.rcp.branding.esbstandard.i18n.Messages;
-import org.talend.core.ui.branding.StartingConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,12 +37,11 @@ import org.w3c.dom.NodeList;
  */
 public class EsbStartingHelper {
 
-    private static EsbStartingHelper helper = null;
+    private static EsbStartingHelper helper;
 
     private String content;
 
     private EsbStartingHelper() {
-
     }
 
     public static EsbStartingHelper getHelper() {
@@ -58,10 +57,9 @@ public class EsbStartingHelper {
             if (entry != null) {
                 entry = FileLocator.toFileURL(entry);
                 String result = entry.toExternalForm();
-                if (result.startsWith("file:/")) { //$NON-NLS-1$
-                    if (result.startsWith("file:///") == false) { //$NON-NLS-1$
-                        result = "file:///" + result.substring(6); //$NON-NLS-1$
-                    }
+                if (result.startsWith("file:/") //$NON-NLS-1$
+                    && result.startsWith("file:///") == false) { //$NON-NLS-1$
+                    result = "file:///" + result.substring(6); //$NON-NLS-1$
                 }
 
                 IntroContentParser parser = new IntroContentParser(result);
@@ -132,7 +130,7 @@ public class EsbStartingHelper {
                         contentProviderElement.getParentNode().replaceChild(contentDiv, contentProviderElement);
                     }
                 }
-            } else {
+//            } else {
                 // we couldn't load the content provider, so add any alternate
                 // text content if there is any.
                 // INTRO: do it. 3.0 intro content style uses text element as

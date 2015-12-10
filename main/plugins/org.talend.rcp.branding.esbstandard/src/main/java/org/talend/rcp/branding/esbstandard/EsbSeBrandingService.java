@@ -17,9 +17,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.osgi.framework.Bundle;
 import org.talend.core.branding.AbstractTalendBrandingService;
 import org.talend.core.branding.DefaultBrandingConfiguration;
 import org.talend.core.ui.branding.IBrandingConfiguration;
@@ -34,33 +32,35 @@ public class EsbSeBrandingService extends AbstractTalendBrandingService {
 
     protected IBrandingConfiguration brandingConfigure;
 
+    @Override
     public String getShortProductName() {
         return getProductName();
     }
 
+    @Override
     public String getCorporationName() {
         return Messages.getString("corporationname"); //$NON-NLS-1$
     }
 
+    @Override
     public ImageDescriptor getLoginVImage() {
-        return Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, Messages.getString("loginimageleft")); //$NON-NLS-1$
+        return Activator.imageDescriptorFromPlugin(Activator.getDefault().getBundle().getSymbolicName(),
+            Messages.getString("loginimageleft")); //$NON-NLS-1$
     }
 
+    @Override
     public ImageDescriptor getLoginHImage() {
-        return Activator.imageDescriptorFromPlugin(Activator.PLUGIN_ID, Messages.getString("loginimagehigh")); //$NON-NLS-1$
+        return Activator.imageDescriptorFromPlugin(Activator.getDefault().getBundle().getSymbolicName(),
+            Messages.getString("loginimagehigh")); //$NON-NLS-1$
     }
 
+    @Override
     public URL getLicenseFile() throws IOException {
-        final Bundle b = Platform.getBundle(Activator.PLUGIN_ID);
-        final URL url = FileLocator.toFileURL(FileLocator.find(b, new Path("resources/license.txt"), null)); //$NON-NLS-1$
-        return url;
+        return FileLocator.toFileURL(FileLocator.find(Activator.getDefault().getBundle(),
+            new Path("resources/license.txt"), null)); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.ui.branding.IBrandingService#getBrandingConfiguration()
-     */
+    @Override
     public IBrandingConfiguration getBrandingConfiguration() {
         if (brandingConfigure == null) {
             brandingConfigure = new DefaultBrandingConfiguration();
@@ -68,35 +68,38 @@ public class EsbSeBrandingService extends AbstractTalendBrandingService {
         return brandingConfigure;
     }
 
+    @Override
     public String getAcronym() {
-        return "tos_esb";
+        return "tos_esb"; //$NON-NLS-1$
     }
 
     @Override
     public String getJobLicenseHeader(String version) {
-        return Messages.getString("TosBrandingService_job_license_header_content", this.getFullProductName(), version);
+        return Messages.getString("TosBrandingService_job_license_header_content", getFullProductName(), version);
     }
 
     @Override
     public String getRoutineLicenseHeader(String version) {
-        return Messages.getString("TosBrandingService_routine_license_header_content", this.getFullProductName(), version);
+        return Messages.getString("TosBrandingService_routine_license_header_content", getFullProductName(), version);
     }
 
+    @Override
     public String getProductName() {
         return "Talend Open Studio";
     }
 
+    @Override
     public String getOptionName() {
         return "for ESB";
     }
 
     @Override
     public String getStartingBrowserId() {
-        // TODO Auto-generated method stub
         return EsbStartingBrowser.ID;
     }
 
+    @Override
     public String getUserManuals() {
-        return "ESB";
+        return "ESB"; //$NON-NLS-1$
     }
 }
