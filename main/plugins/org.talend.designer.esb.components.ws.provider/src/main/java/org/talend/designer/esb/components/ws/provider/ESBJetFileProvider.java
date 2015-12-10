@@ -13,6 +13,7 @@
 package org.talend.designer.esb.components.ws.provider;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -21,17 +22,17 @@ import org.talend.designer.codegen.additionaljet.AbstractJetFileProvider;
 
 public class ESBJetFileProvider extends AbstractJetFileProvider {
 
-    private File providedLocation = null;
+    private File providedLocation;
 
     @Override
     protected File getExternalFrameLocation() {
         if (null == providedLocation) {
-            Activator plugin = Activator.getDefault();
+            final Activator plugin = Activator.getDefault();
+            URL url = FileLocator.find(plugin.getBundle(), new Path("additional"), null); //$NON-NLS-1$
             try {
-                URL url = FileLocator.find(plugin.getBundle(), new Path("additional"), null); //$NON-NLS-1$
                 url = FileLocator.toFileURL(url);
                 providedLocation = new File(url.getPath());
-            } catch (Exception e) {
+            } catch (IOException e) {
                 plugin.getLog().log(Activator.getStatus(null, e));
             }
         }

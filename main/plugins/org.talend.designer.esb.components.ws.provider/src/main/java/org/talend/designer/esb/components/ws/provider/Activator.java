@@ -22,17 +22,8 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends Plugin {
 
-    // The plug-in ID
-    public static final String PLUGIN_ID = "org.talend.designer.esb.components.ws.provider"; //$NON-NLS-1$
-
     // The shared instance
     private static Activator plugin;
-
-    /**
-     * The constructor
-     */
-    public Activator() {
-    }
 
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -54,7 +45,7 @@ public class Activator extends Plugin {
     }
 
     public static IStatus getStatus(final String message, final Throwable e) {
-        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
+        String msg = message != null ? message : (e.getMessage() != null) ? e.getMessage() : e.getClass().getName();
         return new Status(IStatus.ERROR, getDefault().getBundle().getSymbolicName(), msg, e);
     }
 
