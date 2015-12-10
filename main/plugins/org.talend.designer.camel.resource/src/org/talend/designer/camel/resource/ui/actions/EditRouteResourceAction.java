@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IWorkbenchPage;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
@@ -63,25 +62,15 @@ public class EditRouteResourceAction extends AContextualAction {
 
     @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
-        boolean canWork = !selection.isEmpty() && (selection.size() == 1)
+        boolean canWork = !selection.isEmpty() && selection.size() == 1
             && !ProxyRepositoryFactory.getInstance().isUserReadOnlyOnCurrentProject();
         if (canWork) {
             final IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
-            canWork = node.getObjectType() == CamelRepositoryNodeType.repositoryRouteResourceType;
-            if (canWork && node.getObject() != null
-                && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) == ERepositoryStatus.DELETED) {
-                canWork = false;
-            }
-            if (canWork && !ProjectManager.getInstance().isInCurrentMainProject(node)) {
-                canWork = false;
-            }
-
-            // If the editProcess action canwork is true, then detect that the
-            // job version is the latest verison or not.
-            if (canWork) {
-                canWork = isLastVersion(node);
-            }
-
+            canWork = node.getObjectType() == CamelRepositoryNodeType.repositoryRouteResourceType
+                && node.getObject() != null
+                && ProxyRepositoryFactory.getInstance().getStatus(node.getObject()) != ERepositoryStatus.DELETED
+                && ProjectManager.getInstance().isInCurrentMainProject(node)
+                && isLastVersion(node);
         }
         setEnabled(canWork);
     }
@@ -92,7 +81,7 @@ public class EditRouteResourceAction extends AContextualAction {
 	 * @param node
 	 */
 	private void openOrBindEditor(IRepositoryNode node) {
-		final Property property = (Property) node.getObject().getProperty();
+		final Property property = node.getObject().getProperty();
 		if (property != null) {
 			Assert.isTrue(property.getItem() instanceof RouteResourceItem);
 			final RouteResourceItem item = (RouteResourceItem) property.getItem();

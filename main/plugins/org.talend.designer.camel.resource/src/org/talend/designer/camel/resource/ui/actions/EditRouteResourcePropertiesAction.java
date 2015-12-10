@@ -23,7 +23,8 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.designer.camel.resource.i18n.Messages;
 import org.talend.designer.camel.resource.ui.wizards.EditRouteResourcePropertiesWizard;
 import org.talend.metadata.managment.ui.wizard.PropertiesWizard;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.ui.actions.EditPropertiesAction;
 
 /**
@@ -34,45 +35,29 @@ import org.talend.repository.ui.actions.EditPropertiesAction;
  */
 public class EditRouteResourcePropertiesAction extends EditPropertiesAction {
 
-	public EditRouteResourcePropertiesAction() {
-		super();
-		this.setText(Messages
-				.getString("EditRouteResourcePropertiesAction.Title")); //$NON-NLS-1$
-		this.setToolTipText(Messages
-				.getString("EditRouteResourcePropertiesAction.tooltip")); //$NON-NLS-1$
-		this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
-	}
+    public EditRouteResourcePropertiesAction() {
+        this.setText(Messages.getString("EditRouteResourcePropertiesAction.Title")); //$NON-NLS-1$
+        this.setToolTipText(Messages.getString("EditRouteResourcePropertiesAction.tooltip")); //$NON-NLS-1$
+        this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
+    }
 
-	public void init(TreeViewer viewer, IStructuredSelection selection) {
-		boolean canWork = selection.size() == 1;
-		if (canWork) {
-			Object o = ((IStructuredSelection) selection).getFirstElement();
-			if (o instanceof RepositoryNode) {
-				RepositoryNode node = (RepositoryNode) o;
-				switch (node.getType()) {
-				case REPOSITORY_ELEMENT:
-					if (node.getObjectType() == CamelRepositoryNodeType.repositoryRouteResourceType) {
-						canWork = true;
-						break;
-					}
-				default:
-					canWork = false;
-					break;
-				}
-				if (canWork) {
-					canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
-				}
-				if (canWork) {
-					canWork = isLastVersion(node);
-				}
-			}
-		}
-		setEnabled(canWork);
-	}
-	
-	@Override
-	protected PropertiesWizard getPropertiesWizard(
-			IRepositoryViewObject object, IPath path) {
-		return new EditRouteResourcePropertiesWizard(object, path, getNeededVersion() == null);
-	}
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = selection.size() == 1;
+        if (canWork) {
+            Object o = ((IStructuredSelection) selection).getFirstElement();
+            if (o instanceof IRepositoryNode) {
+                final IRepositoryNode node = (IRepositoryNode) o;
+                canWork = node.getType() == ENodeType.REPOSITORY_ELEMENT
+                    && node.getObjectType() == CamelRepositoryNodeType.repositoryRouteResourceType
+                    && node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED
+                    && isLastVersion(node);
+            }
+        }
+        setEnabled(canWork);
+    }
+
+    @Override
+    protected PropertiesWizard getPropertiesWizard(IRepositoryViewObject object, IPath path) {
+        return new EditRouteResourcePropertiesWizard(object, path, getNeededVersion() == null);
+    }
 }

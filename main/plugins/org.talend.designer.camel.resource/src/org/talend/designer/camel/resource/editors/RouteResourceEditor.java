@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ReferenceFileItem;
@@ -66,6 +67,7 @@ public class RouteResourceEditor extends TextEditor {
 		try {
 			ProxyRepositoryFactory.getInstance().unlock(rrInput.getItem());
 		} catch (Exception e) {
+		    ExceptionHandler.process(e);
 		}
 	}
 
@@ -106,7 +108,7 @@ public class RouteResourceEditor extends TextEditor {
 			ByteArray content = refFile.getContent();
 			content.setInnerContent(sb.toString().getBytes());
 		} catch (Exception e) {
-			e.printStackTrace();
+		    ExceptionHandler.process(e);
 		}
 
 	}

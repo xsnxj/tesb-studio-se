@@ -9,4 +9,12 @@
   </parent>
   <artifactId>org.talend.designer.esb.components.router</artifactId>
   <packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

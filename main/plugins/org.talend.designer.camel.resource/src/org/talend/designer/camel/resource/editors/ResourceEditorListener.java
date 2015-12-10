@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.camel.resource.editors;
 
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -19,6 +20,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.properties.Item;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.camel.resource.editors.input.RouteResourceInput;
@@ -58,12 +60,13 @@ public class ResourceEditorListener implements IPartListener2 {
 						.equals(editorInput.getItem().getProperty().getId())) {
 					try {
 						ProxyRepositoryFactory.getInstance().unlock(item);
-						page.getWorkbenchWindow().getPartService()
-								.removePartListener(this);
-						ResourcesPlugin.getWorkspace()
-								.removeResourceChangeListener(
-										editorInput.getListener());
+						page.getWorkbenchWindow().getPartService().removePartListener(this);
+						IResourceChangeListener l = editorInput.getListener();
+						if (null != l) {
+                            ResourcesPlugin.getWorkspace().removeResourceChangeListener(l);
+						}
 					} catch (Exception e) {
+					    ExceptionHandler.process(e);
 					}
 				}
 			}
@@ -86,6 +89,7 @@ public class ResourceEditorListener implements IPartListener2 {
 				try {
 					ProxyRepositoryFactory.getInstance().lock(item);
 				} catch (Exception e) {
+				    ExceptionHandler.process(e);
 				}
 			}
 		}

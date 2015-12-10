@@ -24,10 +24,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
 import org.talend.commons.exception.BusinessException;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
-import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.properties.Item;
@@ -40,7 +40,7 @@ import org.talend.designer.camel.resource.ui.util.RouteResourceEditorUtil;
 import org.talend.expressionbuilder.ExpressionPersistance;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode;
 
 /**
  * Open Route Resource with another version
@@ -96,18 +96,11 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 				.getRepositoryService().getProxyRepositoryFactory();
 		try {
 			repositoryFactory.lock(object);
-		} catch (PersistenceException e) {
-			ExceptionHandler.process(e);
-		} catch (BusinessException e) {
+		} catch (PersistenceException | BusinessException e) {
 			ExceptionHandler.process(e);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		if (mainPage.isCreateNewVersionJob()) {
@@ -123,29 +116,27 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 							ProxyRepositoryFactory.getInstance().saveProject(
 									ProjectManager.getInstance()
 											.getCurrentProject());
-						} catch (Exception e) {
+						} catch (PersistenceException e) {
 							ExceptionHandler.process(e);
 						}
 					}
 
 					try {
 						ProxyRepositoryFactory.getInstance().lock(repoObject);
-					} catch (PersistenceException e) {
-						ExceptionHandler.process(e);
-					} catch (LoginException e) {
+					} catch (PersistenceException | LoginException e) {
 						ExceptionHandler.process(e);
 					}
 
-					boolean locked = repoObject.getRepositoryStatus().equals(
-							ERepositoryStatus.LOCK_BY_USER);
+//					boolean locked = repoObject.getRepositoryStatus().equals(
+//							ERepositoryStatus.LOCK_BY_USER);
 					openAnotherVersion(
-							(RepositoryNode) repoObject.getRepositoryNode(),
-							!locked);
+							(IRepositoryNode) repoObject.getRepositoryNode()/*,
+							!locked*/);
 					try {
 						ProxyRepositoryFactory.getInstance().saveProject(
 								ProjectManager.getInstance()
 										.getCurrentProject());
-					} catch (Exception e) {
+					} catch (PersistenceException e) {
 						ExceptionHandler.process(e);
 					}
 				}
@@ -164,21 +155,21 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 		} else {
 			StructuredSelection selection = (StructuredSelection) mainPage
 					.getSelection();
-			RepositoryNode node = (RepositoryNode) selection.getFirstElement();
+			IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
 			boolean lastVersion = node.getObject().getVersion()
 					.equals(repoObject.getVersion());
 			repoObject.getProperty().setVersion(originalVersion);
 			if (lastVersion) {
 				lockObject(repoObject);
 			}
-			ERepositoryStatus status = node.getObject().getRepositoryStatus();
-			boolean isLocked = false;
-			if (status == ERepositoryStatus.LOCK_BY_USER) {
-				isLocked = true;
-			}
+//			ERepositoryStatus status = node.getObject().getRepositoryStatus();
+//			boolean isLocked = false;
+//			if (status == ERepositoryStatus.LOCK_BY_USER) {
+//				isLocked = true;
+//			}
 
 			// Only latest version can be editted
-			openAnotherVersion(node, !lastVersion || !isLocked);
+			openAnotherVersion(node/*, !lastVersion || !isLocked*/);
 		}
 		return true;
 	}
@@ -203,8 +194,7 @@ public class OpenAnotherVersionResrouceWizard extends Wizard {
 		}
 	}
 
-	private void openAnotherVersion(final RepositoryNode node,
-			final boolean readonly) {
+	private void openAnotherVersion(final IRepositoryNode node/*, final boolean readonly*/) {
 		if (node.getObject() != null) {
 			Item item = node.getObject().getProperty().getItem();
 			IWorkbenchPage page = getActivePage();

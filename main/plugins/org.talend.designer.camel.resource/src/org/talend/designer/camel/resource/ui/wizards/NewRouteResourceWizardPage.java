@@ -15,7 +15,7 @@ package org.talend.designer.camel.resource.ui.wizards;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 	private URL url;
 
 	private List<IRepositoryViewObject> listExistingResources;
-	
+
 	/**
 	 * Constructs a new NewProjectWizardPage.
 	 * 
@@ -67,23 +67,12 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 
 		setTitle(Messages.getString("NewRouteResourceWizardPage.title")); //$NON-NLS-1$
 		setDescription(Messages.getString("NewRouteResourceWizardPage.desc")); //$NON-NLS-1$
-
 	}
 
 	public NewRouteResourceWizardPage(String pageName, Property property,
 			IPath destinationPath, boolean readOnly, boolean editPath,
 			String lastVersionFound) {
 		super(pageName, property, destinationPath, readOnly, editPath, lastVersionFound);
-	}
-
-	public NewRouteResourceWizardPage(String pageName, Property property,
-			IPath destinationPath, boolean readOnly, boolean editPath) {
-		super(pageName, property, destinationPath, readOnly, editPath);
-	}
-
-	public NewRouteResourceWizardPage(String pageName, Property property,
-			IPath destinationPath) {
-		super(pageName, property, destinationPath);
 	}
 
 	@Override
@@ -219,7 +208,7 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 		updatePageStatus();
 
 	}
-	
+
 	private boolean isValidResourceName(String itemName){
 		if(listExistingResources == null){
 			listExistingResources = getListExistingObjects();
@@ -228,26 +217,22 @@ public class NewRouteResourceWizardPage extends PropertiesWizardPage {
 			try {
 				listExistingResources = loadRepositoryViewObjectList();
 			} catch (PersistenceException e) {
-				listExistingResources = new ArrayList<IRepositoryViewObject>();
+				listExistingResources = Collections.emptyList();
 			}
 		}
 		for(IRepositoryViewObject object: listExistingResources){
-			try{
-				if(object.getProperty() == getProperty()){
-					continue;
-				}
-				String p = object.getProperty().getItem().getState().getPath();
-				if(p == null){
-					continue;
-				}
-				if(!p.equalsIgnoreCase(getDestinationPath().toPortableString())){
-					continue;
-				}
-				if(itemName.equalsIgnoreCase(object.getProperty().getLabel())){
-					return false;
-				}
-			}catch(Exception e){
-				
+			if(object.getProperty() == getProperty()){
+				continue;
+			}
+			String p = object.getProperty().getItem().getState().getPath();
+			if(p == null){
+				continue;
+			}
+			if(!p.equalsIgnoreCase(getDestinationPath().toPortableString())){
+				continue;
+			}
+			if(itemName.equalsIgnoreCase(object.getProperty().getLabel())){
+				return false;
 			}
 		}
 		return true;

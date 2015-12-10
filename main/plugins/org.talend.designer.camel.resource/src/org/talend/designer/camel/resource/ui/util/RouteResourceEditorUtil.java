@@ -10,6 +10,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.talend.camel.core.model.camelProperties.RouteResourceItem;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.utils.VersionUtils;
@@ -111,7 +113,6 @@ public class RouteResourceEditorUtil {
 			RouteResourceInput fileEditorInput, RouteResourceItem item,
 			String editorId) {
 		try {
-
 			IEditorPart editorPart = page.findEditor(fileEditorInput);
 
 			page.getWorkbenchWindow()
@@ -126,15 +127,14 @@ public class RouteResourceEditorUtil {
 
 			if (editorPart == null) {
 				editorPart = page.openEditor(fileEditorInput, editorId, true);
-
 			} else {
 				editorPart = page.openEditor(fileEditorInput, editorId);
 			}
-
-		} catch (Exception e) {
+		} catch (PartInitException e) {
 			try {
 				ProxyRepositoryFactory.getInstance().unlock(item);
 			} catch (Exception ie) {
+			    ExceptionHandler.process(e);
 			}
 			MessageBoxExceptionHandler.process(e);
 		}
@@ -195,11 +195,9 @@ public class RouteResourceEditorUtil {
 					lastVersion = object.getVersion();
 				}
 			}
-			if (VersionUtils.compareTo(property.getVersion(), lastVersion) == 0) {
-				return true;
-			}
-			return false;
-		}catch(Exception e){
+			return VersionUtils.compareTo(property.getVersion(), lastVersion) == 0;
+		} catch(PersistenceException e) {
+		    ExceptionHandler.process(e);
 		}
 		return true;
 	}
