@@ -13,10 +13,12 @@
 package org.talend.designer.camel.components.localprovider;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.components.AbstractComponentsProvider;
 
 /**
@@ -26,11 +28,11 @@ public class CamelLocalComponentsProvider extends AbstractComponentsProvider {
 
     protected File getExternalComponentsLocation() {
         URL url = FileLocator.find(CamelComponentPlugin.getDefault().getBundle(), new Path("components"), null); //$NON-NLS-1$
-        URL fileUrl;
         try {
-            fileUrl = FileLocator.toFileURL(url);
-            return new File(fileUrl.getPath());
-        } catch (Exception e) {
+            url = FileLocator.toFileURL(url);
+            return new File(url.getPath());
+        } catch (IOException e) {
+            ExceptionHandler.process(e);
         }
         return null;
     }

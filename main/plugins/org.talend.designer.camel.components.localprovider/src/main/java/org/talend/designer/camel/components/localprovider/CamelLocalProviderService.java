@@ -23,15 +23,12 @@ import org.talend.designer.core.ILocalProviderService;
  */
 public class CamelLocalProviderService implements ILocalProviderService {
 
-    /*
-     * (non-Jsdoc)
-     * 
-     * @see org.talend.designer.core.ILocalProviderService#getResourceBundle(java.lang.String)
-     */
+    @Override
     public ResourceBundle getResourceBundle(String label) {
         return ResourceBundle.getBundle(label, Locale.getDefault(), new ResClassLoader(getClass().getClassLoader()));
     }
 
+    @Override
     public AbstractUIPlugin getPlugin() {
         return CamelComponentPlugin.getDefault();
     }
