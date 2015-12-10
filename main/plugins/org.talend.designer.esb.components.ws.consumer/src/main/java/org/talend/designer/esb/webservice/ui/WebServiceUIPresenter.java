@@ -135,7 +135,7 @@ public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSele
 			if (!ports.isEmpty()) {
 				functionTableModel.addAll(portFunctionsMap.get(ports.get(0)));
 				webServiceUI.selectFirstFunction();
-			};
+			}
 		} catch (InvocationTargetException e) {
 			webServiceUI.setErrorMessage("Error getting service description: " + e.getCause().getMessage());
 			webServiceUI.setPageComplete(false);

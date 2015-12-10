@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.designer.esb.webservice.adapter;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +29,8 @@ import org.talend.designer.esb.webservice.util.WSDLHelper;
 import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
 
 public abstract class BaseNodeAdapter {
-	protected WebServiceNode node;
+
+    protected WebServiceNode node;
 
 	public BaseNodeAdapter(WebServiceNode node) {
 		this.node = node;
@@ -31,18 +44,18 @@ public abstract class BaseNodeAdapter {
 		return definition;
 	}
 
-	public String getExpressionParamValue(String paamValueExpression) {
-		if (!paamValueExpression.contains("\"")) {
-			return parseContextParameter(paamValueExpression);
+	public String getExpressionParamValue(String paramValueExpression) {
+		if (paramValueExpression.indexOf('"') != -1) {
+			return parseContextParameter(paramValueExpression);
 		}
-		return TalendTextUtils.removeQuotes(paamValueExpression);
+		return TalendTextUtils.removeQuotes(paramValueExpression);
 	}
 
 	private String parseContextParameter(final String contextValue) {
 		IContextManager contextManager = node.getProcess().getContextManager();
 		String currentDefaultName = contextManager.getDefaultContext().getName();
 		List<IContext> contextList = contextManager.getListContext();
-		if ((contextList != null) && (contextList.size() > 1)) {
+		if (contextList != null && contextList.size() > 1) {
 			currentDefaultName = ConnectionContextHelper.getContextTypeForJob(Display.getDefault().getActiveShell(), contextManager, false);
 		}
 		IContext context = contextManager.getContext(currentDefaultName);

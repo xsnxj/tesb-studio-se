@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.IImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 
@@ -87,6 +88,7 @@ public abstract class AbstractButtonPart<T extends EventListener> extends Abstra
 			return ImageDescriptor.createFromURL(resource).createImage();
 		} catch (Exception e) {
 			// ignore when get icon failed.
+		    ExceptionHandler.process(e);
 		}
 		return null;
 	}
