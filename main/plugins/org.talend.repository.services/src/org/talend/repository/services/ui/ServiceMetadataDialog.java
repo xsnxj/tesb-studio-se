@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.ui;
 
 import java.util.ArrayList;
@@ -155,9 +167,9 @@ public class ServiceMetadataDialog extends HelpAvailableDialog {
 				public void widgetSelected(SelectionEvent e) {
 					useServiceRegistry = useSRCheck.getSelection();
 					authorizationCheck.setEnabled(!useServiceRegistry
-							&& (securitySAML /* || securityBasic */));
+							&& securitySAML /* || securityBasic )*/);
 					encryptCheck.setEnabled(!useServiceRegistry
-							&& (securitySAML /* || securityBasic */));
+							&& securitySAML /* || securityBasic )*/);
 					samlCheck.setEnabled(!useServiceRegistry);
 					basicCheck.setEnabled(!useServiceRegistry);
 					samCheck.setEnabled(!useServiceRegistry);
@@ -241,7 +253,7 @@ public class ServiceMetadataDialog extends HelpAvailableDialog {
 				authorization = false;
 			}
 			authorizationCheck.setEnabled(!useServiceRegistry
-					&& (securitySAML /* || securityBasic */));
+					&& securitySAML /* || securityBasic )*/);
 			authorizationCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					authorization = authorizationCheck.getSelection();
@@ -256,7 +268,7 @@ public class ServiceMetadataDialog extends HelpAvailableDialog {
 				encryption = false;
 			}
 			encryptCheck.setEnabled(!useServiceRegistry
-					&& (securitySAML /* || securityBasic */));
+					&& securitySAML /* || securityBasic )*/);
 			encryptCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					encryption = encryptCheck.getSelection();
@@ -343,8 +355,7 @@ public class ServiceMetadataDialog extends HelpAvailableDialog {
             props.put(USE_BUSINESS_CORRELATION, Boolean.toString(useBusinessCorrelation));
 
             if (isUseSL()) {
-                slCustomProperties = new HashMap<String, String>(customPropertiesTable
-                        .getPropertiesList().getPropertiesMap());
+                slCustomProperties = new HashMap<String, String>(customPropertiesTable.getPropertiesMap());
                 // remove old custom properties
                 List<String> props2delete = new ArrayList<String>();
                 for (String propKey : props.keySet()) {

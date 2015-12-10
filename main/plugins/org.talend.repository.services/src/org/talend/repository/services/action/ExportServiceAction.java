@@ -64,7 +64,7 @@ public class ExportServiceAction extends AContextualAction {
 
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         setEnabled(false);
-        if (selection.isEmpty() || (selection.size() > 1)) {
+        if (selection.isEmpty() || selection.size() > 1) {
             return;
         }
 

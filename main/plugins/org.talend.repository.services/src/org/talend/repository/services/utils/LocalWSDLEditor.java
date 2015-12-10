@@ -78,11 +78,11 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             @Override
             protected boolean handleButtonDown(int button) {
                 try {
-                    super.handleButtonDown(button);
+                    return super.handleButtonDown(button);
                 } catch (NullPointerException e) {
                     // ignore NPE when click wrong area.
+                    return false;
                 }
-                return false;
             }
         };
         getEditDomain().setActiveTool(tool);
@@ -141,7 +141,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             List<IRepositoryNode> portNodes = repositoryNode.getChildren();
             IRepositoryNode portNode = null;
             for (IRepositoryNode node : portNodes) {
-                if ((node.getObject()).getLabel().equals(servicePort.getName())) {
+                if (node.getObject().getLabel().equals(servicePort.getName())) {
                     portNode = node;
                 }
             }
@@ -357,6 +357,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         }
                     } catch (PartInitException e) {
                         // ignore and compare others
+                        ExceptionHandler.process(e);
                     }
                 }
                 if (!openItemInOtherEditor) {

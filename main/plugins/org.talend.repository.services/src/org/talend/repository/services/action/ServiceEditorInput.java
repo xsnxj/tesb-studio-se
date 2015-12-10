@@ -19,30 +19,28 @@ import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 
 public class ServiceEditorInput extends RepositoryEditorInput {
 
-    /**
-     * 
-     * @param file
-     * @param item
-     */
     public ServiceEditorInput(IFile file, Item item) {
         super(file, item);
     }
-    
+
     @Override
     public String getName() {
-    	return getFile().getName()+ (isReadOnly()?" (ReadOnly)":"");
+        return getFile().getName() + (isReadOnly() ? " (ReadOnly)" : "");
     }
-    
-    @Override
-	public boolean equals(final Object obj) {
-    	if(obj==null){
-    		return false;
-    	}
-    	if(obj instanceof IFileEditorInput){
-    		return getFile().equals(((IFileEditorInput)obj).getFile());
-    	}
-    	return false;
-    }
-    
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof IFileEditorInput) {
+            return getFile().equals(((IFileEditorInput) obj).getFile());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getFile().hashCode();
+    }
 }

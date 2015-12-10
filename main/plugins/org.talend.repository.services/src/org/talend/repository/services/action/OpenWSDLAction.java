@@ -14,6 +14,7 @@ package org.talend.repository.services.action;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -21,6 +22,7 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.actions.metadata.AbstractCreateAction;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
@@ -32,15 +34,13 @@ import org.talend.repository.services.utils.ESBRepositoryNodeType;
  */
 public class OpenWSDLAction extends AbstractCreateAction {
 
-    private final String createLabel = "Assign WSDL";
+    private static final String createLabel = "Assign WSDL";
 
-    private final ERepositoryObjectType currentNodeType;
+    private static final ERepositoryObjectType currentNodeType = ESBRepositoryNodeType.SERVICES;
 
-    private boolean creation = false;
+    private static final int WIZARD_WIDTH = 500;
 
-    protected static final int WIZARD_WIDTH = 500;
-
-    protected static final int WIZARD_HEIGHT = 140;
+    private static final int WIZARD_HEIGHT = 140;
 
     public OpenWSDLAction() {
         super();
@@ -48,8 +48,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
         this.setText(createLabel);
         this.setToolTipText(createLabel);
         this.setImageDescriptor(ImageProvider.getImageDesc(EServiceCoreImage.SERVICE_ICON));
-
-        currentNodeType = ESBRepositoryNodeType.SERVICES;
     }
 
     public OpenWSDLAction(boolean isToolbar) {
@@ -57,12 +55,6 @@ public class OpenWSDLAction extends AbstractCreateAction {
         setToolbar(isToolbar);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode)
-     */
     @Override
     protected void init(RepositoryNode node) {
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
@@ -71,16 +63,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
         }
         this.setText(createLabel);
         // IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-        switch (node.getType()) {
-        case REPOSITORY_ELEMENT:
-            // if (factory.isPotentiallyEditable(node.getObject())) {
-            //
-            // collectSiblingNames(node);
-            // }
-            // collectSiblingNames(node);
-            creation = false;
-            break;
-        default:
+        if (node.getType() != ENodeType.REPOSITORY_ELEMENT) {
             return;
         }
 
@@ -94,7 +77,7 @@ public class OpenWSDLAction extends AbstractCreateAction {
                 setEnabled(false);
             }
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         }
     }
 

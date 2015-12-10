@@ -7,8 +7,6 @@
 package org.talend.repository.services.model.services;
 
 import org.talend.core.model.properties.ConnectionItem;
-import org.eclipse.emf.common.util.EList;
-import org.talend.core.model.properties.Item;
 
 /**
  * <!-- begin-user-doc -->

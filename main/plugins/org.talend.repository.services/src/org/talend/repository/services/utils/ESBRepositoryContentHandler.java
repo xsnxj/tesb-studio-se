@@ -53,6 +53,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
 
     private XmiResourceManager xmiResourceManager = new XmiResourceManager();
 
+    @Override
     public Item createNewItem(ERepositoryObjectType type) {
         Item item = null;
         if (type == ESBRepositoryNodeType.SERVICES) {
@@ -61,6 +62,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return item;
     }
 
+    @Override
     public Resource create(IProject project, Item item, int classifierID, IPath path) throws PersistenceException {
         if (item.eClass() == ServicesPackage.Literals.SERVICE_ITEM) {
             ERepositoryObjectType type = ESBRepositoryNodeType.SERVICES;
@@ -78,6 +80,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return itemResource;
     }
 
+    @Override
     public Resource save(Item item) throws PersistenceException {
         if (item.eClass() == ServicesPackage.Literals.SERVICE_ITEM) {
             Resource itemResource = save((ServiceItem) item);
@@ -112,14 +115,12 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return null;
     }
 
+    @Override
     public boolean isRepObjType(ERepositoryObjectType type) {
-        boolean isESBType = false;
-        if (type == ESBRepositoryNodeType.SERVICES) {
-            isESBType = true;
-        }
-        return isESBType;
+        return type == ESBRepositoryNodeType.SERVICES;
     }
 
+    @Override
     public ERepositoryObjectType getRepositoryObjectType(Item item) {
         if (item == null) {
             return ESBRepositoryNodeType.SERVICES;
@@ -130,12 +131,12 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         return null;
     }
 
-    public RepositoryNode createRepositoryNode(RepositoryNode node) {
-        RepositoryNode serviceNode = new RepositoryNode(null, node, ENodeType.SYSTEM_FOLDER);
-        serviceNode.setProperties(EProperties.LABEL, ESBRepositoryNodeType.SERVICES);
-        serviceNode.setProperties(EProperties.CONTENT_TYPE, ESBRepositoryNodeType.SERVICES);
-        return serviceNode;
-    }
+//    public RepositoryNode createRepositoryNode(RepositoryNode node) {
+//        RepositoryNode serviceNode = new RepositoryNode(null, node, ENodeType.SYSTEM_FOLDER);
+//        serviceNode.setProperties(EProperties.LABEL, ESBRepositoryNodeType.SERVICES);
+//        serviceNode.setProperties(EProperties.CONTENT_TYPE, ESBRepositoryNodeType.SERVICES);
+//        return serviceNode;
+//    }
 
     @Override
     public void addNode(ERepositoryObjectType type, RepositoryNode recBinNode, IRepositoryViewObject repositoryObject,
@@ -218,7 +219,7 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
             Iterator<Information> iter = informations.iterator();
             while (iter.hasNext()) {
                 Information info = iter.next();
-                if (info != null && (info.getLevel() == InformationLevel.WARN_LITERAL)) {
+                if (info != null && info.getLevel() == InformationLevel.WARN_LITERAL) {
                     iter.remove();
                 }
             }
@@ -226,14 +227,12 @@ public class ESBRepositoryContentHandler extends AbstractRepositoryContentHandle
         computePropertyMaxInformationLevel(property);
     }
 
-	@Override
-	public IRepositoryTypeProcessor getRepositoryTypeProcessor(
-			String repositoryType) {
-		if("SERVICES:OPERATION".equals(repositoryType)){
-			return new ServiceOperationRepositoryTypeProcessor(repositoryType);
-		}
-		return super.getRepositoryTypeProcessor(repositoryType);
-	}
-
+    @Override
+    public IRepositoryTypeProcessor getRepositoryTypeProcessor(String repositoryType) {
+        if ("SERVICES:OPERATION".equals(repositoryType)) {
+            return new ServiceOperationRepositoryTypeProcessor(repositoryType);
+        }
+        return super.getRepositoryTypeProcessor(repositoryType);
+    }
 
 }

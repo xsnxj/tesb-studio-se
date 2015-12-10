@@ -15,7 +15,6 @@ package org.talend.repository.services.ui.scriptmanager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.talend.core.GlobalServiceRegister;
@@ -47,8 +45,6 @@ import org.talend.repository.utils.TemplateProcessor;
 public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
 
     private static final String TEMPLATE_BLUEPRINT = "/resources/blueprint-template.xml"; //$NON-NLS-1$
-
-    private static final Logger LOG = Logger.getLogger(ServiceExportManager.class);
 
     public ServiceExportManager(Map<ExportChoice, Object> exportChoiceMap) {
         super(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
@@ -79,29 +75,26 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
                     endpointAddress = WSDLUtils.getPortAddress(port);
                     if (null != endpointAddress) {
                         // http://jira.talendforge.org/browse/TESB-3638
-                        try {
-                            URI uri = new URI(endpointAddress);
-                            endpointAddress = uri.getPath();
-                            if(endpointAddress==null) {
-                                endpointAddress = uri.getRawSchemeSpecificPart();
-                                int interrogationMark=endpointAddress.indexOf('?');
-                                if(interrogationMark>0) {
-                                    endpointAddress=endpointAddress.substring(0, interrogationMark);
-                                }
+                        final URI uri = URI.create(endpointAddress);
+                        endpointAddress = uri.getPath();
+                        if (endpointAddress == null) {
+                            endpointAddress = uri.getRawSchemeSpecificPart();
+                            int interrogationMark = endpointAddress.indexOf('?');
+                            if (interrogationMark > 0) {
+                                endpointAddress = endpointAddress.substring(0, interrogationMark);
                             }
+                        }
 
-                            if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
-                                // pass as is
-                            } else if (endpointAddress.startsWith("/services/")) {
-                                // remove forwarding "/services/" context as required by runtime
-                                endpointAddress = endpointAddress.substring("/services/".length() - 1); // leave
-                                                                                                        // forwarding
-                                                                                                        // slash
-                            } else if (endpointAddress.length() == 1) { // empty path
-                                endpointAddress += studioServiceName;
-                            }
-                        } catch (URISyntaxException e) {
-                            LOG.warn("Endpoint URI invalid: " + e);
+                        if (endpointAddress.equals("/services/") || endpointAddress.equals("/services")) {
+                            // pass as is
+                            endpointAddress = endpointAddress;
+                        } else if (endpointAddress.startsWith("/services/")) {
+                            // remove forwarding "/services/" context as required by runtime
+                            endpointAddress = endpointAddress.substring("/services/".length() - 1); // leave
+                                                                                                    // forwarding
+                                                                                                    // slash
+                        } else if (endpointAddress.length() == 1) { // empty path
+                            endpointAddress += studioServiceName;
                         }
                     }
                     break;

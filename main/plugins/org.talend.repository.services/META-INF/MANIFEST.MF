@@ -42,3 +42,4 @@ Export-Package: org.talend.repository.services.action,
  org.talend.repository.services.model.services.util,
  org.talend.repository.services.ui.action,
  org.talend.repository.services.utils
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

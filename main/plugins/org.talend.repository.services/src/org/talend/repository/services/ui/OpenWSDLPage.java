@@ -146,7 +146,7 @@ public class OpenWSDLPage extends WizardPage {
 
         String[] xmlExtensions = { "*.xml;*.xsd;*.wsdl", "*.*", "*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         wsdlText = new LabelledFileField(wsdlFileArea, Messages.AssignWsdlDialog_ExistentWsdlFilePath, xmlExtensions);
-        String initialPath = (null == item || null == item.getConnection()) ? "" //$NON-NLS-1$
+        final String initialPath = null == item || null == item.getConnection() ? "" //$NON-NLS-1$
                 : ((ServiceConnection) item.getConnection()).getWSDLPath();
         wsdlText.setText(initialPath);
         wsdlText.addModifyListener(new ModifyListener() {
@@ -263,7 +263,7 @@ public class OpenWSDLPage extends WizardPage {
 	                		factory.save(item);
 							factory.deleteObjectPhysical(repositoryNode.getObject());
 						} catch (PersistenceException e1) {
-							e1.printStackTrace();
+		                    throw getCoreException("WDSL creation failed", e1);
 						}
                 	}
                 	//throw the exception
@@ -305,6 +305,7 @@ public class OpenWSDLPage extends WizardPage {
                 setErrorMessage("Populate schema to repository: " + message);
                 return false;
             } catch (InterruptedException e) {
+                return false;
             }
         }
         return true;
@@ -341,10 +342,8 @@ public class OpenWSDLPage extends WizardPage {
 
     private void createReferenceResources(String fileExtension) {
         for (Object resource : item.getReferenceResources()) {
-            if (resource instanceof ReferenceFileItem) {
-                if (fileExtension.equals(((ReferenceFileItem) resource).getExtension())) {
-                    return;
-                }
+            if (resource instanceof ReferenceFileItem && fileExtension.equals(((ReferenceFileItem) resource).getExtension())) {
+                return;
             }
         }
         ReferenceFileItem referenceFileItem = PropertiesFactory.eINSTANCE.createReferenceFileItem();

@@ -8,31 +8,22 @@ package org.talend.repository.services.model.services.impl;
 
 import java.util.Collection;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.talend.core.model.metadata.builder.connection.impl.ConnectionImpl;
-
 import org.talend.core.model.properties.PropertiesPackage;
 import org.talend.core.model.properties.impl.AdditionalInfoMapImpl;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServicePort;
-import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicesPackage;
 
 /**

@@ -110,7 +110,7 @@ public class Activator extends AbstractUIPlugin {
                 try {
                     esbConfigFileStore.copy(esbConfigsTargetFolder.getChild(esbConfigFileName), EFS.NONE, null);
                 } catch (CoreException e) {
-                    ; // ignore to do not overwrite possible user changes in configuration files
+                    return; // ignore to do not overwrite possible user changes in configuration files
                 }
             }
         }

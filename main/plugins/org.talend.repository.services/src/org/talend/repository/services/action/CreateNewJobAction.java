@@ -81,39 +81,25 @@ public class CreateNewJobAction extends AbstractCreateAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
-     * )
-     */
     @Override
     protected void init(RepositoryNode node) {
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
         if (!ERepositoryObjectType.SERVICESOPERATION.equals(nodeType)) {
             return;
         }
-        //
         boolean flag = true;
         ServiceItem serviceItem = (ServiceItem) node.getParent().getParent().getObject().getProperty().getItem();
         for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
             for (ServiceOperation operation : port.getServiceOperation()) {
-                if (operation.getLabel().equals(node.getLabel())) {
-                    if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals("")) {
-                        flag = false;
-                    }
+                if (operation.getLabel().equals(node.getLabel()) && operation.getReferenceJobId() != null
+                    && !operation.getReferenceJobId().equals("")) {
+                    flag = false;
                 }
             }
         }
         setEnabled(flag);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.AContextualAction#doRun()
-     */
     @Override
     protected void doRun() {
         RepositoryNode node = getSelectedRepositoryNode();

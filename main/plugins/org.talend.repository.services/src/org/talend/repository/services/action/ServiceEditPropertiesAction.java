@@ -12,16 +12,14 @@
 // ============================================================================
 package org.talend.repository.services.action;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.ui.IEditorPart;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 import org.talend.repository.ui.actions.EditPropertiesAction;
 
@@ -37,58 +35,16 @@ public class ServiceEditPropertiesAction extends EditPropertiesAction {
         this.setImageDescriptor(ImageProvider.getImageDesc(EImage.EDIT_ICON));
     }
 
-    protected void doRun() {
-        super.doRun();
-    }
-
-    /**
-     * delete the used routine java file if the routine is renamed. This method is added for solving bug 1321, only
-     * supply to talend java version.
-     * 
-     * @param path
-     * @param node
-     * @param originalName
-     */
-    protected void processRoutineRenameOperation(String originalName, RepositoryNode node, IPath path) {
-        super.processRoutineRenameOperation(originalName, node, path);
-    }
-
-    /**
-     * Find the editor that is related to the node.
-     * 
-     * @param node
-     * @return
-     */
-    @Override
-    protected IEditorPart getCorrespondingEditor(IRepositoryNode node) {
-
-        return super.getCorrespondingEditor(node);
-    }
-
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         boolean canWork = selection.size() == 1;
         if (canWork) {
             Object o = ((IStructuredSelection) selection).getFirstElement();
-            if (o instanceof RepositoryNode) {
-                RepositoryNode node = (RepositoryNode) o;
-                switch (node.getType()) {
-                case REPOSITORY_ELEMENT:
-                    if (node.getObjectType() == ESBRepositoryNodeType.SERVICES) {
-                        canWork = true;
-                    } else {
-                        canWork = false;
-                    }
-                    break;
-                default:
-                    canWork = false;
-                    break;
-                }
-                if (canWork) {
-                    canWork = (node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED);
-                }
-                if (canWork) {
-                    canWork = isLastVersion(node);
-                }
+            if (o instanceof IRepositoryNode) {
+                IRepositoryNode node = (IRepositoryNode) o;
+                canWork = node.getType() == ENodeType.REPOSITORY_ELEMENT
+                    && node.getObjectType() == ESBRepositoryNodeType.SERVICES
+                    && node.getObject().getRepositoryStatus() != ERepositoryStatus.DELETED
+                    && isLastVersion(node);
             }
         }
         setEnabled(canWork);

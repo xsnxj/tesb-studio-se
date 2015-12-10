@@ -16,24 +16,22 @@ package org.talend.repository.services;
  */
 public interface IESBConstant {
 
-    public static final String REF_TYPE = "-TYPE"; //$NON-NLS-1$
+    String REF_TYPE = "-TYPE"; //$NON-NLS-1$
 
-    public static final String REPOSITORY_VALUE = "ESB"; //$NON-NLS-1$
+    String REPOSITORY_VALUE = "ESB"; //$NON-NLS-1$
 
-    public static final String TABLE_SCHEMAS = "SCHEMAS"; //$NON-NLS-1$
+    String TABLE_SCHEMAS = "SCHEMAS"; //$NON-NLS-1$
 
-    public static final String REF_ATTR_REPOSITORY = "REPOSITORY"; //$NON-NLS-1$
+    String REF_ATTR_REPOSITORY = "REPOSITORY"; //$NON-NLS-1$
 
-    public static final String FIELD_SCHEMA = "SCHEMA"; //$NON-NLS-1$
+    String FIELD_SCHEMA = "SCHEMA"; //$NON-NLS-1$
 
-    public static final String FIELD_CODE = "CODE"; //$NON-NLS-1$
+    String FIELD_CODE = "CODE"; //$NON-NLS-1$
 
-    /*
-     * 
-     */
-    public static final String PROPERTY = "PROPERTY"; //$NON-NLS-1$
+    String PROPERTY = "PROPERTY"; //$NON-NLS-1$
 
-    public static final String PROPERTY_TYPE = "PROPERTY_TYPE"; //$NON-NLS-1$
+    String PROPERTY_TYPE = "PROPERTY_TYPE"; //$NON-NLS-1$
 
-    public static final String REPOSITORY_PROPERTY_TYPE = "REPOSITORY_PROPERTY_TYPE"; //$NON-NLS-1$
+    String REPOSITORY_PROPERTY_TYPE = "REPOSITORY_PROPERTY_TYPE"; //$NON-NLS-1$
+
 }

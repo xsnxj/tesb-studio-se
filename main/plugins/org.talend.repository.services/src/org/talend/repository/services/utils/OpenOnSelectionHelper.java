@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.utils;
 
 import java.io.IOException;
@@ -20,6 +32,7 @@ import org.eclipse.wst.wsdl.Definition;
 import org.eclipse.wst.wsdl.ui.internal.WSDLEditorPlugin;
 import org.eclipse.wst.xsd.ui.internal.adt.editor.ADTReadOnlyFileEditorInput;
 import org.eclipse.wst.xsd.ui.internal.editor.XSDEditorPlugin;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.properties.Item;
 import org.talend.repository.services.action.ServiceEditorInput;
 
@@ -30,64 +43,46 @@ public class OpenOnSelectionHelper extends org.eclipse.wst.wsdl.ui.internal.util
 	public OpenOnSelectionHelper(Definition definition) {
 		super(definition);
 	}
-	
-	
+
 	@Override
 	protected void openEditor(String resource, String spec) {
-
 	    String pattern = "platform:/resource"; //$NON-NLS-1$
 	    IWorkbenchPage workbenchPage = WSDLEditorPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	    IEditorPart editorPart = workbenchPage.getActiveEditor();
 	    String currentEditorId = editorPart.getEditorSite().getId();
-	    
-	    if (resource != null && resource.startsWith(pattern))
-	    {
-	      try
-	      {
+	    if (resource != null && resource.startsWith(pattern)) {
 	        Path path = new Path(resource.substring(pattern.length()));
 	        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 
-	        
 	        if (editorPart.getEditorInput() instanceof IFileEditorInput &&
-	        		((IFileEditorInput)editorPart.getEditorInput()).getFile().equals(file))
-	        {  
+	        		((IFileEditorInput)editorPart.getEditorInput()).getFile().equals(file)) {  
 	        	workbenchPage.getNavigationHistory().markLocation(editorPart);
-	        }
-	        else
-	        {
-	        	try
-	        	{
+	        } else {
+	        	try {
 	        		Item item=((ServiceEditorInput)editorPart.getEditorInput()).getItem();
 	        		// TODO: Use content type as below
-	        		if (resource.endsWith("xsd")) //$NON-NLS-1$
-	        		{
+	        		if (resource.endsWith("xsd")) { //$NON-NLS-1$
 	        			editorPart = workbenchPage.openEditor(new ServiceEditorInput(file,item), WSDLEditorPlugin.XSD_EDITOR_ID); 
-	        		}
-	        		else
-	        		{
+	        		} else {
 	        			// Since we are already in the wsdleditor
 	        			editorPart =  workbenchPage.openEditor(new ServiceEditorInput(file,item), editorPart.getEditorSite().getId());
-
 	        		}
-	        	}
-	        	catch (PartInitException initEx)
-	        	{
+	        	} catch (PartInitException initEx) {
+	        	    ExceptionHandler.process(initEx);
 	        	}
 	        }
 
-	        Class<? extends IEditorPart> theClass = editorPart.getClass();
-	        Class<?>[] methodArgs = { String.class };
-	        Method method = theClass.getMethod("openOnSelection", methodArgs); //$NON-NLS-1$
-	        Object args[] = { spec };
-	        method.invoke(editorPart, args);
-	        workbenchPage.getNavigationHistory().markLocation(editorPart);
-	      }
-	      catch (Exception e)
-	      {
-	      }
-	    }
-	    else if (resource != null && resource.startsWith("http"))
-	    {
+	        try {
+                Class<? extends IEditorPart> theClass = editorPart.getClass();
+                Class<?>[] methodArgs = { String.class };
+                Method method = theClass.getMethod("openOnSelection", methodArgs); //$NON-NLS-1$
+                Object args[] = { spec };
+                method.invoke(editorPart, args);
+                workbenchPage.getNavigationHistory().markLocation(editorPart);
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+	    } else if (resource != null && resource.startsWith("http")) {
 	      IEditorPart newEditorPart = null;
 	      boolean doOpenWsdlEditor = true;
 	      if (resource.endsWith("xsd")) //$NON-NLS-1$
@@ -102,13 +97,11 @@ public class OpenOnSelectionHelper extends org.eclipse.wst.wsdl.ui.internal.util
 	        for (int i = 0; i < length; i++)
 	        {
 	          IEditorInput input = refs[i].getEditorInput();
-	          if (input instanceof ADTReadOnlyFileEditorInput)
-	          {
+	          if (input instanceof ADTReadOnlyFileEditorInput) {
 	            ADTReadOnlyFileEditorInput readOnlyEditorInput = (ADTReadOnlyFileEditorInput) input;
 	            if (readOnlyEditorInput.getUrlString().equals(resource) && 
 	                (!doOpenWsdlEditor && readOnlyEditorInput.getEditorID().equals(WSDLEditorPlugin.XSD_EDITOR_ID)
-	                || (doOpenWsdlEditor && readOnlyEditorInput.getEditorID().equals(WSDLEditorPlugin.WSDL_EDITOR_ID))))
-	            {
+	                || doOpenWsdlEditor && readOnlyEditorInput.getEditorID().equals(WSDLEditorPlugin.WSDL_EDITOR_ID))) {
 	              newEditorPart = refs[i].getEditor(true);
 	              workbenchPage.activate(refs[i].getPart(true));
 	              break;
@@ -119,19 +112,9 @@ public class OpenOnSelectionHelper extends org.eclipse.wst.wsdl.ui.internal.util
 	        {
 	          ADTReadOnlyFileEditorInput readOnlyStorageEditorInput = new ADTReadOnlyFileEditorInput(resource);
 	          IContentType contentType = null;
-	          InputStream iStream = null;
-	          try
-	          {
-	            iStream = readOnlyStorageEditorInput.getStorage().getContents();
-	            contentType = Platform.getContentTypeManager().findContentTypeFor(iStream, resource);
-	          }
-	          catch (CoreException coreException)
-	          {
-	            
-	          }
-	          finally
-	          {
-	          }
+	          try (InputStream iStream = readOnlyStorageEditorInput.getStorage().getContents()) {
+                    contentType = Platform.getContentTypeManager().findContentTypeFor(iStream, resource);
+              }
 	          // content type more reliable check
 	          if (contentType != null && contentType.equals(XSDEditorPlugin.XSD_CONTENT_TYPE_ID) || resource.endsWith("xsd")) //$NON-NLS-1$
 	          {
@@ -144,12 +127,8 @@ public class OpenOnSelectionHelper extends org.eclipse.wst.wsdl.ui.internal.util
 	            workbenchPage.openEditor(readOnlyStorageEditorInput, currentEditorId, true, 0); //$NON-NLS-1$
 	          }
 	        }
-	      }
-	      catch (PartInitException pie)
-	      {
-	      }
-	      catch (IOException ioe)
-	      {
+	      } catch (IOException | CoreException e) {
+              ExceptionHandler.process(e);
 	      }
 	    }
 	  

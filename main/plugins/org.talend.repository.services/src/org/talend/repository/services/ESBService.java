@@ -29,7 +29,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -53,12 +52,8 @@ import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
-import org.talend.core.model.properties.Property;
-import org.talend.core.model.properties.impl.PropertyImpl;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.model.repository.IRepositoryContentHandler;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.repository.RepositoryContentManager;
 import org.talend.core.repository.model.ProjectRepositoryNode;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
@@ -76,11 +71,11 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
-import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.services.action.CreateNewJobAction;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -164,21 +159,19 @@ public class ESBService implements IESBService {
                 out: for (ServicePort port : portList) {
                     if (port.getName().equals(portValue)) {
                         for (ServiceOperation ope : port.getServiceOperation()) {
-                            if (ope.getName().equals(opeValue)) {
-                                if (newOperation != null && !ope.getId().equals(newOperation.getId())) {
-                                    ope.setLabel(opeValue);
-                                    ope.setReferenceJobId(null);
-                                    if (servicesItem != null) {
-                                        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
-                                        try {
-                                            factory.save(servicesItem);
-                                        } catch (PersistenceException e) {
-                                            ExceptionHandler.process(e);
-                                        }
+                            if (ope.getName().equals(opeValue) && newOperation != null
+                                && !ope.getId().equals(newOperation.getId())) {
+                                ope.setLabel(opeValue);
+                                ope.setReferenceJobId(null);
+                                if (servicesItem != null) {
+                                    IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                                    try {
+                                        factory.save(servicesItem);
+                                    } catch (PersistenceException e) {
+                                        ExceptionHandler.process(e);
                                     }
-                                    break out;
                                 }
-
+                                break out;
                             }
                         }
                     }
@@ -255,7 +248,7 @@ public class ESBService implements IESBService {
     // }
     // }
 
-    private void changeOtherJobSchemaValue(IProxyRepositoryFactory factory, ServiceOperation newOpe, ServiceConnection serConn,
+    private void changeOtherJobSchemaValue(IProxyRepositoryFactory factory, ServiceOperation newOpe, /*ServiceConnection serConn,*/
             RepositoryNode selectNode) throws PersistenceException, CoreException {
         IRepositoryViewObject jobObj = factory.getLastVersion(newOpe.getReferenceJobId());
         if (jobObj == null) {
@@ -382,18 +375,17 @@ public class ESBService implements IESBService {
                 EList<ServicePort> portList = serConn.getServicePort();
                 ServiceOperation operation = null;
                 for (ServicePort port : portList) {
-                    if (!port.getId().equals(ids[1])) {
-                        continue;
-                    }
-                    portName = port.getName();
-                    EList<ServiceOperation> opeList = port.getServiceOperation();
-                    for (ServiceOperation ope : opeList) {
-                        if (ope.getId().equals(ids[2])) {
-                            operation = ope;
-                            break;
+                    if (port.getId().equals(ids[1])) {
+                        portName = port.getName();
+                        EList<ServiceOperation> opeList = port.getServiceOperation();
+                        for (ServiceOperation ope : opeList) {
+                            if (ope.getId().equals(ids[2])) {
+                                operation = ope;
+                                break;
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
 
                 if (operation == null) {
@@ -411,7 +403,7 @@ public class ESBService implements IESBService {
                 String jobName = jobItem.getProperty().getLabel();
 
                 if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals(jobID)) {
-                    changeOtherJobSchemaValue(factory, operation, serConn, selectNode);
+                    changeOtherJobSchemaValue(factory, operation, /*serConn,*/ selectNode);
                     MessageDialog.openWarning(new Shell(), Messages.ESBService_DisconnectWarningTitle,
                             Messages.ESBService_DisconnectWarningMsg);
                 }
@@ -558,10 +550,8 @@ public class ESBService implements IESBService {
                     IElementParameter schema = param.getChildParameters().get(EParameterName.REPOSITORY_SCHEMA_TYPE.getName());
                     if (schema != null && schema.getValue() != null) {
                         String[] names = ((String) schema.getValue()).split(" - "); //$NON-NLS-1$
-                        if (names.length > 0) {
-                            if (names[0].equals(item.getProperty().getId())) {
-                                repositoryParam.add(schema);
-                            }
+                        if (names.length > 0 && names[0].equals(item.getProperty().getId())) {
+                            repositoryParam.add(schema);
                         }
                     }
                 }
@@ -593,8 +583,7 @@ public class ESBService implements IESBService {
 
             @Override
             public void execute() {
-
-                node.setPropertyValue(updataComponentParamName, new Boolean(true));
+                node.setPropertyValue(updataComponentParamName, Boolean.TRUE);
                 for (IElementParameter param : repositoryParam) {
                     // force to reload label
                     param.setListItemsDisplayName(new String[0]);
@@ -681,7 +670,7 @@ public class ESBService implements IESBService {
         try {
             service = proxyRepositoryFactory.getAll(project, ESBRepositoryNodeType.SERVICES, true);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         }
         if (service != null && service.size() > 0) {
             for (IRepositoryViewObject Object : service) {
@@ -706,7 +695,7 @@ public class ESBService implements IESBService {
                     try {
                         proxyRepositoryFactory.save(item);
                     } catch (PersistenceException e) {
-                        e.printStackTrace();
+                        ExceptionHandler.process(e);
                     }
                 }
             }
@@ -733,8 +722,7 @@ public class ESBService implements IESBService {
         boolean serviceBreak = false;
         IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         try {
-            List<IRepositoryViewObject> allService = factory.getAll(ERepositoryObjectType.SERVICESOPERATION);
-            for (IRepositoryViewObject viewObject : allService) {
+            for (IRepositoryViewObject viewObject : factory.getAll(ERepositoryObjectType.SERVICESOPERATION)) {
                 ServiceItem serviceItem = (ServiceItem) viewObject.getProperty().getItem();
                 ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
                 List<ServicePort> ports = serviceConnection.getServicePort();
@@ -742,13 +730,11 @@ public class ESBService implements IESBService {
                     List<ServiceOperation> operations = port.getServiceOperation();
                     for (ServiceOperation operation : operations) {
                         String referenceJobId = operation.getReferenceJobId();
-                        if (referenceJobId != null && !referenceJobId.equals("")) {
-                            if (referenceJobId.equals(jobID)) {
-                                operation.setLabel(operation.getName());
-                                operation.setReferenceJobId(null);
-                                portBreak = true;
-                                break;
-                            }
+                        if (jobID.equals(referenceJobId)) {
+                            operation.setLabel(operation.getName());
+                            operation.setReferenceJobId(null);
+                            portBreak = true;
+                            break;
                         }
                     }
                     if (portBreak) {
@@ -762,83 +748,66 @@ public class ESBService implements IESBService {
                 }
             }
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.IESBService#isServiceItem(int)
-     */
     @Override
     public boolean isServiceItem(int classifierID) {
-        if (classifierID == ServicesPackage.SERVICE_ITEM) {
-            return true;
-        }
-        return false;
+        return classifierID == ServicesPackage.SERVICE_ITEM;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.core.IESBService#copyDataServiceRelateJob(org.talend.repository.model.RepositoryNode)
-     */
     @Override
     public void copyDataServiceRelateJob(Item newItem) {
-        if (newItem != null) {
-            if (newItem instanceof ServiceItem) {
-                ServiceItem serviceItem = (ServiceItem) newItem;
-                ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-                List<ServicePort> ports = serviceConnection.getServicePort();
-                for (ServicePort port : ports) {
-                    List<ServiceOperation> operations = port.getServiceOperation();
-                    for (ServiceOperation operation : operations) {
-                        String referenceJobId = operation.getReferenceJobId();
-                        if (referenceJobId != null && !referenceJobId.equals("")) {
-                            IRepositoryViewObject jobObj = null;
-                            try {
-                                jobObj = ProxyRepositoryFactory.getInstance().getLastVersion(referenceJobId);
-                            } catch (PersistenceException e) {
-                                ExceptionHandler.process(e);
-                            }
-                            if (jobObj == null) {
-                                continue;
-                            }
-                            ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
-                            String initNameValue = "Copy_of_" + processItem.getProperty().getLabel();
-                            final IPath path = RepositoryNodeUtilities.getPath(processItem.getProperty().getId());
-                            String jobNameValue = null;
+        if (newItem instanceof ServiceItem) {
+            ServiceItem serviceItem = (ServiceItem) newItem;
+            ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
+            List<ServicePort> ports = serviceConnection.getServicePort();
+            for (ServicePort port : ports) {
+                List<ServiceOperation> operations = port.getServiceOperation();
+                for (ServiceOperation operation : operations) {
+                    String referenceJobId = operation.getReferenceJobId();
+                    if (referenceJobId != null && !referenceJobId.equals("")) {
+                        IRepositoryViewObject jobObj = null;
+                        try {
+                            jobObj = ProxyRepositoryFactory.getInstance().getLastVersion(referenceJobId);
+                        } catch (PersistenceException e) {
+                            ExceptionHandler.process(e);
+                        }
+                        if (jobObj == null) {
+                            continue;
+                        }
+                        ProcessItem processItem = (ProcessItem) jobObj.getProperty().getItem();
+                        String initNameValue = "Copy_of_" + processItem.getProperty().getLabel();
+                        final IPath path = RepositoryNodeUtilities.getPath(processItem.getProperty().getId());
+                        String jobNameValue = null;
 
-                            try {
-                                jobNameValue = getDuplicateName(RepositoryNodeUtilities.getRepositoryNode(jobObj), initNameValue);
-                            } catch (BusinessException e) {
-                                jobNameValue = ""; //$NON-NLS-1$
-                            }
+                        try {
+                            jobNameValue = getDuplicateName(RepositoryNodeUtilities.getRepositoryNode(jobObj), initNameValue);
+                        } catch (BusinessException e) {
+                            jobNameValue = ""; //$NON-NLS-1$
+                        }
 
-                            Item newProcessItem = copyJobForService(processItem, path, jobNameValue);
+                        Item newProcessItem = copyJobForService(processItem, path, jobNameValue);
 
-                            String operationLabel = operation.getLabel();
-                            if (operationLabel.contains("-")) {
-                                String[] array = operationLabel.split("-");
-                                operation.setLabel(array[0] + "-" + jobNameValue);
-                            }
-                            //update nodes in newProcessItem
-                            ProcessType process = updateNodesInNewProcessItem(newProcessItem, serviceItem, port,
-									operation);
-                            
-                            operation.setReferenceJobId(newProcessItem.getProperty().getId());
-                            try {
-                                ProxyRepositoryFactory.getInstance().save(serviceItem);
-                            } catch (PersistenceException e) {
-                                ExceptionHandler.process(e);
-                            }
+                        String operationLabel = operation.getLabel();
+                        if (operationLabel.contains("-")) {
+                            String[] array = operationLabel.split("-");
+                            operation.setLabel(array[0] + "-" + jobNameValue);
+                        }
+                        //update nodes in newProcessItem
+                        updateNodesInNewProcessItem(newProcessItem, serviceItem, port, operation);
+
+                        operation.setReferenceJobId(newProcessItem.getProperty().getId());
+                        try {
+                            ProxyRepositoryFactory.getInstance().save(serviceItem);
+                        } catch (PersistenceException e) {
+                            ExceptionHandler.process(e);
                         }
                     }
                 }
             }
         }
-
     }
 
 	/**
@@ -849,7 +818,7 @@ public class ESBService implements IESBService {
 	 * @param operation
 	 * @return
 	 */
-	private ProcessType updateNodesInNewProcessItem(Item newProcessItem, ServiceItem serviceItem, ServicePort port,
+	private void updateNodesInNewProcessItem(Item newProcessItem, ServiceItem serviceItem, ServicePort port,
 			ServiceOperation operation) {
 		ProcessType process = ((ProcessItem) newProcessItem).getProcess();
 		for (Object o : process.getNode()) {
@@ -879,7 +848,6 @@ public class ESBService implements IESBService {
 		} catch (PersistenceException e1) {
 			ExceptionHandler.process(e1);
 		}
-		return process;
 	}
 
     private Item copyJobForService(final Item item, final IPath path, final String newName) {
@@ -934,12 +902,10 @@ public class ESBService implements IESBService {
              */
             return "DuplicateAction.NameFormatError"; //$NON-NLS-1$
         } else {
+            final Item testNewItem = createNewItem(node);
             try {
-                Item testNewItem = createNewItem(node);
-                if (testNewItem != null) {
-                    if (!repositoryFactory.isNameAvailable(testNewItem, itemName)) {
-                        return "DuplicateAction.ItemExistsError"; //$NON-NLS-1$
-                    }
+                if (testNewItem != null && !repositoryFactory.isNameAvailable(testNewItem, itemName)) {
+                    return "DuplicateAction.ItemExistsError"; //$NON-NLS-1$
                 }
             } catch (PersistenceException e) {
                 return "DuplicateAction.ItemExistsError"; //$NON-NLS-1$
@@ -969,27 +935,11 @@ public class ESBService implements IESBService {
         return pattern.matcher(str).matches();
     }
 
-    public static boolean isValid(String str) {
-        Pattern pattern = Pattern.compile("^\\w+$");
-        ;
-        return pattern.matcher(str).matches();
-    }
-
-    private Item createNewItem(RepositoryNode sourceNode) {
-
-        ERepositoryObjectType repositoryType = sourceNode.getObjectType();
-
+    private Item createNewItem(IRepositoryNode sourceNode) {
         Item item = null;
-        if (repositoryType != null) {
-            if (repositoryType != null) {
-                if (repositoryType == ERepositoryObjectType.PROCESS) {
-                    item = PropertiesFactory.eINSTANCE.createProcessItem();
-                }
-            }
-        }
-        if (item != null) {
-            Property property = PropertiesFactory.eINSTANCE.createProperty();
-            item.setProperty(property);
+        if (sourceNode.getObjectType() == ERepositoryObjectType.PROCESS) {
+            item = PropertiesFactory.eINSTANCE.createProcessItem();
+            item.setProperty(PropertiesFactory.eINSTANCE.createProperty());
         }
         return item;
     }

@@ -6,9 +6,7 @@
  */
 package org.talend.repository.services.model.services;
 
-import java.util.Map;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.common.util.EMap;
 import org.talend.core.model.metadata.builder.connection.Connection;
 

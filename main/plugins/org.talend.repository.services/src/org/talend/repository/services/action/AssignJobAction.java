@@ -54,9 +54,9 @@ import org.talend.repository.ui.dialog.RepositoryReviewDialog;
 
 public class AssignJobAction extends AbstractCreateAction {
 
-    private String createLabel = "Assign Job";
+    private static final String createLabel = "Assign Job";
 
-    private ERepositoryObjectType currentNodeType;
+    private static final ERepositoryObjectType currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
 
     public AssignJobAction() {
         super();
@@ -65,8 +65,6 @@ public class AssignJobAction extends AbstractCreateAction {
         this.setToolTipText(createLabel);
 
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
-
-        currentNodeType = ERepositoryObjectType.SERVICESOPERATION;
     }
 
     public AssignJobAction(RepositoryNode operationNode) {
@@ -77,34 +75,20 @@ public class AssignJobAction extends AbstractCreateAction {
     public AssignJobAction(boolean isToolbar) {
         this();
         setToolbar(isToolbar);
-
-        this.setText(createLabel);
-        this.setToolTipText(createLabel);
-
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.core.repository.ui.actions.metadata.AbstractCreateAction#init(org.talend.repository.model.RepositoryNode
-     * )
-     */
     @Override
     protected void init(RepositoryNode node) {
         ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
         if (!currentNodeType.equals(nodeType)) {
             return;
         }
-        this.setText(createLabel);
-        this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.PROCESS_ICON));
 
         IProxyRepositoryFactory proxyFactory = DesignerPlugin.getDefault().getProxyRepositoryFactory();
         try {
             proxyFactory.updateLockStatus();
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
         }
         IRepositoryViewObject repositoryViewObject = node.getObject();
         ERepositoryStatus status = proxyFactory.getStatus(repositoryViewObject);
@@ -174,19 +158,17 @@ public class AssignJobAction extends AbstractCreateAction {
                 ProcessItem processItem = (ProcessItem) item;
                 //
                 IDesignerCoreService service = CorePlugin.getDefault().getDesignerCoreService();
-                boolean foundInOpen = false;
                 IProcess2 process = null;
                 IEditorReference[] reference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .getEditorReferences();
                 List<IProcess2> processes = RepositoryPlugin.getDefault().getDesignerCoreService().getOpenedProcess(reference);
                 for (IProcess2 processOpen : processes) {
                     if (processOpen.getProperty().getItem() == processItem) {
-                        foundInOpen = true;
                         process = processOpen;
                         break;
                     }
                 }
-                if (!foundInOpen) {
+                if (process == null) {
                     IProcess proc = service.getProcessFromProcessItem(processItem);
                     if (proc instanceof IProcess2) {
                         process = (IProcess2) proc;
@@ -201,18 +183,11 @@ public class AssignJobAction extends AbstractCreateAction {
                         }
                     }
                     processItem.setProcess(process.saveXmlFile());
-
-                    try {
-                        factory.save(processItem);
-                    } catch (PersistenceException e) {
-                        e.printStackTrace();
-                    }
+                    factory.save(processItem);
                 }
             }
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (PersistenceException | IOException e) {
+            ExceptionHandler.process(e);
         }
     }
 
@@ -315,16 +290,10 @@ public class AssignJobAction extends AbstractCreateAction {
         return false;
     }
 
-    @Override
-    public Class getClassForDoubleClick() {
-        try {
-            RepositoryNode repositoryNode = getCurrentRepositoryNode();
-            return (OpenJobAction.getReferenceJobId(repositoryNode) == null) ? ServiceOperation.class : Object.class;
-        } catch (Exception e) {
-            // do nothing just return default
-        }
-        return ServiceOperation.class;
-    }
+//    @Override
+//    public Class<?> getClassForDoubleClick() {
+//        return (OpenJobAction.getReferenceJobId(getCurrentRepositoryNode()) == null) ? ServiceOperation.class : Object.class;
+//    }
 
     private RepositoryNode getTopParent(RepositoryNode repositoryNode) {
         repositoryNode = repositoryNode.getParent();

@@ -44,12 +44,6 @@ public class OpenJobAction extends EditProcess {
         setToolbar(isToolbar);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.core.ui.action.EditProcess#init(org.eclipse.jface.viewers.TreeViewer,
-     * org.eclipse.jface.viewers.IStructuredSelection)
-     */
     @Override
     public void init(TreeViewer viewer, IStructuredSelection selection) {
         if (selection.size() != 1) {
@@ -57,15 +51,10 @@ public class OpenJobAction extends EditProcess {
             return;
         }
         IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
-        ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
-        if (!ERepositoryObjectType.SERVICESOPERATION.equals(nodeType)) {
+        if (!ERepositoryObjectType.SERVICESOPERATION.equals((ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE))
+            || !WSDLUtils.isOperationInBinding(node)) { //not enabled if the operation doesn't define in binding
             setEnabled(false);
             return;
-        }
-        //not enabled if the operation doesn't define in binding
-        if(!WSDLUtils.isOperationInBinding(node)){
-        	setEnabled(false);
-        	return;
         }
         String jobId = getReferenceJobId(node);
         if (jobId == null) {
@@ -97,28 +86,20 @@ public class OpenJobAction extends EditProcess {
         super.init(viewer, jobSelection);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.repository.ui.actions.AContextualAction#getCurrentRepositoryNode()
-     */
     @Override
     protected RepositoryNode getCurrentRepositoryNode() {
         return jobNode;
     }
 
-    public Class getClassForDoubleClick() {
-        try {
-            RepositoryNode repositoryNode = super.getCurrentRepositoryNode();
-            //not enabled if the operation doesn't define in binding
-            if(!WSDLUtils.isOperationInBinding(repositoryNode)){
-            	return Object.class;
-            }
-            return (getReferenceJobId(repositoryNode) != null) ? ServiceOperation.class : Object.class;
-        } catch (Exception e) {
-            // do nothing just return default
+    public Class<?> getClassForDoubleClick() {
+        final IRepositoryNode repositoryNode = super.getCurrentRepositoryNode();
+        //not enabled if the operation doesn't define in binding
+        if (null != repositoryNode
+            && WSDLUtils.isOperationInBinding(repositoryNode)
+            && getReferenceJobId(repositoryNode) != null) {
+            return ServiceOperation.class;
         }
-        return ServiceOperation.class;
+        return Object.class; // for isDoubleClickAction
     }
 
     protected static String getReferenceJobId(IRepositoryNode node) {

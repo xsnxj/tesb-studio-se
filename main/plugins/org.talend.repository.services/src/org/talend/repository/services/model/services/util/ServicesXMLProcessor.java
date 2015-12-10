@@ -31,7 +31,7 @@ public class ServicesXMLProcessor extends XMLProcessor {
      * @generated
      */
     public ServicesXMLProcessor() {
-        super((EPackage.Registry.INSTANCE));
+        super(EPackage.Registry.INSTANCE);
         ServicesPackage.eINSTANCE.eClass();
     }
     

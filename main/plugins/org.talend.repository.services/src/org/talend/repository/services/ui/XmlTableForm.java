@@ -245,7 +245,7 @@ public class XmlTableForm extends Composite {
         return itemMap;
     }
 
-    public static interface ICompleteListener {
+    interface ICompleteListener {
         void setComplete(boolean complete);
     }
 

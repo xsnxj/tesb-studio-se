@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.ui.assign;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -21,15 +33,13 @@ public class AssignJobPage extends WizardPage {
 		this.assignJobAction = assignJobAction;
 	}
 
-	public void createContents(Composite parent) {
-	}
-
+	@Override
 	public void createControl(Composite parent) {
 		dialog = new AssignJobReviewDialog(
 				(AssignJobWizardDialog) getContainer(), parent.getShell(),
 				ERepositoryObjectType.PROCESS, "");
 		dialog.setJobIDList(assignJobAction.getAllReferenceJobId());
-		setControl(dialog.createDialogArea(parent));
+		setControl(dialog.create(parent));
 	}
 
 	@Override
@@ -38,14 +48,14 @@ public class AssignJobPage extends WizardPage {
 	}
 
 	public boolean finish() {
-		dialog.okPressed();
+		dialog.finish();
 		assignJobAction.changeOldJob();
 		return assignJobAction.assign(dialog.getResult());
 	}
 
-	class AssignJobReviewDialog extends RepositoryReviewDialog {
+	private static class AssignJobReviewDialog extends RepositoryReviewDialog {
 
-		private AssignJobWizardDialog container;
+		private final AssignJobWizardDialog container;
 
 		public AssignJobReviewDialog(AssignJobWizardDialog container,
 				Shell parentShell, ERepositoryObjectType type,
@@ -54,24 +64,22 @@ public class AssignJobPage extends WizardPage {
 			this.container = container;
 		}
 
-		@Override
-		public Control createDialogArea(Composite parent) {
-			return super.createDialogArea(parent);
+		public Control create(Composite parent) {
+			return createDialogArea(parent);
 		}
 
 		@Override
 		protected Button getButton(int id) {
 			if (id == OK) {
-				return container.getButton(IDialogConstants.FINISH_ID);
+				return container.doGetButton(IDialogConstants.FINISH_ID);
 			} else if (id == CANCEL) {
-				return container.getButton(IDialogConstants.CANCEL_ID);
+				return container.doGetButton(IDialogConstants.CANCEL_ID);
 			}
 			return super.getButton(id);
 		}
 
-		@Override
-		public void okPressed() {
-			super.okPressed();
+		public void finish() {
+			okPressed();
 		}
 	}
 }

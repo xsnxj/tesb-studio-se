@@ -24,7 +24,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -136,15 +135,11 @@ public class ServiceExportWSWizardPage extends WizardPage {
         });
         Button browseButton = new Button(destinationGroup, SWT.PUSH);
         browseButton.setText("Browse");
-        browseButton.addSelectionListener(new SelectionListener() {
-
+        browseButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 handleDestinationBrowseButtonPressed();
                 destinationText.setText(destinationValue);
-            }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-                ;
             }
         });
         Group optionsGroup = new Group(container, SWT.NONE);
@@ -182,11 +177,9 @@ public class ServiceExportWSWizardPage extends WizardPage {
                         destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
                                 + OUTPUT_FILE_SUFFIX;
                     }
-                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX)) {
-                    if (!show) {
-                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
-                                + getOutputSuffix();
-                    }
+                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX) && !show) {
+                    destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
+                            + getOutputSuffix();
                 }
                 setDestinationValue(destinationValue);
             }
@@ -217,7 +210,6 @@ public class ServiceExportWSWizardPage extends WizardPage {
         if (addBSButton != null) {
             return addBSButton.getSelection();
         }
-
         return false;
     }
 

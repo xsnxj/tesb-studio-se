@@ -110,8 +110,8 @@ public class WSDLUtils {
                     if (null == bindingOperation) {
                         throw getCoreException("Operation '" + operationName + "' not found in binding", null);
                     }
-                    map.put(COMMUNICATION_STYLE, (null == bindingOperation.getBindingOutput() && bindingOperation
-                            .getBindingFaults().isEmpty()) ? ONE_WAY : REQUEST_RESPONSE);
+                    map.put(COMMUNICATION_STYLE, null == bindingOperation.getBindingOutput() && bindingOperation
+                            .getBindingFaults().isEmpty() ? ONE_WAY : REQUEST_RESPONSE);
 
                     String faults = null;
                     for (Object fault : bindingOperation.getBindingFaults().keySet()) {
@@ -308,7 +308,7 @@ public class WSDLUtils {
     }
 
     private static CoreException getCoreException(final String message, final Throwable e) {
-        String msg = (message != null) ? message : ((e.getMessage() != null) ? e.getMessage() : e.getClass().getName());
+        String msg = message != null ? message : (e.getMessage() != null) ? e.getMessage() : e.getClass().getName();
         return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
     }
 

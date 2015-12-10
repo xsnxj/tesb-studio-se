@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.repository.services.ui;
 
 import java.util.Arrays;
@@ -34,14 +46,15 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.talend.repository.services.Activator;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class ServiceMetadataCustomPropertiesTable {
 
     private static final String COLUMN_PROPERTY_NAME_DEFAULT_VALUE = "property name";
     private static final String COLUMN_PROPERTY_VALUE_DEFAULT_VALUE = "property value";
 
-    private String[] columnNames = new String[] { "name", "value" }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String[] columnNames = new String[] { "name", "value" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private Composite composite;
     private Table table;
@@ -83,8 +96,8 @@ public class ServiceMetadataCustomPropertiesTable {
         return Arrays.asList(columnNames);
     }
 
-    public CustomPropertiesList getPropertiesList() {
-        return properties;
+    public Map<String, String> getPropertiesMap() {
+        return properties.getPropertiesMap();
     }
 
     private void createTable(Composite parent) {
@@ -122,7 +135,7 @@ public class ServiceMetadataCustomPropertiesTable {
         TextCellEditor textEditor = new TextCellEditor(table) {
             protected Object doGetValue() {
                 Object value = super.doGetValue();
-                return (null == value || ((String) value).trim().isEmpty())
+                return null == value || ((String) value).trim().isEmpty()
                         ? COLUMN_PROPERTY_NAME_DEFAULT_VALUE : value;
             }
         };
@@ -151,7 +164,7 @@ public class ServiceMetadataCustomPropertiesTable {
     private void createButtons(Composite parent) {
 
         Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
-        add.setImage(Activator.getImageDescriptor("/icons/add.gif").createImage()); //$NON-NLS-1$
+        add.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ADD));
         add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
         add.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -160,7 +173,7 @@ public class ServiceMetadataCustomPropertiesTable {
         });
 
         Button delete = new Button(parent, SWT.PUSH | SWT.CENTER);
-        delete.setImage(Activator.getImageDescriptor("/icons/delete.gif").createImage()); //$NON-NLS-1$
+        delete.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));
         delete.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
         delete.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -188,17 +201,17 @@ public class ServiceMetadataCustomPropertiesTable {
         }
     }
 
-    public interface IPropertiesListViewer {
+    private interface IPropertiesListViewer {
 
-        public void addProperty(CustomProperty property);
+        void addProperty(CustomProperty property);
 
-        public void removeProperty(CustomProperty property);
+        void removeProperty(CustomProperty property);
 
-        public void updateProperty(CustomProperty property);
+        void updateProperty(CustomProperty property);
 
     }
 
-    public class CustomProperty {
+    private static class CustomProperty {
 
         private String name;
         private String value;
@@ -225,7 +238,7 @@ public class ServiceMetadataCustomPropertiesTable {
         }
     }
 
-    public class CustomPropertiesList {
+    private static class CustomPropertiesList {
 
         private Vector<CustomProperty> properties = new Vector<CustomProperty>();
 
@@ -284,7 +297,7 @@ public class ServiceMetadataCustomPropertiesTable {
         }
     }
 
-    class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider {
+    private static class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
         public String getColumnText(Object element, int columnIndex) {
             CustomProperty task = (CustomProperty) element;
@@ -301,7 +314,7 @@ public class ServiceMetadataCustomPropertiesTable {
         }
     }
 
-    class PropertyCellModifier implements ICellModifier {
+    private static class PropertyCellModifier implements ICellModifier {
 
         private ServiceMetadataCustomPropertiesTable tableViewer;
 
@@ -340,12 +353,12 @@ public class ServiceMetadataCustomPropertiesTable {
             } else if (1 == columnIndex) {
                 customProperty.setValue(((String) value).trim());
             }
-            tableViewer.getPropertiesList().updateProperty(customProperty);
+            tableViewer.properties.updateProperty(customProperty);
         }
 
     }
 
-    class PropertiesContentProvider implements IStructuredContentProvider, IPropertiesListViewer {
+    private class PropertiesContentProvider implements IStructuredContentProvider, IPropertiesListViewer {
 
         public void inputChanged(Viewer v, Object oldInput, Object newInput) {
             if (newInput != null) {

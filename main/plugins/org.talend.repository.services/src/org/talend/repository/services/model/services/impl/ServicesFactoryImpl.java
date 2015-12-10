@@ -6,16 +6,17 @@
  */
 package org.talend.repository.services.model.services.impl;
 
-import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
-import org.talend.repository.services.model.services.*;
+import org.talend.repository.services.model.services.ServiceConnection;
+import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
+import org.talend.repository.services.model.services.ServicesFactory;
+import org.talend.repository.services.model.services.ServicesPackage;
 
 /**
  * <!-- begin-user-doc -->

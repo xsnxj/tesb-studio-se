@@ -6,9 +6,6 @@
  */
 package org.talend.repository.services.model.services;
 
-import org.talend.core.model.metadata.builder.connection.AbstractMetadataObject;
-import org.eclipse.emf.common.util.EMap;
-import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 
 /**
