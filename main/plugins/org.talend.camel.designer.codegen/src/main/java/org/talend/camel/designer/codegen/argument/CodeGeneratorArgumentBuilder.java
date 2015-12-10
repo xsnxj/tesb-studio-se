@@ -42,8 +42,7 @@ public class CodeGeneratorArgumentBuilder {
 	}
 
 	public CodeGeneratorArgument build() {
-		CodeGeneratorArgument argument = cloneTemplate();
-		return argument;
+		return cloneTemplate();
 	}
 
 	private CodeGeneratorArgument cloneTemplate() {
@@ -54,7 +53,7 @@ public class CodeGeneratorArgumentBuilder {
 				Object property = propertyDescriptor.getReadMethod().invoke(template);
 				propertyDescriptor.getWriteMethod().invoke(argument, property);
 			} catch (Exception e) {
-				// ExceptionHandler.process(e); ignore.
+				ExceptionHandler.process(e); // ignore?
 			}
 		}
 		return argument;

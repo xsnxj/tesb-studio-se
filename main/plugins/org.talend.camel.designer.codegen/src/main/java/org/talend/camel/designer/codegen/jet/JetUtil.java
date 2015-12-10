@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.codegen.jet;
 
 import org.apache.log4j.Logger;
@@ -33,25 +45,22 @@ public class JetUtil {
 	 * @return the initialized JetBean
 	 */
 	public static JetBean createJetBean(CodeGeneratorArgument argument) {
-
-		JetBean jetBean = new JetBean();
+		final JetBean jetBean = new JetBean();
 		jetBean.setArgument(argument);
 
-		if (argument != null) {
-			if (argument.getArgument() instanceof INode) {
-				INode node = (INode) argument.getArgument();
-				String componentsPath = IComponentsFactory.COMPONENTS_LOCATION;
+		if (argument != null && argument.getArgument() instanceof INode) {
+			INode node = (INode) argument.getArgument();
+			String componentsPath = IComponentsFactory.COMPONENTS_LOCATION;
 
-				IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
-						IBrandingService.class);
-				if (breaningService.isPoweredOnlyCamel()) {
-					componentsPath = IComponentsFactory.CAMEL_COMPONENTS_LOCATION;
-				}
-
-				jetBean.setJetPluginRepository(componentsPath);
-
-				initTemplateRelativeUri(jetBean, node, argument.getCodePart());
+			IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
+					IBrandingService.class);
+			if (breaningService.isPoweredOnlyCamel()) {
+				componentsPath = IComponentsFactory.CAMEL_COMPONENTS_LOCATION;
 			}
+
+			jetBean.setJetPluginRepository(componentsPath);
+
+			initTemplateRelativeUri(jetBean, node, argument.getCodePart());
 		}
 		if (jetBean.getJetPluginRepository() == null) {
 			jetBean.setJetPluginRepository(Activator.getDefault().getBundle().getSymbolicName());
@@ -92,7 +101,7 @@ public class JetUtil {
 		long startTimer = System.currentTimeMillis();
 		long endTimer = startTimer;
 		try {
-			while ((!CodeGeneratorEmittersPoolFactory.isInitialized()) && ((endTimer - startTimer) < INIT_TIMEOUT)) {
+			while (!CodeGeneratorEmittersPoolFactory.isInitialized() && (endTimer - startTimer) < INIT_TIMEOUT) {
 				Thread.sleep(INIT_PAUSE);
 				endTimer = System.currentTimeMillis();
 			}

@@ -22,15 +22,11 @@ public class Messages extends MessagesCore {
 
     private static final String PLUGIN_ID = "org.talend.camel.designer.codegen"; //$NON-NLS-1$
 
-    private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+    private static ResourceBundle resourceBundle;
 
     private static ResourceBundle getBundle() {
         if (resourceBundle == null) {
-            try {
-                resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
-            } catch (Exception e) {
-                // Nothing to do (return null)
-            }
+            resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
         }
         return resourceBundle;
     }

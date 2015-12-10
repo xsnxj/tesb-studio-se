@@ -50,10 +50,8 @@ public class CamelConnectionTagGenerator {
         // Fix [TESB-12471], the only connection is LOOP, then append .end()
         put("cLoop", new TagGenerator() {
             public String generateEndTag(INode node, IConnection conn) {
-                if (conn.getConnectorName().equals("LOOP")) {
-                    if (node.getOutgoingCamelSortedConnections().size() == 1) {
-                        return ".end()";
-                    }
+                if (conn.getConnectorName().equals("LOOP") && node.getOutgoingCamelSortedConnections().size() == 1) {
+                    return ".end()";
                 }
                 return null;
             }

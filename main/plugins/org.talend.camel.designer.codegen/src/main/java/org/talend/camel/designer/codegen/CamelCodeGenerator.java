@@ -27,9 +27,6 @@ import org.talend.designer.codegen.exception.CodeGeneratorException;
 
 public class CamelCodeGenerator implements ICodeGenerator {
 
-	/** The process, can't be null, checked before initialize. */
-	private final RouteProcess process;
-
 	private static final boolean DEBUG = false;
 
 	private final PartGeneratorManager partGeneratorManager;
@@ -42,7 +39,6 @@ public class CamelCodeGenerator implements ICodeGenerator {
 	 * @param language
 	 */
 	public CamelCodeGenerator(RouteProcess process, boolean statistics, boolean trace, String... options) {
-		this.process = process;
 		if (DEBUG) {
 			System.out.println(Messages.getString("CamelCodeGenerator.getGraphicalNode1")); //$NON-NLS-1$
 			NodeUtil.printForDebug(process.getGraphicalNodes());

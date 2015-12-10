@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.codegen.partgen.process;
 
 import org.talend.camel.designer.codegen.config.ECamelTemplate;
@@ -39,7 +51,7 @@ public class TreeCodePartBuilder extends AbstractProcessPartBuilder {
 
 		for (IConnection connection : node.getOutgoingCamelSortedConnections()) {
 			INode targetNode = connection.getTarget();
-			if ((targetNode != null) && (subTree != null)) {
+			if (targetNode != null && subTree != null) {
 				subTreeArgument.setInputSubtreeConnection(connection);
 				append(CamelConnectionTagGenerator.generateStartTag(node, connection));
 				append(generateComponentsCode(targetNode, connection.getName()));
