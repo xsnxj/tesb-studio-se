@@ -14,30 +14,12 @@
 
     <osgix:cm-properties id="${name}.properties" persistent-id="${name}" />
 
-#if ($hasCXFSamlProvider)
-#[[
-    <osgix:cm-properties id="org.talend.esb.job.service" persistent-id="org.talend.esb.job.service" />
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="properties" ref="org.talend.esb.job.service" />
-        <property name="placeholderPrefix" value="$service{" />
-    </bean>
-]]#
-#end
 #if ($hasCXFRSSamlProviderAuthz)
 #[[
     <osgix:cm-properties id="org.talend.esb.authorization.pep" persistent-id="org.talend.esb.authorization.pep" />
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties" ref="org.talend.esb.authorization.pep" />
         <property name="placeholderPrefix" value="$pep{" />
-    </bean>
-]]#
-#end
-#if ($hasCXFSamlConsumer)
-#[[
-    <osgix:cm-properties id="org.talend.esb.job.client" persistent-id="org.talend.esb.job.client" />
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="properties" ref="org.talend.esb.job.client" />
-        <property name="placeholderPrefix" value="$client{" />
     </bean>
 ]]#
 #end
@@ -61,22 +43,14 @@
 #if ($hasCXFSamlProvider)
 #[[
         <property name="securityProps" >
-            <map>
-                <entry key="security.signature.properties" value="$service{security.signature.properties}" />
-                <entry key="security.signature.username" value="$service{security.signature.username}" />
-                <entry key="security.signature.password" value="$service{security.signature.password}" />
-            </map>
+            <osgix:cm-properties id="org.talend.esb.job.service" persistent-id="org.talend.esb.job.service" />
         </property>
 ]]#
 #end
 #if ($hasCXFSamlConsumer)
 #[[
         <property name="clientProperties">
-            <map>
-                <entry key="security.signature.properties" value="$client{security.signature.properties}" />
-                <entry key="security.signature.username" value="$client{security.signature.username}" />
-                <entry key="security.signature.password" value="$client{security.signature.password}" />
-            </map>
+            <osgix:cm-properties id="org.talend.esb.job.client" persistent-id="org.talend.esb.job.client" />
         </property>
 ]]#
 #end
