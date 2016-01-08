@@ -18,10 +18,13 @@ import java.util.Vector;
 import org.talend.camel.designer.codegen.argument.ArgumentBuilderHolder;
 import org.talend.camel.designer.codegen.argument.CodeGeneratorArgumentBuilder;
 import org.talend.camel.designer.codegen.config.ECamelTemplate;
+import org.talend.camel.designer.codegen.jet.JetUtil;
 import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.temp.ECodePart;
 import org.talend.designer.codegen.config.CloseBlocksCodeArgument;
+import org.talend.designer.codegen.config.CodeGeneratorArgument;
+import org.talend.designer.codegen.config.JetBean;
 import org.talend.designer.codegen.config.NodesSubTree;
 import org.talend.designer.codegen.exception.CodeGeneratorException;
 
@@ -78,40 +81,40 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		return generateTypedComponentCode(template, argument, part, incomingName, subProcess);
 	}
 
-//	private CharSequence generateTypedComponentCode(ECamelTemplate template, Object argument)
-//			throws CodeGeneratorException {
-//		return generateTypedComponentCode(template, argument, null, null, null);
-//	}
+	private CharSequence generateTypedComponentCode(ECamelTemplate template, Object argument)
+			throws CodeGeneratorException {
+		return generateTypedComponentCode(template, argument, null, null, null);
+	}
 
-//	/**
-//	 * Generate Code Part for a given Component.
-//	 * 
-//	 * @param type
-//	 *            the internal component template
-//	 * @param argument
-//	 *            the bean
-//	 * @param part
-//	 *            part of code to generate
-//	 * @param subProcess
-//	 * @return the genrated code
-//	 * @throws CodeGeneratorException
-//	 *             if an error occurs during Code Generation
-//	 */
-//	private CharSequence generateTypedComponentCode(ECamelTemplate type, Object argument, ECodePart part,
-//			String incomingName, NodesSubTree subProcess) throws CodeGeneratorException {
-//		CodeGeneratorArgument codeGenArgument = argumentBuilder.build();
-//		codeGenArgument.setNode(argument);
-//		if (subProcess != null) {
-//			codeGenArgument.setAllMainSubTreeConnections(subProcess.getAllMainSubTreeConnections());
-//			codeGenArgument.setSubTree(subProcess);
-//		}
-//		codeGenArgument.setCodePart(part);
-//		codeGenArgument.setIncomingName(incomingName);
-//
-//		JetBean jetBean = JetUtil.createJetBean(codeGenArgument);
-//		jetBean.setTemplateRelativeUri(type.getTemplateURL());
-//		return JetUtil.jetGenerate(jetBean);
-//	}
+	/**
+	 * Generate Code Part for a given Component.
+	 * 
+	 * @param type
+	 *            the internal component template
+	 * @param argument
+	 *            the bean
+	 * @param part
+	 *            part of code to generate
+	 * @param subProcess
+	 * @return the genrated code
+	 * @throws CodeGeneratorException
+	 *             if an error occurs during Code Generation
+	 */
+	private CharSequence generateTypedComponentCode(ECamelTemplate type, Object argument, ECodePart part,
+			String incomingName, NodesSubTree subProcess) throws CodeGeneratorException {
+		CodeGeneratorArgument codeGenArgument = argumentBuilder.build();
+		codeGenArgument.setNode(argument);
+		if (subProcess != null) {
+			codeGenArgument.setAllMainSubTreeConnections(subProcess.getAllMainSubTreeConnections());
+			codeGenArgument.setSubTree(subProcess);
+		}
+		codeGenArgument.setCodePart(part);
+		codeGenArgument.setIncomingName(incomingName);
+
+		JetBean jetBean = JetUtil.createJetBean(codeGenArgument);
+		jetBean.setTemplateRelativeUri(type.getTemplateURL());
+		return JetUtil.jetGenerate(jetBean);
+	}
 
 	private static Vector<Object> wrapToVector(Object... objs) {
 		return new Vector<Object>(Arrays.asList(objs));
