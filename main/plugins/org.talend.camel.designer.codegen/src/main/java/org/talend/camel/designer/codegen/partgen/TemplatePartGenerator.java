@@ -54,11 +54,11 @@ public class TemplatePartGenerator extends ArgumentBuilderHolder implements Part
 		}
 			
 		default:
-			return generateTypedComponentCode(template, params);
+			return generateDefaultTypedComponentCode(template, params);
 		}
 	}
 
-	private CharSequence generateTypedComponentCode(ECamelTemplate template, Object... params)
+	private CharSequence generateDefaultTypedComponentCode(ECamelTemplate template, Object... params)
 			throws CodeGeneratorException {
 		Object argument = null;
 		if (params.length > 0) {
