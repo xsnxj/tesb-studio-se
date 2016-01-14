@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.talend.camel.designer.codegen.util.ProcessUtil;
@@ -45,19 +46,21 @@ public class CodeGeneratorArgumentBuilder {
 		return cloneTemplate();
 	}
 
-	private CodeGeneratorArgument cloneTemplate() {
-		CodeGeneratorArgument argument = new CodeGeneratorArgument();
-		PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-		for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-			try {
-				Object property = propertyDescriptor.getReadMethod().invoke(template);
-				propertyDescriptor.getWriteMethod().invoke(argument, property);
-			} catch (Exception e) {
-				ExceptionHandler.process(e); // ignore?
-			}
-		}
-		return argument;
-	}
+    private CodeGeneratorArgument cloneTemplate() {
+        final CodeGeneratorArgument argument = new CodeGeneratorArgument();
+        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+            final Method rm, wm;
+            if (null != (rm = propertyDescriptor.getReadMethod()) 
+                && null != (wm = propertyDescriptor.getWriteMethod())) {
+                try {
+                    wm.invoke(argument, rm.invoke(template));
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return argument;
+    }
 
 	public void setOptions(String[] options) {
 		if (options == null || options.length < 4) {
