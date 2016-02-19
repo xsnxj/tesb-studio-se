@@ -2200,6 +2200,11 @@ if (isProvider) {
         }
 <%      }
     } else if ("cWireTap".equals(nodeComponentName) || "cLoadBalancer".equals(nodeComponentName) || "cIdempotentConsumer".equals(nodeComponentName)) {
+        if("cWireTap".equals(nodeComponentName) && "true".equals(ElementParameterParser.getValue(node, "__COPY_ORIGINAL_MESSAGE__"))){
+%>
+            camelContext.setStreamCaching(true);
+<%
+        }
         String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
         if(!"xpath".equals(language)){
             continue;

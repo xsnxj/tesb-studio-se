@@ -5,9 +5,6 @@ import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.designer.codegen.ICamelCodeGeneratorService;
 import org.talend.designer.codegen.ICodeGenerator;
-import org.talend.designer.codegen.ISQLPatternSynchronizer;
-import org.talend.designer.codegen.ITalendSynchronizer;
-import org.talend.designer.codegen.JavaRoutineSynchronizer;
 import org.talend.designer.codegen.model.CodeGeneratorEmittersPoolFactory;
 
 public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
@@ -33,26 +30,6 @@ public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
             return null;
         }
         return new CamelCodeGenerator((RouteProcess) process, statistics, trace, options);
-    }
-
-    @Override
-    public ITalendSynchronizer createPerlRoutineSynchronizer() {
-        return null;
-    }
-
-    @Override
-    public ITalendSynchronizer createJavaRoutineSynchronizer() {
-        return new JavaRoutineSynchronizer();
-    }
-
-    @Override
-    public ITalendSynchronizer createRoutineSynchronizer() {
-        return createJavaRoutineSynchronizer();
-    }
-
-    @Override
-    public ISQLPatternSynchronizer getSQLPatternSynchronizer() {
-        return null;
     }
 
     @Override

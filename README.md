@@ -31,7 +31,7 @@ Use maven to pre-build projects. Go to main/plugins folder and in command line t
 
 ## Download
 
-You can download this product from the [Talend website](http://www.talend.com/download/esb).
+You can download this product from the [Talend website](http://www.talend.com/download/talend-open-studio?qt-product_tos_download_new=3&utm_source=github&utm_campaign=tosesb).
 
 
 ## Usage and Documentation

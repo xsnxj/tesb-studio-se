@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -21,13 +21,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.core.model.camelProperties.BeanItem;
 import org.talend.commons.exception.SystemException;
-import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
-import org.talend.core.context.Context;
-import org.talend.core.context.RepositoryContext;
+import org.talend.core.ICoreService;
 import org.talend.core.language.ECodeLanguage;
 import org.talend.core.repository.ui.editor.RepositoryEditorInput;
-import org.talend.designer.codegen.ICodeGeneratorService;
 import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.AContextualAction;
@@ -58,18 +55,19 @@ public abstract class AbstractBeanAction extends AContextualAction {
         if (beanItem == null) {
             return null;
         }
-        ICodeGeneratorService service = (ICodeGeneratorService) GlobalServiceRegister.getDefault().getService(
-                ICodeGeneratorService.class);
-
-        ECodeLanguage lang = ((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
-                .getProject().getLanguage();
-        ITalendSynchronizer routineSynchronizer = service.createRoutineSynchronizer();
-
+        if (!GlobalServiceRegister.getDefault().isServiceRegistered(ICoreService.class)) {
+            return null;
+        }
+        ICoreService coreService = (ICoreService) GlobalServiceRegister.getDefault().getService(ICoreService.class);
+        ITalendSynchronizer synchronizer = coreService.createCodesSynchronizer();
+        if (synchronizer == null) {
+            return null;
+        }
         // check if the related editor is open.
         IWorkbenchPage page = getActivePage();
 
         IEditorReference[] editorParts = page.getEditorReferences();
-        String talendEditorID = "org.talend.designer.core.ui.editor.StandAloneTalend" + lang.getCaseName() + "Editor"; //$NON-NLS-1$ //$NON-NLS-2$
+        String talendEditorID = "org.talend.designer.core.ui.editor.StandAloneTalend" + ECodeLanguage.JAVA.getCaseName() + "Editor"; //$NON-NLS-1$ //$NON-NLS-2$
         boolean found = false;
         IEditorPart talendEditor = null;
         for (IEditorReference reference : editorParts) {
@@ -87,8 +85,8 @@ public abstract class AbstractBeanAction extends AContextualAction {
         }
 
         if (!found) {
-            routineSynchronizer.syncRoutine(beanItem, true);
-            IFile file = routineSynchronizer.getFile(beanItem);
+            synchronizer.syncRoutine(beanItem, true);
+            IFile file = synchronizer.getFile(beanItem);
             if (file == null) {
                 return null;
             }

@@ -78,32 +78,10 @@
 			<enabled>false</enabled>
 		</releases>
 	</repository-->
-	<!--repository>
-		<id>sonatype-snapshots</id>
-		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		<name>Sonatype Snapshots Repo</name>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-		<releases>
-			<enabled>false</enabled>
-		</releases>
-	</repository-->
-	<repository>
+	<!-- repository>
 		<id>sonatype-staging</id>
 		<url>https://oss.sonatype.org/content/repositories/staging/</url>
 		<name>Sonatype Staging Repo</name>
-		<snapshots>
-			<enabled>false</enabled>
-		</snapshots>
-		<releases>
-			<enabled>true</enabled>
-		</releases>
-	</repository>
-	<!--repository>
-		<id>sonatype-releases</id>
-		<url>https://oss.sonatype.org/content/repositories/releases/</url>
-		<name>Sonatype Releases Repo</name>
 		<snapshots>
 			<enabled>false</enabled>
 		</snapshots>
@@ -237,7 +215,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.5</version>
+				<version>3.6</version>
 				<executions>
 					<execution>
 						<id>validate</id>
