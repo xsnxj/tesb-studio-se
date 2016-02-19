@@ -250,10 +250,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 				return Messages.NewDependencyItemDialog_existCheckMessage;
 			}
 		}
-		final IStatus status = JavaConventions.validatePackageName(name);
-		if (!status.isOK()) {
-			return status.getMessage();
-		}
+        // Bundle-SymbolicName could include dash (-) and other characters
+        if (!this.type.equals(ManifestItem.REQUIRE_BUNDLE)) {
+            final IStatus status = JavaConventions.validatePackageName(name);
+            if (!status.isOK()) {
+                return status.getMessage();
+            }
+        }
 		return null;
 	}
 
