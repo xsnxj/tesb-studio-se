@@ -254,6 +254,15 @@ try {
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
+	
+	<% if (!paramsHelper.getBoolParam( "__CHECK_SERVER_IDENTITY__")) { %>
+	    
+        org.apache.cxf.configuration.jsse.TLSClientParameters tlsClientParameters_<%=cid%> = new org.apache.cxf.configuration.jsse.TLSClientParameters();
+        tlsClientParameters_<%=cid%>.setDisableCNCheck(true);
+        conduit_<%=cid%>.setTlsClientParameters(tlsClientParameters_<%=cid%>);
+	       
+	<% } %>
+	
 	if (use_auth_<%=cid%> && "BASIC".equals(<%=authType%>)) {
 		// set BASIC auth
 		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
