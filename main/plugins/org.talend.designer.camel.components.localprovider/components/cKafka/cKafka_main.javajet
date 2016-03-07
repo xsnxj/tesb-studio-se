@@ -1,0 +1,81 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.core.model.process.IElementParameter
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    org.talend.designer.codegen.config.CamelEndpointBuilder
+    java.util.List
+    java.util.Map
+" 
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+    
+    CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
+    
+    builder.setComponent("kafka");
+    
+    builder.useDoubleSlash(false);
+    
+    String host = ElementParameterParser.getValue(node, "__HOST__");
+    builder.setName(host);
+
+    String port = ElementParameterParser.getValue(node, "__PORT__");
+    if (!"\"\"".equals(port)) {
+        builder.setName(host + "+\":\"+" + port);
+    }
+    
+    String zookeeperHost = ElementParameterParser.getValue(node, "__ZOOKEEPER_HOST__");
+    
+    builder.addParam("zookeeperHost", zookeeperHost);
+
+    String zookeeperPort = ElementParameterParser.getValue(node, "__ZOOKEEPER_PORT__");
+    
+    builder.addParam("zookeeperPort", zookeeperPort);
+    
+    String topic = ElementParameterParser.getValue(node, "__TOPIC__").trim();
+    
+    builder.addParam("topic", topic);
+    
+    String groupId = ElementParameterParser.getValue(node, "__GROUP_ID__").trim();
+    
+    if (!"\"\"".equals(groupId)) {
+        builder.addParam("groupId", groupId);
+    }
+    
+    String partitioner = ElementParameterParser.getValue(node, "__PARTITIONER__").trim();
+    
+    if (!"\"\"".equals(partitioner)) {
+        builder.addParam("partitioner", partitioner);
+    }
+    
+    builder.addParam("partitioner", partitioner);
+    
+    List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__URI_OPTIONS__");
+    for (Map<String, String> map : tableValues) {
+        String argName = map.get("NAME").trim();
+        String argValue = map.get("VALUE").trim();
+        if(argName.startsWith("\"") && argName.endsWith("\"") && argName.length() >= 2) {
+            argName = argName.substring(1, argName.length() - 1);
+        }
+        builder.addParam(argName, argValue);
+    }
+
+    String uri = builder.build();
+
+    List< ? extends IConnection> conns = node.getIncomingConnections();
+    
+    if(conns.size()>0) {
+%>
+            .to(<%=uri%>)
+<%
+    } else {
+%>
+        from(<%=uri%>)
+<%
+    }
+%>
