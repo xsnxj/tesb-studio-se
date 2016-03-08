@@ -23,7 +23,6 @@
             isResouce="true"
             key="Route"
             label="Routes"
-            ordinal="1"
             products="DI"
             type="ROUTE" />
         <repositoryNode
