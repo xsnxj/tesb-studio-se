@@ -56,7 +56,7 @@ public class CamelDesignerCoreService implements ICamelDesignerCoreService {
 
     @Override
     public ERepositoryObjectType getRouteDocsType() {
-        return CamelRepositoryNodeType.repositoryDocumentationsType;
+        return CamelRepositoryNodeType.repositoryDocumentationType;
     }
 
     @Override

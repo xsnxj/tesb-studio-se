@@ -43,14 +43,14 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
 
     @Override
     public List<Status> getPropertyStatus(Item item) {
-    	if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM){
-    		 try {
-                 return CoreRuntimePlugin.getInstance().getProxyRepositoryFactory().getTechnicalStatus();
-             } catch (PersistenceException e) {
-                 ExceptionHandler.process(e);
-             }
-    	}
-    	return super.getPropertyStatus(item);
+        if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
+            try {
+                return CoreRuntimePlugin.getInstance().getProxyRepositoryFactory().getTechnicalStatus();
+            } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
+            }
+        }
+        return super.getPropertyStatus(item);
     }
 
     @Override
@@ -63,11 +63,9 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
 
     @Override
     public boolean isRepObjType(ERepositoryObjectType type) {
-        return type == CamelRepositoryNodeType.repositoryBeansType
-            || type == CamelRepositoryNodeType.repositoryDocumentationsType
-            || type == CamelRepositoryNodeType.repositoryDocumentationType
-            || type == CamelRepositoryNodeType.repositoryRouteResourceType
-            || type == CamelRepositoryNodeType.repositoryRoutesType;
+        return type == CamelRepositoryNodeType.repositoryBeansType || type == CamelRepositoryNodeType.repositoryDocumentationType
+                || type == CamelRepositoryNodeType.repositoryRouteResourceType
+                || type == CamelRepositoryNodeType.repositoryRoutesType;
     }
 
     @Override
@@ -89,18 +87,18 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
             type = CamelRepositoryNodeType.repositoryBeansType;
         } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             type = CamelRepositoryNodeType.repositoryRouteResourceType;
-        } else if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM){
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
             type = CamelRepositoryNodeType.repositoryDocumentationType;
         }
         if (null != type) {
-            return create(project, (FileItem)item, path, type);
+            return create(project, (FileItem) item, path, type);
         }
         return null;
     }
 
     @Override
     public Resource createScreenShotResource(IProject project, Item item, int classifierID, IPath path)
-        throws PersistenceException {
+            throws PersistenceException {
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
             return createScreenShotResource(project, item, path, CamelRepositoryNodeType.repositoryRoutesType);
         }
@@ -115,8 +113,8 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
             return save((BeanItem) item);
         } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_RESOURCE_ITEM) {
             return save((RouteResourceItem) item);
-        } else if(item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
-            return save((RouteDocumentItem)item);
+        } else if (item.eClass() == CamelPropertiesPackage.Literals.ROUTE_DOCUMENT_ITEM) {
+            return save((RouteDocumentItem) item);
         }
         return null;
     }
@@ -137,10 +135,8 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
             return ECamelCoreImage.BEAN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             return ECamelCoreImage.RESOURCE_ICON;
-        } else if (type == CamelRepositoryNodeType.repositoryDocumentationsType) {
-        	return ECoreImage.FOLDER_OPEN_ICON;
         } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
-        	return ECoreImage.DOCUMENTATION_ICON;
+            return ECoreImage.DOCUMENTATION_ICON;
         }
         return null;
     }
@@ -155,7 +151,7 @@ public class CamelRepositoryContentHandler extends AbstractResourceRepositoryCon
         } else if (type == CamelRepositoryNodeType.repositoryRouteResourceType) {
             item = CamelPropertiesFactory.eINSTANCE.createRouteResourceItem();
         } else if (type == CamelRepositoryNodeType.repositoryDocumentationType) {
-        	item = CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
+            item = CamelPropertiesFactory.eINSTANCE.createRouteDocumentItem();
         }
         return item;
     }
