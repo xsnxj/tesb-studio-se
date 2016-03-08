@@ -201,6 +201,16 @@
          </includes>
       </viewerContentBinding>
    </extension>
+   <extension
+         point="org.talend.repository.view.repositorySorter">
+      <sorter
+            class="org.talend.repository.view.route.viewer.sorter.BeanCodeNodeSorter"
+            description="After Routine (2)"
+            id="org.talend.repository.view.route.bean.sorter"
+            name="Bean Sorter"
+            order="20">
+      </sorter>
+   </extension>
 
 
 
