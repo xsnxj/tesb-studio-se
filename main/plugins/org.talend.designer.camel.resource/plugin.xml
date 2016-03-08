@@ -11,7 +11,7 @@
             label="Resources"
             name_pattern="\w+([\.-]\w+)*"
             ordinal="3"
-            products="CAMEL"
+            products="DI"
             type="ROUTE_RESOURCES" />
     </extension>
 

@@ -202,53 +202,6 @@
       </viewerContentBinding>
    </extension>
 
-   <extension
-         point="org.talend.repository.viewer.perspective.filter">
-      <perspectiveFilter
-            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
-            perspectiveId="org.talend.camel.perspective">
-         <includes>
-            <contentExtension
-                  pattern="org.talend.repository.view.route.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.contexts">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.code">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.recycleBin.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.content.refproject.content">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.view.sorter.*">
-            </contentExtension>
-         </includes>
-      </perspectiveFilter>
-      <perspectiveFilter
-            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
-            perspectiveId="org.talend.rcp.perspective">
-         <excludes>
-            <contentExtension
-                  pattern="org.talend.repository.view.route.*">
-            </contentExtension>
-         </excludes>
-      </perspectiveFilter>
-   </extension>
 
-   <extension
-         point="org.talend.core.repository.repository_node_provider">
-      <extraProducts
-            products="CAMEL"
-            type="CODE">
-      </extraProducts>
-      <extraProducts
-            products="CAMEL"
-            type="CONTEXT">
-      </extraProducts>
-   </extension>
 
 </plugin>
