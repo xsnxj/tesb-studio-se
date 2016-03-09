@@ -5,10 +5,11 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
+            appearsBefore="org.talend.repository.viewer.root.services"
             contentProvider="org.talend.repository.view.route.viewer.content.RoutesContentProvider"
             id="org.talend.repository.view.route.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="%NavigatorContent.routes" >
+            name="%NavigatorContent.routes">
          <triggerPoints>
             <or>
                <adapt
@@ -208,6 +209,13 @@
             description="After Routine (2)"
             id="org.talend.repository.view.route.bean.sorter"
             name="Bean Sorter"
+            order="20">
+      </sorter>
+      <sorter
+            class="org.talend.repository.view.route.viewer.sorter.RouteNodeSorter"
+            description="After Job Design"
+            id="org.talend.repository.view.route.sorter"
+            name="Route Sorter"
             order="20">
       </sorter>
    </extension>
