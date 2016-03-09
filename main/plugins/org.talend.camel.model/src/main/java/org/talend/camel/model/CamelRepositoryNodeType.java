@@ -30,4 +30,6 @@ public interface CamelRepositoryNodeType {
 
     ERepositoryObjectType repositoryDocumentationType = ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "ROUTE_DOC"); //$NON-NLS-1$
 
+    ERepositoryObjectType repositoryRouteDesinsType = ERepositoryObjectType.valueOf("ROUTE_DESIGNS"); //$NON-NLS-1$
+
 }
