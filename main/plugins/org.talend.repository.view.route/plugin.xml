@@ -42,7 +42,7 @@
          </possibleChildren>
          <actionProvider
                class="org.talend.repository.viewer.action.RepoNodeActionProvider"
-               id="org.talend.repository.routes.action.provider.id">
+               id="org.talend.repository.route.action.routes">
             <enablement>
                <and>
                   <instanceof
@@ -198,6 +198,9 @@
          <includes>
             <contentExtension
                   pattern="org.talend.repository.view.route.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.route.action.*">
             </contentExtension>
          </includes>
       </viewerContentBinding>
