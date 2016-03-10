@@ -41,7 +41,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
-import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.action.CreateProcess;
 import org.talend.repository.ProjectManager;
@@ -177,11 +176,6 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
             selectRootObject(params);
             doRun();
         }
-    }
-
-    @Override
-    protected String getPerspectiveId() {
-        return IBrandingConfiguration.PERSPECTIVE_CAMEL_ID;
     }
 
 }
