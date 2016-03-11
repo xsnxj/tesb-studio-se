@@ -200,11 +200,6 @@ public class AssignJobPage extends WizardPage {
         }
 
         @Override
-        public Control createDialogArea(Composite parent) {
-            return super.createDialogArea(parent);
-        }
-
-        @Override
         protected Button getButton(int id) {
             if (id == OK) {
                 return container.doGetButton(IDialogConstants.FINISH_ID);
