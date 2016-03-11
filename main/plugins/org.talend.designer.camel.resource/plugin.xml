@@ -3,16 +3,16 @@
 <plugin>
     <extension point="org.talend.core.repository.repository_node_provider">
         <repositoryNode
-            folder="route_resources"
-            isAllowMultiName="true"
-            isAllowPlainFolder="true"
-            isResouce="true"
-            key="Resource"
-            label="Resources"
-            name_pattern="\w+([\.-]\w+)*"
-            ordinal="3"
-            products="CAMEL"
-            type="ROUTE_RESOURCES" />
+              folder="route_resources"
+              isAllowMultiName="true"
+              isAllowPlainFolder="true"
+              isResouce="true"
+              key="Resource"
+              label="Resources"
+              name_pattern="\w+([\.-]\w+)*"
+              ordinal="45"
+              products="DI"
+              type="ROUTE_RESOURCES"/>
     </extension>
 
    <extension

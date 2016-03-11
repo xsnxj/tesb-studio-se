@@ -160,7 +160,7 @@ public class ESBService implements IESBService {
                     if (port.getName().equals(portValue)) {
                         for (ServiceOperation ope : port.getServiceOperation()) {
                             if (ope.getName().equals(opeValue) && newOperation != null
-                                && !ope.getId().equals(newOperation.getId())) {
+                                    && !ope.getId().equals(newOperation.getId())) {
                                 ope.setLabel(opeValue);
                                 ope.setReferenceJobId(null);
                                 if (servicesItem != null) {
@@ -248,7 +248,10 @@ public class ESBService implements IESBService {
     // }
     // }
 
-    private void changeOtherJobSchemaValue(IProxyRepositoryFactory factory, ServiceOperation newOpe, /*ServiceConnection serConn,*/
+    private void changeOtherJobSchemaValue(IProxyRepositoryFactory factory, ServiceOperation newOpe, /*
+                                                                                                      * ServiceConnection
+                                                                                                      * serConn,
+                                                                                                      */
             RepositoryNode selectNode) throws PersistenceException, CoreException {
         IRepositoryViewObject jobObj = factory.getLastVersion(newOpe.getReferenceJobId());
         if (jobObj == null) {
@@ -403,7 +406,7 @@ public class ESBService implements IESBService {
                 String jobName = jobItem.getProperty().getLabel();
 
                 if (operation.getReferenceJobId() != null && !operation.getReferenceJobId().equals(jobID)) {
-                    changeOtherJobSchemaValue(factory, operation, /*serConn,*/ selectNode);
+                    changeOtherJobSchemaValue(factory, operation, /* serConn, */selectNode);
                     MessageDialog.openWarning(new Shell(), Messages.ESBService_DisconnectWarningTitle,
                             Messages.ESBService_DisconnectWarningMsg);
                 }
@@ -795,7 +798,7 @@ public class ESBService implements IESBService {
                             String[] array = operationLabel.split("-");
                             operation.setLabel(array[0] + "-" + jobNameValue);
                         }
-                        //update nodes in newProcessItem
+                        // update nodes in newProcessItem
                         updateNodesInNewProcessItem(newProcessItem, serviceItem, port, operation);
 
                         operation.setReferenceJobId(newProcessItem.getProperty().getId());
@@ -810,45 +813,45 @@ public class ESBService implements IESBService {
         }
     }
 
-	/**
-	 * To fix [TESB-6072], tESBProviderRequest_x in job need to be update to binding to the new service. 
-	 * @param newProcessItem The cloned job process item.
-	 * @param serviceItem The cloned service item.
-	 * @param port
-	 * @param operation
-	 * @return
-	 */
-	private void updateNodesInNewProcessItem(Item newProcessItem, ServiceItem serviceItem, ServicePort port,
-			ServiceOperation operation) {
-		ProcessType process = ((ProcessItem) newProcessItem).getProcess();
-		for (Object o : process.getNode()) {
-			if (o instanceof NodeType) {
-				NodeType node = (NodeType) o;
-				if(node.getComponentName().equals("tESBProviderRequest")) {
-					EList elementParameter = node.getElementParameter();
-					for (Object param : elementParameter) {
-						ElementParameterType paramType = (ElementParameterType) param;
-						if(paramType.getName().equals("PROPERTY:REPOSITORY_PROPERTY_TYPE")) {
-							//value is SERVICE_ID - PORT_ID - OPERATION_ID
-							StringBuilder sb = new StringBuilder(serviceItem.getProperty().getId());
-							sb.append(" - ");
-							sb.append(port.getId());
-							sb.append(" - ");
-							sb.append(operation.getId());
-							paramType.setValue(sb.toString());
-							
-						}
-					}
-				}
-			}
-		}
-		try {
-			ProxyRepositoryFactory
-			.getInstance().save(newProcessItem, true);
-		} catch (PersistenceException e1) {
-			ExceptionHandler.process(e1);
-		}
-	}
+    /**
+     * To fix [TESB-6072], tESBProviderRequest_x in job need to be update to binding to the new service.
+     * 
+     * @param newProcessItem The cloned job process item.
+     * @param serviceItem The cloned service item.
+     * @param port
+     * @param operation
+     * @return
+     */
+    private void updateNodesInNewProcessItem(Item newProcessItem, ServiceItem serviceItem, ServicePort port,
+            ServiceOperation operation) {
+        ProcessType process = ((ProcessItem) newProcessItem).getProcess();
+        for (Object o : process.getNode()) {
+            if (o instanceof NodeType) {
+                NodeType node = (NodeType) o;
+                if (node.getComponentName().equals("tESBProviderRequest")) {
+                    EList elementParameter = node.getElementParameter();
+                    for (Object param : elementParameter) {
+                        ElementParameterType paramType = (ElementParameterType) param;
+                        if (paramType.getName().equals("PROPERTY:REPOSITORY_PROPERTY_TYPE")) {
+                            // value is SERVICE_ID - PORT_ID - OPERATION_ID
+                            StringBuilder sb = new StringBuilder(serviceItem.getProperty().getId());
+                            sb.append(" - ");
+                            sb.append(port.getId());
+                            sb.append(" - ");
+                            sb.append(operation.getId());
+                            paramType.setValue(sb.toString());
+
+                        }
+                    }
+                }
+            }
+        }
+        try {
+            ProxyRepositoryFactory.getInstance().save(newProcessItem, true);
+        } catch (PersistenceException e1) {
+            ExceptionHandler.process(e1);
+        }
+    }
 
     private Item copyJobForService(final Item item, final IPath path, final String newName) {
         try {
@@ -947,7 +950,7 @@ public class ESBService implements IESBService {
     private boolean isKeyword(String itemName, RepositoryNode sourceNode) {
         ERepositoryObjectType itemType = sourceNode.getObjectType();
         ERepositoryObjectType[] types = { ERepositoryObjectType.PROCESS, ERepositoryObjectType.ROUTINES,
-                ERepositoryObjectType.JOBS, ERepositoryObjectType.JOBLET, ERepositoryObjectType.JOBLETS,
+                ERepositoryObjectType.JOB_DOC, ERepositoryObjectType.JOBLET, ERepositoryObjectType.JOBLET_DOC,
                 ERepositoryObjectType.JOB_SCRIPT };
         List<ERepositoryObjectType> arraysList = Arrays.asList(types);
         List<ERepositoryObjectType> typeList = new ArrayList<ERepositoryObjectType>();

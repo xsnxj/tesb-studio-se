@@ -93,40 +93,7 @@
             name="Mediation">
       </editor>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            class="org.talend.camel.designer.CamelPerspectiveFactory"
-            icon="icons/routes.png"
-            id="org.talend.camel.perspective"
-            name="Mediation">
-      </perspective>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.talend.camel.perspective">
-         <actionSet
-               id="org.talend.repository.actionSet">
-         </actionSet>
-         <actionSet
-               id="org.talend.repository.localprovider.actionSet">
-         </actionSet>
-         <!--
-         <actionSet
-               id="org.talend.repository.items.importexport.actionSet">
-         </actionSet>
-         -->
-      </perspectiveExtension>
-   </extension>
 
-   <extension
-         point="org.talend.core.talendperspectives">
-      <TalendPerspective
-            refPerspectiveId="org.talend.camel.perspective"
-            talendPerspectiveId="org.talend.camel.CamelPerspective">
-      </TalendPerspective>
-   </extension>
  <extension
          point="org.talend.core.migrationTask">
       <projecttask
@@ -401,13 +368,6 @@
                  </parameter>
               </importItemsHandler>
            </importItemsProvider>
-        </extension>
-        <extension
-              point="org.talend.core.ui.showPerspectiveAtStartup">
-           <perspective
-                 appearsAfter="org.talend.rcp.perspective"
-                 id="org.talend.camel.perspective">
-           </perspective>
         </extension>
         <extension
               point="org.talend.designer.maven.ui.repositoryMavenSetting">

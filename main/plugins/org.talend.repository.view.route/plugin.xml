@@ -5,10 +5,11 @@
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
             activeByDefault="true"
+            appearsBefore="org.talend.repository.viewer.root.services"
             contentProvider="org.talend.repository.view.route.viewer.content.RoutesContentProvider"
             id="org.talend.repository.view.route.routes"
             labelProvider="org.talend.repository.viewer.label.RepositoryViewLabelProvider"
-            name="%NavigatorContent.routes" >
+            name="%NavigatorContent.routes">
          <triggerPoints>
             <or>
                <adapt
@@ -41,7 +42,7 @@
          </possibleChildren>
          <actionProvider
                class="org.talend.repository.viewer.action.RepoNodeActionProvider"
-               id="org.talend.repository.routes.action.provider.id">
+               id="org.talend.repository.route.action.routes">
             <enablement>
                <and>
                   <instanceof
@@ -198,57 +199,30 @@
             <contentExtension
                   pattern="org.talend.repository.view.route.*">
             </contentExtension>
+            <contentExtension
+                  pattern="org.talend.repository.route.action.*">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
    </extension>
-
    <extension
-         point="org.talend.repository.viewer.perspective.filter">
-      <perspectiveFilter
-            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
-            perspectiveId="org.talend.camel.perspective">
-         <includes>
-            <contentExtension
-                  pattern="org.talend.repository.view.route.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.contexts">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.code">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.recycleBin.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.viewer.root.content.refproject.content">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.talend.repository.view.sorter.*">
-            </contentExtension>
-         </includes>
-      </perspectiveFilter>
-      <perspectiveFilter
-            actionProviderId="org.talend.repository.viewer.actionbar.menu.perspectiveFilter"
-            perspectiveId="org.talend.rcp.perspective">
-         <excludes>
-            <contentExtension
-                  pattern="org.talend.repository.view.route.*">
-            </contentExtension>
-         </excludes>
-      </perspectiveFilter>
+         point="org.talend.repository.view.repositorySorter">
+      <sorter
+            class="org.talend.repository.view.route.viewer.sorter.BeanCodeNodeSorter"
+            description="After Routine (2)"
+            id="org.talend.repository.view.route.bean.sorter"
+            name="Bean Sorter"
+            order="20">
+      </sorter>
+      <sorter
+            class="org.talend.repository.view.route.viewer.sorter.RouteNodeSorter"
+            description="After Job Design"
+            id="org.talend.repository.view.route.sorter"
+            name="Route Sorter"
+            order="20">
+      </sorter>
    </extension>
 
-   <extension
-         point="org.talend.core.repository.repository_node_provider">
-      <extraProducts
-            products="CAMEL"
-            type="CODE">
-      </extraProducts>
-      <extraProducts
-            products="CAMEL"
-            type="CONTEXT">
-      </extraProducts>
-   </extension>
+
 
 </plugin>

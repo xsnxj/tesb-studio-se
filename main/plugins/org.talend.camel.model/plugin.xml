@@ -23,8 +23,7 @@
             isResouce="true"
             key="Route"
             label="Routes"
-            ordinal="1"
-            products="CAMEL"
+            products="DI"
             type="ROUTE" />
         <repositoryNode
             folder="code/beans"
@@ -32,7 +31,7 @@
             key="Bean"
             label="Beans"
             parentNodeType="CODE"
-            products="CAMEL"
+            products="DI"
             type="BEANS" />
     </extension>
 

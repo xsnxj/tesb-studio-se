@@ -22,7 +22,6 @@ import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
-import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.core.ui.action.EditProcess;
 
@@ -35,13 +34,13 @@ import org.talend.designer.core.ui.action.EditProcess;
 public class EditCamelProcess extends EditProcess {
 
     private final String EDIT_LABEL = Messages.getString("EditProcess.editJob"); //$NON-NLS-1$
+
     private final String OPEN_LABEL = Messages.getString("EditProcess.openJob"); //$NON-NLS-1$
 
     public EditCamelProcess() {
         super();
         this.setImageDescriptor(ImageProvider.getImageDesc(ECoreImage.ROUTES_ICON));
     }
-
 
     @Override
     protected JobEditorInput getEditorInput(ProcessItem processItem) throws PersistenceException {
@@ -68,8 +67,4 @@ public class EditCamelProcess extends EditProcess {
         return CamelProcessItem.class;
     }
 
-    @Override
-    protected String getPerspectiveId() {
-        return IBrandingConfiguration.PERSPECTIVE_CAMEL_ID;
-    }
 }

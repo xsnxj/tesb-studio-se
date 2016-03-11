@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
@@ -40,11 +41,12 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
-import org.talend.core.ui.branding.IBrandingConfiguration;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ui.action.CreateProcess;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.IRepositoryService;
 import org.talend.repository.model.RepositoryConstants;
 
@@ -73,6 +75,37 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
     @Override
     public ERepositoryObjectType getProcessType() {
         return CamelRepositoryNodeType.repositoryRoutesType;
+    }
+
+    @Override
+    public void init(TreeViewer viewer, IStructuredSelection selection) {
+        boolean canWork = !selection.isEmpty() && selection.size() == 1;
+        IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+        if (factory.isUserReadOnlyOnCurrentProject()) {
+            canWork = false;
+        }
+        if (canWork) {
+            IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
+            switch (node.getType()) {
+            case SIMPLE_FOLDER:
+            case SYSTEM_FOLDER:
+                ERepositoryObjectType nodeType = (ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE);
+                if (nodeType != null && !nodeType.equals(getProcessType())
+                        && !nodeType.equals(CamelRepositoryNodeType.repositoryRouteDesinsType)) {
+                    canWork = false;
+                }
+                if (node.getObject() != null && node.getObject().isDeleted()) {
+                    canWork = false;
+                }
+                break;
+            default:
+                canWork = false;
+            }
+            if (canWork && !ProjectManager.getInstance().isInCurrentMainProject(node)) {
+                canWork = false;
+            }
+        }
+        setEnabled(canWork);
     }
 
     @Override
@@ -120,8 +153,8 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         // Set readonly to false since created job will always be editable.
         CamelProcessEditorInput fileEditorInput = new CamelProcessEditorInput(processItem, false, true, false);
 
-        IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(fileEditorInput.getItem()
-                .getProperty().getId(), false);
+        IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(
+                fileEditorInput.getItem().getProperty().getId(), false);
         fileEditorInput.setRepositoryNode(repositoryNode);
 
         IWorkbenchPage page = getActivePage();
@@ -129,6 +162,7 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
         // // use project setting true
         // ProjectSettingManager.defaultUseProjectSetting(fileEditorInput.getLoadedProcess());
     }
+
     /*
      * only use for creating a process in the intro by url
      */
@@ -142,11 +176,6 @@ public class CreateCamelProcess extends CreateProcess implements IIntroAction {
             selectRootObject(params);
             doRun();
         }
-    }
-
-    @Override
-    protected String getPerspectiveId() {
-        return IBrandingConfiguration.PERSPECTIVE_CAMEL_ID;
     }
 
 }
