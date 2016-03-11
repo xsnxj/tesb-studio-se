@@ -33,23 +33,139 @@
             <DEFAULT>"9092"</DEFAULT>
         </PARAMETER>
         
-        <PARAMETER NAME="ZOOKEEPER_HOST" FIELD="TEXT" NUM_ROW="33" REQUIRED="true">
-            <DEFAULT>"localhost"</DEFAULT>
-        </PARAMETER>
-        <PARAMETER NAME="ZOOKEEPER_PORT" FIELD="TEXT" NUM_ROW="34" REQUIRED="true">
-            <DEFAULT>"2181"</DEFAULT>
+        <PARAMETER NAME="ZOOKEEPER_CONNECT" FIELD="TEXT" NUM_ROW="33" REQUIRED="true">
+            <DEFAULT>"localhost:2181"</DEFAULT>
         </PARAMETER>
         
        <PARAMETER NAME="TOPIC" FIELD="TEXT" NUM_ROW="35" REQUIRED="true">
             <DEFAULT>""</DEFAULT>
         </PARAMETER>
         
-       <PARAMETER NAME="GROUP_ID" FIELD="TEXT" NUM_ROW="36" REQUIRED="true">
+       <PARAMETER NAME="GROUP_ID" FIELD="TEXT" NUM_ROW="36" REQUIRED="false">
             <DEFAULT>""</DEFAULT>
        </PARAMETER>
         
         <PARAMETER NAME="PARTITIONER" FIELD="TEXT" NUM_ROW="37" REQUIRED="false">
+            <DEFAULT>"kafka.producer.DefaultPartitioner"</DEFAULT>
+        </PARAMETER>
+        
+        
+        <PARAMETER NAME="PRODUCER_TYPE" FIELD="CLOSED_LIST" NUM_ROW="38" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0')">
+	        <ITEMS DEFAULT="SYNC">
+		        <ITEM NAME="SYNC" VALUE="sync" />
+		        <ITEM NAME="ASYNC" VALUE="async" />
+	        </ITEMS>
+        </PARAMETER>
+        
+        <PARAMETER NAME="QUEUE_BUFFERING_MAX_MS" FIELD="TEXT" NUM_ROW="39" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
+            <DEFAULT>5000</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="QUEUE_BUFFERING_MAX_MESSAGES" FIELD="TEXT" NUM_ROW="40" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
+            <DEFAULT>10000</DEFAULT>
+        </PARAMETER>
+        
+         <PARAMETER NAME="QUEUE_ENQUEUE_TIMEOUT_MS" FIELD="TEXT" NUM_ROW="41" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
+            <DEFAULT>0</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="BATCH_NUM_MESSAGES" FIELD="TEXT" NUM_ROW="42" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
+            <DEFAULT>200</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="SERIALIZER_CLASS" FIELD="TEXT" NUM_ROW="43" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
             <DEFAULT>""</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="KEY_SERIALIZER_CLASS" FIELD="TEXT" NUM_ROW="44" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='async')">
+            <DEFAULT>""</DEFAULT>
+        </PARAMETER>        
+        
+        <PARAMETER NAME="SEND_BUFFER_BYTES" FIELD="TEXT" NUM_ROW="45" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='sync')">
+            <DEFAULT>102400</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="REQUEST_REQUIRED_ACKS" FIELD="TEXT" NUM_ROW="46" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='sync')">
+            <DEFAULT>0</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="REQUEST_TIMEOUT_MS" FIELD="TEXT" NUM_ROW="47" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0') AND (PRODUCER_TYPE=='sync')">
+            <DEFAULT>10000</DEFAULT>
+        </PARAMETER>
+
+        <PARAMETER NAME="COMPRESSED_TOPICS_OPS" FIELD="CHECK" GROUP="COMPRESSION_GROUP" NUM_ROW="50" REQUIRED="false" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="COMPRESSION_CODEC" FIELD="CLOSED_LIST" GROUP="COMPRESSION_GROUP" NUM_ROW="50" REQUIRED="false" SHOW_IF="(COMPRESSED_TOPICS_OPS=='true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')" >
+            <ITEMS DEFAULT="NONE">
+                <ITEM NAME="NONE" VALUE="none" />
+                <ITEM NAME="GZIP" VALUE="gzip" />
+                <ITEM NAME="SNAPPY" VALUE="snappy" />
+            </ITEMS>
+        </PARAMETER>
+        
+        <PARAMETER NAME="COMPRESSED_TOPICS" FIELD="TEXT" GROUP="COMPRESSION_GROUP" NUM_ROW="50" REQUIRED="false" SHOW_IF="(COMPRESSED_TOPICS_OPS=='true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')">
+            <DEFAULT>""</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="MESSAGE_SEND_MAX_RETRIES" FIELD="TEXT" NUM_ROW="51" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY &gt; '0')">
+            <DEFAULT>3</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="RETRY_BACKOFF_MS" FIELD="TEXT" NUM_ROW="52" REQUIRED="false" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+            <DEFAULT>100</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="TOPIC_METADATA_REFRESH_INTERVAL_MS" FIELD="TEXT" NUM_ROW="53" REQUIRED="false" SHOW_IF="#LINK@CONNECTOR.IN.ANY &gt; '0'">
+            <DEFAULT>600000</DEFAULT>
+        </PARAMETER>
+
+        <PARAMETER NAME="CONSUMER_ID" FIELD="TEXT" NUM_ROW="73" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>""</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="SOCKET_TIMEOUT_MS" FIELD="TEXT" NUM_ROW="74" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>300000</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="SOCKET_RECEIVE_BUFFER_BYTES" FIELD="TEXT" NUM_ROW="75" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>65536</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="FETCH_MESSAGE_MAX_BYTES" FIELD="TEXT" NUM_ROW="76" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>1048576</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="AUTO_COMMIT_ENABLE" FIELD="CHECK" NUM_ROW="77" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>true</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="AUTO_COMMIT_INTERVAL_MS" FIELD="TEXT" NUM_ROW="78" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>600000</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="QUEUED_MAX_MESSAGES" FIELD="TEXT" NUM_ROW="79" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>2</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="REBALANCE_MAX_RETRIES" FIELD="TEXT" NUM_ROW="80" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>4</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="FETCH_MIN_BYTES" FIELD="TEXT" NUM_ROW="81" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>1</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="FETCH_WAIT_MAX_MS" FIELD="TEXT" NUM_ROW="82" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>100</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="REBALANCE_BACKOFF_MS" FIELD="TEXT" NUM_ROW="83" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>2000</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="REFRESH_LEADER_BACKOFF_MS" FIELD="TEXT" NUM_ROW="84" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>200</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="AUTO_OFFSET_RESET" FIELD="CLOSED_LIST" NUM_ROW="85" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <ITEMS DEFAULT="LARGEST">
+                <ITEM NAME="SMALLEST" VALUE="smallest" />
+                <ITEM NAME="LARGEST" VALUE="largest" />
+                <ITEM NAME="FAIL" VALUE="fail" />
+            </ITEMS>
+        </PARAMETER>
+        <PARAMETER NAME="CONSUMER_TIMEOUT_MS" FIELD="TEXT" NUM_ROW="86" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
+            <DEFAULT>0</DEFAULT>
         </PARAMETER>
 
 	</PARAMETERS>
@@ -71,9 +187,12 @@
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
             
             <IMPORT MODULE_GROUP="camel-kafka" REQUIRED="true" />
-            
-            <IMPORT MODULE="camel-kafka-alldep-2.16.2.jar" MVN="mvn:org.talend.libraries/camel-kafka-alldep-2.16.2/6.0.0" NAME="talend-camel-kafka" 
-                UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.16.2.jar" REQUIRED="true"/> 
+                
+            <IMPORT MODULE="camel-kafka-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-kafka-alldep-${camel.version}/6.0.0" NAME="talend-camel-kafka" 
+                UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-${camel.version}.jar" REQUIRED="true"/> 
+                
+            <IMPORT MODULE="scala-library-${scala.version}.jar" MVN="mvn:org.talend.libraries/scala-library-${scala.version}/6.0.0" NAME="scala-library-${scala.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/scala-library-${scala.version}.jar" REQUIRED="true"/>
             
 		</IMPORTS>
 	</CODEGENERATION>
