@@ -199,8 +199,9 @@ public class AssignJobPage extends WizardPage {
             this.container = container;
         }
 
-        @Override
+        @Override @SuppressWarnings("PMD")
         public Control createDialogArea(Composite parent) {
+            // must override to change visibility
             return super.createDialogArea(parent);
         }
 
