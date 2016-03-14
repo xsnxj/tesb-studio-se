@@ -1,12 +1,12 @@
 package org.talend.camel.designer.codegen.argument;
 
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 import org.talend.designer.codegen.config.NodesTree;
 
 public abstract class ArgumentBuilderHolder {
 
 	protected final CodeGeneratorArgumentBuilder argumentBuilder;
-	protected final RouteProcess process;
+	protected final IRouteProcess process;
 	protected final NodesTree processTree;
 
 	public ArgumentBuilderHolder(CodeGeneratorArgumentBuilder argumentBuilder) {

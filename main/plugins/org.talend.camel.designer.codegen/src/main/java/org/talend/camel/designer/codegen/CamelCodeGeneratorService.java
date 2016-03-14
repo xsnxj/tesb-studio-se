@@ -1,7 +1,7 @@
 package org.talend.camel.designer.codegen;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.designer.codegen.ICamelCodeGeneratorService;
 import org.talend.designer.codegen.ICodeGenerator;
@@ -32,7 +32,7 @@ public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
         if (!validProcess(process)) {
             return null;
         }
-        return new CamelCodeGenerator((RouteProcess) process, statistics, trace, options);
+        return new CamelCodeGenerator((IRouteProcess) process, statistics, trace, options);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
 
     @Override
     public boolean validProcess(IProcess process) {
-        return process != null && process instanceof RouteProcess;
+        return process != null && (process instanceof IRouteProcess);
     }
 
 }

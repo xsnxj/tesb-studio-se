@@ -17,7 +17,7 @@ import org.talend.camel.designer.codegen.i18n.Messages;
 import org.talend.camel.designer.codegen.jet.JetUtil;
 import org.talend.camel.designer.codegen.partgen.PartGeneratorManager;
 import org.talend.camel.designer.codegen.util.NodeUtil;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.temp.ECodePart;
@@ -31,23 +31,23 @@ public class CamelCodeGenerator implements ICodeGenerator {
 
 	private final PartGeneratorManager partGeneratorManager;
 
-	/**
-	 * Constructor : use the process and language to initialize internal
-	 * components.
-	 * 
-	 * @param process
-	 * @param language
-	 */
-	public CamelCodeGenerator(RouteProcess process, boolean statistics, boolean trace, String... options) {
-		if (DEBUG) {
-			System.out.println(Messages.getString("CamelCodeGenerator.getGraphicalNode1")); //$NON-NLS-1$
-			NodeUtil.printForDebug(process.getGraphicalNodes());
-			System.out.println(Messages.getString("CamelCodeGenerator.getGraphicalNode2")); //$NON-NLS-1$
-			NodeUtil.printForDebug(process.getGeneratingNodes());
-		}
-		partGeneratorManager = new PartGeneratorManager(process, statistics, trace, options);
-	}
-
+   /**
+     * Constructor : use the process and language to initialize internal
+     * components.
+     * 
+     * @param process
+     * @param language
+     */
+    public CamelCodeGenerator(IRouteProcess process, boolean statistics, boolean trace, String... options) {
+        if (DEBUG) {
+            // TODO Missing messages
+            System.out.println(Messages.getString("CamelCodeGenerator.getGraphicalNode1")); //$NON-NLS-1$
+            NodeUtil.printForDebug(process.getGraphicalNodes());
+            System.out.println(Messages.getString("CamelCodeGenerator.getGraphicalNode2")); //$NON-NLS-1$
+            NodeUtil.printForDebug(process.getGeneratingNodes());
+        }
+        partGeneratorManager = new PartGeneratorManager(process, statistics, trace, options);
+    }
 	/**
 	 * Generate the code for the process given to the constructor.
 	 * 

@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.talend.camel.designer.codegen.util.ProcessUtil;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IContext;
@@ -20,29 +20,29 @@ import org.talend.designer.codegen.config.NodesTree;
 public class CodeGeneratorArgumentBuilder {
 
 	private CodeGeneratorArgument template;
-	private RouteProcess process;
+	private IRouteProcess process;
 	private NodesTree processTree;
 
 	private BeanInfo beanInfo;
 
-	public CodeGeneratorArgumentBuilder(RouteProcess process, boolean statistics, boolean trace, String[] options) {
-		template = new CodeGeneratorArgument();
-		setProcess(process);
-		template.setStatistics(statistics);
-		template.setTrace(trace);
-		setOptions(options);
+    public CodeGeneratorArgumentBuilder(IRouteProcess process, boolean statistics, boolean trace, String[] options) {
+        template = new CodeGeneratorArgument();
+        setProcess(process);
+        template.setStatistics(statistics);
+        template.setTrace(trace);
+        setOptions(options);
 
-		template.setCheckingSyntax(false);
-		template.setPauseTime(CorePlugin.getDefault().getRunProcessService().getPauseTime());
+        template.setCheckingSyntax(false);
+        template.setPauseTime(CorePlugin.getDefault().getRunProcessService().getPauseTime());
 
-		try {
-			beanInfo = Introspector.getBeanInfo(CodeGeneratorArgument.class);
-		} catch (IntrospectionException e) {
-			ExceptionHandler.process(e);
-		}
-	}
+        try {
+            beanInfo = Introspector.getBeanInfo(CodeGeneratorArgument.class);
+        } catch (IntrospectionException e) {
+            ExceptionHandler.process(e);
+        }
+    }
 
-	public CodeGeneratorArgument build() {
+    public CodeGeneratorArgument build() {
 		return cloneTemplate();
 	}
 
@@ -72,7 +72,7 @@ public class CodeGeneratorArgumentBuilder {
 		template.setCurrentProjectName(options[3]);
 	}
 
-	public void setProcess(RouteProcess process) {
+	public void setProcess(IRouteProcess process) {
 		this.process = process;
 		template.setJobName(process.getName());
 		if (process.getVersion() != null) {
@@ -83,6 +83,7 @@ public class CodeGeneratorArgumentBuilder {
 		template.setIsRunInMultiThread(ProcessUtil.getRunInMultiThread(process));
 	}
 
+    
 	public void setContextName(String contextName) {
 		template.setContextName(contextName);
 	}
@@ -91,7 +92,7 @@ public class CodeGeneratorArgumentBuilder {
 		template.setCheckingSyntax(b);
 	}
 
-	public RouteProcess getProcess() {
+	public IRouteProcess getProcess() {
 		return process;
 	}
 

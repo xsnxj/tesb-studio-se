@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.codegen,
  org.talend.designer.core,
  org.talend.camel.designer,
- org.talend.repository
+ org.talend.repository,
+ org.talend.camel.model
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-ClassPath: codegen.jar

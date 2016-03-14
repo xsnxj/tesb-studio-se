@@ -8,7 +8,7 @@ import org.talend.camel.designer.codegen.partgen.process.ComponentsCodePartBuild
 import org.talend.camel.designer.codegen.partgen.process.NodePartBuilder;
 import org.talend.camel.designer.codegen.partgen.process.ProcessPartBuilder;
 import org.talend.camel.designer.codegen.partgen.process.TreeCodePartBuilder;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.temp.ECodePart;
@@ -21,13 +21,21 @@ public class PartGeneratorManager extends ArgumentBuilderHolder {
 	private PartGenerator<IContext> contextGenerator;
 	private PartGenerator<INode> endpointIdGenerator;
 
-	public PartGeneratorManager(RouteProcess process, boolean statistics, boolean trace, String[] options) {
-		super(new CodeGeneratorArgumentBuilder(process, statistics, trace, options));
-		templateGenerator = new TemplatePartGenerator(argumentBuilder);
-		contextGenerator = new ContextPartGenerator(argumentBuilder);
-		endpointIdGenerator = new EndpointIdGenerator();
-	}
-
+    /**
+     * DOC yyan PartGeneratorManager constructor comment.
+     * Extract IRouteProcess interface
+     * @param process
+     * @param statistics
+     * @param trace
+     * @param options
+     */
+    public PartGeneratorManager(IRouteProcess process, boolean statistics, boolean trace, String[] options) {
+        super(new CodeGeneratorArgumentBuilder(process, statistics, trace, options));
+        templateGenerator = new TemplatePartGenerator(argumentBuilder);
+        contextGenerator = new ContextPartGenerator(argumentBuilder);
+        endpointIdGenerator = new EndpointIdGenerator();
+    }
+	   
 	public PartGenerator<ECamelTemplate> getTemplateGenerator() {
 		return templateGenerator;
 	}

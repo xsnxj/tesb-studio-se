@@ -8,7 +8,7 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.talend.camel.designer.i18n.CamelDesignerMessages;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 
 public class SpringConfigurationView extends PageBookView {
 
@@ -50,7 +50,7 @@ public class SpringConfigurationView extends PageBookView {
     protected boolean isImportant(IWorkbenchPart part) {
         // We only care about editors
         return part instanceof CamelMultiPageTalendEditor
-            && null != ((RouteProcess) ((CamelMultiPageTalendEditor) part).getProcess()).getSpringContent();
+            && null != ((IRouteProcess) ((CamelMultiPageTalendEditor) part).getProcess()).getSpringContent();
     }
 
 }

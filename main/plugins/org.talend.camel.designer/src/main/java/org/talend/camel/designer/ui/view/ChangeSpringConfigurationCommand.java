@@ -1,7 +1,7 @@
 package org.talend.camel.designer.ui.view;
 
 import org.eclipse.gef.commands.Command;
-import org.talend.camel.designer.ui.editor.RouteProcess;
+import org.talend.camel.model.IRouteProcess;
 
 /**
  * this command used to change the spring configuration
@@ -11,12 +11,12 @@ public class ChangeSpringConfigurationCommand extends Command {
 
 	private String newContent;
 
-	private RouteProcess process;
+	private IRouteProcess process;
 
 	private String oldContent;
 
 	public ChangeSpringConfigurationCommand(String newContent,
-			RouteProcess process) {
+			IRouteProcess process) {
 		super();
 		this.newContent = newContent;
 		this.process = process;
