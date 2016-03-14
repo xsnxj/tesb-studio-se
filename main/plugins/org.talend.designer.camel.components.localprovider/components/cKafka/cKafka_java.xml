@@ -165,7 +165,7 @@
             </ITEMS>
         </PARAMETER>
         <PARAMETER NAME="CONSUMER_TIMEOUT_MS" FIELD="TEXT" NUM_ROW="86" REQUIRED="false" SHOW_IF="(#LINK@CONNECTOR.IN.ANY == '0')">
-            <DEFAULT>0</DEFAULT>
+            <DEFAULT></DEFAULT>
         </PARAMETER>
 
 	</PARAMETERS>
