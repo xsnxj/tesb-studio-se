@@ -19,8 +19,8 @@ import org.talend.core.model.process.IProcess2;
  */
 public interface IRouteProcess extends IProcess2 {
 
-    public String getSpringContent();
+    String getSpringContent();
 
-    public void setSpringContent(String springContent);
+    void setSpringContent(String springContent);
 
 }
