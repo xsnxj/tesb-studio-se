@@ -62,7 +62,7 @@ public class CamelCodeGeneratorService implements ICamelCodeGeneratorService {
 
     @Override
     public boolean validProcess(IProcess process) {
-        return process != null && (process instanceof IRouteProcess);
+        return process != null && process instanceof IRouteProcess;
     }
 
 }
