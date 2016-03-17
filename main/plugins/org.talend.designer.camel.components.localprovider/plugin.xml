@@ -382,7 +382,7 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-ftp}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-jsch}"
+            name="camel-${tesb-jsch}"
             id="jsch"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jsch}"
             bundleID="" />
