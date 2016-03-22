@@ -18,17 +18,17 @@
         <!-- camel-groovy -->
         <groovy.version>2.4.3</groovy.version>
         <!-- camel-xstream -->
-        <xstream.version>1.4.7</xstream.version>
+        <xstream.version>1.4.8</xstream.version>
         <xpp3.version>1.1.6</xpp3.version>
         <!-- camel-amqp -->
         <qpid-amqp.version>0.32</qpid-amqp.version>
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
         <!-- camel-mqtt -->
-        <mqtt-client.version>1.10</mqtt-client.version>
+        <mqtt-client.version>1.12</mqtt-client.version>
         <hawtbuf.version>1.10</hawtbuf.version>
-        <hawtdispatch.version>1.20</hawtdispatch.version>
+        <hawtdispatch.version>1.21</hawtdispatch.version>
         <!-- camel-ftp -->
-        <jsch.version>0.1.51</jsch.version>
+        <jsch.version>0.1.53</jsch.version>
         <commons-net.version>3.3</commons-net.version>
         <!-- camel-flatpack -->
         <flatpack.version>3.4.3</flatpack.version>
