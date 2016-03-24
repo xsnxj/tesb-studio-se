@@ -88,7 +88,7 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         final String name = type;
-        final boolean isNew = (origin == null);
+        final boolean isNew = origin == null;
         getShell().setText(name);
         setTitle(MessageFormat.format(isNew ? Messages.NewDependencyItemDialog_addTitle
             : Messages.NewDependencyItemDialog_editTitle, name));
@@ -177,14 +177,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
         item.setName(getDependencyName());
         item.setVersion(getVersion());
         item.setOptional(getOptional());
-        if (item.equals(origin) && (item.isOptional() == origin.isOptional())
-                && ((item.getVersion() == null && origin.getVersion() == null)
-                    || (item.getVersion() != null && item.getVersion().equals(origin.getVersion())))) {
-			setErrorMessage(null);
+        setErrorMessage(null);
+        if (item.equals(origin) && item.isOptional() == origin.isOptional()
+                && (item.getVersion() == null && origin.getVersion() == null
+                    || item.getVersion() != null && item.getVersion().equals(origin.getVersion()))) {
 			// nothing changes.
 			return false;
 		}
-		setErrorMessage(null);
 		return true;
 	}
 
@@ -239,10 +238,13 @@ public class NewOrEditDependencyDialog extends TitleAreaDialog {
 				return Messages.NewDependencyItemDialog_existCheckMessage;
 			}
 		}
-		final IStatus status = JavaConventions.validatePackageName(name);
-		if (!status.isOK()) {
-			return status.getMessage();
-		}
+        // Bundle-SymbolicName could include dash (-) and other characters
+        if (!this.type.equals(ManifestItem.REQUIRE_BUNDLE)) {
+            final IStatus status = JavaConventions.validatePackageName(name);
+            if (!status.isOK()) {
+                return status.getMessage();
+            }
+        }
 		return null;
 	}
 
