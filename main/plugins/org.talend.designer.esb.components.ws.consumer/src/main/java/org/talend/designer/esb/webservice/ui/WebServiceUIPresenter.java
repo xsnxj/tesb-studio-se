@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.commons.ui.swt.extended.table.ExtendedTableModel;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.esb.webservice.SchemaTool;
 import org.talend.designer.esb.webservice.ServiceSetting;
 import org.talend.designer.esb.webservice.WebServiceComponentPlugin;
@@ -116,7 +117,7 @@ public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSele
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
 				try {
-					retrieveData(wsdlLocation);
+					retrieveData(TalendQuoteUtils.removeQuotesIfExist(wsdlLocation));
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				} finally {
