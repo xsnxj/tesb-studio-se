@@ -33,26 +33,35 @@ imports="
     
     builder.addParam("zookeeperConnect", zookeeperConnect);
     
+    String zookeeperSessionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SESSION_TIMEOUT_MS__");
+    
+    builder.addParam("zookeeperSessionTimeoutMs", zookeeperSessionTimeoutMs);
+    
+    String zookeeperConnectionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECTION_TIMEOUT_MS__");
+    
+    builder.addParam("zookeeperConnectionTimeoutMs", zookeeperConnectionTimeoutMs);
+    
+    String zookeeperSynctimeMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SYNC_TIME_MS__");
+    
+    builder.addParam("zookeeperSynctimeMs", zookeeperSynctimeMs);
+    
+    String clientId = ElementParameterParser.getValue(node, "__CLIENT_ID__");
+    
+    builder.addParam("clientId", clientId);
+    
     String topic = ElementParameterParser.getValue(node, "__TOPIC__").trim();
     
     builder.addParam("topic", topic);
     
-    String groupId = ElementParameterParser.getValue(node, "__GROUP_ID__").trim();
-    
-    if (!"\"\"".equals(groupId)) {
-        builder.addParam("groupId", groupId);
-    }
-    
-    String partitioner = ElementParameterParser.getValue(node, "__PARTITIONER__").trim();
-    
-    if (!"\"\"".equals(partitioner)) {
-        builder.addParam("partitioner", partitioner);
-    }
-    
-    
     List< ? extends IConnection> conns = node.getIncomingConnections();
     
     if(conns.size()>0){
+        
+        String partitioner = ElementParameterParser.getValue(node, "__PARTITIONER__").trim();
+        
+        if (!"\"\"".equals(partitioner)) {
+            builder.addParam("partitioner", partitioner);
+        }
         
         String producerType = ElementParameterParser.getValue(node, "__PRODUCER_TYPE__").trim();
         if (!"\"\"".equals(producerType)) {
@@ -135,11 +144,43 @@ imports="
         }
     
     }else{
+    
+            String groupId = ElementParameterParser.getValue(node, "__GROUP_ID_C__").trim();
+    
+            if (!"\"\"".equals(groupId)) {
+                builder.addParam("groupId", groupId);
+            }
+            
             String consumerId = ElementParameterParser.getValue(node, "__CONSUMER_ID__").trim();
             if (!"\"\"".equals(consumerId)) {
                 builder.addParam("consumerId", consumerId);
             }
-        
+            
+            String consumerStreams = ElementParameterParser.getValue(node, "__CONSUMER_STREAMS__").trim();
+            if (!"\"\"".equals(consumerStreams)) {
+                builder.addParam("consumerStreams", consumerStreams);
+            }
+            
+            String consumersCount = ElementParameterParser.getValue(node, "__CONSUMERS_COUNT__").trim();
+            if (!"\"\"".equals(consumersCount)) {
+                builder.addParam("consumersCount", consumersCount);
+            }
+            
+            String batchSize = ElementParameterParser.getValue(node, "__BATCH_SIZE__").trim();
+            if (!"\"\"".equals(batchSize)) {
+                builder.addParam("batchSize", batchSize);
+            }
+            
+            String barrierAwaitTimeoutMs = ElementParameterParser.getValue(node, "__BARRIER_AWAIT_TIMEOUT_MS__").trim();
+            if (!"\"\"".equals(barrierAwaitTimeoutMs)) {
+                builder.addParam("barrierAwaitTimeoutMs", barrierAwaitTimeoutMs);
+            }
+            
+            String consumerTimeoutMs = ElementParameterParser.getValue(node, "__CONSUMER_TIMEOUT_MS__").trim();
+            if (!"\"\"".equals(consumerTimeoutMs)) {
+                builder.addParam("consumerTimeoutMs", consumerTimeoutMs);
+            }
+            
             String socketTimeoutMs = ElementParameterParser.getValue(node, "__SOCKET_TIMEOUT_MS__").trim();
             if (!"\"\"".equals(socketTimeoutMs)) {
                 builder.addParam("socketTimeoutMs", socketTimeoutMs);
@@ -198,11 +239,6 @@ imports="
             String autoOffsetReset = ElementParameterParser.getValue(node, "__AUTO_OFFSET_RESET__").trim();
             if (!"\"\"".equals(autoOffsetReset)) {
                 builder.addParam("autoOffsetReset", "\""+autoOffsetReset+"\"");
-            }
-
-            String consumerTimeoutMs = ElementParameterParser.getValue(node, "__CONSUMER_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(consumerTimeoutMs)) {
-                builder.addParam("consumerTimeoutMs", consumerTimeoutMs);
             }
     }
 
