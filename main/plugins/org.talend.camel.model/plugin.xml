@@ -19,12 +19,13 @@
 
     <extension point="org.talend.core.repository.repository_node_provider">
         <repositoryNode
-            folder="routes"
-            isResouce="true"
-            key="Route"
-            label="Routes"
-            products="DI"
-            type="ROUTE" />
+              folder="routes"
+              isResouce="true"
+              key="Route"
+              label="Routes"
+              ordinal="20"
+              products="DI"
+              type="ROUTE"/>
         <repositoryNode
             folder="code/beans"
             isResouce="true"

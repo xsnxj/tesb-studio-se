@@ -74,7 +74,7 @@
         isResouce="true"
         key="Services"
         label="%NavigatorContent.services"
-        ordinal="3"
+        ordinal="30"
         products="DI"
         type="SERVICES"/>
 	</extension>
