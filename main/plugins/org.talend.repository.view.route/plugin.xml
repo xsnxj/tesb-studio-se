@@ -214,13 +214,6 @@
             name="Bean Sorter"
             order="20">
       </sorter>
-      <sorter
-            class="org.talend.repository.view.route.viewer.sorter.RouteNodeSorter"
-            description="After Job Design"
-            id="org.talend.repository.view.route.sorter"
-            name="Route Sorter"
-            order="20">
-      </sorter>
    </extension>
 
 
