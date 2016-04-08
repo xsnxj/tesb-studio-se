@@ -425,6 +425,24 @@
             <library id="flatpack" />
             <library id="jdom" />
         </libraryNeededGroup>
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-spring-boot}"
+            id="camel-spring-boot"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-spring-boot}"
+            bundleID="" />    
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-spring-boot}"
+            id="spring-boot"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-boot}"
+            bundleID="" />
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-spring-boot-autoconfigure}"
+            id="spring-boot-autoconfigure"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-boot-autoconfigure}"
+            bundleID="" /> 
 
     </extension>
 
