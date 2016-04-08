@@ -13,13 +13,18 @@
 package org.talend.camel.designer.ui.wizards;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,6 +40,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.framework.Bundle;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
@@ -56,6 +62,10 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizardPage {
 
     private static final String EXPORTTYPE_KAR = Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ExportKar");//$NON-NLS-1$
+
+    private static final String EXPORTTYPE_SPRING_BOOT = Messages
+            .getString("JavaCamelJobScriptsExportWSWizardPage.ExportSpringBoot");//$NON-NLS-1$
+
     // dialog store id constants
     private static final String STORE_DESTINATION_NAMES_ID = "JavaJobScriptsExportWizardPage.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
@@ -91,8 +101,41 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
         // TESB-5328
         exportTypeCombo.add(EXPORTTYPE_KAR);
-        exportTypeCombo.setEnabled(false); // only can export kar file
+        if (PluginChecker.isTIS()) {
+            exportTypeCombo.add(EXPORTTYPE_SPRING_BOOT);
+        }
+        // exportTypeCombo.setEnabled(false); // only can export kar file
         exportTypeCombo.setText(EXPORTTYPE_KAR);
+
+        exportTypeCombo.addSelectionListener(new SelectionAdapter() {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Widget source = e.widget;
+                if (source instanceof Combo) {
+                    String destination = ((Combo) source).getText();
+                    boolean show = destination.equals(EXPORTTYPE_SPRING_BOOT);
+                    String OUTPUT_FILE_SUFFIX = FileConstants.JAR_FILE_SUFFIX;
+                    String destinationValue = getDestinationValue();
+                    if (destinationValue.endsWith(getOutputSuffix())) {
+                        if (show) {
+                            destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
+                                    + OUTPUT_FILE_SUFFIX;
+                        }
+                    } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX) && !show) {
+                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
+                                + getOutputSuffix();
+                    }
+                    setDestinationValue(destinationValue);
+                }
+
+            }
+        });
     }
 
     @Override
@@ -272,6 +315,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
     @Override
     protected ExportTreeViewer getExportTree() {
         return new ExportCamelTreeViewer(selection, this) {
+
             @Override
             protected void checkSelection() {
                 JavaCamelJobScriptsExportWSWizardPage.this.checkExport();
@@ -310,27 +354,63 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
         }
 
-        final JavaCamelJobScriptsExportWSAction action;
+        JavaCamelJobScriptsExportWSAction action = null;
+        IRunnableWithProgress actionMS = null;
         Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
-        if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
-                && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
-            action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
+
+        if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
+            System.setProperty("EXPORTTYPE_SPRING_BOOT", "true");
+
+            Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
+            try {
+                Class javaCamelJobScriptsExportMicroServiceAction = bundle
+                        .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
+
+                Constructor constructor = javaCamelJobScriptsExportMicroServiceAction.getConstructor(Map.class, List.class,
+                        String.class, String.class, String.class);
+
+                actionMS = (IRunnableWithProgress) constructor.newInstance(exportChoiceMap, Arrays.asList(getCheckNodes()),
+                        version, destinationKar, "");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                getContainer().run(false, true, actionMS);
+            } catch (InvocationTargetException e) {
+                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                return false;
+            } catch (InterruptedException e) {
+                return false;
+            } finally {
+                System.setProperty("EXPORTTYPE_SPRING_BOOT", "false");
+            }
+
         } else {
-            action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
+
+            System.setProperty("EXPORTTYPE_SPRING_BOOT", "false");
+            if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
+                    && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
+                action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
+            } else {
+                action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
+            }
+
+            try {
+                getContainer().run(false, true, action);
+            } catch (InvocationTargetException e) {
+                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                return false;
+            } catch (InterruptedException e) {
+                return false;
+            }
+            manager = action.getManager();
+            // save output directory
+            manager.setDestinationPath(destinationKar);
+            saveWidgetValues();
         }
 
-        try {
-            getContainer().run(false, true, action);
-        } catch (InvocationTargetException e) {
-            MessageBoxExceptionHandler.process(e.getCause(), getShell());
-            return false;
-        } catch (InterruptedException e) {
-            return false;
-        }
-        manager = action.getManager();
-        // save output directory
-        manager.setDestinationPath(destinationKar);
-        saveWidgetValues();
         return true;
     }
 
@@ -351,22 +431,22 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
         }
     }
-//    @Override
-//    protected void internalSaveWidgetValues() {
-//        // update directory names history
-//        IDialogSettings settings = getDialogSettings();
-//        if (settings != null) {
-//            String[] directoryNames = new String[1];
-//            String destinationValue = manager.getDestinationPath();
-//            if (destinationValue != null) {
-//                IPath path = Path.fromOSString(destinationValue);
-//                destinationValue = path.removeLastSegments(1).toOSString();
-//            }
-//            directoryNames[0] = destinationValue;
-//
-//            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
-//        }
-//    }
+    // @Override
+    // protected void internalSaveWidgetValues() {
+    // // update directory names history
+    // IDialogSettings settings = getDialogSettings();
+    // if (settings != null) {
+    // String[] directoryNames = new String[1];
+    // String destinationValue = manager.getDestinationPath();
+    // if (destinationValue != null) {
+    // IPath path = Path.fromOSString(destinationValue);
+    // destinationValue = path.removeLastSegments(1).toOSString();
+    // }
+    // directoryNames[0] = destinationValue;
+    //
+    // settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+    // }
+    // }
 
     /**
      * Hook method for restoring widget values to the values that they held last time this wizard was used to

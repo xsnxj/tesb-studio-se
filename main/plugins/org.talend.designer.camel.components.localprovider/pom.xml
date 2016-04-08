@@ -121,6 +121,12 @@
             <artifactId>camel-http</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -312,6 +318,26 @@
             <artifactId>jdom</artifactId>
             <version>${jdom.version}</version>
         </dependency>
+        
+        <!-- Spring Boot -->
+	    <dependency>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-autoconfigure</artifactId>
+	        <version>${spring.boot.version}</version>
+	    </dependency>
+	    
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>	    
+	    
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-context</artifactId>
+	        <version>${spring4.version}</version>
+        </dependency>
+	    
     </dependencies>
 
     <build>

@@ -185,12 +185,29 @@ for (IContextParameter ctxParam : params) {
 
 	private final Properties context_param = new Properties();
 
-    public static void main(String[] args){
-        int exitCode = new <%=process.getName() %>().runJobInTOS(args);
-        if(exitCode != 0) {
-            System.exit(exitCode);
+    <% 
+    
+        boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
+        
+        System.setProperty("EXPORTTYPE_SPRING_BOOT","false");
+        
+        if(exportTypeSpringBoot){
+    
+    
+    %>
+    
+
+    
+    <% } else { %>
+    
+        public static void main(String[] args){
+            int exitCode = new <%=process.getName() %>().runJobInTOS(args);
+            if(exitCode != 0) {
+                System.exit(exitCode);
+            }
         }
-    }
+    
+    <% } %>
 
     @Override
     public String[][] runJob(String[] args) {

@@ -135,7 +135,20 @@ package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurren
  * @version <%=version %>
  * @status <%=ElementParameterParser.getValue(process, "__STATUS__") %>
  */
-public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
+ 
+ <%
+        boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
+        if(exportTypeSpringBoot){
+ %>
+@org.springframework.boot.autoconfigure.SpringBootApplication
+public class <%=process.getName()%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
+<%
+    }else {
+%>
+    public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
+<% 
+   } 
+%>
 
 	private boolean inOSGi;
 
@@ -149,7 +162,6 @@ public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilde
 	}
 
 <%
-
     boolean hasSam = false;
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
@@ -1823,6 +1835,9 @@ if (isProvider) {
                 continue;
             }
             String nodeComponentName = node.getComponent().getName();
+            
+            System.out.println("00000000 -> "+nodeComponentName);
+            
     if("cCXF".equals(nodeComponentName)){
             IElementParameter param = node.getElementParameter("LABEL");
             String cid = node.getUniqueName();
