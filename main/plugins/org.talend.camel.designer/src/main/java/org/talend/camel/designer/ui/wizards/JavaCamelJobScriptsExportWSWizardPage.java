@@ -120,6 +120,13 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 if (source instanceof Combo) {
                     String destination = ((Combo) source).getText();
                     boolean show = destination.equals(EXPORTTYPE_SPRING_BOOT);
+
+                    if (show) {
+                        addBSButton.setEnabled(false);
+                    } else {
+                        addBSButton.setEnabled(true);
+                    }
+
                     String OUTPUT_FILE_SUFFIX = FileConstants.JAR_FILE_SUFFIX;
                     String destinationValue = getDestinationValue();
                     if (destinationValue.endsWith(getOutputSuffix())) {
