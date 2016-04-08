@@ -444,6 +444,73 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-boot-autoconfigure}"
             bundleID="" /> 
 
+        <libraryNeededGroup
+              description="camel-test"
+              id="camel-test"
+              name="camel-test">
+           <library
+                 id="camel-test-spring">
+           </library>
+           <library
+                 id="camel-test">
+           </library>
+           <library
+                 id="spring-test">
+           </library>       
+           <library
+                 id="jaxb-impl">
+           </library>  
+           <library
+                 id="jaxb-core">
+           </library>
+           <library
+                 id="camel-spring">
+           </library>
+           <library
+                 id="commons-logging">
+           </library>
+           <library
+                 id="junit.jar">
+           </library>
+           <library
+                 id="org.hamcrest.core_1.3.0.v201303031735.jar">
+           </library>                                       
+        </libraryNeededGroup>
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="camel-test-spring"
+              name="camel-test-spring-2.16.2.jar"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-test-spring-2.16.2.jar">
+        </libraryNeeded>
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="camel-test"
+              name="camel-test-2.16.2.jar"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-test-2.16.2.jar">
+        </libraryNeeded>
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="spring-test"
+              name="spring-test-4.1.7.RELEASE.jar"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-test-4.1.7.RELEASE.jar">
+        </libraryNeeded>
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="jaxb-impl-2.2.11.jar"
+            id="jaxb-impl"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-impl-2.2.11.jar"
+            bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="jaxb-core-2.2.11.jar"
+            id="jaxb-core"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-core-2.2.11.jar"
+            bundleID="" />
+        <!-- slf4j-api-1.7.12.jar -->
+        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
+            name="slf4j-api-1.7.5.jar"
+            id="slf4j-api"
+            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
+            bundleID="" />
+
     </extension>
 
 </plugin>

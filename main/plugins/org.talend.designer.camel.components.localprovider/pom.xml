@@ -318,7 +318,12 @@
             <artifactId>jdom</artifactId>
             <version>${jdom.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+                
         <!-- Spring Boot -->
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>

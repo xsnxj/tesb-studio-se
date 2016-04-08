@@ -33,6 +33,7 @@
 		org.talend.designer.codegen.config.NodeParamsHelper
 		org.talend.designer.runprocess.CodeGeneratorRoutine
 		org.talend.core.model.process.EParameterFieldType
+		org.talend.core.model.process.ProcessUtils
 	"
 	class="Header"
 %>
@@ -50,6 +51,9 @@
 	//boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
 	//List<IContextParameter> params = new ArrayList<IContextParameter>();
 	//params=process.getContextManager().getDefaultContext().getContextParameterList();
+	boolean isTestContainer = ProcessUtils.isTestContainer(process);
+	String className = isTestContainer ? process.getName() + "Test" : process.getName();
+	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder"; 
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -59,8 +63,16 @@ if (service instanceof AbstractBrandingService) {
 <%
 }
 
+    String routeFolderName = "";
+    IProcess baseProcess = ProcessUtils.getTestContainerBaseProcess(process);
+    if (baseProcess != null) {
+        routeFolderName = JavaResourcesHelper.getJobFolderName(baseProcess.getName(), baseProcess.getVersion()) + ".";
+    }
+	routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
+	String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
+	
 %>
-package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurrentProjectName(), process.getName(), process.getVersion()) %>;
+package <%= packageName %>;
 
 <%
 	java.util.Set<String> importsSet = new java.util.TreeSet<String>();
@@ -121,6 +133,12 @@ package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurren
 		
 	}
 	
+	if(isTestContainer){
+		importsSet.add("import org.apache.camel.builder.RouteBuilder");
+		importsSet.add("import org.junit.Test");
+		importsSet.add("import org.apache.camel.component.mock.MockEndpoint");
+	}
+	
 	for(String s: importsSet){
 %>
 		<%=s%> ;
@@ -129,7 +147,7 @@ package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurren
 %>
 
 /**
- * Job: <%=process.getName() %> Purpose: <%=ElementParameterParser.getValue(process, "__PURPOSE__") %><br>
+ * Job: <%=className%> Purpose: <%=ElementParameterParser.getValue(process, "__PURPOSE__") %><br>
  * Description: <%=ElementParameterParser.getValue(process, "__DESCRIPTION__") %> <br>
  * @author <%=ElementParameterParser.getValue(process, "__AUTHOR__") %>
  * @version <%=version %>
@@ -141,11 +159,11 @@ package <%= JavaResourcesHelper.getJobClassPackageName(codeGenArgument.getCurren
         if(exportTypeSpringBoot){
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
-public class <%=process.getName()%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
+public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
 <%
     }else {
 %>
-    public class <%=process.getName()%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
+    public class <%=className%> extends <%=extendsClassName %> implements TalendESBRoute {
 <% 
    } 
 %>
@@ -162,6 +180,7 @@ public class <%=process.getName()%> extends org.apache.camel.spring.boot.FatJarR
 	}
 
 <%
+
     boolean hasSam = false;
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
@@ -1277,6 +1296,17 @@ if (isProvider) {
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
 }//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
+
+<%
+	if(isTestContainer){
+%>
+
+	@Override
+	protected RouteBuilder createRouteBuilder() throws Exception {
+		return new RouteBuilder() {
+<%
+	}//end if(isTestContainer)
+%>
             @Override
             public void configure() throws java.lang.Exception {
                 final /*org.apache.camel.model.Model*/CamelContext camelContext = getContext();
@@ -1835,9 +1865,6 @@ if (isProvider) {
                 continue;
             }
             String nodeComponentName = node.getComponent().getName();
-            
-            System.out.println("00000000 -> "+nodeComponentName);
-            
     if("cCXF".equals(nodeComponentName)){
             IElementParameter param = node.getElementParameter("LABEL");
             String cid = node.getUniqueName();
