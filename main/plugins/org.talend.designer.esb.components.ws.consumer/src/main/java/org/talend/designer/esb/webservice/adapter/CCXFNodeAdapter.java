@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.TalendTextUtils;
+import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.esb.webservice.ServiceSetting;
 import org.talend.designer.esb.webservice.WebServiceConstants;
 import org.talend.designer.esb.webservice.WebServiceNode;
@@ -81,6 +82,7 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 		}
 		portName = getExpressionParamValue(portName);
 		portName = portName.substring(portName.indexOf('}') + 1);
+		portName = TalendQuoteUtils.removeQuotes(portName);
 		String serviceName = node.getParamStringValue(SERVICE_NAME);
 		// String targetNamespace = node.getParamStringValue(SERVICE_NS);
 		if (serviceName == null /* || targetNamespace == null */) {

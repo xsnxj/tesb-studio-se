@@ -60,7 +60,8 @@ public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSele
 	}
 
 	public void retrieveData(String wsdlLocation) throws WSDLException, InvocationTargetException {
-		Definition definition = nodeAdapter.generateDefinition(wsdlLocation);
+		String wsdlLocationTemp = TalendQuoteUtils.removeQuotesIfExist(wsdlLocation);
+        Definition definition = nodeAdapter.generateDefinition(wsdlLocationTemp);
 		currentSetting.setWsdlLocation(wsdlLocation);
 		currentSetting.setDefinition(definition);
 		List<Function> functionsAvailable = new ArrayList<Function>();
