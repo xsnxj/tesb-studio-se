@@ -61,7 +61,7 @@ public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSele
 
 	public void retrieveData(String wsdlLocation) throws WSDLException, InvocationTargetException {
 		String wsdlLocationTemp = TalendQuoteUtils.removeQuotesIfExist(wsdlLocation);
-        Definition definition = nodeAdapter.generateDefinition(wsdlLocationTemp);
+                Definition definition = nodeAdapter.generateDefinition(wsdlLocationTemp);
 		currentSetting.setWsdlLocation(wsdlLocation);
 		currentSetting.setDefinition(definition);
 		List<Function> functionsAvailable = new ArrayList<Function>();
@@ -118,7 +118,7 @@ public class WebServiceUIPresenter implements WsdlFieldListener, ServicePortSele
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("Retrieve WSDL parameter from net.", IProgressMonitor.UNKNOWN);
 				try {
-					retrieveData(TalendQuoteUtils.removeQuotesIfExist(wsdlLocation));
+					retrieveData(wsdlLocation);
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				} finally {
