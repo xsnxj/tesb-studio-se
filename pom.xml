@@ -224,7 +224,7 @@
 						<id>validate</id>
 						<phase>test</phase>
 						<goals>
-							<goal>check</goal>
+							<!-- disable <goal>check</goal> -->
 							<!--goal>cpd</goal>
 							<goal>cpd-check</goal-->
 						</goals>
