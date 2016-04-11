@@ -442,7 +442,37 @@
             name="${tesb-spring-boot-autoconfigure}"
             id="spring-boot-autoconfigure"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-boot-autoconfigure}"
+            bundleID="" />
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="spring-aop-4.1.9.RELEASE.jar"
+            id="spring4-aop"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-aop-4.1.9.RELEASE.jar"
             bundleID="" /> 
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="spring-beans-4.1.9.RELEASE.jar"
+            id="spring4-beans"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-beans-4.1.9.RELEASE.jar"
+            bundleID="" /> 
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="spring-context-4.1.9.RELEASE.jar"
+            id="spring4-context"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-context-4.1.9.RELEASE.jar"
+            bundleID="" /> 
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="spring-core-4.1.9.RELEASE.jar"
+            id="spring4-core"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-core-4.1.9.RELEASE.jar"
+            bundleID="" /> 
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="spring-expression-4.1.9.RELEASE.jar"
+            id="spring4-expression"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-expression-4.1.9.RELEASE.jar"
+            bundleID="" />
 
         <libraryNeededGroup
               description="camel-test"
