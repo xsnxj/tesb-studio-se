@@ -33,6 +33,8 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public class RunCamelProcess extends AContextualAction {
 
+    private static final String TEST_CONTAINER = "TEST_CONTAINER";
+
     private static final String LABEL = Messages.getString("RunProcess.runJob"); //$NON-NLS-1$
 
     public RunCamelProcess() {
@@ -77,6 +79,10 @@ public class RunCamelProcess extends AContextualAction {
             switch (node.getType()) {
             case REPOSITORY_ELEMENT:
                 if (node.getParent() == null || node.getParent().getContentType() != CamelRepositoryNodeType.repositoryRoutesType) {
+                    canWork = false;
+                }
+                // Avoid showing in route test case
+                if (node.getObjectType().getType().equals(TEST_CONTAINER)) {
                     canWork = false;
                 }
                 break;
