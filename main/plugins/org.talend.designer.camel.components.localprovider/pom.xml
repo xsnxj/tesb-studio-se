@@ -318,12 +318,23 @@
             <artifactId>jdom</artifactId>
             <version>${jdom.version}</version>
         </dependency>
+        
+        <!-- Test Container -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <version>${camel.version}</version>
+        </dependency>        
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <version>${camel.version}</version>
         </dependency>
-                
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring4.version}</version>
+        </dependency>
         <!-- Spring Boot -->
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>
