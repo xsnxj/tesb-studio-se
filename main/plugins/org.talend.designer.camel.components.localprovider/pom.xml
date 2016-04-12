@@ -330,56 +330,12 @@
             <artifactId>camel-test-spring</artifactId>
             <version>${camel.version}</version>
         </dependency>
-<<<<<<< HEAD
-                
-=======
+        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring4.version}</version>
         </dependency>
-        <!-- Spring Boot -->
-	    <dependency>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-autoconfigure</artifactId>
-	        <version>${spring.boot.version}</version>
-	    </dependency>
-	    
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring4.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring4.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring4.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-expression</artifactId>
-            <version>${spring4.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring4.version}</version>
-        </dependency>
-        
->>>>>>> 681c1254ee3985c5962dfbb81c35b0a9e7f5edaa
     </dependencies>
 
     <build>
