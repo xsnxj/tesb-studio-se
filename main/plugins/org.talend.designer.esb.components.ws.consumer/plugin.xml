@@ -226,14 +226,6 @@
             <library id="spring-beans" />
             <library id="spring-core" />
             <library id="spring-expression" />
-            <library id="spring4-context" />
-            <library id="spring4-aop" />
-            <library id="spring4-beans" />
-            <library id="spring4-core" />
-            <library id="spring4-expression" />
-            <library id="camel-spring-boot" />
-            <library id="spring-boot" />
-            <library id="spring-boot-autoconfigure" />
             <library id="aopalliance" />
             <library id="commons-logging" />
         </libraryNeededGroup>
