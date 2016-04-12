@@ -159,8 +159,17 @@ package <%= packageName %>;
         if(exportTypeSpringBoot){
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
+@org.springframework.context.annotation.ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
-<%
+
+    @org.springframework.beans.factory.annotation.Autowired
+    org.springframework.core.env.Environment env;
+    
+    @org.springframework.context.annotation.Bean
+    public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
+        return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
+    }
+<%  
     }else {
 %>
     public class <%=className%> extends <%=extendsClassName %> implements TalendESBRoute {
@@ -169,6 +178,8 @@ public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter im
 %>
 
 	private boolean inOSGi;
+	
+	
 
 	public void setArguments(Map<String, String> arguments) {
 	    inOSGi = true;
@@ -1318,6 +1329,11 @@ if (isProvider) {
                 ((org.apache.camel.impl.DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
 
                 //read context values
+                <%
+                    if(exportTypeSpringBoot){
+                %>
+                    contextStr = env.getProperty("spring.config.name")==null?contextStr:env.getProperty("spring.config.name");
+                <%} %>
                 readContextValues(contextStr);
 
 <%
