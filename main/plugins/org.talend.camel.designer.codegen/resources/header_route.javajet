@@ -159,16 +159,10 @@ package <%= packageName %>;
         if(exportTypeSpringBoot){
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
-@org.springframework.context.annotation.ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
 
     @org.springframework.beans.factory.annotation.Autowired
     org.springframework.core.env.Environment env;
-    
-    @org.springframework.context.annotation.Bean
-    public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
-        return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
-    }
 <%  
     }else {
 %>
@@ -835,6 +829,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             allCxfNodes.addAll(process.getNodesOfType("cCXF"));
             boolean hasCXFComponent = !allCxfNodes.isEmpty();
             allCxfNodes.addAll(process.getNodesOfType("cCXFRS"));
+            boolean hasCXF = !allCxfNodes.isEmpty();
             for(INode n: allCxfNodes) {
                 boolean isProvider = n.getIncomingConnections().isEmpty();
                 hasCXFComponentConsumer |= !isProvider;
@@ -948,12 +943,21 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                     }
                 }
 <%
-            }
-
-
-            if(hasCXFComponent){
+            } if(hasCXF && exportTypeSpringBoot){
 %>
-
+            @org.springframework.context.annotation.Bean(name = "cxf")
+            public org.apache.cxf.bus.spring.SpringBus springBus() {
+                return new org.apache.cxf.bus.spring.SpringBus();
+            }
+            
+            @org.springframework.context.annotation.Bean
+            public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
+                return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
+            }
+<%
+            } if(hasCXFComponent){
+%>
+            
             private org.apache.camel.component.cxf.CxfEndpoint getCxfEndpoint(String uri, boolean isProvider, boolean useAuthorization, boolean usePropagateSamlAP, String... token){
                 final org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint = (org.apache.camel.component.cxf.CxfEndpoint) endpoint(uri);
 <%
