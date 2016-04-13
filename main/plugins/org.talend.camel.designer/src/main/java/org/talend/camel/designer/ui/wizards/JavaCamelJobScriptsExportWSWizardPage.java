@@ -199,6 +199,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         String idealSuffix;
         if (isAddMavenScript()) {
             idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
+        } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
+            idealSuffix = FileConstants.JAR_FILE_SUFFIX;
         } else {
             idealSuffix = getOutputSuffix();
         }
