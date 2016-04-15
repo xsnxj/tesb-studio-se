@@ -31,6 +31,10 @@
 	
     boolean isTestContainer=ProcessUtils.isTestContainer(process);
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
+	
+	boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
+        
+    System.setProperty("EXPORTTYPE_SPRING_BOOT","false");
 %>
 	}
 <%
@@ -143,28 +147,44 @@ for (String routeletClass : getRoutelets(process)) {
 		}
 	}
 
-	public static class ContextProperties extends Properties {
+    
 
-		public void synchronizeContext() {
-		<% for (IContextParameter ctxParam : params){
-			String cParaName = ctxParam.getName(); %>
-			if(<%=cParaName %> != null){
-			<% if(ctxParam.getType().equals("id_Date")){ %>
-				String pattern_<%=cParaName %> = "yyyy-MM-dd HH:mm:ss";
-				String value_<%=cParaName %> = "<%=ctxParam.getValue() %>";
-				String[] parts_<%=cParaName %> = value_<%=cParaName %>.split(";");
-				if (parts_<%=cParaName %>.length > 1) {
-					pattern_<%=cParaName %> = parts_<%=cParaName %>[0];
-					this.setProperty("<%=cParaName %>", pattern_<%=cParaName %> + ";" + FormatterUtils.format_Date(<%=cParaName %>, pattern_<%=cParaName %>));
-				} else {
-					this.setProperty("<%=cParaName %>", FormatterUtils.format_Date(<%=cParaName %>, pattern_<%=cParaName %>));
-				}
-			<% } else { %>
-				this.setProperty("<%=cParaName %>", <%=cParaName %>.toString());
-			<% } %>
-			}
-		<% } %>
-		}
+    <%
+        if(exportTypeSpringBoot){
+    %>
+        @org.springframework.beans.factory.annotation.Autowired
+        private ContextProperties context;
+        
+        @org.springframework.boot.context.properties.ConfigurationProperties
+        public static class ContextProperties {
+        
+    <%} else { %>
+    
+        private final ContextProperties context = new ContextProperties();
+        
+        public static class ContextProperties extends Properties {
+            public void synchronizeContext() {
+                <% for (IContextParameter ctxParam : params){
+                    String cParaName = ctxParam.getName(); %>
+                    if(<%=cParaName %> != null){
+                    <% if(ctxParam.getType().equals("id_Date")){ %>
+                        String pattern_<%=cParaName %> = "yyyy-MM-dd HH:mm:ss";
+                        String value_<%=cParaName %> = "<%=ctxParam.getValue() %>";
+                        String[] parts_<%=cParaName %> = value_<%=cParaName %>.split(";");
+                        if (parts_<%=cParaName %>.length > 1) {
+                            pattern_<%=cParaName %> = parts_<%=cParaName %>[0];
+                            this.setProperty("<%=cParaName %>", pattern_<%=cParaName %> + ";" + FormatterUtils.format_Date(<%=cParaName %>, pattern_<%=cParaName %>));
+                        } else {
+                            this.setProperty("<%=cParaName %>", FormatterUtils.format_Date(<%=cParaName %>, pattern_<%=cParaName %>));
+                        }
+                    <% } else { %>
+                        this.setProperty("<%=cParaName %>", <%=cParaName %>.toString());
+                    <% } %>
+                    }
+                <% } %>
+            }
+        
+    <% } %>
 
 <%
 for (IContextParameter ctxParam : params) {
@@ -178,13 +198,20 @@ for (IContextParameter ctxParam : params) {
 		public <%=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true)%> get<%=Character.toUpperCase(ctxParam.getName().charAt(0)) + ctxParam.getName().substring(1)%>() {
 			return this.<%=ctxParam.getName()%>;
 		}
+		
+		<% if(exportTypeSpringBoot){%>
+		    public void set<%=Character.toUpperCase(ctxParam.getName().charAt(0)) + ctxParam.getName().substring(1)%>(<%=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true)%> <%=ctxParam.getName()%>) {
+                this.<%=ctxParam.getName()%> = <%=ctxParam.getName()%>;
+            }
+		<%
+		  }
+		%>
 <%	}
 }
 %>
 	}
 
 	private String contextStr = "<%=codeGenArgument.getContextName() %>";
-	private final ContextProperties context = new ContextProperties();
 
 <%
     if(stats) {
@@ -199,14 +226,7 @@ for (IContextParameter ctxParam : params) {
 	private final Properties context_param = new Properties();
 
     <% 
-    
-        boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
-        
-        System.setProperty("EXPORTTYPE_SPRING_BOOT","false");
-        
         if(exportTypeSpringBoot){
-    
-    
     %>
     
 
@@ -350,100 +370,105 @@ if (isTestContainer) {
 		return 0;
 	}
 
-	/**
-	* read context values from specified context
-	* @parameter contextName : the name of context while will be used
-	*/
-	private void readContextValues(String contextName){
-		try {
-			java.io.InputStream inContext = <%=className %>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
-
-			if (inContext!=null) {
-	    		context.load(inContext);
-    			inContext.close();
-	    	}else{
-	    		//print info and job continue to run, for case: context_param is not empty.
-	    		System.err.println("Could not find the context " + contextName);
-			}
-
-			if(!context_param.isEmpty()) {
-			    context.putAll(context_param);
-			}
-<% 
-			//for bug TDI-22398
-			for (IContextParameter ctxParam :params){ //start for
-
-            	if (ctxParam.getType().equals("id_Password")) {
-            %>
-            		String pwd_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
-            		context.<%=ctxParam.getName()%> = null;
-            		if(pwd_<%=ctxParam.getName()%>_value!=null) {
-            			if(context_param.containsKey("<%=ctxParam.getName()%>")) {//no need to decrypt if it come from program argument or parent job runtime
-            				context.<%=ctxParam.getName()%> = pwd_<%=ctxParam.getName()%>_value;
-            			} else if (!pwd_<%=ctxParam.getName()%>_value.isEmpty()) {
-            				try {
-            					context.<%=ctxParam.getName()%> = routines.system.PasswordEncryptUtil.decryptPassword(pwd_<%=ctxParam.getName()%>_value);
-            					context.put("<%=ctxParam.getName()%>",context.<%=ctxParam.getName()%>);
-            				} catch (java.lang.RuntimeException e) {
-            					//do nothing
-            				}
-            			}
-            		}
-            <%
-            		continue;
-            	}						
-			
-			    String typeToGenerate ="String";
-			    if( !(ctxParam.getType().equals("id_File") || ctxParam.getType().equals("id_Directory") ||ctxParam.getType().equals("id_List Of Value")))
-			    {
-			       typeToGenerate=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true);
-			    }
-			    if(typeToGenerate.equals("java.util.Date")){ // start if
-			        
-%>
-			try{
-				String context_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
-				if (context_<%=ctxParam.getName()%>_value == null){
-					context_<%=ctxParam.getName()%>_value = "";
-				}
-				int context_<%=ctxParam.getName()%>_pos = context_<%=ctxParam.getName()%>_value.indexOf(";");
-				String context_<%=ctxParam.getName()%>_pattern =  "yyyy-MM-dd HH:mm:ss";
-				if(context_<%=ctxParam.getName()%>_pos > -1){
-					context_<%=ctxParam.getName()%>_pattern = context_<%=ctxParam.getName()%>_value.substring(0, context_<%=ctxParam.getName()%>_pos);
-					context_<%=ctxParam.getName()%>_value = context_<%=ctxParam.getName()%>_value.substring(context_<%=ctxParam.getName()%>_pos + 1);
-				}
-				
-			    context.<%=ctxParam.getName()%>=(java.util.Date)(new java.text.SimpleDateFormat(context_<%=ctxParam.getName()%>_pattern).parse(context_<%=ctxParam.getName()%>_value));
-			   
-			}catch(java.text.ParseException e)
-			{
-			    context.<%=ctxParam.getName()%>=null;
-			}
-<%
-		    	}else if(typeToGenerate.equals("Object")||typeToGenerate.equals("String")||typeToGenerate.equals("java.lang.String") ){
-%>
-			    	context.<%=ctxParam.getName()%>=(<%=typeToGenerate%>) context.getProperty("<%=ctxParam.getName()%>");
-<%
-				}else if(typeToGenerate.equals("Character")&&ctxParam.getName()!=null){
-%>
-			 	context.<%=ctxParam.getName()%>= new java.text.StringCharacterIterator(context.getProperty("<%=ctxParam.getName()%>")).first();			 
-<%
-            	}else{
-%> 
-			 		try{
-			     		context.<%=ctxParam.getName()%>=routines.system.ParserUtils.parseTo_<%=typeToGenerate%> (context.getProperty("<%=ctxParam.getName()%>"));
-			 		}catch(NumberFormatException e){
-			     		context.<%=ctxParam.getName()%>=null;
-			 		}
-<%
-			    } //end if
-			} //end for
-%>
-    	} catch (java.io.IOException ie) {
-    		System.err.println("Could not load context "+contextName);
-    		ie.printStackTrace();
-    	}
-	}
+    <%if(exportTypeSpringBoot){%>
+    
+    <% }else{ %>
+            /**
+            * read context values from specified context
+            * @parameter contextName : the name of context while will be used
+            */
+            private void readContextValues(String contextName){
+                try {
+                    java.io.InputStream inContext = <%=className %>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
+        
+                    if (inContext!=null) {
+                        context.load(inContext);
+                        inContext.close();
+                    }else{
+                        //print info and job continue to run, for case: context_param is not empty.
+                        System.err.println("Could not find the context " + contextName);
+                    }
+        
+                    if(!context_param.isEmpty()) {
+                        context.putAll(context_param);
+                    }
+        <% 
+                    //for bug TDI-22398
+                    for (IContextParameter ctxParam :params){ //start for
+        
+                        if (ctxParam.getType().equals("id_Password")) {
+                    %>
+                            String pwd_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
+                            context.<%=ctxParam.getName()%> = null;
+                            if(pwd_<%=ctxParam.getName()%>_value!=null) {
+                                if(context_param.containsKey("<%=ctxParam.getName()%>")) {//no need to decrypt if it come from program argument or parent job runtime
+                                    context.<%=ctxParam.getName()%> = pwd_<%=ctxParam.getName()%>_value;
+                                } else if (!pwd_<%=ctxParam.getName()%>_value.isEmpty()) {
+                                    try {
+                                        context.<%=ctxParam.getName()%> = routines.system.PasswordEncryptUtil.decryptPassword(pwd_<%=ctxParam.getName()%>_value);
+                                        context.put("<%=ctxParam.getName()%>",context.<%=ctxParam.getName()%>);
+                                    } catch (java.lang.RuntimeException e) {
+                                        //do nothing
+                                    }
+                                }
+                            }
+                    <%
+                            continue;
+                        }                       
+                    
+                        String typeToGenerate ="String";
+                        if( !(ctxParam.getType().equals("id_File") || ctxParam.getType().equals("id_Directory") ||ctxParam.getType().equals("id_List Of Value")))
+                        {
+                           typeToGenerate=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true);
+                        }
+                        if(typeToGenerate.equals("java.util.Date")){ // start if
+                            
+        %>
+                    try{
+                        String context_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
+                        if (context_<%=ctxParam.getName()%>_value == null){
+                            context_<%=ctxParam.getName()%>_value = "";
+                        }
+                        int context_<%=ctxParam.getName()%>_pos = context_<%=ctxParam.getName()%>_value.indexOf(";");
+                        String context_<%=ctxParam.getName()%>_pattern =  "yyyy-MM-dd HH:mm:ss";
+                        if(context_<%=ctxParam.getName()%>_pos > -1){
+                            context_<%=ctxParam.getName()%>_pattern = context_<%=ctxParam.getName()%>_value.substring(0, context_<%=ctxParam.getName()%>_pos);
+                            context_<%=ctxParam.getName()%>_value = context_<%=ctxParam.getName()%>_value.substring(context_<%=ctxParam.getName()%>_pos + 1);
+                        }
+                        
+                        context.<%=ctxParam.getName()%>=(java.util.Date)(new java.text.SimpleDateFormat(context_<%=ctxParam.getName()%>_pattern).parse(context_<%=ctxParam.getName()%>_value));
+                       
+                    }catch(java.text.ParseException e)
+                    {
+                        context.<%=ctxParam.getName()%>=null;
+                    }
+        <%
+                        }else if(typeToGenerate.equals("Object")||typeToGenerate.equals("String")||typeToGenerate.equals("java.lang.String") ){
+        %>
+                            context.<%=ctxParam.getName()%>=(<%=typeToGenerate%>) context.getProperty("<%=ctxParam.getName()%>");
+        <%
+                        }else if(typeToGenerate.equals("Character")&&ctxParam.getName()!=null){
+        %>
+                        context.<%=ctxParam.getName()%>= new java.text.StringCharacterIterator(context.getProperty("<%=ctxParam.getName()%>")).first();          
+        <%
+                        }else{
+        %> 
+                            try{
+                                context.<%=ctxParam.getName()%>=routines.system.ParserUtils.parseTo_<%=typeToGenerate%> (context.getProperty("<%=ctxParam.getName()%>"));
+                            }catch(NumberFormatException e){
+                                context.<%=ctxParam.getName()%>=null;
+                            }
+        <%
+                        } //end if
+                    } //end for
+        %>
+                } catch (java.io.IOException ie) {
+                    System.err.println("Could not load context "+contextName);
+                    ie.printStackTrace();
+                }
+            }    
+    <%}%>
+    
 
 	private void evalParam(String arg) {
         if (arg.startsWith("--context=")) {

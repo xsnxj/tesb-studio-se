@@ -159,6 +159,7 @@ package <%= packageName %>;
         if(exportTypeSpringBoot){
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
+@org.springframework.boot.context.properties.EnableConfigurationProperties(<%=className%>.ContextProperties.class)
 public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -1332,13 +1333,13 @@ if (isProvider) {
                 compositeRegistry.addRegistry(registry);
                 ((org.apache.camel.impl.DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
 
-                //read context values
-                <%
-                    if(exportTypeSpringBoot){
-                %>
-                    contextStr = env.getProperty("spring.config.name")==null?contextStr:env.getProperty("spring.config.name");
-                <%} %>
-                readContextValues(contextStr);
+                
+                <%if(exportTypeSpringBoot){%>
+
+                <%}else{%>
+                    //read context values
+                    readContextValues(contextStr);
+                <%}%>
 
 <%
             //process cConfig components first 
@@ -1481,7 +1482,12 @@ if (isProvider) {
 <% 
                 if (isProvider) {
 %>
-                factory_<%=cid%>.setAddress(getCXFRSEndpointAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>));
+                
+                <%if(exportTypeSpringBoot){%>
+                    factory_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>);
+                <%}else{%>
+                    factory_<%=cid%>.setAddress(getCXFRSEndpointAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>));
+                <%}%>
 <%              } else {
 %>
                 factory_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>);
