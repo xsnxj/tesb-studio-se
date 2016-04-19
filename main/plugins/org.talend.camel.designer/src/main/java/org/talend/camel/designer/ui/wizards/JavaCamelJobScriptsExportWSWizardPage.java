@@ -371,7 +371,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
 
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
-            System.setProperty("EXPORTTYPE_SPRING_BOOT", "true");
 
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
             try {
@@ -395,13 +394,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 return false;
             } catch (InterruptedException e) {
                 return false;
-            } finally {
-                System.setProperty("EXPORTTYPE_SPRING_BOOT", "false");
             }
 
         } else {
 
-            System.setProperty("EXPORTTYPE_SPRING_BOOT", "false");
             if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
                     && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
                 action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);

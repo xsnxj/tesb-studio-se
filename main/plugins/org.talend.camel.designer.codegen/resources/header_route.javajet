@@ -41,6 +41,7 @@
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	Vector v = (Vector) codeGenArgument.getArgument();
 	IProcess process = (IProcess) v.get(0);
+	
 	String version = (String) v.get(1);
 
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
@@ -155,7 +156,11 @@ package <%= packageName %>;
  */
  
  <%
-        boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
+        boolean exportTypeSpringBoot = false;
+        if(process.getClass().getName().endsWith("MicroServiceProcess")){
+            exportTypeSpringBoot = true;
+        }
+        
         if(exportTypeSpringBoot){
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication

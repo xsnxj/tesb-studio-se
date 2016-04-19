@@ -13,6 +13,8 @@
 package org.talend.camel.designer;
 
 import org.talend.camel.core.model.camelProperties.CamelPropertiesPackage;
+import org.talend.camel.core.model.camelProperties.impl.CamelProcessItemImpl;
+import org.talend.camel.designer.ui.editor.MicroServiceProcess;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
@@ -26,7 +28,13 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
     @Override
     public IProcess getProcessFromItem(Item item, boolean loadScreenshots) {
         if (item.eClass() == CamelPropertiesPackage.Literals.CAMEL_PROCESS_ITEM) {
-            final RouteProcess process = new RouteProcess(item.getProperty());
+            RouteProcess process = new RouteProcess(item.getProperty());
+            if (item instanceof CamelProcessItemImpl) {
+                CamelProcessItemImpl camelProcessItemImpl = (CamelProcessItemImpl) item;
+                if (camelProcessItemImpl.isExportMicroService()) {
+                    process = new MicroServiceProcess(item.getProperty());
+                }
+            }
             process.loadXmlFile(loadScreenshots);
             return process;
         }

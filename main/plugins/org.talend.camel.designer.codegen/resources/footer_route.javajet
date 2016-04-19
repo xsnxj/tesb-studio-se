@@ -32,10 +32,15 @@
     boolean isTestContainer=ProcessUtils.isTestContainer(process);
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
 	
-	boolean exportTypeSpringBoot = Boolean.valueOf(System.getProperty("EXPORTTYPE_SPRING_BOOT"));
-        
-    System.setProperty("EXPORTTYPE_SPRING_BOOT","false");
+    boolean exportTypeSpringBoot = false;
+    if(process.getClass().getName().endsWith("MicroServiceProcess")){
+        exportTypeSpringBoot = true;
+    }
+	
 %>
+    <%if(exportTypeSpringBoot){%>
+        addRoutelets();
+    <%}%>
 	}
 <%
 	if(isTestContainer){
@@ -152,6 +157,16 @@ for (String routeletClass : getRoutelets(process)) {
     <%
         if(exportTypeSpringBoot){
     %>
+        private void addRoutelets() throws Exception{
+            <%
+                for (String routeletClass : getRoutelets(process)) {
+            %>
+                        addRoutes((org.apache.camel.builder.RouteBuilder) Class.forName("<%=routeletClass %>").newInstance());
+            <%
+                }
+            %>
+        }
+        
         @org.springframework.beans.factory.annotation.Autowired
         private ContextProperties context;
         
