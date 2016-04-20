@@ -461,14 +461,14 @@
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="camel-test-spring"
-              name="camel-test-spring-2.16.2.jar"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-test-spring-2.16.2.jar">
+              name="${tesb-camel-test-spring}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-test-spring}">
         </libraryNeeded>
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="camel-test"
-              name="camel-test-2.16.2.jar"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-test-2.16.2.jar">
+              name="${tesb-camel-test}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-test}">
         </libraryNeeded>
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
