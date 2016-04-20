@@ -950,15 +950,16 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                 }
 <%
             } if(hasCXF && exportTypeSpringBoot){
+            if(!hasCXFComponentConsumer){
 %>
+                @org.springframework.context.annotation.Bean
+                public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
+                    return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
+                }
+            <%}%>
             @org.springframework.context.annotation.Bean(name = "cxf")
             public org.apache.cxf.bus.spring.SpringBus springBus() {
                 return new org.apache.cxf.bus.spring.SpringBus();
-            }
-            
-            @org.springframework.context.annotation.Bean
-            public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
-                return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
             }
 <%
             } if(hasCXFComponent){
@@ -984,7 +985,11 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
 <%
                 }
 if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFHTTPAuthProvider || hasCXFRegistryProvider || hasCXFRegistryConsumer){%>
+               <%
+                if(!exportTypeSpringBoot){
+               %>
                 if (inOSGi) {
+               <%}%>
 <%
                     if(hasCXFHTTPAuthProvider){
 %>
@@ -1014,7 +1019,9 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
                         addRegistry(cxfEndpoint, isProvider, usePropagateSamlAP, token);
                     }
 <%}%>
+                <%if(!exportTypeSpringBoot){%>
                 }
+                <%}%>
 <%
 }
 %>
@@ -1045,12 +1052,125 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
 
             if (hasCXFUsernameTokenProvider) {
 %>
+           <%
+            if(exportTypeSpringBoot){
+           %>
+           
+            class PropertyFileValidator implements org.apache.wss4j.dom.validate.Validator {
+        
+                private final static String USERSFILENAME = "users.properties";
+        
+                private String configPath;
+        
+                public void setConfigPath(String configPath) {
+                    this.configPath = configPath;
+                }
+        
+                @Override
+                public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
+                    if (credential == null || credential.getUsernametoken() == null) {
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILURE, "noCredential");
+                    }
+        
+                    String user = null;
+                    String password = null;
+        
+                    org.apache.wss4j.dom.message.token.UsernameToken usernameToken = credential.getUsernametoken();
+        
+                    user = usernameToken.getName();
+                    String pwType = usernameToken.getPasswordType();
+                    if (log.isDebugEnabled()) {
+                        log.debug("UsernameToken user " + usernameToken.getName());
+                        log.debug("UsernameToken password type " + pwType);
+                    }
+        
+                    if (usernameToken.isHashed()) {
+                        log.warn("Authentication failed as hashed username token not supported");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    password = usernameToken.getPassword();
+        
+                    if (!org.apache.wss4j.dom.WSConstants.PASSWORD_TEXT.equals(pwType)) {
+                        log.warn("Password type " + pwType + " not supported");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    if (!(user != null && user.length() > 0 && password != null && password.length() > 0)) {
+                        log.warn("User or password empty");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    java.io.InputStream stream = null;
+                    try {
+                        String file = "";
+                        if (configPath != null) {
+                            // get spring.config.location from env
+                            file = configPath + USERSFILENAME;
+                        } else {
+                            // by default from current "config" directory
+                            file = System.getProperty("user.dir") + java.io.File.separator + "config" + java.io.File.separator + USERSFILENAME;
+                        }
+        
+                        java.io.File usersfile = new java.io.File(file);
+                        if (usersfile.exists()) {
+                            stream = new java.io.FileInputStream(file);
+                        } else {
+                            stream = this.getClass().getClassLoader().getResourceAsStream("config/" + USERSFILENAME);
+                        }
+        
+                        Properties properties = new Properties();
+                        properties.load(stream);
+                        String propertyPwd = (String) properties.get(user);
+                        if (propertyPwd == null || !propertyPwd.equalsIgnoreCase(password)) {
+                            log.info("Authentication failed");
+                            throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                        }
+                    } catch (Exception ex) {
+                        log.info("Authentication failed", ex);
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    } finally {
+                        try {
+                            stream.close();
+                        } catch (java.io.IOException e) {
+        
+                        }
+                    }
+        
+                    return credential;
+                }
+        
+            }
+           
+            private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
+            PropertyFileValidator validator = new PropertyFileValidator();
+            validator.setConfigPath(env.getProperty("spring.config.location"));
+    
+            cxfEndpoint
+                    .setProperties(java.util.Collections
+                            .<String, Object> singletonMap(
+                                    org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR,
+                                    validator));
+            java.io.InputStream policyInput = this.getClass().getClassLoader().getResourceAsStream("config/" + "org.talend.esb.job.token.policy");
+            org.apache.neethi.Policy policy;
+            try {
+                policy = cxfEndpoint.getBus().getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(policyInput);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load policy", e);
+            }
+             
+            cxfEndpoint.getFeatures().add(
+                    new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
+            }
+           <%}else{%>
             private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
                 org.apache.wss4j.dom.validate.JAASUsernameTokenValidator validator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
                 validator.setContextName("karaf");
                 cxfEndpoint.setProperties(java.util.Collections.<String, Object>singletonMap(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, validator));
                 cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policyProvider.getUsernamePolicy(cxfEndpoint.getBus())));
             }
+           <%}%>
+
 <%
             }
             if (hasCXFUsernameTokenConsumer) {
