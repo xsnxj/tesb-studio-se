@@ -92,6 +92,19 @@
             REQUIRED="false" NUM_ROW="200" NB_LINES="2">
             <DEFAULT>.to("mock:")</DEFAULT>
         </PARAMETER -->
+        <PARAMETER NAME="TEST_WAIT_TIME" FIELD="TEXT"
+            NUM_ROW="67" SHOW_IF="(TEST_COUNT=='true') OR (TEST_BODY=='true') OR (TEST_HEADER=='true')">
+            <DEFAULT>1000</DEFAULT>
+        </PARAMETER>
+        
+        <PARAMETER NAME="TEST_SIMULATE" FIELD="CHECK" REQUIRED="true"
+            NUM_ROW="70" SHOW_IF="#LINK@CONNECTOR.OUT.ANY &gt; '0'">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>        
+        
+        <PARAMETER NAME="PROCESSOR_ENDPOINT" FIELD="ROUTE_COMPONENT_TYPE" FILTER="cProcessor"
+            NUM_ROW="75" SHOW_IF="(TEST_SIMULATE=='true') AND (#LINK@CONNECTOR.OUT.ANY &gt; '0')">
+        </PARAMETER>
     </PARAMETERS>
 
     <ADVANCED_PARAMETERS>
