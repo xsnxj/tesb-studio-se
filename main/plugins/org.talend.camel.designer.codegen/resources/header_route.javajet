@@ -950,13 +950,11 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                 }
 <%
             } if(hasCXF && exportTypeSpringBoot){
-            if(!hasCXFComponentConsumer){
 %>
-                @org.springframework.context.annotation.Bean
-                public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
-                    return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
-                }
-            <%}%>
+            @org.springframework.context.annotation.Bean
+            public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
+                return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
+            }
             @org.springframework.context.annotation.Bean(name = "cxf")
             public org.apache.cxf.bus.spring.SpringBus springBus() {
                 return new org.apache.cxf.bus.spring.SpringBus();
@@ -1224,6 +1222,23 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
         if(usePropagateSamlAP && (token[4] == null)){
             usePropagateSamlAP = false ;
         }
+        
+        <% if(exportTypeSpringBoot) {%>
+            Properties stsProperties = new Properties();
+            java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+
+            try {
+                    stsProperties.load(stsCfg);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load client properties", e);
+            }
+            
+            Map<String, String> stsProps = new HashMap<String, String>();
+            for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
+                    stsProps.put((String)entry.getKey(), (String)entry.getValue());
+            }
+            new org.talend.esb.security.saml.STSClientUtils(stsProps);
+        <%}%>
         final org.apache.cxf.ws.security.trust.STSClient stsClient;
         if(usePropagateSamlAP) {
             stsClient= org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, token[4]);
@@ -1243,6 +1258,22 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
         clientProps.put(
                 org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
                 stsClient);
+                
+        <% if(exportTypeSpringBoot){ %>
+            Properties clientPropertiesTmp = new Properties();
+            java.io.InputStream clientCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.cfg");
+            
+            try {
+                    clientPropertiesTmp.load(clientCfg);
+                    
+                    clientProperties = new HashMap<String, String>();
+                    for (String key : clientPropertiesTmp.stringPropertyNames()) {
+                        clientProperties.put(key, clientPropertiesTmp.getProperty(key));
+                    }
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load client properties", e);
+            }
+        <%}%>
 
         for (Map.Entry<String, String> entry : clientProperties.entrySet()) {
             if (org.apache.cxf.ws.security.SecurityConstants.ALL_PROPERTIES
@@ -1314,6 +1345,21 @@ if(hasCXFRegistryProvider){
         org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
         jaasUTValidator.setContextName("karaf");
         // set endpoint properties
+        <% if(exportTypeSpringBoot) {%>
+        Properties serviceProps = new Properties();
+        java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+        
+        try {
+                serviceProps.load(serviceCfg);
+            securityProps = new HashMap<String, Object>();
+            for (String key : serviceProps.stringPropertyNames()) {
+                securityProps.put(key, serviceProps.getProperty(key));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load service properties", e);
+        }
+        <%}%>
+        
         final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
         final Map<String, Object> endpointProps = new HashMap<String, Object>();
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
@@ -1369,6 +1415,24 @@ private void addSAMLToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint
 if(hasCXFSamlTokenConsumer){
 %>
     if (!isProvider) {
+    
+        <% if(exportTypeSpringBoot) {%>
+            Properties stsProperties = new Properties();
+            java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+
+            try {
+                    stsProperties.load(stsCfg);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load client properties", e);
+            }
+            
+            Map<String, String> stsProps = new HashMap<String, String>();
+            for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
+                    stsProps.put((String)entry.getKey(), (String)entry.getValue());
+            }
+            new org.talend.esb.security.saml.STSClientUtils(stsProps);
+        <%}%>
+        
         final org.apache.cxf.ws.security.trust.STSClient stsClient;
         if (usePropagateSamlAP) {
             stsClient = org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, token[4]);
@@ -1384,6 +1448,22 @@ if(hasCXFSamlTokenConsumer){
         clientProps.put(
                 org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
                 stsClient);
+                
+        <% if(exportTypeSpringBoot){ %>
+            Properties clientPropertiesTmp = new Properties();
+            java.io.InputStream clientCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.cfg");
+            
+            try {
+                    clientPropertiesTmp.load(clientCfg);
+                    
+                    clientProperties = new HashMap<String, String>();
+                    for (String key : clientPropertiesTmp.stringPropertyNames()) {
+                        clientProperties.put(key, clientPropertiesTmp.getProperty(key));
+                    }
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load client properties", e);
+            }
+        <%}%>
 
         for (Map.Entry<String, String> entry : clientProperties.entrySet()) {
             if (org.apache.cxf.ws.security.SecurityConstants.ALL_PROPERTIES
@@ -1412,13 +1492,50 @@ if(hasCXFSamlTokenConsumer){
 }
 if(hasCXFSamlTokenProvider){
 %>
+        <%if(exportTypeSpringBoot){%>
+        Properties pepProps = new Properties();
+        java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
+
+        try {
+            pepProps.load(pepCfg);
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load pep properties", e);
+        }
+        <%}%>
+        
 if (isProvider) {
         // set endpoint properties
+        <%if(exportTypeSpringBoot){%>
+        
+        Properties serviceProps = new Properties();
+        java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+        
+        try {
+            serviceProps.load(serviceCfg);
+            
+            securityProps = new HashMap<String, Object>();
+            for (String key : serviceProps.stringPropertyNames()) {
+                securityProps.put(key, serviceProps.getProperty(key));
+            }
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot load service properties", e);
+        }
+        <%}%>
         final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
         final Map<String, Object> endpointProps = new HashMap<String, Object>();
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
         endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, (String) securityProps.get("security.signature.password")));
+        
+        <%if(exportTypeSpringBoot){%>
+        if(useAuthorization){
+            endpointProps.put(org.talend.esb.authorization.xacml.rt.pep.AuthorizationConstants.PDP_ADDRESS_PROPERTY, pepProps.get("tesb.pdp.address"));
+            org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor authzInterceptor = new org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor();
+            authzInterceptor.setPdpAddress(pepProps.getProperty("tesb.pdp.address"));
+            cxfEndpoint.getInInterceptors().add(authzInterceptor);
+        }
+        <%}%>
         cxfEndpoint.setProperties(endpointProps);
 }
 
@@ -1426,12 +1543,30 @@ if (isProvider) {
 }//end if(hasCXFSamlTokenProvider)
 %>
         // add policy
-        final org.apache.neethi.Policy policy;
-        if (useAuthorization) {
-            policy = policyProvider.getSAMLAuthzPolicy(bus);
-        } else {
-            policy = policyProvider.getSAMLPolicy(bus);
-        }
+        org.apache.neethi.Policy policy;
+        
+        <%if(exportTypeSpringBoot){%>
+            java.io.InputStream policyInput = null;
+            if (useAuthorization) {
+                policyInput = this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.saml.authz.policy");
+            } else {
+                policyInput = this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.saml.policy");
+            }
+    
+            
+            try {
+                policy = cxfEndpoint.getBus().getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(policyInput);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load policy", e);
+            }        
+        <%} else {%>
+            if (useAuthorization) {
+                policy = policyProvider.getSAMLAuthzPolicy(bus);
+            } else {
+                policy = policyProvider.getSAMLPolicy(bus);
+            }
+        <%}%>
+        
         cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
 }<%
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
@@ -1551,6 +1686,41 @@ if (isProvider) {
 <%
                         } else if ("SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
+
+                            <%if(exportTypeSpringBoot){%>
+                            
+                            Properties pepProps = new Properties();
+                            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/" + "org.talend.esb.authorization.pep.cfg");
+                    
+                            try {
+                                pepProps.load(pepCfg);
+                                <%
+                                    if (hasCXFSamlTokenAuthorizationProvider && !hasCXFComponent) {
+                                %>
+                                org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor _authorizationInterceptor =
+                                        new org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor();
+                                _authorizationInterceptor.setPdpAddress(pepProps.getProperty("tesb.pdp.address"));
+                                authorizationInterceptor = (org.apache.cxf.interceptor.Interceptor) _authorizationInterceptor;
+                                
+                                <%}%>
+                            } catch (Exception e) {
+                                throw new RuntimeException("Cannot load pep properties", e);
+                            }
+                            
+                            Properties serviceProps = new Properties();
+                            java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+                            
+                            try {
+                                    serviceProps.load(serviceCfg);
+                                securityProps = new HashMap<String, Object>();
+                                for (String key : serviceProps.stringPropertyNames()) {
+                                    securityProps.put(key, serviceProps.getProperty(key));
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException("Cannot load service properties", e);
+                            }
+                            <%}%>
+                            
                             if (null != securityProps) {
                                 org.talend.esb.security.saml.SAMLRESTUtils.configureServer(sf_<%=cid%>, securityProps);
                                 <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_AUTHORIZATION__"))) { %>
@@ -1589,9 +1759,28 @@ if (isProvider) {
 <%
                         } else if ("SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
-                            if (!inOSGi) {
-                                throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
-                            }
+
+                            <%if(exportTypeSpringBoot){%>
+                                Properties stsProperties = new Properties();
+                                java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+                        
+                                try {
+                                    stsProperties.load(stsCfg);
+                                } catch (Exception e) {
+                                    throw new RuntimeException("Cannot load client properties", e);
+                                }
+                        
+                                Map<String, String> stsProps = new HashMap<String, String>();
+                                for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
+                                    stsProps.put((String)entry.getKey(), (String)entry.getValue());
+                                }
+                                
+                                new org.talend.esb.security.saml.STSClientUtils(stsProps);
+                            <%}else{%>
+                                if (!inOSGi) {
+                                    throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
+                                }
+                            <%}%>
                             org.apache.cxf.ws.security.trust.STSClient stsClient =
                                 org.talend.esb.security.saml.STSClientUtils.createSTSClient(cf_<%=cid%>.getBus(),
                                     <%=ElementParameterParser.getValue(node, "__USERNAME__")%>, decryptedPassword_<%=cid%>);
@@ -1625,9 +1814,14 @@ if (isProvider) {
                     factory_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAMESPACE__")%>,
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>));
-                    if (!inOSGi) {
-                        factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                    }
+                    <%if(exportTypeSpringBoot){%>
+                            factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    <%}else{%>
+                        if (!inOSGi) {
+                            factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                        }
+                    <%}%>
+
 <%
                         if (!isProvider) {
 %>
@@ -2148,9 +2342,15 @@ if (isProvider) {
 %>
                 // Add Service Locator Service to <%=endpointVar%>
                 org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
-                if (!inOSGi) {
+                <%if(exportTypeSpringBoot){%>
                     <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                }
+                <%}else{%>
+                    if (!inOSGi) {
+                        <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    }
+                <%}%>
+                
+
                 <% if (!customProperties.isEmpty()) { %>
                     java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                     <% for (Map<String, String> custProp : customProperties) { %>
