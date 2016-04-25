@@ -269,9 +269,11 @@ if (isTestContainer) {
 	public void test<%=instance%>() throws java.lang.Exception {
 	
 <%
-	String mCode = ""; 
+	String assertPart = "";
+
 	for (INode node: process.getNodesOfType("cMock")) {
 		String cid = node.getUniqueName();
+		boolean needCreatePart = false;
 %>	
 		// get the mock endpoint
 		MockEndpoint mock_<%=cid%> = getMockEndpoint("mock:<%=cid%>");
@@ -283,10 +285,12 @@ if (isTestContainer) {
 		String testBody = ElementParameterParser.getValue(node, "__TEST_BODY__");
 		String testBodyWithContext = ElementParameterParser.getValue(node, "__TEST_BODY_CONTEXT__");
 		String testBodyWithTable = ElementParameterParser.getValue(node, "__TEST_BODY_TABLE__");
+		String testSimulate = ElementParameterParser.getValue(node, "__TEST_SIMULATE__");
+		String testWaitTime = ElementParameterParser.getValue(node, "__TEST_WAIT_TIME__");
 		if("true".equals(testHeader)){
+			needCreatePart = true;
 			if("true".equals(testHeaderWithContext)){
 				String headerContext = ElementParameterParser.getValue(node, "__TEST_HEADER_USE_CONTEXT__");
-				//mCode += headerContext;
 			}else if("true".equals(testHeaderWithTable)){
 				String headerContext = ElementParameterParser.getValue(node, "__TEST_HEADER_USE_TABLE__");
 				//mCode += headerContext;
@@ -301,16 +305,15 @@ if (isTestContainer) {
 			}
 		}
 		if("true".equals(testBody)){
+			needCreatePart = true;
 			if("true".equals(testBodyWithContext)){
 				String bodyContext = ElementParameterParser.getValue(node, "__TEST_BODY_USE_CONTEXT__");
-				mCode += bodyContext;
 %>
 				routines.system.FileDataSet fileDataSet_<%=cid%> = new routines.system.FileDataSet(<%=bodyContext%>);
 				mock_<%=cid%>.expectedBodiesReceived(fileDataSet_<%=cid%>.getDefaultBodies());
 <%				
 			}else if("true".equals(testBodyWithTable)){
 				String bodyContext = ElementParameterParser.getValue(node, "__TEST_BODY_USE_TABLE__");
-				//mCode += bodyContext;
 				List<Map<String, String>> bodyValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__TEST_BODY_USE_TABLE__");
 				String list = "";				
 				for(Map<String, String> valuesMap: bodyValues){
@@ -326,20 +329,50 @@ if (isTestContainer) {
 			}
 		}
 		if("true".equals(testMsgCount)){
+			needCreatePart = true;
 			String msgCount = ElementParameterParser.getValue(node, "__MESSAGE_COUNT__");
 %>
 			mock_<%=cid%>.expectedMessageCount(<%=msgCount%>);
 <%				
 		}
-	}
-	
-	for (INode node: process.getNodesOfType("cMock")) {
-		String cid = node.getUniqueName();	
+		if("true".equals(testSimulate)){
+			String processorName = ElementParameterParser.getValue(node, "__PROCESSOR_ENDPOINT__");
+			if(!"".equals(processorName)){
+		    List<? extends INode> cProcessorNodes = process.getNodesOfType("cProcessor");
+				for(INode n: cProcessorNodes){
+					if(n.getUniqueName().equals(processorName)){
+						String code = ElementParameterParser.getValue(n, "__CODE__");
 %>
-	mock_<%=cid%>.assertIsSatisfied();
+						mock_<%=cid%>.whenAnyExchangeReceived(new org.apache.camel.Processor(){
+							public void process(org.apache.camel.Exchange exchange) throws Exception{
+								<%=code%>
+							}
+						});
 <%
-	}// end for cMock
-%>	
+						break;
+					}
+				}
+			}
+		}
+		if(needCreatePart){
+			assertPart += "\nmock_" + cid + ".setResultWaitTime(" + testWaitTime + "L);";
+			assertPart += "\nmock_"+cid+".assertIsSatisfied();";
+		}
+	}
+
+	for (INode node: process.getNodesOfType("OUTPUT")) {
+		String tCode = ElementParameterParser.getValue(node, "__INFORMATION__");
+		if(!"".equals(tCode)){
+%>
+			// send to endpoint
+			<%=tCode%>
+<%		
+	        break;
+		}
+    }// end of for INPUT
+%>
+		<%=assertPart%>
+
     }// end of test<%=instance%>
 <%
 	}// end pf for
