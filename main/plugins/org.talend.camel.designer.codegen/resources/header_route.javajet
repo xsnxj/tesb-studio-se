@@ -1342,10 +1342,99 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
 if(hasCXFRegistryProvider){
 %>
     if (isProvider) {
-        org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
-        jaasUTValidator.setContextName("karaf");
+
         // set endpoint properties
         <% if(exportTypeSpringBoot) {%>
+            
+            class PropertyFileValidator implements org.apache.wss4j.dom.validate.Validator {
+        
+                private final static String USERSFILENAME = "users.properties";
+        
+                private String configPath;
+        
+                public void setConfigPath(String configPath) {
+                    this.configPath = configPath;
+                }
+        
+                @Override
+                public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
+                    if (credential == null || credential.getUsernametoken() == null) {
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILURE, "noCredential");
+                    }
+        
+                    String user = null;
+                    String password = null;
+        
+                    org.apache.wss4j.dom.message.token.UsernameToken usernameToken = credential.getUsernametoken();
+        
+                    user = usernameToken.getName();
+                    String pwType = usernameToken.getPasswordType();
+                    if (log.isDebugEnabled()) {
+                        log.debug("UsernameToken user " + usernameToken.getName());
+                        log.debug("UsernameToken password type " + pwType);
+                    }
+        
+                    if (usernameToken.isHashed()) {
+                        log.warn("Authentication failed as hashed username token not supported");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    password = usernameToken.getPassword();
+        
+                    if (!org.apache.wss4j.dom.WSConstants.PASSWORD_TEXT.equals(pwType)) {
+                        log.warn("Password type " + pwType + " not supported");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    if (!(user != null && user.length() > 0 && password != null && password.length() > 0)) {
+                        log.warn("User or password empty");
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    }
+        
+                    java.io.InputStream stream = null;
+                    try {
+                        String file = "";
+                        if (configPath != null) {
+                            // get spring.config.location from env
+                            file = configPath + USERSFILENAME;
+                        } else {
+                            // by default from current "config" directory
+                            file = System.getProperty("user.dir") + java.io.File.separator + "config" + java.io.File.separator + USERSFILENAME;
+                        }
+        
+                        java.io.File usersfile = new java.io.File(file);
+                        if (usersfile.exists()) {
+                            stream = new java.io.FileInputStream(file);
+                        } else {
+                            stream = this.getClass().getClassLoader().getResourceAsStream("config/" + USERSFILENAME);
+                        }
+        
+                        Properties properties = new Properties();
+                        properties.load(stream);
+                        String propertyPwd = (String) properties.get(user);
+                        if (propertyPwd == null || !propertyPwd.equalsIgnoreCase(password)) {
+                            log.info("Authentication failed");
+                            throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                        }
+                    } catch (Exception ex) {
+                        log.info("Authentication failed", ex);
+                        throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
+                    } finally {
+                        try {
+                            stream.close();
+                        } catch (java.io.IOException e) {
+        
+                        }
+                    }
+        
+                    return credential;
+                }
+        
+            }
+            
+            PropertyFileValidator jaasUTValidator = new PropertyFileValidator();
+            jaasUTValidator.setConfigPath(env.getProperty("spring.config.location"));
+        
         Properties serviceProps = new Properties();
         java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
         
@@ -1358,6 +1447,10 @@ if(hasCXFRegistryProvider){
         } catch (Exception e) {
             throw new RuntimeException("Cannot load service properties", e);
         }
+        
+        <%} else {%>
+            org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
+            jaasUTValidator.setContextName("karaf");
         <%}%>
         
         final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
