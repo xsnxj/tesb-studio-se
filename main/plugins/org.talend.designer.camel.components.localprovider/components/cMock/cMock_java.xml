@@ -94,7 +94,7 @@
         </PARAMETER -->
         <PARAMETER NAME="TEST_WAIT_TIME" FIELD="TEXT"
             NUM_ROW="67" SHOW_IF="(TEST_COUNT=='true') OR (TEST_BODY=='true') OR (TEST_HEADER=='true')">
-            <DEFAULT>1000</DEFAULT>
+            <DEFAULT>2000</DEFAULT>
         </PARAMETER>
         
         <PARAMETER NAME="TEST_SIMULATE" FIELD="CHECK" REQUIRED="true"

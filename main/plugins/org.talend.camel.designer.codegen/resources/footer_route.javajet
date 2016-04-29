@@ -302,11 +302,23 @@ if (isTestContainer) {
 	for(String instance : instanceList)
 	{
 %>         
-	//<%=instance%>
 	@org.junit.Test
 	public void test<%=instance%>() throws java.lang.Exception {
 	
 <%
+	//for test container
+	for(String testData : ProcessUtils.getTestData(process,instance)){
+		if(null!=process.getContextManager().getDefaultContext().getContextParameter(testData)){
+			String testDataPath =  ProcessUtils.getTestDataValue(process, instance, testData);
+			if(testDataPath != null && testDataPath.length() > 0){
+	%>
+				java.net.URL url_<%=testData%> = getClass().getResource("<%=testDataPath%>");
+				context.<%=testData%>=java.net.URLDecoder.decode(url_<%=testData%>.getPath(), "<%=encoding%>");
+	<%
+			}//end if
+		}//end if
+	}//for testData end
+	
 	String assertPart = "";
 
 	for (INode node: process.getNodesOfType("cMock")) {
