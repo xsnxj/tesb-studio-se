@@ -18,7 +18,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.talend.repository.utils.EsbConfigUtils;
 
-
 public class Activator extends AbstractUIPlugin {
 
     // The plug-in ID
@@ -29,8 +28,10 @@ public class Activator extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
+     * 
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
@@ -38,16 +39,16 @@ public class Activator extends AbstractUIPlugin {
         try {
             copyConfigs();
         } catch (Exception e) {
-            getLog().log(
-                    new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-                            "cannot set Studio ESB configuration", e));
+            getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(), "cannot set Studio ESB configuration", e));
         }
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
@@ -72,15 +73,12 @@ public class Activator extends AbstractUIPlugin {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
     }
 
-
     private void copyConfigs() throws CoreException, IOException, URISyntaxException {
 
         // find ESB configuration files folder in plug-in
         URL esbConfigsFolderUrl = FileLocator.find(getBundle(), new Path("esb"), null);
         if (null == esbConfigsFolderUrl) {
-            getLog().log(
-                    new Status(IStatus.WARNING, getBundle().getSymbolicName(),
-                            "cannot find ESB configuration files"));
+            getLog().log(new Status(IStatus.WARNING, getBundle().getSymbolicName(), "cannot find ESB configuration files"));
             return;
         }
 
@@ -93,13 +91,11 @@ public class Activator extends AbstractUIPlugin {
         esbConfigsTargetFolder = esbConfigsTargetFolder.mkdir(EFS.SHALLOW, null);
 
         // retrieve all ESB configuration files packed inside plug-in
-        File fileEsbConfigFolder=new File(esbConfigsFolderUrl.getPath());
+        File fileEsbConfigFolder = new File(esbConfigsFolderUrl.getPath());
         IFileStore esbConfigsFolderStore = fileSystem.getStore(fileEsbConfigFolder.toURI());
         IFileStore[] esbConfigsFolderStoreChildren = esbConfigsFolderStore.childStores(EFS.NONE, null);
         if (0 == esbConfigsFolderStoreChildren.length) {
-            getLog().log(
-                    new Status(IStatus.WARNING, getBundle().getSymbolicName(),
-                            "cannot find any ESB configuration files"));
+            getLog().log(new Status(IStatus.WARNING, getBundle().getSymbolicName(), "cannot find any ESB configuration files"));
             return;
         }
 
@@ -111,6 +107,15 @@ public class Activator extends AbstractUIPlugin {
                     esbConfigFileStore.copy(esbConfigsTargetFolder.getChild(esbConfigFileName), EFS.NONE, null);
                 } catch (CoreException e) {
                     return; // ignore to do not overwrite possible user changes in configuration files
+                }
+            } else {
+                String esbConfigFileName = esbConfigFileStore.fetchInfo().getName();
+                if ("microservice".equals(esbConfigFileName)) {
+                    try {
+                        esbConfigFileStore.copy(esbConfigsTargetFolder.getChild(esbConfigFileName), EFS.NONE, null);
+                    } catch (CoreException e) {
+                        return; // ignore to do not overwrite possible user changes in configuration files
+                    }
                 }
             }
         }

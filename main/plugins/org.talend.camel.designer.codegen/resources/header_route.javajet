@@ -165,7 +165,7 @@ package <%= packageName %>;
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
 @org.springframework.boot.context.properties.EnableConfigurationProperties(<%=className%>.ContextProperties.class)
-public class <%=className%> extends org.apache.camel.spring.boot.FatJarRouter implements TalendESBRoute {
+public class <%=className%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
 
     @org.springframework.beans.factory.annotation.Autowired
     org.springframework.core.env.Environment env;

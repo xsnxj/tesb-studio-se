@@ -33,6 +33,7 @@
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
 	
     boolean exportTypeSpringBoot = false;
+    boolean isHttpBasic=false;
     if(process.getClass().getName().endsWith("MicroServiceProcess")){
         exportTypeSpringBoot = true;
     }
@@ -50,7 +51,6 @@
 <%
 	}//end if(isTestContainer)
 %>
-
 	private org.apache.camel.main.Main main;
 
     private void run() throws java.lang.Exception {
@@ -157,6 +157,33 @@ for (String routeletClass : getRoutelets(process)) {
     <%
         if(exportTypeSpringBoot){
     %>
+    
+        private static String[] resetArgs(String... args){
+            Map<String,String> argsMap = new HashMap<String,String>();
+    
+            for(int i=0;i<args.length;i++){
+                String[] kv = args[i].split("=");
+                argsMap.put(kv[0], kv[1]);
+            }
+    
+            if(argsMap.get("--server.port")==null){
+                argsMap.put("--server.port","8065");
+            }
+            
+            String[] resetArgs = new String[argsMap.size()];
+            
+            java.util.Set<String> keySet = argsMap.keySet();
+    
+            int idx = 0;
+            
+            for(String key:keySet){
+                resetArgs[idx] =  key+"="+argsMap.get(key);
+                idx++;
+            }
+            
+            return resetArgs;
+        }
+        
         private void addRoutelets() throws Exception{
             <%
                 for (String routeletClass : getRoutelets(process)) {
@@ -244,7 +271,18 @@ for (IContextParameter ctxParam : params) {
         if(exportTypeSpringBoot){
     %>
     
+        public static void main(String... args){
 
+            String[] resetArgs = resetArgs(args);
+        
+
+            
+            org.springframework.context.ApplicationContext applicationContext = new org.springframework.boot.SpringApplication(<%=className%>.class).run(resetArgs);
+        
+            org.apache.camel.spring.boot.CamelSpringBootApplicationController applicationController = applicationContext.getBean(org.apache.camel.spring.boot.CamelSpringBootApplicationController.class);
+            
+            applicationController.blockMainThread();
+        }
     
     <% } else { %>
     
