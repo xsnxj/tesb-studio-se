@@ -201,6 +201,11 @@
             id="spring-jms"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-jms}"
             bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-commons-pool2}"
+            id="commons-pool2"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-commons-pool2}"
+            bundleID="" />
 
         <libraryNeededGroup
                 description="camel-jms"
@@ -209,6 +214,7 @@
             <library id="camel-jms" />
             <library id="geronimo-jms_1.1_spec" />
             <library id="spring-jms" />
+            <library id="commons-pool2" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
