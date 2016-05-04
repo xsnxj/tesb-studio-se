@@ -1668,8 +1668,15 @@ if (isProvider) {
 
 <%
 	if(isTestContainer){
-%>
 
+		if(hasCXFComponent){
+%>
+			private org.apache.camel.Endpoint endpoint(String uri) {
+				return context().getEndpoint(uri);
+			}
+<%
+		}// end if cCxf
+%>
 	@Override
 	protected RouteBuilder createRouteBuilder() throws Exception {
 		return new RouteBuilder() {
