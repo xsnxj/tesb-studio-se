@@ -168,6 +168,12 @@
             id="commons-httpclient"
             uripath="platform:/base/plugins/org.apache.commons.httpclient_3.1.0.v201012070820.jar"
             bundleID="" />
+        <libraryNeeded
+              context="context"
+              id="camel-http-common"
+              mvn_uri="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http-common}"
+              name="${tesb-camel-http-common}" />
+
         <!-- ${tesb-commons-codec} -->
         <!--libraryNeeded context="plugin:org.apache.commons.codec"
             name="org.apache.commons.codec_1.6.0.v201305230611.jar"
@@ -184,6 +190,7 @@
             <library id="commons-httpclient" />
             <library id="commons-logging" />
             <library id="commons-codec" />
+            <library id="camel-http-common" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
@@ -349,6 +356,7 @@
             <library id="camel-jetty-common" />
             <library id="camel-jetty8" />
             <library id="camel-http" />
+            <library id="camel-http-common" />
             <group id="jetty-server" />
             <library id="jetty-all" />
         </libraryNeededGroup>
