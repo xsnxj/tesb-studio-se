@@ -374,26 +374,28 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
             try {
-                Class javaCamelJobScriptsExportMicroServiceAction = bundle
-                        .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
+                if (bundle != null) {
+                    Class javaCamelJobScriptsExportMicroServiceAction = bundle
+                            .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
 
-                Constructor constructor = javaCamelJobScriptsExportMicroServiceAction.getConstructor(Map.class, List.class,
-                        String.class, String.class, String.class);
+                    Constructor constructor = javaCamelJobScriptsExportMicroServiceAction.getConstructor(Map.class, List.class,
+                            String.class, String.class, String.class);
 
-                actionMS = (IRunnableWithProgress) constructor.newInstance(exportChoiceMap, Arrays.asList(getCheckNodes()),
-                        version, destinationKar, "");
+                    actionMS = (IRunnableWithProgress) constructor.newInstance(exportChoiceMap, Arrays.asList(getCheckNodes()),
+                            version, destinationKar, "");
+
+                    try {
+                        getContainer().run(false, true, actionMS);
+                    } catch (InvocationTargetException e) {
+                        MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                        return false;
+                    } catch (InterruptedException e) {
+                        return false;
+                    }
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-
-            try {
-                getContainer().run(false, true, actionMS);
-            } catch (InvocationTargetException e) {
-                MessageBoxExceptionHandler.process(e.getCause(), getShell());
-                return false;
-            } catch (InterruptedException e) {
-                return false;
             }
 
         } else {
