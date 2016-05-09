@@ -1585,16 +1585,6 @@ if(hasCXFSamlTokenConsumer){
 }
 if(hasCXFSamlTokenProvider){
 %>
-        <%if(exportTypeSpringBoot){%>
-        Properties pepProps = new Properties();
-        java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
-
-        try {
-            pepProps.load(pepCfg);
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot load pep properties", e);
-        }
-        <%}%>
         
 if (isProvider) {
         // set endpoint properties
@@ -1623,6 +1613,14 @@ if (isProvider) {
         
         <%if(exportTypeSpringBoot){%>
         if(useAuthorization){
+            Properties pepProps = new Properties();
+            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
+
+            try {
+                pepProps.load(pepCfg);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load pep properties", e);
+            }
             endpointProps.put(org.talend.esb.authorization.xacml.rt.pep.AuthorizationConstants.PDP_ADDRESS_PROPERTY, pepProps.get("tesb.pdp.address"));
             org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor authzInterceptor = new org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor();
             authzInterceptor.setPdpAddress(pepProps.getProperty("tesb.pdp.address"));
