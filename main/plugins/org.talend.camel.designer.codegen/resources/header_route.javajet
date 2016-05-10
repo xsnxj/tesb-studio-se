@@ -992,7 +992,11 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
                     if(hasCXFHTTPAuthProvider){
 %>
                         if (isProvider && token!=null && org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])) {
+                            
+                        <%if(!exportTypeSpringBoot){%>
                             addHttpAuthProvider(cxfEndpoint);
+                        <%}%>
+                            
                         }
 <%
                     }
@@ -2490,6 +2494,8 @@ if (isProvider) {
                 // Add Service Activity Monitor Service to <%=endpointVar%>
                 if (eventFeature != null) {
                     <%=endpointVar%>.getFeatures().add(eventFeature);
+                } else {
+                    <%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
                 }
 <%
             }
