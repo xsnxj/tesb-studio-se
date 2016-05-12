@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.talend.core.PluginChecker;
 import org.talend.repository.utils.EsbConfigUtils;
 
 public class Activator extends AbstractUIPlugin {
@@ -110,7 +111,7 @@ public class Activator extends AbstractUIPlugin {
                 }
             } else {
                 String esbConfigFileName = esbConfigFileStore.fetchInfo().getName();
-                if ("microservice".equals(esbConfigFileName)) {
+                if ("microservice".equals(esbConfigFileName) && PluginChecker.isTIS()) {
                     try {
                         esbConfigFileStore.copy(esbConfigsTargetFolder.getChild(esbConfigFileName), EFS.NONE, null);
                     } catch (CoreException e) {
