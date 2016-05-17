@@ -1464,6 +1464,18 @@ if(hasCXFRegistryProvider){
         endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, (String) securityProps.get("security.signature.password")));
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR, jaasUTValidator);
         endpointProps.put("use.service.registry", "true");
+        <%if(exportTypeSpringBoot){%>
+            Properties pepProps = new Properties();
+            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
+
+            try {
+                pepProps.load(pepCfg);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load pep properties", e);
+            }
+            endpointProps.put(org.talend.esb.authorization.xacml.rt.pep.AuthorizationConstants.PDP_ADDRESS_PROPERTY, pepProps.get("tesb.pdp.address"));
+        <%}%>
+        
         cxfEndpoint.setProperties(endpointProps);
     }
 <%}%>
