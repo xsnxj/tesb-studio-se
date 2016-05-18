@@ -165,7 +165,11 @@ for (String routeletClass : getRoutelets(process)) {
                 String[] kv = args[i].split("=");
                 argsMap.put(kv[0], kv[1]);
             }
-    
+            
+            if (argsMap.get("--banner.location") == null) {
+                argsMap.put("--banner.location", "config/banner.txt");
+            }
+            
             if(argsMap.get("--server.port")==null){
                 argsMap.put("--server.port","8065");
             }
