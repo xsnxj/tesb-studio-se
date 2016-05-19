@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.talend.studio</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>6.0.1-SNAPSHOT</version>
+    <version>6.0.2-SNAPSHOT</version>
 	<relativePath />
   </parent>
   <artifactId>tesb-studio-se</artifactId>
@@ -27,11 +27,11 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <cxf.version>3.1.1</cxf.version>
-    <spring.version>3.2.11.RELEASE</spring.version>
+    <cxf.version>3.1.4</cxf.version>
+    <spring.version>3.2.14.RELEASE</spring.version>
     <jettison.version>1.3.7</jettison.version>
     <!--slf4j.version>1.7.9</slf4j.version-->
-    <tesb.version>6.0.0</tesb.version>
+    <tesb.version>6.0.1</tesb.version>
 
     <mvn-dom4j>mvn:dom4j/dom4j/1.6.1</mvn-dom4j>
   </properties>

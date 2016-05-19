@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -37,7 +37,7 @@ import org.talend.repository.ui.actions.AContextualAction;
  */
 public abstract class AbstractBeanAction extends AContextualAction {
 
-//    protected RepositoryNode repositoryNode;
+    // protected RepositoryNode repositoryNode;
 
     /*
      * (non-Jsdoc)
@@ -89,7 +89,9 @@ public abstract class AbstractBeanAction extends AContextualAction {
         if (!found) {
             routineSynchronizer.syncBean(beanItem, true);
             IFile file = routineSynchronizer.getFile(beanItem);
-
+            if (file == null) {
+                return null;
+            }
             RepositoryEditorInput input = new BeanEditorInput(file, beanItem);
             input.setReadOnly(readOnly);
             talendEditor = page.openEditor(input, talendEditorID); //$NON-NLS-1$            

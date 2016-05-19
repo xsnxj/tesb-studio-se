@@ -276,6 +276,15 @@ try {
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
+	
+	<% if (!paramsHelper.getBoolParam( "__CHECK_SERVER_IDENTITY__")) { %>
+        
+        org.apache.cxf.configuration.jsse.TLSClientParameters tlsClientParameters_<%=cid%> = new org.apache.cxf.configuration.jsse.TLSClientParameters();
+        tlsClientParameters_<%=cid%>.setDisableCNCheck(true);
+        conduit_<%=cid%>.setTlsClientParameters(tlsClientParameters_<%=cid%>);
+           
+    <% } %>
+	
 	if (!inOSGi) {
 		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
 		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
@@ -403,13 +412,14 @@ try {
 			}
 			<%=connFaultName%>.errorCode = ex_<%=cid%>.getResponse().getStatus();
 
-			String errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
+			String errorMessage_<%=cid%> = null;
+			try {
+				errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
+			} catch (Exception exe_<%=cid%>) {
+				// ignore
+			}
 			if (null == errorMessage_<%=cid%> || 0 == errorMessage_<%=cid%>.trim().length()) {
-				try {
-					errorMessage_<%=cid%> = ex_<%=cid%>.getResponse().readEntity(String.class);
-				} catch (Exception exe_<%=cid%>) {
-					// ignore
-				}
+				errorMessage_<%=cid%> = ex_<%=cid%>.getMessage();
 			}
 			<%=connFaultName%>.errorMessage = errorMessage_<%=cid%>;
 

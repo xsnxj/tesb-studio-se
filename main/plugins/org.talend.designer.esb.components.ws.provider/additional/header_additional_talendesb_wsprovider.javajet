@@ -252,8 +252,8 @@ public class QueuedMessageHandlerImpl<IN, OUT> implements ESBProviderCallback {
 @javax.xml.ws.WebServiceProvider()
 public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 
-    @javax.annotation.Resource
-    private javax.xml.ws.WebServiceContext context;
+	@javax.annotation.Resource
+	private javax.xml.ws.WebServiceContext context;
 
 	private QueuedMessageHandlerImpl<java.util.Map, org.dom4j.Document> messageHandler;
 
@@ -274,7 +274,7 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 
 			java.util.Map<String, Object> esbRequest = new java.util.HashMap<String, Object>();
 			esbRequest.put(ESBProviderCallback.HEADERS_SOAP, context.getMessageContext().get(org.apache.cxf.headers.Header.HEADER_LIST));
-            esbRequest.put(ESBProviderCallback.HEADERS_HTTP, context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS));
+			esbRequest.put(ESBProviderCallback.HEADERS_HTTP, context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS));
 			esbRequest.put(ESBProviderCallback.REQUEST, requestDoc);
 
 			QueuedExchangeContextImpl<java.util.Map, org.dom4j.Document> messageExchange = messageHandler.invoke(esbRequest, <%=!isOneWay%>);
@@ -282,9 +282,22 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 <% if (isOneWay) { %>
 			return null;
 <% } else { %>
-            try {
+			try {
 				if (messageExchange.isFault()) {
-					throw messageExchange.getFault();
+					Throwable throwable = messageExchange.getFault();
+					if (throwable instanceof org.apache.cxf.interceptor.Fault) {
+						org.apache.cxf.interceptor.Fault fault = (org.apache.cxf.interceptor.Fault) throwable;
+						org.apache.cxf.binding.soap.SoapVersion soapVersion =
+								(org.apache.cxf.binding.soap.SoapVersion)
+										context.getMessageContext().get("org.apache.cxf.binding.soap.SoapVersion");
+						org.apache.cxf.binding.soap.SoapFault soapFault = org.apache.cxf.binding.soap.SoapFault.createFault(fault, soapVersion);
+						if (soapVersion instanceof org.apache.cxf.binding.soap.Soap12) {
+							soapFault.setFaultCode(org.apache.cxf.binding.soap.Soap12.getInstance().getReceiver());
+							soapFault.setSubCode(fault.getFaultCode());
+						}
+						throw soapFault;
+					}
+					throw throwable;
 				} else {
 					org.dom4j.Document responseDoc = messageExchange.getResponse();
 					if (null == responseDoc) {
@@ -299,7 +312,7 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
 				}
 			} finally {
 				messageExchange.completeQueuedProcessing();
-            }
+			}
 <% } %>
 		} catch (RuntimeException ex) {
 			throw ex;
@@ -333,12 +346,12 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	public void setCustomProperties(java.util.Map<String, String> props) {
 		customProperty = props;
 	}
-	
+
 	private void doSendResponse(Object obj){
-		if((Boolean)globalMap.get("wsRequestReceivedAndResponseSentBack")){
+		if ((Boolean) globalMap.get("wsRequestReceivedAndResponseSentBack")) {
 			throw new RuntimeException("Send Response failed! Response already sent with current request.");
-		}else{
-			globalMap.put("wsRequestReceivedAndResponseSentBack",true);
+		} else {
+			globalMap.put("wsRequestReceivedAndResponseSentBack", true);
 			esbProviderCallback.sendResponse(obj);
 		}
 	}
@@ -352,14 +365,14 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 			talendJobError = (RuntimeException) error;
 		} else {
 			String msg = "";
-			if(error != null && error.getMessage() != null){
+			if (error != null && error.getMessage() != null) {
 				msg = error.getMessage();
 			}
 			talendJobError = new RuntimeException("Talend job execution error: "+ msg, error);
 		}
 		doSendResponse(talendJobError);
 	}
-	
+
 	public void sendFaultByDefault(Throwable error){
 		if(!(Boolean)globalMap.get("wsRequestReceivedAndResponseSentBack")){
 			sendFault(error);
@@ -367,29 +380,33 @@ public class ESBProviderCallbackTalendJobWrapper_<%=cid%> implements ESBProvider
 	}
 
 	public void sendBusinessFault(String faultString, org.dom4j.Document faultDetail) {
-
 		try {
-            org.apache.cxf.binding.soap.SoapFault soapFault = new org.apache.cxf.binding.soap.SoapFault(
-                faultString, new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
+			org.apache.cxf.interceptor.Fault soapFault = new org.apache.cxf.interceptor.Fault(faultString, (java.util.ResourceBundle) null);
+			soapFault.setFaultCode(new javax.xml.namespace.QName("<%=serviceNS%>", "businessFault"));
 			if (null != faultDetail) {
 				// wrap details
 				org.dom4j.Element rootElement = faultDetail.getRootElement();
-                org.dom4j.tree.DefaultElement newRootElement = new org.dom4j.tree.DefaultElement("details");
-                faultDetail.setRootElement(newRootElement);
-                newRootElement.add(rootElement);
-                // A special version of DOMWriter that does not write xmlns:foo attributes
-                org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
-                    protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
-                        // Do nothing
-                    }
-                };
-				org.w3c.dom.Document faultDetailDom = writer.write(faultDetail);
+				org.dom4j.tree.DefaultElement newRootElement = new org.dom4j.tree.DefaultElement("details");
+				faultDetail.setRootElement(newRootElement);
+				newRootElement.add(rootElement);
+
+				org.w3c.dom.Document faultDetailDom = convertDocument(faultDetail);
 				soapFault.setDetail(faultDetailDom.getDocumentElement());
 			}
 			doSendResponse(wrapOutput(soapFault));
 		} catch (Exception e) {
 			this.sendFault(e);
 		}
+	}
+
+	private org.w3c.dom.Document convertDocument(org.dom4j.Document document) throws Exception{
+		// A special version of DOMWriter that does not write xmlns:foo attributes
+		org.dom4j.io.DOMWriter writer = new org.dom4j.io.DOMWriter() {
+			protected void writeNamespace(org.w3c.dom.Element domElement, org.dom4j.Namespace namespace) {
+				// Do nothing
+			}
+		};
+		return writer.write(document);
 	}
 
 	private Object wrapOutput(Object output) {
@@ -420,7 +437,7 @@ class HandlerThread_<%=cid%> extends Thread {
 			if (java.net.InetAddress.getByName(host).isLoopbackAddress()) {
 				int port = endpointURI.getPort();
 				if (-1 == port) {
-				    port = 80;
+					port = 80;
 				}
 				java.net.ServerSocket ss = null;
 				try {

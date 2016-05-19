@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -49,7 +49,9 @@ import org.talend.repository.model.IProxyRepositoryFactory;
  */
 public class NewRouteResourceWizard extends Wizard {
 
-	/** Main page. */
+    /** Main page. */
+    private static final String LOW_DASH = "_";
+
 	private NewRouteResourceWizardPage mainPage;
 
 	private RouteResourceItem item;
@@ -130,6 +132,7 @@ public class NewRouteResourceWizard extends Wizard {
 		URL url = mainPage.getUrl();
 		Path p = new Path(property.getLabel());
 		String itemName = p.removeFileExtension().lastSegment();
+        // String refName = item.getProperty().getLabel() + LOW_DASH + VersionUtils.DEFAULT_VERSION;
 		String fileExtension = null;
 		if (url != null) {
 			p = new Path(url.getPath());
@@ -147,12 +150,12 @@ public class NewRouteResourceWizard extends Wizard {
 
 		// In case the source file extension is "item"
 		if (fileExtension.equals(FileConstants.ITEM_EXTENSION)) {
-			fileExtension += "_";
+			fileExtension += LOW_DASH;
 		}
 
 		// In case the source file extension is "properties"
 		if (fileExtension.equals(FileConstants.PROPERTIES_EXTENSION)) {
-			fileExtension += "_";
+			fileExtension += LOW_DASH;
 		}
 
 		ByteArray byteArray = PropertiesFactory.eINSTANCE.createByteArray();
@@ -174,7 +177,7 @@ public class NewRouteResourceWizard extends Wizard {
 				.createReferenceFileItem();
 		refItem.setContent(byteArray);
 		refItem.setExtension(fileExtension);
-		refItem.setName(itemName);
+        // refItem.setName(refName);
 
 		item.setName(itemName);
 

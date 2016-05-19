@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -44,38 +44,26 @@ public class WebServiceNode extends AbstractExternalNode {
         WizardDialog wizardDialog = new WizardDialog(shell, new WebServiceDialog(this));
         return (Window.OK == wizardDialog.open()) ? SWT.OK : SWT.CANCEL;
     }
-    
-	public Object getParamValue(String key) {
-		IElementParameter parameter = getElementParameter(key);
-		return parameter == null ? null : parameter.getValue();
-	}
-	
-	public void setParamValue(String key, Object value) {
-		IElementParameter parameter = getElementParameter(key);
-		if(parameter!=null) {
-			parameter.setValue(value);
-		}
-	}
 
-	public String getParamStringValue(String key) {
-		Object parameterValue = getParamValue(key);
-		if (parameterValue instanceof String) {
-			return StringUtils.trimToNull((String)parameterValue);
-		}
-		return null;
-	}
-	
-	public String getVisibleParamStringValue(String key) {
-        String value = getParamStringValue(key);
-        if (!("").equals(value)) {
-            IElementParameter param = getElementParameter(key);
-            if (param.isShow(getElementParametersWithChildrens())) {
-                return value;
-            }
+    public String getParamStringValue(String key) {
+        final Object parameterValue = getParamValue(key);
+        if (parameterValue instanceof String) {
+            return StringUtils.trimToNull((String) parameterValue);
         }
-        return "";
-    
-	}
+        return null;
+    }
+
+    private Object getParamValue(String key) {
+        final IElementParameter parameter = getElementParameter(key);
+        return parameter == null ? null : parameter.getValue();
+    }
+
+    public void setParamValue(String key, Object value) {
+        final IElementParameter parameter = getElementParameter(key);
+        if (parameter != null) {
+            parameter.setValue(value);
+        }
+    }
 
 	public boolean getBooleanValue(String key) {
 		Object value = getParamValue(key);

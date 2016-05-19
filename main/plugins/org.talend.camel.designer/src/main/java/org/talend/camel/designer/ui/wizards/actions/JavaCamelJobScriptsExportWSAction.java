@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -200,13 +200,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             	jobArtifactVersion += "-SNAPSHOT";
             }
             String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getGroupId(), routeName+"_"+jobName, getArtifactVersion(), jobFile);
+            BundleModel jobModel = new BundleModel(getGroupId() + '.' + routeName, jobName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-            		exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
-            				jobName, jobVersion,
-            				routeNode.getObject().getProperty().getDisplayName(),
-            				version
-            				);
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
+                    .getObject().getProperty().getDisplayName(), version);
             }
         }
     }

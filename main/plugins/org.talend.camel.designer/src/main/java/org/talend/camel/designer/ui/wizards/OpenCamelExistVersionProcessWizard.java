@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -33,10 +33,10 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
 import org.talend.commons.exception.BusinessException;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.exception.SystemException;
-import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.core.CorePlugin;
@@ -253,12 +253,18 @@ public class OpenCamelExistVersionProcessWizard extends Wizard {
                     } else {
                         file = routineSynchronizer.getRoutinesFile(routineItem);
                     }
+                    if (file == null) {
+                        return;
+                    }
                     fileEditorInput = new RoutineEditorInput(file, routineItem);
                 } else if (item instanceof SQLPatternItem) {
                     SQLPatternItem patternItem = (SQLPatternItem) item;
                     ISQLPatternSynchronizer SQLPatternSynchronizer = codeGenService.getSQLPatternSynchronizer();
                     SQLPatternSynchronizer.syncSQLPattern(patternItem, true);
                     IFile file = SQLPatternSynchronizer.getSQLPatternFile(patternItem);
+                    if (file == null) {
+                        return;
+                    }
                     fileEditorInput = new RepositoryEditorInput(file, patternItem);
                 }
 

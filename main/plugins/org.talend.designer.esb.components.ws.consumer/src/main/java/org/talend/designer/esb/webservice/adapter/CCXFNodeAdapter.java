@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -47,8 +47,13 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 
 		String fullPortName = "{" + currentFunction.getServiceNameSpace() + "}" + currentFunction.getPortName();
 		node.setParamValue(PORT_NAME, TalendTextUtils.addQuotes(fullPortName));
-		
-		IRepositoryViewObject resourceNode = setting.getResourceNode();
+
+        final String endpoint = node.getParamStringValue("ADDRESS");
+        if (endpoint == null || !endpoint.startsWith("context.")) {
+            node.setParamValue("ADDRESS", TalendTextUtils.addQuotes(currentFunction.getAddressLocation()));
+        }
+
+        IRepositoryViewObject resourceNode = setting.getResourceNode();
 		if(resourceNode!=null) {
             final Item item = resourceNode.getProperty().getItem();
             String id = item.getProperty().getId();
@@ -87,7 +92,7 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 
 	@Override
 	public String getInitialWsdlLocation() {
-		String wsdlType = node.getVisibleParamStringValue("WSDL_TYPE");
+		String wsdlType = node.getParamStringValue("WSDL_TYPE");
 		if("repo".equals(wsdlType)) {
 			String routeResFileLocation = getRouteResourceFileLocation();
 			if(routeResFileLocation != null) {
@@ -99,7 +104,7 @@ class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants
 
 	private String getRouteResourceFileLocation() {
 		String repoId = node.getParamStringValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_ID");
-		String repoVersion = node.getVisibleParamStringValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_VERSION");
+		String repoVersion = node.getParamStringValue("WSDL_FILE_REPO:ROUTE_RESOURCE_TYPE_VERSION");
 		return RouteResourcesHelper.getRouteResourcesLocation(repoId, repoVersion);
 	}
 

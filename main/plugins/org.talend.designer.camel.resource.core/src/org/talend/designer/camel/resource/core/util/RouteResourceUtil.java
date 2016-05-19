@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2015 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -74,9 +74,9 @@ public class RouteResourceUtil {
 
     public static final String LATEST_VERSION = RelationshipItemBuilder.LATEST_VERSION;
 
-    private static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
-
     private static final String ROUTE_RESOURCES_DESC_FILE = ".route_resources";
+
+    public static final String ROUTE_RESOURCES_PROP = "ROUTE_RESOURCES_PROP";
 
     /**
      * Copy route resource
@@ -87,6 +87,9 @@ public class RouteResourceUtil {
     public static void copyResources(FileItem item) throws CoreException {
 
         IFolder folder = getRouteResourceFolder();
+        if (folder == null) {
+            return;
+        }
         File resFolder = folder.getLocation().toFile();
         if (!resFolder.exists()) {
             resFolder.mkdirs();
@@ -114,6 +117,10 @@ public class RouteResourceUtil {
     public static void deleteResources(FileItem item) throws CoreException {
 
         IFolder folder = getRouteResourceFolder();
+        if (folder == null) {
+            return;
+        }
+
         File resFolder = folder.getLocation().toFile();
         if (!resFolder.exists()) {
             return;
@@ -492,6 +499,9 @@ public class RouteResourceUtil {
     public static void addRouteResourcesDesc(Set<ResourceDependencyModel> models) {
 
         File localFile = getResourceDescFile();
+        if (localFile == null) {
+            return;
+        }
         StringBuffer buffer = new StringBuffer();
         for (ResourceDependencyModel model : models) {
             buffer.append(model.getClassPathUrl()).append("\n");

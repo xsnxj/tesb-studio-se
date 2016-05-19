@@ -38,7 +38,7 @@
 				<ITEM NAME="HEADER" VALUE="header" />
 				<ITEM NAME="JAVASCRIPT" VALUE="javaScript" />
 				<ITEM NAME="JOSQL" VALUE="sql" />
-                <ITEM NAME="JSONPATH" VALUE="JSonPath" />
+                <ITEM NAME="JSONPATH" VALUE="jsonpath" />
 				<ITEM NAME="JXPATH" VALUE="jxpath" />
 				<ITEM NAME="MVEL" VALUE="mvel" />
 				<ITEM NAME="OGNL" VALUE="ognl" />
