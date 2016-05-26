@@ -302,36 +302,22 @@ for (IContextParameter ctxParam : params) {
 if (isTestContainer) {
 
 	List<String> instanceList =  ProcessUtils.getTestInstances(process);
-	String encoding = System.getProperty("file.encoding");
 	for(String instance : instanceList)
 	{
 %>         
 	@org.junit.Test
 	public void test<%=instance%>() throws java.lang.Exception {
-	
+
 <%
-	//for test container
-	for(String testData : ProcessUtils.getTestData(process,instance)){
-		if(null!=process.getContextManager().getDefaultContext().getContextParameter(testData)){
-			String testDataPath =  ProcessUtils.getTestDataValue(process, instance, testData);
-			if(testDataPath != null && testDataPath.length() > 0){
-	%>
-				java.net.URL url_<%=testData%> = getClass().getResource("<%=testDataPath%>");
-				context.<%=testData%>=java.net.URLDecoder.decode(url_<%=testData%>.getPath(), "<%=encoding%>");
-	<%
-			}//end if
-		}//end if
-	}//for testData end
-	
 	String assertPart = "";
 
 	for (INode node: process.getNodesOfType("cMock")) {
 		String cid = node.getUniqueName();
 		boolean needCreatePart = false;
-%>	
+%>
 		// get the mock endpoint
 		MockEndpoint mock_<%=cid%> = getMockEndpoint("mock:<%=cid%>");
-<%			
+<%
 		String testMsgCount = ElementParameterParser.getValue(node, "__TEST_COUNT__");
 		String testHeader = ElementParameterParser.getValue(node, "__TEST_HEADER__");
 		String testHeaderWithContext = ElementParameterParser.getValue(node, "__TEST_HEADER_CONTEXT__");
@@ -354,7 +340,7 @@ if (isTestContainer) {
 		 			String headerValue = headersMap.get("HEADER_VALUES");
 %>
 					mock_<%=cid%>.expectedHeaderReceived(<%=headerName%>, <%=headerValue%>);
-<%		 			
+<%
 				}
 			}
 		}
@@ -378,7 +364,7 @@ if (isTestContainer) {
 		           list = list.substring(0, list.length() - 1);
 %>
 					mock_<%=cid%>.expectedBodiesReceived(<%=list%>);
-<%		
+<%
 		        }
 			}
 		}
@@ -387,7 +373,7 @@ if (isTestContainer) {
 			String msgCount = ElementParameterParser.getValue(node, "__MESSAGE_COUNT__");
 %>
 			mock_<%=cid%>.expectedMessageCount(<%=msgCount%>);
-<%				
+<%
 		}
 		if("true".equals(testSimulate)){
 			String processorName = ElementParameterParser.getValue(node, "__PROCESSOR_ENDPOINT__");
@@ -563,12 +549,39 @@ if (isTestContainer) {
         <%
                         } //end if
                     } //end for
+					
+					//reload contexts for each test case instances
+					if (isTestContainer) {
+						List<String> instanceList =  ProcessUtils.getTestInstances(process);
+						String encoding = System.getProperty("file.encoding");
+						for(String instance : instanceList)
+						{
+		%>
+							if (getTestMethodName().equals("test<%=instance%>")) {
+		<%
+								//for test container
+								for(String testData : ProcessUtils.getTestData(process,instance)){
+									if(null!=process.getContextManager().getDefaultContext().getContextParameter(testData)){
+										String testDataPath =  ProcessUtils.getTestDataValue(process, instance, testData);
+										if(testDataPath != null && testDataPath.length() > 0){
+		%>
+											java.net.URL url_<%=testData%> = getClass().getResource("<%=testDataPath%>");
+											context.<%=testData%>=java.net.URLDecoder.decode(url_<%=testData%>.getPath(), "<%=encoding%>");
+		<%
+										}//end if
+									}//end if
+								}//for testData end
+		%>
+							}
+		<%
+						}
+					} //end if
         %>
                 } catch (java.io.IOException ie) {
                     System.err.println("Could not load context "+contextName);
                     ie.printStackTrace();
                 }
-            }    
+            }
     <%}%>
     
 
