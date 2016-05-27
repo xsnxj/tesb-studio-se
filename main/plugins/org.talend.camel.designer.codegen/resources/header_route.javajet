@@ -1980,10 +1980,15 @@ if (isProvider) {
 %>
                     if (eventFeature != null) {
                         factory_<%=cid%>.getFeatures().add(eventFeature);
-                    } else {
-                        factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
                     }
 <%
+					if(exportTypeSpringBoot){
+%>					
+						else {
+							factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+						}
+<%
+					}
                 }
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
@@ -2506,10 +2511,15 @@ if (isProvider) {
                 // Add Service Activity Monitor Service to <%=endpointVar%>
                 if (eventFeature != null) {
                     <%=endpointVar%>.getFeatures().add(eventFeature);
-                } else {
-                    <%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
                 }
 <%
+				if(exportTypeSpringBoot){
+%>
+					else {
+						<%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+					}
+<%
+				}
             }
     }else if("cFtp".equals(nodeComponentName)){
             String cid = node.getUniqueName();
