@@ -170,6 +170,10 @@ for (String routeletClass : getRoutelets(process)) {
                 argsMap.put("--banner.location", "config/banner.txt");
             }
             
+            if (argsMap.get("--camel.springboot.typeConversion") == null) {
+                argsMap.put("--camel.springboot.typeConversion", "false");
+            }
+            
             if(argsMap.get("--server.port")==null){
                 argsMap.put("--server.port","8065");
             }
