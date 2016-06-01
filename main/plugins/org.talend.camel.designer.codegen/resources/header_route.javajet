@@ -1062,12 +1062,6 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
         
                 private final static String USERSFILENAME = "users.properties";
         
-                private String configPath;
-        
-                public void setConfigPath(String configPath) {
-                    this.configPath = configPath;
-                }
-        
                 @Override
                 public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
                     if (credential == null || credential.getUsernametoken() == null) {
@@ -1103,24 +1097,8 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
         
-                    java.io.InputStream stream = null;
+                    java.io.InputStream stream = getConfigLocation(USERSFILENAME);
                     try {
-                        String file = "";
-                        if (configPath != null) {
-                            // get spring.config.location from env
-                            file = configPath + USERSFILENAME;
-                        } else {
-                            // by default from current "config" directory
-                            file = System.getProperty("user.dir") + java.io.File.separator + "config" + java.io.File.separator + USERSFILENAME;
-                        }
-        
-                        java.io.File usersfile = new java.io.File(file);
-                        if (usersfile.exists()) {
-                            stream = new java.io.FileInputStream(file);
-                        } else {
-                            stream = this.getClass().getClassLoader().getResourceAsStream("config/" + USERSFILENAME);
-                        }
-        
                         Properties properties = new Properties();
                         properties.load(stream);
                         String propertyPwd = (String) properties.get(user);
@@ -1146,14 +1124,13 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
            
             private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
             PropertyFileValidator validator = new PropertyFileValidator();
-            validator.setConfigPath(env.getProperty("spring.config.location"));
     
             cxfEndpoint
                     .setProperties(java.util.Collections
                             .<String, Object> singletonMap(
                                     org.apache.cxf.ws.security.SecurityConstants.USERNAME_TOKEN_VALIDATOR,
                                     validator));
-            java.io.InputStream policyInput = this.getClass().getClassLoader().getResourceAsStream("config/" + "org.talend.esb.job.token.policy");
+            java.io.InputStream policyInput = getConfigLocation("org.talend.esb.job.token.policy");
             org.apache.neethi.Policy policy;
             try {
                 policy = cxfEndpoint.getBus().getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(policyInput);
@@ -1229,7 +1206,7 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
         
         <% if(exportTypeSpringBoot) {%>
             Properties stsProperties = new Properties();
-            java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+            java.io.InputStream stsCfg= getConfigLocation("org.talend.esb.job.client.sts.cfg");
 
             try {
                     stsProperties.load(stsCfg);
@@ -1265,7 +1242,7 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
                 
         <% if(exportTypeSpringBoot){ %>
             Properties clientPropertiesTmp = new Properties();
-            java.io.InputStream clientCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.cfg");
+            java.io.InputStream clientCfg= getConfigLocation("org.talend.esb.job.client.cfg");
             
             try {
                     clientPropertiesTmp.load(clientCfg);
@@ -1354,12 +1331,6 @@ if(hasCXFRegistryProvider){
         
                 private final static String USERSFILENAME = "users.properties";
         
-                private String configPath;
-        
-                public void setConfigPath(String configPath) {
-                    this.configPath = configPath;
-                }
-        
                 @Override
                 public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
                     if (credential == null || credential.getUsernametoken() == null) {
@@ -1395,24 +1366,8 @@ if(hasCXFRegistryProvider){
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
         
-                    java.io.InputStream stream = null;
+                    java.io.InputStream stream = getConfigLocation(USERSFILENAME);
                     try {
-                        String file = "";
-                        if (configPath != null) {
-                            // get spring.config.location from env
-                            file = configPath + USERSFILENAME;
-                        } else {
-                            // by default from current "config" directory
-                            file = System.getProperty("user.dir") + java.io.File.separator + "config" + java.io.File.separator + USERSFILENAME;
-                        }
-        
-                        java.io.File usersfile = new java.io.File(file);
-                        if (usersfile.exists()) {
-                            stream = new java.io.FileInputStream(file);
-                        } else {
-                            stream = this.getClass().getClassLoader().getResourceAsStream("config/" + USERSFILENAME);
-                        }
-        
                         Properties properties = new Properties();
                         properties.load(stream);
                         String propertyPwd = (String) properties.get(user);
@@ -1437,10 +1392,9 @@ if(hasCXFRegistryProvider){
             }
             
             PropertyFileValidator jaasUTValidator = new PropertyFileValidator();
-            jaasUTValidator.setConfigPath(env.getProperty("spring.config.location"));
         
         Properties serviceProps = new Properties();
-        java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+        java.io.InputStream serviceCfg= getConfigLocation("org.talend.esb.job.service.cfg");
         
         try {
                 serviceProps.load(serviceCfg);
@@ -1466,7 +1420,7 @@ if(hasCXFRegistryProvider){
         endpointProps.put("use.service.registry", "true");
         <%if(exportTypeSpringBoot){%>
             Properties pepProps = new Properties();
-            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
+            java.io.InputStream pepCfg= getConfigLocation("org.talend.esb.authorization.pep.cfg");
 
             try {
                 pepProps.load(pepCfg);
@@ -1527,7 +1481,7 @@ if(hasCXFSamlTokenConsumer){
     
         <% if(exportTypeSpringBoot) {%>
             Properties stsProperties = new Properties();
-            java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+            java.io.InputStream stsCfg = getConfigLocation("org.talend.esb.job.client.sts.cfg");
 
             try {
                     stsProperties.load(stsCfg);
@@ -1560,7 +1514,7 @@ if(hasCXFSamlTokenConsumer){
                 
         <% if(exportTypeSpringBoot){ %>
             Properties clientPropertiesTmp = new Properties();
-            java.io.InputStream clientCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.cfg");
+            java.io.InputStream clientCfg = getConfigLocation("org.talend.esb.job.client.cfg");
             
             try {
                     clientPropertiesTmp.load(clientCfg);
@@ -1607,7 +1561,7 @@ if (isProvider) {
         <%if(exportTypeSpringBoot){%>
         
         Properties serviceProps = new Properties();
-        java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+        java.io.InputStream serviceCfg = getConfigLocation("org.talend.esb.job.service.cfg");
         
         try {
             serviceProps.load(serviceCfg);
@@ -1630,7 +1584,7 @@ if (isProvider) {
         <%if(exportTypeSpringBoot){%>
         if(useAuthorization){
             Properties pepProps = new Properties();
-            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.authorization.pep.cfg");
+            java.io.InputStream pepCfg = getConfigLocation("org.talend.esb.authorization.pep.cfg");
 
             try {
                 pepProps.load(pepCfg);
@@ -1655,9 +1609,9 @@ if (isProvider) {
         <%if(exportTypeSpringBoot){%>
             java.io.InputStream policyInput = null;
             if (useAuthorization) {
-                policyInput = this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.saml.authz.policy");
+                policyInput = getConfigLocation("org.talend.esb.job.saml.authz.policy");
             } else {
-                policyInput = this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.saml.policy");
+                policyInput = getConfigLocation("org.talend.esb.job.saml.policy");
             }
     
             
@@ -1804,7 +1758,7 @@ if (isProvider) {
                             <%if(exportTypeSpringBoot){%>
                             
                             Properties pepProps = new Properties();
-                            java.io.InputStream pepCfg= this.getClass().getClassLoader().getResourceAsStream("config/" + "org.talend.esb.authorization.pep.cfg");
+                            java.io.InputStream pepCfg = getConfigLocation("org.talend.esb.authorization.pep.cfg");
                     
                             try {
                                 pepProps.load(pepCfg);
@@ -1822,7 +1776,7 @@ if (isProvider) {
                             }
                             
                             Properties serviceProps = new Properties();
-                            java.io.InputStream serviceCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.service.cfg");
+                            java.io.InputStream serviceCfg = getConfigLocation("org.talend.esb.job.service.cfg");
                             
                             try {
                                     serviceProps.load(serviceCfg);
@@ -1876,7 +1830,7 @@ if (isProvider) {
 
                             <%if(exportTypeSpringBoot){%>
                                 Properties stsProperties = new Properties();
-                                java.io.InputStream stsCfg= this.getClass().getClassLoader().getResourceAsStream("config/"+"org.talend.esb.job.client.sts.cfg");
+                                java.io.InputStream stsCfg = getConfigLocation("org.talend.esb.job.client.sts.cfg");
                         
                                 try {
                                     stsProperties.load(stsCfg);

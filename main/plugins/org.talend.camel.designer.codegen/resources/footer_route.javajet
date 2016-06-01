@@ -157,7 +157,71 @@ for (String routeletClass : getRoutelets(process)) {
     <%
         if(exportTypeSpringBoot){
     %>
+        
+        public java.io.InputStream getConfigLocation(String fileName){
+        
+            java.io.InputStream stream = null;
+            
+            String configFile = "config" + java.io.File.separator + fileName;
+            
+            String configPath = env.getProperty("spring.config.location");
+            
+            String file = "";
+            if (configPath != null) {
+                // get spring.config.location from env
+                file = configPath +java.io.File.separator+ fileName;
+            } else {
+                // by default from current "config" directory
+                file = System.getProperty("user.dir") + java.io.File.separator + configFile;
+            }
+
+            java.io.File usersfile = new java.io.File(file);
+            
+            System.out.println("----------------> "+usersfile);
+            
+            if (usersfile.exists()) {
+                try{
+                    stream = new java.io.FileInputStream(file);
+                }catch(Exception e){
+                    stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+                }
+            } else {
+                stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+            }
+            
+            return stream;
+        }
     
+        private static void loadConfig(Map<String,String> argsMap,String configName,String configValue){
+            String configFileValue = "classpath:config" + java.io.File.separator + configValue;
+    
+            if (argsMap.get(configName) == null) {
+                if (argsMap.get("--spring.config.location") == null) {
+                    argsMap.put(configName, configFileValue);
+                } else {
+                    String value = argsMap.get("--spring.config.location") + java.io.File.separator + configValue;
+    
+                    if(new java.io.File(value).exists()){
+                        argsMap.put(configName, "file:" + value);
+                    }else{
+                        if (argsMap.get("--spring.config.location").contains(":")) {
+                            try {
+                                if (new java.io.File(new java.net.URI(value)).exists()) {
+                                    argsMap.put(configName, value);
+                                } else {
+                                    argsMap.put(configName, configFileValue);
+                                }
+                            } catch (Exception e) {
+                                argsMap.put(configName, configFileValue);
+                            }
+                        } else {
+                            argsMap.put(configName, configFileValue);
+                        }
+                    }
+                }
+            }
+        }
+        
         private static String[] resetArgs(String... args){
             Map<String,String> argsMap = new HashMap<String,String>();
     
@@ -166,9 +230,13 @@ for (String routeletClass : getRoutelets(process)) {
                 argsMap.put(kv[0], kv[1]);
             }
             
-            if (argsMap.get("--banner.location") == null) {
-                argsMap.put("--banner.location", "config/banner.txt");
-            }
+            
+                        
+            if (argsMap.get("--spring.config.location") != null) {
+                System.setProperty("spring.config.location",argsMap.get("--spring.config.location"));
+            }            
+            loadConfig(argsMap,"--banner.location","banner.txt");
+            loadConfig(argsMap,"--logging.config","log4j.xml");
             
             if (argsMap.get("--camel.springboot.typeConversion") == null) {
                 argsMap.put("--camel.springboot.typeConversion", "false");
