@@ -177,8 +177,6 @@ for (String routeletClass : getRoutelets(process)) {
 
             java.io.File usersfile = new java.io.File(file);
             
-            System.out.println("----------------> "+usersfile);
-            
             if (usersfile.exists()) {
                 try{
                     stream = new java.io.FileInputStream(file);
