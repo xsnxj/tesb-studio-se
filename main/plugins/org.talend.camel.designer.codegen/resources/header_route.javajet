@@ -165,6 +165,7 @@ package <%= packageName %>;
  %>
 @org.springframework.boot.autoconfigure.SpringBootApplication
 @org.springframework.boot.context.properties.EnableConfigurationProperties(<%=className%>.ContextProperties.class)
+@org.springframework.context.annotation.ImportResource("classpath:META-INF/spring/<%=className.toLowerCase()%>.xml")
 public class <%=className%> extends org.apache.camel.builder.RouteBuilder implements TalendESBRoute {
 
     @org.springframework.beans.factory.annotation.Autowired
