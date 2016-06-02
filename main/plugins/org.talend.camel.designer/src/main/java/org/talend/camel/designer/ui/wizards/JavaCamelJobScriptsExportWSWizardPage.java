@@ -373,8 +373,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
 
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
+
             try {
                 if (bundle != null) {
+
                     Class javaCamelJobScriptsExportMicroServiceAction = bundle
                             .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
 
@@ -386,15 +388,14 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
                     try {
                         getContainer().run(false, true, actionMS);
-                    } catch (InvocationTargetException e) {
+                    } catch (Exception e) {
                         MessageBoxExceptionHandler.process(e.getCause(), getShell());
-                        return false;
-                    } catch (InterruptedException e) {
                         return false;
                     }
                 }
 
             } catch (Exception e) {
+                MessageBoxExceptionHandler.process(e.getCause(), getShell());
                 e.printStackTrace();
             }
 
