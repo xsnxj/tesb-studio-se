@@ -44,6 +44,7 @@ import org.eclipse.wst.wsdl.ui.internal.asd.actions.BaseSelectionAction;
 import org.eclipse.wst.wsdl.ui.internal.asd.design.directedit.DirectEditSelectionTool;
 import org.eclipse.wst.wsdl.ui.internal.asd.util.IOpenExternalEditorHelper;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IESBService;
@@ -53,6 +54,7 @@ import org.talend.core.model.update.RepositoryUpdateManager;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
@@ -109,7 +111,25 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
         super.doSave(monitor);
         if (null != serviceItem && null != repositoryNode) {
-            save();
+            // save();
+
+            try {
+                String name = "Save Service"; //$NON-NLS-1$
+                RepositoryWorkUnit<Object> repositoryWorkUnit = new RepositoryWorkUnit<Object>(name, this) {
+
+                    @Override
+                    protected void run() throws LoginException, PersistenceException {
+                        save();
+                    }
+                };
+                repositoryWorkUnit.setAvoidSvnUpdate(true);
+                repositoryWorkUnit.setAvoidUnloadResources(true);
+                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(repositoryWorkUnit);
+                repositoryWorkUnit.throwPersistenceExceptionIfAny();
+            } catch (Exception e) {
+                e.printStackTrace();
+                ExceptionHandler.process(e);
+            }
         }
     }
 
@@ -323,8 +343,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
     }
 
     @Override
-    public Object getAdapter(@SuppressWarnings("rawtypes")
-    Class type) {
+    public Object getAdapter(@SuppressWarnings("rawtypes") Class type) {
         if (type == IOpenExternalEditorHelper.class && isEditorInputReadOnly()) {
             return null;
         }
