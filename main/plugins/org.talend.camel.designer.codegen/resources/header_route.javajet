@@ -2450,7 +2450,7 @@ if (isProvider) {
                         org.apache.activemq.pool.PooledConnectionFactory pooledConnectionFactory_<%=cid%> 
                             = new org.apache.activemq.pool.PooledConnectionFactory();
                         pooledConnectionFactory_<%=cid%>.setConnectionFactory(jmsConnectionFactory_<%=cid%>);
-                        pooledConnectionFactory_<%=cid%>.setExpiryTimeout(<%=amq_pool_expiry_timeout%>L);
+                        pooledConnectionFactory_<%=cid%>.setExpiryTimeout(<%=amq_pool_expiry_timeout%>);
                         pooledConnectionFactory_<%=cid%>.setIdleTimeout(<%=amq_pool_idle_timeout%>);
                         pooledConnectionFactory_<%=cid%>.setMaxConnections(<%=amq_pool_max_connections%>);
                         pooledConnectionFactory_<%=cid%>.setMaximumActiveSessionPerConnection(<%=amq_pool_max_active%>);

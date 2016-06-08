@@ -414,6 +414,14 @@ if (isTestContainer) {
 			needCreatePart = true;
 			if("true".equals(testHeaderWithContext)){
 				String headerContext = ElementParameterParser.getValue(node, "__TEST_HEADER_USE_CONTEXT__");
+%>
+				java.util.List headers = new routines.system.FileDataSet(<%=headerContext%>).getDefaultBodies();
+				for (Object header : headers) {
+					mock_<%=cid%>.expectedHeaderValuesReceivedInAnyOrder(
+					header.toString().split(";")[0],
+					header.toString().split(";")[1]);
+				}
+<%
 			}else if("true".equals(testHeaderWithTable)){
 				String headerContext = ElementParameterParser.getValue(node, "__TEST_HEADER_USE_TABLE__");
 				//mCode += headerContext;
@@ -422,7 +430,7 @@ if (isTestContainer) {
 		 			String headerName = headersMap.get("HEADER_NAMES");
 		 			String headerValue = headersMap.get("HEADER_VALUES");
 %>
-					mock_<%=cid%>.expectedHeaderReceived(<%=headerName%>, <%=headerValue%>);
+					mock_<%=cid%>.expectedHeaderValuesReceivedInAnyOrder(<%=headerName%>, <%=headerValue%>);
 <%
 				}
 			}
