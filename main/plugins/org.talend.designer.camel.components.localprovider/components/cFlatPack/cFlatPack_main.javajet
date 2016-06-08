@@ -66,14 +66,29 @@ imports="
 
 	if (isdelimited) {
 		String textQualifier = ElementParameterParser.getValue(node, "__TEXT_QUALIFIER__");
-		if (textQualifier != null && !textQualifier.trim().equals("") && !"\"".equals(textQualifier)) {
+		if (textQualifier != null && !textQualifier.trim().equals("") && !"\"".equals(textQualifier) && !"\"\"\"".equals(textQualifier)) {
             //the first '&' should replace to '?' later.
+			if (!textQualifier.startsWith("\"")) {
+            textQualifier = "\"" + textQualifier;
+			}
+			if (!textQualifier.endsWith("\"")) {
+            textQualifier = textQualifier + "\"";
+			}
             sb.append("+\"&").append("textQualifier").append("=\"+").append(textQualifier);
         }
 
 		String delimiter = ElementParameterParser.getValue(node, "__TEXT_DELIMITER__");
-		if (delimiter != null && !delimiter.trim().equals("") && !",".equals(delimiter)) {
+		if (delimiter != null && !delimiter.trim().equals("") && !",".equals(delimiter) && !"\",\"".equals(delimiter)) {
             //the first '&' should replace to '?' later.
+			if (!delimiter.startsWith("\"")) {
+            delimiter = "\"" + delimiter;
+			}
+			if (!delimiter.endsWith("\"")) {
+            delimiter = delimiter + "\"";
+			}
+			if ("\"".equals(delimiter) || "\"\"\"".equals(delimiter)) {
+			delimiter = "\"\\\"\"";
+			}
             sb.append("+\"&").append("delimiter").append("=\"+").append(delimiter);
         }
 
