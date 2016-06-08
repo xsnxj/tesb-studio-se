@@ -300,9 +300,9 @@
             bundleID="" />
         <!-- ${tesb-mail} -->
         <libraryNeeded context="plugin:org.talend.libraries.apache.axis2"
-            name="mail-1.4.jar"
+            name="${tesb-mail}"
             id="mail"
-            uripath="platform:/plugin/org.talend.libraries.apache.axis2/lib/mail-1.4.jar"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-mail}"
             bundleID="" />
 
         <libraryNeededGroup
