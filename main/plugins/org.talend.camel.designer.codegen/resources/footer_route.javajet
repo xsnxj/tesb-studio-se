@@ -157,6 +157,21 @@ for (String routeletClass : getRoutelets(process)) {
     <%
         if(exportTypeSpringBoot){
     %>
+    
+        private java.util.Dictionary<String, String> loadHttpConduitProperties(String configName) {
+            java.io.InputStream is = getConfigLocation(configName);
+            Properties properties = new Properties();
+            try {
+                properties.load(is);
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot load the properties", e);
+            }
+            java.util.Dictionary<String, String> dic = new java.util.Hashtable<String, String>();
+            for (Object key : properties.keySet()) {
+                dic.put((String) key, properties.getProperty((String) key));
+            }
+            return dic;
+        }
         
         public java.io.InputStream getConfigLocation(String fileName){
         
@@ -228,8 +243,6 @@ for (String routeletClass : getRoutelets(process)) {
                 argsMap.put(kv[0], kv[1]);
             }
             
-            
-                        
             if (argsMap.get("--spring.config.location") != null) {
                 System.setProperty("spring.config.location",argsMap.get("--spring.config.location"));
             }            
