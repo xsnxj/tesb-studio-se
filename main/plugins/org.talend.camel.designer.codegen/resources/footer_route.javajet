@@ -404,7 +404,7 @@ if (isTestContainer) {
 %>
 				java.util.List headers = new routines.system.FileDataSet(<%=headerContext%>).getDefaultBodies();
 				for (Object header : headers) {
-					mock_<%=cid%>.expectedHeaderReceived(
+					mock_<%=cid%>.expectedHeaderValuesReceivedInAnyOrder(
 					header.toString().split(";")[0],
 					header.toString().split(";")[1]);
 				}
@@ -417,7 +417,7 @@ if (isTestContainer) {
 		 			String headerName = headersMap.get("HEADER_NAMES");
 		 			String headerValue = headersMap.get("HEADER_VALUES");
 %>
-					mock_<%=cid%>.expectedHeaderReceived(<%=headerName%>, <%=headerValue%>);
+					mock_<%=cid%>.expectedHeaderValuesReceivedInAnyOrder(<%=headerName%>, <%=headerValue%>);
 <%
 				}
 			}
