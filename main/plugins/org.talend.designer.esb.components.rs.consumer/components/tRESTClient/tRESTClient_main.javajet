@@ -222,8 +222,11 @@ try {
 	<%
 		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method)) && "application/json".equals(contentType))
 				? paramsHelper.getBoolParam("__UNWRAP_JSON_REQUEST__") : false;
+		boolean convertTypesToStrings  = ("application/json".equals(contentType) || "application/json".equals(acceptType) || "*/*".equals(acceptType) )
+				? paramsHelper.getBoolParam("__CONVERT_TYPES_TO_STRINGS__") : false;				
 	%>
 		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
+		jsonProvider_<%=cid%>.setConvertTypesToStrings(<%=convertTypesToStrings%>);				
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
