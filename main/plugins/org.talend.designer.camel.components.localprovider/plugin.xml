@@ -299,9 +299,9 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-mail}"
             bundleID="" />
         <!-- ${tesb-mail} -->
-        <libraryNeeded context="plugin:org.talend.libraries.apache.axis2"
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-mail}"
-            id="mail"
+            id="javax.mail"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-mail}"
             bundleID="" />
 
@@ -310,7 +310,7 @@
                 id="camel-mail"
                 name="camel-mail">
             <library id="camel-mail" />
-            <library id="mail" />
+            <library id="javax.mail" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
