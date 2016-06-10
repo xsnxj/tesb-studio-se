@@ -1,6 +1,6 @@
 <!DOCTYPE document [
 <!ENTITY languages SYSTEM "../common/languages.xml">
-<!ENTITY namespaces SYSTEM "../common/namespaces.xml">
+<!ENTITY listnamespaces SYSTEM "../common/listnamespaces.xml">
 ]>
 <COMPONENT>
 
