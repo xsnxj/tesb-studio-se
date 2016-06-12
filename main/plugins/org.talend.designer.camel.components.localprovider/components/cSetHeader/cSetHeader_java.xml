@@ -51,7 +51,7 @@
 				<ITEM NAME="EXPRESSION" VALUE="&quot;HeaderValue&quot;" READONLY_IF="VALUES.LANGUAGE == 'CORRELATION'"/>	
 			</ITEMS>
 		</PARAMETER>
-    	&namespaces;
+    	&listnamespaces;
    </PARAMETERS>
    
    <ADVANCED_PARAMETERS>
