@@ -2610,8 +2610,28 @@ if (isProvider) {
                                 ks.load(fis, decryptedPassword_<%=cid%>.toCharArray());
                                 fis.close();
                                 tmf.init(ks);
+                                
+                                javax.net.ssl.KeyManagerFactory kmf = javax.net.ssl.KeyManagerFactory
+                                .getInstance(javax.net.ssl.KeyManagerFactory
+                                        .getDefaultAlgorithm());
+                                        
+                                java.io.FileInputStream kfis = new java.io.FileInputStream(
+                                        <%=helper.getStringParam("__MQTT_SSL_KEY_STORE__")%>);
+                                java.security.KeyStore kks = java.security.KeyStore
+                                        .getInstance(java.security.KeyStore.getDefaultType());
+                                <%passwordFieldName = "__MQTT_SSL_KEY_STORE_PASSWORD__";%>
+                                
+                                <% if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
+                                    String kDecryptedPassword_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
+                                <%} else {%>
+                                    String kDecryptedPassword_<%=cid%> = <%= ElementParameterParser.getValue(node, passwordFieldName)%>; 
+                                <%}%>
+                                kks.load(kfis, kDecryptedPassword_<%=cid%>.toCharArray());
+                                kfis.close();
+                                kmf.init(kks, kDecryptedPassword_<%=cid%>.toCharArray());
+                                
                                 javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
-                                sslContext.init(null, tmf.getTrustManagers(), new java.security.SecureRandom());
+                                sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new java.security.SecureRandom());
                                 config.setSslContext(sslContext);
                             <%}%>
                             return endpoint;
