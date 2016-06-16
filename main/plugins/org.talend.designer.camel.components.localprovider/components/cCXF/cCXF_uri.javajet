@@ -39,7 +39,9 @@ String serviceType = ElementParameterParser.getValue(node, "__SERVICE_TYPE__");
 StringBuilder sb = new StringBuilder();
 sb.append("\"cxf://\"+").append(url);
 sb.append("+\"?dataFormat=" + dataformat + "\"");
-sb.append("+\"&allowStreaming="+ElementParameterParser.getValue(node, "__ALLOW_STREAMING__")+"\"");
+if("PAYLOAD".equals(dataformat)){
+	sb.append("+\"&allowStreaming="+ElementParameterParser.getValue(node, "__ALLOW_STREAMING__")+"\"");
+}
 if ("true".equals(ElementParameterParser.getValue(node, "__LOG_MESSAGES__"))) {
 	sb.append("+\"&loggingFeatureEnabled=true\"");
 }
