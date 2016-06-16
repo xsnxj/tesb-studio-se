@@ -52,7 +52,7 @@
             GROUP="HEADER">
             <ITEMS>
                 <ITEM NAME="HEADER_NAMES"  VALUE="&quot;HeaderName&quot;" />
-                <ITEM NAME="HEADER_VALUES"  VALUE="&quot;HeaderValues&quot;" />
+                <ITEM NAME="HEADER_VALUES"  VALUE="&quot;HeaderValue&quot;" />
             </ITEMS>
         </PARAMETER>
         <PARAMETER NAME="TEST_BODY" FIELD="CHECK" REQUIRED="true"
