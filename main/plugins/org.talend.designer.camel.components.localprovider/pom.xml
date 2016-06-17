@@ -13,7 +13,7 @@
 
     <properties>
         <camel.version>2.16.3</camel.version>
-        <activemq.version>5.13.2</activemq.version>
+        <activemq.version>5.13.3</activemq.version>
         <!--spring.osgi.compatible.version>1.2.1</spring.osgi.compatible.version-->
         <!-- camel-groovy -->
         <groovy.version>2.4.3</groovy.version>
