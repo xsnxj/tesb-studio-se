@@ -12,11 +12,17 @@
 // ============================================================================
 package org.talend.camel.designer.ui;
 
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.CamelMultiPageTalendEditor;
 import org.talend.camel.designer.ui.editor.CamelProcessEditorInput;
+import org.talend.camel.designer.ui.view.SpringConfigurationView;
 import org.talend.camel.model.CamelRepositoryNodeType;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -50,6 +56,24 @@ public class EditCamelProcess extends EditProcess {
     @Override
     protected String getEditorId() {
         return CamelMultiPageTalendEditor.ID;
+    }
+
+    @Override
+    protected void doRun() {
+        super.doRun();
+
+        // TESB-17301: 'Spring' View is not visible
+        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWorkbenchWindow != null) {
+            IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
+            if (page != null) {
+                try {
+                    page.showView(SpringConfigurationView.ID, null, IWorkbenchPage.VIEW_CREATE);
+                } catch (PartInitException e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
     }
 
     @Override

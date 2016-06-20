@@ -12,6 +12,8 @@ import org.talend.camel.model.IRouteProcess;
 
 public class SpringConfigurationView extends PageBookView {
 
+    public static final String ID = "org.talend.camel.designer.spring.view"; //$NON-NLS-1$
+
     @Override
     protected IPage createDefaultPage(PageBook book) {
         MessagePage page = new MessagePage();
@@ -24,7 +26,7 @@ public class SpringConfigurationView extends PageBookView {
     @Override
     protected PageRec doCreatePage(IWorkbenchPart part) {
         final SpringConfigurationPageImpl page = new SpringConfigurationPageImpl(
-            ((CamelMultiPageTalendEditor) part).getDesignerEditor());
+                ((CamelMultiPageTalendEditor) part).getDesignerEditor());
         initPage(page);
         page.createControl(getPageBook());
         return new PageRec(part, page);
@@ -50,7 +52,7 @@ public class SpringConfigurationView extends PageBookView {
     protected boolean isImportant(IWorkbenchPart part) {
         // We only care about editors
         return part instanceof CamelMultiPageTalendEditor
-            && null != ((IRouteProcess) ((CamelMultiPageTalendEditor) part).getProcess()).getSpringContent();
+                && null != ((IRouteProcess) ((CamelMultiPageTalendEditor) part).getProcess()).getSpringContent();
     }
 
 }
