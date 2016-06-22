@@ -648,7 +648,7 @@ if (isTestContainer) {
 						for(String instance : instanceList)
 						{
 		%>
-							if (getTestMethodName().equals("test<%=instance%>")) {
+							if ("test<%=instance%>".equals(getTestMethodName())) {
 		<%
 								//for test container
 								for(String testData : ProcessUtils.getTestData(process,instance)){
