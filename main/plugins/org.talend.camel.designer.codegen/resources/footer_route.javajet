@@ -177,7 +177,7 @@ for (String routeletClass : getRoutelets(process)) {
         
             java.io.InputStream stream = null;
             
-            String configFile = "config" + java.io.File.separator + fileName;
+            String configFile = "config/" + fileName;
             
             String configPath = env.getProperty("spring.config.location");
             
