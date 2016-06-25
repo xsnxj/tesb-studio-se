@@ -21,39 +21,38 @@ imports="
     
     builder.useDoubleSlash(false);
     
-    String host = ElementParameterParser.getValue(node, "__HOST__");
-    builder.setName(host);
-
-    String port = ElementParameterParser.getValue(node, "__PORT__");
-    if (!"\"\"".equals(port)) {
-        builder.setName(host + "+\":\"+" + port);
-    }
+    List< ? extends IConnection> conns = node.getIncomingConnections();
     
-    String zookeeperConnect = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECT__");
-    
-    builder.addParam("zookeeperConnect", zookeeperConnect);
-    
-    String zookeeperSessionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SESSION_TIMEOUT_MS__");
-    
-    builder.addParam("zookeeperSessionTimeoutMs", zookeeperSessionTimeoutMs);
-    
-    String zookeeperConnectionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECTION_TIMEOUT_MS__");
-    
-    builder.addParam("zookeeperConnectionTimeoutMs", zookeeperConnectionTimeoutMs);
-    
-    String zookeeperSynctimeMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SYNC_TIME_MS__");
-    
-    builder.addParam("zookeeperSynctimeMs", zookeeperSynctimeMs);
-    
-    String clientId = ElementParameterParser.getValue(node, "__CLIENT_ID__");
-    
-    builder.addParam("clientId", clientId);
+    String brokerList = ElementParameterParser.getValue(node, "__BROKER_LIST__");
     
     String topic = ElementParameterParser.getValue(node, "__TOPIC__").trim();
     
     builder.addParam("topic", topic);
     
-    List< ? extends IConnection> conns = node.getIncomingConnections();
+    if(conns.size()>0){
+        builder.setName(brokerList);
+    }else{
+        
+        String zookeeperConnect = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECT__");
+
+        builder.addParam("zookeeperConnect", zookeeperConnect);
+    
+        String zookeeperSessionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SESSION_TIMEOUT_MS__");
+        
+        builder.addParam("zookeeperSessionTimeoutMs", zookeeperSessionTimeoutMs);
+        
+        String zookeeperConnectionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECTION_TIMEOUT_MS__");
+        
+        builder.addParam("zookeeperConnectionTimeoutMs", zookeeperConnectionTimeoutMs);
+        
+        String zookeeperSynctimeMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SYNC_TIME_MS__");
+        
+        builder.addParam("zookeeperSynctimeMs", zookeeperSynctimeMs);
+    }
+    
+    String clientId = ElementParameterParser.getValue(node, "__CLIENT_ID__");
+    
+    builder.addParam("clientId", clientId);
     
     if(conns.size()>0){
         
