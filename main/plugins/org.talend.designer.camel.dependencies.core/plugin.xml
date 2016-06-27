@@ -114,6 +114,13 @@
                     attributeValue="true">
                 </predicate>
             </importPackage>
+            <importPackage
+                name="org.talend.esb.sam.agent.feature">
+                <predicate
+                    attributeName="SERVICE_ACTIVITY_MONITOR"
+                    attributeValue="true">
+                </predicate>
+            </importPackage>
         </component>
 
         <component componentName="cHttp">
