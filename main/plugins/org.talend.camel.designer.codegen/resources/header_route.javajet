@@ -498,6 +498,7 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasSam = false;
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
+    boolean hasCXFRSServiceLocator = false;
 	for (INode node : graphicalNodes) {
 		if ("cCXF".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
@@ -517,6 +518,9 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 <%
             } // CorrelationID
 		} else if ("cCXFRS".equals(node.getComponent().getName())) {
+            if(!hasCXFRSServiceLocator){
+                hasCXFRSServiceLocator = Boolean.parseBoolean(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
+            }
             String cid = node.getUniqueName();
             if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
                 hasSam = true;
@@ -1133,6 +1137,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             boolean hasCXFRegistryProvider = false;
             boolean hasCXFRegistryConsumer = false;
             boolean hasCXFSAMLPropagateConsumer = false;
+            boolean hasCXFServiceLocator = false;
 
             List<INode> allCxfNodes = new ArrayList<INode>();
             allCxfNodes.addAll(process.getNodesOfType("cCXF"));
@@ -1154,6 +1159,9 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                     useSecurity = "false";
                 }
                 String securityType = ElementParameterParser.getValue(n, "__SECURITY_TYPE__");
+                if(!hasCXFServiceLocator){
+                    hasCXFServiceLocator = Boolean.parseBoolean(ElementParameterParser.getValue(n, "__ENABLE_SL__"));
+                }
 
                 if("true".equals(useRegistry)){
                     useSecurity = "false";
@@ -1260,7 +1268,17 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             }
             @org.springframework.context.annotation.Bean(name = "cxf")
             public org.apache.cxf.bus.spring.SpringBus springBus() {
-                return new org.apache.cxf.bus.spring.SpringBus();
+                
+                <% 
+                if(hasCXFServiceLocator || hasCXFRSServiceLocator){
+                %>
+                    return (org.apache.cxf.bus.spring.SpringBus) new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml");
+                <%
+                   } else {
+                %>
+                    return new org.apache.cxf.bus.spring.SpringBus();
+                <%}%>
+                
             }
 <%
             } if(hasCXFComponent){
@@ -2238,7 +2256,11 @@ if (isProvider) {
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAMESPACE__")%>,
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>));
                     <%if(exportTypeSpringBoot){%>
+                        <%if(isProvider){%>
+                            factory_<%=cid%>.setBus(springBus());
+                        <% }else {%>
                             factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                        <%}%>
                     <%}else{%>
                         if (!inOSGi) {
                             factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
@@ -2791,7 +2813,11 @@ if (isProvider) {
                 // Add Service Locator Service to <%=endpointVar%>
                 org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
                 <%if(exportTypeSpringBoot){%>
-                    <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    <%if(isProvider){%>
+                        <%=endpointVar%>.setBus(springBus());
+                    <% }else {%>
+                        <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+                    <%}%>
                 <%}else{%>
                     if (!inOSGi) {
                         <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
