@@ -206,7 +206,7 @@ for (String routeletClass : getRoutelets(process)) {
         }
     
         private static void loadConfig(Map<String,String> argsMap,String configName,String configValue){
-            String configFileValue = "classpath:config" + java.io.File.separator + configValue;
+            String configFileValue = "classpath:config/" + configValue;
     
             if (argsMap.get(configName) == null) {
                 if (argsMap.get("--spring.config.location") == null) {
