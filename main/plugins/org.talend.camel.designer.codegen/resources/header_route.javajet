@@ -2166,12 +2166,6 @@ if (isProvider) {
                                         .getConduit();
                 
                                 String urlString = "<%=node.getUniqueName()%>";
-                                try {
-                                    java.net.URL url = new java.net.URL(<%=ElementParameterParser.getValue(node, "__URL__")%>);
-                                    urlString = url.getProtocol() + "_" + url.getHost() + "_" + url.getPort()
-                                            + url.getPath().replace("/", "_");
-                                } catch (java.net.MalformedURLException e) {
-                                }
                                 
                                 String configName = "org.apache.cxf.http.conduits-" + urlString + ".cfg";
                                 java.util.Dictionary<String, String> dic = loadHttpConduitProperties(configName);
