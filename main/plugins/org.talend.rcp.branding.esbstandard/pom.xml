@@ -10,18 +10,18 @@
   <artifactId>org.talend.rcp.branding.esbstandard</artifactId>
   <packaging>eclipse-plugin</packaging>
     <build>
-	  <plugins>
-	  	<plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-deploy-plugin</artifactId>
-		        <executions>
-		          <execution>
-		            <id>default-deploy</id>
-		            <phase>deploy</phase>
-		          </execution>
-		        </executions>
-      		</plugin>
-		<plugin>
+    <plugins>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+          </plugin>
+    <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>1.9.1</version>
@@ -37,13 +37,18 @@
                 <artifact>
                   <file>./resources/license.txt</file>
                   <type>txt</type>
-				  <classifier>license</classifier>
+                  <classifier>license</classifier>
+                </artifact>
+                <artifact>
+                  <file>./resources/NOTICE.txt</file>
+                  <type>txt</type>
+                  <classifier>notice</classifier>
                 </artifact>
               </artifacts>
             </configuration>
           </execution>
         </executions>
       </plugin>
-	</plugins>
+  </plugins>
   </build>
 </project>
