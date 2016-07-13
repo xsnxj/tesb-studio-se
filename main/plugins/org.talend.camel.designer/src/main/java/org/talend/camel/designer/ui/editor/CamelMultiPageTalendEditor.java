@@ -16,10 +16,12 @@ import java.text.MessageFormat;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.editor.dependencies.CamelDependenciesEditor;
+import org.talend.camel.designer.util.CamelSpringUtil;
 import org.talend.camel.designer.util.ECamelCoreImage;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.IImage;
@@ -79,6 +81,7 @@ public class CamelMultiPageTalendEditor extends AbstractMultiPageTalendEditor {
             throw new PartInitException(Messages.getString("MultiPageTalendEditor.InvalidInput")); //$NON-NLS-1$
         }
         super.init(site, editorInput);
+        CamelSpringUtil.openSpringView(IWorkbenchPage.VIEW_CREATE);
     }
 
     /**

@@ -59,24 +59,6 @@ public class EditCamelProcess extends EditProcess {
     }
 
     @Override
-    protected void doRun() {
-        super.doRun();
-
-        // TESB-17301: 'Spring' View is not visible
-        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow != null) {
-            IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
-            if (page != null) {
-                try {
-                    page.showView(SpringConfigurationView.ID, null, IWorkbenchPage.VIEW_CREATE);
-                } catch (PartInitException e) {
-                    ExceptionHandler.process(e);
-                }
-            }
-        }
-    }
-
-    @Override
     protected ERepositoryObjectType getProcessType() {
         return CamelRepositoryNodeType.repositoryRoutesType;
     }
