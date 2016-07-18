@@ -23,15 +23,20 @@ public class EndpointIdGenerator implements PartGenerator<INode> {
     }
 
     @Override
-	public CharSequence generatePart(INode node, Object... ignoredParams) throws CodeGeneratorException {
-        if (NodeUtil.isStartNode(node)) {
+    public CharSequence generatePart(INode node, Object... ignoredParams) throws CodeGeneratorException {
+        String part;
+        // cJavaDSL should not be generating id() DSL statement
+        if ("cJavaDSLProcessor".equals(node.getComponent().getName())) { //$NON-NLS-1$
+            part = ""; //$NON-NLS-1$
+        } else if (NodeUtil.isStartNode(node)) {
             if ("cErrorHandler".equals(node.getComponent().getName())) { //$NON-NLS-1$
-                return ""; //$NON-NLS-1$
+                part = ""; //$NON-NLS-1$
             }
-            return ".routeId(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
+            part = ".routeId(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-            return ".id(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
+            part = ".id(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
-	}
+        return part;
+    }
 
 }
