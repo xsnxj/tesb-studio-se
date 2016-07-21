@@ -31,8 +31,9 @@ public class EndpointIdGenerator implements PartGenerator<INode> {
         } else if (NodeUtil.isStartNode(node)) {
             if ("cErrorHandler".equals(node.getComponent().getName())) { //$NON-NLS-1$
                 part = ""; //$NON-NLS-1$
+            } else {
+                part = ".routeId(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
-            part = ".routeId(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             part = ".id(\"" + getNodeId(node) + "\")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
