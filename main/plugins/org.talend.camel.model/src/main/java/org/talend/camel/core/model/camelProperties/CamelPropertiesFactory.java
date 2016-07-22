@@ -16,65 +16,65 @@ import org.eclipse.emf.ecore.EFactory;
  */
 public interface CamelPropertiesFactory extends EFactory {
     /**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
+     * The singleton instance of the factory.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @generated
-	 */
+     * @generated
+     */
     CamelPropertiesFactory eINSTANCE = org.talend.camel.core.model.camelProperties.impl.CamelPropertiesFactoryImpl.init();
 
     /**
-	 * Returns a new object of class '<em>Bean Item</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Bean Item</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Bean Item</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Bean Item</em>'.
+     * @generated
+     */
     BeanItem createBeanItem();
 
     /**
-	 * Returns a new object of class '<em>Camel Process Item</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Camel Process Item</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Camel Process Item</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Camel Process Item</em>'.
+     * @generated
+     */
     CamelProcessItem createCamelProcessItem();
 
     /**
-	 * Returns a new object of class '<em>Route Resource Item</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Route Resource Item</em>'.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Route Resource Item</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Route Resource Item</em>'.
+     * @generated
+     */
     RouteResourceItem createRouteResourceItem();
 
     /**
-	 * Returns a new object of class '<em>Route Document Item</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Route Document Item</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Route Document Item</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Route Document Item</em>'.
+     * @generated
+     */
 	RouteDocumentItem createRouteDocumentItem();
 
 				/**
-	 * Returns a new object of class '<em>Routelet Process Item</em>'.
-	 * <!-- begin-user-doc -->
+     * Returns a new object of class '<em>Routelet Process Item</em>'.
+     * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Routelet Process Item</em>'.
-	 * @generated
-	 */
+     * @return a new object of class '<em>Routelet Process Item</em>'.
+     * @generated
+     */
 	RouteletProcessItem createRouteletProcessItem();
 
 				/**
-	 * Returns the package supported by this factory.
-	 * <!-- begin-user-doc -->
+     * Returns the package supported by this factory.
+     * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-	 * @return the package supported by this factory.
-	 * @generated
-	 */
+     * @return the package supported by this factory.
+     * @generated
+     */
     CamelPropertiesPackage getCamelPropertiesPackage();
 
 } //CamelPropertiesFactory

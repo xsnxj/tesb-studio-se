@@ -6,6 +6,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="CamelProcessItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//ProcessItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="springContent" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
         defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="exportMicroService" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RouteResourceItem" eSuperTypes="../../org.talend.model/model/properties.ecore#//FileItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingExtension" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
