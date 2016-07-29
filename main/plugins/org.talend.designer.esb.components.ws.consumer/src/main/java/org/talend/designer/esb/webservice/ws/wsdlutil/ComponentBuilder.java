@@ -68,7 +68,9 @@ public class ComponentBuilder {
                 } else {
                     SOAP12Operation soap12Operation = findExtensibilityElement(operation.getExtensibilityElements(),
                             SOAP12Operation.class);
-                    operationInfo.setSoapActionURI(soap12Operation.getSoapActionURI());
+                    if (soap12Operation != null) {
+                        operationInfo.setSoapActionURI(soap12Operation.getSoapActionURI());
+                    }
                 }
 
                 operationInfo.setTargetURL(soapLocation);
