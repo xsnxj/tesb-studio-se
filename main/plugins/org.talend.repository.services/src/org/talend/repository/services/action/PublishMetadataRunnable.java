@@ -247,24 +247,36 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         return null;
     }
 
+    Map<String, File> fileToSchemaMap = new HashMap<String, File>();
+
+    File zip = null;
+
     @SuppressWarnings("unchecked")
-    private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws IOException {
-        Map<String, File> fileToSchemaMap = new HashMap<String, File>();
-        File zip = null;
+    private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables)
+            throws IOException, CoreException {
         final SchemaUtil schemaUtil = new SchemaUtil(wsdlDefinition);
 
         try {
-            populationUtil = new XSDPopulationUtil2();
-            for (XmlSchema schema : schemaUtil.getSchemas()) {
-                File file = initFileContent(schema);
-                String ns = schema.getTargetNamespace();
-                fileToSchemaMap.put(ns != null ? ns : "", file);
-                populationUtil.addSchema(file.getPath());
+            if (populationUtil == null) {
+                populationUtil = new XSDPopulationUtil2();
+                populationUtil.loadWSDL(wsdlDefinition.getDocumentBaseURI());
             }
-
-            zip = File.createTempFile("tempXSDFile", ".zip");
-            Collection<File> files = fileToSchemaMap.values();
-            org.talend.utils.io.FilesUtils.zips(files.toArray(new File[files.size()]), zip.getPath());
+            for (XmlSchema schema : schemaUtil.getSchemas()) {
+                String ns = schema.getTargetNamespace();
+                ns = ns != null ? ns : "";
+                if (!fileToSchemaMap.containsKey(ns)) {
+                    File file = initFileContent(schema);
+                    fileToSchemaMap.put(ns != null ? ns : "", file);
+                }
+            }
+            if (zip == null) {
+                // TODO need to modify either:
+                // to save the wsdl inside the zip file, this might simplify a lot the code after on the xml wizard
+                // either have no zip, but allow to set the wsdl (but maybe many changes needed after)
+                zip = File.createTempFile("tempXSDFile", ".zip");
+                Collection<File> files = fileToSchemaMap.values();
+                org.talend.utils.io.FilesUtils.zips(files.toArray(new File[files.size()]), zip.getPath());
+            }
 
             final Set<QName> portTypes = new HashSet<QName>();
             final Set<QName> alreadyCreated = new HashSet<QName>();
@@ -285,8 +297,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip, populationUtil);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
@@ -303,8 +315,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip, populationUtil);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
@@ -319,8 +331,8 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                                 if (alreadyCreated.add(parameterFromMessage)) {
                                     File schemaFile = fileToSchemaMap.get(parameterFromMessage.getNamespaceURI());
                                     if (null != schemaFile) {
-                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(), oper.getName(),
-                                                schemaFile, selectTables, zip, populationUtil);
+                                        XsdMetadataUtils.createMetadataFromXSD(parameterFromMessage, portType.getLocalPart(),
+                                                oper.getName(), schemaFile, selectTables, zip, populationUtil);
                                     }
                                 }
                             }
