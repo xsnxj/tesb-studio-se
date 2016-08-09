@@ -53,7 +53,6 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.XmlFileConnectionItem;
 import org.talend.cwm.helper.ConnectionHelper;
-import org.talend.datatools.xml.utils.XSDPopulationUtil2;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.metadata.managment.ui.utils.XsdMetadataUtils;
 import org.talend.repository.services.Activator;
@@ -62,6 +61,7 @@ import org.talend.repository.services.ui.RewriteSchemaDialog;
 import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePage;
 import org.talend.repository.services.utils.FolderNameUtil;
 import org.talend.repository.services.utils.SchemaUtil;
+import org.talend.repository.services.utils.WSDLPopulationUtil;
 import org.talend.repository.services.utils.WSDLUtils;
 
 public class PublishMetadataRunnable implements IRunnableWithProgress {
@@ -70,7 +70,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
     private final Shell shell;
 
-    private XSDPopulationUtil2 populationUtil;
+    private WSDLPopulationUtil populationUtil;
 
     public PublishMetadataRunnable(Definition wsdlDefinition, Shell shell) {
         this.wsdlDefinition = wsdlDefinition;
@@ -258,7 +258,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
         try {
             if (populationUtil == null) {
-                populationUtil = new XSDPopulationUtil2();
+                populationUtil = new WSDLPopulationUtil();
                 populationUtil.loadWSDL(wsdlDefinition.getDocumentBaseURI());
             }
             for (XmlSchema schema : schemaUtil.getSchemas()) {
