@@ -487,8 +487,8 @@
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="spring-test"
-              name="spring-test-4.1.9.RELEASE.jar"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/spring-test-4.1.9.RELEASE.jar">
+              name="${tesb-spring-test}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-spring-test}">
         </libraryNeeded>
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="jaxb-impl-2.2.11.jar"
