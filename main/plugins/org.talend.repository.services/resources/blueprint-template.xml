@@ -131,12 +131,11 @@
 #if ($useBusinessCorrelation)
             <bean class="org.talend.esb.policy.correlation.feature.CorrelationIDFeature" />
 #end ## ($useBusinessCorrelation)
+            <bean class="org.apache.cxf.metrics.MetricsFeature" />
         </jaxws:features>
     </jaxws:endpoint>
 
-    <bean class="org.apache.cxf.management.counters.CounterRepository">
-        <property name="bus" ref="cxf" />
-    </bean>
+
 
     <reference interface="org.talend.esb.job.controller.ProviderFactory" id="providerFactory" />
     <bean id="genericServiceProvider" factory-ref="providerFactory" factory-method="create">
