@@ -200,7 +200,7 @@ public class ServiceExportManager extends JobJavaScriptOSGIForESBManager {
         a.put(new Attributes.Name("Import-Package"), //$NON-NLS-1$
                 "javax.xml.ws,org.talend.esb.job.controller" //$NON-NLS-1$
                         + ",org.osgi.service.cm;version=\"[1.3,2)\"" //$NON-NLS-1$
-                        + ",org.apache.cxf.metrics" //$NON-NLS-1$
+                        + ",org.apache.cxf,org.apache.cxf.metrics" //$NON-NLS-1$
                         + (logMessages ? ",org.apache.cxf.feature" : "") //$NON-NLS-1$
                         + (useSL ? ",org.talend.esb.servicelocator.cxf" : "") //$NON-NLS-1$
                         + (useSAM ? ",org.talend.esb.sam.agent.feature" : "") //$NON-NLS-1$
