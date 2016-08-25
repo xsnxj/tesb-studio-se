@@ -265,6 +265,8 @@ if (actAsConsumer) {
                         });
                 client.getEndpoint()
                         .getOutInterceptors().add(new org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor(wssProps));
+                client.getRequestContext().put("ws-security.username", username);
+                client.getRequestContext().put("ws-security.password", password);
             }
 
             org.apache.cxf.transports.http.configuration.HTTPClientPolicy httpClientPolicy = conduit.getClient();
