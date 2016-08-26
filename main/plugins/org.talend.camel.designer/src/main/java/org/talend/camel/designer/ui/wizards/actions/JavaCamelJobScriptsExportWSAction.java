@@ -15,10 +15,12 @@ package org.talend.camel.designer.ui.wizards.actions;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +30,7 @@ import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.camel.model.CamelRepositoryNodeType;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -41,6 +44,7 @@ import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.publish.core.utils.ZipModel;
 import org.talend.designer.runprocess.IProcessor;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
@@ -114,6 +118,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return version;
     }
 
+    @Override
     public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         this.monitor = monitor;
 
@@ -262,7 +267,15 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     private static IRepositoryNode getJobRepositoryNode(String jobId, ERepositoryObjectType type) throws PersistenceException {
-        for (IRepositoryViewObject job : ProxyRepositoryFactory.getInstance().getAll(type)) {
+        List<IRepositoryViewObject> list = new ArrayList<IRepositoryViewObject>();
+        List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
+        for (Project p : projects) {
+            list.addAll(ProxyRepositoryFactory.getInstance().getAll(p, type));
+        }
+
+        list.addAll(ProxyRepositoryFactory.getInstance().getAll(type));
+
+        for (IRepositoryViewObject job : list) {
             if (job.getId().equals(jobId)) {
                 return new RepositoryNode(job, null, ENodeType.REPOSITORY_ELEMENT);
             }

@@ -3138,7 +3138,16 @@ if (isProvider) {
 //              String jobName = (String) node.getElementParameter("SELECTED_JOB_NAME").getValue();
                 String jobVersion = ElementParameterParser.getStringElementParameterValue(node.getElementParameter("PROCESS_TYPE_VERSION"));
                 String jobFolderName = JavaResourcesHelper.getJobFolderName(jobName, jobVersion);
-                typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
+                
+                try{
+                    String selectedId = (String) node.getElementParameter("PROCESS_TYPE_PROCESS").getValue();
+                    String selectedContext = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue();
+                    String selectedVersion = (String) node.getElementParameter("PROCESS_TYPE_VERSION").getValue();
+
+                    typeName = org.talend.designer.runprocess.ProcessorUtilities.getMainCommand(selectedId,selectedVersion, selectedContext,org.talend.designer.runprocess.IProcessor.NO_STATISTICS,org.talend.designer.runprocess.IProcessor.NO_TRACES, null)[0];
+                }catch(Exception e){
+                    typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
+                }
             }
             
             if("NOT_DEFINED".equals(context)){
