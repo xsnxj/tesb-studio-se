@@ -257,7 +257,13 @@ try {
 	// set connection properties
 	org.apache.cxf.jaxrs.client.ClientConfiguration clientConfig_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>);
 	org.apache.cxf.transport.http.HTTPConduit conduit_<%=cid%> = clientConfig_<%=cid%>.getHttpConduit();
-	
+
+    if (clientConfig_<%=cid%>.getEndpoint() != null
+            && clientConfig_<%=cid%>.getEndpoint().getEndpointInfo() != null) {
+        clientConfig_<%=cid%>.getEndpoint().getEndpointInfo().setProperty(org.apache.cxf.jaxrs.client.WebClient.WEB_CLIENT_OPERATION_REPORTING,
+                                                                          <%=paramsHelper.getStringParam("__ENABLE_WEBCLIENT_OPERATION_REPORTING__")%>);
+    }
+
 	<% if (!paramsHelper.getBoolParam( "__CHECK_SERVER_IDENTITY__")) { %>
 	    
         org.apache.cxf.configuration.jsse.TLSClientParameters tlsClientParameters_<%=cid%> = new org.apache.cxf.configuration.jsse.TLSClientParameters();
