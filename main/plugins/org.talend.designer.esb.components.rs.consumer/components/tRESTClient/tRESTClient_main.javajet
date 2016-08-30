@@ -260,7 +260,7 @@ try {
 
     if (clientConfig_<%=cid%>.getEndpoint() != null
             && clientConfig_<%=cid%>.getEndpoint().getEndpointInfo() != null) {
-        clientConfig_<%=cid%>.getEndpoint().getEndpointInfo().setProperty(org.apache.cxf.jaxrs.client.WebClient.WEB_CLIENT_OPERATION_REPORTING,
+        clientConfig_<%=cid%>.getEndpoint().getEndpointInfo().setProperty("enable.webclient.operation.reporting",
                                                                           <%=paramsHelper.getStringParam("__ENABLE_WEBCLIENT_OPERATION_REPORTING__")%>);
     }
 
