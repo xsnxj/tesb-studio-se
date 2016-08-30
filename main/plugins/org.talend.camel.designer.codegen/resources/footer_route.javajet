@@ -415,7 +415,7 @@ if (isTestContainer) {
 			if("true".equals(testHeaderWithContext)){
 				String headerContext = ElementParameterParser.getValue(node, "__TEST_HEADER_USE_CONTEXT__");
 %>
-				java.util.List headers = new routines.system.FileDataSet(<%=headerContext%>).getDefaultBodies();
+				java.util.List headers = new org.apache.camel.component.dataset.FileDataSet(<%=headerContext%>).getDefaultBodies();
 				for (Object header : headers) {
 					mock_<%=cid%>.expectedHeaderValuesReceivedInAnyOrder(
 					header.toString().split(";")[0],
@@ -440,7 +440,7 @@ if (isTestContainer) {
 			if("true".equals(testBodyWithContext)){
 				String bodyContext = ElementParameterParser.getValue(node, "__TEST_BODY_USE_CONTEXT__");
 %>
-				routines.system.FileDataSet fileDataSet_<%=cid%> = new routines.system.FileDataSet(<%=bodyContext%>);
+				org.apache.camel.component.dataset.FileDataSet fileDataSet_<%=cid%> = new org.apache.camel.component.dataset.FileDataSet(<%=bodyContext%>);
 				mock_<%=cid%>.expectedBodiesReceived(fileDataSet_<%=cid%>.getDefaultBodies());
 <%				
 			}else if("true".equals(testBodyWithTable)){
