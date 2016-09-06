@@ -88,6 +88,11 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>	
 
+        <PARAMETER NAME="AMQ_USE_RETROACTIVE_CONSUMER" FIELD="CHECK" REQUIRED="false"
+            NUM_ROW="15" SHOW_IF="MQ_TYPE == 'ACTIVEMQ'">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+
 		<!-- WebSphere MQ Jms-->
 		<PARAMETER NAME="WQM_SEVER" FIELD="TEXT" NUM_ROW="7"
 			REQUIRED="true" SHOW_IF="MQ_TYPE == 'WMQ'">

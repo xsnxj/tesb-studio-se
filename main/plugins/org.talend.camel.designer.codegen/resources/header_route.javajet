@@ -2414,6 +2414,7 @@ if (isProvider) {
             
                 //ActiveMQ
                 String mqType = ElementParameterParser.getValue(node, "__MQ_TYPE__");
+                String amqUseRetroactiveConsumer = ElementParameterParser.getValue(node, "__AMQ_USE_RETROACTIVE_CONSUMER__").trim();
                 if("ActiveMQ".equals(mqType)){
                     String amqUri = ElementParameterParser.getValue(node, "__AMQ_BROKER_URI__").trim();
                     String useActiveMQAuth = ElementParameterParser.getValue(node, "__AMQ_AUTH__");
@@ -2427,11 +2428,25 @@ if (isProvider) {
 <%
                     } else {
 %>
-                        javax.jms.ConnectionFactory jmsConnectionFactory_<%=cid%> =
-                            new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+                            <%
+                                if("true".equals(amqUseRetroactiveConsumer)){
+                            %>
+                                org.apache.activemq.ActiveMQConnectionFactory jmsConnectionFactory_<%=cid%> =
+                                    new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+                                jmsConnectionFactory_<%=cid%>.setUseRetroactiveConsumer(true);
+                            <%
+                                } else {
+                            %>
+                                javax.jms.ConnectionFactory jmsConnectionFactory_<%=cid%> =
+                                    new org.apache.activemq.ActiveMQConnectionFactory(<%=amqUri%>);
+                            <%
+                                }
+                            %>
+
 <%
                     }
                     String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
+                    
                     if("true".equals(amqPool)){
                          String amq_pool_max_connections = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_CONNECTIONS__").trim();
                          String amq_pool_max_active = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_ACTIVE__").trim();
