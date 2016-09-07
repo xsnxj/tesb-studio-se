@@ -430,6 +430,12 @@
             id="jdom"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jdom}"
             bundleID="" />
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="camel-aws"
+              name="${tesb-camel-aws}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-aws}">
+        </libraryNeeded>
 
         <libraryNeededGroup
                 description="camel-flatpack"
