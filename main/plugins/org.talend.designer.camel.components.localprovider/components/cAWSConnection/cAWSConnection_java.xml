@@ -118,8 +118,8 @@
 		<IMPORTS>
             <IMPORT MODULE_GROUP="camel-core" REQUIRED="true" />
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
-            <IMPORT MODULE="camel-aws" REQUIRED="true" />
-            <IMPORT MODULE="camel-aws-alldep-${camel.version}.jar" NAME="talend-camel-aws" UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-aws-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-aws-alldep-${camel.version}.jar/6.0.0" REQUIRED="true"/>                
+            <IMPORT MODULE="camel-aws-${camel.version}.jar" NAME="talend-camel-aws" UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-aws-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-aws-${camel.version}.jar/6.0.0" REQUIRED="true" />
+            <IMPORT MODULE="camel-aws-alldep-${camel.version}.jar" NAME="talend-camel-aws-alldep" UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-aws-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-aws-alldep-${camel.version}.jar/6.0.0" REQUIRED="true" />                
 		</IMPORTS>
 	</CODEGENERATION>
 
