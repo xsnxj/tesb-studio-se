@@ -64,7 +64,8 @@
             </importPackage>
             <importPackage
                 name="org.apache.cxf.service.model,
-                    org.apache.cxf.endpoint">
+                    org.apache.cxf.endpoint,
+                    org.springframework.beans.factory.config">
                 <predicate
                     attributeName="ENABLE_REGISTRY"
                     attributeValue="true">
