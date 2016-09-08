@@ -3206,6 +3206,11 @@ if (isProvider) {
 <%
     }
     }
-    }
+    } else if("cAWSConnection".equals(nodeComponentName)){
+        String cid = node.getUniqueName();
+%>
+<%@ include file="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cAWSConnection/AWSConnectionClient.javajet" %>
+<%
+    }//end cAWSConnection
 }
 %>

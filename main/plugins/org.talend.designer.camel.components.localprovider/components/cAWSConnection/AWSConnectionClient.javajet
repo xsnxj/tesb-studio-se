@@ -1,0 +1,103 @@
+<%@ jet 
+%>
+<%
+	boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
+    
+	String sqsClient = "com.amazonaws.services.sqs.AmazonSQSClient";
+    String snsClient = "com.amazonaws.services.sns.AmazonSNSClient";
+    String sesClient = "com.amazonaws.services.ses.AmazonSESClient";
+    String s3Client = "com.amazonaws.services.s3.AmazonS3Client";
+    
+	String accessKey = ElementParameterParser.getValue(node, "__ACCESS_KEY__");
+
+	boolean configClient = "true".equals(ElementParameterParser.getValue(node, "__CONFIG_CLIENT__"));
+
+	List<Map<String,String>> clientConfiguration = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__CLIENT_CONFIGURATION__");
+	String region = ElementParameterParser.getValue(node,"__REGION__");
+
+    if(isLog4jEnabled){
+    %>	
+        log.info("<%=cid%> - Creating new connection.");
+    <%
+    }
+    String passwordFieldName = "__SECRET_KEY__";
+    %>
+
+    <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+    com.amazonaws.auth.AWSCredentials credentials_<%=cid%> = new com.amazonaws.auth.BasicAWSCredentials(<%=accessKey%>,decryptedPassword_<%=cid%>);
+    <%
+    
+    String connType = ElementParameterParser.getValue(node, "__AWS_TYPE__");
+    String connClient = "com.amazonaws.AmazonWebServiceClient";
+    if("SNS".equals(connType)){
+        connClient = snsClient;
+    }else if("SQS".equals(connType)){
+        connClient = sqsClient;
+    }else if("SES".equals(connType)){
+        connClient = sesClient;
+    }else if("S3".equals(connType)){
+        connClient = s3Client;
+    }
+    
+    
+    if(configClient && clientConfiguration.size()>0){
+    %>
+        com.amazonaws.ClientConfiguration cc_<%=cid%> = new com.amazonaws.ClientConfiguration();
+        <%
+        boolean setBuffer = false;
+        for(Map<String,String> map :clientConfiguration){
+            String client_parameter = map.get("CLIENT_PARAMETER");
+            String value = map.get("VALUE");
+            if(!setBuffer && ("SocketSendBufferSizeHints".equals(client_parameter) || "SocketReceiveBufferSizeHints".equals(client_parameter))){
+                setBuffer=true;
+                %>
+                int scketSendBufferSizeHints_<%=cid%> = 0;
+                int socketReceiveBufferSizeHints_<%=cid%> = 0;
+            <%
+            }
+            if("SocketSendBufferSizeHints".equals(client_parameter)){
+            %>
+                scketSendBufferSizeHints_<%=cid%> = <%=value%>;
+            <%
+            }else if("SocketReceiveBufferSizeHints".equals(client_parameter)){
+            %>
+                socketReceiveBufferSizeHints_<%=cid%> = <%=value%>;
+            <%
+            }else if("Protocol".equals(client_parameter)){
+            %>
+                cc_<%=cid%>.setProtocol(com.amazonaws.Protocol.<%=value.toUpperCase().replaceAll("\"","")%>);
+            <%
+            }else{
+            %>
+                cc_<%=cid%>.set<%=client_parameter%>(<%=value%>);
+            <%
+            }
+        }
+        if(setBuffer){
+        %>
+            cc_<%=cid%>.setSocketBufferSizeHints(scketSendBufferSizeHints_<%=cid%>,socketReceiveBufferSizeHints_<%=cid%>);
+        <%
+        }
+        %>
+            <%=connClient%> conn_<%=cid%> = new <%=connClient%>(credentials_<%=cid%>,cc_<%=cid%>);
+    <%
+    }else{
+    %>
+        <%=connClient%> conn_<%=cid%> = new <%=connClient%>(credentials_<%=cid%>);
+    <%
+    }
+    if(region!=null && !region.isEmpty() && !"DEFAULT".equalsIgnoreCase(region)){
+    %>
+        conn_<%=cid%>.setRegion(com.amazonaws.regions.RegionUtils.getRegion(<%=region%>));
+    <%
+    }
+    %>
+        registry.put("conn_<%=cid%>", conn_<%=cid%>);
+    <%       
+    if(isLog4jEnabled){
+    %>	
+        log.info("<%=cid%> - Creating new connection successfully.");
+    <%
+    }
+%>
