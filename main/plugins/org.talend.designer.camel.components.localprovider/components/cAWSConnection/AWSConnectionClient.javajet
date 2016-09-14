@@ -5,7 +5,7 @@
     
 	String sqsClient = "com.amazonaws.services.sqs.AmazonSQSClient";
     String snsClient = "com.amazonaws.services.sns.AmazonSNSClient";
-    String sesClient = "com.amazonaws.services.ses.AmazonSESClient";
+    String sesClient = "com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient";
     String s3Client = "com.amazonaws.services.s3.AmazonS3Client";
     
 	String accessKey = ElementParameterParser.getValue(node, "__ACCESS_KEY__");

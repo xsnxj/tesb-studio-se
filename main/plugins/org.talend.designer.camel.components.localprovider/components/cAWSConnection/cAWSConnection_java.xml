@@ -14,7 +14,8 @@
     </HEADER>
 
     <FAMILIES>
-        <FAMILY>AWS/Connectivity</FAMILY>
+        <FAMILY>AWS</FAMILY>
+        <FAMILY>Connectivity</FAMILY>
     </FAMILIES>
 
     <DOCUMENTATION>
