@@ -23,6 +23,7 @@
         <!-- camel-amqp -->
         <qpid-amqp.version>0.32</qpid-amqp.version>
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
+        <geronimo-j2ee-management.version>1.0.1</geronimo-j2ee-management.version>
         <!-- camel-mqtt -->
         <mqtt-client.version>1.12</mqtt-client.version>
         <hawtbuf.version>1.10</hawtbuf.version>
@@ -37,7 +38,9 @@
         <commons-pool2.version>2.4.2</commons-pool2.version>
         <!-- camel-mail -->
         <mail.version>1.4.7</mail.version>
-
+        <!-- camel-aws -->
+        <aws-java-sdk-version>1.10.52</aws-java-sdk-version>
+            
         <!-- external deps -->
         <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2</mvn-commons-collections>
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
@@ -164,7 +167,11 @@
             <artifactId>activemq-all</artifactId>
             <version>${activemq.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
+            <version>${geronimo-j2ee-management.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xstream</artifactId>
@@ -218,6 +225,41 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-mail</artifactId>
             <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-java-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+            <version>${aws-java-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-kms</artifactId>
+            <version>${aws-java-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-kinesis</artifactId>
+            <version>${aws-java-sdk-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-cloudfront</artifactId>
+            <version>${aws-java-sdk-version}</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
@@ -321,11 +363,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kafka</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws</artifactId>
             <version>${camel.version}</version>
         </dependency>
         <dependency>

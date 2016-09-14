@@ -430,12 +430,6 @@
             id="jdom"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jdom}"
             bundleID="" />
-        <libraryNeeded
-              context="plugin:org.talend.designer.camel.components.localprovider"
-              id="camel-aws"
-              name="${tesb-camel-aws}"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-aws}">
-        </libraryNeeded>
 
         <libraryNeededGroup
                 description="camel-flatpack"
@@ -512,6 +506,55 @@
             id="slf4j-api"
             uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
             bundleID="" />
+        <!-- aws s3 -->
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-s3}"
+            id="aws-java-sdk-s3"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-s3}"
+            bundleID="" />
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-kms}"
+            id="aws-java-sdk-kms"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-kms}"
+            bundleID="" />
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-kinesis}"
+            id="aws-java-sdk-kinesis"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-kinesis}"
+            bundleID="" />
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-cloudfront}"
+            id="aws-java-sdk-cloudfront"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-cloudfront}"
+            bundleID="" />
+            
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-core}"
+            id="aws-java-sdk-core"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-core}"
+            bundleID="" />
+            
+        
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-aws}"
+            id="camel-aws"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-aws}"
+            bundleID="" />
+
+        <libraryNeededGroup
+                description="camel-aws-s3"
+                id="camel-aws-s3"
+                name="camel-aws-s3">
+            <library id="camel-aws" />
+            <library id="aws-java-sdk-core" />
+            <library id="aws-java-sdk-kms" />
+            <library id="aws-java-sdk-kinesis" />
+            <library id="aws-java-sdk-cloudfront" />
+            <library id="aws-java-sdk-s3" />
+        </libraryNeededGroup>
 
     </extension>
 
