@@ -64,4 +64,41 @@
           class="org.talend.designer.esb.components.rs.provider.validation.CheckMultiRestRequestNodes">
     </checknodes>
  </extension>
+ <extension point="org.talend.core.runtime.librariesNeeded">
+
+	<libraryNeeded context="plugin:org.talend.designer.esb.components.rs.provider"
+             name="${tesb-swagger-annotations}"
+             id="swagger-annotations"
+             uripath="platform:/plugin/org.talend.designer.esb.components.rs.provider/lib/${tesb-swagger-annotations}"
+             bundleID="" />
+
+	<libraryNeeded context="plugin:org.talend.designer.esb.components.rs.provider"
+             name="${tesb-swagger-core}"
+             id="swagger-core"
+             uripath="platform:/plugin/org.talend.designer.esb.components.rs.provider/lib/${tesb-swagger-core}"
+             bundleID="" />
+
+	<libraryNeeded context="plugin:org.talend.designer.esb.components.rs.provider"
+             name="${tesb-swagger-jaxrs}"
+             id="swagger-jaxrs"
+             uripath="platform:/plugin/org.talend.designer.esb.components.rs.provider/lib/${tesb-swagger-jaxrs}"
+             bundleID="" />
+
+	<libraryNeeded context="plugin:org.talend.designer.esb.components.rs.provider"
+             name="${tesb-swagger-models}"
+             id="swagger-models"
+             uripath="platform:/plugin/org.talend.designer.esb.components.rs.provider/lib/${tesb-swagger-models}"
+             bundleID="" />
+
+    <libraryNeededGroup
+            description="rs-provider-swagger"
+            id="rs-provider-swagger"
+            name="rs-provider-swagger">
+        <library id="swagger-annotations" />
+        <library id="swagger-core" />
+        <library id="swagger-jaxrs" />
+        <library id="swagger-models" />
+    </libraryNeededGroup>
+
+ </extension>
 </plugin>

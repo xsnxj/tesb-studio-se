@@ -55,6 +55,7 @@
             <IMPORT MODULE_GROUP="cxf-rt-rs-client" REQUIRED="true" />
             <IMPORT MODULE_GROUP="cxf-rt-transports-http-jetty" REQUIRED="true" />
             <IMPORT MODULE="cxf-rt-rs-service-description" REQUIRED="true" />
+            <IMPORT MODULE_GROUP="rs-provider-swagger" REQUIRED="true" />
 
             <IMPORT MODULE_GROUP="spring-context"
                 REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
