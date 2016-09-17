@@ -291,6 +291,11 @@
 		<artifactId>cxf-rt-rs-service-description</artifactId>
 		<version>${cxf.version}</version>
 	</dependency>
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+        <version>${cxf.version}</version>
+    </dependency>
 	<!-- ESB Features-->
 	<dependency>
 		<groupId>org.springframework</groupId>

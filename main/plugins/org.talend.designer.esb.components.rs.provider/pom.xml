@@ -11,7 +11,7 @@
   <packaging>eclipse-plugin</packaging>
   <name>Talend Designer ESB Tooling REST Service provider plugin</name>
   <properties>
-      <swagger.version>1.5.8</swagger.version>
+      <swagger.version>1.5.9</swagger.version>
   </properties>
     <dependencies>
         <dependency>
@@ -20,27 +20,6 @@
             <version>${project.version}</version>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jaxrs</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>

@@ -496,6 +496,9 @@ private boolean restTalendJobAlreadyStarted = false;
  * REST provider implementation
  */
 @javax.ws.rs.Path("/")
+<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__EXPOSE_SWAGGER_SPEC__"))) { %>
+@io.swagger.annotations.Api(value = "/sample", description = "Sample JAX-RS service with Swagger documentation")
+<% } %>
 public static class RestServiceProviderImpl4TalendJob {
 
 	@javax.ws.rs.core.Context

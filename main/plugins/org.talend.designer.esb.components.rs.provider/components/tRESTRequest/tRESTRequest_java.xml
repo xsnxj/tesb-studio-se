@@ -155,6 +155,9 @@
 		<PARAMETER NAME="CONVERT_JSON_VALUES_TO_STRING" FIELD="CHECK" REQUIRED="true" NUM_ROW="30">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+        <PARAMETER NAME="EXPOSE_SWAGGER_SPEC" FIELD="CHECK" REQUIRED="false" NUM_ROW="55">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
@@ -168,6 +171,20 @@
 			<TEMPLATE_PARAM SOURCE="self.SERVICE_ACTIVITY_MONITOR" TARGET="Loop.SERVICE_ACTIVITY_MONITOR" />
 			<TEMPLATE_PARAM SOURCE="self.USE_BUSINESS_CORRELATION" TARGET="Loop.USE_BUSINESS_CORRELATION" />
 		</TEMPLATES>
+
+        <IMPORTS>
+
+            <IMPORT MODULE="swagger-annotations-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-annotations/6.0.0" NAME="swagger-annotations-${swagger.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-annotations-${swagger.version}.jar"
+                REQUIRED="true"/>
+                <!--REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
+
+            <IMPORT MODULE="cxf-rt-rs-service-description-swagger-${cxf.version}.jar" MVN="mvn:org.talend.libraries/cxf-rt-rs-service-description-swagger/6.0.0"
+                NAME="cxf-rt-rs-service-description-swagger-${cxf.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-service-description-swagger-${cxf.version}.jar"
+                REQUIRED="true"/>
+                <!--REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
+        </IMPORTS>
 	</CODEGENERATION>
 
 	<RETURNS>
