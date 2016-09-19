@@ -62,7 +62,6 @@
         RAW="true" 
         NUM_ROW="30" 
         REQUIRED="true"
-        SHOW_IF="(AWS_TYPE == 'SQS') OR (AWS_TYPE == 'S3')"
      >
          <ITEMS DEFAULT="DEFAULT">
             <ITEM NAME="DEFAULT" VALUE="DEFAULT" />
