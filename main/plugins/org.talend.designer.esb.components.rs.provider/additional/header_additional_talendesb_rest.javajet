@@ -497,7 +497,7 @@ private boolean restTalendJobAlreadyStarted = false;
  */
 @javax.ws.rs.Path("/")
 <% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__EXPOSE_SWAGGER_SPEC__"))) { %>
-@io.swagger.annotations.Api(value = "/sample", description = "Sample JAX-RS service with Swagger documentation")
+@io.swagger.annotations.Api(value = "/", description = "Sample JAX-RS service with Swagger documentation")
 <% } %>
 public static class RestServiceProviderImpl4TalendJob {
 
@@ -999,8 +999,8 @@ if (null != conns && !conns.isEmpty()) {
 	@javax.ws.rs.Path(<%=uriPattern%>)
 <% } %>
 <%
+String consumesContentTypes = null;
 if (!noBodyRequest) {
-	String consumesContentTypes = null;
 	if (contentTypes.containsKey(consumes)) {
 		consumesContentTypes = arrayHelper.codeGenArray(contentTypes.get(consumes));
 	} else if (null != bodyParameter) {
@@ -1017,12 +1017,32 @@ if (!noBodyRequest) {
 	if (null != consumesContentTypes) { %>	@javax.ws.rs.Consumes(<%=consumesContentTypes%>)
 <% }
 }
+String producesContentTypes = null;
 if (contentTypes.containsKey(produces)) {
-	String producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));
+	producesContentTypes = arrayHelper.codeGenArray(contentTypes.get(produces));
 %>	@javax.ws.rs.Produces(<%=producesContentTypes%>)
 <% } else if ("ONEWAY".equals(produces)) {
 %>	@org.apache.cxf.jaxrs.ext.Oneway()
-<% } %>
+<% }
+boolean exposeSwagger = Boolean.valueOf(ElementParameterParser.getValue(node,"__EXPOSE_SWAGGER_SPEC__"));
+if (exposeSwagger) {
+	String opName = "Operation " + connName;
+	String notes = "";
+	if (producesContentTypes != null) {
+	    notes += "Produces: " + producesContentTypes + " ";
+	}
+	if (consumesContentTypes != null) {
+	    notes += "Consumes: " + consumesContentTypes;
+	}
+	notes = notes.replaceAll("\"", "");
+    %>
+
+	  @io.swagger.annotations.ApiOperation(
+		value = "<%=opName%>",
+		notes = "<%=notes%>"
+	)<%
+}
+%>
 	public javax.ws.rs.core.Response <%=connName%>(
 		<%	boolean paramCommaWritten = false;
 			for (Parameter param : parameters.values()) {
@@ -1040,6 +1060,10 @@ if (contentTypes.containsKey(produces)) {
 				if ("java.util.Date".equals(javaType)) {
 					javaType = "String";
 					variableName += "_" + cid;
+				}
+				if (exposeSwagger) {
+					%>
+					@io.swagger.annotations.ApiParam(value="<%=param.getName()%>", required = true)<%
 				}
 
 				if (param.getDefaultValue() != null && param.getDefaultValue().length() > 0) {
