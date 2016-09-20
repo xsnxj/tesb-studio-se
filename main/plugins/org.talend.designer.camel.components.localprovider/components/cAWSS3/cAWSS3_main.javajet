@@ -66,14 +66,6 @@ imports="
         builder.addParam("partSize", partSize);
         
     }
-
-    String enableProxy = ElementParameterParser.getValue(node, "__ENABLE_PROXY__");
-    if("true".equals(enableProxy)){
-        String proxyHost = ElementParameterParser.getValue(node, "__PROXY_HOST__");
-        String proxyPort = ElementParameterParser.getValue(node, "__PROXY_PORT__");
-        builder.addParam("proxyHost", proxyHost);
-        builder.addParam("proxyPort", proxyPort);
-    }
     
     if("true".equals(multiPartUpload)){
         builder.addParam("multiPartUpload", "\"" + multiPartUpload + "\"");
