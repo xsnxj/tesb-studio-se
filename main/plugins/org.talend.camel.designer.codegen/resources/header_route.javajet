@@ -1138,7 +1138,6 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             boolean hasCXFRegistryConsumer = false;
             boolean hasCXFSAMLPropagateConsumer = false;
             boolean hasCXFServiceLocator = false;
-            boolean hasAWSS3 = !process.getNodesOfType("cAWSS3").isEmpty();
 
             List<INode> allCxfNodes = new ArrayList<INode>();
             allCxfNodes.addAll(process.getNodesOfType("cCXF"));
@@ -3010,8 +3009,22 @@ if (isProvider) {
                 <%=cid%>userDefinedHeaders.put(<%=map.get("MESSAGE_HEADER_USER_DEFINED")%>,<%=map.get("MESSAGE_HEADER_VALUE_USER_DEFINED")%>);
             <%}%>
        <%}%>
-       
-
+<%  } else if("cAWSSES".equals(nodeComponentName)){
+       String cid = node.getUniqueName();
+       List<Map<String, String>> messageHeaders = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__MESSAGE_HEADERS__");
+%>
+       <%if(messageHeaders.size()>0){ 
+            for (Map<String, String> map : messageHeaders) {
+        %>
+                <%if(map.get("MESSAGE_HEADER").equals("CamelAwsSesTo")){%>
+                    java.util.List<String> <%=cid%>tos = java.util.Arrays.asList(<%=map.get("MESSAGE_HEADER_VALUE")%>.split(","));
+                <%}else if(map.get("MESSAGE_HEADER").equals("CamelAwsSesReplyToAddresses")){%>
+                    java.util.List<String> <%=cid%>replyToAddresses = java.util.Arrays.asList(<%=map.get("MESSAGE_HEADER_VALUE")%>.split(","));
+                <%}%>
+       <%
+            }
+         }
+       %>
 <%
     } else if("cMessageRouter".equals(nodeComponentName)){
         for (IConnection param : node.getOutgoingConnections()) {

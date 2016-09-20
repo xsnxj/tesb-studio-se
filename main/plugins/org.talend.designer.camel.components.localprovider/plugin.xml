@@ -556,6 +556,22 @@
             <library id="aws-java-sdk-s3" />
         </libraryNeededGroup>
 
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-aws-java-sdk-ses}"
+            id="aws-java-sdk-ses"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-ses}"
+            bundleID="" />
+        
+        <libraryNeededGroup
+            description="camel-aws-ses"
+            id="camel-aws-ses"
+            name="camel-aws-ses">
+            <library id="camel-aws" />
+            <library id="aws-java-sdk-core" />
+            <library id="aws-java-sdk-kinesis" />
+            <library id="aws-java-sdk-ses" />
+            <library id="javax.mail" />
+        </libraryNeededGroup>
     </extension>
 
 </plugin>
