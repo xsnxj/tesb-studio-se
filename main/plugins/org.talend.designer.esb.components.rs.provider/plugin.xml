@@ -64,7 +64,7 @@
           class="org.talend.designer.esb.components.rs.provider.validation.CheckMultiRestRequestNodes">
     </checknodes>
  </extension>
- <extension point="org.talend.core.runtime.librariesNeeded">
+ <!--extension point="org.talend.core.runtime.librariesNeeded">
 
     <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-rs-service-description-swagger}"
@@ -86,5 +86,5 @@
         <library id="swagger-annotations" />
     </libraryNeededGroup>
 
- </extension>
+ </extension-->
 </plugin>
