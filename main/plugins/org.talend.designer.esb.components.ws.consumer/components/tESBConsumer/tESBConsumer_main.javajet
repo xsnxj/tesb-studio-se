@@ -108,6 +108,8 @@ if (inputConn != null) {
     }
 }
 
+List<Map<String, String>> customHttpHeaders = paramsHelper.getObjectParam("__HEADERS__");
+
 /*GENERATE CODE*/
 if (inputConn != null) {
     for (IConnection conn : dataOutputs) {
@@ -179,6 +181,13 @@ if (inputConn != null) {
                     }
                 }
             <% } %>
+            
+            final List<java.util.Map<String, String>> customHttpHeaders_<%=cid%> = new java.util.ArrayList<java.util.Map<String, String>>();
+            <% if(customHttpHeaders!=null && !customHttpHeaders.isEmpty()){ %>   
+            <% for (java.util.Map<String, String> customHttpHeader : customHttpHeaders) { %>
+			customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=customHttpHeader.get("NAME")%>, <%=customHttpHeader.get("VALUE")%>);}});
+			<% } %>
+            <% } %>  
 
             if (null == registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
@@ -266,7 +275,9 @@ if (inputConn != null) {
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
                     genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
                 }
-
+				if (!customHttpHeaders_<%=cid%>.isEmpty()) {
+					esbFeatures_<%=cid%>.add(new CustomHttpHeadersFeature(customHttpHeaders_<%=cid%>));
+				}
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
                 <% if (useBusinessCorrelation || useSR) { %>
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
@@ -334,6 +345,9 @@ if (inputConn != null) {
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }
+							if (!customHttpHeaders_<%=cid%>.isEmpty()) {
+								put("httpHeaders", customHttpHeaders_<%=cid%>);
+							}                            
                             <% if (authPropagateUP || authPropagateCertificate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
