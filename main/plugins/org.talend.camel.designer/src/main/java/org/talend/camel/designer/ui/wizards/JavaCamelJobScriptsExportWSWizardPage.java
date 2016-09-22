@@ -22,9 +22,12 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -41,6 +44,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
+import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
@@ -60,6 +64,12 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  * 
  */
 public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizardPage {
+
+    private static final String ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE = "ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE";
+
+    private static final String ECLIPSE_M2_OFFLINE = "eclipse.m2.offline";
+
+    private static final String ORG_ECLIPSE_M2E_CORE = "org.eclipse.m2e.core";
 
     private static final String EXPORTTYPE_KAR = Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ExportKar");//$NON-NLS-1$
 
@@ -339,7 +349,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 onlyExportDefaultContext = contextButton.getSelection();
             }
         });
-        // }
 
         exportAsZipButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
         exportAsZipButton.setText("Export as ZIP"); //$NON-NLS-1$
@@ -408,6 +417,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     @Override
     public boolean finish() {
+
         String version = getSelectedJobVersion();
         String destinationKar = getDestinationValue();
         if (new File(destinationKar).exists()) {
@@ -426,9 +436,31 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
 
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
-
             try {
                 if (bundle != null) {
+                    boolean eclipseM2Offline = Platform.getPreferencesService().getBoolean(ORG_ECLIPSE_M2E_CORE,
+                            ECLIPSE_M2_OFFLINE, true, null);
+                    // maven online
+                    if (eclipseM2Offline) {
+                        if (!CamelDesignerPlugin.getDefault().getPreferenceStore()
+                                .getBoolean(ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE)) {
+                            MessageDialog dialog = new MessageDialog(getShell(), "Maven", null, //$NON-NLS-1$
+                                    Messages.getString("JavaCamelJobScriptsExportWSWizardPage.MavenOnlineWarning"), //$NON-NLS-1$
+                                    MessageDialog.QUESTION, new String[] { "Always", IDialogConstants.YES_LABEL,
+                                            IDialogConstants.NO_LABEL }, 0);
+
+                            int openResult = dialog.open();
+                            if (openResult == 2) {
+                                // No pressed
+                                return false;
+                            } else if (openResult == 0) {
+                                // Always pressed
+                                IPreferenceStore store = CamelDesignerPlugin.getDefault().getPreferenceStore();
+                                store.setValue(ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE, true);
+                            }
+                        }
+                        InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_M2E_CORE).putBoolean(ECLIPSE_M2_OFFLINE, false);
+                    }
 
                     Class javaCamelJobScriptsExportMicroServiceAction = bundle
                             .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
@@ -444,6 +476,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                     } catch (Exception e) {
                         MessageBoxExceptionHandler.process(e.getCause(), getShell());
                         return false;
+                    } finally {
+                        if (eclipseM2Offline) {
+                            // restore maven status
+                            InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_M2E_CORE).putBoolean(ECLIPSE_M2_OFFLINE, eclipseM2Offline);
+                        }
                     }
                 }
 
