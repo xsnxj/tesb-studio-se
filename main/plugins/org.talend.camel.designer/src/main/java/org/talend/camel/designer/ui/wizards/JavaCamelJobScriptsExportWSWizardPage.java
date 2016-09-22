@@ -71,6 +71,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     private boolean onlyExportDefaultContext;
 
+    private boolean exportAsZip;
+
+    protected Button exportAsZipButton;
+
     protected Combo exportTypeCombo;
 
     protected Composite pageComposite;
@@ -121,27 +125,32 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 Widget source = e.widget;
                 if (source instanceof Combo) {
                     String destination = ((Combo) source).getText();
-                    boolean show = destination.equals(EXPORTTYPE_SPRING_BOOT);
+                    boolean isMS = destination.equals(EXPORTTYPE_SPRING_BOOT);
 
-                    if (show) {
+                    if (isMS) {
                         addBSButton.setEnabled(false);
                         contextButton.setEnabled(true);
+                        exportAsZipButton.setEnabled(true);
                     } else {
                         addBSButton.setEnabled(true);
                         contextButton.setEnabled(false);
+                        exportAsZipButton.setEnabled(false);
                     }
 
-                    String OUTPUT_FILE_SUFFIX = FileConstants.JAR_FILE_SUFFIX;
                     String destinationValue = getDestinationValue();
-                    if (destinationValue.endsWith(getOutputSuffix())) {
-                        if (show) {
-                            destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
-                                    + OUTPUT_FILE_SUFFIX;
+
+                    if (isMS) {
+                        if (exportAsZip) {
+                            destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf("."))
+                                    + FileConstants.ZIP_FILE_SUFFIX;
+                        } else {
+                            destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf("."))
+                                    + FileConstants.JAR_FILE_SUFFIX;
                         }
-                    } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX) && !show) {
-                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
-                                + getOutputSuffix();
+                    } else {
+                        destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf(".")) + getOutputSuffix();
                     }
+
                     setDestinationValue(destinationValue);
                 }
 
@@ -183,7 +192,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (isAddMavenScript()) {
             dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
-            dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            if (exportAsZip) {
+                dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            }else{
+                dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         } else {
             dialog.setFilterExtensions(new String[] { "*.kar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -204,7 +217,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (isAddMavenScript()) {
             idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
         } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
-            idealSuffix = FileConstants.JAR_FILE_SUFFIX;
+            if (exportAsZip) {
+                idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
+            } else {
+                idealSuffix = FileConstants.JAR_FILE_SUFFIX;
+            }
         } else {
             idealSuffix = getOutputSuffix();
         }
@@ -278,6 +295,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
         }
         exportChoiceMap.put(ExportChoice.onlyDefautContext, onlyExportDefaultContext);
+        exportChoiceMap.put(ExportChoice.needLauncher, exportAsZip);
+
         return exportChoiceMap;
     }
 
@@ -321,6 +340,21 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
         });
         // }
+
+        exportAsZipButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+        exportAsZipButton.setText("Export as ZIP"); //$NON-NLS-1$
+        exportAsZipButton.setSelection(false);
+        exportAsZipButton.setFont(getFont());
+        exportAsZipButton.setEnabled(false);
+        exportAsZipButton.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boolean selectContext = exportAsZipButton.getSelection();
+                exportAsZip = selectContext;
+                exportTypeCombo.notifyListeners(SWT.Selection, null);
+            }
+        });
     }
 
     private void restoreWidgetValuesForKar() {
