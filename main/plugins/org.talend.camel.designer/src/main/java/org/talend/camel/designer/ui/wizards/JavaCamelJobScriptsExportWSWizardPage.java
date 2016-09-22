@@ -69,6 +69,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
     // dialog store id constants
     private static final String STORE_DESTINATION_NAMES_ID = "JavaJobScriptsExportWizardPage.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
+    private boolean onlyExportDefaultContext;
+
     protected Combo exportTypeCombo;
 
     protected Composite pageComposite;
@@ -123,8 +125,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
                     if (show) {
                         addBSButton.setEnabled(false);
+                        contextButton.setEnabled(true);
                     } else {
                         addBSButton.setEnabled(true);
+                        contextButton.setEnabled(false);
                     }
 
                     String OUTPUT_FILE_SUFFIX = FileConstants.JAR_FILE_SUFFIX;
@@ -147,7 +151,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     @Override
     public void createOptions(final Composite optionsGroup, Font font) {
-        createOptionsForKar(optionsGroup);
+        createOptionsForKar(optionsGroup, font);
         restoreWidgetValuesForKar();
     }
 
@@ -273,10 +277,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (addBSButton != null) {
             exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
         }
+        exportChoiceMap.put(ExportChoice.onlyDefautContext, onlyExportDefaultContext);
         return exportChoiceMap;
     }
 
-    private void createOptionsForKar(Composite optionsGroup) {
+    private void createOptionsForKar(Composite optionsGroup, Font font) {
         if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
             return;
         }
@@ -302,6 +307,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
         });
 
+        // TESB-17856: ESB Microservice can be exported only with Default context
+        contextButton = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+        contextButton.setText("Only export the default context"); //$NON-NLS-1$
+        contextButton.setFont(font);
+        contextButton.setEnabled(false);
+        contextButton.setVisible(PluginChecker.isTIS());
+        contextButton.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onlyExportDefaultContext = contextButton.getSelection();
+            }
+        });
+        // }
     }
 
     private void restoreWidgetValuesForKar() {
@@ -442,6 +461,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
         }
     }
+
     // @Override
     // protected void internalSaveWidgetValues() {
     // // update directory names history
@@ -480,6 +500,11 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
     @Override
     protected String getProcessType() {
         return "Route";
+    }
+
+    // TESB-17856
+    public boolean isExportDefaultContext() {
+        return onlyExportDefaultContext;
     }
 
 }
