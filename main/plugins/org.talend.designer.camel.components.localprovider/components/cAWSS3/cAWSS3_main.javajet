@@ -117,15 +117,15 @@ imports="
 	if(messageHeaders.size()>0){
 	    StringBuilder sb1 = new StringBuilder();
         for (Map<String, String> map : messageHeaders) {
-            String header = org.talend.core.utils.TalendQuoteUtils.removeQuotesIfExist(map.get("MESSAGE_HEADER"));
-            String value = org.talend.core.utils.TalendQuoteUtils.removeQuotesIfExist(map.get("MESSAGE_HEADER_VALUE"));
+            String header = map.get("MESSAGE_HEADER");
+            String value = map.get("MESSAGE_HEADER_VALUE");
             
             sb1.append(".setHeader(\"");
             sb1.append(header);
             sb1.append("\",");
-            sb1.append("constant(\"");
+            sb1.append("constant(");
             sb1.append(value);
-            sb1.append("\"))");
+            sb1.append("))");
         }
         
         if(("true".equals(useMessageHeadersUserDefined)) && (userDefinedHeaders.size()>0)){
