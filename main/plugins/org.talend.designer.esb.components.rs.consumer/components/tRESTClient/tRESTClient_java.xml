@@ -64,6 +64,7 @@
 			<ITEMS DEFAULT="XML">
 				<ITEM NAME="XML" VALUE="application/xml" />
 				<ITEM NAME="JSON" VALUE="application/json" />
+                <ITEM NAME="MULTIPART" VALUE="multipart/mixed" />
 				<ITEM NAME="ANY" VALUE="*/*" />
 			</ITEMS>
 		</PARAMETER>
