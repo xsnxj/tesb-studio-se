@@ -29,7 +29,7 @@ imports="
 
     //Producer
     eb.setName(topicName);
-    eb.addParam("amazonSNSClient", "\"#conn_" +sns+"\"");
+    eb.addParam("amazonSNSClient", "\"#cAWSSNS_" +sns+"\"");
     eb.addParam("subject", subjectName);
 
     if(queueConf){

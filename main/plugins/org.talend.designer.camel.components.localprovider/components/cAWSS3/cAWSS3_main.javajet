@@ -34,7 +34,7 @@ imports="
 
     String amazonS3Client = ElementParameterParser.getValue(node, "__AWS_CONNECTION_CLIENT__");
 
-    builder.addParam("amazonS3Client", "\"#conn_" +amazonS3Client+"\"");
+    builder.addParam("amazonS3Client", "\"#cAWSS3_" + amazonS3Client + "\"");
     
     String prefix = ElementParameterParser.getValue(node, "__PREFIX__");
     builder.addParam("prefix", prefix);
@@ -114,7 +114,7 @@ imports="
    
 	List< ? extends IConnection> conns = node.getIncomingConnections();
 	
-	if(messageHeaders.size()>0){
+	if(conns.size()>0 && messageHeaders.size()>0){
 	    StringBuilder sb1 = new StringBuilder();
         for (Map<String, String> map : messageHeaders) {
             String header = map.get("MESSAGE_HEADER");

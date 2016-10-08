@@ -47,7 +47,7 @@ imports="
     List<Map<String,String>> msgAttr = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__MESSAGE_ATTRIBUTE_NAME__");
     
     //Shared header
-    eb.addParam("amazonSQSClient", "\"#conn_" +sqs+"\"");
+    eb.addParam("amazonSQSClient", "\"#cAWSSQS_" +sqs+"\"");
     eb.setName(queueName);
     
     if(in.size()>0){

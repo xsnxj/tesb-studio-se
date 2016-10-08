@@ -27,7 +27,7 @@ imports="
 
     String amazonSESClient = ElementParameterParser.getValue(node, "__AWS_CONNECTION_CLIENT__");
 
-    builder.addParam("amazonSESClient", "\"#conn_" +amazonSESClient+"\"");
+    builder.addParam("amazonSESClient", "\"#cAWSSES_" +amazonSESClient+"\"");
     
     String subject = ElementParameterParser.getValue(node, "__SUBJECT__");
     builder.addParam("subject", subject);

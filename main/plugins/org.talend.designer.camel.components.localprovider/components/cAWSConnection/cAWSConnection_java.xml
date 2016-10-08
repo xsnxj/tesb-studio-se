@@ -27,17 +27,6 @@
     </CONNECTORS>
 
     <PARAMETERS>
-
-
-    <PARAMETER NAME="AWS_TYPE" FIELD="CLOSED_LIST" NUM_ROW="1" REQUIRED="true" READONLY="false">
-        <ITEMS DEFAULT="SQS">
-            <ITEM NAME="SQS" VALUE="SQS" />
-            <ITEM NAME="SNS" VALUE="SNS" />
-            <ITEM NAME="S3" VALUE="S3" />
-            <ITEM NAME="SES" VALUE="SES" />
-        </ITEMS>
-    </PARAMETER>
-        
     <PARAMETER
       NAME="ACCESS_KEY"
       FIELD="TEXT"
