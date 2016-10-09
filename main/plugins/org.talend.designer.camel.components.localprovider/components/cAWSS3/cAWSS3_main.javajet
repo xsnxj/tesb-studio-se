@@ -39,8 +39,13 @@ imports="
     String prefix = ElementParameterParser.getValue(node, "__PREFIX__");
     builder.addParam("prefix", prefix);
     
-    String policy = ElementParameterParser.getValue(node, "__POLICY__");
-    builder.addParam("policy", policy);
+    if("true".equals(ElementParameterParser.getValue(node, "__ENABLE_POLICY__"))) {
+    	String policy = ElementParameterParser.getValue(node, "__POLICY__");
+    	
+    	if(!"".equals(policy)) {
+    		builder.addParamsWithEscapeValue("policy", policy);
+    	}
+    }
     
     String fileName = ElementParameterParser.getValue(node, "__FILE_NAME__");
     builder.addParam("fileName", fileName);

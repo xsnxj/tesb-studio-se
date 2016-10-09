@@ -24,7 +24,7 @@ imports="
     String sns = ElementParameterParser.getValue(node, "__AWS_CONNECTION_CLIENT__");
     String topicName = ElementParameterParser.getValue(node, "__TOPIC_NAME__");
     String subjectName = ElementParameterParser.getValue(node, "__SUBJECT_NAME__");
-    boolean queueConf = "true".equals(ElementParameterParser.getValue(node,"__QUEUE_CONFIGURATION__"));
+    boolean enablePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_POLICY__"));
     String policy = ElementParameterParser.getValue(node, "__POLICY__");
 
     //Producer
@@ -32,8 +32,8 @@ imports="
     eb.addParam("amazonSNSClient", "\"#cAWSSNS_" +sns+"\"");
     eb.addParam("subject", subjectName);
 
-    if(queueConf){
-        eb.addParam("policy", TalendQuoteUtils.addQuotesIfNotExist(policy));
+    if(enablePolicy){
+        eb.addParamsWithEscapeValue("policy", policy);
     }
 
     String uri = eb.build();

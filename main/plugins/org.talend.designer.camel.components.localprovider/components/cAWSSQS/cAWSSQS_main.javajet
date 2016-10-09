@@ -35,8 +35,12 @@ imports="
     String waitSeconds = ElementParameterParser.getValue(node, "__WAIT_TIME_SECOND__");
     String awsID = ElementParameterParser.getValue(node, "__QUEUE_OWNER_ACCOUNT__");
     
-    boolean hasQueueConf = "true".equals(ElementParameterParser.getValue(node, "__QUEUE_SETTING__"));
     List<Map<String,String>> queueConf = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUEUE_CONFIGURATION__");
+    
+    boolean enablePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_POLICY__"));
+    String policy = ElementParameterParser.getValue(node, "__POLICY__");
+    boolean enableRedrivePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_REDRIVEPOLICY__"));
+    String redrivePolicy = ElementParameterParser.getValue(node, "__REDRIVEPOLICY__");
     
     boolean attrAll = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_ALL__"));
     boolean attrRecTime = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_RECEIVE_TIME__"));
@@ -97,14 +101,20 @@ imports="
     if(TalendQuoteUtils.removeQuotesIfExist(awsID).length()>0){
         eb.addParam("queueOwnerAWSAccountId",awsID);
     }
-    if(hasQueueConf){
+    if(queueConf.size()>0) {
         for(Map<String,String> map :queueConf){
             String param = map.get("QUEUE_PARAMETER");
             String value = map.get("VALUE");
             eb.addParam(param,value);
         }
     }
-
+    if(enablePolicy){
+    	eb.addParamsWithEscapeValue("policy", policy);
+    }
+	if(enableRedrivePolicy){
+		eb.addParamsWithEscapeValue("redrivePolicy", redrivePolicy);
+	}
+	
     String uri = eb.build();
     if(in.size()>0) {
 %>

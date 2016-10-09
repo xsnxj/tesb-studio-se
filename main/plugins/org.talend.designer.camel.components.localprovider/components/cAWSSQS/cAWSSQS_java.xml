@@ -108,26 +108,32 @@
           <DEFAULT>""</DEFAULT>
         </PARAMETER>
         
-        <PARAMETER NAME="QUEUE_SETTING" FIELD="CHECK" NUM_ROW="10" REQUIRED="false" GROUP="QUEUE_GROUP">
-            <DEFAULT>false</DEFAULT>
-            <!-- org.apache.camel.component.aws.sqs.SqsEndpoint protected void createQueue(AmazonSQS client) -->
-        </PARAMETER>
-        <PARAMETER NAME="QUEUE_CONFIGURATION" FIELD="TABLE" NUM_ROW="11" NB_LINES="5" REQUIRED="true" SHOW_IF="QUEUE_SETTING=='true'" GROUP="QUEUE_GROUP">
+        <PARAMETER NAME="QUEUE_CONFIGURATION" FIELD="TABLE" NUM_ROW="11" NB_LINES="4" REQUIRED="true" GROUP="QUEUE_GROUP">
           <ITEMS>
             <ITEM NAME="QUEUE_PARAMETER" FIELD="CLOSED_LIST">
                 <ITEMS DEFAULT="DEFAULTVISIBILITYTIMEOUT">
                     <ITEM NAME="DEFAULTVISIBILITYTIMEOUT" VALUE="defaultVisibilityTimeout"/>
                     <ITEM NAME="MAXIMUMMESSAGESIZE" VALUE="maximumMessageSize"/>
                     <ITEM NAME="MESSAGERETENTIONPERIOD" VALUE="messageRetentionPeriod"/>
-                    <ITEM NAME="POLICY" VALUE="policy"/>
+                    <!-- ITEM NAME="POLICY" VALUE="policy"/ -->
                     <ITEM NAME="RECEIVEMESSAGEWAITTIMESECONDS" VALUE="receiveMessageWaitTimeSeconds"/>
-                    <ITEM NAME="REDRIVEPOLICY" VALUE="redrivePolicy"/>
+                    <!-- ITEM NAME="REDRIVEPOLICY" VALUE="redrivePolicy"/ -->
                 </ITEMS>
             </ITEM>
             <ITEM NAME="VALUE" />
           </ITEMS>
         </PARAMETER>
-
+        <PARAMETER NAME="ENABLE_POLICY" FIELD="CHECK" NUM_ROW="20" GROUP="QUEUE_GROUP">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="POLICY" FIELD="MEMO" RAW="true" NUM_ROW="21" REQUIRED="false" GROUP="QUEUE_GROUP" SHOW_IF="(ENABLE_POLICY == 'true')" >
+        </PARAMETER>
+        <PARAMETER NAME="ENABLE_REDRIVEPOLICY" FIELD="CHECK" NUM_ROW="22" GROUP="QUEUE_GROUP">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+        <PARAMETER NAME="REDRIVEPOLICY" FIELD="MEMO" RAW="true" NUM_ROW="23" REQUIRED="false" GROUP="QUEUE_GROUP" SHOW_IF="(ENABLE_REDRIVEPOLICY == 'true')" >
+        </PARAMETER>
+                
         <PARAMETER NAME="MESSAGE_ATTRIBUTE_NAME" FIELD="TABLE" NUM_ROW="40" REQUIRED="false" GROUP="MESSAGE_ATTRIBUTE_GROUP" SHOW_IF="#LINK@CONNECTOR.IN.ANY == '0'">
           <ITEMS>
             <ITEM NAME="ATTRIBUTE_NAME"  VALUE="&quot;&quot;" />
