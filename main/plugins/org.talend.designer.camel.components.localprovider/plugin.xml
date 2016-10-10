@@ -536,6 +536,18 @@
             id="aws-java-sdk-core"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-core}"
             bundleID="" />
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="aws-java-sdk-sqs"
+              name="${tesb-aws-java-sdk-sqs}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sqs}">
+        </libraryNeeded>
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="aws-java-sdk-sns"
+              name="${tesb-aws-java-sdk-sns}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sns}">
+        </libraryNeeded>
             
         
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
@@ -571,6 +583,54 @@
             <library id="aws-java-sdk-kinesis" />
             <library id="aws-java-sdk-ses" />
             <library id="javax.mail" />
+        </libraryNeededGroup>
+        <libraryNeededGroup
+              description="camel-aws-connection"
+              id="camel-aws-connection"
+              name="camel-aws-connection">
+           <library
+                 id="camel-aws">
+           </library>
+           <library
+                 id="aws-java-sdk-core">
+           </library>
+           <library
+                 id="aws-java-sdk-kinesis">
+           </library>
+        </libraryNeededGroup>
+        <libraryNeededGroup
+              description="camel-aws-sqs"
+              id="camel-aws-sqs"
+              name="camel-aws-sqs">
+           <library
+                 id="camel-aws">
+           </library>
+           <library
+                 id="aws-java-sdk-core">
+           </library>
+           <library
+                 id="aws-java-sdk-sqs">
+           </library>
+           <library
+                 id="aws-java-sdk-kinesis">
+           </library>
+        </libraryNeededGroup>
+        <libraryNeededGroup
+              description="camel-aws-sns"
+              id="camel-aws-sns"
+              name="camel-aws-sns">
+           <library
+                 id="camel-aws">
+           </library>
+           <library
+                 id="aws-java-sdk-core">
+           </library>
+           <library
+                 id="aws-java-sdk-sns">
+           </library>
+           <library
+                 id="aws-java-sdk-kinesis">
+           </library>
         </libraryNeededGroup>
     </extension>
 
