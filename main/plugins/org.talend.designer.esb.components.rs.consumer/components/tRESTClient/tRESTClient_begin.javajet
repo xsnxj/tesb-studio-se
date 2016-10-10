@@ -16,6 +16,8 @@
 CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode) codeGenArgument.getArgument();
 
+final String MULTIPART_MIXED = "multipart/mixed";
+
 /*INIT PARAMETERS AND INDICATORS.*/
 NodeConnectionsHelper connsHelper = new NodeConnectionsHelper(node);
 IConnection inputConn = connsHelper.getInputConn();
@@ -66,6 +68,16 @@ for (IConnection conn : dataOutputs) {
 }
 %>
 
+// expected response body
+
+<% if (MULTIPART_MIXED.equals(acceptType)) {
+       if ("PUT".equals(method) || "PATCH".equals(method)) {
+           %>javax.ws.rs.core.Response<%
+       } else {
+           %>java.util. Collection<? extends String><%
+       }
+} else { %>Object<% } %> responseDoc_<%=cid%> = null;
+
 try {
 	// request body
 	org.dom4j.Document requestDoc_<%=cid%> = null;
@@ -85,13 +97,28 @@ try {
 
 	Object requestBody_<%=cid%> = requestDoc_<%=cid%> != null ? requestDoc_<%=cid%> : requestString_<%=cid%>;
 
-	// expected response body
-	Object responseDoc_<%=cid%> = null;
 	<%
 		String convertResponseToDomProperty = paramsHelper.getStringParam("__CONVERT_RESPONSE_TO_DOM__");
 		boolean convertResponseToDom = convertResponseToDomProperty == null ? true : Boolean.valueOf(convertResponseToDomProperty);
 	%>
-	Class<?> responseClass_<%=cid%> = <% if ("*/*".equals(acceptType) || !convertResponseToDom) { %>String.class<% } else { %>org.dom4j.Document.class<% } %>;
+
+    //resposne class name
+<%
+    String responseClassName = null;
+    if ("*/*".equals(acceptType) || !convertResponseToDom) {
+        responseClassName = "String";
+    } else if  (MULTIPART_MIXED.equals(acceptType)) {
+        if ("PUT".equals(method) || "PATCH".equals(method)) {
+            responseClassName = "javax.ws.rs.core.Response";
+        } else {
+            responseClassName = "String";
+        }
+    } else {
+        responseClassName = "org.dom4j.Document";
+    }
+%>
+	Class<<% if (MULTIPART_MIXED.equals(acceptType)) {%><%=responseClassName%><%} else {%>?<%} %>> responseClass_<%=cid%>
+		= <%=responseClassName%>.class;
 
 	// create web client instance
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
@@ -223,10 +250,10 @@ try {
 		boolean dropJsonRoot = (("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method)) && "application/json".equals(contentType))
 				? paramsHelper.getBoolParam("__UNWRAP_JSON_REQUEST__") : false;
 		boolean convertTypesToStrings  = ("application/json".equals(contentType) || "application/json".equals(acceptType) || "*/*".equals(acceptType) )
-				? paramsHelper.getBoolParam("__CONVERT_TYPES_TO_STRINGS__") : false;				
+				? paramsHelper.getBoolParam("__CONVERT_TYPES_TO_STRINGS__") : false;
 	%>
 		jsonProvider_<%=cid%>.setDropRootElement(<%=dropJsonRoot%>);
-		jsonProvider_<%=cid%>.setConvertTypesToStrings(<%=convertTypesToStrings%>);				
+		jsonProvider_<%=cid%>.setConvertTypesToStrings(<%=convertTypesToStrings%>);
 	providers_<%=cid%>.add(jsonProvider_<%=cid%>);
 	factoryBean_<%=cid%>.setProviders(providers_<%=cid%>);
 	factoryBean_<%=cid%>.setTransportId("http://cxf.apache.org/transports/http");
@@ -265,13 +292,13 @@ try {
     }
 
 	<% if (!paramsHelper.getBoolParam( "__CHECK_SERVER_IDENTITY__")) { %>
-	    
+
         org.apache.cxf.configuration.jsse.TLSClientParameters tlsClientParameters_<%=cid%> = new org.apache.cxf.configuration.jsse.TLSClientParameters();
         tlsClientParameters_<%=cid%>.setDisableCNCheck(true);
         conduit_<%=cid%>.setTlsClientParameters(tlsClientParameters_<%=cid%>);
-	       
+
 	<% } %>
-	
+
 	if (use_auth_<%=cid%> && "BASIC".equals(<%=authType%>)) {
 		// set BASIC auth
 		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
@@ -357,9 +384,9 @@ try {
 	try {
 		// start send request
 		<% if ("GET".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.get(responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.get<%if (MULTIPART_MIXED.equals(acceptType)) {%>Collection<%}%>(responseClass_<%=cid%>);
 		<% } else if ("POST".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.post<%if (MULTIPART_MIXED.equals(acceptType)) {%>ObjectGetCollection<%}%>(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else if ("PUT".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
 		<% } else if ("PATCH".equals(method)) { %>
@@ -382,6 +409,7 @@ try {
 			}
 
 			<%=connResponseName%>.statusCode = webClientResponseStatus_<%=cid%>;
+			<% if (!MULTIPART_MIXED.equals(acceptType)) {%>
 			if (responseDoc_<%=cid%> != null) {
 				if (responseClass_<%=cid%> == String.class) {
 					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
@@ -394,6 +422,8 @@ try {
 					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
 				}
 			}
+			<% } %>
+
 
 			globalMap.put("<%=cid%>_HEADERS", webClient_<%=cid%>.getResponse().getHeaders());
 			<% if (useBusinessCorrelation) { %>
@@ -440,3 +470,32 @@ try {
 		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
 	<% } %>
 }
+
+<% if (MULTIPART_MIXED.equals(acceptType)) {%>
+java.util.Collection<String> responseParts_<%=cid%> = new java.util.ArrayList<String>();
+<%
+     if ("PUT".equals(method) || "PATCH".equals(method)) {%>
+org.apache.cxf.jaxrs.ext.multipart.MultipartBody multipartBody_<%=cid%> =responseDoc_<%=cid%>.readEntity(org.apache.cxf.jaxrs.ext.multipart.MultipartBody.class);
+try {
+	for (org.apache.cxf.jaxrs.ext.multipart.Attachment att_<%=cid%> : multipartBody_<%=cid%>.getAllAttachments()) {
+       java.io.InputStream is_<%=cid%> = att_<%=cid%>.getDataHandler().getInputStream();
+       java.util.Scanner s_<%=cid%> = new java.util.Scanner(is_<%=cid%>).useDelimiter("\\A");
+       responseParts_<%=cid%>.add(s_<%=cid%>.hasNext() ? s_<%=cid%>.next() : "");
+       is_<%=cid%>.close();
+   }
+} catch (java.io.IOException e_<%=cid%>) {
+	<% if (paramsHelper.getBoolParam( "__DIE_ON_ERROR__")) { %>
+		throw new TalendException(e_<%=cid%>, currentComponent, globalMap);
+	<% } else { %>
+		new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
+	<% } %>
+}
+<% } else { %>
+for (String responsePart_<%=cid%> : responseDoc_<%=cid%>) {
+    responseParts_<%=cid%>.add(responsePart_<%=cid%>);
+}
+<% } %>
+for (String responsePart_<%=cid%> : responseParts_<%=cid%>) {
+    row1 = new row1Struct();
+    row1.string = responsePart_<%=cid%>;
+<% } %>
