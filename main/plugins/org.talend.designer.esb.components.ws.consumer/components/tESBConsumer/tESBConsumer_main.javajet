@@ -259,6 +259,10 @@ if (inputConn != null) {
                 genericConsumer_<%=cid%>.setReceiveTimeout((long)(<%=receiveTimeout%> * 1000L));
                 genericConsumer_<%=cid%>.setAutoRedirect(<%=paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")%>);
                 genericConsumer_<%=cid%>.setRedirectSameHostOnly(<%=!paramsHelper.getBoolParam("__REDIRECT_NON_SAME_HOST__")%>);
+                
+                <% if(!paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")){ %>
+                    genericConsumer_<%=cid%>.setDisableChunking(<%=paramsHelper.getBoolParam("__DISABLE_CHUNKING__")%>);
+                <% } %>
 
                 genericConsumer_<%=cid%>.setLogMessages(<%=logMessages%>);
 

@@ -70,6 +70,7 @@ if (actAsConsumer) {
         private long receiveTimeout;
         
         private boolean autoRedirect;
+        private boolean disableChunking;
         private boolean redirectSameHostOnly;
 
         private boolean logMessages;
@@ -157,6 +158,10 @@ if (actAsConsumer) {
             this.autoRedirect = autoRedirect;
         }
 
+        public void setDisableChunking(boolean disableChunking) {
+            this.disableChunking = disableChunking;
+        }
+        
         public void setRedirectSameHostOnly(boolean redirectSameHostOnly) {
             this.redirectSameHostOnly = redirectSameHostOnly;
         }
@@ -288,7 +293,9 @@ if (actAsConsumer) {
                 client.getRequestContext().put("http.redirect.relative.uri", true);
                 client.getRequestContext().put("http.redirect.same.host.only", redirectSameHostOnly);
             }
-
+            if (disableChunking) {
+                httpClientPolicy.setAllowChunking(false);
+            }
             if (null != soapHeaders) {
                 client.getRequestContext().put(org.apache.cxf.headers.Header.HEADER_LIST, soapHeaders);
             }
