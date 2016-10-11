@@ -279,13 +279,12 @@ if (inputConn != null) {
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
                     genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
                 }
-				if (!customHttpHeaders_<%=cid%>.isEmpty()) {
-					esbFeatures_<%=cid%>.add(new CustomHttpHeadersFeature(customHttpHeaders_<%=cid%>));
-				}
+					 esbFeatures_<%=cid%>.add(new HttpHeadersFeature(customHttpHeaders_<%=cid%>));
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
                 <% if (useBusinessCorrelation || useSR) { %>
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
                 <% } %>
+                globalMap.put("<%=cid%>_HTTP_HEADERS", genericConsumer_<%=cid%>.getResponseHttpHeaders());
             } else {
                 ESBConsumer consumer_<%=cid%> = registry.createConsumer(
                     new ESBEndpointInfo() {
@@ -393,6 +392,7 @@ if (inputConn != null) {
                         <% if (useBusinessCorrelation || useSR) { %>
                             globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
                         <% } %>
+                        globalMap.put("<%=cid%>_HTTP_HEADERS", responseMap_<%=cid%>.get(HttpHeadersFeature.HTTP_HEADERS));
                     } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
                         responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
                     } else {

@@ -80,6 +80,8 @@ if (actAsConsumer) {
         private Object correlationIDCallbackHandler;
 
         private String correlationID;
+        
+        private java.util.Map<String, List<?>> responseHttpHeaders;
 
         public void setServiceQName(javax.xml.namespace.QName serviceQName) {
             this.serviceQName = serviceQName;
@@ -173,7 +175,11 @@ if (actAsConsumer) {
         public void setSoapHeaders(java.util.Collection<org.apache.cxf.headers.Header> soapHeaders) {
             this.soapHeaders = soapHeaders;
         }
-
+        
+        public java.util.Map<String, List<?>> getResponseHttpHeaders(){
+        		return this.responseHttpHeaders;
+        }
+        
         public void setCorrelationIDCallbackHandler(Object correlationIDCallbackHandler) {
             this.correlationIDCallbackHandler = correlationIDCallbackHandler;
         }
@@ -303,6 +309,7 @@ if (actAsConsumer) {
             try {
                 Object[] results = client.invoke(operationQName, new javax.xml.transform.dom.DOMSource(new org.dom4j.io.DOMWriter().write(doc)));
                 correlationID = (String) client.getResponseContext().get("CorrelationID");
+                responseHttpHeaders = (java.util.Map<String, java.util.List<?>>) client.getResponseContext().get(HttpHeadersFeature.HTTP_HEADERS);
                 if (results != null && results.length > 0) {
                     return sourceToDocument((javax.xml.transform.Source) results[0]);
                 }
@@ -324,30 +331,38 @@ if (actAsConsumer) {
 
     }
 	
-	public class CustomHttpHeadersFeature extends org.apache.cxf.feature.AbstractFeature {
+	public class HttpHeadersFeature extends org.apache.cxf.feature.AbstractFeature {
+	
+		public final static String HTTP_HEADERS = "http_headers";
+		public final static String RESPONSE_CODE = "response_code";
 		
-		private CustomHttpHeadersInterceptor out = new CustomHttpHeadersInterceptor();
+		private HttpHeadersOutInterceptor out = new HttpHeadersOutInterceptor();
+		private HttpHeadersInInterceptor in = new HttpHeadersInInterceptor();
 
-		public CustomHttpHeadersFeature(List<java.util.Map<String, String>> headers) {
-			
+		public HttpHeadersFeature(List<java.util.Map<String, String>> headers) {
 			out.addHeaders(headers);
 		}
 		
-		public CustomHttpHeadersInterceptor getOutInterceptor(){
+		public HttpHeadersOutInterceptor getOutInterceptor(){
 			return out;
 		}
+		
+		public HttpHeadersInInterceptor getInInterceptor(){
+			return in;
+		}		
 
 		@Override
 		protected void initializeProvider(org.apache.cxf.interceptor.InterceptorProvider provider, org.apache.cxf.Bus bus) {
 			provider.getOutInterceptors().add(out);
+			provider.getInInterceptors().add(in);
 		}
 
-		public class CustomHttpHeadersInterceptor extends
-			org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+		public class HttpHeadersOutInterceptor extends
+					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
 
 			private java.util.Map<String, List<String>> headers = new java.util.TreeMap<String, List<String>>();
 
-			public CustomHttpHeadersInterceptor() {
+			public HttpHeadersOutInterceptor() {
 				super(org.apache.cxf.phase.Phase.POST_PROTOCOL);
 			}
 
@@ -379,6 +394,37 @@ if (actAsConsumer) {
 				}
 			}
 		}
+		
+		public class HttpHeadersInInterceptor extends
+					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+
+			public HttpHeadersInInterceptor() {
+				super(org.apache.cxf.phase.Phase.PRE_INVOKE);
+			}
+
+			private java.util.Map<String, java.util.List<?>> getHttpHeaders(org.apache.cxf.message.Message message) {
+					java.util.Map<String, java.util.List<?>> httpHeaders = new java.util.TreeMap<String, java.util.List<?>>();
+					httpHeaders.putAll((java.util.Map<String, java.util.List<?>>)message.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+					
+					// write reponse code to http headers
+					java.util.List<java.lang.Integer> responseCode = new java.util.ArrayList<java.lang.Integer>(
+						java.util.Arrays.asList((java.lang.Integer)message.get(org.apache.cxf.message.Message.RESPONSE_CODE)));
+					
+					httpHeaders.put(RESPONSE_CODE, responseCode);
+					return httpHeaders;			
+			}
+
+			@Override
+			public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
+				try {
+					message.put(HttpHeadersFeature.HTTP_HEADERS, getHttpHeaders(message));
+				} catch (Exception e) {
+					throw new org.apache.cxf.interceptor.Fault(e);
+				}
+			}
+		}
+		
+		
 	}
 
     private static java.util.Map<String, Object> collectFaultInfo(Exception error) {
