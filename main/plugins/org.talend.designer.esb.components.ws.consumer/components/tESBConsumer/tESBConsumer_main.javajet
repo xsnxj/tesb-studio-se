@@ -284,7 +284,8 @@ if (inputConn != null) {
                 <% if (useBusinessCorrelation || useSR) { %>
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
                 <% } %>
-                globalMap.put("<%=cid%>_HTTP_HEADERS", genericConsumer_<%=cid%>.getResponseHttpHeaders());
+                globalMap.put("<%=cid%>_HTTP_HEADERS", genericConsumer_<%=cid%>.getHttpResponseHeaders());
+                globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", genericConsumer_<%=cid%>.getHttpResponseCode());
             } else {
                 ESBConsumer consumer_<%=cid%> = registry.createConsumer(
                     new ESBEndpointInfo() {
@@ -393,6 +394,7 @@ if (inputConn != null) {
                             globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
                         <% } %>
                         globalMap.put("<%=cid%>_HTTP_HEADERS", responseMap_<%=cid%>.get(HttpHeadersFeature.HTTP_HEADERS));
+                        globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", responseMap_<%=cid%>.get(HttpHeadersFeature.HTTP_RESPONSE_CODE));
                     } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
                         responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
                     } else {
