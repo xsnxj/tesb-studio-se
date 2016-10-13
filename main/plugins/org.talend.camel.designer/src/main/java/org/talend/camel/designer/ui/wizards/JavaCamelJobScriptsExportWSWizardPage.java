@@ -204,7 +204,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
             if (exportAsZip) {
                 dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-            }else{
+            } else {
                 dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else {
@@ -453,7 +453,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                             if (openResult == 2) {
                                 // No pressed
                                 return false;
-                            } else if (openResult == 0) {
+                            } else if (openResult == 0 || openResult == -1) {
                                 // Always pressed
                                 IPreferenceStore store = CamelDesignerPlugin.getDefault().getPreferenceStore();
                                 store.setValue(ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE, true);
