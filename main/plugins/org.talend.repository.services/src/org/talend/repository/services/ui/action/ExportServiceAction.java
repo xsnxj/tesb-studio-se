@@ -212,9 +212,13 @@ public class ExportServiceAction implements IRunnableWithProgress {
 	}
 
     private File generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
-        File temp = new File(tempFolder, "control-bundle"); //$NON-NLS-1$
+        File tempWsdl = new File(tempFolder, "control-bundle"); //$NON-NLS-1$
         // wsdl
-        File wsdl = new File(temp, serviceWsdl.getName());
+        File wsdl = new File(tempWsdl, serviceWsdl.getName());
+        // Fix for TUP-15998 Improve build performances
+        if (!tempWsdl.exists()) {
+            tempWsdl.mkdir();
+        }
         FilesUtils.copyFile(serviceWsdl.getContents(), wsdl);
         // wsdl:import
         String serviceWsdlPrefix = serviceName + '_' + serviceVersion + '.';
@@ -222,18 +226,18 @@ public class ExportServiceAction implements IRunnableWithProgress {
             if (IResource.FILE == resource.getType()
                 && resource.getName().startsWith(serviceWsdlPrefix)
                 && "wsdl".equals(resource.getFileExtension())) {
-                FilesUtils.copyFile(((IFile) resource).getContents(), new File(temp, resource.getName()));
+                FilesUtils.copyFile(((IFile) resource).getContents(), new File(tempWsdl, resource.getName()));
             }
         }
         // blueprint
-        File blueprint = new File(temp, FileConstants.BLUEPRINT_FOLDER_NAME);
+        File blueprint = new File(tempWsdl, FileConstants.BLUEPRINT_FOLDER_NAME);
         blueprint.mkdirs();
         serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl,
                 getServiceName());
         String jarName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File jar = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), jarName);
-        FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion(), additionalInfo), temp, jar);
-        FilesUtils.removeFolder(temp, true);
+        FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion(), additionalInfo), tempWsdl, jar);
+        FilesUtils.removeFolder(tempWsdl, true);
         return jar;
     }
 
