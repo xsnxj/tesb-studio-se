@@ -1256,7 +1256,13 @@ public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.
 			responseType = javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
 		}
 
-		return javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(responseType).build();
+		javax.ws.rs.core.Response r = javax.ws.rs.core.Response.status(response.getStatus()).entity(response.getEntity()).type(responseType).build();
+
+		if(response.getHeaders()!=null){
+			r.getHeaders().putAll(response.getHeaders());
+		}
+
+		return r;
 	}
 }
 
