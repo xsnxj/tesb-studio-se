@@ -31,6 +31,20 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         super(readOnly);
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void initializeGraphicalViewer() {
+        super.initializeGraphicalViewer();
+
+        // Set DND listener by CamelEditorDropTargetListener
+        getGraphicalViewer().removeDropTargetListener(talendEditorDropTargetListener);
+        talendEditorDropTargetListener.setEditor(null);
+        talendEditorDropTargetListener = null;
+        talendEditorDropTargetListener = new CamelEditorDropTargetListener(this);
+        talendEditorDropTargetListener.setEditor(this);
+        getGraphicalViewer().addDropTargetListener(talendEditorDropTargetListener);
+    }
+
     @Override
     public void doSaveAs() {
         SaveAsRoutesAction saveAsAction = new SaveAsRoutesAction(this.getParent());
@@ -38,7 +52,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
     }
 
     protected IComponentsHandler initComponentsHandler() {
-        if(CAMEL_COMPONENTS_HANDLER == null){
+        if (CAMEL_COMPONENTS_HANDLER == null) {
             synchronized (CamelTalendEditor.class) {
                 CAMEL_COMPONENTS_HANDLER = new CamelComponentsHandler();
             }
