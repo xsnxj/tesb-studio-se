@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -65,11 +66,11 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
  */
 public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizardPage {
 
-    private static final String ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE = "ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE";
+    private static final String TOGGLE_MVN_ONLINE = "ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE";
 
-    private static final String ECLIPSE_M2_OFFLINE = "eclipse.m2.offline";
+    private static final String M2_OFFLINE = "eclipse.m2.offline";
 
-    private static final String ORG_ECLIPSE_M2E_CORE = "org.eclipse.m2e.core";
+    private static final String M2E_CORE = "org.eclipse.m2e.core";
 
     private static final String EXPORTTYPE_KAR = Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ExportKar");//$NON-NLS-1$
 
@@ -438,28 +439,23 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
             try {
                 if (bundle != null) {
-                    boolean eclipseM2Offline = Platform.getPreferencesService().getBoolean(ORG_ECLIPSE_M2E_CORE,
-                            ECLIPSE_M2_OFFLINE, true, null);
-                    // maven online
-                    if (eclipseM2Offline) {
-                        if (!CamelDesignerPlugin.getDefault().getPreferenceStore()
-                                .getBoolean(ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE)) {
-                            MessageDialog dialog = new MessageDialog(getShell(), "Maven", null, //$NON-NLS-1$
-                                    Messages.getString("JavaCamelJobScriptsExportWSWizardPage.MavenOnlineWarning"), //$NON-NLS-1$
-                                    MessageDialog.QUESTION, new String[] { "Always", IDialogConstants.YES_LABEL,
-                                            IDialogConstants.NO_LABEL }, 0);
+                    boolean mvnOffline = InstanceScope.INSTANCE.getNode(M2E_CORE).getBoolean(M2_OFFLINE, false);
+                    if (mvnOffline) {
+                        // Change mvn to online ONLY if maven is offline needs run this part
+                        IPreferenceStore camelStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
+                        // camelStore.setValue(TOGGLE_MAVEN_ONLINE, MessageDialogWithToggle.NEVER); //for bebug
+                        if (!MessageDialogWithToggle.ALWAYS.equals(camelStore.getString(TOGGLE_MVN_ONLINE))) {
+                            MessageDialogWithToggle dlg = MessageDialogWithToggle.openOkCancelConfirm(getShell(),
+                                    Messages.getString("JavaCamelJobScriptsExportWSWizardPage.MavenConfirm"),
+                                    Messages.getString("JavaCamelJobScriptsExportWSWizardPage.MavenMesssage"),
+                                    Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ShowItAgain"), false, camelStore,
+                                    TOGGLE_MVN_ONLINE);
 
-                            int openResult = dialog.open();
-                            if (openResult == 2) {
-                                // No pressed
+                            if (dlg.getReturnCode() != IDialogConstants.OK_ID)
                                 return false;
-                            } else if (openResult == 0 || openResult == -1) {
-                                // Always pressed
-                                IPreferenceStore store = CamelDesignerPlugin.getDefault().getPreferenceStore();
-                                store.setValue(ALWAYS_MAVEN_ONLINE_FOR_MICROSERVICE, true);
-                            }
                         }
-                        InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_M2E_CORE).putBoolean(ECLIPSE_M2_OFFLINE, false);
+
+                        InstanceScope.INSTANCE.getNode(M2E_CORE).putBoolean(M2_OFFLINE, false);
                     }
 
                     Class javaCamelJobScriptsExportMicroServiceAction = bundle
@@ -477,9 +473,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                         MessageBoxExceptionHandler.process(e.getCause(), getShell());
                         return false;
                     } finally {
-                        if (eclipseM2Offline) {
+                        if (mvnOffline) {
                             // restore maven status
-                            InstanceScope.INSTANCE.getNode(ORG_ECLIPSE_M2E_CORE).putBoolean(ECLIPSE_M2_OFFLINE, eclipseM2Offline);
+                            InstanceScope.INSTANCE.getNode(M2E_CORE).putBoolean(M2_OFFLINE, mvnOffline);
                         }
                     }
                 }
