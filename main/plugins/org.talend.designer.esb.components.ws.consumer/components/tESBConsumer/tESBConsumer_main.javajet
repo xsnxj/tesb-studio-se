@@ -121,9 +121,10 @@ if (inputConn != null) {
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
+	 HttpHeadersFeature httpHeadersFeature = null;
+	
     try {
         routines.system.Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
-
         try {
             org.dom4j.Document responseDoc_<%=cid%> = null;
 
@@ -279,7 +280,8 @@ if (inputConn != null) {
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
                     genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
                 }
-					 esbFeatures_<%=cid%>.add(new HttpHeadersFeature(customHttpHeaders_<%=cid%>));
+                httpHeadersFeature = new HttpHeadersFeature(customHttpHeaders_<%=cid%>);
+					 esbFeatures_<%=cid%>.add(httpHeadersFeature);
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
                 <% if (useBusinessCorrelation || useSR) { %>
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
@@ -447,6 +449,11 @@ if (inputConn != null) {
         <% } else { %>
             new TalendException(e_<%=cid%>, currentComponent, globalMap).printStackTrace();
         <% } %>
+    }
+    
+    if(httpHeadersFeature!=null){
+    	 globalMap.put("<%=cid%>_HTTP_HEADERS", httpHeadersFeature.getInInterceptor().getHeaders());
+       globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE",  httpHeadersFeature.getInInterceptor().getResponseCode());
     }
 
 <% } %>

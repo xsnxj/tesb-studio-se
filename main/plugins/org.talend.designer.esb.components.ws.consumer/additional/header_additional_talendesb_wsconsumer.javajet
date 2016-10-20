@@ -344,6 +344,7 @@ if (actAsConsumer) {
 		public final static String HTTP_RESPONSE_CODE = "http_response_code";
 		
 		private HttpHeadersOutInterceptor out = new HttpHeadersOutInterceptor();
+		private HttpHeadersInInterceptor in = new HttpHeadersInInterceptor();
 
 		public HttpHeadersFeature(List<java.util.Map<String, String>> headers) {
 			out.addHeaders(headers);
@@ -353,9 +354,14 @@ if (actAsConsumer) {
 			return out;
 		}
 		
+		public HttpHeadersInInterceptor getInInterceptor(){
+			return in;
+		}
+		
 		@Override
 		protected void initializeProvider(org.apache.cxf.interceptor.InterceptorProvider provider, org.apache.cxf.Bus bus) {
 			provider.getOutInterceptors().add(out);
+			provider.getInInterceptors().add(in);
 		}
 
 		public class HttpHeadersOutInterceptor extends
@@ -393,6 +399,38 @@ if (actAsConsumer) {
 				} catch (Exception ce) {
 					throw new org.apache.cxf.interceptor.Fault(ce);
 				}
+			}
+		}
+		
+			public class HttpHeadersInInterceptor extends
+					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+
+			private java.util.Map<String, List<?>> httpHeaders = new java.util.TreeMap<String, List<?>>();
+			private java.lang.Integer responseCode = new java.lang.Integer(0); 
+
+			public HttpHeadersInInterceptor() {
+				super(org.apache.cxf.phase.Phase.POST_PROTOCOL);
+			}
+
+			@Override
+			public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
+				 		
+				try {
+					this.httpHeaders = ((java.util.Map<String, List<?>>) message
+						.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+					this.responseCode = (java.lang.Integer)message
+						.get(org.apache.cxf.message.Message.RESPONSE_CODE);
+				} catch (Exception ce) {
+					throw new org.apache.cxf.interceptor.Fault(ce);
+				}
+			}
+			
+			public java.util.Map<String, List<?>> getHeaders(){
+				return httpHeaders;
+			}
+			
+			public java.lang.Integer getResponseCode(){
+				return responseCode;
 			}
 		}
 	}
