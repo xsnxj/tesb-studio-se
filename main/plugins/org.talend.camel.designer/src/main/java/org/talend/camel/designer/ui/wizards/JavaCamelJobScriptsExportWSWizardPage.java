@@ -439,7 +439,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
             try {
                 if (bundle != null) {
-                    boolean mvnOffline = InstanceScope.INSTANCE.getNode(M2E_CORE).getBoolean(M2_OFFLINE, false);
+                    // Get m2e preferences
+                    boolean mvnOffline = Platform.getPreferencesService().getBoolean(M2E_CORE, M2_OFFLINE, false, null);
+
                     if (mvnOffline) {
                         // Change mvn to online ONLY if maven is offline needs run this part
                         IPreferenceStore camelStore = CamelDesignerPlugin.getDefault().getPreferenceStore();
