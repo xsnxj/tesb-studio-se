@@ -1,7 +1,7 @@
 <%@ jet 
 imports="
-    org.talend.core.model.process.INode 
-    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.INode
+    org.talend.core.model.process.ElementParameterParser
     org.talend.core.model.process.IConnection
     org.talend.core.model.process.IElementParameter
     org.talend.designer.codegen.config.CodeGeneratorArgument
@@ -14,234 +14,300 @@ imports="
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode) codeGenArgument.getArgument();
     String cid = node.getUniqueName();
-    
-    CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
-    
-    builder.setComponent("kafka");
-    
-    builder.useDoubleSlash(false);
-    
-    List< ? extends IConnection> conns = node.getIncomingConnections();
-    
-    String brokerList = ElementParameterParser.getValue(node, "__BROKER_LIST__");
-    
-    String topic = ElementParameterParser.getValue(node, "__TOPIC__").trim();
-    
-    builder.addParam("topic", topic);
-    
-    if(conns.size()>0){
-        builder.setName(brokerList);
-    }else{
-        
-        String zookeeperConnect = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECT__");
+    List<? extends IConnection> incomingConnections = node.getIncomingConnections();
 
-        builder.addParam("zookeeperConnect", zookeeperConnect);
-    
-        String zookeeperSessionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SESSION_TIMEOUT_MS__");
-        
-        builder.addParam("zookeeperSessionTimeoutMs", zookeeperSessionTimeoutMs);
-        
-        String zookeeperConnectionTimeoutMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_CONNECTION_TIMEOUT_MS__");
-        
-        builder.addParam("zookeeperConnectionTimeoutMs", zookeeperConnectionTimeoutMs);
-        
-        String zookeeperSynctimeMs = ElementParameterParser.getValue(node, "__ZOOKEEPER_SYNC_TIME_MS__");
-        
-        builder.addParam("zookeeperSynctimeMs", zookeeperSynctimeMs);
+    CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
+    builder.setComponent("kafka");
+    builder.useDoubleSlash(false);
+
+    String brokerList = ElementParameterParser.getValue(node, "__BROKER_LIST__").trim();
+    builder.setName(brokerList);
+
+    String topic = ElementParameterParser.getValue(node, "__TOPIC__").trim();
+    builder.addParam("topic", topic);
+
+    String clientId = ElementParameterParser.getValue(node, "__CLIENT_ID__").trim();
+    if (!"\"\"".equals(clientId)) {
+        builder.addParam("clientId", clientId);
     }
-    
-    String clientId = ElementParameterParser.getValue(node, "__CLIENT_ID__");
-    
-    builder.addParam("clientId", clientId);
-    
-    if(conns.size()>0){
-        
+
+    String groupId = ElementParameterParser.getValue(node, "__GROUP_ID__").trim();
+    if (!"\"\"".equals(groupId)) {
+        builder.addParam("groupId", groupId);
+    }
+
+    String connectionMaxIdleMs = ElementParameterParser.getValue(node, "__CONNECTION_MAX_IDLE_MS__").trim();
+    if (!"\"\"".equals(connectionMaxIdleMs)) {
+        builder.addParam("connectionMaxIdleMs", connectionMaxIdleMs);
+    }
+
+    String receiveBufferBytes = ElementParameterParser.getValue(node, "__MAX_REQUEST_SIZE__").trim();
+    if (!"\"\"".equals(receiveBufferBytes)) {
+        builder.addParam("receiveBufferBytes", receiveBufferBytes);
+    }
+
+    String metadataMaxAgeMs = ElementParameterParser.getValue(node, "__METADATA_MAX_AGE_MS__").trim();
+    if (!"\"\"".equals(metadataMaxAgeMs)) {
+        builder.addParam("metadataMaxAgeMs", metadataMaxAgeMs);
+    }
+
+    String reconnectBackoffMs = ElementParameterParser.getValue(node, "__RECONNECT_BACKOFF_MS__").trim();
+    if (!"\"\"".equals(reconnectBackoffMs)) {
+        builder.addParam("reconnectBackoffMs", reconnectBackoffMs);
+    }
+
+    String sslKeyPassword = ElementParameterParser.getValue(node, "__SSL_KEY_PASSWORD__").trim();
+    if (!"\"\"".equals(sslKeyPassword)) {
+        builder.addParam("sslKeyPassword", sslKeyPassword);
+    }
+
+    String sslKeystoreLocation = ElementParameterParser.getValue(node, "__SSL_KEYSTORE_LOCATION__").trim();
+    if (!"\"\"".equals(sslKeystoreLocation)) {
+        builder.addParam("sslKeystoreLocation", sslKeystoreLocation);
+    }
+
+    String sslKeystorePassword = ElementParameterParser.getValue(node, "__SSL_KEYSTORE_PASSWORD__").trim();
+    if (!"\"\"".equals(sslKeystorePassword)) {
+        builder.addParam("sslKeystorePassword", sslKeystorePassword);
+    }
+
+    String sslTruststorePassword = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_PASSWORD__").trim();
+    if (!"\"\"".equals(sslTruststorePassword)) {
+        builder.addParam("sslTruststorePassword", sslTruststorePassword);
+    }
+
+    String sslTruststoreLocation = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_LOCATION__").trim();
+    if (!"\"\"".equals(sslTruststoreLocation)) {
+        builder.addParam("sslTruststoreLocation", sslTruststoreLocation);
+    }
+
+    String sslEnabledProtocols = ElementParameterParser.getValue(node, "__SSL_ENABLED_PROTOCOLS__").trim();
+    if (!"\"\"".equals(sslEnabledProtocols)) {
+        builder.addParam("sslEnabledProtocols", sslEnabledProtocols);
+    }
+
+    String sslKeystoreType = ElementParameterParser.getValue(node, "__SSL_KEYSTORE_TYPE__").trim();
+    if (!"\"\"".equals(sslKeystoreType)) {
+        builder.addParam("sslKeystoreType", sslKeystoreType);
+    }
+
+    String sslProtocol = ElementParameterParser.getValue(node, "__SSL_PROTOCOL__").trim();
+    if (!"\"\"".equals(sslProtocol)) {
+        builder.addParam("sslProtocol", sslProtocol);
+    }
+
+    String sslTruststoreType = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_TYPE__").trim();
+    if (!"\"\"".equals(sslTruststoreType)) {
+        builder.addParam("sslTruststoreType", sslTruststoreType);
+    }
+
+    String sslCipherSuites = ElementParameterParser.getValue(node, "__SSL_CIPHER_SUITS__").trim();
+    if (!"\"\"".equals(sslCipherSuites)) {
+        builder.addParam("sslCipherSuites", sslCipherSuites);
+    }
+
+    String sslEndpointAlgorithm = ElementParameterParser.getValue(node, "__SSL_ENDPOINT_ALGORITHM__").trim();
+    if (!"\"\"".equals(sslEndpointAlgorithm)) {
+        builder.addParam("sslEndpointAlgorithm", sslEndpointAlgorithm);
+    }
+
+    String sslKeymanagerAlgorithm = ElementParameterParser.getValue(node, "__SSL_KEYMANAGER_ALGORITHM__").trim();
+    if (!"\"\"".equals(sslKeymanagerAlgorithm)) {
+        builder.addParam("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+    }
+
+    String sslTrustmanagerAlgorithm = ElementParameterParser.getValue(node, "__SSL_TRUSTMANAGER_ALGORITHM__").trim();
+    if (!"\"\"".equals(sslTrustmanagerAlgorithm)) {
+        builder.addParam("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+    }
+
+    String saslKerberosServiceName = ElementParameterParser.getValue(node, "__SASL_KERBEROS_SERVICE_NAME__").trim();
+    if (!"\"\"".equals(saslKerberosServiceName)) {
+        builder.addParam("saslKerberosServiceName", saslKerberosServiceName);
+    }
+
+    String securityProtocol = ElementParameterParser.getValue(node, "__SECURITY_PROTOCOL__").trim();
+    if (!"\"\"".equals(securityProtocol)) {
+        builder.addParam("securityProtocol", securityProtocol);
+    }
+
+    String kerberosInitCmd = ElementParameterParser.getValue(node, "__KERBEROS_INIT_CMD__").trim();
+    if (!"\"\"".equals(kerberosInitCmd)) {
+        builder.addParam("kerberosInitCmd", kerberosInitCmd);
+    }
+
+    String kerberosBeforeReloginMinTime = ElementParameterParser.getValue(node, "__KERBEROS_BEFORE_RELOGIN_MIN_TIME__").trim();
+    if (!"\"\"".equals(kerberosBeforeReloginMinTime)) {
+        builder.addParam("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
+    }
+
+    String kerberosRenewJitter = ElementParameterParser.getValue(node, "__KERBEROS_RENEW_JITTER__").trim();
+    if (!"\"\"".equals(kerberosRenewJitter)) {
+        builder.addParam("kerberosRenewJitter", kerberosRenewJitter);
+    }
+
+    String kerberosRenewWindowFactor = ElementParameterParser.getValue(node, "__KERBEROS_RENEW_WINDOW_FACTOR__").trim();
+    if (!"\"\"".equals(kerberosRenewWindowFactor)) {
+        builder.addParam("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
+    }
+
+    if (incomingConnections.size() > 0) {
         String partitioner = ElementParameterParser.getValue(node, "__PARTITIONER__").trim();
-        
         if (!"\"\"".equals(partitioner)) {
             builder.addParam("partitioner", partitioner);
         }
-        
-        String producerType = ElementParameterParser.getValue(node, "__PRODUCER_TYPE__").trim();
-        if (!"\"\"".equals(producerType)) {
-            builder.addParam("producerType", "\""+producerType+"\"");
+
+        String compressionCodec = ElementParameterParser.getValue(node, "__COMPRESSION_CODEC__");
+        if (!"\"\".equals(compressionCodec)) {
+            builder.addParam("compressionCodec", compressionCodec);
         }
-    
-        boolean compressedTopicsOps = ElementParameterParser.getBooleanValue(node, "__COMPRESSED_TOPICS_OPS__");
-        
-        String compressedTopics = ElementParameterParser.getValue(node, "__COMPRESSED_TOPICS__").trim();
-        if (compressedTopicsOps && !"\"\"".equals(compressedTopics)) {
-            builder.addParam("compressedTopics", compressedTopics);
+
+        String serializerClass = ElementParameterParser.getValue(node, "__SERIALIZER_CLASS__").trim();
+        if (!"\"\"".equals(serializerClass)) {
+            builder.addParam("serializerClass", serializerClass);
         }
-    
-        String compressionCodec = ElementParameterParser.getValue(node, "__COMPRESSION_CODEC__").trim();
-        if (compressedTopicsOps && !"\"\"".equals(compressionCodec)) {
-            builder.addParam("compressionCodec", "\""+compressionCodec+"\"");
+
+        String keySerializerClass = ElementParameterParser.getValue(node, "__KEY_SERIALIZER_CLASS__").trim();
+        if (!"\"\"".equals(keySerializerClass)) {
+            builder.addParam("keySerializerClass", keySerializerClass);
         }
-    
-        String messageSendMaxRetries = ElementParameterParser.getValue(node, "__MESSAGE_SEND_MAX_RETRIES__").trim();
-        if (!"\"\"".equals(messageSendMaxRetries)) {
-            builder.addParam("messageSendMaxRetries", messageSendMaxRetries);
+
+        String requestRequiredAcks = ElementParameterParser.getValue(node, "__REQUEST_REQUIRED_ACKS__").trim();
+        if (!"\"\"".equals(requestRequiredAcks)) {
+            builder.addParam("requestRequiredAcks", requestRequiredAcks);
         }
-    
+
+        String requestTimeoutMs = ElementParameterParser.getValue(node, "__REQUEST_TIMEOUT_MS__").trim();
+        if (!"\"\"".equals(requestTimeoutMs)) {
+            builder.addParam("requestTimeoutMs", requestTimeoutMs);
+        }
+
         String retryBackoffMs = ElementParameterParser.getValue(node, "__RETRY_BACKOFF_MS__").trim();
         if (!"\"\"".equals(retryBackoffMs)) {
             builder.addParam("retryBackoffMs", retryBackoffMs);
         }
-    
-        String topicMetadataRefreshIntervalMs = ElementParameterParser.getValue(node, "__TOPIC_METADATA_REFRESH_INTERVAL_MS__").trim();
-        if (!"\"\"".equals(topicMetadataRefreshIntervalMs)) {
-            builder.addParam("topicMetadataRefreshIntervalMs", topicMetadataRefreshIntervalMs);
+
+        String sendBufferBytes = ElementParameterParser.getValue(node, "__SEND_BUFFER_BYTES__").trim();
+        if (!"\"\"".equals(sendBufferBytes)) {
+            builder.addParam("sendBufferBytes", sendBufferBytes);
         }
-    
-        if("async".equals(producerType)){
-        
-            String queueBufferingMaxMs = ElementParameterParser.getValue(node, "__QUEUE_BUFFERING_MAX_MS__").trim();
-            if (!"\"\"".equals(queueBufferingMaxMs)) {
-                builder.addParam("queueBufferingMaxMs", queueBufferingMaxMs);
-            }
-        
-            String queueBufferingMaxMessages = ElementParameterParser.getValue(node, "__QUEUE_BUFFERING_MAX_MESSAGES__").trim();
-            if (!"\"\"".equals(queueBufferingMaxMessages)) {
-                builder.addParam("queueBufferingMaxMessages", queueBufferingMaxMessages);
-            }
-        
-            String queueEnqueueTimeoutMs = ElementParameterParser.getValue(node, "__QUEUE_ENQUEUE_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(queueEnqueueTimeoutMs)) {
-                builder.addParam("queueEnqueueTimeoutMs", queueEnqueueTimeoutMs);
-            }
-        
-            String batchNumMessages = ElementParameterParser.getValue(node, "__BATCH_NUM_MESSAGES__").trim();
-            if (!"\"\"".equals(batchNumMessages)) {
-                builder.addParam("batchNumMessages", batchNumMessages);
-            }
-        
-            String serializerClass = ElementParameterParser.getValue(node, "__SERIALIZER_CLASS__").trim();
-            if (!"\"\"".equals(serializerClass)) {
-                builder.addParam("serializerClass", serializerClass);
-            }
-        
-            String keySerializerClass = ElementParameterParser.getValue(node, "__KEY_SERIALIZER_CLASS__").trim();
-            if (!"\"\"".equals(keySerializerClass)) {
-                builder.addParam("keySerializerClass", keySerializerClass);
-            }
-        }else{
-            String sendBufferBytes = ElementParameterParser.getValue(node, "__SEND_BUFFER_BYTES__").trim();
-            if (!"\"\"".equals(sendBufferBytes)) {
-                builder.addParam("sendBufferBytes", sendBufferBytes);
-            }
-        
-            String requestRequiredAcks = ElementParameterParser.getValue(node, "__REQUEST_REQUIRED_ACKS__").trim();
-            if (!"\"\"".equals(requestRequiredAcks)) {
-                builder.addParam("requestRequiredAcks", requestRequiredAcks);
-            }
-        
-            String requestTimeoutMs = ElementParameterParser.getValue(node, "__REQUEST_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(requestTimeoutMs)) {
-                builder.addParam("requestTimeoutMs", requestTimeoutMs);
-            }
+
+        String bufferMemorySize = ElementParameterParser.getValue(node, "__BUFFER_MEMORY_SIZE__").trim();
+        if (!"\"\"".equals(bufferMemorySize)) {
+            builder.addParam("bufferMemorySize", bufferMemorySize);
         }
-    
-    }else{
-    
-            String groupId = ElementParameterParser.getValue(node, "__GROUP_ID_C__").trim();
-    
-            if (!"\"\"".equals(groupId)) {
-                builder.addParam("groupId", groupId);
-            }
-            
-            String consumerId = ElementParameterParser.getValue(node, "__CONSUMER_ID__").trim();
-            if (!"\"\"".equals(consumerId)) {
-                builder.addParam("consumerId", consumerId);
-            }
-            
-            String consumerStreams = ElementParameterParser.getValue(node, "__CONSUMER_STREAMS__").trim();
-            if (!"\"\"".equals(consumerStreams)) {
-                builder.addParam("consumerStreams", consumerStreams);
-            }
-            
-            String consumersCount = ElementParameterParser.getValue(node, "__CONSUMERS_COUNT__").trim();
-            if (!"\"\"".equals(consumersCount)) {
-                builder.addParam("consumersCount", consumersCount);
-            }
-            
-            String batchSize = ElementParameterParser.getValue(node, "__BATCH_SIZE__").trim();
-            if (!"\"\"".equals(batchSize)) {
-                builder.addParam("batchSize", batchSize);
-            }
-            
-            String barrierAwaitTimeoutMs = ElementParameterParser.getValue(node, "__BARRIER_AWAIT_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(barrierAwaitTimeoutMs)) {
-                builder.addParam("barrierAwaitTimeoutMs", barrierAwaitTimeoutMs);
-            }
-            
-            String consumerTimeoutMs = ElementParameterParser.getValue(node, "__CONSUMER_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(consumerTimeoutMs)) {
-                builder.addParam("consumerTimeoutMs", consumerTimeoutMs);
-            }
-            
-            String socketTimeoutMs = ElementParameterParser.getValue(node, "__SOCKET_TIMEOUT_MS__").trim();
-            if (!"\"\"".equals(socketTimeoutMs)) {
-                builder.addParam("socketTimeoutMs", socketTimeoutMs);
-            }
-        
-            String socketReceiveBufferBytes = ElementParameterParser.getValue(node, "__SOCKET_RECEIVE_BUFFER_BYTES__").trim();
-            if (!"\"\"".equals(socketReceiveBufferBytes)) {
-                builder.addParam("socketReceiveBufferBytes", socketReceiveBufferBytes);
-            }
-        
-            String fetchMessageMaxBytes = ElementParameterParser.getValue(node, "__FETCH_MESSAGE_MAX_BYTES__").trim();
-            if (!"\"\"".equals(fetchMessageMaxBytes)) {
-                builder.addParam("fetchMessageMaxBytes", fetchMessageMaxBytes);
-            }
-        
-            String autoCommitEnable = ElementParameterParser.getValue(node, "__AUTO_COMMIT_ENABLE__").trim();
-            if (!"\"\"".equals(autoCommitEnable)) {
-                builder.addParam("autoCommitEnable", autoCommitEnable);
-            }
-        
-            String autoCommitIntervalMs = ElementParameterParser.getValue(node, "__AUTO_COMMIT_INTERVAL_MS__").trim();
-            if (!"\"\"".equals(autoCommitIntervalMs)) {
-                builder.addParam("autoCommitIntervalMs", autoCommitIntervalMs);
-            }
 
-            String queuedMaxMessages = ElementParameterParser.getValue(node, "__QUEUED_MAX_MESSAGES__").trim();
-            if (!"\"\"".equals(queuedMaxMessages)) {
-                builder.addParam("queuedMaxMessages", queuedMaxMessages);
-            }
+        String retries = ElementParameterParser.getValue(node, "__RETRIES__").trim();
+        if (!"\"\"".equals(retries)) {
+            builder.addParam("retries", retries);
+        }
 
-            String rebalanceMaxRetries = ElementParameterParser.getValue(node, "__REBALANCE_MAX_RETRIES__").trim();
-            if (!"\"\"".equals(rebalanceMaxRetries)) {
-                builder.addParam("rebalanceMaxRetries", rebalanceMaxRetries);
-            }
+        String producerBatchSize = ElementParameterParser.getValue(node, "__PRODUCER_BATCH_SIZE__").trim();
+        if (!"\"\"".equals(producerBatchSize)) {
+            builder.addParam("producerBatchSize", producerBatchSize);
+        }
 
-            String fetchMinBytes = ElementParameterParser.getValue(node, "__FETCH_MIN_BYTES__").trim();
-            if (!"\"\"".equals(fetchMinBytes)) {
-                builder.addParam("fetchMinBytes", fetchMinBytes);
-            }
+        String lingerMs = ElementParameterParser.getValue(node, "__LINGER_MS__").trim();
+        if (!"\"\"".equals(lingerMs)) {
+            builder.addParam("lingerMs", lingerMs);
+        }
 
-            String fetchWaitMaxMs = ElementParameterParser.getValue(node, "__FETCH_WAIT_MAX_MS__").trim();
-            if (!"\"\"".equals(fetchWaitMaxMs)) {
-                builder.addParam("fetchWaitMaxMs", fetchWaitMaxMs);
-            }
+        String maxBlockMs = ElementParameterParser.getValue(node, "__MAX_BLOCK_MS__").trim();
+        if (!"\"\"".equals(maxBlockMs)) {
+            builder.addParam("maxBlockMs", maxBlockMs);
+        }
 
-            String rebalanceBackoffMs = ElementParameterParser.getValue(node, "__REBALANCE_BACKOFF_MS__").trim();
-            if (!"\"\"".equals(rebalanceBackoffMs)) {
-                builder.addParam("rebalanceBackoffMs", rebalanceBackoffMs);
-            }
+        String maxRequestSize = ElementParameterParser.getValue(node, "__MAX_REQUEST_SIZE__").trim();
+        if (!"\"\"".equals(maxRequestSize)) {
+            builder.addParam("maxRequestSize", maxRequestSize);
+        }
 
-            String refreshLeaderBackoffMs = ElementParameterParser.getValue(node, "__REFRESH_LEADER_BACKOFF_MS__").trim();
-            if (!"\"\"".equals(refreshLeaderBackoffMs)) {
-                builder.addParam("refreshLeaderBackoffMs", refreshLeaderBackoffMs);
-            }
+        String maxInFlightRequest = ElementParameterParser.getValue(node, "__MAX_IN_FLIGHT_REQUEST__").trim();
+        if (!"\"\"".equals(maxInFlightRequest)) {
+            builder.addParam("maxInFlightRequest", maxInFlightRequest);
+        }
+    } else {
+        String consumerStreams = ElementParameterParser.getValue(node, "__CONSUMER_STREAMS__").trim();
+        if (!"\"\"".equals(consumerStreams)) {
+            builder.addParam("consumerStreams", consumerStreams);
+        }
 
-            String autoOffsetReset = ElementParameterParser.getValue(node, "__AUTO_OFFSET_RESET__").trim();
-            if (!"\"\"".equals(autoOffsetReset)) {
-                builder.addParam("autoOffsetReset", "\""+autoOffsetReset+"\"");
-            }
+        String consumersCount = ElementParameterParser.getValue(node, "__CONSUMERS_COUNT__").trim();
+        if (!"\"\"".equals(consumersCount)) {
+            builder.addParam("consumersCount", consumersCount);
+        }
+
+        String batchSize = ElementParameterParser.getValue(node, "__BATCH_SIZE__").trim();
+        if (!"\"\"".equals(batchSize)) {
+            builder.addParam("batchSize", batchSize);
+        }
+
+        String retryBackoffMs = ElementParameterParser.getValue(node, "__RETRY_BACKOFF_MS__").trim();
+        if (!"\"\"".equals(retryBackoffMs)) {
+            builder.addParam("retryBackoffMs", retryBackoffMs);
+        }
+
+        String barrierAwaitTimeoutMs = ElementParameterParser.getValue(node, "__BARRIER_AWAIT_TIMEOUT_MS__").trim();
+        if (!"\"\"".equals(barrierAwaitTimeoutMs)) {
+            builder.addParam("barrierAwaitTimeoutMs", barrierAwaitTimeoutMs);
+        }
+
+        String autoCommitEnable = ElementParameterParser.getValue(node, "__AUTO_COMMIT_ENABLE__").trim();
+        if (!"\"\"".equals(autoCommitEnable)) {
+            builder.addParam("autoCommitEnable", autoCommitEnable);
+        }
+
+        String autoCommitIntervalMs = ElementParameterParser.getValue(node, "__AUTO_COMMIT_INTERVAL_MS__").trim();
+        if (!"\"\"".equals(autoCommitIntervalMs)) {
+            builder.addParam("autoCommitIntervalMs", autoCommitIntervalMs);
+        }
+
+        String fetchMinBytes = ElementParameterParser.getValue(node, "__FETCH_MIN_BYTES__").trim();
+        if (!"\"\"".equals(fetchMinBytes)) {
+            builder.addParam("fetchMinBytes", fetchMinBytes);
+        }
+
+        String fetchWaitMaxMs = ElementParameterParser.getValue(node, "__FETCH_WAIT_MAX_MS__").trim();
+        if (!"\"\"".equals(fetchWaitMaxMs)) {
+            builder.addParam("fetchWaitMaxMs", fetchWaitMaxMs);
+        }
+
+        String autoOffsetReset = ElementParameterParser.getValue(node, "__AUTO_OFFSET_RESET__").trim();
+        if (!"\"\"".equals(autoOffsetReset)) {
+            builder.addParam("autoOffsetReset", autoOffsetReset);
+        }
+
+        String heartbeatIntervalMs = ElementParameterParser.getValue(node, "__HEARTBEAT_INTERVAL_MS__").trim();
+        if (!"\"\"".equals(heartbeatIntervalMs)) {
+            builder.addParam("heartbeatIntervalMs", heartbeatIntervalMs);
+        }
+
+        String maxPartitionFetchBytes = ElementParameterParser.getValue(node, "__MAX_PARTITION_FETCH_BYTES__").trim();
+        if (!"\"\"".equals(maxPartitionFetchBytes)) {
+            builder.addParam("maxPartitionFetchBytes", maxPartitionFetchBytes);
+        }
+
+        String sessionTimeoutMs = ElementParameterParser.getValue(node, "__SESSION_TIMEOUT_MS__").trim();
+        if (!"\"\"".equals(sessionTimeoutMs)) {
+            builder.addParam("sessionTimeoutMs", sessionTimeoutMs);
+        }
+
+        String partitionAssignor = ElementParameterParser.getValue(node, "__PARTITION_ASSIGNOR__").trim();
+        if (!"\"\"".equals(partitionAssignor)) {
+            builder.addParam("partitionAssignor", partitionAssignor);
+        }
+
+        String consumerRequestTimeoutMs = ElementParameterParser.getValue(node, "__CONSUMER_REQUEST_TIMEOUT_MS__").trim();
+        if (!"\"\"".equals(consumerRequestTimeoutMs)) {
+            builder.addParam("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
+        }
+
+        String checkCrcs = ElementParameterParser.getValue(node, "__CHECK_CRC__").trim();
+        if (!"\"\"".equals(checkCrcs)) {
+            builder.addParam("checkCrcs", checkCrcs);
+        }
     }
 
-    
     List<Map<String, String>> tableValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__URI_OPTIONS__");
     for (Map<String, String> map : tableValues) {
         String argName = map.get("NAME").trim();
@@ -254,9 +320,7 @@ imports="
 
     String uri = builder.build();
 
-    
-    
-    if(conns.size()>0) {
+    if (incomingConnections.size() > 0) {
 %>
             .to(<%=uri%>)
 <%
