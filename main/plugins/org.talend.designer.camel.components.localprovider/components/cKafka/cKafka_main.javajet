@@ -158,7 +158,7 @@ imports="
         }
 
         String compressionCodec = ElementParameterParser.getValue(node, "__COMPRESSION_CODEC__");
-        if (!"\"\".equals(compressionCodec)) {
+        if (!"\"\"".equals(compressionCodec)) {
             builder.addParam("compressionCodec", compressionCodec);
         }
 
