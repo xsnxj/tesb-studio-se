@@ -128,7 +128,7 @@ imports="
 
     String securityProtocol = ElementParameterParser.getValue(node, "__SECURITY_PROTOCOL__").trim();
     if (!"\"\"".equals(securityProtocol)) {
-        builder.addParam("securityProtocol", securityProtocol);
+        builder.addParam("securityProtocol", "\"" + securityProtocol + "\"");
     }
 
     String kerberosInitCmd = ElementParameterParser.getValue(node, "__KERBEROS_INIT_CMD__").trim();
@@ -159,7 +159,7 @@ imports="
 
         String compressionCodec = ElementParameterParser.getValue(node, "__COMPRESSION_CODEC__");
         if (!"\"\"".equals(compressionCodec)) {
-            builder.addParam("compressionCodec", compressionCodec);
+            builder.addParam("compressionCodec", "\"" + compressionCodec + "\"");
         }
 
         String serializerClass = ElementParameterParser.getValue(node, "__SERIALIZER_CLASS__").trim();
@@ -174,7 +174,7 @@ imports="
 
         String requestRequiredAcks = ElementParameterParser.getValue(node, "__REQUEST_REQUIRED_ACKS__").trim();
         if (!"\"\"".equals(requestRequiredAcks)) {
-            builder.addParam("requestRequiredAcks", requestRequiredAcks);
+            builder.addParam("requestRequiredAcks", "\"" + requestRequiredAcks + "\"");
         }
 
         String requestTimeoutMs = ElementParameterParser.getValue(node, "__REQUEST_TIMEOUT_MS__").trim();
@@ -274,7 +274,7 @@ imports="
 
         String autoOffsetReset = ElementParameterParser.getValue(node, "__AUTO_OFFSET_RESET__").trim();
         if (!"\"\"".equals(autoOffsetReset)) {
-            builder.addParam("autoOffsetReset", autoOffsetReset);
+            builder.addParam("autoOffsetReset", "\"" + autoOffsetReset + "\"");
         }
 
         String heartbeatIntervalMs = ElementParameterParser.getValue(node, "__HEARTBEAT_INTERVAL_MS__").trim();
