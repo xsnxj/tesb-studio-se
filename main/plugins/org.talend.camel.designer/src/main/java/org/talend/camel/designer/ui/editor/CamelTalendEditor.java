@@ -12,7 +12,9 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
+import org.eclipse.jface.action.IAction;
 import org.talend.camel.designer.ui.SaveAsRoutesAction;
+import org.talend.camel.designer.ui.action.RoutePasteAction;
 import org.talend.core.model.components.IComponentsHandler;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 
@@ -43,6 +45,9 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         talendEditorDropTargetListener = new CamelEditorDropTargetListener(this);
         talendEditorDropTargetListener.setEditor(this);
         getGraphicalViewer().addDropTargetListener(talendEditorDropTargetListener);
+
+        IAction pasteAction = new RoutePasteAction(this);
+        getActionRegistry().registerAction(pasteAction);
     }
 
     @Override
