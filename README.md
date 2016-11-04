@@ -1,17 +1,16 @@
 # Talend Open Studio for ESB
-http://www.talend.com
 
 
-![alt text](http://www.talend.com/sites/all/themes/talend_responsive/images/logo.png "Talend")
+[![Visit Talend's website](http://www.talend.com/sites/all/themes/talend_responsive/images/logo.png "Talend")](http://www.talend.com/)
 
-
-> Contents
 
 This repository contains the source files for Talend Open Studio for ESB.
 
 
 ## Repository Structure
+
 All Talend Studio repositories follow the same file structure:
+
 ```
 
   |_ main          Main Eclipse plugins and features
@@ -26,8 +25,12 @@ All Talend Studio repositories follow the same file structure:
 ```
 
 ## How to build projects
-Use maven to pre-build projects. Go to main/plugins folder and in command line type:
- mvn clean package
+
+Follow the instructions at [Talend/studio-se-master](https://github.com/Talend/studio-se-master) and run the following from inside the `studio-se-master` repository.
+
+```
+mvn install -Dtos.esb=true
+```
 
 ## Download
 
@@ -39,22 +42,21 @@ You can download this product from the [Talend website](http://www.talend.com/do
 Documentation is available on [Talend Help Center](http://help.talend.com/).
 
 
-
 ## Support 
 
-You can ask for help on our [Forum](http://www.talend.com/services/global-technical-support).
+You can ask for help on our [Forum](http://www.talend.com/services/technical-support).
 
 
 ## Contributing
 
 We welcome contributions of all kinds from anyone.
 
-Using the bug tracker [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports, feature requests and submitting pull requests.
+Using the [Talend bugtracker](http://jira.talendforge.org/) is the best channel for bug reports and feature requests. Use GitHub to submit pull requests.
 
 Feel free to share your Talend components on [Talend Exchange](http://www.talendforge.org/exchange).
 
 ## License
 
-Copyright (c) 2006-2015 Talend
+Copyright (c) 2006-2016 Talend
 
 Licensed under the Apache V2 License
