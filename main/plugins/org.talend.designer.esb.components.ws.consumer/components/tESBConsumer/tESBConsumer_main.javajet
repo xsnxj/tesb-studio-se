@@ -191,14 +191,17 @@ if (inputConn != null) {
             <% } %>
             
             final List<java.util.Map<String, String>> customHttpHeaders_<%=cid%> = new java.util.ArrayList<java.util.Map<String, String>>();
+            <%if(esbProviderRequestCid!=null){%>
             List<String> propagatedHeaders = new java.util.ArrayList<String>();
-            <%for (Map<String, String> h : customHttpHeaders) {
+            <%}
+            for (Map<String, String> h : customHttpHeaders) {
 					if(!java.lang.Boolean.parseBoolean(h.get("PROPAGATE").replaceAll("\"",""))){
 				%>
                 customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=h.get("NAME")%>, <%=h.get("VALUE")%>);}});
-				<%} else {%>
+				<%} else if(esbProviderRequestCid!=null){%>
                 propagatedHeaders.add(<%=h.get("NAME")%>);
-				<%}}
+				<%}
+				}
 				if(esbProviderRequestCid!=null){%>
             final List<java.util.Map<String, String>> tESBProviderRequestHttpHeaders=(List<java.util.Map<String, String>>)globalMap.get("<%=esbProviderRequestCid%>_HEADERS_HTTP");
             if(tESBProviderRequestHttpHeaders!=null){
