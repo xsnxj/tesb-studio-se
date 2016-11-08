@@ -108,7 +108,14 @@ if (inputConn != null) {
     }
 }
 
-List<Map<String, String>> customHttpHeaders = paramsHelper.getObjectParam("__HEADERS__");
+List<Map<String, String>> customHttpHeaders = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,  "__HEADERS__");
+
+String esbProviderRequestCid = null;
+if (!node.getProcess().getNodesOfType("tESBProviderRequest").isEmpty()) {
+	for (INode tESBProviderRequestNode : node.getProcess().getNodesOfType("tESBProviderRequest")){
+		esbProviderRequestCid = tESBProviderRequestNode.getUniqueName();
+	}
+}
 
 /*GENERATE CODE*/
 if (inputConn != null) {
@@ -184,12 +191,28 @@ if (inputConn != null) {
             <% } %>
             
             final List<java.util.Map<String, String>> customHttpHeaders_<%=cid%> = new java.util.ArrayList<java.util.Map<String, String>>();
-            <% if(customHttpHeaders!=null && !customHttpHeaders.isEmpty()){ %>   
-            <% for (java.util.Map<String, String> customHttpHeader : customHttpHeaders) { %>
-			customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=customHttpHeader.get("NAME")%>, <%=customHttpHeader.get("VALUE")%>);}});
-			<% } %>
-            <% } %>  
-
+            List<String> propagatedHeaders = new java.util.ArrayList<String>();
+            <%for (Map<String, String> h : customHttpHeaders) {
+					if(!java.lang.Boolean.parseBoolean(h.get("PROPAGATE").replaceAll("\"",""))){
+				%>
+                customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=h.get("NAME")%>, <%=h.get("VALUE")%>);}});
+				<%} else {%>
+                propagatedHeaders.add(<%=h.get("NAME")%>);
+				<%}}
+				if(esbProviderRequestCid!=null){%>
+            final List<java.util.Map<String, String>> tESBProviderRequestHttpHeaders=(List<java.util.Map<String, String>>)globalMap.get("<%=esbProviderRequestCid%>_HEADERS_HTTP");
+            if(tESBProviderRequestHttpHeaders!=null){
+                for(java.util.Map<String, String> h: tESBProviderRequestHttpHeaders){
+				        for (java.util.Map.Entry<String, String> e : h.entrySet()) {
+				            if(propagatedHeaders.contains(e.getKey())){
+				                java.util.Map<String, String> header = new java.util.HashMap<String, String>();
+				                header.put(e.getKey(), e.getValue());
+				                customHttpHeaders_<%=cid%>.add(header);
+                        }
+                    }
+                }
+            }
+            <%}%>
             if (null == registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);

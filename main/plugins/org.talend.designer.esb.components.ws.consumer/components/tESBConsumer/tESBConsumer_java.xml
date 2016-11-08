@@ -332,6 +332,7 @@
 			<ITEMS>
 				<ITEM NAME="NAME" VALUE='""'/>
 				<ITEM NAME="VALUE" VALUE='""'/>
+				<ITEM NAME="PROPAGATE" FIELD="CHECK" VALUE='false'/>
 			</ITEMS>
 		</PARAMETER>
 		
