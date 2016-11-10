@@ -81,7 +81,7 @@ public class RouteResoureChangeListener implements IResourceChangeListener {
 
                     if (resource.equals(editorFile)) {
 
-                        RepositoryWorkUnit<Object> repositoryWorkUnit = new RepositoryWorkUnit<Object>(SAVING_RESOURCE, this) {
+                        final RepositoryWorkUnit<Object> repositoryWorkUnit = new RepositoryWorkUnit<Object>(SAVING_RESOURCE, this) {
 
                             @Override
                             protected void run() throws LoginException, PersistenceException {
