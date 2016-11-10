@@ -394,7 +394,7 @@ if (actAsConsumer) {
 			public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
 				java.util.Map<String, List> httpHeaders = (java.util.Map<String, List>) message
 						.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
-				message.put(Headers.ADD_HEADERS_PROPERTY, true);
+				message.put(org.apache.cxf.transport.http.Headers.ADD_HEADERS_PROPERTY, true);
 				try {
 					httpHeaders.putAll(this.headers);
 				} catch (Exception ce) {
