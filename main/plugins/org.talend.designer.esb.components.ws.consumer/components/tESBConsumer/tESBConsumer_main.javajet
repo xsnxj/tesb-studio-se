@@ -203,17 +203,23 @@ if (inputConn != null) {
 				<%}
 				}
 				if(esbProviderRequestCid!=null){%>
-            final List<java.util.Map<String, String>> tESBProviderRequestHttpHeaders=(List<java.util.Map<String, String>>)globalMap.get("<%=esbProviderRequestCid%>_HEADERS_HTTP");
+            final java.util.TreeMap<String, String> tESBProviderRequestHttpHeaders=(java.util.TreeMap<String, String>)globalMap.get("<%=esbProviderRequestCid%>_HEADERS_HTTP");
             if(tESBProviderRequestHttpHeaders!=null){
-                for(java.util.Map<String, String> h: tESBProviderRequestHttpHeaders){
-				        for (java.util.Map.Entry<String, String> e : h.entrySet()) {
-				            if(propagatedHeaders.contains(e.getKey())){
-				                java.util.Map<String, String> header = new java.util.HashMap<String, String>();
-				                header.put(e.getKey(), e.getValue());
-				                customHttpHeaders_<%=cid%>.add(header);
-                        }
-                    }
-                }
+					for (java.util.Map.Entry<String, ?> e : tESBProviderRequestHttpHeaders.entrySet()) {
+				   	if(propagatedHeaders.contains(e.getKey())){
+				         if(e.getValue() instanceof java.util.List){
+								for(Object v: (java.util.List)e.getValue()){
+								   java.util.Map<String, String> header = new java.util.HashMap<String, String>();
+									header.put(e.getKey(), String.valueOf(v));
+									customHttpHeaders_<%=cid%>.add(header);
+								}
+							}else{
+								java.util.Map<String, String> header = new java.util.HashMap<String, String>();
+								header.put(e.getKey(), String.valueOf(e.getValue()));
+								customHttpHeaders_<%=cid%>.add(header);
+							}
+                 }
+               }
             }
             <%}%>
             if (null == registry) {
