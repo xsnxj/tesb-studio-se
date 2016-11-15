@@ -102,26 +102,6 @@ imports="
         builder.addParam("sslTruststoreLocation", sslTruststoreLocation);
     }
 
-    String sslEnabledProtocols = ElementParameterParser.getValue(node, "__SSL_ENABLED_PROTOCOLS__").trim();
-    if (!"\"\"".equals(sslEnabledProtocols)) {
-        builder.addParam("sslEnabledProtocols", sslEnabledProtocols);
-    }
-
-    String sslKeystoreType = ElementParameterParser.getValue(node, "__SSL_KEYSTORE_TYPE__").trim();
-    if (!"\"\"".equals(sslKeystoreType)) {
-        builder.addParam("sslKeystoreType", sslKeystoreType);
-    }
-
-    String sslProtocol = ElementParameterParser.getValue(node, "__SSL_PROTOCOL__").trim();
-    if (!"\"\"".equals(sslProtocol)) {
-        builder.addParam("sslProtocol", sslProtocol);
-    }
-
-    String sslTruststoreType = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_TYPE__").trim();
-    if (!"\"\"".equals(sslTruststoreType)) {
-        builder.addParam("sslTruststoreType", sslTruststoreType);
-    }
-
     String sslCipherSuites = ElementParameterParser.getValue(node, "__SSL_CIPHER_SUITS__").trim();
     if (!"\"\"".equals(sslCipherSuites)) {
         builder.addParam("sslCipherSuites", sslCipherSuites);
@@ -132,16 +112,6 @@ imports="
         builder.addParam("sslEndpointAlgorithm", sslEndpointAlgorithm);
     }
 
-    String sslKeymanagerAlgorithm = ElementParameterParser.getValue(node, "__SSL_KEYMANAGER_ALGORITHM__").trim();
-    if (!"\"\"".equals(sslKeymanagerAlgorithm)) {
-        builder.addParam("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
-    }
-
-    String sslTrustmanagerAlgorithm = ElementParameterParser.getValue(node, "__SSL_TRUSTMANAGER_ALGORITHM__").trim();
-    if (!"\"\"".equals(sslTrustmanagerAlgorithm)) {
-        builder.addParam("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
-    }
-
     String saslKerberosServiceName = ElementParameterParser.getValue(node, "__SASL_KERBEROS_SERVICE_NAME__").trim();
     if (!"\"\"".equals(saslKerberosServiceName)) {
         builder.addParam("saslKerberosServiceName", saslKerberosServiceName);
@@ -150,26 +120,6 @@ imports="
     String securityProtocol = ElementParameterParser.getValue(node, "__SECURITY_PROTOCOL__").trim();
     if (!"\"\"".equals(securityProtocol)) {
         builder.addParam("securityProtocol", "\"" + securityProtocol + "\"");
-    }
-
-    String kerberosInitCmd = ElementParameterParser.getValue(node, "__KERBEROS_INIT_CMD__").trim();
-    if (!"\"\"".equals(kerberosInitCmd)) {
-        builder.addParam("kerberosInitCmd", kerberosInitCmd);
-    }
-
-    String kerberosBeforeReloginMinTime = ElementParameterParser.getValue(node, "__KERBEROS_BEFORE_RELOGIN_MIN_TIME__").trim();
-    if (!"\"\"".equals(kerberosBeforeReloginMinTime)) {
-        builder.addParam("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
-    }
-
-    String kerberosRenewJitter = ElementParameterParser.getValue(node, "__KERBEROS_RENEW_JITTER__").trim();
-    if (!"\"\"".equals(kerberosRenewJitter)) {
-        builder.addParam("kerberosRenewJitter", kerberosRenewJitter);
-    }
-
-    String kerberosRenewWindowFactor = ElementParameterParser.getValue(node, "__KERBEROS_RENEW_WINDOW_FACTOR__").trim();
-    if (!"\"\"".equals(kerberosRenewWindowFactor)) {
-        builder.addParam("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
     }
 
     if (incomingConnections.size() > 0) {
