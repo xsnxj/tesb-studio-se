@@ -367,7 +367,7 @@ if (actAsConsumer) {
 		public class HttpHeadersOutInterceptor extends
 					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
 
-			private java.util.Map<String, List<String>> headers = new java.util.TreeMap<String, List<String>>();
+			private java.util.Map<String, List<String>> headers = new java.util.TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
 
 			public HttpHeadersOutInterceptor() {
 				super(org.apache.cxf.phase.Phase.POST_PROTOCOL);
@@ -406,7 +406,7 @@ if (actAsConsumer) {
 			public class HttpHeadersInInterceptor extends
 					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
 
-			private java.util.Map<String, List<?>> httpHeaders = new java.util.TreeMap<String, List<?>>();
+			private java.util.Map<String, List<?>> httpHeaders = new java.util.TreeMap<String, List<?>>(String.CASE_INSENSITIVE_ORDER);
 			private java.lang.Integer responseCode = new java.lang.Integer(0); 
 
 			public HttpHeadersInInterceptor() {

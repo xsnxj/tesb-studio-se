@@ -197,16 +197,18 @@ if (inputConn != null) {
             for (Map<String, String> h : customHttpHeaders) {
 					if(!java.lang.Boolean.parseBoolean(h.get("PROPAGATE").replaceAll("\"",""))){
 				%>
+					 System.out.println(<%=h.get("NAME")%>);
                 customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=h.get("NAME")%>, <%=h.get("VALUE")%>);}});
-				<%} else if(esbProviderRequestCid!=null){%>
-                propagatedHeaders.add(<%=h.get("NAME")%>);
+				<%} else if(esbProviderRequestCid!=null && h.get("NAME")!=null){%>
+					 System.out.println(<%=h.get("NAME")%>);
+                propagatedHeaders.add(<%=h.get("NAME").toLowerCase()%>);
 				<%}
 				}
 				if(esbProviderRequestCid!=null){%>
             final java.util.TreeMap<String, String> tESBProviderRequestHttpHeaders=(java.util.TreeMap<String, String>)globalMap.get("<%=esbProviderRequestCid%>_HEADERS_HTTP");
             if(tESBProviderRequestHttpHeaders!=null){
 					for (java.util.Map.Entry<String, ?> e : tESBProviderRequestHttpHeaders.entrySet()) {
-				   	if(propagatedHeaders.contains(e.getKey())){
+				   	if(propagatedHeaders.contains(e.getKey().toLowerCase())){
 				         if(e.getValue() instanceof java.util.List){
 								for(Object v: (java.util.List)e.getValue()){
 								   java.util.Map<String, String> header = new java.util.HashMap<String, String>();
