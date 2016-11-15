@@ -198,21 +198,6 @@ imports="
             builder.addParam("maxInFlightRequest", maxInFlightRequest);
         }
     } else {
-        String consumerStreams = ElementParameterParser.getValue(node, "__CONSUMER_STREAMS__").trim();
-        if (!"\"\"".equals(consumerStreams)) {
-            builder.addParam("consumerStreams", consumerStreams);
-        }
-
-        String consumersCount = ElementParameterParser.getValue(node, "__CONSUMERS_COUNT__").trim();
-        if (!"\"\"".equals(consumersCount)) {
-            builder.addParam("consumersCount", consumersCount);
-        }
-
-        String batchSize = ElementParameterParser.getValue(node, "__BATCH_SIZE__").trim();
-        if (!"\"\"".equals(batchSize)) {
-            builder.addParam("batchSize", batchSize);
-        }
-
         String retryBackoffMs = ElementParameterParser.getValue(node, "__RETRY_BACKOFF_MS__").trim();
         if (!"\"\"".equals(retryBackoffMs)) {
             builder.addParam("retryBackoffMs", retryBackoffMs);
@@ -271,11 +256,6 @@ imports="
         String consumerRequestTimeoutMs = ElementParameterParser.getValue(node, "__CONSUMER_REQUEST_TIMEOUT_MS__").trim();
         if (!"\"\"".equals(consumerRequestTimeoutMs)) {
             builder.addParam("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
-        }
-
-        String checkCrcs = ElementParameterParser.getValue(node, "__CHECK_CRC__").trim();
-        if (!"\"\"".equals(checkCrcs)) {
-            builder.addParam("checkCrcs", checkCrcs);
         }
     }
 
