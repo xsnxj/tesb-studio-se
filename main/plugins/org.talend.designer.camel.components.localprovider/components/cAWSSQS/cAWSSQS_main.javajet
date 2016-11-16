@@ -12,21 +12,21 @@ imports="
 "
 %>
 <%
-	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-	INode node = (INode)codeGenArgument.getArgument();
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
     String cid = node.getUniqueName();
     List< ? extends IConnection> in = node.getIncomingConnections();
-    
+
     CamelEndpointBuilder eb = CamelEndpointBuilder.getBuilder();
     eb.setComponent("aws-sqs");
     eb.useDoubleSlash(false);
-    
+
     String sqs = ElementParameterParser.getValue(node, "__AWS_CONNECTION_CLIENT__");
     String queueName = ElementParameterParser.getValue(node, "__QUEUE_NAME__");
     boolean delAfterRead = "true".equals(ElementParameterParser.getValue(node, "__DELETE_AFTER_READ__"));
     boolean delIfFilter = "true".equals(ElementParameterParser.getValue(node, "__DELETE_IF_FILTERED__"));
     boolean enableConcurrent = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_CONCURRENT__"));
-    
+
     String poolNumber = ElementParameterParser.getValue(node, "__POOL_NUMBER__");
     String maxMessage = ElementParameterParser.getValue(node, "__MAX_MESSAGE__");
     boolean changeVisibility = "true".equals(ElementParameterParser.getValue(node, "__EXTEND_MESSAGE_VISIBILITY__"));
@@ -34,27 +34,22 @@ imports="
     String delaySeconds = ElementParameterParser.getValue(node, "__DELAY_SECOND__");
     String waitSeconds = ElementParameterParser.getValue(node, "__WAIT_TIME_SECOND__");
     String awsID = ElementParameterParser.getValue(node, "__QUEUE_OWNER_ACCOUNT__");
-    
+
     List<Map<String,String>> queueConf = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__QUEUE_CONFIGURATION__");
-    
-    boolean enablePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_POLICY__"));
-    String policy = ElementParameterParser.getValue(node, "__POLICY__");
-    boolean enableRedrivePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_REDRIVEPOLICY__"));
-    String redrivePolicy = ElementParameterParser.getValue(node, "__REDRIVEPOLICY__");
-    
+
     boolean attrAll = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_ALL__"));
     boolean attrRecTime = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_RECEIVE_TIME__"));
     boolean attrRecCount = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_RECEIVE_COUNT__"));
     boolean attrSender = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_SENDER_ID__"));
     boolean attrSentTime = "true".equals(ElementParameterParser.getValue(node, "__ATTRIBUTE_SENT_TIME__"));
-    
+
     List<Map<String,String>> msgAttr = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__MESSAGE_ATTRIBUTE_NAME__");
-    
+
     //Shared header
     eb.addParam("amazonSQSClient", "\"#cAWSSQS_" +sqs+"\"");
     eb.setName(queueName);
-    
-    if(in.size()>0){
+
+    if (in.size()>0) {
     //Producer
         if(!"0".equals(delaySeconds)){
             eb.addParam("delaySeconds", delaySeconds);
@@ -62,61 +57,55 @@ imports="
         if(!"0".equals(waitSeconds)){
             eb.addParam("waitTimeSeconds", waitSeconds);
         }
-    }else{
+    } else {
     //Consumer
-        if(!delAfterRead){eb.addParam("deleteAfterRead", "false");};
-        if(!delIfFilter){eb.addParam("deleteIfFiltered", "false");};
-        if(enableConcurrent){
+        if (!delAfterRead) { eb.addParam("deleteAfterRead", "false"); };
+        if (!delIfFilter) { eb.addParam("deleteIfFiltered", "false"); };
+        if (enableConcurrent) {
             eb.addParam("concurrentConsumers", poolNumber);
             eb.addParam("maxMessagesPerPoll", maxMessage);
         }
-        if(changeVisibility){
+        if (changeVisibility) {
             eb.addParam("extendMessageVisibility", "true");
             eb.addParam("visibilityTimeout", visibilitySeconds);
         }
-        
-        if(attrAll){
-            eb.addParam("attributeNames", "\"All\"");
-        }else{
-            String attr = "";
-            if(attrRecTime){attr+="ApproximateFirstReceiveTimestamp,";}
-            if(attrRecCount){attr+="ApproximateReceiveCount,";}
-            if(attrSender){attr+="SenderId,";}
-            if(attrSentTime){attr+="SentTimestamp,";}
 
-            if(attr.length()>0){
+        if (attrAll) {
+            eb.addParam("attributeNames", "\"All\"");
+        } else {
+            String attr = "";
+            if (attrRecTime) { attr+="ApproximateFirstReceiveTimestamp,"; }
+            if (attrRecCount) { attr+="ApproximateReceiveCount,"; }
+            if (attrSender) { attr+="SenderId,"; }
+            if (attrSentTime) { attr+="SentTimestamp,"; }
+
+            if (attr.length() > 0) {
                 eb.addParam("attributeNames", TalendQuoteUtils.addQuotesIfNotExist(attr.substring(0, attr.length()-1)));
             }
         }
 
         String msgs = "";
-        for(Map<String,String> map :msgAttr){
+        for (Map<String,String> map :msgAttr) {
             msgs+=TalendQuoteUtils.removeQuotesIfExist(map.get("ATTRIBUTE_NAME"))+",";
         }
-        if(msgs.length()>0){
+        if (msgs.length() > 0) {
             eb.addParam("messageAttributeNames",TalendQuoteUtils.addQuotesIfNotExist(msgs.substring(0, msgs.length()-1)));
         }
     }
     //Shared end
-    if(TalendQuoteUtils.removeQuotesIfExist(awsID).length()>0){
+    if (TalendQuoteUtils.removeQuotesIfExist(awsID).length() > 0) {
         eb.addParam("queueOwnerAWSAccountId",awsID);
     }
-    if(queueConf.size()>0) {
-        for(Map<String,String> map :queueConf){
+    if (queueConf.size() > 0) {
+        for (Map<String,String> map : queueConf) {
             String param = map.get("QUEUE_PARAMETER");
             String value = map.get("VALUE");
             eb.addParam(param,value);
         }
     }
-    if(enablePolicy){
-    	eb.addParamsWithEscapeValue("policy", policy);
-    }
-	if(enableRedrivePolicy){
-		eb.addParamsWithEscapeValue("redrivePolicy", redrivePolicy);
-	}
-	
+
     String uri = eb.build();
-    if(in.size()>0) {
+    if (in.size() > 0) {
 %>
         .to(<%=uri%>)
 <%

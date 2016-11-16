@@ -24,17 +24,11 @@ imports="
     String sns = ElementParameterParser.getValue(node, "__AWS_CONNECTION_CLIENT__");
     String topicName = ElementParameterParser.getValue(node, "__TOPIC_NAME__");
     String subjectName = ElementParameterParser.getValue(node, "__SUBJECT_NAME__");
-    boolean enablePolicy = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_POLICY__"));
-    String policy = ElementParameterParser.getValue(node, "__POLICY__");
 
     //Producer
     eb.setName(topicName);
     eb.addParam("amazonSNSClient", "\"#cAWSSNS_" +sns+"\"");
     eb.addParam("subject", subjectName);
-
-    if(enablePolicy){
-        eb.addParamsWithEscapeValue("policy", policy);
-    }
 
     String uri = eb.build();
     if(in.size()>0) {
