@@ -29,7 +29,12 @@ All Talend Studio repositories follow the same file structure:
 Follow the instructions at [Talend/studio-se-master](https://github.com/Talend/studio-se-master) and run the following from inside the `studio-se-master` repository.
 
 ```
-mvn install -Dtos.esb=true
+mvn clean install \
+    -Dtos.esb=true \
+    -Dtos.bd=false \
+    -Dtos.di=false \
+    -Dtos.dq=false \
+    -Dtos.mdm=false
 ```
 
 ## Download
