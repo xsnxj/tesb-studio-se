@@ -338,99 +338,132 @@ if (actAsConsumer) {
 
     }
 	
-	public class HttpHeadersFeature extends org.apache.cxf.feature.AbstractFeature {
-	
+	public class HttpHeadersFeature extends
+			org.apache.cxf.feature.AbstractFeature {
+
 		public final static String HTTP_HEADERS = "http_headers";
 		public final static String HTTP_RESPONSE_CODE = "http_response_code";
-		
+
 		private HttpHeadersOutInterceptor out = new HttpHeadersOutInterceptor();
 		private HttpHeadersInInterceptor in = new HttpHeadersInInterceptor();
 
 		public HttpHeadersFeature(List<java.util.Map<String, String>> headers) {
-			out.addHeaders(headers);
+			out.setHeaders(headers);
 		}
-		
-		public HttpHeadersOutInterceptor getOutInterceptor(){
+
+		public HttpHeadersOutInterceptor getOutInterceptor() {
 			return out;
 		}
-		
-		public HttpHeadersInInterceptor getInInterceptor(){
+
+		public HttpHeadersInInterceptor getInInterceptor() {
 			return in;
 		}
-		
+
+		public java.util.Map<String, List<?>> getResponseHeaders() {
+			return getInInterceptor().getHeaders();
+		}
+
+		public java.lang.Integer getResponseCode() {
+			return getInInterceptor().getResponseCode();
+		}
+
 		@Override
-		protected void initializeProvider(org.apache.cxf.interceptor.InterceptorProvider provider, org.apache.cxf.Bus bus) {
+		protected void initializeProvider(
+				org.apache.cxf.interceptor.InterceptorProvider provider,
+				org.apache.cxf.Bus bus) {
 			provider.getOutInterceptors().add(out);
 			provider.getInInterceptors().add(in);
 		}
 
-		public class HttpHeadersOutInterceptor extends
-					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+		public class HttpHeadersOutInterceptor
+				extends
+				org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
 
-			private java.util.Map<String, List<String>> headers = new java.util.TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+			private List<java.util.Map<String, String>> headers = null;
 
 			public HttpHeadersOutInterceptor() {
 				super(org.apache.cxf.phase.Phase.POST_PROTOCOL);
 			}
 
-			public void addHeaders(List<java.util.Map<String, String>> headers) {
-				for (java.util.Map<String, String> header : headers) {
-					for (java.util.Map.Entry<String, String> h : header
-							.entrySet()) {
-						String k = h.getKey();
-						if (k == null || k == "")
-							continue;
-						List<String> v = this.headers.get(k);
-						if (v == null) {
-							v = new java.util.ArrayList<String>();
-							this.headers.put(k, v);
-						}
-						v.add(h.getValue());
-					}
-				}
+			public void setHeaders(List<java.util.Map<String, String>> headers) {
+				this.headers =  headers;
 			}
 
 			@Override
-			public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
+			public void handleMessage(org.apache.cxf.message.Message message)
+					throws org.apache.cxf.interceptor.Fault {
 				java.util.Map<String, List> httpHeaders = (java.util.Map<String, List>) message
 						.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
-				message.put(org.apache.cxf.transport.http.Headers.ADD_HEADERS_PROPERTY, true);
+				
+				message.put(org.apache.cxf.transport.http.Headers.ADD_HEADERS_PROPERTY,	true);
 				try {
-					httpHeaders.putAll(this.headers);
+					for (java.util.Map<String, String> header : headers) {
+						for (java.util.Map.Entry<String, String> h : header
+								.entrySet()) {
+							String k = h.getKey();
+							if (k == null || k == "")
+								continue;
+							List<String> v = httpHeaders.get(k);
+							if (v == null) {
+								v = new java.util.ArrayList<String>();
+								httpHeaders.put(k, v);
+							}
+							v.add(h.getValue());
+						}
+					}
 				} catch (Exception ce) {
 					throw new org.apache.cxf.interceptor.Fault(ce);
 				}
 			}
 		}
-		
-			public class HttpHeadersInInterceptor extends
-					org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
 
-			private java.util.Map<String, List<?>> httpHeaders = new java.util.TreeMap<String, List<?>>(String.CASE_INSENSITIVE_ORDER);
-			private java.lang.Integer responseCode = new java.lang.Integer(0); 
+		public class HttpHeadersInInterceptor
+				extends
+				org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+
+			private java.util.Map<String, List<?>> httpHeaders = new java.util.TreeMap<String, List<?>>(
+					String.CASE_INSENSITIVE_ORDER);
+			private java.lang.Integer responseCode = new java.lang.Integer(0);
 
 			public HttpHeadersInInterceptor() {
 				super(org.apache.cxf.phase.Phase.POST_PROTOCOL);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
-			public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
-				 		
+			public void handleMessage(org.apache.cxf.message.Message message)
+					throws org.apache.cxf.interceptor.Fault {
+
 				try {
 					this.httpHeaders = ((java.util.Map<String, List<?>>) message
-						.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
-					this.responseCode = (java.lang.Integer)message
-						.get(org.apache.cxf.message.Message.RESPONSE_CODE);
+							.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+					this.responseCode = (java.lang.Integer) message
+							.get(org.apache.cxf.message.Message.RESPONSE_CODE);
 				} catch (Exception ce) {
 					throw new org.apache.cxf.interceptor.Fault(ce);
 				}
 			}
 			
-			public java.util.Map<String, List<?>> getHeaders(){
+			@SuppressWarnings("unchecked")
+			@Override
+			public void handleFault(org.apache.cxf.message.Message message)
+					throws org.apache.cxf.interceptor.Fault {
+
+				try {
+					this.httpHeaders = ((java.util.Map<String, List<?>>) message
+							.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+					this.responseCode = (java.lang.Integer) message
+							.get(org.apache.cxf.message.Message.RESPONSE_CODE);
+				} catch (Exception ce) {
+					throw new org.apache.cxf.interceptor.Fault(ce);
+				}
+			}
+
+			public java.util.Map<String, List<?>> getHeaders() {
 				return httpHeaders;
 			}
-			
-			public java.lang.Integer getResponseCode(){
+
+			public java.lang.Integer getResponseCode() {
 				return responseCode;
 			}
 		}

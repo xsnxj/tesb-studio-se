@@ -128,7 +128,8 @@ if (inputConn != null) {
     final javax.xml.namespace.QName serviceName_<%=cid%> = new javax.xml.namespace.QName("<%=serviceNS%>", "<%=serviceName%>");
     final javax.xml.namespace.QName portName_<%=cid%> = new javax.xml.namespace.QName("<%=portNS%>", "<%=portName%>");
 
-	 HttpHeadersFeature httpHeadersFeature = null;
+	 final List<java.util.Map<String, String>> customHttpHeaders_<%=cid%> = new java.util.ArrayList<java.util.Map<String, String>>();
+	 final HttpHeadersFeature httpHeadersFeature = new HttpHeadersFeature(customHttpHeaders_<%=cid%>);
 	
     try {
         routines.system.Document requestTalendDoc_<%=cid%> = <%=inputConn.getName()%>.payload;
@@ -189,18 +190,14 @@ if (inputConn != null) {
                     }
                 }
             <% } %>
-            
-            final List<java.util.Map<String, String>> customHttpHeaders_<%=cid%> = new java.util.ArrayList<java.util.Map<String, String>>();
             <%if(esbProviderRequestCid!=null){%>
             List<String> propagatedHeaders = new java.util.ArrayList<String>();
             <%}
             for (Map<String, String> h : customHttpHeaders) {
 					if(!java.lang.Boolean.parseBoolean(h.get("PROPAGATE").replaceAll("\"",""))){
 				%>
-					 System.out.println(<%=h.get("NAME")%>);
                 customHttpHeaders_<%=cid%>.add(new java.util.HashMap<String, String>() {{put(<%=h.get("NAME")%>, <%=h.get("VALUE")%>);}});
 				<%} else if(esbProviderRequestCid!=null && h.get("NAME")!=null){%>
-					 System.out.println(<%=h.get("NAME")%>);
                 propagatedHeaders.add(<%=h.get("NAME").toLowerCase()%>);
 				<%}
 				}
@@ -314,14 +311,13 @@ if (inputConn != null) {
                 if (!soapHeaders_<%=cid%>.isEmpty()) {
                     genericConsumer_<%=cid%>.setSoapHeaders(soapHeaders_<%=cid%>);
                 }
-                httpHeadersFeature = new HttpHeadersFeature(customHttpHeaders_<%=cid%>);
 					 esbFeatures_<%=cid%>.add(httpHeadersFeature);
                 responseDoc_<%=cid%> = genericConsumer_<%=cid%>.invoke(requestTalendDoc_<%=cid%>.getDocument());
                 <% if (useBusinessCorrelation || useSR) { %>
                     globalMap.put("<%=cid%>_CORRELATION_ID", genericConsumer_<%=cid%>.getCorrelationID());
                 <% } %>
-                globalMap.put("<%=cid%>_HTTP_HEADERS", genericConsumer_<%=cid%>.getHttpResponseHeaders());
-                globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", genericConsumer_<%=cid%>.getHttpResponseCode());
+                globalMap.put("<%=cid%>_HTTP_HEADERS", httpHeadersFeature.getResponseHeaders());
+                globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", httpHeadersFeature.getResponseCode());
             } else {
                 ESBConsumer consumer_<%=cid%> = registry.createConsumer(
                     new ESBEndpointInfo() {
@@ -385,9 +381,7 @@ if (inputConn != null) {
                             if (!soapHeaders_<%=cid%>.isEmpty()) {
                                 put("soapHeaders", soapHeaders_<%=cid%>);
                             }
-							if (!customHttpHeaders_<%=cid%>.isEmpty()) {
-								put("httpHeaders", customHttpHeaders_<%=cid%>);
-							}                            
+							put("httpHeadersFeature", httpHeadersFeature);
                             <% if (authPropagateUP || authPropagateCertificate) { %>
                                 put("securityToken", securityToken_<%=cid%>);
                             <% }
@@ -429,13 +423,14 @@ if (inputConn != null) {
                         <% if (useBusinessCorrelation || useSR) { %>
                             globalMap.put("<%=cid%>_CORRELATION_ID", responseMap_<%=cid%>.get(org.talend.esb.policy.correlation.feature.CorrelationIDFeature.MESSAGE_CORRELATION_ID));
                         <% } %>
-                        globalMap.put("<%=cid%>_HTTP_HEADERS", responseMap_<%=cid%>.get(HttpHeadersFeature.HTTP_HEADERS));
-                        globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", responseMap_<%=cid%>.get(HttpHeadersFeature.HTTP_RESPONSE_CODE));
                     } else if (consumerResponse_<%=cid%> instanceof org.dom4j.Document) {
                         responseDoc_<%=cid%> = (org.dom4j.Document) consumerResponse_<%=cid%>;
                     } else {
                         throw new RuntimeException("Incompatible consumer response: " + consumerResponse_<%=cid%>.getClass().getName());
                     }
+                    
+                    globalMap.put("<%=cid%>_HTTP_HEADERS", httpHeadersFeature.getResponseHeaders());
+               	    globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE", httpHeadersFeature.getResponseCode());
                 }
             }
             <% if (null != connResponse) {
@@ -486,8 +481,8 @@ if (inputConn != null) {
     }
     
     if(httpHeadersFeature!=null){
-    	 globalMap.put("<%=cid%>_HTTP_HEADERS", httpHeadersFeature.getInInterceptor().getHeaders());
-       globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE",  httpHeadersFeature.getInInterceptor().getResponseCode());
+    	 globalMap.put("<%=cid%>_HTTP_HEADERS", httpHeadersFeature.getResponseHeaders());
+       globalMap.put("<%=cid%>_HTTP_RESPONSE_CODE",  httpHeadersFeature.getResponseCode());
     }
 
 <% } %>
