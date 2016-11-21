@@ -49,7 +49,13 @@ public class ExportServiceWithMavenAction extends ExportServiceAction {
     public ExportServiceWithMavenAction(ServiceExportWithMavenManager manager, Map<ExportChoice, Object> exportChoiceMap,
             ServiceItem serviceItem, String targetPath) throws InvocationTargetException {
         super(serviceItem, targetPath, exportChoiceMap);
-        this.manager = manager;
+
+        if (manager == null) {
+            this.manager = new ServiceExportWithMavenManager(exportChoiceMap, IContext.DEFAULT, JobScriptsManager.LAUNCHER_ALL,
+                    IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        } else {
+            this.manager = manager;
+        }
         this.manager.setMavenGroupId(this.getGroupId());
     }
 
