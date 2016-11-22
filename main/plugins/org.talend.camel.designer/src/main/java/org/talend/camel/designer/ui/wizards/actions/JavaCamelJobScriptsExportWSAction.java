@@ -146,7 +146,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 throw new InvocationTargetException(e);
             }
 
-            BundleModel routeModel = new BundleModel(getGroupId(), routeName, getArtifactVersion(), routeFile);
+            BundleModel routeModel = new BundleModel(getGroupId(), routeName + "-bundle", getArtifactVersion(), routeFile);
             if (featuresModel.addBundle(routeModel)) {
                 final ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
                 CamelFeatureUtil.addFeatureAndBundles(routeProcess, featuresModel);
