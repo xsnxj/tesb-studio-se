@@ -397,32 +397,6 @@
             <version>${commons-pool2.version}</version>
         </dependency>
         
-        <!-- TESB-18232 -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-hawtdb</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jsonpath</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-saxon</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <!-- dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-kafka</artifactId>
-            <version>${camel.version}</version>
-        </dependency -->
-        <dependency>
-            <groupId>org.apache-extras.camel-extra</groupId>
-            <artifactId>camel-wmq</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
         <!-- Test Container -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -460,6 +434,32 @@
                             <outputDirectory>${basedir}/lib</outputDirectory>
                             <excludeGroupIds>p2.eclipse-plugin,org.talend.studio</excludeGroupIds>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <!-- requierd jars from alldeps -->
+                    	<id>unpack-camel</id>
+                    	<phase>generate-resources</phase>
+                    	<goals>
+                    		<goal>unpack</goal>
+                    	</goals>
+                    	<configuration>
+                    		<artifactItems>
+                    			<artifactItem>
+                    				<groupId>org.apache.camel</groupId>
+                    				<artifactId>camel-shape</artifactId>
+                    				<version>${camel.version}</version>
+                    				<type>zip</type>
+                                    <includes>
+                                        camel-hawtdb-alldep-${camel.version}.jar,
+                                        camel-jsonpath-alldep-${camel.version}.jar,
+                                        camel-saxon-alldep-${camel.version}.jar,
+                                        camel-kafka-alldep-${camel.version}.jar,
+                                        camel-wmq-alldep-${camel.version}.jar
+                                    </includes>
+                    			</artifactItem>
+                    		</artifactItems>
+                    		<outputDirectory>${basedir}/lib</outputDirectory>
+                    	</configuration>
                     </execution>
                 </executions>
             </plugin>
