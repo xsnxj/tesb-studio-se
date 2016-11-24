@@ -396,7 +396,33 @@
             <artifactId>commons-pool2</artifactId>
             <version>${commons-pool2.version}</version>
         </dependency>
-
+        
+        <!-- TESB-18232 -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-hawtdb</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jsonpath</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-saxon</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <!-- dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kafka</artifactId>
+            <version>${camel.version}</version>
+        </dependency -->
+        <dependency>
+            <groupId>org.apache-extras.camel-extra</groupId>
+            <artifactId>camel-wmq</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
         <!-- Test Container -->
         <dependency>
             <groupId>org.apache.camel</groupId>
