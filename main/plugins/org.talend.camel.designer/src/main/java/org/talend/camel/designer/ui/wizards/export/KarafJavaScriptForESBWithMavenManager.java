@@ -168,6 +168,18 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 continue;
             }
 
+            // remove META-INF/MANIFEST.MF
+            if (resource.getDirectoryName().equals("META-INF") && relativePaths.size() == 1) {
+                Set<URL> res = resource.getResourcesByRelativePath("");
+                if (res.size() == 1) {
+                    URL url = (URL) res.toArray()[0];
+                    if (url.getPath().endsWith("MANIFEST.MF")) {
+                        it.remove();
+                        continue;
+                    }
+                }
+            }
+
             // move Spring-related stuff to src/main/resources
             if (relativePaths.contains("META-INF/spring") && relativePaths.size() == 1) {
                 resource.setDirectoryName("src/main/resources");
