@@ -14,11 +14,14 @@ package org.talend.camel.designer.ui.wizards.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
@@ -44,8 +47,10 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
             destinationKar = getTempDir() + File.separatorChar + getNodeBundleName(routeNode, version)
                     + FileConstants.KAR_FILE_SUFFIX;
         }
-        scriptsManager = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
-                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        KarafJavaScriptForESBWithMavenManager sm = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES, "Route");
+        sm.setReferenceRoutelets(getReferenceRoutlets());
+        scriptsManager = sm;
     }
 
     @Override
@@ -64,7 +69,20 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
     }
 
     private static String getNodeBundleName(IRepositoryNode node, String v) {
-        return node.getObject().getProperty().getDisplayName() + '-' + v; 
+        return node.getObject().getProperty().getDisplayName() + '-' + v;
+    }
+
+    private Collection<String> getReferenceRoutlets() {
+        ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
+        Collection<String> routelets = new HashSet<String>();
+        try {
+            exportAllReferenceRoutelets(routeProcess, routelets);
+        } catch (InvocationTargetException e) {
+            return  new HashSet<String>();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return routelets;
     }
 
 }

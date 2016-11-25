@@ -16,12 +16,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -86,16 +81,28 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     private String groupId;
 
+    private String type = "Job";
+
+    private Collection<String> referenceRoutelets;
+
     public KarafJavaScriptForESBWithMavenManager(Map<ExportChoice, Object> exportChoiceMap, String destinationKar,
-            String contextName, String launcher, int statisticPort, int tracePort) {
+            String contextName, String launcher, int statisticPort, int tracePort, String type) {
         super(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
         this.destinationKar = destinationKar;
+        this.type = (type == null) ? "Job" : type;
+    }
+
+    public KarafJavaScriptForESBWithMavenManager(Map<ExportChoice, Object> exportChoiceMap, String destinationKar,
+                                                 String contextName, String launcher, int statisticPort, int tracePort) {
+        this(exportChoiceMap, destinationKar, contextName, launcher, statisticPort, tracePort, null);
     }
 
     @Override
     public List<ExportFileResource> getExportResources(ExportFileResource[] processes, String... codeOptions)
             throws ProcessorException {
+
         List<ExportFileResource> list = super.getExportResources(processes, codeOptions);
+
         // cTalendJob
         addTalendJobsExportResources(list);
         // karaf
@@ -103,7 +110,70 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         // feature
         addFeatureFileToExport(list, processes);
 
+        if (type != null && type.toLowerCase().equals("route")) {
+            RouteJavaScriptOSGIForESBManager mgr =
+                    new RouteJavaScriptOSGIForESBManager(exportChoice, contextName, referenceRoutelets);
+            mgr.setJobVersion(this.selectedJobVersion);
+            list.addAll(mgr.getExportResources(processes, codeOptions));
+
+            removeJobResources(list);
+        }
+
         return list;
+    }
+
+    private void removeJobResources(List<ExportFileResource> list) {
+        Set<String> relativePaths = null;
+        ExportFileResource resource = null;
+        Iterator<ExportFileResource> it = list.iterator();
+        while (it.hasNext()) {
+            resource = it.next();
+            relativePaths = resource.getRelativePathList();
+
+            // remove src/main/resources/OSGI-INF/blueprint/job.xml
+            if (relativePaths.contains("src/main/resources/OSGI-INF/blueprint") && relativePaths.size() == 1) {
+                it.remove();
+                continue;
+            }
+
+            // remove lib/routines.jar
+            if (resource.getDirectoryName().equals("lib")) {
+                Set<URL> res = resource.getResourcesByRelativePath("");
+                Iterator<URL> iterator = res.iterator();
+                while (iterator.hasNext()){
+                    URL url = iterator.next();
+                    if (url.getPath() != null && url.getPath().endsWith("routines.jar")) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+
+            // remove directories with .class files
+            Collection<Set<URL>> allResources = resource.getAllResources();
+            boolean containsClassFile = false;
+            for (Set<URL> set : allResources) {
+                for (URL url : set) {
+                    if (url.getPath() != null && url.getPath().endsWith(".class")) {
+                        containsClassFile = true;
+                        break;
+                    }
+                }
+                if (containsClassFile) {
+                    break;
+                }
+            }
+            if (containsClassFile) {
+                it.remove();
+                continue;
+            }
+
+            // move Spring-related stuff to src/main/resources
+            if (relativePaths.contains("META-INF/spring") && relativePaths.size() == 1) {
+                resource.setDirectoryName("src/main/resources");
+                continue;
+            }
+        }
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -183,7 +253,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#getMainMavenProperties(org.talend
      * .core.model.properties.Item)
@@ -386,7 +456,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     /**
      * DOC ggu Comment method "getOsgiWithMavenManager".
-     * 
+     *
      * @param contextgGroup
      * @return
      */
@@ -499,7 +569,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobJavaScriptsManager#addRoutinesSourceCodes(org.talend
      * .repository.documentation.ExportFileResource[], org.talend.repository.documentation.ExportFileResource,
@@ -522,7 +592,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager#deleteTempFiles()
      */
     @Override
@@ -535,4 +605,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         }
     }
 
+    public void setReferenceRoutelets(Collection<String> routelets) {
+        this.referenceRoutelets = routelets;
+    }
 }
