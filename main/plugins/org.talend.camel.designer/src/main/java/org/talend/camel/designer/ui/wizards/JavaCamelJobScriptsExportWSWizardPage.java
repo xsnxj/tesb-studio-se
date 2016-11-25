@@ -139,11 +139,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                     boolean isMS = destination.equals(EXPORTTYPE_SPRING_BOOT);
 
                     if (isMS) {
-                        addBSButton.setEnabled(false);
                         contextButton.setEnabled(true);
                         exportAsZipButton.setEnabled(true);
                     } else {
-                        addBSButton.setEnabled(true);
                         contextButton.setEnabled(false);
                         exportAsZipButton.setEnabled(false);
                     }
@@ -151,7 +149,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                     String destinationValue = getDestinationValue();
 
                     if (isMS) {
-                        if (exportAsZip) {
+                        if (exportAsZip || isAddMavenScript()) {
                             destinationValue = destinationValue.substring(0, destinationValue.lastIndexOf("."))
                                     + FileConstants.ZIP_FILE_SUFFIX;
                         } else {
@@ -203,7 +201,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (isAddMavenScript()) {
             dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
-            if (exportAsZip) {
+            if (exportAsZip || isAddMavenScript()) {
                 dialog.setFilterExtensions(new String[] { "*" + FileConstants.ZIP_FILE_SUFFIX, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 dialog.setFilterExtensions(new String[] { "*.jar", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,7 +226,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         if (isAddMavenScript()) {
             idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
         } else if (EXPORTTYPE_SPRING_BOOT.equals(exportTypeCombo.getText())) {
-            if (exportAsZip) {
+            if (exportAsZip || isAddMavenScript()) {
                 idealSuffix = FileConstants.ZIP_FILE_SUFFIX;
             } else {
                 idealSuffix = FileConstants.JAR_FILE_SUFFIX;
@@ -302,11 +300,17 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
         exportChoiceMap.put(ExportChoice.needMetaInfo, true);
         exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.needLauncher, exportAsZip);
         if (addBSButton != null) {
             exportChoiceMap.put(ExportChoice.needMavenScript, addBSButton.getSelection());
+
+            if (isAddMavenScript()) {
+                exportChoiceMap.put(ExportChoice.needAssembly, true);
+                exportChoiceMap.put(ExportChoice.needLauncher, true);
+            }
         }
         exportChoiceMap.put(ExportChoice.onlyDefautContext, onlyExportDefaultContext);
-        exportChoiceMap.put(ExportChoice.needLauncher, exportAsZip);
+
 
         return exportChoiceMap;
     }
@@ -322,18 +326,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                boolean show = addBSButton.getSelection();
-                String destinationValue = getDestinationValue();
-                if (destinationValue.endsWith(getOutputSuffix())) {
-                    if (show) {
-                        destinationValue = destinationValue.substring(0, destinationValue.indexOf(getOutputSuffix()))
-                                + OUTPUT_FILE_SUFFIX;
-                    }
-                } else if (destinationValue.endsWith(OUTPUT_FILE_SUFFIX) && !show) {
-                    destinationValue = destinationValue.substring(0, destinationValue.indexOf(OUTPUT_FILE_SUFFIX))
-                            + getOutputSuffix();
-                }
-                setDestinationValue(destinationValue);
+                exportTypeCombo.notifyListeners(SWT.Selection, null);
             }
         });
 
@@ -453,8 +446,9 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                                     Messages.getString("JavaCamelJobScriptsExportWSWizardPage.ShowItAgain"), false, camelStore,
                                     TOGGLE_MVN_ONLINE);
 
-                            if (dlg.getReturnCode() != IDialogConstants.OK_ID)
+                            if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
                                 return false;
+                            }
                         }
 
                         InstanceScope.INSTANCE.getNode(M2E_CORE).putBoolean(M2_OFFLINE, false);
