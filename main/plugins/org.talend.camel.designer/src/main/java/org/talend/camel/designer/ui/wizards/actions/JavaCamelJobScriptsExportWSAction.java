@@ -35,6 +35,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
@@ -121,6 +122,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected String getGroupId() {
         return CamelFeatureUtil.getMavenGroupId(routeNode.getObject().getProperty().getItem());
+    }
+
+    protected String getJobGroupId(String jobName) {
+    	String projectName = JavaResourcesHelper.getProjectFolderName(
+    			routeNode.getObject().getProperty().getItem());
+    	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
     }
 
     protected String getArtifactId() {
@@ -225,7 +232,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             	jobArtifactVersion += "-SNAPSHOT";
             }
             String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getGroupId() + '.' + routeName, jobName, getArtifactVersion(), jobFile);
+            BundleModel jobModel = new BundleModel(getJobGroupId(jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
                     .getObject().getProperty().getDisplayName(), version, jobContext);
