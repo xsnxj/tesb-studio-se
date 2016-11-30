@@ -193,7 +193,9 @@
         <IMPORTS>
             <IMPORT MODULE_GROUP="camel-core" REQUIRED="true" />
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
-            <IMPORT MODULE_GROUP="camel-kafka-alldep" REQUIRED="true" />
+            <IMPORT MODULE_GROUP="camel-kafka" REQUIRED="true" />
+            <IMPORT MODULE="camel-kafka-alldep-2.17.3.jar" MVN="mvn:org.talend.libraries/camel-kafka-alldep-2.17.3/6.0.0" NAME="talend-camel-kafka" 
+                UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-kafka-alldep-2.17.3.jar" REQUIRED="true"/> 
        </IMPORTS>
     </CODEGENERATION>
 

@@ -8,7 +8,7 @@ As the overall size of the libraries reach a critical size of >= 600 MB.
 Beside the installation via the Additional Packages Screen in the Studio there is also a way to install the complete set of libraries in the following way: 
  
 Example using a Windows 6.4 (EXE) and Windows path for the P2 Folder:
-Talend-Studio-win-x86_64.exe -nosplash -consoleLog -application org.eclipse.equinox.p2.director -repository file:///<Path>//Talend_Full_Studio_p2_repository-20161125_1939-V6.3.1SNAPSHOT -installIU org.talend.esb.camel.alldeps.feature.feature.group
+Talend-Studio-win-x86_64.exe -consoleLog ipse.equinox.p2.director -repository file:///Talend_Full_Studio_p2_repository -installIU org.talend.esb.camel.alldeps.feature.feature.group
 
 The above will install the libraries to the Studio/plugins/org.talend.libraries.camel.alldeps_xxxx folder using the local p2 repository which we ship with all Talend Subscription Products (Talend_Full_Studio_p2_repository-xxx.zip). 
 This command allows an offline installation and would not require the 620MB to be downloaded via the internet. 
