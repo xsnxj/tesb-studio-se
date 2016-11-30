@@ -40,7 +40,21 @@
         <mail.version>1.4.7</mail.version>
         <!-- camel-aws -->
         <aws-java-sdk-version>1.10.52</aws-java-sdk-version>
-            
+        <!-- camel-hawtdb -->
+        <hawtdb-version>1.6</hawtdb-version>
+        <!-- camel-wmq -->
+        <mq-version>7.5</mq-version>
+        <!-- camel-saxon -->
+        <Saxon-HE-version>9.5.1-5</Saxon-HE-version>
+        <!-- camel-kafka -->
+        <kafka-clients-version>0.9.0.1</kafka-clients-version>
+        <snappy-java-version>1.1.1.7</snappy-java-version>
+        <lz4-version>1.2.0</lz4-version>
+        <!-- camel-jsonpath -->
+        <json-path-version>2.1.0</json-path-version>
+        <json-smart-version>2.2.1</json-smart-version>
+        <accessors-smart-version>1.1</accessors-smart-version>
+        <asm-version>5.0.3</asm-version>
         <!-- external deps -->
         <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2</mvn-commons-collections>
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
@@ -376,11 +390,6 @@
             <version>${camel.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-kafka</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.flatpack</groupId>
             <artifactId>flatpack</artifactId>
             <version>${flatpack.version}</version>
@@ -397,6 +406,111 @@
             <version>${commons-pool2.version}</version>
         </dependency>
         
+        <!-- camel-hawtdb -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-hawtdb</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.hawtdb</groupId>
+            <artifactId>hawtdb</artifactId>
+            <version>${hawtdb-version}</version>
+        </dependency>
+        
+        <!-- camel-jsonpath -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jsonpath</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${json-path-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${json-smart-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>accessors-smart</artifactId>
+            <version>${accessors-smart-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm-version}</version>
+        </dependency>
+        
+        <!-- camel-saxon -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-saxon</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>${Saxon-HE-version}</version>
+        </dependency>
+
+        <!-- camel-kafka -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kafka</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-clients-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>${snappy-java-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.jpountz.lz4</groupId>
+            <artifactId>lz4</artifactId>
+            <version>${lz4-version}</version>
+        </dependency>
+        
+        <!-- camel-wmq -->
+        <dependency>
+            <groupId>org.apache-extras.camel-extra</groupId>
+            <artifactId>camel-wmq</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>mq</artifactId>
+            <version>${mq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>mqjms</artifactId>
+            <version>${mq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>jmqi</artifactId>
+            <version>${mq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>connector</artifactId>
+            <version>${mq-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>headers</artifactId>
+            <version>${mq-version}</version>
+        </dependency>
+        
         <!-- Test Container -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -408,7 +522,6 @@
             <artifactId>camel-test-spring</artifactId>
             <version>${camel.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -434,32 +547,6 @@
                             <outputDirectory>${basedir}/lib</outputDirectory>
                             <excludeGroupIds>p2.eclipse-plugin,org.talend.studio</excludeGroupIds>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <!-- requierd jars from alldeps -->
-                    	<id>unpack-camel</id>
-                    	<phase>generate-resources</phase>
-                    	<goals>
-                    		<goal>unpack</goal>
-                    	</goals>
-                    	<configuration>
-                    		<artifactItems>
-                    			<artifactItem>
-                    				<groupId>org.apache.camel</groupId>
-                    				<artifactId>camel-shape</artifactId>
-                    				<version>${camel.version}</version>
-                    				<type>zip</type>
-                                    <includes>
-                                        camel-hawtdb-alldep-${camel.version}.jar,
-                                        camel-jsonpath-alldep-${camel.version}.jar,
-                                        camel-saxon-alldep-${camel.version}.jar,
-                                        camel-kafka-alldep-${camel.version}.jar,
-                                        camel-wmq-alldep-${camel.version}.jar
-                                    </includes>
-                    			</artifactItem>
-                    		</artifactItems>
-                    		<outputDirectory>${basedir}/lib</outputDirectory>
-                    	</configuration>
                     </execution>
                 </executions>
             </plugin>
