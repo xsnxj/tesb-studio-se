@@ -56,10 +56,10 @@ imports="
 	builder.addParam("contentType", contentType);
 
 	String cc = ElementParameterParser.getValue(node, "__CC__");
-	builder.addParam("CC", cc);
+	builder.addParam("cc", cc);
 
 	String bcc = ElementParameterParser.getValue(node, "__BCC__");
-	builder.addParam("BCC", bcc);
+	builder.addParam("bcc", bcc);
 
 	List<Map<String, String>> formatValues = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ARGUMENTS__");
 	for (Map<String, String> map : formatValues) {
