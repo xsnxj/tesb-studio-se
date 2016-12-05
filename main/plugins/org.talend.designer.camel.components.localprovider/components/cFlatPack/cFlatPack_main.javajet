@@ -10,8 +10,6 @@ imports="
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	INode node = (INode)codeGenArgument.getArgument();
-	INode consumerNode = node;
-	NodeParamsHelper helper = new NodeParamsHelper(node);
 	CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
 
 	boolean asProductor = !node.getIncomingConnections().isEmpty();
@@ -21,13 +19,14 @@ imports="
 			String desNodeName = desNode.toString();	
 			for(INode aNode : node.getProcess().getGraphicalNodes()){
 				if(aNode.getUniqueName().equals(desNodeName)){
-					consumerNode=aNode;
+					node=aNode;
 					break;
 				}
 			}
 		}
 	}
 	
+	NodeParamsHelper helper = new NodeParamsHelper(node);
 	StringBuilder sb = new StringBuilder("\"flatpack:");
 	boolean isfixed = helper.getBoolParam("__ISFIXED__");
 	boolean isdelimited = helper.getBoolParam("__ISDELIMITED__");
