@@ -2003,6 +2003,7 @@ if (isProvider) {
             @Override
             public void configure() throws java.lang.Exception {
                 final /*org.apache.camel.model.Model*/CamelContext camelContext = getContext();
+                addRoutelets();
                 final org.apache.camel.impl.SimpleRegistry registry = new org.apache.camel.impl.SimpleRegistry();
                 final org.apache.camel.impl.CompositeRegistry compositeRegistry =
                     new org.apache.camel.impl.CompositeRegistry();
@@ -2485,13 +2486,19 @@ if (isProvider) {
                         pooledConnectionFactory_<%=cid%>.setIdleTimeout(<%=amq_pool_idle_timeout%>);
                         pooledConnectionFactory_<%=cid%>.setMaxConnections(<%=amq_pool_max_connections%>);
                         pooledConnectionFactory_<%=cid%>.setMaximumActiveSessionPerConnection(<%=amq_pool_max_active%>);
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=cid%>));    
+                        
+                        if(camelContext.getComponent(<%=name%>)==null){
+                                                    camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=cid%>));   
+                        }
+ 
 <%
                     } else {
 %>
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
+                        if(camelContext.getComponent(<%=name%>)==null){
+                            camelContext.addComponent(<%=name%>,
+                                org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
+                            }
 <%
                     }
                 } else if ("WebSphere MQ Jms".equals(mqType)) {
@@ -2539,8 +2546,10 @@ if (isProvider) {
 <%
                     if("false".equals(useAuth)){
 %>
-                    camelContext.addComponent(<%=name%>,
-                        org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                    }
 <%                  
                     }else{
 %>
@@ -2557,8 +2566,10 @@ if (isProvider) {
                     connectionFactoryAdapter<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
                     connectionFactoryAdapter<%=cid%>.setTargetConnectionFactory(jmsConnectionFactory);
        
-                    camelContext.addComponent(<%=name%>,
-                        org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
+                    }
 <%                      
                     }                   
 %>
@@ -2591,8 +2602,10 @@ if (isProvider) {
                         ep.append(port);
                     }
 %>              
-                    camelContext.addComponent(<%=name%>,
-                            new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                                new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+                    }
                     //((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
 <%
                 } else if("MQTT".equals(mqType)) {
@@ -2668,15 +2681,19 @@ if (isProvider) {
                             return endpoint;
                         }
                      };
-                    camelContext.addComponent(<%=name%>, mqttComponent_<%=cid%>);
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>, mqttComponent_<%=cid%>);
+                    }
 <%
                 } else if ("Other".equals(mqType)) {
 %>
                     {
                         javax.jms.ConnectionFactory jmsConnectionFactory;
                         <%=ElementParameterParser.getValue(node, "__OTHER_CODE__")%>
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                        if(camelContext.getComponent(<%=name%>)==null){
+                            camelContext.addComponent(<%=name%>,
+                                org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                        }
                     }
 <%
                 }
