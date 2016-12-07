@@ -14,6 +14,7 @@ import org.talend.commons.ui.runtime.image.ECoreImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.designer.core.ui.action.EditProcess;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode;
@@ -52,7 +53,7 @@ public class OpenJobAction extends EditProcess {
         }
         IRepositoryNode node = (IRepositoryNode) selection.getFirstElement();
         if (!ERepositoryObjectType.SERVICESOPERATION.equals((ERepositoryObjectType) node.getProperties(EProperties.CONTENT_TYPE))
-            || !WSDLUtils.isOperationInBinding(node)) { //not enabled if the operation doesn't define in binding
+                || !WSDLUtils.isOperationInBinding(node)) { // not enabled if the operation doesn't define in binding
             setEnabled(false);
             return;
         }
@@ -61,7 +62,8 @@ public class OpenJobAction extends EditProcess {
             setEnabled(false);
             return;
         }
-        jobNode = RepositoryNodeUtilities.getRepositoryNode(jobId, false);
+        IRepositoryNode repoNode = RepositorySeekerManager.getInstance().searchRepoViewNode(jobId, false);
+        jobNode = repoNode == null ? null : (RepositoryNode) repoNode;
         if (jobNode == null) {
             removeReferenecJobId(node);
             setEnabled(false);
@@ -93,10 +95,8 @@ public class OpenJobAction extends EditProcess {
 
     public Class<?> getClassForDoubleClick() {
         final IRepositoryNode repositoryNode = super.getCurrentRepositoryNode();
-        //not enabled if the operation doesn't define in binding
-        if (null != repositoryNode
-            && WSDLUtils.isOperationInBinding(repositoryNode)
-            && getReferenceJobId(repositoryNode) != null) {
+        // not enabled if the operation doesn't define in binding
+        if (null != repositoryNode && WSDLUtils.isOperationInBinding(repositoryNode) && getReferenceJobId(repositoryNode) != null) {
             return ServiceOperation.class;
         }
         return Object.class; // for isDoubleClickAction
