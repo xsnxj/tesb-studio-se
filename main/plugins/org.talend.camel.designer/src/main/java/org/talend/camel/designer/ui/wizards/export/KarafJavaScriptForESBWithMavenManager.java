@@ -263,7 +263,10 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                                 if (property != null) {
                                     talendJobsMap.put(talendJobId, foundObject);
                                     talendJobContextGroupsMap.put(talendJobId, talendJobContextGroup);
-                                    mavenModules.add(TALEND_JOBS_PATH + property.getLabel());
+                                    // we do not export the referenced jobs literally,
+                                    // but get them for build from the Maven repository.
+                                    // Thus, we must not add module declarations for them.
+                                    // mavenModules.add(TALEND_JOBS_PATH + property.getLabel());
                                 }
                             }
                         }
