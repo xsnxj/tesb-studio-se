@@ -56,10 +56,10 @@ public class OpenWSDLEditorAction extends AbstractCreateAction implements IIntro
 
     @Override
     protected void init(RepositoryNode node) {
-        // disable context menu action except service node
-        final boolean isServicesNode = ESBRepositoryNodeType.SERVICES == node.getObjectType();
+        // set to true for service node and service port node
+        final boolean isServicesNode = ESBRepositoryNodeType.SERVICES == node.getObjectType()
+                || ESBRepositoryNodeType.SERVICEPORT == node.getObjectType();
         setEnabled(isServicesNode);
-
         // anyway initialize for double-click
         if (isServicesNode && null != node.getObject()) {
             Item item = node.getObject().getProperty().getItem();
