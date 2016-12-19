@@ -39,9 +39,6 @@
     }
 	
 %>
-    <%if(exportTypeSpringBoot){%>
-        addRoutelets();
-    <%}%>
 	}
 <%
 	if(isTestContainer){
@@ -129,14 +126,7 @@
 
         //add route
 		main.addRouteBuilder(<%=isTestContainer ? "this.createRouteBuilder()" : "this" %>);
-<%
-for (String routeletClass : getRoutelets(process)) {
-%>
-        main.addRouteBuilder(
-            (org.apache.camel.builder.RouteBuilder) Class.forName("<%=routeletClass %>").newInstance());
-<%
-}
-%>
+		
         main.run();
     }
 
@@ -152,7 +142,15 @@ for (String routeletClass : getRoutelets(process)) {
 		}
 	}
 
-    
+    private void addRoutelets() throws Exception{
+        <%
+            for (String routeletClass : getRoutelets(process)) {
+        %>
+                new <%=routeletClass %>().configureRoutes((org.apache.camel.model.ModelCamelContext) getContext());
+        <%
+            }
+        %>
+    }
 
     <%
         if(exportTypeSpringBoot){
@@ -267,15 +265,6 @@ for (String routeletClass : getRoutelets(process)) {
             return resetArgs;
         }
         
-        private void addRoutelets() throws Exception{
-            <%
-                for (String routeletClass : getRoutelets(process)) {
-            %>
-                        addRoutes((org.apache.camel.builder.RouteBuilder) Class.forName("<%=routeletClass %>").newInstance());
-            <%
-                }
-            %>
-        }
         
         @org.springframework.beans.factory.annotation.Autowired
         private ContextProperties context;
@@ -284,7 +273,6 @@ for (String routeletClass : getRoutelets(process)) {
         public static class ContextProperties {
         
     <%} else { %>
-    
         private final ContextProperties context = new ContextProperties();
         
         public static class ContextProperties extends Properties {
