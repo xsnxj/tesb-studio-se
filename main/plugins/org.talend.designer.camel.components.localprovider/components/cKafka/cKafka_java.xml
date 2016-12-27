@@ -219,8 +219,8 @@
             
             <IMPORT MODULE_GROUP="camel-kafka" REQUIRED="true" />
                 
-            <IMPORT MODULE="camel-kafka-alldep-2.16.3.jar" MVN="mvn:org.talend.libraries/camel-kafka-alldep-2.16.3/6.0.0" NAME="talend-camel-kafka" 
-                UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.16.3.jar" REQUIRED="true"/> 
+            <IMPORT MODULE="camel-kafka-alldep-2.16.5.jar" MVN="mvn:org.talend.libraries/camel-kafka-alldep-2.16.5/6.0.0" NAME="talend-camel-kafka" 
+                UrlPath="platform:/plugin/org.talend.libraries.camel.alldeps/lib/camel-kafka-alldep-2.16.5.jar" REQUIRED="true"/> 
                 
             <IMPORT MODULE="scala-library-2.11.7.jar" MVN="mvn:org.talend.libraries/scala-library-2.11.7/6.0.0" NAME="scala-library-2.11.7"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/scala-library-2.11.7.jar" REQUIRED="true"/>
