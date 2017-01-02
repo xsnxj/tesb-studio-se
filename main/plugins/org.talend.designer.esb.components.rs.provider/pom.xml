@@ -11,7 +11,7 @@
   <packaging>eclipse-plugin</packaging>
   <name>Talend Designer ESB Tooling REST Service provider plugin</name>
   <properties>
-      <swagger.version>1.5.9</swagger.version>
+      <swagger.version>1.5.10</swagger.version>
   </properties>
     <dependencies>
         <dependency>
