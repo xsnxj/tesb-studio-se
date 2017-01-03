@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.talend.studio</groupId>
     <artifactId>tesb-studio-se</artifactId>
-    <version>6.3.1-SNAPSHOT</version>
+    <version>6.4.0-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
   <artifactId>org.talend.libraries.esb</artifactId>
@@ -295,6 +295,13 @@
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
         <version>${cxf.version}</version>
+        <!-- TESB-18555 remove transitive dependency to FindBugs annotations jar since it's LGPL -->
+        <exclusions>
+            <exclusion>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 	<!-- ESB Features-->
 	<dependency>
