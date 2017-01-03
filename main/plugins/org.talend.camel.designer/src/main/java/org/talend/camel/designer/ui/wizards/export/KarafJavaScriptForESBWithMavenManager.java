@@ -13,7 +13,9 @@
 package org.talend.camel.designer.ui.wizards.export;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -40,11 +42,13 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
+import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
@@ -61,8 +65,10 @@ import org.talend.designer.maven.template.MavenTemplateManager;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
+import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.IMavenProperties;
@@ -214,7 +220,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 for (NodeType node : (List<NodeType>) nodes) {
                     if ("cTalendJob".equals(node.getComponentName())) { //$NON-NLS-1$
                         String talendJobId = null;
-                        String talendJobVesion = null;
+                        String talendJobVersion = null;
                         String talendJobContextGroup = null;
 
                         EList elementParameters = node.getElementParameter();
@@ -222,32 +228,32 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                             if ("SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(paramType.getName())) { //$NON-NLS-1$
                                 talendJobId = paramType.getValue();
                             } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(paramType.getName())) { //$NON-NLS-1$
-                                talendJobVesion = paramType.getValue();
+                                talendJobVersion = paramType.getValue();
                             } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_CONTEXT".equals(paramType.getName())) { //$NON-NLS-1$
                                 talendJobContextGroup = paramType.getValue();
                             }
 
-                            if (talendJobId != null && talendJobVesion != null && talendJobContextGroup != null) {
+                            if (talendJobId != null && talendJobVersion != null && talendJobContextGroup != null) {
                                 break; // found
                             }
                         }
                         if (talendJobId != null) {
-                            if (talendJobVesion == null) {
-                                talendJobVesion = RelationshipItemBuilder.LATEST_VERSION;
+                            if (talendJobVersion == null) {
+                                talendJobVersion = RelationshipItemBuilder.LATEST_VERSION;
                             }
                             if (talendJobContextGroup == null) {
                                 talendJobContextGroup = IContext.DEFAULT;
                             }
                             IRepositoryViewObject foundObject = null;
                             try {
-                                if (RelationshipItemBuilder.LATEST_VERSION.equals(talendJobVesion)) {
+                                if (RelationshipItemBuilder.LATEST_VERSION.equals(talendJobVersion)) {
                                     foundObject = factory.getLastVersion(talendJobId);
                                 } else {
                                     // find out the fixing version
                                     List<IRepositoryViewObject> allVersionObjects = factory.getAllVersion(talendJobId);
                                     if (allVersionObjects != null) {
                                         for (IRepositoryViewObject obj : allVersionObjects) {
-                                            if (obj.getVersion().equals(talendJobVesion)) {
+                                            if (obj.getVersion().equals(talendJobVersion)) {
                                                 foundObject = obj;
                                                 break;
                                             }
@@ -298,7 +304,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         return groupId;
     }
 
-    private String getJobGroupId(String jobName) {
+    private String getJobGroupId(String jobId, String jobName) {
     	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
     }
 
@@ -405,7 +411,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (repObject != null) {
                 Element dependencyElement = parentEle.addElement(IMavenProperties.ELE_DEPENDENCY);
                 Element groupIdElement = dependencyElement.addElement(IMavenProperties.ELE_GROUP_ID);
-                groupIdElement.setText(getJobGroupId(repObject.getLabel()));
+                groupIdElement.setText(getJobGroupId(repObject.getId(), repObject.getLabel()));
                 Element artifactIdElement = dependencyElement.addElement(IMavenProperties.ELE_ARTIFACT_ID);
                 artifactIdElement.setText(repObject.getLabel() + "-bundle");
                 Element versionElement = dependencyElement.addElement(IMavenProperties.ELE_VERSION);
@@ -637,5 +643,64 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     public void setReferenceRoutelets(Collection<String> routelets) {
         this.referenceRoutelets = routelets;
+    }
+
+    private String getJobProjectName(String jobId, String jobName) throws IOException {
+
+        if (jobId == null || jobId.isEmpty()) {
+            return projectName;
+        }
+
+        if (jobName == null || jobName.isEmpty()) {
+            return projectName;
+        }
+
+        IRepositoryNode referencedJobNode = null;
+        Project referenceProject = null;
+        try {
+            List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
+            if (projects == null) {
+                return projectName;
+            }
+            for (Project p : projects) {
+                List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(
+                		p, ERepositoryObjectType.PROCESS);
+                if (jobs == null) {
+                    continue;
+                }
+                for (IRepositoryViewObject job : jobs) {
+                    if (job.getId().equals(jobId)) {
+                        referencedJobNode = new RepositoryNode(
+                        		job, null, IRepositoryNode.ENodeType.REPOSITORY_ELEMENT);
+                        referenceProject = p;
+                        break;
+                    }
+                }
+                if (referenceProject != null) {
+                    break;
+                }
+            }
+        } catch (PersistenceException e) {
+            throw new IOException(e);
+        }
+
+        if (referencedJobNode == null) {
+            return projectName;
+        }
+
+        Property p = referencedJobNode.getObject().getProperty();
+        String jobNameFound = p.getDisplayName();
+        String jobLabelFound = p.getLabel();
+
+        if ((jobNameFound == null || !jobNameFound.equals(jobName)) &&
+        		(jobLabelFound == null || !jobNameFound.equals(jobName))) {
+            return projectName;
+        }
+
+        if (referenceProject != null) {
+            return referenceProject.getLabel().toLowerCase();
+        }
+
+        return projectName;
     }
 }
