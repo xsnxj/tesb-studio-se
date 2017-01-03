@@ -17,14 +17,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.process.EConnectionType;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.Property;
+import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
@@ -34,7 +41,10 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
+import org.talend.repository.model.IRepositoryNode;
+import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.utils.EmfModelUtils;
 
 /**
@@ -140,8 +150,8 @@ public final class CamelFeatureUtil {
 
 	private static void addConnectionsSpecialFeatures(
 			Collection<FeatureModel> features, ProcessType processType) {
-		EList connections = processType.getConnection();
-		Iterator iterator = connections.iterator();
+		EList<?> connections = processType.getConnection();
+		Iterator<?> iterator = connections.iterator();
 		while(iterator.hasNext()){
 			Object next = iterator.next();
 			if(!(next instanceof ConnectionType)){
@@ -151,8 +161,8 @@ public final class CamelFeatureUtil {
 			if(!EConnectionType.ROUTE_WHEN.getName().equals(con.getConnectorName())){
 				continue;
 			}
-			EList elementParameters = con.getElementParameter();
-			Iterator paraIter = elementParameters.iterator();
+			EList<?> elementParameters = con.getElementParameter();
+			Iterator<?> paraIter = elementParameters.iterator();
 			while(paraIter.hasNext()){
 				Object paraNext = paraIter.next();
 				if(!(paraNext instanceof ElementParameterType)){
@@ -256,5 +266,69 @@ public final class CamelFeatureUtil {
 			return projectName + '.' + itemName;
 		}
 		return null;
+	}
+
+	public static String getMavenGroupId(String jobId, String jobName, String defaultProject) {
+		return JavaResourcesHelper.getGroupItemName(
+				getJobProjectName(jobId, jobName, defaultProject), jobName);
+	}
+
+	private static String getJobProjectName(String jobId, String jobName, String defaultProject) {
+
+        if (jobId == null || jobId.isEmpty()) {
+            return defaultProject;
+        }
+
+        if (jobName == null || jobName.isEmpty()) {
+            return defaultProject;
+        }
+
+        IRepositoryNode referencedJobNode = null;
+        Project referenceProject = null;
+        try {
+            List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
+            if (projects == null) {
+                return defaultProject;
+            }
+            for (Project p : projects) {
+                List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(
+                		p, ERepositoryObjectType.PROCESS);
+                if (jobs == null) {
+                    continue;
+                }
+                for (IRepositoryViewObject job : jobs) {
+                    if (job.getId().equals(jobId)) {
+                        referencedJobNode = new RepositoryNode(
+                        		job, null, IRepositoryNode.ENodeType.REPOSITORY_ELEMENT);
+                        referenceProject = p;
+                        break;
+                    }
+                }
+                if (referenceProject != null) {
+                    break;
+                }
+            }
+        } catch (PersistenceException e) {
+            return defaultProject;
+        }
+
+        if (referencedJobNode == null) {
+            return defaultProject;
+        }
+
+        Property p = referencedJobNode.getObject().getProperty();
+        String jobNameFound = p.getDisplayName();
+        String jobLabelFound = p.getLabel();
+
+        if ((jobNameFound == null || !jobNameFound.equals(jobName)) &&
+        		(jobLabelFound == null || !jobNameFound.equals(jobName))) {
+            return defaultProject;
+        }
+
+        if (referenceProject != null) {
+            return referenceProject.getLabel().toLowerCase();
+        }
+
+        return defaultProject;
 	}
 }

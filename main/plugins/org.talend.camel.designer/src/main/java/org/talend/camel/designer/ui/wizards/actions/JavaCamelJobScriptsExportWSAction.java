@@ -124,10 +124,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return CamelFeatureUtil.getMavenGroupId(routeNode.getObject().getProperty().getItem());
     }
 
-    protected String getJobGroupId(String jobName) {
-    	String projectName = JavaResourcesHelper.getProjectFolderName(
+    protected String getJobGroupId(String jobId, String jobName) {
+    	String defaultProjectName = JavaResourcesHelper.getProjectFolderName(
     			routeNode.getObject().getProperty().getItem());
-    	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
+    	return CamelFeatureUtil.getMavenGroupId(jobId, jobName, defaultProjectName);
     }
 
     protected String getArtifactId() {
@@ -231,8 +231,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             if(getArtifactVersion().endsWith("-SNAPSHOT")) {
             	jobArtifactVersion += "-SNAPSHOT";
             }
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getJobGroupId(jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
+            // String routeName = routeNode.getObject().getProperty().getDisplayName();
+            BundleModel jobModel = new BundleModel(getJobGroupId(jobId, jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
                     .getObject().getProperty().getDisplayName(), version, jobContext);
@@ -240,7 +240,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
 
-    protected void exportAllReferenceRoutelets(ProcessItem routeProcess, Collection<String> routelets) throws InvocationTargetException, InterruptedException {
+    @SuppressWarnings("unchecked")
+	protected void exportAllReferenceRoutelets(ProcessItem routeProcess, Collection<String> routelets) throws InvocationTargetException, InterruptedException {
         for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
             if (!EmfModelUtils.isComponentActive(node)) {
                 continue;

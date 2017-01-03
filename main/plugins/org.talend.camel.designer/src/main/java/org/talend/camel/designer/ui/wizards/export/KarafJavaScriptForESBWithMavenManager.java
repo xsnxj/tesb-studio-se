@@ -13,7 +13,6 @@
 package org.talend.camel.designer.ui.wizards.export;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,13 +40,11 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
-import org.talend.core.model.general.Project;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
-import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
@@ -64,10 +61,8 @@ import org.talend.designer.maven.template.MavenTemplateManager;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
-import org.talend.repository.ProjectManager;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.IMavenProperties;
@@ -304,7 +299,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     }
 
     private String getJobGroupId(String jobId, String jobName) {
-    	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
+    	return CamelFeatureUtil.getMavenGroupId(jobId, jobName, projectName);
     }
 
     @Override
@@ -359,7 +354,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
-                scriptsUrls.add(mavenBuildFile.toURL());
+                scriptsUrls.add(mavenBuildFile.toURI().toURL());
             }
 
             mavenScript = MavenTemplateManager.getTemplateContent(templateBundleFile,
@@ -369,7 +364,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
-                scriptsUrls.add(mavenBuildBundleFile.toURL());
+                scriptsUrls.add(mavenBuildBundleFile.toURI().toURL());
             }
 
             mavenScript = MavenTemplateManager.getTemplateContent(templateFeatureFile,
@@ -379,7 +374,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
-                scriptsUrls.add(mavenBuildFeatureFile.toURL());
+                scriptsUrls.add(mavenBuildFeatureFile.toURI().toURL());
             }
 
             mavenScript = MavenTemplateManager.getTemplateContent(templateParentFile,
@@ -389,7 +384,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
-                scriptsUrls.add(mavenBuildParentFile.toURL());
+                scriptsUrls.add(mavenBuildParentFile.toURI().toURL());
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -551,7 +546,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (karFile.exists()) {
                 ExportFileResource karFileResource = new ExportFileResource(null, ""); //$NON-NLS-1$
                 try {
-                    karFileResource.addResource("", karFile.toURL()); //$NON-NLS-1$
+                    karFileResource.addResource("", karFile.toURI().toURL()); //$NON-NLS-1$
                 } catch (MalformedURLException e) {
                     ExceptionHandler.process(e);
                 }
@@ -642,64 +637,5 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     public void setReferenceRoutelets(Collection<String> routelets) {
         this.referenceRoutelets = routelets;
-    }
-
-    private String getJobProjectName(String jobId, String jobName) throws IOException {
-
-        if (jobId == null || jobId.isEmpty()) {
-            return projectName;
-        }
-
-        if (jobName == null || jobName.isEmpty()) {
-            return projectName;
-        }
-
-        IRepositoryNode referencedJobNode = null;
-        Project referenceProject = null;
-        try {
-            List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
-            if (projects == null) {
-                return projectName;
-            }
-            for (Project p : projects) {
-                List<IRepositoryViewObject> jobs = ProxyRepositoryFactory.getInstance().getAll(
-                		p, ERepositoryObjectType.PROCESS);
-                if (jobs == null) {
-                    continue;
-                }
-                for (IRepositoryViewObject job : jobs) {
-                    if (job.getId().equals(jobId)) {
-                        referencedJobNode = new RepositoryNode(
-                        		job, null, IRepositoryNode.ENodeType.REPOSITORY_ELEMENT);
-                        referenceProject = p;
-                        break;
-                    }
-                }
-                if (referenceProject != null) {
-                    break;
-                }
-            }
-        } catch (PersistenceException e) {
-            throw new IOException(e);
-        }
-
-        if (referencedJobNode == null) {
-            return projectName;
-        }
-
-        Property p = referencedJobNode.getObject().getProperty();
-        String jobNameFound = p.getDisplayName();
-        String jobLabelFound = p.getLabel();
-
-        if ((jobNameFound == null || !jobNameFound.equals(jobName)) &&
-        		(jobLabelFound == null || !jobNameFound.equals(jobName))) {
-            return projectName;
-        }
-
-        if (referenceProject != null) {
-            return referenceProject.getLabel().toLowerCase();
-        }
-
-        return projectName;
     }
 }
