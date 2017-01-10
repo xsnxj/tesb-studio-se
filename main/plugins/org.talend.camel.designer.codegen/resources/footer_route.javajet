@@ -146,7 +146,7 @@
         <%
             for (String routeletClass : getRoutelets(process)) {
         %>
-                new <%=routeletClass %>().configureRoutes((org.apache.camel.model.ModelCamelContext) getContext());
+                new <%=routeletClass %>().addRoutesToCamelContext((org.apache.camel.model.ModelCamelContext) getContext());
         <%
             }
         %>
