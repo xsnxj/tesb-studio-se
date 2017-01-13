@@ -183,6 +183,55 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-service-description-swagger-${cxf.version}.jar"
                 REQUIRED="true"/>
                 <!--REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
+
+            <IMPORT MODULE="swagger-jaxrs-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-jaxrs/6.0.0" NAME="swagger-jaxrs-${swagger.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-jaxrs-${swagger.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="swagger-core-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-core/6.0.0" NAME="swagger-core-${swagger.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-core-${swagger.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="swagger-models-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-models/6.0.0" NAME="swagger-models-${swagger.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-models-${swagger.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="commons-lang3-${commons.lang3.version}.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-${commons.lang3.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-${commons.lang3.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="slf4j-api-${slf4j-api.version}.jar" MVN="mvn:org.talend.libraries/slf4j-api/6.0.0" NAME="slf4j-api-${slf4j-api.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-${slf4j-api.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="reflections-${reflections.version}.jar" MVN="mvn:org.talend.libraries/reflections/6.0.0" NAME="reflections-${reflections.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/reflections-${reflections.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="jackson-core-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-core/6.0.0" NAME="jackson-core-${jackson.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-${jackson.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="jackson-databind-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-${jackson.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-${jackson.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="jackson-dataformat-yaml-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-dataformat-yaml/6.0.0" NAME="jackson-dataformat-yaml-${jackson.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-dataformat-yaml-${jackson.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="jackson-annotations-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-${jackson.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-${jackson.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="guava-${guava.version}.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-${guava.version}.jar"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-${guava.version}.jar"
+                REQUIRED="true"/>
+
+            <IMPORT MODULE="validation-api-${validation-api.version}.jar" MVN="mvn:org.talend.libraries/validation-api/6.0.0" NAME="validation-api-${validation-api.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/validation-api-${validation-api.version}.jar"
+                REQUIRED="true"/>
+
         </IMPORTS>
 	</CODEGENERATION>
 

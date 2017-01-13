@@ -1453,6 +1453,15 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				features.add(new org.apache.cxf.feature.LoggingFeature());
 			<% } %>
 
+            <% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__EXPOSE_SWAGGER_SPEC__"))) { %>
+                org.apache.cxf.jaxrs.swagger.Swagger2Feature swaggerFeature =
+                        new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
+
+                swaggerFeature.setScan(false);
+                swaggerFeature.setBasePath(<%=ElementParameterParser.getValue(node, "__REST_ENDPOINT__")%>);
+                features.add(swaggerFeature);
+			<% } %>
+
 			sf.setFeatures(features);
 
 			server = sf.create();
