@@ -272,7 +272,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             }
             if (populationUtil == null) {
                 populationUtil = new WSDLPopulationUtil();
-                populationUtil.loadWSDL(baseUri);
+                populationUtil.loadWSDL("file://" + wsdlFile.getAbsolutePath());
             }
 
             final Set<QName> portTypes = new HashSet<QName>();
