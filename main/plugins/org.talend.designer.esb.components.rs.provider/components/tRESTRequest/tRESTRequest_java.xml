@@ -196,8 +196,8 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-models-${swagger.version}.jar"
                 REQUIRED="true"/>
 
-            <IMPORT MODULE="commons-lang3-${commons.lang3.version}.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-${commons.lang3.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-${commons.lang3.version}.jar"
+            <IMPORT MODULE="commons-lang3-${commons-lang3.version}.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-${commons-lang3.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-${commons-lang3.version}.jar"
                 REQUIRED="true"/>
 
             <IMPORT MODULE="slf4j-api-${slf4j-api.version}.jar" MVN="mvn:org.talend.libraries/slf4j-api/6.0.0" NAME="slf4j-api-${slf4j-api.version}"
