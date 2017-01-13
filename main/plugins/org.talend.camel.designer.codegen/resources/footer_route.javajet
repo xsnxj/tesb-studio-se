@@ -37,7 +37,7 @@
     if(process.getClass().getName().endsWith("MicroServiceProcess")){
         exportTypeSpringBoot = true;
     }
-	
+
 %>
 	}
 <%
@@ -142,15 +142,7 @@
 		}
 	}
 
-    private void addRoutelets() throws Exception{
-        <%
-            for (String routeletClass : getRoutelets(process)) {
-        %>
-                new <%=routeletClass %>().addRoutesToCamelContext((org.apache.camel.model.ModelCamelContext) getContext());
-        <%
-            }
-        %>
-    }
+	<%= generateAddRouteletMethod(process)%>
 
     <%
         if(exportTypeSpringBoot){
@@ -202,10 +194,10 @@
             
             return stream;
         }
-    
+
         private static void loadConfig(Map<String,String> argsMap,String configName,String configValue){
             String configFileValue = "classpath:config/" + configValue;
-    
+
             if (argsMap.get(configName) == null) {
                 if (argsMap.get("--spring.config.location") == null) {
                     argsMap.put(configName, configFileValue);
@@ -232,15 +224,15 @@
                 }
             }
         }
-        
+
         private static String[] resetArgs(String... args){
             Map<String,String> argsMap = new HashMap<String,String>();
-    
+
             for(int i=0;i<args.length;i++){
                 String[] kv = args[i].split("=");
                 argsMap.put(kv[0], kv[1]);
             }
-            
+
             if (argsMap.get("--spring.config.location") != null) {
                 System.setProperty("spring.config.location",argsMap.get("--spring.config.location"));
             }            
@@ -250,31 +242,31 @@
             if (argsMap.get("--camel.springboot.typeConversion") == null) {
                 argsMap.put("--camel.springboot.typeConversion", "false");
             }
-            
+
             String[] resetArgs = new String[argsMap.size()];
             
             java.util.Set<String> keySet = argsMap.keySet();
-    
+
             int idx = 0;
             
             for(String key:keySet){
                 resetArgs[idx] =  key+"="+argsMap.get(key);
                 idx++;
             }
-            
+
             return resetArgs;
         }
-        
-        
+
+
         @org.springframework.beans.factory.annotation.Autowired
         private ContextProperties context;
-        
+
         @org.springframework.boot.context.properties.ConfigurationProperties
         public static class ContextProperties {
-        
+
     <%} else { %>
         private final ContextProperties context = new ContextProperties();
-        
+
         public static class ContextProperties extends Properties {
             public void synchronizeContext() {
                 <% for (IContextParameter ctxParam : params){
@@ -311,7 +303,7 @@ for (IContextParameter ctxParam : params) {
 		public <%=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true)%> get<%=Character.toUpperCase(ctxParam.getName().charAt(0)) + ctxParam.getName().substring(1)%>() {
 			return this.<%=ctxParam.getName()%>;
 		}
-		
+
 		<% if(exportTypeSpringBoot){%>
 		    public void set<%=Character.toUpperCase(ctxParam.getName().charAt(0)) + ctxParam.getName().substring(1)%>(<%=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true)%> <%=ctxParam.getName()%>) {
                 this.<%=ctxParam.getName()%> = <%=ctxParam.getName()%>;
@@ -343,27 +335,21 @@ for (IContextParameter ctxParam : params) {
     %>
     
         public static void main(String... args){
-
             String[] resetArgs = resetArgs(args);
-        
-
-            
             org.springframework.context.ApplicationContext applicationContext = new org.springframework.boot.SpringApplication(<%=className%>.class).run(resetArgs);
-        
             org.apache.camel.spring.boot.CamelSpringBootApplicationController applicationController = applicationContext.getBean(org.apache.camel.spring.boot.CamelSpringBootApplicationController.class);
-            
             applicationController.blockMainThread();
         }
     
     <% } else { %>
-    
+
         public static void main(String[] args){
             int exitCode = new <%=className %>().runJobInTOS(args);
             if(exitCode != 0) {
                 System.exit(exitCode);
             }
         }
-    
+
     <% }
  
 if (isTestContainer) {
@@ -371,7 +357,7 @@ if (isTestContainer) {
 	List<String> instanceList =  ProcessUtils.getTestInstances(process);
 	for(String instance : instanceList)
 	{
-%>         
+%>
 	@org.junit.Test
 	public void test<%=instance%>() throws java.lang.Exception {
 
@@ -543,7 +529,7 @@ if (isTestContainer) {
             private void readContextValues(String contextName){
                 try {
                     java.io.InputStream inContext = <%=className %>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
-        
+
                     if (inContext!=null) {
                         context.load(inContext);
                         inContext.close();
@@ -551,14 +537,14 @@ if (isTestContainer) {
                         //print info and job continue to run, for case: context_param is not empty.
                         System.err.println("Could not find the context " + contextName);
                     }
-        
+
                     if(!context_param.isEmpty()) {
                         context.putAll(context_param);
                     }
         <% 
                     //for bug TDI-22398
                     for (IContextParameter ctxParam :params){ //start for
-        
+
                         if (ctxParam.getType().equals("id_Password")) {
                     %>
                             String pwd_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
@@ -577,15 +563,15 @@ if (isTestContainer) {
                             }
                     <%
                             continue;
-                        }                       
-                    
+                        }
+
                         String typeToGenerate ="String";
                         if( !(ctxParam.getType().equals("id_File") || ctxParam.getType().equals("id_Directory") ||ctxParam.getType().equals("id_List Of Value")))
                         {
                            typeToGenerate=JavaTypesManager.getTypeToGenerate(ctxParam.getType(),true);
                         }
                         if(typeToGenerate.equals("java.util.Date")){ // start if
-                            
+
         %>
                     try{
                         String context_<%=ctxParam.getName()%>_value = context.getProperty("<%=ctxParam.getName()%>");
@@ -612,7 +598,7 @@ if (isTestContainer) {
         <%
                         }else if(typeToGenerate.equals("Character")&&ctxParam.getName()!=null){
         %>
-                        context.<%=ctxParam.getName()%>= new java.text.StringCharacterIterator(context.getProperty("<%=ctxParam.getName()%>")).first();          
+                        context.<%=ctxParam.getName()%>= new java.text.StringCharacterIterator(context.getProperty("<%=ctxParam.getName()%>")).first();
         <%
                         }else{
         %> 
