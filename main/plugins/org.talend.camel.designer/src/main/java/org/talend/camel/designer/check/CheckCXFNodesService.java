@@ -40,7 +40,7 @@ public class CheckCXFNodesService implements ICheckNodesService {
 	 * .core.ui.editor.nodes.Node)
 	 */
 	public void checkNode(Node node) {
-		if (!node.getComponent().getName().equals("cCXF")) { //$NON-NLS-1$
+		if (!node.getComponent().getName().equals("cSOAP")) { //$NON-NLS-1$
 			return;
 		}
         final IElementParameter serviceParam = node.getElementParameter("SERVICE_TYPE"); //$NON-NLS-1$

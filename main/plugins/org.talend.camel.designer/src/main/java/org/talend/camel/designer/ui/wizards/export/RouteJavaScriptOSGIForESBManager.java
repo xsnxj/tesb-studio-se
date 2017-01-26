@@ -122,10 +122,10 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
         boolean hasCXFSamlProvider = false;
         boolean hasCXFRSSamlProviderAuthz = false;
 
-        Collection<NodeType> cCXFs = EmfModelUtils.getComponentsByName(processItem, "cCXF");
-        boolean hasCXFComponent = !cCXFs.isEmpty();
-        cCXFs.addAll(EmfModelUtils.getComponentsByName(processItem, "cCXFRS"));
-        if (!cCXFs.isEmpty()) {
+        Collection<NodeType> cSOAPs = EmfModelUtils.getComponentsByName(processItem, "cSOAP");
+        boolean hasCXFComponent = !cSOAPs.isEmpty();
+        cSOAPs.addAll(EmfModelUtils.getComponentsByName(processItem, "cCXFRS"));
+        if (!cSOAPs.isEmpty()) {
             Set<String> consumerNodes = new HashSet<String>();
             @SuppressWarnings("unchecked")
             List<ConnectionType> connections = processItem.getProcess().getConnection();
@@ -134,7 +134,7 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
             }
 
             boolean isEEVersion = isStudioEEVersion();
-            for (NodeType node : cCXFs) {
+            for (NodeType node : cSOAPs) {
                 boolean nodeUseSAM = false;
                 boolean nodeUseSaml = false;
                 boolean nodeUseAuthz = false;

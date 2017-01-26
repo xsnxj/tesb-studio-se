@@ -15,10 +15,10 @@ public abstract class AbstractNodeAdapter extends BaseNodeAdapter {
 			}
 		},
 
-		cCXF {
+		cSOAP {
 			@Override
 			public AbstractNodeAdapter getParametersSetter(WebServiceNode wrappedNode) {
-				return new CCXFNodeAdapter(wrappedNode);
+				return new CSOAPNodeAdapter(wrappedNode);
 			}
 		};
 

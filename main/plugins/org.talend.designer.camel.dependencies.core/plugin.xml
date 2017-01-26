@@ -19,7 +19,7 @@
                 routines.system.api"
         />
 
-        <component componentName="cCXF">
+        <component componentName="cSOAP">
             <importPackage
                 name="javax.xml.namespace,
                     org.apache.camel.component.cxf,

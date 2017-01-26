@@ -10,13 +10,13 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
 /**
- * DOC GangLiu class global comment. Detailled comment
+ * DOC GangLiu class global comment. Detailed comment
  */
 public class UpdateCXFDataFormatMigrationTask extends AbstractRouteItemComponentMigrationTask {
 
 	@Override
 	public String getComponentNameRegex() {
-		return "cCXF";
+		return "cSOAP";
 	}
 
 	public Date getOrder() {

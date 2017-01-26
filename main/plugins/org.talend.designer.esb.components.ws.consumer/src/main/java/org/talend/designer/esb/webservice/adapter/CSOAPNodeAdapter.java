@@ -26,11 +26,11 @@ import org.talend.designer.esb.webservice.WebServiceNode;
 import org.talend.designer.esb.webservice.util.RouteResourcesHelper;
 import org.talend.designer.esb.webservice.ws.wsdlinfo.Function;
 
-class CCXFNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants {
+class CSOAPNodeAdapter extends AbstractNodeAdapter implements WebServiceConstants {
 
 
 
-	CCXFNodeAdapter(WebServiceNode node) {
+	CSOAPNodeAdapter(WebServiceNode node) {
 		super(node);
 	}
 

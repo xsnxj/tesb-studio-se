@@ -501,7 +501,7 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasCXFRSProvider = false;
     boolean hasCXFRSServiceLocator = false;
 	for (INode node : graphicalNodes) {
-		if ("cCXF".equals(node.getComponent().getName())) {
+		if ("cSOAP".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
             String dataFormat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
             if (isStudioEEVersion && !"RAW".equals(dataFormat) && !"CXF_MESSAGE".equals(dataFormat)) {
@@ -1141,7 +1141,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             boolean hasCXFServiceLocator = false;
 
             List<INode> allCxfNodes = new ArrayList<INode>();
-            allCxfNodes.addAll(process.getNodesOfType("cCXF"));
+            allCxfNodes.addAll(process.getNodesOfType("cSOAP"));
             boolean hasCXFComponent = !allCxfNodes.isEmpty();
             allCxfNodes.addAll(process.getNodesOfType("cCXFRS"));
             boolean hasCXF = !allCxfNodes.isEmpty();
@@ -2043,7 +2043,7 @@ if (isProvider) {
 %>
 
 <%
-            List<? extends INode> cxfNodes = process.getNodesOfType("cCXF");
+            List<? extends INode> cxfNodes = process.getNodesOfType("cSOAP");
             if (null != cxfNodes && !cxfNodes.isEmpty()){
                 boolean hasCXFConsumer = false;
                 boolean hasCXFSAMLProvider = false;
@@ -2713,7 +2713,7 @@ if (isProvider) {
                 continue;
             }
             String nodeComponentName = node.getComponent().getName();
-    if("cCXF".equals(nodeComponentName)){
+    if("cSOAP".equals(nodeComponentName)){
             IElementParameter param = node.getElementParameter("LABEL");
             String cid = node.getUniqueName();
             NodeParamsHelper helper = new NodeParamsHelper(node);
@@ -2727,7 +2727,7 @@ if (isProvider) {
 //              cid = (String)param.getValue()+"_"+cid;
 //          }
             String endpointVar = "endpoint_" + node.getUniqueName();
-            %><%@ include file="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cCXF/cCXF_uri.javajet"%><%
+            %><%@ include file="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cSOAP/cSOAP_uri.javajet"%><%
             String formatType = ElementParameterParser.getValue(node, "__DATAFORMAT__");
 
             boolean useRegistry = false;
@@ -2838,7 +2838,7 @@ if (isProvider) {
             if ("true".equals(useSL) && (isProvider || !useRegistry)) {
                 if (!isProvider) {
 %>
-                    <%=endpointVar%>.setAddress("locator://cCXF");
+                    <%=endpointVar%>.setAddress("locator://cSOAP");
 <%
                 }
                 List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
