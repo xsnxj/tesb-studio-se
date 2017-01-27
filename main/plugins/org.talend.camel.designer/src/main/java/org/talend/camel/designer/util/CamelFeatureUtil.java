@@ -122,7 +122,7 @@ public final class CamelFeatureUtil {
 				    continue;
 				}
 				String componentName = currentNode.getComponentName();
-				if ("cCXF".equals(componentName) || "cCXFRS".equals(componentName)) {
+				if ("cSOAP".equals(componentName) || "cCXFRS".equals(componentName)) {
 					handleCXFcase(features, currentNode);
 				} else if ("cLoop".equals(componentName)) {
 					handleLoopCase(features, currentNode);

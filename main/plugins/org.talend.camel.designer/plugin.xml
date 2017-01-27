@@ -234,10 +234,10 @@
           <projecttask
                 beforeLogon="false"
                 breaks="5.4.1"
-                class="org.talend.camel.designer.migration.UpdatecCXFServiceNamePortNameDefault"
+                class="org.talend.camel.designer.migration.UpdatecSOAPServiceNamePortNameDefault"
                 description="Set Default value of Service name and Port name to empty string"
-                id="org.talend.camel.designer.migration.UpdatecCXFServiceNamePortNameDefault"
-                name="UpdatecCXFServiceNamePortNameDefault"
+                id="org.talend.camel.designer.migration.UpdatecSOAPServiceNamePortNameDefault"
+                name="UpdatecSOAPServiceNamePortNameDefault"
                 version="5.6.1">
           </projecttask>
           <projecttask

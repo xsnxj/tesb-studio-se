@@ -23,7 +23,7 @@ public class UpdateRouteResourceTypeMigrationTask extends AbstractRouteItemCompo
 
     @Override
     public String getComponentNameRegex() {
-        return "cCXF|cFlatPack";
+        return "cSOAP|cFlatPack";
     }
 
     public Date getOrder() {

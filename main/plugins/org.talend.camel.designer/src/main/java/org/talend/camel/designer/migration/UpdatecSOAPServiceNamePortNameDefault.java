@@ -8,12 +8,12 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 
-public class UpdatecCXFServiceNamePortNameDefault extends
+public class UpdatecSOAPServiceNamePortNameDefault extends
 		AbstractRouteItemComponentMigrationTask {
 
 	@Override
 	public String getComponentNameRegex() {
-		return "cCXF";
+		return "cSOAP";
 	}
 
 	public Date getOrder() {
