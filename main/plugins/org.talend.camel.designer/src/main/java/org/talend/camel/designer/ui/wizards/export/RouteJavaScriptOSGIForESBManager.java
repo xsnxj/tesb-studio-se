@@ -124,7 +124,7 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
         Collection<NodeType> cSOAPs = EmfModelUtils.getComponentsByName(processItem, "cSOAP");
         boolean hasCXFComponent = !cSOAPs.isEmpty();
-        cSOAPs.addAll(EmfModelUtils.getComponentsByName(processItem, "cCXFRS"));
+        cSOAPs.addAll(EmfModelUtils.getComponentsByName(processItem, "cREST"));
         if (!cSOAPs.isEmpty()) {
             Set<String> consumerNodes = new HashSet<String>();
             @SuppressWarnings("unchecked")
