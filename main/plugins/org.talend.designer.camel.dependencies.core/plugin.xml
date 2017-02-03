@@ -72,7 +72,7 @@
             </importPackage>
         </component>
 
-        <component componentName="cCXFRS">
+        <component componentName="cREST">
             <importPackage
                 name="javax.ws.rs,
                     javax.ws.rs.core,

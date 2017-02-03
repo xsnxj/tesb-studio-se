@@ -518,7 +518,7 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     private final CorrelationIDCallbackHandler correlationIDCallbackHandler_<%=cid%> = new CorrelationIDCallbackHandler();
 <%
             } // CorrelationID
-		} else if ("cCXFRS".equals(node.getComponent().getName())) {
+		} else if ("cREST".equals(node.getComponent().getName())) {
             if(!hasCXFRSServiceLocator){
                 hasCXFRSServiceLocator = Boolean.parseBoolean(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
             }
@@ -1027,7 +1027,7 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 <%
             } // CorrelationID
 
-		} // "cCXFRS"
+		} // "cREST"
 	} // for
 
     if (hasSam) {
@@ -1143,7 +1143,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             List<INode> allCxfNodes = new ArrayList<INode>();
             allCxfNodes.addAll(process.getNodesOfType("cSOAP"));
             boolean hasCXFComponent = !allCxfNodes.isEmpty();
-            allCxfNodes.addAll(process.getNodesOfType("cCXFRS"));
+            allCxfNodes.addAll(process.getNodesOfType("cREST"));
             boolean hasCXF = !allCxfNodes.isEmpty();
             for(INode n: allCxfNodes) {
                 boolean isProvider = n.getIncomingConnections().isEmpty();
@@ -2084,7 +2084,7 @@ if (isProvider) {
 <%              }
             }
 
-            for (INode node : process.getNodesOfType("cCXFRS")) {
+            for (INode node : process.getNodesOfType("cREST")) {
                 String cid = node.getUniqueName();
 %>
                 org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean factory_<%=cid%>;
@@ -2304,8 +2304,8 @@ if (isProvider) {
 <%
                 } else if (!isProvider) {
 %>
-                    // {baseUri}cCXFRS
-                    factory_<%=cid%>.setServiceName(new javax.xml.namespace.QName(<%=ElementParameterParser.getValue(node, "__URL__")%>, "cCXFRS"));
+                    // {baseUri}cREST
+                    factory_<%=cid%>.setServiceName(new javax.xml.namespace.QName(<%=ElementParameterParser.getValue(node, "__URL__")%>, "cREST"));
 <%
                 }
 
