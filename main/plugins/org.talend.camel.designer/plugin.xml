@@ -258,6 +258,15 @@
                 name="UpdateRouteResourceTypeMigrationTask"
                 version="6.1.0">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.6.0"
+                class="org.talend.camel.designer.migration.RenameToCSoapAndCRestMigrationTask"
+                description="Rename cCXF To cSoap and cCXFRS to cRest"
+                id="org.talend.camel.designer.migration.RenameToCSoapAndCRestMigrationTask"
+                name="RenameToCSoapAndCRestMigrationTask"
+                version="6.4.0">
+          </projecttask>
     </extension>
 
         <extension
