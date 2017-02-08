@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+>
+   <extension
+         point="org.talend.core.runtime.service">
+      <Service
+            class="org.talend.designer.esb.runcontainer.core.LocalRunESBContainerService"
+            serviceId="IESBRunContainerService">
+      </Service>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.talend.designer.runprocess"
+            class="org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage"
+            id="org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage"
+            name="Local Runtime">
+      </page>
+   </extension>
+</plugin>
