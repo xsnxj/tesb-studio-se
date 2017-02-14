@@ -50,7 +50,7 @@ public class CLASS {
 	            org.talend.core.model.process.IProcess2 routelet = (org.talend.core.model.process.IProcess2) node.getComponent().getProcess();
 	            final String routeletClass = org.talend.core.model.utils.JavaResourcesHelper.getJobClassName(routelet);
 	            final String instanceName = routeletClass.substring(routeletClass.lastIndexOf('.')+1);
-	            code.append(routeletClass +" "+ instanceName +"=new "+ routeletClass+ "();\n");
+	            code.append(routeletClass +" "+ instanceName +"=new "+ routeletClass+ "(){@Override\n public void configure() throws java.lang.Exception {this.doConfig();}};\n");
 	            if(useRoute){
 	            	if(!routeContextCodeGenerated){
 	            		routeContextCodeGenerated=true;

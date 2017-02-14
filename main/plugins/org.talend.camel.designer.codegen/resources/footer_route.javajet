@@ -125,10 +125,12 @@
         };
 
         //add route
-		main.addRouteBuilder(<%=isTestContainer ? "this.createRouteBuilder()" : "this" %>);
+        main.addRouteBuilder(<%=isTestContainer ? "this.createRouteBuilder()" : "this" %>);
 		
         main.run();
     }
+    
+    private boolean runInRuntime = true;
 
 	public void stop() throws java.lang.Exception {
 		if(main != null) {
@@ -488,6 +490,7 @@ if (isTestContainer) {
 
     @Override
     public int runJobInTOS(String[] args) {
+        runInRuntime = false;
 		String lastStr = "";
         for (String arg : args) {
         	if (arg.equalsIgnoreCase("--context_param")) {

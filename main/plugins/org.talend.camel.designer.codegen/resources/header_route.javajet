@@ -158,6 +158,13 @@ package <%= packageName %>;
  
  <%
         boolean exportTypeSpringBoot = false;
+        boolean isRoutelet = false;
+        try{
+            isRoutelet = (((org.talend.core.model.properties.Property)process.getClass().getMethod("getProperty", null).invoke(process, null)).getItem().getClass().getName().endsWith("RouteletProcessItemImpl"));
+        }catch(Exception eee){
+            
+        }
+        
         if(process.getClass().getName().endsWith("MicroServiceProcess")){
             exportTypeSpringBoot = true;
         }
@@ -2003,6 +2010,28 @@ if (isProvider) {
 %>
             @Override
             public void configure() throws java.lang.Exception {
+                <%
+                    if(hasRouteletComponent(process)){
+                %>
+                        doConfig();
+                <%
+                    }else{
+                        if(isRoutelet){
+                %>
+                            if(!runInRuntime){
+                                doConfig();
+                            }
+                <%
+                        }else{
+                %>
+                            doConfig();
+                <%
+                        }
+                    }
+                %>
+            }
+            
+            public void doConfig() throws java.lang.Exception {
                 final /*org.apache.camel.model.Model*/CamelContext camelContext = getContext();
 <%
 				if(hasRouteletComponent(process)){
