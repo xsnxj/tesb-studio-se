@@ -2007,9 +2007,7 @@ if (isProvider) {
 <%
 				if(hasRouteletComponent(process)){
 %>
-                if (!inOSGi) {
                 	addRoutelets();
-                }
 <%
 				}
 %>
