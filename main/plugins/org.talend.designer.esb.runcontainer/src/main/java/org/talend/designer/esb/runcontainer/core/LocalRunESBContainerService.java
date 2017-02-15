@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.EComponentCategory;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
+import org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessContext;
 import org.talend.designer.esb.runcontainer.ui.RunESBContainerComposite;
 import org.talend.designer.runprocess.IESBRunContainerService;
 import org.talend.designer.runprocess.RunProcessContext;
@@ -39,6 +40,10 @@ import org.talend.designer.runprocess.ui.views.ProcessView;
 public class LocalRunESBContainerService implements IESBRunContainerService {
 
     private RunESBContainerComposite esbContainerComposite;
+
+    private RunProcessContext containerProcessContext;
+
+    private RunProcessContext esbProcessContext;
 
     @Override
     public EComponentCategory getRunCategory() {
@@ -66,8 +71,31 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
     public IDynamicProperty createRunContainerComposite(ProcessView viewPart, Composite parent, RunProcessContext processContext,
             int style) {
         esbContainerComposite = new RunESBContainerComposite(viewPart, parent, processContext, style);
-        esbContainerComposite.setProcessContext(processContext);
+        if (containerProcessContext != null) {
+            esbContainerComposite.setProcessContext(containerProcessContext);
+        }
         return esbContainerComposite;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.runprocess.IESBRunContainerService#setRunProcessContext(org.talend.designer.runprocess.
+     * RunProcessContext)
+     */
+    @Override
+    public void setRunProcessContext(RunProcessContext context) {
+        containerProcessContext = context;
+        // if (esbContainerComposite != null) {
+        // esbContainerComposite.setProcessContext(containerProcessContext);
+        // }
+
+        if (esbContainerComposite != null) {
+            if (esbProcessContext == null) {
+                esbProcessContext = new ESBRunContainerProcessContext(containerProcessContext.getProcess());
+            }
+            esbContainerComposite.setProcessContext(esbProcessContext);
+        }
     }
 
 }

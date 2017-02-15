@@ -23,7 +23,6 @@ package org.talend.designer.esb.runcontainer.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -63,8 +62,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -85,11 +88,13 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
@@ -97,10 +102,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.TextConsole;
-import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.progress.IProgressService;
-import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ImageProvider;
@@ -135,7 +137,8 @@ import org.talend.designer.core.ui.editor.process.Process;
 import org.talend.designer.core.ui.editor.subjobcontainer.sparkstreaming.SparkStreamingSubjobContainer;
 import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
 import org.talend.designer.core.ui.views.problems.Problems;
-import org.talend.designer.esb.runcontainer.ui.console.ESBRunContainerConsole;
+import org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage;
+import org.talend.designer.esb.runcontainer.ui.actions.JavaCamelJobScriptsExportWSForRuntimeAction;
 import org.talend.designer.runprocess.IProcessMessage;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.JobErrorsChecker;
@@ -252,6 +255,10 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
     private ProcessManager processManager;
 
     private ProcessView viewPart;
+
+    private Button statusBtn;
+
+    private Button updateBtn;
 
     /**
      * DOC yyi RunContainerComposite constructor comment.
@@ -657,11 +664,63 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
         formData.height = 30;
         clearTracePerfBtn.setLayoutData(formData);
 
+        statusBtn = new Button(execHeader, SWT.PUSH);
+        statusBtn.setText("Status"); //$NON-NLS-1$
+        statusBtn.setToolTipText(Messages.getString("ProcessComposite.clearHint")); //$NON-NLS-1$
+        statusBtn.setImage(ImageProvider.getImage(RunProcessPlugin.imageDescriptorFromPlugin(RunProcessPlugin.PLUGIN_ID,
+                "icons/trace_on.png"))); //$NON-NLS-1$
+        statusBtn.setEnabled(true);
+        formData = new FormData();
+        formData.top = new FormAttachment(clearTracePerfBtn, 0, SWT.TOP);
+        formData.left = new FormAttachment(clearTracePerfBtn, 0, SWT.RIGHT);
+        formData.right = new FormAttachment(clearTracePerfBtn, 10 + 70, SWT.RIGHT);
+        formData.height = 30;
+        statusBtn.setLayoutData(formData);
+
+        updateBtn = new Button(execHeader, SWT.PUSH);
+        updateBtn.setText("Update"); //$NON-NLS-1$
+        updateBtn.setToolTipText(Messages.getString("ProcessComposite.clearHint")); //$NON-NLS-1$
+        updateBtn.setImage(ImageProvider.getImage(RunProcessPlugin.imageDescriptorFromPlugin(RunProcessPlugin.PLUGIN_ID,
+                "icons/process_view.png"))); //$NON-NLS-1$
+        updateBtn.setEnabled(true);
+        formData = new FormData();
+        formData.top = new FormAttachment(statusBtn, 0, SWT.TOP);
+        formData.left = new FormAttachment(statusBtn, 0, SWT.RIGHT);
+        formData.right = new FormAttachment(statusBtn, 10 + 70, SWT.RIGHT);
+        formData.height = 30;
+        updateBtn.setLayoutData(formData);
+
+        Link runtimePrefLink = new Link(execContent, SWT.NONE);
+        FormData fd_link = new FormData();
+        fd_link.left = new FormAttachment(2);
+        fd_link.right = new FormAttachment(20);
+        fd_link.top = new FormAttachment(0, 52);
+        runtimePrefLink.setLayoutData(fd_link);
+        runtimePrefLink.setText("<a>Runtime Environment</a>");
+        runtimePrefLink.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PreferenceDialog d = new PreferenceDialog(getShell(), PlatformUI.getWorkbench().getPreferenceManager());
+                d.setSelectedNode(ESBRunContainerPreferencePage.ID);
+                d.open();
+            }
+        });
+
+        Combo combo = new Combo(execContent, SWT.DROP_DOWN | SWT.READ_ONLY);
+        fd_link = new FormData();
+        fd_link.left = new FormAttachment(25);
+        fd_link.right = new FormAttachment(54);
+        fd_link.top = new FormAttachment(0, 50);
+        fd_link.width = 10;
+        combo.setLayoutData(fd_link);
+        combo.add("localhost");
+
         consoleText = new StyledText(execContent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
         layouData = new FormData();
         layouData.left = new FormAttachment(0, 10);
         layouData.right = new FormAttachment(100, 0);
-        layouData.top = new FormAttachment(0, 50);
+        layouData.top = new FormAttachment(33);
         layouData.bottom = new FormAttachment(100, -30);
 
         consoleText.setLayoutData(layouData);
@@ -734,18 +793,51 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
 
         Composite execFooter = new Composite(tabFolder, SWT.NONE);
         execFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        layout = new GridLayout();
-        execFooter.setLayout(new FormLayout());
 
+        execFooter.setLayout(new FormLayout());
+        FormData layouDatat = new FormData();
+        layouDatat.left = new FormAttachment(0, 0);
+        layouDatat.right = new FormAttachment(100, 0);
+        layouDatat.top = new FormAttachment(0);
+        layouDatat.bottom = new FormAttachment(100);
+        execFooter.setLayoutData(layoutData);
         serverItem.setControl(execFooter);
 
         // Text btn1 = new Text(execFooter, SWT.BORDER);
         // btn1.setLayoutData(layouDatag);
         // btn1.setText("hahahaha");
-        TextConsole c1 = new ESBRunContainerConsole("aa", "java", null, false);
-        TextConsoleViewer v1 = new TextConsoleViewer(execFooter, c1);
-        v1.setConsoleWidth(100);
-        v1.setTabWidth(200);
+
+        // DONOT REMOVE
+        // TextConsole c1 = new ESBRunContainerConsole("aa", "java", null, false);
+        // TextConsoleViewer v1 = new TextConsoleViewer(execFooter, c1);
+        // v1.setConsoleWidth(100);
+        // v1.setTabWidth(200);
+
+        Browser browser = new Browser(execFooter, SWT.NONE);
+        browser.setUrl("http://localhost:8040/system/console/gogo");
+        browser.addProgressListener(new ProgressListener() {
+
+            @Override
+            public void completed(ProgressEvent event) {
+                // System.out.println("------>" + browser.evaluate("return document.getElementById('main').innerHTML"));
+                System.out.println("------>" + browser.evaluate("document.getElementById('term').style.position='absolute';"));
+                System.out.println("------>" + browser.evaluate("document.getElementById('term').style.height='100%';"));
+                System.out.println("------>" + browser.evaluate("document.getElementById('term').style.width='100%';"));
+                System.out.println("------>" + browser.evaluate("document.getElementById('term').style.top='0';"));
+                System.out.println("------>" + browser.evaluate("document.getElementById('term').style.left='0';"));
+            }
+
+            @Override
+            public void changed(ProgressEvent event) {
+            }
+        });
+        browser.setLayoutData(new FormData());
+        layouDatat = new FormData();
+        layouDatat.left = new FormAttachment(0, 0);
+        layouDatat.right = new FormAttachment(100, 0);
+        layouDatat.top = new FormAttachment(0);
+        layouDatat.bottom = new FormAttachment(100);
+        browser.setLayoutData(layouDatat);
 
         addListeners();
         createLineLimitedControl(execContent);
@@ -1023,55 +1115,124 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
             // addInHistoryRunningList();
             // run.setData(ProcessView.PAUSE_ID);
             // exec();
+
+            processContext.exec(getShell());
+//
+            if (1 == 1) {
+
+                return;
+            }
+            IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
             try {
-                IProcess2 process = processContext.getProcess();
-                IRepositoryViewObject routeViewObject = findJob(process.getId());
+                progressService.run(false, true, new IRunnableWithProgress() {
 
-                RepositoryNode routeNode = new RepositoryNode(routeViewObject, null, ENodeType.REPOSITORY_ELEMENT);
-                JavaCamelJobScriptsExportWSAction action = new JavaCamelJobScriptsExportWSAction(routeNode, process.getVersion(),
-                        "e:/tmp/run_c.kar", true);
-                action.run(new RunESBContainerProgressMonitor(processContext));
-                processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, "Starting log listener"));
+                    @Override
+                    public void run(final IProgressMonitor monitor) {
+                        processContext.setRunning(true);
+                        // final IProgressMonitor progressMonitor = new EventLoopProgressMonitor(monitor);
+                        //                        progressMonitor.beginTask("Start log listener", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
-                String username = "karaf";
-                String password = "karaf";
+                        // RuntimeLogHTTPMonitor logMonitor = RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor();
+                        // try {
+                        // logMonitor.startLogging();
+                        // logMonitor.addLogLictener(new RuntimeLogHTTPAdapter() {
+                        //
+                        // @Override
+                        // public void logReceived(FelixLogsModel logsModel) {
+                        //
+                        // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+                        // Date date = new Date(logsModel.getReceived());
+                        //
+                        // String eventlog = sdf.format(date) + " | " + logsModel.getLevel() + " | "
+                        // + logsModel.getBundleId() + " - " + logsModel.getBundleName() + " | "
+                        // + logsModel.getMessage();
+                        // System.out.println(eventlog);
+                        // Display.getDefault().asyncExec(new Runnable() {
+                        //
+                        // @Override
+                        // public void run() {
+                        // Display.getDefault().asyncExec(new Runnable() {
+                        //
+                        // @Override
+                        // public void run() {
+                        // processContext.addMessage(new ProcessMessage(MsgType.STD_OUT, eventlog));
+                        // }
+                        // });
+                        // }
+                        // });
+                        // }
+                        // });
+                        // } catch (Exception e) {
+                        //
+                        // }
 
-                String host = "localhost";
-                String jmxPort = "44444";
-                String karafPort = "1099";
-                String instanceName = "trun";
-                String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://"+host+":" + karafPort + "/karaf-" + instanceName;
+                        //                        progressMonitor.beginTask("build ", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
-                HashMap<String, String[]> env = new HashMap<String, String[]>();
-                String[] credentials = new String[] { username, password };
-                env.put("jmx.remote.credentials", credentials);
+                        // processContext.addMessage(new ProcessMessage(MsgType.STD_OUT, "eventlog"));
+                        try {
 
-                JMXServiceURL url = new JMXServiceURL(serviceUrl);
-                JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
-                MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+//                            IProcess2 process = processContext.getProcess();
+//                            IRepositoryViewObject routeViewObject = findJob(process.getId());
 
-                String bundleUrl = new File("E:\\tmp\\run_c.kar").toURI().toURL().toExternalForm();;
-
-                String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
-//                String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
-                ObjectName objectName = new ObjectName(KARAF_BUNDLE_MBEAN);
-
-                Object retVal = mbsc.invoke(objectName, "install", new Object[] { bundleUrl, Boolean.TRUE }, new String[] {
-                        String.class.getName(), "boolean" });
-                if (retVal instanceof Long) {
-                    System.out.println("------>" + (Long) retVal);
-                    processContext.addMessage(new ProcessMessage(MsgType.CORE_OUT, ">>>>>>>>deployed success!"
-                            + retVal.toString()));
-                } else {
-                    processContext
-                            .addMessage(new ProcessMessage(MsgType.CORE_ERR, ">>>>>>>>deployed failed!" + retVal.toString()));
-                }
-
+//                            RepositoryNode routeNode = new RepositoryNode(routeViewObject, null, ENodeType.REPOSITORY_ELEMENT);
+//                            JavaCamelJobScriptsExportWSForRuntimeAction action = new JavaCamelJobScriptsExportWSForRuntimeAction(
+//                                    routeNode, process.getVersion(), "e:/tmp/alltest/run_c.kar", true);
+//                            action.run(new RunESBContainerProgressMonitor(processContext));
+//                            processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, "Starting log listener"));
+//                            String username = "karaf";
+//                            String password = "karaf";
+//
+//                            String host = "localhost";
+//                            String jmxPort = "44444";
+//                            String karafPort = "1099";
+//                            String instanceName = "trun";
+//                            String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":"
+//                                    + karafPort + "/karaf-" + instanceName;
+//
+//                            HashMap<String, String[]> env = new HashMap<String, String[]>();
+//                            String[] credentials = new String[] { username, password };
+//                            env.put("jmx.remote.credentials", credentials);
+//
+//                            JMXServiceURL url = new JMXServiceURL(serviceUrl);
+//                            JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
+//                            MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+//
+//                            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
+//                            // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+//                            ObjectName objectName = new ObjectName(KARAF_BUNDLE_MBEAN);
+//
+//                            mbsc.invoke(
+//                                    objectName,
+//                                    "addRepository",
+//                                    new Object[] { "file:E:/tmp/alltest/run_r1simple-feature/repository/local_project/run_r1simple/run_r1simple-feature/0.1/run_r1simple-feature-0.1.xml" },
+//                                    new String[] { String.class.getName() });
+//
+//                            mbsc.invoke(objectName, "installFeature", new Object[] { "run_r1simple-feature" },
+//                                    new String[] { String.class.getName() });
+//
+//                            Object info = mbsc.invoke(objectName, "infoFeature", new Object[] { "run_r1simple-feature" },
+//                                    new String[] { String.class.getName() });
+                            // if (info instanceof Long) {
+                            // System.out.println("------>" + (Long) info);
+                            // processContext
+                            // .addMessage(new ProcessMessage(MsgType.CORE_OUT, ">>>>>>>>deployed success!" +
+                            // info.toString()));
+                            // } else if (info instanceof TabularDataSupport) {
+                            //
+                            // processContext.addMessage(new ProcessMessage(MsgType.STD_OUT, ((TabularDataSupport)
+                            // info).get("Bundles")
+                            // .toString()));
+                            // }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, e.getMessage()));
             }
+
         }
         refreshNodeContainer();
         refreshSubjobContainer();
@@ -1810,6 +1971,8 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
         if (isDisposed()) {
             return;
         }
+        // add by Mike
+        processNextMessage();
         String propName = evt.getPropertyName();
         if (ProcessMessageManager.UPDATE_CONSOLE.equals(propName)) {
             processNextMessage();

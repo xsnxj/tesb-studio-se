@@ -24,4 +24,18 @@
             name="Local Runtime">
       </page>
    </extension>
+   <!-- extension
+         point="org.talend.designer.runprocess.runprocess_manager">
+      <runprocess_manager
+            class="org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessContextManager"
+            label="ESBRunContainerProcessContextManager">
+      </runprocess_manager>
+   </extension -->
+   <!-- extension
+         point="org.talend.designer.runprocess.runprocess_view_helper">
+      <runprocess_view_helper
+            class="org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessViewHelper"
+            label="ESBRunContainerProcessViewHelper">
+      </runprocess_view_helper>
+   </extension -->
 </plugin>

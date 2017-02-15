@@ -25,6 +25,8 @@ Require-Bundle: org.talend.core.runtime,
  org.talend.core.repository,
  org.eclipse.ui.console,
  org.talend.libraries.jackson,
- org.talend.remote.runtime.client
+ org.talend.remote.runtime.client,
+ org.talend.designer.publish.core,
+ org.eclipse.jdt.core
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin

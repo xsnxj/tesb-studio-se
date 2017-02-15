@@ -40,15 +40,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * $Id$
  *
  */
-public class RuntimeLogHTTPListener {
+public class RuntimeLogHTTPAdapter implements IRuntimeLogListener {
 
-    static String URL = "http://192.168.32.98:8040/system/console/logs?traces=true&minLevel=" + LogService.LOG_INFO;
+    static String URL = "http://localhost:8040/system/console/logs?traces=true&minLevel=" + LogService.LOG_INFO;
 
     static String BASIC = "karaf:karaf";
 
-    public void addListenerByBundleId(int bundleId){
-        
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.esb.runcontainer.logs.IRuntimeLogListener#addListenerByBundleId(int)
+     */
+    @Override
+    public void addListenerByBundleId(int bundleId) {
+
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.designer.esb.runcontainer.logs.IRuntimeLogListener#logReceived(org.talend.designer.esb.runcontainer
+     * .logs.FelixLogsModel)
+     */
+    @Override
+    public void logReceived(FelixLogsModel logsModel) {
+        // TODO Auto-generated method stub
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+        Date date = new Date(logsModel.getReceived());
+
+        System.out.println(sdf.format(date) + " | " + logsModel.getLevel() + " | " + logsModel.getBundleId() + " - "
+                + logsModel.getBundleName() + " | " + logsModel.getMessage());
+    }
+
     // test
     public static void main(String[] args) throws Exception {
 
@@ -71,15 +95,14 @@ public class RuntimeLogHTTPListener {
         int dataPos = line.indexOf("\"data\":") + 7;
         line = line.substring(dataPos, line.length());
         FelixLogsModel[] logs = mapper.readValue(line, FelixLogsModel[].class);
-        
+
         for (FelixLogsModel runtimeLogsModel : logs) {
-            System.out.println(runtimeLogsModel.getMessage());
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ssss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,sss");
 
             Date date = new Date(runtimeLogsModel.getReceived());
 
-            System.out.println(sdf.format(date));
+            System.out.println(sdf.format(date) + " | " + runtimeLogsModel.getLevel() + " | " + runtimeLogsModel.getBundleId()
+                    + " - " + runtimeLogsModel.getBundleName() + " | " + runtimeLogsModel.getMessage());
         }
     }
-
 }

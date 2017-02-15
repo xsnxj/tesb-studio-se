@@ -33,17 +33,28 @@ public class ESBRunContainerPreferencePage extends FieldEditorPreferencePage imp
     public ESBRunContainerPreferencePage() {
         super(GRID);
         setPreferenceStore(ESBRunContainerPlugin.getDefault().getPreferenceStore());
-        setDescription(Messages.getString("BPMRuntimePreferencePage.Desc")); //$NON-NLS-1$
+        setDescription("Runtime Test Container"); //$NON-NLS-1$
     }
 
     /*
      * TESB-15283 Update container for Bonita BPM 6.5.2
      * 
+     * String host = "localhost";
+                String jmxPort = "44444";
+                String karafPort = "1099";
+                String instanceName = "trun";
      * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
      */
     public void createFieldEditors() {
         addField(new StringFieldEditor(ESBRunContainerPreferenceInitializer.P_LOCAL_RUN_CONTAINER_PATH,
-                Messages.getString("BPMRuntimePreferencePage.Username"), getFieldEditorParent())); //$NON-NLS-1$
+                "Location", getFieldEditorParent())); //$NON-NLS-1$
+        addField(new StringFieldEditor("",
+                "JMX port", getFieldEditorParent())); //$NON-NLS-1$
+        addField(new StringFieldEditor("",
+                "Runtime port", getFieldEditorParent())); //$NON-NLS-1$
+        addField(new StringFieldEditor("",
+                "Instance name", getFieldEditorParent())); //$NON-NLS-1$
+        
 
     }
 
