@@ -59,29 +59,17 @@ import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 
 /**
- * DOC yyi class global comment. Detailled comment <br/>
- *
- * $Id$
+ * DOC yyan class global comment. Detailled comment <br/>
  *
  */
 public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcessor, TalendProcessOptionConstants {
 
     private IProcess process;
 
-    /**
-     * DOC yyi ESBRuntimeContainerProcessor constructor comment.
-     * 
-     * @param process
-     */
     public ESBRuntimeContainerProcessor(IProcess process) {
         this.process = process;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.runprocess.IProcessor#cleanBeforeGenerate(int)
-     */
     @Override
     public void cleanBeforeGenerate(int options) throws ProcessorException {
         // TODO Auto-generated method stub
@@ -168,7 +156,6 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
                 JavaCamelJobScriptsExportWSForRuntimeAction action = new JavaCamelJobScriptsExportWSForRuntimeAction(routeNode,
                         process.getVersion(), "", true);
                 action.run(new NullProgressMonitor());
-                System.out.println("------>" + RunESBContainerComposite.getProcessContext().isRunning());
 
                 String artifactId = routeNode.getObject().getProperty().getDisplayName();
 
@@ -199,15 +186,16 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
                 // + "-feature/repository/local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId
                 // + "-bundle-0.1.jar" }, new String[] { String.class.getName() });
 
-                Object bundleId = mbsc.invoke(objectName, "install", new Object[] { "file:E:/tmp/alltest/" + artifactId
-                        + "-feature/repository/local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId
-                        + "-bundle-0.1.jar" }, new String[] { String.class.getName() });
+                Object bundleId = mbsc.invoke(objectName, "install", new Object[] { "file:" + action.getExportDir()
+                        + "local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId + "-bundle-0.1.jar" },
+                        new String[] { String.class.getName() });
 
                 // Object info = mbsc.invoke(objectName, "infoFeature", new Object[] { artifactId + "-feature" },
                 // new String[] { String.class.getName() });
                 if (bundleId instanceof Long) {
                     esbRunContainerProcess.getOutputStream().write(bundleId.toString().getBytes());
-                    mbsc.invoke(objectName, "start", new Object[] { bundleId.toString() }, new String[] { String.class.getName() });
+                    mbsc.invoke(objectName, "start", new Object[] { bundleId.toString() },
+                            new String[] { String.class.getName() });
                 }
                 jmxc.close();
                 // if (info instanceof Long) {
@@ -221,6 +209,7 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
                 // info).get("Bundles")
                 // .toString()));
                 // }
+                action.removeTempFilesAfterDeploy();
             } catch (Exception e) {
                 e.printStackTrace();
             }

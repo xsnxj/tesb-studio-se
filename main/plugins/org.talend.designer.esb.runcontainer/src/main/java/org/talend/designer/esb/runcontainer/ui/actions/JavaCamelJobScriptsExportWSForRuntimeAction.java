@@ -37,44 +37,31 @@ import org.talend.repository.model.RepositoryNode;
 /**
  * It's for export the karaf feature to a target folder without zipping.
  *
- * $Id$
- *
  */
 public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScriptsExportWSAction {
 
-    /**
-     * DOC yyi JavaCamelJobScriptsExportWSForRuntimeAction constructor comment.
-     * 
-     * @param routeNode
-     * @param version
-     * @param bundleVersion
-     */
+    private String exportFolder;
+
     public JavaCamelJobScriptsExportWSForRuntimeAction(IRepositoryNode routeNode, String version, String bundleVersion) {
         super(routeNode, version, bundleVersion);
-        // TODO Auto-generated constructor stub
     }
 
-    /**
-     * DOC yyi JavaCamelJobScriptsExportWSForRuntimeAction constructor comment.
-     * 
-     * @param routeNode
-     * @param version
-     * @param string
-     * @param b
-     */
     public JavaCamelJobScriptsExportWSForRuntimeAction(RepositoryNode routeNode, String version, String string, boolean b) {
-        // TODO Auto-generated constructor stub
         super(routeNode, version, string, b);
+    }
+
+    public String getExportDir() {
+        return exportFolder;
     }
 
     @Override
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException,
             InterruptedException {
-        String parentFolder = "E:/tmp/alltest/" + featuresModel.getArtifactId() + "/repository";
+        exportFolder = getTempDir();
         try {
-            getTempDir();
+            ;
 
-            File parentDestFile = new File(parentFolder);
+            File parentDestFile = new File(exportFolder);
             if (!parentDestFile.exists()) {
                 parentDestFile.mkdirs();
             }
@@ -90,7 +77,7 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
                 // FileWriter fw = new FileWriter(new File(PREFIX + featuresModel.getRepositoryLocation(null)));
                 // FileOutputStream outputStream = new FileOutputStream(new File(PREFIX +
                 // featuresModel.getRepositoryLocation(null)));
-                File featureFile = new File(parentFolder + featuresModel.getRepositoryLocation(null));
+                File featureFile = new File(exportFolder + featuresModel.getRepositoryLocation(null));
                 featureFile.mkdirs();
                 Files.copy(featuresModel.getContent(), featureFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 // add(PREFIX + featuresModel.getRepositoryLocation(null), featuresModel.getContent());
@@ -104,7 +91,7 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
                     if (null == f) {
                         continue;
                     }
-                    File bundleFile = new File(parentFolder + bundleModel.getRepositoryLocation(null));
+                    File bundleFile = new File(exportFolder + bundleModel.getRepositoryLocation(null));
                     bundleFile.mkdirs();
                     Files.copy(bundleModel.getFile().toPath(), bundleFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     // add(PREFIX + bundleModel.getRepositoryLocation(null).toString(), f);
@@ -116,5 +103,19 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
         } catch (IOException e) {
             throw new InvocationTargetException(e);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction#removeTempFiles()
+     */
+    @Override
+    protected void removeTempFiles() {
+        // do nothing
+    }
+
+    public void removeTempFilesAfterDeploy() {
+        super.removeTempFiles();
     }
 }

@@ -170,8 +170,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
         } finally {
             // remove generated files
-            FilesUtils.removeFolder(getTempDir(), true);
+            removeTempFiles();
         }
+    }
+
+    protected void removeTempFiles() {
+        FilesUtils.removeFolder(getTempDir(), true);
     }
 
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
