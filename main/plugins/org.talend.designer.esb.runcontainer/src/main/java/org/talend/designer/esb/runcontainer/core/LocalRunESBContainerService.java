@@ -21,15 +21,20 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.core;
 
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.talend.core.model.components.ComponentCategory;
-import org.talend.core.model.process.EComponentCategory;
-import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessContext;
+import org.eclipse.swt.widgets.Control;
+import org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessContextManager;
 import org.talend.designer.esb.runcontainer.ui.RunESBContainerComposite;
 import org.talend.designer.runprocess.IESBRunContainerService;
 import org.talend.designer.runprocess.RunProcessContext;
-import org.talend.designer.runprocess.ui.views.ProcessView;
+import org.talend.designer.runprocess.RunProcessContextManager;
+import org.talend.designer.runprocess.RunProcessPlugin;
+import org.talend.designer.runprocess.ui.JobJvmComposite;
+import org.talend.designer.runprocess.ui.ProcessManager;
+import org.talend.designer.runprocess.ui.TargetExecComposite;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -39,63 +44,56 @@ import org.talend.designer.runprocess.ui.views.ProcessView;
  */
 public class LocalRunESBContainerService implements IESBRunContainerService {
 
-    private RunESBContainerComposite esbContainerComposite;
-
-    private RunProcessContext containerProcessContext;
-
     private RunProcessContext esbProcessContext;
 
-    @Override
-    public EComponentCategory getRunCategory() {
-        return EComponentCategory.ESBCONTAINERRUN;
-    }
+    private RunProcessContextManager remoteContextManager;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.runprocess.IESBRunContainerService#hasContainer()
-     */
-    @Override
-    public boolean hasRuntimeContainer(String componentCategory) {
-        return componentCategory.equals(ComponentCategory.CATEGORY_4_CAMEL.getName());
-    }
+    private RunProcessContextManager runtimeContextManager;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.designer.runprocess.IESBRunContainerService#createRunContainerComposite(org.eclipse.swt.widgets.Composite
-     * , org.talend.designer.runprocess.RunProcessContext, int)
-     */
+    private int index;
+
     @Override
-    public IDynamicProperty createRunContainerComposite(ProcessView viewPart, Composite parent, RunProcessContext processContext,
-            int style) {
-        esbContainerComposite = new RunESBContainerComposite(viewPart, parent, processContext, style);
-        if (containerProcessContext != null) {
-            esbContainerComposite.setProcessContext(containerProcessContext);
+    public void addRuntimeServer(TargetExecComposite targetExecComposite, JobJvmComposite jobComposite) {
+        // targetExecComposite.get
+        Combo tragetCombo = null;
+        if ("org.talend.designer.runprocess.remote.ui.RemoteProcessComposite".equals(jobComposite.getClass().getName())) {
+            // EE
+            Control control = ((Composite) jobComposite.getChildren()[0]).getChildren()[0];
+            tragetCombo = (Combo) control;
+            tragetCombo.add("ESB Runtime (localhost)");
+            this.index = tragetCombo.getSelectionIndex();
+
+        } else {
+            // SE
+
         }
-        return esbContainerComposite;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.runprocess.IESBRunContainerService#setRunProcessContext(org.talend.designer.runprocess.
-     * RunProcessContext)
-     */
-    @Override
-    public void setRunProcessContext(RunProcessContext context) {
-        containerProcessContext = context;
-        // if (esbContainerComposite != null) {
-        // esbContainerComposite.setProcessContext(containerProcessContext);
-        // }
-
-        if (esbContainerComposite != null) {
-            if (esbProcessContext == null) {
-                esbProcessContext = new ESBRunContainerProcessContext(containerProcessContext.getProcess());
+        if (tragetCombo != null) {
+            if (RunProcessPlugin.getDefault().getRunProcessContextManager() instanceof ESBRunContainerProcessContextManager) {
+                int i = tragetCombo.indexOf("ESB Runtime (localhost)");
+                tragetCombo.select(i);
+            }else{
+                tragetCombo.select(index);
             }
-            esbContainerComposite.setProcessContext(esbProcessContext);
+            tragetCombo.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    if (((Combo) e.getSource()).getText().equals("ESB Runtime (localhost)")) {
+                        //
+                        remoteContextManager = RunProcessPlugin.getDefault().getRunProcessContextManager();
+                        // targetExecComposite.setProcessViewHelper(new ESBRunContainerProcessViewHelper());
+                        if (runtimeContextManager == null) {
+                            runtimeContextManager = new ESBRunContainerProcessContextManager();
+                            runtimeContextManager.setActiveProcess(remoteContextManager.getActiveContext().getProcess());
+                        }
+                        RunProcessPlugin.getDefault().setRunProcessContextManager(runtimeContextManager);
+                        ProcessManager.getInstance().setProcessContext(esbProcessContext);
+                    } else {
+                        RunProcessPlugin.getDefault().setRunProcessContextManager(remoteContextManager);
+                    }
+                }
+
+            });
         }
     }
-
 }

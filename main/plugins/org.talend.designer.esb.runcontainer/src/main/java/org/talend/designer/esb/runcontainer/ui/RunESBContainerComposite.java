@@ -37,12 +37,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-
 import org.apache.commons.collections.BidiMap;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -138,7 +132,6 @@ import org.talend.designer.core.ui.editor.subjobcontainer.sparkstreaming.SparkSt
 import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
 import org.talend.designer.core.ui.views.problems.Problems;
 import org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage;
-import org.talend.designer.esb.runcontainer.ui.actions.JavaCamelJobScriptsExportWSForRuntimeAction;
 import org.talend.designer.runprocess.IProcessMessage;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.JobErrorsChecker;
@@ -164,10 +157,9 @@ import org.talend.designer.runprocess.ui.actions.ClearTraceAction;
 import org.talend.designer.runprocess.ui.actions.SaveJobBeforeRunAction;
 import org.talend.designer.runprocess.ui.views.IProcessViewHelper;
 import org.talend.designer.runprocess.ui.views.ProcessView;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.RepositoryNode;
 
 /**
+ * @deprecated
  * DOC yyan class global comment. Detailled comment
  */
 public class RunESBContainerComposite extends ScrolledComposite implements IDynamicProperty {
