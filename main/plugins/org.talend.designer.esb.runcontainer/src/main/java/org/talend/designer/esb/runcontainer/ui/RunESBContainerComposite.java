@@ -159,8 +159,7 @@ import org.talend.designer.runprocess.ui.views.IProcessViewHelper;
 import org.talend.designer.runprocess.ui.views.ProcessView;
 
 /**
- * @deprecated
- * DOC yyan class global comment. Detailled comment
+ * @deprecated DOC yyan class global comment. Detailled comment
  */
 public class RunESBContainerComposite extends ScrolledComposite implements IDynamicProperty {
 
@@ -1109,7 +1108,7 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
             // exec();
 
             processContext.exec(getShell());
-//
+            //
             if (1 == 1) {
 
                 return;
@@ -1163,47 +1162,53 @@ public class RunESBContainerComposite extends ScrolledComposite implements IDyna
                         // processContext.addMessage(new ProcessMessage(MsgType.STD_OUT, "eventlog"));
                         try {
 
-//                            IProcess2 process = processContext.getProcess();
-//                            IRepositoryViewObject routeViewObject = findJob(process.getId());
+                            // IProcess2 process = processContext.getProcess();
+                            // IRepositoryViewObject routeViewObject = findJob(process.getId());
 
-//                            RepositoryNode routeNode = new RepositoryNode(routeViewObject, null, ENodeType.REPOSITORY_ELEMENT);
-//                            JavaCamelJobScriptsExportWSForRuntimeAction action = new JavaCamelJobScriptsExportWSForRuntimeAction(
-//                                    routeNode, process.getVersion(), "e:/tmp/alltest/run_c.kar", true);
-//                            action.run(new RunESBContainerProgressMonitor(processContext));
-//                            processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, "Starting log listener"));
-//                            String username = "karaf";
-//                            String password = "karaf";
-//
-//                            String host = "localhost";
-//                            String jmxPort = "44444";
-//                            String karafPort = "1099";
-//                            String instanceName = "trun";
-//                            String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":"
-//                                    + karafPort + "/karaf-" + instanceName;
-//
-//                            HashMap<String, String[]> env = new HashMap<String, String[]>();
-//                            String[] credentials = new String[] { username, password };
-//                            env.put("jmx.remote.credentials", credentials);
-//
-//                            JMXServiceURL url = new JMXServiceURL(serviceUrl);
-//                            JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
-//                            MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-//
-//                            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
-//                            // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
-//                            ObjectName objectName = new ObjectName(KARAF_BUNDLE_MBEAN);
-//
-//                            mbsc.invoke(
-//                                    objectName,
-//                                    "addRepository",
-//                                    new Object[] { "file:E:/tmp/alltest/run_r1simple-feature/repository/local_project/run_r1simple/run_r1simple-feature/0.1/run_r1simple-feature-0.1.xml" },
-//                                    new String[] { String.class.getName() });
-//
-//                            mbsc.invoke(objectName, "installFeature", new Object[] { "run_r1simple-feature" },
-//                                    new String[] { String.class.getName() });
-//
-//                            Object info = mbsc.invoke(objectName, "infoFeature", new Object[] { "run_r1simple-feature" },
-//                                    new String[] { String.class.getName() });
+                            // RepositoryNode routeNode = new RepositoryNode(routeViewObject, null,
+                            // ENodeType.REPOSITORY_ELEMENT);
+                            // JavaCamelJobScriptsExportWSForRuntimeAction action = new
+                            // JavaCamelJobScriptsExportWSForRuntimeAction(
+                            // routeNode, process.getVersion(), "e:/tmp/alltest/run_c.kar", true);
+                            // action.run(new RunESBContainerProgressMonitor(processContext));
+                            // processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, "Starting log listener"));
+                            // String username = "karaf";
+                            // String password = "karaf";
+                            //
+                            // String host = "localhost";
+                            // String jmxPort = "44444";
+                            // String karafPort = "1099";
+                            // String instanceName = "trun";
+                            // String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host +
+                            // ":"
+                            // + karafPort + "/karaf-" + instanceName;
+                            //
+                            // HashMap<String, String[]> env = new HashMap<String, String[]>();
+                            // String[] credentials = new String[] { username, password };
+                            // env.put("jmx.remote.credentials", credentials);
+                            //
+                            // JMXServiceURL url = new JMXServiceURL(serviceUrl);
+                            // JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
+                            // MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+                            //
+                            // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
+                            // // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+                            // ObjectName objectName = new ObjectName(KARAF_BUNDLE_MBEAN);
+                            //
+                            // mbsc.invoke(
+                            // objectName,
+                            // "addRepository",
+                            // new Object[] {
+                            // "file:E:/tmp/alltest/run_r1simple-feature/repository/local_project/run_r1simple/run_r1simple-feature/0.1/run_r1simple-feature-0.1.xml"
+                            // },
+                            // new String[] { String.class.getName() });
+                            //
+                            // mbsc.invoke(objectName, "installFeature", new Object[] { "run_r1simple-feature" },
+                            // new String[] { String.class.getName() });
+                            //
+                            // Object info = mbsc.invoke(objectName, "infoFeature", new Object[] {
+                            // "run_r1simple-feature" },
+                            // new String[] { String.class.getName() });
                             // if (info instanceof Long) {
                             // System.out.println("------>" + (Long) info);
                             // processContext

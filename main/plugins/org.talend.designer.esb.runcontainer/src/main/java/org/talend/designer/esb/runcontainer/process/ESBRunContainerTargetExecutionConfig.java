@@ -1,4 +1,4 @@
-//============================================================================
+// ============================================================================
 //
 // Talend Community Edition
 //
@@ -11,30 +11,30 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-//============================================================================
+// ============================================================================
 package org.talend.designer.esb.runcontainer.process;
 
 import org.talend.core.model.process.IServerConfiguration;
 import org.talend.core.model.process.ITargetExecutionConfig;
 
-
 /**
- * DOC yyi  class global comment. Detailled comment
- * <br/>
+ * DOC yyi class global comment. Detailled comment <br/>
  *
  * $Id$
  *
  */
 public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionConfig {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.IServerConfiguration#getName()
      */
     @Override
@@ -43,7 +43,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.IServerConfiguration#getHost()
      */
     @Override
@@ -52,7 +54,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.IServerConfiguration#getPort()
      */
     @Override
@@ -61,7 +65,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return 0;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.IServerConfiguration#getUser()
      */
     @Override
@@ -70,7 +76,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.IServerConfiguration#getPassword()
      */
     @Override
@@ -79,7 +87,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#isRemote()
      */
     @Override
@@ -88,7 +98,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#getFileTransferPort()
      */
     @Override
@@ -97,7 +109,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return 0;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#setFileTransferPort(int)
      */
     @Override
@@ -106,7 +120,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#getCommandlineServerConfig()
      */
     @Override
@@ -115,8 +131,12 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.talend.core.model.process.ITargetExecutionConfig#setCommandlineServerConfig(org.talend.core.model.process.IServerConfiguration)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.talend.core.model.process.ITargetExecutionConfig#setCommandlineServerConfig(org.talend.core.model.process
+     * .IServerConfiguration)
      */
     @Override
     public void setCommandlineServerConfig(IServerConfiguration cmdLineServer) {
@@ -124,7 +144,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#setUseSSL(boolean)
      */
     @Override
@@ -133,7 +155,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#useSSL()
      */
     @Override
@@ -142,7 +166,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#isUseJMX()
      */
     @Override
@@ -151,7 +177,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#setUseJMX(boolean)
      */
     @Override
@@ -160,7 +188,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#getRemotePort()
      */
     @Override
@@ -169,7 +199,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return 0;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#setRemotePort(int)
      */
     @Override
@@ -178,7 +210,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#getRunAsUser()
      */
     @Override
@@ -187,7 +221,9 @@ public class ESBRunContainerTargetExecutionConfig implements ITargetExecutionCon
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.talend.core.model.process.ITargetExecutionConfig#setRunAsUser(java.lang.String)
      */
     @Override

@@ -22,8 +22,7 @@
 package org.talend.designer.esb.runcontainer.logs;
 
 /**
- * DOC yyi  class global comment. Detailled comment
- * <br/>
+ * DOC yyi class global comment. Detailled comment <br/>
  *
  * $Id$
  *

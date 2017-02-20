@@ -1,4 +1,4 @@
-//============================================================================
+// ============================================================================
 //
 // Talend Community Edition
 //
@@ -11,14 +11,14 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-//============================================================================
+// ============================================================================
 package org.talend.designer.esb.runcontainer.ui;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,10 +29,8 @@ import org.talend.designer.runprocess.ProcessMessage;
 import org.talend.designer.runprocess.RunProcessContext;
 import org.talend.designer.runprocess.ProcessMessage.MsgType;
 
-
 /**
- * DOC yyi  class global comment. Detailled comment
- * <br/>
+ * DOC yyi class global comment. Detailled comment <br/>
  *
  * $Id$
  *
@@ -43,15 +41,18 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
 
     /**
      * DOC yyi RunESBContainerProgressMonitor constructor comment.
+     * 
      * @param processContext
      */
     public RunESBContainerProgressMonitor(RunProcessContext processContext) {
         this.processContext = processContext;
         // TODO Auto-generated constructor stub
-        
+
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
      */
     @Override
@@ -61,7 +62,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
         processContext.addMessage(processMsg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
      */
     @Override
@@ -70,7 +73,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
      */
     @Override
@@ -79,7 +84,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
      */
     @Override
@@ -88,7 +95,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
      */
     @Override
@@ -97,7 +106,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
      */
     @Override
@@ -107,7 +118,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
         processContext.addMessage(processMsg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
      */
     @Override
@@ -117,7 +130,9 @@ public class RunESBContainerProgressMonitor implements IProgressMonitor {
         processContext.addMessage(processMsg);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
      */
     @Override

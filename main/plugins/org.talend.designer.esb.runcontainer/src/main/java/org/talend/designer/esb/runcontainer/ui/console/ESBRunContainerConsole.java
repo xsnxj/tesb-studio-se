@@ -1,4 +1,4 @@
-//============================================================================
+// ============================================================================
 //
 // Talend Community Edition
 //
@@ -11,34 +11,31 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 // Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-//============================================================================
+// ============================================================================
 package org.talend.designer.esb.runcontainer.ui.console;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.TextConsole;
 
-
 /**
- * DOC yyi  class global comment. Detailled comment
- * <br/>
+ * DOC yyi class global comment. Detailled comment <br/>
  *
  * $Id$
  *
  */
-public class ESBRunContainerConsole extends TextConsole{
-
-
+public class ESBRunContainerConsole extends TextConsole {
 
     /**
      * DOC yyi ESBRunContainerConsole constructor comment.
+     * 
      * @param name
      * @param consoleType
      * @param imageDescriptor
@@ -49,7 +46,9 @@ public class ESBRunContainerConsole extends TextConsole{
         // TODO Auto-generated constructor stub
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.console.TextConsole#getPartitioner()
      */
     @Override
@@ -57,7 +56,5 @@ public class ESBRunContainerConsole extends TextConsole{
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
 
 }

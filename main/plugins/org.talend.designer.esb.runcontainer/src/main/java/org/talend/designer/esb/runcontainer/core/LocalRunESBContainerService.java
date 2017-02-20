@@ -48,7 +48,7 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
 
     private RunProcessContextManager remoteContextManager;
 
-    private RunProcessContextManager runtimeContextManager;
+    private ESBRunContainerProcessContextManager runtimeContextManager;
 
     private int index;
 
@@ -71,7 +71,7 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
             if (RunProcessPlugin.getDefault().getRunProcessContextManager() instanceof ESBRunContainerProcessContextManager) {
                 int i = tragetCombo.indexOf("ESB Runtime (localhost)");
                 tragetCombo.select(i);
-            }else{
+            } else {
                 tragetCombo.select(index);
             }
             tragetCombo.addSelectionListener(new SelectionAdapter() {
@@ -79,20 +79,20 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     if (((Combo) e.getSource()).getText().equals("ESB Runtime (localhost)")) {
-                        //
                         remoteContextManager = RunProcessPlugin.getDefault().getRunProcessContextManager();
-                        // targetExecComposite.setProcessViewHelper(new ESBRunContainerProcessViewHelper());
+                        esbProcessContext = remoteContextManager.getActiveContext();
                         if (runtimeContextManager == null) {
                             runtimeContextManager = new ESBRunContainerProcessContextManager();
-                            runtimeContextManager.setActiveProcess(remoteContextManager.getActiveContext().getProcess());
                         }
+                        // reset context manager and active process
                         RunProcessPlugin.getDefault().setRunProcessContextManager(runtimeContextManager);
-                        ProcessManager.getInstance().setProcessContext(esbProcessContext);
-                    } else {
+                        RunProcessPlugin.getDefault().getRunProcessContextManager()
+                                .setActiveProcess(esbProcessContext.getProcess());
+                        ProcessManager.getInstance().setProcessContext(runtimeContextManager.getActiveContext());
+                    } else if (remoteContextManager != null) {
                         RunProcessPlugin.getDefault().setRunProcessContextManager(remoteContextManager);
                     }
                 }
-
             });
         }
     }
