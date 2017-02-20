@@ -1,7 +1,7 @@
 # Talend Open Studio for ESB
 
 
-[![Visit Talend's website](http://www.talend.com/sites/all/themes/talend_responsive/images/logo.png "Talend")](http://www.talend.com/)
+[![Visit Talend's website](https://www.talend.com/wp-content/uploads/2016/07/talend-logo.png "Talend")](http://www.talend.com/)
 
 
 This repository contains the source files for Talend Open Studio for ESB.
@@ -39,7 +39,7 @@ mvn clean install \
 
 ## Download
 
-You can download this product from the [Talend website](http://www.talend.com/download/talend-open-studio?qt-product_tos_download_new=3&utm_source=github&utm_campaign=tosesb).
+You can download this product from the [Talend website](http://www.talend.com/download/talend-open-studio?qt-product_tos_download_new=3&utm_medium=communityext&utm_source=github&utm_campaign=tosesb).
 
 
 ## Usage and Documentation
