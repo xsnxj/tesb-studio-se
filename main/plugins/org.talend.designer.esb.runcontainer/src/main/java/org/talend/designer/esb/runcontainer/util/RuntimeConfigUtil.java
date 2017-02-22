@@ -19,19 +19,8 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.process;
+package org.talend.designer.esb.runcontainer.util;
 
-import org.eclipse.swt.widgets.Composite;
-import org.talend.designer.runprocess.ui.JobJvmComposite;
-import org.talend.designer.runprocess.ui.views.IProcessViewHelper;
-
-@Deprecated
-public class ESBRunContainerProcessViewHelper implements IProcessViewHelper {
-
-    @Override
-    public JobJvmComposite getProcessComposite(Composite container) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+public class RuntimeConfigUtil {
 
 }

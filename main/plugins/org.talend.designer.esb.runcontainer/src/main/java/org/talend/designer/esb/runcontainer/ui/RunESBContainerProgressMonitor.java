@@ -22,12 +22,10 @@
 package org.talend.designer.esb.runcontainer.ui;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Text;
 import org.talend.designer.runprocess.IProcessMessage;
 import org.talend.designer.runprocess.ProcessMessage;
-import org.talend.designer.runprocess.RunProcessContext;
 import org.talend.designer.runprocess.ProcessMessage.MsgType;
+import org.talend.designer.runprocess.RunProcessContext;
 
 /**
  * DOC yyi class global comment. Detailled comment <br/>

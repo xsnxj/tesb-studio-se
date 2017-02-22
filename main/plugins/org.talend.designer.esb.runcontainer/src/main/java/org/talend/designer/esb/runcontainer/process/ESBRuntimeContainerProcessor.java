@@ -21,6 +21,7 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.process;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,8 +51,8 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.designer.core.ISyntaxCheckableEditor;
-import org.talend.designer.esb.runcontainer.ui.RunESBContainerComposite;
 import org.talend.designer.esb.runcontainer.ui.actions.JavaCamelJobScriptsExportWSForRuntimeAction;
+import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IProcessMessageManager;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
@@ -140,80 +141,33 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
     @Override
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
-        // TODO Auto-generated method stub
+
         ESBRunContainerProcess esbRunContainerProcess = new ESBRunContainerProcess();
         if (process != null) {
 
-            // use the same function with ExportModelJavaProcessor, but will do for maven
-            // ProcessItem processItem = (ProcessItem) process;
-
             try {
-
-                // IProcess2 process = (IProcess2) getProcess();
                 IRepositoryViewObject routeViewObject = findJob(process.getId());
 
                 RepositoryNode routeNode = new RepositoryNode(routeViewObject, null, ENodeType.REPOSITORY_ELEMENT);
                 JavaCamelJobScriptsExportWSForRuntimeAction action = new JavaCamelJobScriptsExportWSForRuntimeAction(routeNode,
                         process.getVersion(), "", true);
-                action.run(new NullProgressMonitor());
+
+                esbRunContainerProcess.startLogging();
+                esbRunContainerProcess.getOutputStream().write("Generating bundle to runtime.".toString().getBytes());
+
+                action.run(monitor);
 
                 String artifactId = routeNode.getObject().getProperty().getDisplayName();
+                String artifactVersion = routeNode.getObject().getProperty().getVersion();
+                long bundleId = JMXUtil.installBundle(new File(action.getExportDir() + "local_project/" + artifactId + "/"
+                        + artifactId + "-bundle/" + artifactVersion + "/" + artifactId + "-bundle-" + artifactVersion + ".jar"));
 
-                // processContext.addMessage(new ProcessMessage(MsgType.CORE_ERR, "Starting log listener"));
-                String username = "karaf";
-                String password = "karaf";
-
-                String host = "localhost";
-                String jmxPort = "44444";
-                String karafPort = "1099";
-                String instanceName = "trun";
-                String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort
-                        + "/karaf-" + instanceName;
-
-                HashMap<String, String[]> env = new HashMap<String, String[]>();
-                String[] credentials = new String[] { username, password };
-                env.put("jmx.remote.credentials", credentials);
-
-                JMXServiceURL url = new JMXServiceURL(serviceUrl);
-                JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
-                MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-
-                // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
-                String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
-                ObjectName objectName = new ObjectName(KARAF_BUNDLE_MBEAN);
-
-                // mbsc.invoke(objectName, "addRepository", new Object[] { "file:E:/tmp/alltest/" + artifactId
-                // + "-feature/repository/local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId
-                // + "-bundle-0.1.jar" }, new String[] { String.class.getName() });
-
-                Object bundleId = mbsc.invoke(objectName, "install", new Object[] { "file:" + action.getExportDir()
-                        + "local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId + "-bundle-0.1.jar" },
-                        new String[] { String.class.getName() });
-
-                // Object info = mbsc.invoke(objectName, "infoFeature", new Object[] { artifactId + "-feature" },
-                // new String[] { String.class.getName() });
-                if (bundleId instanceof Long) {
-                    esbRunContainerProcess.getOutputStream().write(bundleId.toString().getBytes());
-                    mbsc.invoke(objectName, "start", new Object[] { bundleId.toString() },
-                            new String[] { String.class.getName() });
-                }
-                jmxc.close();
-                // if (info instanceof Long) {
-                // System.out.println("------>" + (Long) info);
-                // processContext
-                // .addMessage(new ProcessMessage(MsgType.CORE_OUT, ">>>>>>>>deployed success!" +
-                // info.toString()));
-                // } else if (info instanceof TabularDataSupport) {
-                //
-                // processContext.addMessage(new ProcessMessage(MsgType.STD_OUT, ((TabularDataSupport)
-                // info).get("Bundles")
-                // .toString()));
-                // }
+                esbRunContainerProcess.getOutputStream().write(
+                        ("Install bundle, return value: " + bundleId + ".\n").toString().getBytes());
                 action.removeTempFilesAfterDeploy();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
         return esbRunContainerProcess;

@@ -59,46 +59,24 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
             InterruptedException {
         exportFolder = getTempDir();
         try {
-            ;
-
             File parentDestFile = new File(exportFolder);
             if (!parentDestFile.exists()) {
                 parentDestFile.mkdirs();
             }
 
-            // new ZipModel(featuresModel, new File("E:/tmp/alltest/"+featuresModel.getArtifactId()));
-            // Create the parent file if not exist
-            // BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream("E:/tmp/alltest/"
-            // + featuresModel.getArtifactId()));
+            File featureFile = new File(exportFolder + featuresModel.getRepositoryLocation(null));
+            featureFile.mkdirs();
+            Files.copy(featuresModel.getContent(), featureFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            try {
-                // feature file path:
-                // repository/[itemName]/[itemName]-feature/[itemVersion]/[itemName]-feature-[itemVersion].xml
-                // FileWriter fw = new FileWriter(new File(PREFIX + featuresModel.getRepositoryLocation(null)));
-                // FileOutputStream outputStream = new FileOutputStream(new File(PREFIX +
-                // featuresModel.getRepositoryLocation(null)));
-                File featureFile = new File(exportFolder + featuresModel.getRepositoryLocation(null));
-                featureFile.mkdirs();
-                Files.copy(featuresModel.getContent(), featureFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                // add(PREFIX + featuresModel.getRepositoryLocation(null), featuresModel.getContent());
-                // output.write(featuresModel.getContent());
-
-                // Bundle File path:
-                // repository/[itemName]/[itemVersion]/[itemName]-[itemVersion].jar
-                for (BundleModel bundleModel : featuresModel.getBundles()) {
-                    // add bundle jar file
-                    File f = bundleModel.getFile();
-                    if (null == f) {
-                        continue;
-                    }
-                    File bundleFile = new File(exportFolder + bundleModel.getRepositoryLocation(null));
-                    bundleFile.mkdirs();
-                    Files.copy(bundleModel.getFile().toPath(), bundleFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    // add(PREFIX + bundleModel.getRepositoryLocation(null).toString(), f);
+            for (BundleModel bundleModel : featuresModel.getBundles()) {
+                // add bundle jar file
+                File f = bundleModel.getFile();
+                if (null == f) {
+                    continue;
                 }
-            } finally {
-                // output.flush();
-                // output.close();
+                File bundleFile = new File(exportFolder + bundleModel.getRepositoryLocation(null));
+                bundleFile.mkdirs();
+                Files.copy(bundleModel.getFile().toPath(), bundleFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             throw new InvocationTargetException(e);

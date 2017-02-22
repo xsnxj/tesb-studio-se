@@ -82,7 +82,7 @@ public class RuntimeLogHTTPMonitor {
         listeners.add(listener);
     }
 
-    public boolean startLogging() throws IOException {
+    public boolean startLogging() {
         // httpLogTimer.cancel();
         if (httpLoggingTask.getStatus() == 0) {
             httpLogTimer.schedule(httpLoggingTask, 0, 600);
@@ -153,5 +153,12 @@ public class RuntimeLogHTTPMonitor {
             }
         }
 
+    }
+
+    public void removeLogLictener(RuntimeLogHTTPAdapter logListener) {
+        listeners.remove(logListener);
+        if (listeners.size() == 0) {
+            stopLogging();
+        }
     }
 }

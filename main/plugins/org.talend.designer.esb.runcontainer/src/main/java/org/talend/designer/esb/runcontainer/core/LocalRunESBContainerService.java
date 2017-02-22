@@ -57,14 +57,14 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
         // targetExecComposite.get
         Combo tragetCombo = null;
         if ("org.talend.designer.runprocess.remote.ui.RemoteProcessComposite".equals(jobComposite.getClass().getName())) {
-            // EE
+            // Update Tab EE
             Control control = ((Composite) jobComposite.getChildren()[0]).getChildren()[0];
             tragetCombo = (Combo) control;
             tragetCombo.add("ESB Runtime (localhost)");
             this.index = tragetCombo.getSelectionIndex();
 
         } else {
-            // SE
+            // Update Tab SE
 
         }
         if (tragetCombo != null) {

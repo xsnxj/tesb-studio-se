@@ -34,10 +34,7 @@ import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter;
 import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPMonitor;
 
 /**
- * DOC yyi class global comment. Detailled comment <br/>
- *
- * $Id$
- *
+ * DOC yyan class global comment. Detailled comment <br/>
  */
 public class ESBRunContainerProcess extends Process {
 
@@ -49,11 +46,9 @@ public class ESBRunContainerProcess extends Process {
 
     private PipedOutputStream errOutputStream;
 
-    /**
-     * DOC yyi ESBRunContainerProcess constructor comment.
-     */
+    private RuntimeLogHTTPAdapter logListener;
+
     public ESBRunContainerProcess() {
-        // TODO Auto-generated constructor stub
         stdInputStream = new PipedInputStream();
         errInputStream = new PipedInputStream();
 
@@ -62,18 +57,10 @@ public class ESBRunContainerProcess extends Process {
             errOutputStream = new PipedOutputStream(errInputStream);
 
         } catch (IOException e) {
-            ;
-        }
-
-        // start logging
-        RuntimeLogHTTPMonitor logMonitor = RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor();
-        try {
-            logMonitor.startLogging();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        logMonitor.addLogLictener(new RuntimeLogHTTPAdapter() {
+
+        logListener = new RuntimeLogHTTPAdapter() {
 
             @Override
             public synchronized void logReceived(FelixLogsModel logsModel) {
@@ -90,14 +77,24 @@ public class ESBRunContainerProcess extends Process {
                     } else {
                         errOutputStream.write((eventlog + '\n').getBytes());
                     }
-                    // stdOutputStream.flush();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
             }
-        });
+        };
+
+    }
+
+    // start logging
+    public void startLogging() {
+        RuntimeLogHTTPMonitor logMonitor = RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor();
+        logMonitor.startLogging();
+        logMonitor.addLogLictener(logListener);
+    }
+
+    public void stopLogging() {
+        RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor().removeLogLictener(logListener);
     }
 
     /*

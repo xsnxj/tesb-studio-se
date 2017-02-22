@@ -65,12 +65,6 @@ public class RuntimeLogHTTPAdapter implements IRuntimeLogListener {
      */
     @Override
     public void logReceived(FelixLogsModel logsModel) {
-        // TODO Auto-generated method stub
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-        Date date = new Date(logsModel.getReceived());
-
-        System.out.println(sdf.format(date) + " | " + logsModel.getLevel() + " | " + logsModel.getBundleId() + " - "
-                + logsModel.getBundleName() + " | " + logsModel.getMessage());
     }
 
     // test
