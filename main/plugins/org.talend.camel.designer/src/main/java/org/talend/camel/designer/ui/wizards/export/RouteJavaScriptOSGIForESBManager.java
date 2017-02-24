@@ -54,8 +54,23 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     private final Collection<String> routelets;
 
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
-        Collection<String> routelets) {
+            Collection<String> routelets) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        this.routelets = routelets;
+    }
+
+    /**
+     * DOC yyan RouteJavaScriptOSGIForESBManager constructor comment.
+     * 
+     * @param exportChoiceMap
+     * @param contextName
+     * @param routelets
+     * @param statisticPort
+     * @param tracePort
+     */
+    public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
+            Collection<String> routelets, int statisticPort, int tracePort) {
+        super(exportChoiceMap, contextName, null, statisticPort, tracePort);
         this.routelets = routelets;
     }
 
@@ -93,9 +108,12 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
         // http://jira.talendforge.org/browse/TESB-6437
         // https://jira.talendforge.org/browse/TESB-7893
-        for (IPath path : RouteResourceUtil.synchronizeRouteResource(processItem)) {
-            osgiResource.addResource(path.removeLastSegments(1).makeRelativeTo(srcPath).toString(), path.toFile().toURI()
-                    .toURL());
+        Collection<IPath> synchronizeRouteResource = RouteResourceUtil.synchronizeRouteResource(processItem);
+        if (synchronizeRouteResource != null) {
+            for (IPath path : synchronizeRouteResource) {
+                osgiResource.addResource(path.removeLastSegments(1).makeRelativeTo(srcPath).toString(), path.toFile().toURI()
+                        .toURL());
+            }
         }
     }
 
@@ -105,7 +123,7 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     protected void generateConfig(ExportFileResource osgiResource, ProcessItem processItem, IProcess process) throws IOException {
         final File targetFile = new File(getTmpFolder() + PATH_SEPARATOR + "route.xml"); //$NON-NLS-1$
         TemplateProcessor.processTemplate("ROUTE_BLUEPRINT_CONFIG", //$NON-NLS-1$
-            collectRouteInfo(processItem, process), targetFile, getClass().getResourceAsStream(TEMPLATE_BLUEPRINT_ROUTE));
+                collectRouteInfo(processItem, process), targetFile, getClass().getResourceAsStream(TEMPLATE_BLUEPRINT_ROUTE));
         osgiResource.addResource(FileConstants.META_INF_FOLDER_NAME + "/spring", targetFile.toURI().toURL());
     }
 
@@ -197,14 +215,14 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
             throws IOException {
         final DependenciesResolver resolver = new DependenciesResolver(processItem);
-        //exportPackage.append(getPackageName(processItem));
+        // exportPackage.append(getPackageName(processItem));
         // Add Route Resource Export packages
         // http://jira.talendforge.org/browse/TESB-6227
 
         // add manifest items
         analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, resolver.getManifestRequireBundle(MANIFEST_ITEM_SEPARATOR));
-        analyzer.setProperty(Analyzer.IMPORT_PACKAGE,
-            resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR) + ",*;resolution:=optional"); //$NON-NLS-1$
+        analyzer.setProperty(Analyzer.IMPORT_PACKAGE, resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR)
+                + ",*;resolution:=optional"); //$NON-NLS-1$
         analyzer.setProperty(Analyzer.EXPORT_PACKAGE, resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
 
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
@@ -215,8 +233,8 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
                 final IPath libPath = talendProcessJavaProject.getLibFolder().getLocation();
                 // process external libs
                 final List<URL> list = new ArrayList<URL>();
-                for (String s : resolver.getManifestBundleClasspath(MANIFEST_ITEM_SEPARATOR)
-                    .split(Character.toString(MANIFEST_ITEM_SEPARATOR))) {
+                for (String s : resolver.getManifestBundleClasspath(MANIFEST_ITEM_SEPARATOR).split(
+                        Character.toString(MANIFEST_ITEM_SEPARATOR))) {
                     if (!s.isEmpty()) {
                         list.add(libPath.append(s).toFile().toURI().toURL());
                     }

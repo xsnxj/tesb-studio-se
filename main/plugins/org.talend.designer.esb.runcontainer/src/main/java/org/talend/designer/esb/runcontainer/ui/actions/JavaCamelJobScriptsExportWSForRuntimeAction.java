@@ -26,13 +26,17 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 
 /**
  * It's for export the karaf feature to a target folder without zipping.
@@ -42,12 +46,27 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
 
     private String exportFolder;
 
+    public JavaCamelJobScriptsExportWSForRuntimeAction(Map<ExportChoice, Object> exportChoiceMap, IRepositoryNode routeNode,
+            String version, String destinationKar, boolean addStatisticsCode) {
+        super(exportChoiceMap, routeNode, version, destinationKar, addStatisticsCode);
+    }
+
     public JavaCamelJobScriptsExportWSForRuntimeAction(IRepositoryNode routeNode, String version, String bundleVersion) {
         super(routeNode, version, bundleVersion);
     }
 
-    public JavaCamelJobScriptsExportWSForRuntimeAction(RepositoryNode routeNode, String version, String string, boolean b) {
-        super(routeNode, version, string, b);
+    public JavaCamelJobScriptsExportWSForRuntimeAction(IRepositoryNode routeNode, String version, String destinationKar,
+            boolean addStatisticsCode) {
+        // add statistics for runtime debug
+        super(routeNode, version, destinationKar, addStatisticsCode);
+        assert addStatisticsCode;
+    }
+
+    public JavaCamelJobScriptsExportWSForRuntimeAction(IRepositoryNode routeNode, String version, String destinationKar,
+            boolean addStatisticsCode, int statisticPort, int tracePort) {
+        // add statistics for runtime debug
+        super(routeNode, version, destinationKar, addStatisticsCode, statisticPort, tracePort);
+        assert addStatisticsCode;
     }
 
     public String getExportDir() {
@@ -94,6 +113,7 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
     }
 
     public void removeTempFilesAfterDeploy() {
-        super.removeTempFiles();
+        // do nothing for test
+        // super.removeTempFiles();
     }
 }

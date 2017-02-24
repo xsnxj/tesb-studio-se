@@ -22,21 +22,13 @@
 package org.talend.designer.esb.runcontainer.process;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.general.ModuleNeeded;
@@ -147,16 +139,15 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
 
             try {
                 IRepositoryViewObject routeViewObject = findJob(process.getId());
-
                 RepositoryNode routeNode = new RepositoryNode(routeViewObject, null, ENodeType.REPOSITORY_ELEMENT);
                 JavaCamelJobScriptsExportWSForRuntimeAction action = new JavaCamelJobScriptsExportWSForRuntimeAction(routeNode,
-                        process.getVersion(), "", true);
+                        process.getVersion(), "", true, statisticsPort, tracePort);
 
                 esbRunContainerProcess.startLogging();
                 esbRunContainerProcess.getOutputStream().write("Generating bundle to runtime.".toString().getBytes());
 
                 action.run(monitor);
-
+                System.out.println(action.getExportDir());
                 String artifactId = routeNode.getObject().getProperty().getDisplayName();
                 String artifactVersion = routeNode.getObject().getProperty().getVersion();
                 long bundleId = JMXUtil.installBundle(new File(action.getExportDir() + "local_project/" + artifactId + "/"
