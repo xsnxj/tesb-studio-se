@@ -126,7 +126,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected String getJobGroupId(String jobId, String jobName) {
         String defaultProjectName = JavaResourcesHelper.getProjectFolderName(routeNode.getObject().getProperty().getItem());
-        return CamelFeatureUtil.getMavenGroupId(jobId, jobName, defaultProjectName);
+        // return CamelFeatureUtil.getMavenGroupId(jobId, jobName, defaultProjectName);
+        return JavaResourcesHelper.getGroupItemName(defaultProjectName, jobName);
     }
 
     protected String getArtifactId() {
