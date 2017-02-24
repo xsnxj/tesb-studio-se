@@ -44,6 +44,7 @@ import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.designer.core.ISyntaxCheckableEditor;
 import org.talend.designer.esb.runcontainer.ui.actions.JavaCamelJobScriptsExportWSForRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.console.KarafConsoleUtil;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IProcessMessageManager;
 import org.talend.designer.runprocess.IProcessor;
@@ -134,6 +135,8 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
 
+    	KarafConsoleUtil.loadConsole();
+    	
         ESBRunContainerProcess esbRunContainerProcess = new ESBRunContainerProcess();
         if (process != null) {
 
