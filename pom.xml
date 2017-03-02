@@ -41,7 +41,7 @@
 		<snapshots>
 			<enabled>false</enabled>
 		</snapshots>
-		<url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease/</url>
+		<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease/</url>
 	</repository>
 	<repository>
 		<id>talend_open_snapshots</id>
@@ -51,7 +51,7 @@
 		<snapshots>
 			<enabled>true</enabled>
 		</snapshots>
-		<url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+		<url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
 	</repository>
 	<!--repository>
 		<id>apache-releases</id>
@@ -102,7 +102,7 @@
   <pluginRepositories>
 	<pluginRepository>
 		<id>trojanbug.plugins</id>
-		<url>http://newbuild.talend.com:8081/nexus/content/repositories/propertymapper-maven-plugin/</url>
+		<url>https://artifacts-oss.talend.com/nexus/content/repositories/propertymapper-maven-plugin/</url>
 		<releases>
 			<enabled>true</enabled>
 			<updatePolicy>never</updatePolicy>
