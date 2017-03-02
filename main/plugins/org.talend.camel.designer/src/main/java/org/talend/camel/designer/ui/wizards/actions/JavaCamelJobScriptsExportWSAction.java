@@ -279,7 +279,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
-                String routeletName = routeName + "_" + referencedRouteletNode.getObject().getLabel();
+                String routeletName = routeName + "__" + referencedRouteletNode.getObject().getLabel();
                 BundleModel jobModel = new BundleModel(getGroupId(), routeletName, getArtifactVersion(), routeletFile);
                 if (featuresModel.addBundle(jobModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion, null,
