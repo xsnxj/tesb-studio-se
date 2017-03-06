@@ -21,6 +21,9 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.logs;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * DOC yyi class global comment. Detailled comment <br/>
  *
@@ -28,6 +31,10 @@ package org.talend.designer.esb.runcontainer.logs;
  *
  */
 public class FelixLogsModel {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss,SSS";
+
+    private static final String LINE_SPLIT = " | ";
 
     private int id;
 
@@ -117,5 +124,14 @@ public class FelixLogsModel {
 
     public void setBundleName(String bundleName) {
         this.bundleName = bundleName;
+    }
+
+    public String toString() {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        Date date = new Date(getReceived());
+        String eventlog = sdf.format(date) + LINE_SPLIT + getLevel() + LINE_SPLIT + getBundleId() + " - " + getBundleName()
+                + LINE_SPLIT + getMessage();
+
+        return eventlog;
     }
 }

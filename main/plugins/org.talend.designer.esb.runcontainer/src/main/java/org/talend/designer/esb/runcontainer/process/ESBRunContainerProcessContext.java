@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.eclipse.swt.widgets.Display;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.IProcess;
@@ -55,14 +56,22 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
 
     private LocalRuntimeProcessMonitor localRuntimeProcessMonitor;
 
+    private IProcess2 process;
+
+    private IProcessor processor;
+
     public ESBRunContainerProcessContext(IProcess2 process) {
         super(process);
         // processMessageManager = new ProcessMessageManager();
+        this.process = process;
     }
 
     @Override
     protected IProcessor getProcessor(IProcess process, Property property) {
-        return new ESBRuntimeContainerProcessor(process);
+        if (null == processor) {
+            processor = new ESBRuntimeContainerProcessor(process);
+        }
+        return processor;
     }
 
     @Override
@@ -71,24 +80,233 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
         return localRuntimeProcessMonitor;
     }
 
+    /*
+     * Re-implement exec to ignore generate code twice
+     * 
+     * @see org.talend.designer.runprocess.RunProcessContext#exec(org.eclipse.swt.widgets.Shell)
+     */
+    // @Override
+    // public void exec(Shell shell) {
+    // if (process instanceof org.talend.designer.core.ui.editor.process.Process) {
+    // org.talend.designer.core.ui.editor.process.Process prs = (org.talend.designer.core.ui.editor.process.Process)
+    // process;
+    // prs.checkDifferenceWithRepository();
+    // }
+    // // checkTraces();
+    //
+    // if (ProcessContextComposite.promptConfirmLauch(shell, getSelectedContext(), process)) {
+    // if (getSelectedTargetExecutionConfig() == null || !getSelectedTargetExecutionConfig().isRemote()) {
+    // // tos run to collect
+    // IPreferenceStore preferenceStore = RunProcessPlugin.getDefault().getPreferenceStore();
+    // int num = preferenceStore.getInt(RunProcessTokenCollector.TOS_COUNT_RUNS.getPrefKey());
+    // preferenceStore.setValue(RunProcessTokenCollector.TOS_COUNT_RUNS.getPrefKey(), num + 1);
+    // }
+    //
+    // ClearPerformanceAction clearPerfAction = new ClearPerformanceAction();
+    // clearPerfAction.setProcess(process);
+    // clearPerfAction.run();
+    //
+    // ClearTraceAction clearTraceAction = new ClearTraceAction();
+    // clearTraceAction.setProcess(process);
+    // clearTraceAction.run();
+    // if (monitorPerf) {
+    // this.getStatisticsPort();
+    // }
+    // final IProcessor processor = getProcessor(process, process.getProperty());
+    // IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+    //
+    // try {
+    // progressService.run(false, true, new IRunnableWithProgress() {
+    //
+    // @Override
+    // public void run(final IProgressMonitor monitor) {
+    //
+    // final IProgressMonitor progressMonitor = new EventLoopProgressMonitor(monitor);
+    //
+    //                        progressMonitor.beginTask(Messages.getString("ProcessComposite.buildTask"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+    // try {
+    // testPort();
+    // TraceConnectionsManager traceConnectionsManager = getTraceConnectionsManager(process);
+    // // findNewStatsPort();
+    // if (monitorPerf) {
+    // if (traceConnectionsManager != null) {
+    // traceConnectionsManager.clear();
+    // }
+    // traceConnectionsManager = getTraceConnectionsManager(process);
+    // traceConnectionsManager.init();
+    // }
+    // final IContext context = getSelectedContext();
+    // PerformanceMonitor perfMonitor;
+    // List<PerformanceMonitor> perMonitorList = new ArrayList<PerformanceMonitor>();
+    // if (monitorPerf) {
+    // // clearThreads();
+    // perfMonitor = getPerformanceMonitor();
+    //                                new Thread(perfMonitor, "PerfMonitor_" + process.getLabel()).start(); //$NON-NLS-1$
+    // perMonitorList.add(perfMonitor);
+    // }
+    // // findNewTracesPort();
+    // // if (monitorTrace) {
+    // // TraceMonitor traceMonitor = new TraceMonitor();
+    //                            //                                new Thread(traceMonitor, "TraceMonitor_" + process.getLabel()).start(); //$NON-NLS-1$
+    // // }
+    //
+    // // final String watchParam = RunProcessContext.this.isWatchAllowed() ?
+    // // TalendProcessArgumentConstant.CMD_ARG_WATCH
+    // // : null;
+    // // final String log4jRuntimeLevel = getLog4jRuntimeLevel();
+    // processor.setContext(context);
+    // ((IEclipseProcessor) processor).setTargetExecutionConfig(getSelectedTargetExecutionConfig());
+    //
+    // final boolean oldMeasureActived = TimeMeasure.measureActive;
+    // if (!oldMeasureActived) { // not active before.
+    // TimeMeasure.display = TimeMeasure.displaySteps = TimeMeasure.measureActive = CommonsPlugin
+    // .isDebugMode();
+    // }
+    //                            final String generateCodeId = "Generate job source codes and compile before run"; //$NON-NLS-1$
+    // TimeMeasure.begin(generateCodeId);
+    //
+    // // ProcessorUtilities.generateCode(processor, process, context,
+    // // getStatisticsPort() != IProcessor.NO_STATISTICS, getTracesPort() != IProcessor.NO_TRACES
+    // // && hasConnectionTrace(), true, progressMonitor);
+    //
+    // TimeMeasure.end(generateCodeId);
+    // // if active before, not disable and active still.
+    // if (!oldMeasureActived) {
+    // TimeMeasure.display = TimeMeasure.displaySteps = TimeMeasure.measureActive = false;
+    // }
+    // final boolean[] refreshUiAndWait = new boolean[1];
+    // refreshUiAndWait[0] = true;
+    // final Display display = shell.getDisplay();
+    // new Thread(new Runnable() {
+    //
+    // @Override
+    // public void run() {
+    // display.syncExec(new Runnable() {
+    //
+    // @Override
+    // public void run() {
+    // try {
+    // // startingMessageWritten = false;
+    //
+    // // see feature 0004820: The run
+    // // job doesn't verify if code is
+    // // correct
+    // // before launching
+    // Process ps = null;
+    // if (!JobErrorsChecker.hasErrors(shell)) {
+    // ps = processor.run(getStatisticsPort(), getTracesPort(), null, "INFO",
+    // progressMonitor, processMessageManager);
+    // }
+    //
+    // if (ps != null && !progressMonitor.isCanceled()) {
+    // setRunning(true);
+    // IProcessMonitor psMonitor = createProcessMonitor(ps);
+    //
+    // // startingMessageWritten = true;
+    //
+    // final String startingPattern = Messages
+    //                                                            .getString("ProcessComposite.startPattern"); //$NON-NLS-1$
+    // MessageFormat mf = new MessageFormat(startingPattern);
+    // String welcomeMsg = mf.format(new Object[] { process.getLabel(), new Date() });
+    // processMessageManager.addMessage(new ProcessMessage(MsgType.CORE_OUT,
+    //                                                            welcomeMsg + "\r\n")); //$NON-NLS-1$
+    // Thread processMonitorThread = new Thread(psMonitor);
+    // processMonitorThread.start();
+    // } else {
+    // kill();
+    // // running = true;
+    // setRunning(false);
+    // }
+    // } catch (Throwable e) {
+    // // catch any Exception or Error
+    // // to kill the process, see bug
+    // // 0003567
+    // // running = true;
+    // Throwable cause = e.getCause();
+    // if (cause != null && cause.getClass().equals(InterruptedException.class)) {
+    // setRunning(false);
+    // addErrorMessage(e);
+    // } else {
+    // ExceptionHandler.process(e);
+    // addErrorMessage(e);
+    // kill();
+    // }
+    // } finally {
+    // // progressMonitor.done();
+    // refreshUiAndWait[0] = false;
+    // }
+    // }
+    // });
+    // }
+    //                            }, "RunProcess_" + process.getLabel()).start(); //$NON-NLS-1$
+    // while (refreshUiAndWait[0] && !progressMonitor.isCanceled()) {
+    // if (!display.readAndDispatch()) {
+    // display.sleep();
+    // }
+    // synchronized (this) {
+    // try {
+    // final long waitTime = 50;
+    // wait(waitTime);
+    // } catch (InterruptedException e) {
+    // // Do nothing
+    // }
+    // }
+    //
+    // }
+    //
+    // } catch (Throwable e) {
+    // // catch any Exception or Error to kill the process,
+    // // see bug 0003567
+    // // running = true;
+    // ExceptionHandler.process(e);
+    // addErrorMessage(e);
+    // kill();
+    // } finally {
+    // progressMonitor.done();
+    // // System.out.println("exitValue:" +
+    // // ps.exitValue());
+    // }
+    // }
+    //
+    // });
+    // } catch (InvocationTargetException e1) {
+    // addErrorMessage(e1);
+    // } catch (InterruptedException e1) {
+    // addErrorMessage(e1);
+    // }
+    //
+    // } else {
+    // // See bug 0003567: When a prompt from context is cancelled or a
+    // // fatal error occurs during a job exec the
+    // // Kill button have to be pressed manually.
+    // // this.running = true;
+    // setRunning(false);
+    // }
+    // }
+
     @Override
     public synchronized int kill(Integer returnExitValue) {
         if (getProcess() instanceof ESBRunContainerProcess) {
             ((ESBRunContainerProcess) getProcess()).stopLogging();
+        }
+        if (processor instanceof ESBRuntimeContainerProcessor) {
+            ((ESBRuntimeContainerProcessor) processor).stop();
         }
         return super.kill(returnExitValue);
     }
 
     @Override
     protected PerformanceMonitor getPerformanceMonitor() {
-        jmxPerformanceMonitor = new JMXPerformanceMonitor();
-        return jmxPerformanceMonitor;
+        return super.getPerformanceMonitor();
+        // jmxPerformanceMonitor = new JMXPerformanceMonitor();
+        // return jmxPerformanceMonitor;
     }
 
     @Override
     protected TraceConnectionsManager getTraceConnectionsManager(IProcess2 process) {
-        jmxConnectionsManager = new JMXConnectionsManager(process);
-        return jmxConnectionsManager;
+        return super.getTraceConnectionsManager(process);
+        // jmxConnectionsManager = new JMXConnectionsManager(process);
+        // return jmxConnectionsManager;
     }
 
     class JMXPerformanceMonitor extends PerformanceMonitor {
@@ -174,20 +392,27 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
 
         @Override
         public void run() {
+
             int exitValue = 0;
             while (!stopThread) {
                 boolean dataPiped = extractMessages(false);
-                // processMessageManager.updateConsole();
+                processMessageManager.updateConsole();
                 boolean ended;
                 try {
 
-                    if (!hasCompilationError) {
-                        exitValue = process.exitValue();
-                    }
-
+                    exitValue = process.exitValue();
                     // flush remaining messages
                     while (!stopThread) {
                         extractMessages(true);
+                        processMessageManager.updateConsole();
+                        synchronized (this) {
+                            try {
+                                final long waitTime = 200;
+                                wait(waitTime);
+                            } catch (InterruptedException e) {
+                                // Do nothing
+                            }
+                        }
                     }
 
                     // Read the end of the stream after the end of the process
@@ -196,13 +421,13 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
                     try {
                         this.process.getInputStream().close();
                     } catch (IOException e) {
-                        ExceptionHandler.process(e);
+                        // Do nothing
                     }
 
                     try {
                         this.process.getErrorStream().close();
                     } catch (IOException e) {
-                        ExceptionHandler.process(e);
+                        // Do nothing
                     }
 
                 } catch (IllegalThreadStateException itse) {
@@ -214,7 +439,7 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
                 if (!dataPiped && !ended) {
                     synchronized (this) {
                         try {
-                            final long waitTime = 5;
+                            final long waitTime = 100;
                             wait(waitTime);
                         } catch (InterruptedException e) {
                             // Do nothing
@@ -239,16 +464,12 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
             try {
                 messageErr = extractMessage(errIs, MsgType.STD_ERR, flush);
                 if (messageErr != null) {
-                    if (messageErr.getContent().contains("Unresolved compilation problem")) { //$NON-NLS-1$
-                        hasCompilationError = true;
-                    }
-                    addMessage(messageErr);
-                    processMessageManager.updateConsole();
+                    processMessageManager.addMessage(messageErr);
                 }
                 messageOut = extractMessage(outIs, MsgType.STD_OUT, flush);
                 if (messageOut != null) {
-                    addMessage(messageOut);
-                    processMessageManager.updateConsole();
+                    processMessageManager.addMessage(messageOut);
+                    // processMessageManager.updateConsole();
                 }
             } catch (IOException ioe) {
                 addErrorMessage(ioe);
@@ -277,10 +498,16 @@ public class ESBRunContainerProcessContext extends RunProcessContext {
                 long timeStart = System.currentTimeMillis();
                 while (is.ready()) {
                     data = is.readLine();
+                    System.out.println("------>" + data);
                     if (data == null) {
                         break;
                     }
-                    sb.append(data).append("\n"); //$NON-NLS-1$
+                    // TODO check if it's not end with '\n', add it.
+                    if (!data.endsWith("\n")) {
+                        sb.append(data).append('\n'); //$NON-NLS-1$
+                    } else {
+                        sb.append(data);
+                    }
                     if (sb.length() > 1024 || System.currentTimeMillis() - timeStart > 100) {
                         break;
                     }

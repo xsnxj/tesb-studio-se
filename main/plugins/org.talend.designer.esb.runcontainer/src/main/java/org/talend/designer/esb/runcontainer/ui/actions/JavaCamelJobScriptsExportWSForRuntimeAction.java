@@ -32,11 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 
 /**
  * It's for export the karaf feature to a target folder without zipping.
@@ -77,6 +74,12 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException,
             InterruptedException {
         exportFolder = getTempDir();
+        
+        
+        
+        
+        
+        
         try {
             File parentDestFile = new File(exportFolder);
             if (!parentDestFile.exists()) {

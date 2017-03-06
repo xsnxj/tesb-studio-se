@@ -27,13 +27,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import org.osgi.service.log.LogService;
 
@@ -61,102 +61,137 @@ public class RuntimeLogHTTPMonitor {
 
     private long tailMilliSecond = 0;
 
+    private Map<RuntimeLogHTTPAdapter, Long> listenerMap;
+
     // private boolean scheduled = false;
 
     RuntimeLogHTTPMonitor() {
         // init
         listeners = new ArrayList<RuntimeLogHTTPAdapter>();
-        httpLogTimer = new Timer();
         httpLoggingTask = new HttpLoggingTask();
+        listenerMap = new HashMap<RuntimeLogHTTPAdapter, Long>();
     }
 
     public static RuntimeLogHTTPMonitor createRuntimeLogHTTPMonitor() {
         if (instance == null) {
             instance = new RuntimeLogHTTPMonitor();
-
         }
         return instance;
     }
 
     public void addLogLictener(RuntimeLogHTTPAdapter listener) {
+        listenerMap.put(listener, System.currentTimeMillis());
         listeners.add(listener);
     }
 
     public boolean startLogging() {
         // httpLogTimer.cancel();
-        if (httpLoggingTask.getStatus() == 0) {
-            httpLogTimer.schedule(httpLoggingTask, 0, 600);
+        if (!httpLoggingTask.isRunning()) {
+            new Thread(httpLoggingTask, "ESB Runtime Logging Monitor").start();
         }
+        // if (httpLoggingTask.getStatus() == 0) {
+        // httpLogTimer.schedule(httpLoggingTask, 0);
+        // }
         return true;
     }
 
     public boolean stopLogging() {
-        httpLogTimer.cancel();
+        httpLoggingTask.cancel();
         return true;
     }
 
     public static void main(String[] args) throws Exception {
         RuntimeLogHTTPMonitor monitor = RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor();
         monitor.startLogging();
+        monitor.addLogLictener(new RuntimeLogHTTPAdapter() {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter#logReceived(org.talend.designer.esb.
+             * runcontainer.logs.FelixLogsModel)
+             */
+            @Override
+            public void logReceived(FelixLogsModel logsModel) {
+                // TODO Auto-generated method stub
+                super.logReceived(logsModel);
+                System.out.println("------>" + logsModel.toString());
+            }
+        });
     }
 
-    class HttpLoggingTask extends TimerTask {
+    class HttpLoggingTask implements Runnable {
 
-        int status = 0;
+        boolean running = false;
 
-        public int getStatus() {
-            return status;
+        public boolean isRunning() {
+            return running;
         }
 
-        @Override
-        public boolean cancel() {
-            status = 0;
-            return super.cancel();
+        public void cancel() {
+            if (listeners.size() == 0) {
+                running = false;
+            }
         }
 
         @Override
         public void run() {
-            status = 1;
+            running = true;
+            long latestTime = 0;
+            long current = System.currentTimeMillis();
             URL url;
             try {
-                url = new URL(URL);
+                do {
+                    url = new URL(URL);
 
-                String encoding = Base64.getEncoder().encodeToString(BASIC.getBytes("UTF-8"));
+                    String encoding = Base64.getEncoder().encodeToString(BASIC.getBytes("UTF-8"));
 
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Authorization", "Basic " + encoding);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setDoOutput(true);
+                    connection.setRequestProperty("Authorization", "Basic " + encoding);
 
-                InputStream content = (InputStream) connection.getInputStream();
-                BufferedReader in = new BufferedReader(new InputStreamReader(content));
-                String line = in.readLine();
+                    InputStream content = (InputStream) connection.getInputStream();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(content));
+                    String line = in.readLine();
 
-                ObjectMapper mapper = new ObjectMapper();
+                    ObjectMapper mapper = new ObjectMapper();
 
-                // Map<String, RuntimeLogsModel[]> maps = mapper.readValue(json, Map.class);
-                // maps.get("data");
-                int dataPos = line.indexOf("\"data\":") + 7;
-                line = line.substring(dataPos, line.length());
-                FelixLogsModel[] logs = mapper.readValue(line, FelixLogsModel[].class);
+                    int dataPos = line.indexOf("\"data\":") + 7;
+                    line = line.substring(dataPos, line.length());
+                    FelixLogsModel[] logs = mapper.readValue(line, FelixLogsModel[].class);
+                    if (logs[0].getReceived() >= current) {
+                        for (int i = logs.length - 1; i >= 0; i--) {
+                            if (latestTime >= logs[i].getReceived()) {
+                                continue;
+                            }
+                            for (IRuntimeLogListener listener : listeners) {
+                                if (listenerMap.get(listener) < logs[i].getReceived()) {
+                                    listener.logReceived(logs[i]);
+                                }
+                            }
+                        }
+                        latestTime = logs[0].getReceived();
+                    }
 
-                for (FelixLogsModel runtimeLogsModel : logs) {
-                    if (tailMilliSecond < runtimeLogsModel.getReceived()) {
-                        tailMilliSecond = runtimeLogsModel.getReceived();
-                        for (IRuntimeLogListener listener : listeners) {
-                            listener.logReceived(runtimeLogsModel);
+                    synchronized (this) {
+                        try {
+                            final long waitTime = 500;
+                            wait(waitTime);
+                        } catch (InterruptedException e) {
+                            // Do nothing
                         }
                     }
-                }
+                } while (running);
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
-
     }
 
-    public void removeLogLictener(RuntimeLogHTTPAdapter logListener) {
-        listeners.remove(logListener);
+    public void removeLogLictener(RuntimeLogHTTPAdapter listener) {
+        listeners.remove(listener);
+        listenerMap.remove(listener);
         if (listeners.size() == 0) {
             stopLogging();
         }

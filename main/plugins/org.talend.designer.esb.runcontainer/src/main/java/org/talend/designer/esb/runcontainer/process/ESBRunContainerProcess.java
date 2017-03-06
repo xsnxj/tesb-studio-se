@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.talend.designer.esb.runcontainer.logs.FelixLogsModel;
 import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter;
@@ -48,6 +46,8 @@ public class ESBRunContainerProcess extends Process {
 
     private RuntimeLogHTTPAdapter logListener;
 
+    private boolean startLogging;
+
     public ESBRunContainerProcess() {
         stdInputStream = new PipedInputStream();
         errInputStream = new PipedInputStream();
@@ -64,26 +64,25 @@ public class ESBRunContainerProcess extends Process {
 
             @Override
             public synchronized void logReceived(FelixLogsModel logsModel) {
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-                Date date = new Date(logsModel.getReceived());
-
-                String eventlog = sdf.format(date) + " | " + logsModel.getLevel() + " | " + logsModel.getBundleId() + " - "
-                        + logsModel.getBundleName() + " | " + logsModel.getMessage();
-                System.out.println(eventlog);
-                try {
-                    if ("INFO".equals(logsModel.getLevel())) {
-                        stdOutputStream.write((eventlog + '\n').getBytes());
-                    } else {
-                        errOutputStream.write((eventlog + '\n').getBytes());
+                if (startLogging) {
+                    String msg = logsModel.toString();
+                    try {
+                        if ("INFO".equals(logsModel.getLevel())) {
+                            stdOutputStream.write(msg.getBytes());
+                            stdOutputStream.write('\n');
+                            // stdOutputStream.flush();
+                        } else {
+                            errOutputStream.write(msg.getBytes());
+                            errOutputStream.write('\n');
+                            // errOutputStream.flush();
+                            // stdOutputStream.write((msg + '\n').getBytes());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-
             }
         };
-
     }
 
     // start logging
@@ -91,10 +90,12 @@ public class ESBRunContainerProcess extends Process {
         RuntimeLogHTTPMonitor logMonitor = RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor();
         logMonitor.startLogging();
         logMonitor.addLogLictener(logListener);
+        startLogging = true;
     }
 
     public void stopLogging() {
         RuntimeLogHTTPMonitor.createRuntimeLogHTTPMonitor().removeLogLictener(logListener);
+        startLogging = false;
     }
 
     /*
@@ -159,8 +160,21 @@ public class ESBRunContainerProcess extends Process {
      */
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub
+        stopLogging();
+        try {
+            stdInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            stdOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public PipedOutputStream getErrOutputStream() {
+        return errOutputStream;
     }
 
 }

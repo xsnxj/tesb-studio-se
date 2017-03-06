@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.talend.designer.esb.runcontainer.process.ESBRunContainerProcessContextManager;
-import org.talend.designer.esb.runcontainer.ui.RunESBContainerComposite;
 import org.talend.designer.runprocess.IESBRunContainerService;
 import org.talend.designer.runprocess.RunProcessContext;
 import org.talend.designer.runprocess.RunProcessContextManager;
@@ -57,7 +56,7 @@ public class LocalRunESBContainerService implements IESBRunContainerService {
         // targetExecComposite.get
         Combo tragetCombo = null;
         if ("org.talend.designer.runprocess.remote.ui.RemoteProcessComposite".equals(jobComposite.getClass().getName())) {
-            // Update Tab EE
+            // Update EE tab
             Control control = ((Composite) jobComposite.getChildren()[0]).getChildren()[0];
             tragetCombo = (Combo) control;
             tragetCombo.add("ESB Runtime (localhost)");

@@ -29,7 +29,8 @@ Require-Bundle: org.talend.core.runtime,
  org.talend.designer.publish.core,
  org.eclipse.jdt.core,
  org.eclipse.ui,
- org.talend.repository
+ org.talend.repository,
+ org.eclipse.core.jobs
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin
 Bundle-ClassPath: lib/httpclient-4.3.6-6.0.0.jar,

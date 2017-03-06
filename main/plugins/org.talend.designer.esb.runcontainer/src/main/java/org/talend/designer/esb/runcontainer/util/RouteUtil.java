@@ -23,8 +23,6 @@ package org.talend.designer.esb.runcontainer.util;
 
 import java.util.Set;
 
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationListener;

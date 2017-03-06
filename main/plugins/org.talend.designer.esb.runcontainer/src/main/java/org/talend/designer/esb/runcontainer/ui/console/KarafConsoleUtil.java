@@ -87,7 +87,7 @@ public class KarafConsoleUtil {
         
         new Thread(){
 	    	public void run() {
-				System.setProperty("karaf.etc", "/Volumes/WD/Talend/60/tesb-studio-se/main/plugins/org.talend.camel.designer/resources/etc");
+				System.setProperty("karaf.etc", "D:\\yyi.talendbj.esb\\git\\tesb-studio-se\\main\\plugins\\org.talend.designer.esb.runcontainer\\etc");
 				String[] karafArgs = new String[]{"-h","localhost"};
 
 				try {
