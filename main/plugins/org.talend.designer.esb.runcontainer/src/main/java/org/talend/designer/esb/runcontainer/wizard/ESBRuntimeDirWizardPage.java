@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -138,6 +137,13 @@ public class ESBRuntimeDirWizardPage extends WizardPage {
         compInfo.setLayout(new GridLayout(2, false));
         compInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+        Label lblSpace = new Label(compInfo, SWT.NONE);
+        lblSpace.setText("Available Spaces:");
+
+        Label labelSpaceSize = new Label(compInfo, SWT.NONE);
+        labelSpaceSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+        labelSpaceSize.setText(new File(System.getProperty("user.dir")).getFreeSpace() / 1024 / 1024 + " MB");
+
         Label lblRuntimeServerVersion = new Label(compInfo, SWT.NONE);
         lblRuntimeServerVersion.setText("Runtime Server Version:");
 
@@ -151,6 +157,7 @@ public class ESBRuntimeDirWizardPage extends WizardPage {
         labelSize = new Label(compInfo, SWT.NONE);
         labelSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
         labelSize.setText("");
+
     }
 
     /*

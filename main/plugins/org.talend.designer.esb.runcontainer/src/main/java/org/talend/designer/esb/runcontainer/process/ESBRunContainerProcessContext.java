@@ -25,7 +25,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.eclipse.swt.widgets.Display;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.model.process.IConnection;
 import org.talend.core.model.process.IProcess;

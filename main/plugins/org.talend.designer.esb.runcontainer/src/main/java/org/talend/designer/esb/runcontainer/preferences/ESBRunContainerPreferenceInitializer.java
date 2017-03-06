@@ -43,42 +43,42 @@ public class ESBRunContainerPreferenceInitializer extends AbstractPreferenceInit
     //
     public static final String P_ESB_RUNTIME_PORT = "P_ESB_RUNTIME_PORT";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_PORT = "1099";
+    public static final int P_DEFAULT_ESB_RUNTIME_PORT = 1099;
 
     //
     public static final String P_ESB_RUNTIME_USERNAME = "ESB_RUNTIME_USERNAME";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_USERNAME = "karaf";
+    public static final String P_DEFAULT_ESB_RUNTIME_USERNAME = "tesb";
 
     //
     public static final String P_ESB_RUNTIME_PASSWORD = "ESB_RUNTIME_PASSWORD";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_PASSWORD = "karaf";
+    public static final String P_DEFAULT_ESB_RUNTIME_PASSWORD = "tesb";
 
     //
     public static final String P_ESB_RUNTIME_MAVEN_SCRIPT = "ESB_RUNTIME_MAVEN_SCRIPT";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_MAVEN_SCRIPT = "";
+    public static final boolean P_DEFAULT_ESB_RUNTIME_MAVEN_SCRIPT = false;
 
     //
     public static final String P_ESB_RUNTIME_CLEAN_CACHE = "ESB_RUNTIME_CLEAN_CACHE";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_CLEAN_CACHE = "";
+    public static final boolean P_DEFAULT_ESB_RUNTIME_CLEAN_CACHE = false;
 
     //
     public static final String P_ESB_RUNTIME_JMX = "ESB_RUNTIME_JMX";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_JMX = "";
+    public static final boolean P_DEFAULT_ESB_RUNTIME_JMX = true;
 
     //
     public static final String P_ESB_RUNTIME_JMX_PORT = "ESB_RUNTIME_JMX_PORT";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_JMX_PORT = "44444";
+    public static final int P_DEFAULT_ESB_RUNTIME_JMX_PORT = 44444;
 
     //
     public static final String P_ESB_RUNTIME_SYS_LOG = "ESB_RUNTIME_SYS_LOG";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_SYS_LOG = "";
+    public static final boolean P_DEFAULT_ESB_RUNTIME_SYS_LOG = false;
 
     /*
      * (non-Javadoc)
@@ -88,5 +88,14 @@ public class ESBRunContainerPreferenceInitializer extends AbstractPreferenceInit
     public void initializeDefaultPreferences() {
         IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
         store.setDefault(P_ESB_RUNTIME_LOCATION, P_DEFAULT_ESB_RUNTIME_LOCATION);
+        store.setDefault(P_ESB_RUNTIME_HOST, P_DEFAULT_ESB_RUNTIME_HOST);
+        store.setDefault(P_ESB_RUNTIME_PORT, P_DEFAULT_ESB_RUNTIME_PORT);
+        store.setDefault(P_ESB_RUNTIME_USERNAME, P_DEFAULT_ESB_RUNTIME_USERNAME);
+        store.setDefault(P_ESB_RUNTIME_PASSWORD, P_DEFAULT_ESB_RUNTIME_PASSWORD);
+        store.setDefault(P_ESB_RUNTIME_MAVEN_SCRIPT, P_DEFAULT_ESB_RUNTIME_MAVEN_SCRIPT);
+        store.setDefault(P_ESB_RUNTIME_CLEAN_CACHE, P_DEFAULT_ESB_RUNTIME_CLEAN_CACHE);
+        store.setDefault(P_ESB_RUNTIME_JMX, P_DEFAULT_ESB_RUNTIME_JMX);
+        store.setDefault(P_ESB_RUNTIME_JMX_PORT, P_DEFAULT_ESB_RUNTIME_JMX_PORT);
+        store.setDefault(P_ESB_RUNTIME_SYS_LOG, P_DEFAULT_ESB_RUNTIME_SYS_LOG);
     }
 }

@@ -56,11 +56,8 @@ import org.slf4j.impl.SimpleLogger;
 
 import com.sun.xml.internal.ws.util.NoCloseInputStream;
 
-/**
- * A very simple
- */
 public class KarafClient {
-    
+
     public void connect(String[] args) throws Exception {
         ClientConfig config = new ClientConfig(args);
         SimpleLogger.setLevel(config.getLevel());
@@ -84,24 +81,26 @@ public class KarafClient {
             config.setCommand(sb.toString());
         }
 
-        try (SshClient client = ClientBuilder.builder().build())
-        {
+        try (SshClient client = ClientBuilder.builder().build()) {
             setupAgent(config.getUser(), config.getKeyFile(), client);
             client.getProperties().put(FactoryManager.IDLE_TIMEOUT, String.valueOf(config.getIdleTimeout()));
             final Console console = System.console();
             if (console != null) {
                 client.setUserInteraction(new UserInteraction() {
+
                     @Override
                     public void welcome(ClientSession s, String banner, String lang) {
                         System.err.println(banner);
                     }
+
                     @Override
-                    public String[] interactive(ClientSession s, String name, String instruction, String lang, String[] prompt, boolean[] echo) {
+                    public String[] interactive(ClientSession s, String name, String instruction, String lang, String[] prompt,
+                            boolean[] echo) {
                         String[] answers = new String[prompt.length];
                         try {
                             for (int i = 0; i < prompt.length; i++) {
                                 if (echo[i]) {
-                                	answers[i] = console.readLine(prompt[i] + " ");
+                                    answers[i] = console.readLine(prompt[i] + " ");
                                 } else {
                                     answers[i] = new String(console.readPassword(prompt[i] + " "));
                                 }
@@ -114,13 +113,16 @@ public class KarafClient {
                             return null;
                         }
                     }
+
                     @Override
                     public boolean isInteractionAllowed(ClientSession session) {
                         return true;
                     }
+
                     @Override
                     public void serverVersionInfo(ClientSession session, List<String> lines) {
                     }
+
                     @Override
                     public String getUpdatedPassword(ClientSession session, String prompt, String lang) {
                         return null;
@@ -129,9 +131,9 @@ public class KarafClient {
             }
             client.start();
             if (console != null) {
-            	console.printf("Logging in as %s\n", config.getUser());
+                console.printf("Logging in as %s\n", config.getUser());
             }
-            
+
             ClientSession session = connectWithRetries(client, config);
 
             if (config.getPassword() != null) {
@@ -145,14 +147,14 @@ public class KarafClient {
                 OutputStream outputStream = KarafConsoleUtil.getOutputStream();
                 try {
                     ClientChannel channel;
-                    
+
                     if (config.getCommand().length() > 0) {
                         channel = session.createChannel("exec", config.getCommand() + "\n");
                         channel.setIn(new ByteArrayInputStream(new byte[0]));
                     } else {
-                    	ChannelShell shell = session.createShellChannel();
+                        ChannelShell shell = session.createShellChannel();
                         channel = shell;
-                        
+
                         channel.setIn(new NoCloseInputStream(inputStream));
 
                         Map<PtyMode, Integer> modes = new HashMap<>();
@@ -228,24 +230,24 @@ public class KarafClient {
                     inputStream.close();
                 }
             }
-            //System.exit(exitStatus);
+            // System.exit(exitStatus);
         } catch (Throwable t) {
-        	t.printStackTrace();
+            t.printStackTrace();
             if (config.getLevel() > SimpleLogger.WARN) {
                 t.printStackTrace();
             } else {
                 System.err.println(t.getMessage());
             }
-            //System.exit(1);
+            // System.exit(1);
         }
     }
 
     private InputStream inputStream;
-    
-    public void setInputStream(InputStream inputStream){
-    	this.inputStream = inputStream;
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
-    
+
     private static int getFlag(Attributes attributes, InputFlag flag) {
         return attributes.getInputFlag(flag) ? 1 : 0;
     }
@@ -299,7 +301,7 @@ public class KarafClient {
                 AbstractFileKeyPairProvider fileKeyPairProvider = SecurityUtils.createFileKeyPairProvider();
                 fileKeyPairProvider.setPaths(Collections.singleton(Paths.get(keyFile)));
                 for (KeyPair key : fileKeyPairProvider.loadKeys()) {
-                    agent.addIdentity(key, user);                
+                    agent.addIdentity(key, user);
                 }
             }
             return agent;
@@ -326,20 +328,18 @@ public class KarafClient {
             Class<?> signalHandlerClass = Class.forName("sun.misc.SignalHandler");
             // Implement signal handler
             Object signalHandler = Proxy.newProxyInstance(KarafClient.class.getClassLoader(),
-                    new Class<?>[]{signalHandlerClass}, new InvocationHandler() {
+                    new Class<?>[] { signalHandlerClass }, new InvocationHandler() {
+
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             Size size = terminal.getSize();
                             channel.sendWindowChange(size.getColumns(), size.getRows());
                             return null;
                         }
-                    }
-            );
+                    });
             // Register the signal handler, this code is equivalent to:
             // Signal.handle(new Signal("CONT"), signalHandler);
-            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(
-                    null,
-                    signalClass.getConstructor(String.class).newInstance("WINCH"),
-                    signalHandler);
+            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null,
+                    signalClass.getConstructor(String.class).newInstance("WINCH"), signalHandler);
         } catch (Exception e) {
             // Ignore this exception, if the above failed, the signal API is incompatible with what we're expecting
 
@@ -354,10 +354,8 @@ public class KarafClient {
             Object signalHandler = signalHandlerClass.getField("SIG_DFL").get(null);
             // Register the signal handler, this code is equivalent to:
             // Signal.handle(new Signal("CONT"), signalHandler);
-            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(
-                    null,
-                    signalClass.getConstructor(String.class).newInstance("WINCH"),
-                    signalHandler);
+            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null,
+                    signalClass.getConstructor(String.class).newInstance("WINCH"), signalHandler);
         } catch (Exception e) {
             // Ignore this exception, if the above failed, the signal API is incompatible with what we're expecting
 

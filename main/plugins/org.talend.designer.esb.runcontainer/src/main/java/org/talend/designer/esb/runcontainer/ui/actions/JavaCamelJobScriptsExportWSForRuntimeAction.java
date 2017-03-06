@@ -74,12 +74,7 @@ public class JavaCamelJobScriptsExportWSForRuntimeAction extends JavaCamelJobScr
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException,
             InterruptedException {
         exportFolder = getTempDir();
-        
-        
-        
-        
-        
-        
+
         try {
             File parentDestFile = new File(exportFolder);
             if (!parentDestFile.exists()) {

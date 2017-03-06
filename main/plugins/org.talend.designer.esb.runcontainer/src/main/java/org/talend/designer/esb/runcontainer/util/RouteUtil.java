@@ -43,17 +43,16 @@ public class RouteUtil {
         // ClientListener clientListener = new ClientListener();
         // org.apache.camel:context=local_project.let1-local_project.let1_0_1.let1,type=processors,name="let1_cLog_1"
         Set<ObjectName> set = connection.queryNames(new ObjectName(
-                "org.apache.camel:context=local_project.let1-local_project.let1_0_1.let1,type=processors,name=*"),
-                null);
+                "org.apache.camel:context=local_project.let1-local_project.let1_0_1.let1,type=processors,name=*"), null);
         for (int i = 1; i < 20; i++) {
 
             for (ObjectName on : set) {
                 System.out.println(on.getCanonicalName() + "------>" + connection.getAttribute(on, "ExchangesCompleted"));
-//                try {
-//                    java.util.concurrent.TimeUnit.SECONDS.sleep(1);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                // try {
+                // java.util.concurrent.TimeUnit.SECONDS.sleep(1);
+                // } catch (InterruptedException e) {
+                // e.printStackTrace();
+                // }
             }
         }
 

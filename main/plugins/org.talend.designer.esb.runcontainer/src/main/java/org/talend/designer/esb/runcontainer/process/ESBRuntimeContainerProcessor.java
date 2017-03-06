@@ -147,7 +147,7 @@ public class ESBRuntimeContainerProcessor implements IProcessor, IEclipseProcess
      */
     private void writeLog(IProcessMessageManager processMessageManager, ProcessMessage message) {
         processMessageManager.addMessage(message);
-//        processMessageManager.updateConsole();
+        // processMessageManager.updateConsole();
     }
 
     @Override

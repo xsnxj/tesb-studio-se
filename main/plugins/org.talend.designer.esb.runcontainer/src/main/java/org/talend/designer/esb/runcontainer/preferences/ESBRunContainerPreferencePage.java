@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.wizard.ESBRuntimeWizard;
 
 /**
@@ -93,7 +94,8 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         compServer.setSize(230, 25);
         {
 
-            DirectoryFieldEditor directoryFieldEditor = new DirectoryFieldEditor("id", "Location:", compServer);
+            DirectoryFieldEditor directoryFieldEditor = new DirectoryFieldEditor(
+                    ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION, "Location:", compServer);
             directoryFieldEditor.getLabelControl(compServer).setText("");
             addField(directoryFieldEditor);
         }
@@ -104,8 +106,8 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         Composite compHost = new Composite(compSvrBody, SWT.NONE);
         compHost.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         {
-            StringFieldEditor stringFieldEditor = new StringFieldEditor("id", "Host:", -1,
-                    StringFieldEditor.VALIDATE_ON_KEY_STROKE, compHost);
+            StringFieldEditor stringFieldEditor = new StringFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST,
+                    "Host:", -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, compHost);
             stringFieldEditor.getLabelControl(compHost).setText("");
             addField(stringFieldEditor);
         }
@@ -116,10 +118,10 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         Composite compPort = new Composite(compSvrBody, SWT.NONE);
         compPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         {
-            StringFieldEditor stringFieldEditor = new StringFieldEditor("id", "Port:", -1,
-                    StringFieldEditor.VALIDATE_ON_KEY_STROKE, compPort);
-            stringFieldEditor.getLabelControl(compPort).setText("");
-            addField(stringFieldEditor);
+            IntegerFieldEditor integerFieldEditor = new IntegerFieldEditor(
+                    ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT, "Port:", compPort, -1);
+            integerFieldEditor.getLabelControl(compPort).setText("");
+            addField(integerFieldEditor);
         }
 
         Label lblUsername = new Label(compSvrBody, SWT.NONE);
@@ -128,7 +130,8 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         Composite compUser = new Composite(compSvrBody, SWT.NONE);
         compUser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         {
-            StringFieldEditor stringFieldEditor = new StringFieldEditor("id", "User:", -1,
+            StringFieldEditor stringFieldEditor = new StringFieldEditor(
+                    ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME, "User:", -1,
                     StringFieldEditor.VALIDATE_ON_KEY_STROKE, compUser);
             stringFieldEditor.getLabelControl(compUser).setText("");
             addField(stringFieldEditor);
@@ -140,7 +143,8 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         Composite compPassword = new Composite(compSvrBody, SWT.NONE);
         compPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         {
-            StringFieldEditor stringFieldEditor = new StringFieldEditor("id", "Password:", -1,
+            StringFieldEditor stringFieldEditor = new StringFieldEditor(
+                    ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_PASSWORD, "Password:", -1,
                     StringFieldEditor.VALIDATE_ON_KEY_STROKE, compPassword);
             stringFieldEditor.getLabelControl(compPassword).setText("");
             addField(stringFieldEditor);
@@ -182,7 +186,8 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         groupEnd.setLayout(new GridLayout(1, false));
 
         Composite compScript = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor("id", "Add Maven Script", BooleanFieldEditor.DEFAULT, compScript));
+        addField(new BooleanFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT, "Add Maven Script",
+                BooleanFieldEditor.DEFAULT, compScript));
 
         Composite compCache = new Composite(groupEnd, SWT.NONE);
         GridLayout gl_compCache = new GridLayout(2, false);
@@ -192,19 +197,22 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
         compCache.setLayout(gl_compCache);
 
         Composite compClean = new Composite(compCache, SWT.NONE);
-        addField(new BooleanFieldEditor("id", "Clean cache before running", BooleanFieldEditor.DEFAULT, compClean));
+        addField(new BooleanFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_CLEAN_CACHE,
+                "Clean cache before running", BooleanFieldEditor.DEFAULT, compClean));
 
         Button btnNewButton = new Button(compCache, SWT.NONE);
         btnNewButton.setText("Clean now");
 
         Composite compJmx = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor("id", "Use JMX for Route Monitoring", BooleanFieldEditor.DEFAULT, compJmx));
+        addField(new BooleanFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX, "Use JMX for Route Monitoring",
+                BooleanFieldEditor.DEFAULT, compJmx));
 
         Composite compJmxPort = new Composite(groupEnd, SWT.NONE);
-        addField(new IntegerFieldEditor("id", "Port:", compJmxPort));
+        addField(new IntegerFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX_PORT, "Port:", compJmxPort));
 
         Composite compFilter = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor("id", "Filter system logs", BooleanFieldEditor.DEFAULT, compFilter));
+        addField(new BooleanFieldEditor(ESBRunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG, "Filter system logs",
+                BooleanFieldEditor.DEFAULT, compFilter));
         return container;
     }
 
@@ -213,6 +221,7 @@ public class ESBRunContainerPreferencePage extends FieldLayoutPreferencePage imp
      */
     public void init(IWorkbench workbench) {
         // Initialize the preference page
+        setPreferenceStore(ESBRunContainerPlugin.getDefault().getPreferenceStore());
     }
 
 }
