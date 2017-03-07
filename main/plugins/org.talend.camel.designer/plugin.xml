@@ -387,5 +387,13 @@
               </RepositoryType>
            </RepositorySupportType>
         </extension>
+        <extension
+              point="org.talend.core.runtime.buildExport_provider">
+           <buildProvider
+                 description="Test case for Route job"
+                 id="testcase.route.job"
+                 provider="org.talend.camel.designer.build.RouteTestCaseBuildProvider">
+           </buildProvider>
+        </extension>
 
 </plugin>
