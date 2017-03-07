@@ -19,7 +19,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.wizard;
+package org.talend.designer.esb.runcontainer.ui.wizard;
 
 import org.eclipse.jface.wizard.Wizard;
 

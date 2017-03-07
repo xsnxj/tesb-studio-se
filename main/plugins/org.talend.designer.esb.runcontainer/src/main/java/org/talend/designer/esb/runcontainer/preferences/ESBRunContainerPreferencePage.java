@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
-import org.talend.designer.esb.runcontainer.wizard.ESBRuntimeWizard;
+import org.talend.designer.esb.runcontainer.ui.wizard.ESBRuntimeWizard;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
