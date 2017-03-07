@@ -41,6 +41,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.documentation.ExportFileResource;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.talend.repository.utils.EmfModelUtils;
@@ -56,6 +57,20 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
         Collection<String> routelets) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        this.routelets = routelets;
+    }
+
+    /**
+     * DOC yyan RouteJavaScriptOSGIForESBManager constructor comment.
+     * @param exportChoice
+     * @param context
+     * @param routelets2
+     * @param statisticsPort
+     * @param tracePort
+     */
+    public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String context,
+            Collection<String> routelets, int statisticsPort, int tracePort) {
+        super(exportChoiceMap, context, null, statisticsPort, tracePort);
         this.routelets = routelets;
     }
 

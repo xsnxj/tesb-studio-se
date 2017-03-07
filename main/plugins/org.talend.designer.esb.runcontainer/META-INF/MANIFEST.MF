@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ESB Runtime Container
+Bundle-SymbolicName: org.talend.designer.esb.runcontainer;singleton:=true
+Bundle-Version: 6.4.0.qualifier
+Bundle-Vendor: .Talend SA.
+Bundle-Localization: plugin
+Require-Bundle: org.talend.camel.model,
+ org.talend.core,
+ org.talend.core.ui,
+ org.talend.designer.runprocess,
+ org.eclipse.debug.ui,
+ org.talend.commons.ui,
+ org.talend.camel.designer,
+ org.talend.core.repository,
+ org.eclipse.ui.console,
+ org.talend.libraries.jackson,
+ org.talend.designer.publish.core,
+ org.talend.repository,
+ org.eclipse.jdt.core
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin
+Bundle-ClassPath: lib/httpclient-4.3.6-6.0.0.jar,
+ lib/jline-3.0.0.M1.jar,
+ lib/org.apache.karaf.client-4.0.8.jar,
+ lib/slf4j-api-1.7.12.jar,
+ lib/sshd-core-1.3.0.jar,
+ .
