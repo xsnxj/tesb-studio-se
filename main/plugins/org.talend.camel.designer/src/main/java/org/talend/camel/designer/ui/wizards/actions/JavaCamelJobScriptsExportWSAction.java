@@ -75,6 +75,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private final boolean addStatisticsCode;
 
+    private int statisticPort;
+
+    private int tracePort;
+
     public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version, String destinationKar,
             boolean addStatisticsCode) {
         this.routeNode = routeNode;
@@ -88,8 +92,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         manager.setBundleVersion(version);
     }
 
-    public JavaCamelJobScriptsExportWSAction(Map<ExportChoice, Object> exportChoiceMap, IRepositoryNode routeNode, String version,
-            String destinationKar, boolean addStatisticsCode) {
+    public JavaCamelJobScriptsExportWSAction(Map<ExportChoice, Object> exportChoiceMap, IRepositoryNode routeNode,
+            String version, String destinationKar, boolean addStatisticsCode) {
         this.routeNode = routeNode;
         this.version = version;
         this.bundleVersion = version;
@@ -104,6 +108,30 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version, String bundleVersion) {
         this(routeNode, version, null, false);
         this.bundleVersion = bundleVersion;
+    }
+
+    /**
+     * DOC yyan JavaCamelJobScriptsExportWSAction constructor comment.
+     * 
+     * @param routeNode
+     * @param version
+     * @param destinationKar
+     * @param addStatisticsCode
+     * @param statisticPort
+     * @param tracePort
+     */
+    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version, String destinationKar,
+            boolean addStatisticsCode, int statisticPort, int tracePort) {
+        this.routeNode = routeNode;
+        this.version = version;
+        this.bundleVersion = version;
+        this.destinationKar = destinationKar;
+        this.addStatisticsCode = addStatisticsCode;
+        this.statisticPort = statisticPort;
+        this.tracePort = tracePort;
+
+        manager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null, statisticPort, tracePort);
+        manager.setBundleVersion(version);
     }
 
     private Map<ExportChoice, Object> getExportChoice() {
@@ -171,12 +199,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
         } finally {
             // remove generated files
-            FilesUtils.removeFolder(getTempDir(), true);
+            removeTempFiles();
         }
     }
 
-    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
-            throws InvocationTargetException, InterruptedException {
+    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException,
+            InterruptedException {
         // create kar file
         try {
             new ZipModel(featuresModel, new File(destinationKar));
@@ -186,7 +214,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     private void exportAllReferenceJobs(String routeName, ProcessItem routeProcess)
-    		throws InvocationTargetException, InterruptedException {
+            throws InvocationTargetException, InterruptedException {
         for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(routeProcess, "cTalendJob")) { //$NON-NLS-1$
             String jobId = null;
             String jobVersion = null;
@@ -319,7 +347,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion,
             Collection<String> routelets, String context) throws InvocationTargetException, InterruptedException {
         final JobJavaScriptOSGIForESBManager talendJobManager = new RouteJavaScriptOSGIForESBManager(getExportChoice(), context,
-                routelets);
+                routelets, statisticPort, tracePort);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
@@ -329,8 +357,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath, String jobVersion, String bundleName,
-            String bundleVersion, String routeName, String routeVersion, String context)
-            throws InvocationTargetException, InterruptedException {
+            String bundleVersion, String routeName, String routeVersion, String context) throws InvocationTargetException,
+            InterruptedException {
         RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice(), context);
         talendJobManager.setJobVersion(jobVersion);
         talendJobManager.setBundleName(bundleName);
@@ -341,8 +369,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         talendJobManager.setGroupId(getGroupId());
         talendJobManager.setArtifactId(getArtifactId());
         talendJobManager.setArtifactVersion(getArtifactVersion());
-        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion, talendJobManager,
-                getTempDir(), "Job");
+        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion,
+                talendJobManager, getTempDir(), "Job");
         action.run(monitor);
     }
 
@@ -355,6 +383,11 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
         return path;
     }
+
     // END of TESB-5328
+
+    protected void removeTempFiles() {
+        FilesUtils.removeFolder(getTempDir(), true);
+    }
 
 }
