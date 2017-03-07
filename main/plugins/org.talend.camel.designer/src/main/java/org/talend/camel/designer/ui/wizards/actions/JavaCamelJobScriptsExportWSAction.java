@@ -230,13 +230,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            // String jobArtifactVersion = jobVersion;
-            // if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-            //    jobArtifactVersion += "-SNAPSHOT";
-            // }
+            String jobBundleVersion = jobVersion;
+            if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                jobBundleVersion += "-SNAPSHOT";
+            }
             BundleModel jobModel = new BundleModel(getGroupId(), jobArtifactName, getArtifactVersion(), jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion,
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion,
                         routeNode.getObject().getProperty().getDisplayName(), version, jobContext);
             }
         }
@@ -281,9 +281,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 }
                 String routeletName = referencedRouteletNode.getObject().getLabel();
                 String routeletArtifactName = routeName + "__" + routeletName + "-bundle";
-                BundleModel jobModel = new BundleModel(getGroupId(), routeletArtifactName, getArtifactVersion(), routeletFile);
-                if (featuresModel.addBundle(jobModel)) {
-                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion, null,
+                String routeletBundleVersion = routeletVersion;
+                if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                    routeletBundleVersion += "-SNAPSHOT";
+                }
+                BundleModel routeletModel = new BundleModel(getGroupId(), routeletArtifactName, getArtifactVersion(), routeletFile);
+                if (featuresModel.addBundle(routeletModel)) {
+                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleVersion, null,
                             EmfModelUtils.findElementParameterByName(
                                     EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(),
                                     node).getValue());
