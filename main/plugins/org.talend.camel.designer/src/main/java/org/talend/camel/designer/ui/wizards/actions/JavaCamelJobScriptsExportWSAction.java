@@ -228,13 +228,15 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 throw new InvocationTargetException(e);
             }
             String jobArtifactVersion = jobVersion;
-            if(getArtifactVersion().endsWith("-SNAPSHOT")) {
-            	jobArtifactVersion += "-SNAPSHOT";
+            String jobBundleVersion = jobVersion;
+            if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                jobArtifactVersion += "-SNAPSHOT";
+                jobBundleVersion += ".0.SNAPSHOT";
             }
             String routeName = routeNode.getObject().getProperty().getDisplayName();
             BundleModel jobModel = new BundleModel(getJobGroupId(jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobVersion, routeNode
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion, routeNode
                     .getObject().getProperty().getDisplayName(), version, jobContext);
             }
         }
@@ -274,9 +276,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
+                String routeletBundleVersion = routeletVersion;
+                if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                    routeletBundleVersion += ".0.SNAPSHOT";
+                }
                 BundleModel jobModel = new BundleModel(getGroupId(), referencedRouteletNode.getObject().getLabel(), getArtifactVersion(), routeletFile);
                 if (featuresModel.addBundle(jobModel)) {
-                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletVersion, null,
+                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleVersion, null,
                         EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(), node).getValue());
                     CamelFeatureUtil.addFeatureAndBundles(routeletProcess, featuresModel);
 
