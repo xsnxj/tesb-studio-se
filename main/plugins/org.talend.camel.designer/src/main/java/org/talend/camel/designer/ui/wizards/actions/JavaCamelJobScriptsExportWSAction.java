@@ -271,7 +271,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
             String jobBundleVersion = jobVersion;
             if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                jobBundleVersion += "-SNAPSHOT";
+                jobBundleVersion += ".0.SNAPSHOT";
             }
             BundleModel jobModel = new BundleModel(getGroupId(), jobArtifactName,
                     getArtifactVersion(), jobFile);
@@ -329,7 +329,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 String routeletArtifactName = routeName + "__" + routeletName + "-bundle";
                 String routeletBundleVersion = routeletVersion;
                 if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                    routeletBundleVersion += "-SNAPSHOT";
+                    routeletBundleVersion += ".0.SNAPSHOT";
                 }
                 BundleModel routeletModel = new BundleModel(getGroupId(), routeletArtifactName,
                         getArtifactVersion(), routeletFile);
