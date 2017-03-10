@@ -22,6 +22,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -198,7 +199,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 featuresModel.setContexts(JobContextUtils.getContextsMap(routeProcess));
 
                 exportAllReferenceJobs(routeName, routeProcess);
-                final Collection<String> routelets = new HashSet<>();
+                final Set<String> routelets = new HashSet<>();
                 exportAllReferenceRoutelets(routeName, routeProcess, routelets);
 
                 exportRouteBundle(routeNode, routeFile, version, bundleVersion, routelets, null);
@@ -256,6 +257,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (PersistenceException e) {
                 throw new InvocationTargetException(e);
             }
+
             if (RelationshipItemBuilder.LATEST_VERSION.equals(jobVersion)) {
                 jobVersion = referencedJobNode.getObject().getVersion();
             }
@@ -284,8 +286,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     @SuppressWarnings("unchecked")
-    protected void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess,
-    		Collection<String> routelets) throws InvocationTargetException, InterruptedException {
+    protected final void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess,
+    		Set<String> routelets) throws InvocationTargetException, InterruptedException {
         for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
             if (!EmfModelUtils.isComponentActive(node)) {
                 continue;
