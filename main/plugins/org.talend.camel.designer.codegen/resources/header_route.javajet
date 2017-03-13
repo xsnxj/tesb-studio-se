@@ -2033,13 +2033,6 @@ if (isProvider) {
             
             public void doConfig() throws java.lang.Exception {
                 final /*org.apache.camel.model.Model*/CamelContext camelContext = getContext();
-<%
-				if(hasRouteletComponent(process)){
-%>
-                	addRoutelets();
-<%
-				}
-%>
                 final org.apache.camel.impl.SimpleRegistry registry = new org.apache.camel.impl.SimpleRegistry();
                 final org.apache.camel.impl.CompositeRegistry compositeRegistry =
                     new org.apache.camel.impl.CompositeRegistry();

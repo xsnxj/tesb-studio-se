@@ -126,7 +126,13 @@
 
         //add route
         main.addRouteBuilder(<%=isTestContainer ? "this.createRouteBuilder()" : "this" %>);
-		
+		<%
+				if(hasRouteletComponent(process)){
+		%>
+					addRoutelets(main);
+		<%
+				}
+		%>
         main.run();
     }
     
