@@ -32,7 +32,7 @@ public class CLASS {
 	public static String generateAddRouteletMethod(final org.talend.core.model.process.IProcess process){
 		if(hasRouteletComponent(process)){
 			routeContextCodeGenerated = false;
-			StringBuilder code = new StringBuilder("private void addRoutelets() throws Exception{\n");
+			StringBuilder code = new StringBuilder("private void addRoutelets(org.apache.camel.main.Main main) throws Exception{\n");
 			addRouteletsWithContext(process, code);
 			return code.append("}\n").toString();
 		}else{
@@ -71,9 +71,8 @@ public class CLASS {
 	            	}
 	            	code.append(instanceName +".setArguments(overwriteContext_"+instanceName+");\n");
 	            }
-	            code.append("//add routelet "+instanceName+"\n");
-	            code.append(instanceName +".addRoutesToCamelContext((org.apache.camel.model.ModelCamelContext) getContext());\n");
-	            addRouteletsWithContext(routelet, code);
+
+	            code.append("main.addRouteBuilder("+instanceName+");");
             }
         }
     }
