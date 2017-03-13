@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
@@ -76,7 +77,7 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
     private Collection<String> getReferenceRoutlets() {
         ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
         String routeName = routeNode.getObject().getProperty().getDisplayName();
-        Collection<String> routelets = new HashSet<>();
+        Set<String> routelets = new HashSet<>();
         try {
             exportAllReferenceRoutelets(routeName, routeProcess, routelets);
         } catch (InvocationTargetException e) {
