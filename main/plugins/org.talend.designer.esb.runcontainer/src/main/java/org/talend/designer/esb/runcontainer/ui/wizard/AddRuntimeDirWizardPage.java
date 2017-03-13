@@ -48,6 +48,8 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class AddRuntimeDirWizardPage extends WizardPage {
+    
+    private final String target;
 
     private Text rtDirText;
 
@@ -56,12 +58,15 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     private List<String> rtFiles = new ArrayList<String>();
 
     private Label labelSize;
-
+    
+    private Button btnCopyToStudio;
+    
     /**
      * Create the wizard.
      */
-    public AddRuntimeDirWizardPage() {
+    public AddRuntimeDirWizardPage(String target) {
         super("Add ESB Runtime Server");
+        this.target = target;
         setTitle("Add ESB Runtime Server");
         setDescription("Please select local runtime installation directory");
         rtFiles.add("/bin/trun");
@@ -124,15 +129,16 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         Composite compCheck = new Composite(body, SWT.NONE);
         compCheck.setLayout(new GridLayout(2, false));
 
-        Button btnCopyToStudio = new Button(compCheck, SWT.CHECK);
+        btnCopyToStudio = new Button(compCheck, SWT.CHECK);
         btnCopyToStudio.setText("Copy entire runtime server into studio directory and use it");
         btnCopyToStudio.setSelection(true);
+        btnCopyToStudio.setEnabled(true);
 
         Label blank = new Label(compCheck, SWT.NONE);
         blank.setText("");
 
         Label labelStudioPath = new Label(compCheck, SWT.NONE);
-        labelStudioPath.setText(System.getProperty("user.dir") + File.separator + "esb" + File.separator + "container");
+        labelStudioPath.setText(target);
         Composite compInfo = new Composite(body, SWT.NONE);
         compInfo.setLayout(new GridLayout(2, false));
         compInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -259,5 +265,13 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     public boolean canFlipToNextPage() {
         // TODO Auto-generated method stub
         return true;
+    }
+    
+    public String getRuntimeHome() {
+    	return rtDirText.getText();
+    }
+    
+    public boolean isCopyNeeded() {
+    	return btnCopyToStudio.getSelection();
     }
 }

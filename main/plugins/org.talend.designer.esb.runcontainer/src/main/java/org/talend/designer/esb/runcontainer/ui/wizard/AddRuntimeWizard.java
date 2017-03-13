@@ -21,7 +21,12 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.wizard;
 
+import java.io.IOException;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.talend.designer.esb.runcontainer.util.RuntimeContainerUtil;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -31,22 +36,44 @@ import org.eclipse.jface.wizard.Wizard;
  */
 public class AddRuntimeWizard extends Wizard {
 
+    private String target;
+    
     private AddRuntimeDirWizardPage dirPage;
 
-    public AddRuntimeWizard() {
+    public AddRuntimeWizard(String target) {
+        this.target = target;
         setWindowTitle("Add ESB Runtime Server");
     }
 
     @Override
     public void addPages() {
-        dirPage = new AddRuntimeDirWizardPage();
+        dirPage = new AddRuntimeDirWizardPage(target);
 
         addPage(dirPage);
     }
 
     @Override
     public boolean performFinish() {
-        return false;
+
+        if (dirPage.isCopyNeeded()) {
+            try {
+                RuntimeContainerUtil.copyContainer(dirPage.getRuntimeHome(), target);
+            } catch (IOException e) {
+                MessageDialog.openError(this.getShell(), "Unable to copy runtime container", ExceptionUtils.getStackTrace(e));
+                return false;
+            }
+            return true;
+        }
+
+//        MessageDialog.openInformation(this.getShell(), "Not implemented", "Only copying is supported");
+        target = dirPage.getRuntimeHome();
+
+//        return false;
+        return true;
+    }
+    
+    public String getTarget() {
+        return target;
     }
 
     // @Override

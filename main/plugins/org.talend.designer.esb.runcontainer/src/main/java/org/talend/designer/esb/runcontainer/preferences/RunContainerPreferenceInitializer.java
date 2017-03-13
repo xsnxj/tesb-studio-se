@@ -21,6 +21,8 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.preferences;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
@@ -33,7 +35,8 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
     //
     public static final String P_ESB_RUNTIME_LOCATION = "ESB_RUNTIME_LOCATION";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_LOCATION = "";
+    public static final String P_DEFAULT_ESB_RUNTIME_LOCATION = 
+    		System.getProperty("user.dir") + File.separator + "esb" + File.separator + "container";
 
     //
     public static final String P_ESB_RUNTIME_HOST = "P_ESB_RUNTIME_HOST";

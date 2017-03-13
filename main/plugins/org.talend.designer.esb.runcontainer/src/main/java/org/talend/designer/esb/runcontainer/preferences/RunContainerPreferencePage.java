@@ -22,7 +22,6 @@
 package org.talend.designer.esb.runcontainer.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -92,13 +91,11 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         Composite compServer = new Composite(compSvrBody, SWT.NONE);
         compServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         compServer.setSize(230, 25);
-        {
-
-            DirectoryFieldEditor directoryFieldEditor = new DirectoryFieldEditor(
-                    RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION, "Location:", compServer);
-            directoryFieldEditor.getLabelControl(compServer).setText("");
-            addField(directoryFieldEditor);
-        }
+        StringFieldEditor locationEditor = new StringFieldEditor(
+                RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION, "Location:", compServer);
+        locationEditor.getLabelControl(compServer).setText("");
+        locationEditor.setEnabled(true, compServer);
+        addField(locationEditor);
 
         Label lblHost = new Label(compSvrBody, SWT.NONE);
         lblHost.setText("Host:");
@@ -162,9 +159,11 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                AddRuntimeWizard dirWizard = new AddRuntimeWizard();
+                AddRuntimeWizard dirWizard = new AddRuntimeWizard(locationEditor.getStringValue());
                 WizardDialog wizardDialog = new WizardDialog(getShell(), dirWizard);
-                wizardDialog.open();
+                if (wizardDialog.open() == WizardDialog.OK) {
+                    locationEditor.setStringValue(dirWizard.getTarget());
+                }
             }
         });
         btnAddSvr.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -223,5 +222,4 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         // Initialize the preference page
         setPreferenceStore(ESBRunContainerPlugin.getDefault().getPreferenceStore());
     }
-
 }
