@@ -52,6 +52,8 @@ import org.talend.repository.utils.TemplateProcessor;
 public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBManager {
 
     private final Collection<String> routelets;
+    private String bundleName = null;
+    private String bundleSymbolicName = null;
 
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
         Collection<String> routelets) {
@@ -75,6 +77,22 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
     public static String getClassName(ProcessItem processItem) {
         return getPackageName(processItem) + PACKAGE_SEPARATOR + processItem.getProperty().getLabel();
+    }
+
+    public String getBundleName() {
+    	return bundleName;
+    }
+
+    public void setBundleName(String bundleName) {
+    	this.bundleName = bundleName;
+    }
+
+    public String getBundleSymbolicName() {
+    	return bundleSymbolicName;
+    }
+
+    public void setBundleSymbolicName(String bundleSymbolicName) {
+    	this.bundleSymbolicName = bundleSymbolicName;
     }
 
     protected String getIncludeRoutinesPath() {
@@ -240,4 +258,15 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
         }
     }
 
+    @Override
+    protected Analyzer createAnalyzer(ExportFileResource libResource, ProcessItem processItem) throws IOException {
+        Analyzer analyzer = super.createAnalyzer(libResource, processItem);
+        if (bundleName != null && bundleName.length() > 0) {
+            analyzer.setProperty(Analyzer.BUNDLE_NAME, bundleName);
+        }
+        if (bundleSymbolicName != null && bundleSymbolicName.length() > 0) {
+            analyzer.setProperty(Analyzer.BUNDLE_SYMBOLICNAME, bundleSymbolicName);
+        }
+        return analyzer;
+    }
 }

@@ -202,7 +202,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 final Set<String> routelets = new HashSet<>();
                 exportAllReferenceRoutelets(routeName, routeProcess, routelets);
 
-                exportRouteBundle(routeNode, routeFile, version, bundleVersion, routelets, null);
+                exportRouteBundle(routeNode, routeFile, version, null, null, bundleVersion,
+                		routelets, null);
             }
 
             processResults(featuresModel, monitor);
@@ -328,16 +329,30 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                     throw new InvocationTargetException(e);
                 }
                 String routeletName = referencedRouteletNode.getObject().getLabel();
-                String routeletArtifactName = routeName + "__" + routeletName + "-bundle";
-                String routeletBundleVersion = routeletVersion;
-                if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                    routeletBundleVersion += ".0.SNAPSHOT";
+                String routeletBundleName = routeName + "_" + routeletName;
+                String routeletBundleSymbolicName = routeletBundleName;
+                Project project = ProjectManager.getInstance().getCurrentProject();
+                if (project != null) {
+                    String projectName = project.getLabel();
+                    if (projectName != null && projectName.length() > 0) {
+                        routeletBundleSymbolicName =
+                        		projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
+                    }
                 }
+                String routeletArtifactName = routeletBundleName + "-bundle";
+                String routeletBundleVersion = bundleVersion;
+                // String routeletBundleName = null; // fallback to default behaviour
+                // String routeletBundleSymbolicName = null; // fallback to default behaviour
+                // String routeletArtifactName = routeName + "__" + routeletName + "-bundle";
+                // String routeletBundleVersion = routeletVersionxx;
+                // if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                //     routeletBundleVersion += ".0.SNAPSHOT";
+                // }
                 BundleModel routeletModel = new BundleModel(getGroupId(), routeletArtifactName,
                         getArtifactVersion(), routeletFile);
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion,
-                            routeletBundleVersion, null,
+                            routeletBundleName, routeletBundleSymbolicName, routeletBundleVersion, null,
                             EmfModelUtils.findElementParameterByName(
                                     EParameterName.PROCESS_TYPE.getName() + ':'
                                             + EParameterName.PROCESS_TYPE_CONTEXT.getName(),
@@ -369,11 +384,14 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     private void exportRouteBundle(IRepositoryNode node, File filePath, String version,
-            String bundleVersion, Collection<String> routelets, String context)
+            String bundleName, String bundleSymbolicName, String bundleVersion,
+            Collection<String> routelets, String context)
                     throws InvocationTargetException, InterruptedException {
-        final JobJavaScriptOSGIForESBManager talendJobManager =
+        final RouteJavaScriptOSGIForESBManager talendJobManager =
                 new RouteJavaScriptOSGIForESBManager(getExportChoice(), context,
                         routelets, statisticPort, tracePort);
+        talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
