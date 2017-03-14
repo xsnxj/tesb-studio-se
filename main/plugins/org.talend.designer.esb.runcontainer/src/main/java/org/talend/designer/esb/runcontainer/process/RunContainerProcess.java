@@ -75,7 +75,6 @@ public class RunContainerProcess extends Process {
                             errOutputStream.write(msg.getBytes());
                             errOutputStream.write('\n');
                             // errOutputStream.flush();
-                            // stdOutputStream.write((msg + '\n').getBytes());
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

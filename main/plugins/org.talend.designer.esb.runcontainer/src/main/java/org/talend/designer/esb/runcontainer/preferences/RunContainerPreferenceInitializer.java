@@ -51,12 +51,12 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
     //
     public static final String P_ESB_RUNTIME_USERNAME = "ESB_RUNTIME_USERNAME";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_USERNAME = "tesb";
+    public static final String P_DEFAULT_ESB_RUNTIME_USERNAME = "tadmin";
 
     //
     public static final String P_ESB_RUNTIME_PASSWORD = "ESB_RUNTIME_PASSWORD";
 
-    public static final String P_DEFAULT_ESB_RUNTIME_PASSWORD = "tesb";
+    public static final String P_DEFAULT_ESB_RUNTIME_PASSWORD = "tadmin";
 
     //
     public static final String P_ESB_RUNTIME_MAVEN_SCRIPT = "ESB_RUNTIME_MAVEN_SCRIPT";
@@ -83,6 +83,11 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
 
     public static final boolean P_DEFAULT_ESB_RUNTIME_SYS_LOG = false;
 
+    //
+    public static final String P_ESB_RUNTIME_INSTANCE = "ESB_RUNTIME_INSTANCE";
+
+    public static final String P_DEFAULT_ESB_RUNTIME_INSTANCE = "trun";
+
     /*
      * (non-Javadoc)
      * 
@@ -100,5 +105,6 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
         store.setDefault(P_ESB_RUNTIME_JMX, P_DEFAULT_ESB_RUNTIME_JMX);
         store.setDefault(P_ESB_RUNTIME_JMX_PORT, P_DEFAULT_ESB_RUNTIME_JMX_PORT);
         store.setDefault(P_ESB_RUNTIME_SYS_LOG, P_DEFAULT_ESB_RUNTIME_SYS_LOG);
+        store.setDefault(P_ESB_RUNTIME_INSTANCE, P_DEFAULT_ESB_RUNTIME_INSTANCE);
     }
 }

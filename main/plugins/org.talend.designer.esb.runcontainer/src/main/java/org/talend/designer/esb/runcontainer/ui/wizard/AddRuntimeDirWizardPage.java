@@ -48,8 +48,10 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class AddRuntimeDirWizardPage extends WizardPage {
-    
+
     private final String target;
+
+    private String rtHome;
 
     private Text rtDirText;
 
@@ -58,9 +60,9 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     private List<String> rtFiles = new ArrayList<String>();
 
     private Label labelSize;
-    
+
     private Button btnCopyToStudio;
-    
+
     /**
      * Create the wizard.
      */
@@ -121,7 +123,9 @@ public class AddRuntimeDirWizardPage extends WizardPage {
 
                 DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN | SWT.SHEET);
                 String rtHome = fileDialog.open();
-                rtDirText.setText(rtHome);
+                if (rtHome != null) {
+                    rtDirText.setText(rtHome);
+                }
             }
         });
         btnNewButton.setText("&Directory...");
@@ -249,6 +253,7 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             if (validated) {
                 setErrorMessage(null);
                 setPageComplete(true);
+                this.rtHome = rtHome;
             } else {
                 setErrorMessage(errorMsg);
                 setPageComplete(false);
@@ -266,12 +271,12 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         // TODO Auto-generated method stub
         return true;
     }
-    
+
     public String getRuntimeHome() {
-    	return rtDirText.getText();
+        return rtHome;
     }
-    
+
     public boolean isCopyNeeded() {
-    	return btnCopyToStudio.getSelection();
+        return btnCopyToStudio.getSelection();
     }
 }

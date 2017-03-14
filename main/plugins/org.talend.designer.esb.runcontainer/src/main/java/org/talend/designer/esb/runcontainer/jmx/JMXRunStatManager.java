@@ -37,7 +37,7 @@ import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.repository.ProjectManager;
 
 /**
- * DOC yyi class global comment. Detailled comment <br/>
+ * DOC yyan class global comment. Detailled comment <br/>
  *
  * $Id$
  *
@@ -147,8 +147,6 @@ public class JMXRunStatManager {
                                 + ".*,type=processors,name=*"), null);
                         // org.apache.camel:context=local_project.let1-local_project.let1_0_1.let1,type=processors,name="let1_cLog_1"
                         for (ObjectName component : components) {
-                            System.out.println(component.getCanonicalName() + "------>"
-                                    + server.getAttribute(component, "ExchangesCompleted"));
                             int completed = Integer
                                     .parseInt(String.valueOf(server.getAttribute(component, "ExchangesCompleted")));
 
@@ -160,7 +158,6 @@ public class JMXRunStatManager {
                                 }
                             }
                         }
-                        // }
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }

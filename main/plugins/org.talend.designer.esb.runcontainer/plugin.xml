@@ -31,6 +31,26 @@
             label="ESBRunContainerProcessContextManager">
       </runprocess_manager>
    </extension>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.talend.designer.esb.runcontainer.ui.console.ESBRuntimeConsoleFactory"
+            label="Talend ESB Runtime">
+      </consoleFactory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.talend.designer.esb.runcontainer.ui.console.ESBRuntimeConsolePageParticipant"
+            id="org.talend.designer.esb.runcontainer.ESBRuntimeConsolePageParticipant">
+         <enablement>
+            <and>
+               <instanceof
+                     value="org.eclipse.ui.console.IOConsole">
+               </instanceof>
+            </and></enablement>
+      </consolePageParticipant>
+   </extension>
    <!-- extension
          point="org.talend.designer.runprocess.runprocess_manager">
       <runprocess_manager

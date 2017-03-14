@@ -67,7 +67,6 @@ public class SocketUtil {
             LineNumberReader reader = new LineNumberReader(new InputStreamReader(in));
 
             String line = reader.readLine();
-            System.out.println("------>" + line);
         }
     }
 }

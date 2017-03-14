@@ -19,34 +19,27 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.core;
+package org.talend.designer.esb.runcontainer.ui.console;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.ui.console.IConsoleFactory;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
+import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
 
-public class ESBRunContainerPlugin extends AbstractUIPlugin {
-
-    // The plug-in ID
-    public static final String PLUGIN_ID = "org.talend.designer.esb.runcontainer"; //$NON-NLS-1$
-
-    // The shared instance
-    private static ESBRunContainerPlugin plugin;
-
-    @Override
-    public void start(BundleContext context) throws Exception {
-        super.start(context);
-        plugin = this;
-    }
+/**
+ * DOC yyan class global comment. Detailled comment <br/>
+ *
+ * $Id$
+ *
+ */
+public class ESBRuntimeConsoleFactory implements IConsoleFactory {
 
     @Override
-    public void stop(BundleContext context) throws Exception {
-        RuntimeServerController.getInstance().stopRuntimeServer();
-        plugin = null;
-        super.stop(context);
+    public void openConsole() {
+        if (RuntimeServerController.getInstance().isRunning()) {
+            RuntimeConsoleUtil.loadConsole();
+        } else {
+            RuntimeConsoleUtil.findConsole(RuntimeConsoleUtil.KARAF_CONSOLE);
+        }
     }
 
-    public static ESBRunContainerPlugin getDefault() {
-        return plugin;
-    }
 }

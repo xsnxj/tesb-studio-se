@@ -19,7 +19,7 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.ui.console;
+package org.talend.designer.esb.runcontainer.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,14 +27,23 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
+import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
+import org.talend.designer.esb.runcontainer.ui.console.RuntimeClient;
 
 public class RuntimeConsoleUtil {
 
-    private static final String KARAF_CONSOLE = "Runtime Console";
+    public static final String KARAF_CONSOLE = "ESB Runtime";
+
+    private static RuntimeServerController server;
+
+    private static String systemCommand = null;
 
     public static IOConsole findConsole(String name) {
         ConsolePlugin plugin = ConsolePlugin.getDefault();
@@ -78,10 +87,9 @@ public class RuntimeConsoleUtil {
         } catch (IOException e2) {
             e2.printStackTrace();
         }
-
         m.setInputStream(pis);
 
-        new Thread() {
+        Thread consoleThread = new Thread("Runtime Console 1") {
 
             public void run() {
                 InputStream is = findConsole(KARAF_CONSOLE).getInputStream();
@@ -94,30 +102,47 @@ public class RuntimeConsoleUtil {
                     }
                 } catch (IOException e1) {
                     e1.printStackTrace();
-                } finally {
-                    try {
-                        is.close();
-                        pos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
-
             }
-        }.start();
+        };
+        consoleThread.start();
 
-        new Thread() {
+        Thread connectThread = new Thread("Runtime Console 2") {
 
             public void run() {
-                System.setProperty("karaf.etc", "");
-                String[] karafArgs = new String[] { "-h", "localhost" };
+                IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+                String etcLocation = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION);
+                String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
+                System.setProperty("karaf.etc", etcLocation + "/etc");
+                String[] karafArgs = new String[] { "-h", host };
 
                 try {
                     m.connect(karafArgs);
-                } catch (Exception eee) {
-                    eee.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        }.start();
+        };
+        connectThread.start();
+    }
+
+    public static void startLocalRuntime(String karafHome) {
+        // find bin
+
+    }
+
+    // test
+    public static void main(String[] args) {
+        startLocalRuntime("E:\\nb\\Talend-ESB-V6.3.1\\container");
+    }
+
+    public static void exec(String cmd) {
+        try {
+            findConsole(KARAF_CONSOLE).newOutputStream().write(cmd + '\n');
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // systemCommand = cmd;
     }
 }
