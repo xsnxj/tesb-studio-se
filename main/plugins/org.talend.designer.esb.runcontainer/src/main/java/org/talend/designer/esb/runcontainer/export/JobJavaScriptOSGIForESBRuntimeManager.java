@@ -48,7 +48,6 @@ public class JobJavaScriptOSGIForESBRuntimeManager extends JobJavaScriptOSGIForE
     public JobJavaScriptOSGIForESBRuntimeManager(Map<ExportChoice, Object> exportChoiceMap, String contextName, String launcher,
             int statisticPort, int tracePort) {
         super(exportChoiceMap, contextName, launcher, statisticPort, tracePort);
-        // TODO Auto-generated constructor stub
     }
 
     /*
@@ -63,7 +62,6 @@ public class JobJavaScriptOSGIForESBRuntimeManager extends JobJavaScriptOSGIForE
             throws ProcessorException {
         // TODO Auto-generated method stub
         List<ExportFileResource> exportResources = super.getExportResources(processes, codeOptions);
-        System.out.println("------>" + exportResources);
         return exportResources;
     }
 

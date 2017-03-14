@@ -22,6 +22,7 @@
 package org.talend.designer.esb.runcontainer.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -34,6 +35,10 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
+
 /**
  * DOC yyan class global comment. Detailled comment <br/>
  */
@@ -44,19 +49,19 @@ public class JMXUtil {
      */
     private static final String CREDENTIALS = "jmx.remote.credentials";
 
-    public static final String username = "karaf";
+    public static String username = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_USERNAME;
 
-    public static final String password = "karaf";
+    public static String password = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_PASSWORD;
 
-    public static final String host = "localhost";
+    public static String host = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_HOST;
 
-    public static final String jmxPort = "44444";
+    public static String jmxPort = String.valueOf(RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_JMX_PORT);
 
-    public static final String karafPort = "1099";
+    public static String karafPort = String.valueOf(RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_PORT);
 
-    public static final String instanceName = "trun";
+    public static String instanceName = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_INSTANCE;
 
-    public static final String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort
+    public static String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort
             + "/karaf-" + instanceName;
 
     private static MBeanServerConnection mbsc;
@@ -175,20 +180,62 @@ public class JMXUtil {
      * @return
      */
     public static MBeanServerConnection connectToRuntime() {
-        if (mbsc == null) {
+        if (!testConnection()) {
             HashMap<String, String[]> env = new HashMap<String, String[]>();
+
+            resetPreferences();
+
             String[] credentials = new String[] { username, password };
             env.put(CREDENTIALS, credentials);
             try {
                 JMXServiceURL url = new JMXServiceURL(serviceUrl);
+                jmxc = null;
                 jmxc = JMXConnectorFactory.connect(url, env);
+                mbsc = null;
                 mbsc = jmxc.getMBeanServerConnection();
             } catch (Exception e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
         connectNumber++;
         return mbsc;
+    }
+
+    private static void resetPreferences() {
+        IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+        if (store != null) {
+            username = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
+
+            password = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PASSWORD);
+
+            host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
+
+            jmxPort = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX_PORT);
+
+            karafPort = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT);
+
+            instanceName = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_INSTANCE);
+
+            serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort + "/karaf-"
+                    + instanceName;
+        }
+    }
+
+    /**
+     * Check whether the JMX connection is connected
+     * 
+     * @return
+     */
+    public static boolean testConnection() {
+        if (mbsc == null || jmxc == null) {
+            return false;
+        }
+        try {
+            jmxc.getConnectionId();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     public static void closeConnection() {
@@ -202,4 +249,12 @@ public class JMXUtil {
         }
         connectNumber--;
     }
+
+    public static void halt() throws Exception {
+        MBeanServerConnection mbsc = connectToRuntime();
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=trun";
+        ObjectName objectKar = new ObjectName(SYS_MBEAN);
+        mbsc.invoke(objectKar, "halt", new Object[] {}, new String[] {});
+    }
+
 }

@@ -34,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.log.LogService;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,10 +48,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class RuntimeLogHTTPMonitor {
-
-    static String URL = "http://localhost:8040/system/console/logs?traces=true&minLevel=" + LogService.LOG_INFO;
-
-    static String BASIC = "karaf:karaf";
 
     private static RuntimeLogHTTPMonitor instance;
 
@@ -104,17 +103,9 @@ public class RuntimeLogHTTPMonitor {
         monitor.startLogging();
         monitor.addLogLictener(new RuntimeLogHTTPAdapter() {
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter#logReceived(org.talend.designer.esb.
-             * runcontainer.logs.FelixLogsModel)
-             */
             @Override
             public void logReceived(FelixLogsModel logsModel) {
-                // TODO Auto-generated method stub
                 super.logReceived(logsModel);
-                System.out.println("------>" + logsModel.toString());
             }
         });
     }
@@ -139,6 +130,15 @@ public class RuntimeLogHTTPMonitor {
             long latestTime = 0;
             long current = System.currentTimeMillis();
             URL url;
+
+            IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+            String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
+            String URL = "http://" + host + ":8040/system/console/logs?traces=true&minLevel=" + LogService.LOG_INFO;
+
+            String username = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
+            String password = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PASSWORD);
+            String BASIC = username + ":" + password;
+
             try {
                 do {
                     url = new URL(URL);

@@ -6,15 +6,17 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class RuntimeContainerUtil {
 
@@ -83,11 +85,11 @@ public class RuntimeContainerUtil {
         return true;
     }
 
-    public static void copyContainer(String from, String to) throws IOException {
+    public static void copyContainer(String from, String to, IProgressMonitor monitor) throws IOException {
         Path fromPath = Paths.get(from);
         Path toPath = Paths.get(to);
         Path bakPath = null;
-        
+        monitor.beginTask("Copy to target", 100);
         if (Files.exists(toPath)) {
             bakPath = toPath.getParent().resolve(toPath.getFileName().toString() + ".bak");
             deleteDir(bakPath);
@@ -97,7 +99,7 @@ public class RuntimeContainerUtil {
         Files.createDirectories(toPath);
 
         try {
-            copyDir(fromPath, toPath);
+            copyDir(fromPath, toPath, monitor);
         } catch (IOException e) {
             deleteDir(toPath);
             if (bakPath != null) {
@@ -108,6 +110,7 @@ public class RuntimeContainerUtil {
             if (bakPath != null) {
                 deleteDir(bakPath);
             }
+            monitor.done();
         }
     }
 
@@ -115,7 +118,7 @@ public class RuntimeContainerUtil {
         if (!Files.exists(dir)) {
             return;
         }
-        
+
         Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 
             @Override
@@ -136,7 +139,7 @@ public class RuntimeContainerUtil {
         });
     }
 
-    private static void copyDir(Path from, Path to) throws IOException {
+    private static void copyDir(Path from, Path to, IProgressMonitor monitor) throws IOException {
         Files.walkFileTree(from, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
 
             @Override
@@ -144,6 +147,8 @@ public class RuntimeContainerUtil {
                 Path targetdir = to.resolve(from.relativize(dir));
                 try {
                     Files.copy(dir, targetdir);
+                    monitor.subTask(dir.toString());
+                    monitor.worked(1);
                 } catch (FileAlreadyExistsException e) {
                     if (!Files.isDirectory(targetdir))
                         throw e;
@@ -154,8 +159,14 @@ public class RuntimeContainerUtil {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.copy(file, to.resolve(from.relativize(file)));
+                monitor.subTask(file.toString());
+                monitor.worked(1);
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    public static void deleteFolder(String folder) throws IOException {
+        Files.delete(Paths.get(folder));
     }
 }

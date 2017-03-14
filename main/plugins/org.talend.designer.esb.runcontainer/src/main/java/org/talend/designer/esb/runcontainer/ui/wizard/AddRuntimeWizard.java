@@ -22,9 +22,12 @@
 package org.talend.designer.esb.runcontainer.ui.wizard;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.designer.esb.runcontainer.util.RuntimeContainerUtil;
 
@@ -37,7 +40,7 @@ import org.talend.designer.esb.runcontainer.util.RuntimeContainerUtil;
 public class AddRuntimeWizard extends Wizard {
 
     private String target;
-    
+
     private AddRuntimeDirWizardPage dirPage;
 
     public AddRuntimeWizard(String target) {
@@ -48,7 +51,6 @@ public class AddRuntimeWizard extends Wizard {
     @Override
     public void addPages() {
         dirPage = new AddRuntimeDirWizardPage(target);
-
         addPage(dirPage);
     }
 
@@ -57,21 +59,30 @@ public class AddRuntimeWizard extends Wizard {
 
         if (dirPage.isCopyNeeded()) {
             try {
-                RuntimeContainerUtil.copyContainer(dirPage.getRuntimeHome(), target);
-            } catch (IOException e) {
+                String runtimeHome = dirPage.getRuntimeHome();
+                getContainer().run(true, true, new IRunnableWithProgress() {
+
+                    @Override
+                    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                        try {
+                            RuntimeContainerUtil.copyContainer(runtimeHome, target, monitor);
+                        } catch (IOException e) {
+                        }
+                    }
+
+                });
+            } catch (Exception e) {
                 MessageDialog.openError(this.getShell(), "Unable to copy runtime container", ExceptionUtils.getStackTrace(e));
                 return false;
             }
-            return true;
         }
-
-//        MessageDialog.openInformation(this.getShell(), "Not implemented", "Only copying is supported");
+        // MessageDialog.openInformation(this.getShell(), "Not implemented", "Only copying is supported");
         target = dirPage.getRuntimeHome();
 
-//        return false;
+        // return false;
         return true;
     }
-    
+
     public String getTarget() {
         return target;
     }

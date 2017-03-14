@@ -19,8 +19,21 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.util;
+package org.talend.designer.esb.runcontainer.server;
 
-public class RuntimeConfigUtil {
+/**
+ * DOC yyi class global comment. Detailled comment <br/>
+ *
+ * $Id$
+ *
+ */
+public interface RuntimeStatusChangeListener {
 
+    void startRunning();
+
+    void stopRunning();
+
+    void featureInstalled(int id);
+
+    void featureUninstalled(int id);
 }
