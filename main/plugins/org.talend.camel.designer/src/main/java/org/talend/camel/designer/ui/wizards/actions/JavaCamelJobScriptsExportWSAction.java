@@ -203,7 +203,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 exportAllReferenceRoutelets(routeName, routeProcess, routelets);
 
                 exportRouteBundle(routeNode, routeFile, version, null, null, bundleVersion,
-                		routelets, null);
+                		null, routelets, null);
             }
 
             processResults(featuresModel, monitor);
@@ -310,7 +310,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         (ProcessItem) referencedRouteletNode.getObject().getProperty().getItem();
                 final String className =
                         RouteJavaScriptOSGIForESBManager.getClassName(routeletProcess);
-                if (!routelets.add(className)) {
+                String idSuffix = "-" + routeName;
+                if (!routelets.add(className + idSuffix)) {
                     continue;
                 }
 
@@ -352,7 +353,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         getArtifactVersion(), routeletFile);
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion,
-                            routeletBundleName, routeletBundleSymbolicName, routeletBundleVersion, null,
+                            routeletBundleName, routeletBundleSymbolicName, routeletBundleVersion,
+                            idSuffix, null,
                             EmfModelUtils.findElementParameterByName(
                                     EParameterName.PROCESS_TYPE.getName() + ':'
                                             + EParameterName.PROCESS_TYPE_CONTEXT.getName(),
@@ -384,7 +386,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     private void exportRouteBundle(IRepositoryNode node, File filePath, String version,
-            String bundleName, String bundleSymbolicName, String bundleVersion,
+            String bundleName, String bundleSymbolicName, String bundleVersion, String idSuffix,
             Collection<String> routelets, String context)
                     throws InvocationTargetException, InterruptedException {
         final RouteJavaScriptOSGIForESBManager talendJobManager =
@@ -393,6 +395,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         talendJobManager.setBundleName(bundleName);
         talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
+        talendJobManager.setOsgiServiceIdSuffix(idSuffix);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
         JobExportAction action = new JobExportAction(Collections.singletonList(node),

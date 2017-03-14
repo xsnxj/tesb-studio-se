@@ -81,7 +81,7 @@
 #foreach ($routelet in $routelets)
     <osgi:reference id="${routelet}" interface="org.apache.camel.RoutesBuilder" filter="(id=${routelet})" />
 #end
-    <camel:camelContext id="${className}">
+    <camel:camelContext id="${idName}">
         <camel:routeBuilder ref="route" />
 #foreach ($routelet in $routelets)
         <camel:routeBuilder ref="${routelet}" />
@@ -90,7 +90,7 @@
 #else
     <osgi:service interface="org.apache.camel.RoutesBuilder" ref="route" >
         <service-properties>
-            <entry key="id" value="${className}"/>
+            <entry key="id" value="${idName}"/>
         </service-properties>
     </osgi:service>
 #end

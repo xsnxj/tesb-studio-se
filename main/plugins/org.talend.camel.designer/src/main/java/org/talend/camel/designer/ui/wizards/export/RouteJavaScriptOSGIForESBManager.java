@@ -127,7 +127,14 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
 
         // route name and class name
         routeInfo.put("name", processItem.getProperty().getLabel()); //$NON-NLS-1$
-        routeInfo.put("className", getClassName(processItem)); //$NON-NLS-1$
+        String className = getClassName(processItem);
+        String idName = className;
+        String suffix = getOsgiServiceIdSuffix();
+        if (suffix != null && suffix.length() > 0) {
+        	idName += suffix;
+        }
+        routeInfo.put("className", className); //$NON-NLS-1$
+        routeInfo.put("idName", idName); //$NON-NLS-2$
 
         boolean useSAM = false;
         boolean hasCXFUsernameToken = false;

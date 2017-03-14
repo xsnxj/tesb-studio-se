@@ -25,6 +25,7 @@ public class AdaptedJobJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForE
 
     private String bundleName = null;
     private String bundleSymbolicName = null;
+    private String osgiServiceIdSuffix = null;
 
 	public AdaptedJobJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
 			String launcher, int statisticPort, int tracePort) {
@@ -45,6 +46,14 @@ public class AdaptedJobJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForE
 
     public void setBundleSymbolicName(String bundleSymbolicName) {
     	this.bundleSymbolicName = bundleSymbolicName;
+    }
+
+    public String getOsgiServiceIdSuffix() {
+    	return osgiServiceIdSuffix;
+    }
+
+    public void setOsgiServiceIdSuffix(String osgiServiceIdSuffix) {
+    	this.osgiServiceIdSuffix = osgiServiceIdSuffix;
     }
 
     @Override
