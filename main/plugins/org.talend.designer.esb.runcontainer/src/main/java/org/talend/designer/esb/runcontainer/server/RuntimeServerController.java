@@ -110,7 +110,7 @@ public class RuntimeServerController {
     }
 
     public Process startClient(String karafHome, String host, String username, String password, String cmd) throws Exception {
-        if (!isRunning()) {
+        if (isRunning()) {
             File launcher;
             String os = System.getProperty("os.name");
             if (os != null && os.toLowerCase().contains("windows")) {

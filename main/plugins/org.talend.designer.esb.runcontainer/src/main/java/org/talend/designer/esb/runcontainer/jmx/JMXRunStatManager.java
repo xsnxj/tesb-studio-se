@@ -103,7 +103,7 @@ public class JMXRunStatManager {
     }
 
     public void addTracing(RunContainerProcessContext context) {
-        if (jmxRunStat == null) {
+        if (jmxRunStat == null || jmxRunStat.stopTracing) {
             jmxRunStat = new JMXRunStat();
             Thread thread = new Thread(jmxRunStat, "JMX_Run_Stat");
             thread.start();

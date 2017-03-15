@@ -132,15 +132,18 @@ public class RuntimeLogHTTPMonitor {
             URL url;
 
             IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-            String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
+            boolean sysLog = store.getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG);
+
+            store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+            String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
             String URL = "http://" + host + ":8040/system/console/logs?traces=true&minLevel=" + LogService.LOG_INFO;
 
             String username = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
             String password = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PASSWORD);
             String BASIC = username + ":" + password;
 
-            try {
-                do {
+            do {
+                try {
                     url = new URL(URL);
 
                     String encoding = Base64.getEncoder().encodeToString(BASIC.getBytes("UTF-8"));
@@ -164,6 +167,10 @@ public class RuntimeLogHTTPMonitor {
                             if (latestTime >= logs[i].getReceived()) {
                                 continue;
                             }
+                            // ignore system logs
+                            if (sysLog && logs[i].getBundleName().startsWith("Apache Karaf")) {
+                                continue;
+                            }
                             for (IRuntimeLogListener listener : listeners) {
                                 if (listenerMap.get(listener) < logs[i].getReceived()) {
                                     listener.logReceived(logs[i]);
@@ -181,10 +188,10 @@ public class RuntimeLogHTTPMonitor {
                             // Do nothing
                         }
                     }
-                } while (running);
-            } catch (IOException e) {
-                // e.printStackTrace();
-            }
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                }
+            } while (running);
         }
     }
 

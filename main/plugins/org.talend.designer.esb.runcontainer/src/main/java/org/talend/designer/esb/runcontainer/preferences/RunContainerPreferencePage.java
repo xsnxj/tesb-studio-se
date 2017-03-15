@@ -201,13 +201,13 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                         amq.waitFor();
                         MessageDialog
                                 .openInformation(getShell(), "Initalize runtime server finished",
-                                        "tesb:start-all and feature:install activemq-broker have been executed,\n please use Console to browse.");
+                                        "All ESB features and Activemq-Broker have been started.\nPlease use Talend ESB Console to stop the rutime server.");
                     } else {
                         MessageDialog.openError(getShell(), "Cannot initalize runtime server", "Start runtime server failed.");
                     }
                 } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    MessageDialog
+                            .openError(getShell(), "Cannot initalize runtime server", "Runtime client starts failed.\n" + e1);
                 }
             }
         });
@@ -246,7 +246,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                             RuntimeContainerUtil.deleteFolder(locationEditor.getStringValue() + "/data");
                         } catch (Exception x) {
                             MessageDialog.openError(getShell(), "Clean Cache Failed",
-                                    "Cannot delete runtime server cache folder, please check if it's running.");
+                                    "Cannot delete runtime server cache folder, please check if it's running." + x);
                         }
                     } else {
                         MessageDialog.openError(getShell(), "Clean Cache Failed",

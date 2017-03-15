@@ -104,16 +104,16 @@ public class RunContainerProcessContext extends RunProcessContext {
         return super.getPerformanceMonitor();
     }
 
-    // @Override
-    // protected TraceConnectionsManager getTraceConnectionsManager(IProcess2 process) {
-    // IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-    // if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())
-    // && store.getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX)) {
-    // jmxConnectionsManager = new JMXConnectionsManager(process);
-    // return jmxConnectionsManager;
-    // }
-    // return super.getTraceConnectionsManager(process);
-    // }
+    @Override
+    protected TraceConnectionsManager getTraceConnectionsManager(IProcess2 process) {
+        IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+        if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())
+                && store.getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX)) {
+            jmxConnectionsManager = new JMXConnectionsManager(process);
+            return jmxConnectionsManager;
+        }
+        return super.getTraceConnectionsManager(process);
+    }
 
     class JMXPerformanceMonitor extends PerformanceMonitor {
 
@@ -213,8 +213,7 @@ public class RunContainerProcessContext extends RunProcessContext {
                         processMessageManager.updateConsole();
                         synchronized (this) {
                             try {
-                                final long waitTime = 200;
-                                wait(waitTime);
+                                wait(200);
                             } catch (InterruptedException e) {
                                 // Do nothing
                             }

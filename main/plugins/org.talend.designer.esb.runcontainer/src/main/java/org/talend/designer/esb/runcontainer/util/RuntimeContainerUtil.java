@@ -167,6 +167,22 @@ public class RuntimeContainerUtil {
     }
 
     public static void deleteFolder(String folder) throws IOException {
-        Files.delete(Paths.get(folder));
+        deleteDirectory(new File(folder));
+    }
+
+    private static boolean deleteDirectory(File directory) {
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        deleteDirectory(files[i]);
+                    } else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        return (directory.delete());
     }
 }
