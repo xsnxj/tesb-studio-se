@@ -171,6 +171,9 @@ public class RuntimeLogHTTPMonitor {
                             if (sysLog && logs[i].getBundleName().startsWith("Apache Karaf")) {
                                 continue;
                             }
+                            if (logs[i].getMessage().indexOf("Authentication") == 0) {
+                                continue;
+                            }
                             for (IRuntimeLogListener listener : listeners) {
                                 if (listenerMap.get(listener) < logs[i].getReceived()) {
                                     listener.logReceived(logs[i]);

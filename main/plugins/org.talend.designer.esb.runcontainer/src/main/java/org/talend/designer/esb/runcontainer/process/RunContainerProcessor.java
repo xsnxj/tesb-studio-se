@@ -116,7 +116,7 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
             IProcessMessageManager processMessageManager) throws ProcessorException {
 
         new StartRuntimeAction().run();
-        
+
         RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
         esbRunContainerProcess.startLogging();
         esbContainerJob = null;
@@ -460,9 +460,8 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 writeLog(processMessageManager, new ProcessMessage(MsgType.STD_ERR, ExceptionUtils.getStackTrace(e) + ".\n"));
-                return new Status(Status.ERROR, "org.talend.designer.esb.runcontainer", "Kill process failed.", e);
+                return new Status(Status.ERROR, "org.talend.designer.esb.runcontainer", "Kill process might failed.", e);
             }
             return Status.OK_STATUS;
         }

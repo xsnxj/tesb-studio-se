@@ -96,12 +96,12 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
         Composite compServer = new Composite(compSvrBody, SWT.NONE);
         compServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        compServer.setSize(230, 25);
         StringFieldEditor locationEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION,
                 "Location:", compServer);
         locationEditor.getLabelControl(compServer).setText("");
         locationEditor.setEnabled(true, compServer);
         addField(locationEditor);
+        compServer.setSize(230, 25);
 
         Label lblHost = new Label(compSvrBody, SWT.NONE);
         lblHost.setText("Host:");
