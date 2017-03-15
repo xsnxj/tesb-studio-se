@@ -68,6 +68,9 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
     public void addRuntimeServer(TargetExecComposite targetExecComposite, JobJvmComposite jobComposite) {
         Combo targetCombo = null;
         IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+        String url = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
+        String port = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT);
+        String rt = ESB_RUNTIME_ITEM + " (" + url + ":" + port + ")";
         if (JobJvmComposite.class == jobComposite.getClass()) { // Update Tab SE
             try {
                 Control control = ((Composite) jobComposite.getChildren()[0]).getChildren()[0];
@@ -79,8 +82,6 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
                     data.horizontalIndent = 5;
                     targetCombo.setLayoutData(data);
                     targetCombo.add("Default", 0);
-                    String url = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
-                    String rt = ESB_RUNTIME_ITEM + ":" + url;
                     targetCombo.add(rt, 1);
                     this.index = targetCombo.getSelectionIndex();
                     targetCombo.select(index == -1 ? 0 : index);
@@ -92,8 +93,6 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
                 Control control = ((Composite) jobComposite.getChildren()[0]).getChildren()[0];
                 if (control instanceof Combo) {
                     targetCombo = (Combo) control;
-                    String url = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
-                    String rt = ESB_RUNTIME_ITEM + ":" + url;
                     targetCombo.add(rt);
                     this.index = targetCombo.getSelectionIndex();
                 }
@@ -103,8 +102,7 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
 
         if (targetCombo != null) {
             if (RunProcessPlugin.getDefault().getRunProcessContextManager() instanceof RunContainerProcessContextManager) {
-                int i = targetCombo.indexOf(ESB_RUNTIME_ITEM);
-                targetCombo.select(i);
+                targetCombo.select(targetCombo.indexOf(rt));
             } else {
                 targetCombo.select(index);
             }
@@ -112,7 +110,7 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
 
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    if (0 == ((Combo) e.getSource()).getText().indexOf(ESB_RUNTIME_ITEM)) {
+                    if (((Combo) e.getSource()).getText().startsWith(ESB_RUNTIME_ITEM)) {
                         // check if server setting is validated.
                         IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                         String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
@@ -147,8 +145,8 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
         }
     }
 
-    // @Override
-    // public boolean isESBProcessContextManager(RunProcessContextManager contextManager) {
-    // return contextManager instanceof RunContainerProcessContextManager;
-    // }
+    @Override
+    public boolean isESBProcessContextManager(RunProcessContextManager contextManager) {
+        return contextManager instanceof RunContainerProcessContextManager;
+    }
 }

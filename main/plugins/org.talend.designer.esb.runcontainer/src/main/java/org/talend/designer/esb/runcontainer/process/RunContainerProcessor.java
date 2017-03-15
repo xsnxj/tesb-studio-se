@@ -53,8 +53,8 @@ import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.designer.core.ISyntaxCheckableEditor;
 import org.talend.designer.esb.runcontainer.export.JobJavaScriptOSGIForESBRuntimeManager;
+import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
-import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
 import org.talend.designer.runprocess.IProcessMessageManager;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessMessage;
@@ -115,8 +115,8 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
 
-        RuntimeConsoleUtil.loadConsole();
-        
+        new StartRuntimeAction().run();
+
         RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
         esbRunContainerProcess.startLogging();
         esbContainerJob = null;
@@ -460,9 +460,8 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 writeLog(processMessageManager, new ProcessMessage(MsgType.STD_ERR, ExceptionUtils.getStackTrace(e) + ".\n"));
-                return new Status(Status.ERROR, "org.talend.designer.esb.runcontainer", "Kill process failed.", e);
+                return new Status(Status.ERROR, "org.talend.designer.esb.runcontainer", "Kill process might failed.", e);
             }
             return Status.OK_STATUS;
         }
