@@ -145,7 +145,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         featuresModel = new FeaturesModel(getGroupId(), getArtifactId(), getArtifactVersion());
         try {
             // generated bundle jar first
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
+            String routeName = getArtifactId();
             File routeFile;
             try {
                 routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 throw new InvocationTargetException(e);
             }
 
-            BundleModel routeModel = new BundleModel(getGroupId(), routeName + "-bundle", getArtifactVersion(), routeFile);
+            BundleModel routeModel = new BundleModel(getGroupId(), routeName, getArtifactVersion(), routeFile);
             if (featuresModel.addBundle(routeModel)) {
                 final ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
                 CamelFeatureUtil.addFeatureAndBundles(routeProcess, featuresModel);
