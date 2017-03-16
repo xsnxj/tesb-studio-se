@@ -141,11 +141,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     @Override
     public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         this.monitor = monitor;
-
-        featuresModel = new FeaturesModel(getGroupId(), getArtifactId(), getArtifactVersion());
+        String groupId = getGroupId();
+        String routeName = getArtifactId();
+        String routeVersion = getArtifactVersion();
+        featuresModel = new FeaturesModel(groupId, routeName, routeVersion);
         try {
             // generated bundle jar first
-            String routeName = getArtifactId();
             File routeFile;
             try {
                 routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
@@ -153,7 +154,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 throw new InvocationTargetException(e);
             }
 
-            BundleModel routeModel = new BundleModel(getGroupId(), routeName, getArtifactVersion(), routeFile);
+            BundleModel routeModel = new BundleModel(groupId, routeName, routeVersion, routeFile);
             if (featuresModel.addBundle(routeModel)) {
                 final ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
                 CamelFeatureUtil.addFeatureAndBundles(routeProcess, featuresModel);
@@ -232,11 +233,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             if (jobArtifactVersion.endsWith("-SNAPSHOT")) {
                 jobBundleVersion += ".0.SNAPSHOT";
             }
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
             BundleModel jobModel = new BundleModel(getGroupId(), jobName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion, routeNode
-                    .getObject().getProperty().getDisplayName(), version, jobContext);
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion,
+                		getArtifactId(), version, jobContext);
             }
         }
     }
