@@ -75,9 +75,10 @@ public class AddRuntimeWizard extends Wizard {
                 MessageDialog.openError(this.getShell(), "Unable to copy runtime container", ExceptionUtils.getStackTrace(e));
                 return false;
             }
+        } else {
+            target = dirPage.getRuntimeHome();
         }
         // MessageDialog.openInformation(this.getShell(), "Not implemented", "Only copying is supported");
-        target = dirPage.getRuntimeHome();
 
         // return false;
         return true;

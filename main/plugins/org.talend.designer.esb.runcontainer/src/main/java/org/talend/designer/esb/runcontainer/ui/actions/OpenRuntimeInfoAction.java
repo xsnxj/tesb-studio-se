@@ -32,9 +32,9 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.eclipse.jface.action.Action;
-import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.talend.designer.esb.runcontainer.ui.dialog.RuntimeInfoDialog;
-import org.talend.designer.esb.runcontainer.util.ERunContainerImage;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 
 /**
@@ -47,7 +47,7 @@ public class OpenRuntimeInfoAction extends Action {
 
     public OpenRuntimeInfoAction() {
         setToolTipText("Running Information");
-        setImageDescriptor(ImageProvider.getImageDesc(ERunContainerImage.INFO_RUNTIME_ICON));
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
     }
 
     /*

@@ -41,7 +41,9 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        RuntimeServerController.getInstance().stopRuntimeServer();
+        if (RuntimeServerController.getInstance().isRunning()) {
+            RuntimeServerController.getInstance().stopRuntimeServer();
+        }
         plugin = null;
         super.stop(context);
     }

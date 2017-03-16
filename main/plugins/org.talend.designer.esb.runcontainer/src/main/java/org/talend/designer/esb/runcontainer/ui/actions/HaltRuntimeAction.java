@@ -30,7 +30,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.esb.runcontainer.util.ERunContainerImage;
+import org.talend.designer.runprocess.ui.ERunprocessImages;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -42,7 +42,7 @@ public class HaltRuntimeAction extends Action {
 
     public HaltRuntimeAction() {
         setToolTipText("Stop Server");
-        setImageDescriptor(ImageProvider.getImageDesc(ERunContainerImage.STOP_RUNTIME_ICON));
+        setImageDescriptor(ImageProvider.getImageDesc(ERunprocessImages.KILL_PROCESS_ACTION));
         setEnabled(RuntimeServerController.getInstance().isRunning());
     }
 
