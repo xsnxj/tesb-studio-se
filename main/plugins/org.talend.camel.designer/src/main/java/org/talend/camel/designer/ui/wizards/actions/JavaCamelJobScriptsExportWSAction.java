@@ -227,14 +227,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String jobArtifactVersion = jobVersion;
+            String jobArtifactVersion = getArtifactVersion();
             String jobBundleVersion = jobVersion;
-            if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                jobArtifactVersion += "-SNAPSHOT";
+            if (jobArtifactVersion.endsWith("-SNAPSHOT")) {
                 jobBundleVersion += ".0.SNAPSHOT";
             }
             String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getJobGroupId(jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
+            BundleModel jobModel = new BundleModel(getGroupId(), jobName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion, routeNode
                     .getObject().getProperty().getDisplayName(), version, jobContext);
@@ -270,17 +269,19 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                     routeletVersion = referencedRouteletNode.getObject().getVersion();
                 }
 
+                String routeletName = referencedRouteletNode.getObject().getLabel();
                 final File routeletFile;
                 try {
                     routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
+                String routeletArtifactVersion = getArtifactVersion();
                 String routeletBundleVersion = routeletVersion;
-                if (getArtifactVersion().endsWith("-SNAPSHOT")) {
+                if (routeletArtifactVersion.endsWith("-SNAPSHOT")) {
                     routeletBundleVersion += ".0.SNAPSHOT";
                 }
-                BundleModel jobModel = new BundleModel(getGroupId(), referencedRouteletNode.getObject().getLabel(), getArtifactVersion(), routeletFile);
+                BundleModel jobModel = new BundleModel(getGroupId(), routeletName, routeletArtifactVersion, routeletFile);
                 if (featuresModel.addBundle(jobModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleVersion, null,
                         EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(), node).getValue());
