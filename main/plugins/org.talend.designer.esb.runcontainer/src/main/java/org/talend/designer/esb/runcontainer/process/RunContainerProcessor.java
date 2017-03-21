@@ -13,8 +13,11 @@
 package org.talend.designer.esb.runcontainer.process;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.components.ComponentCategory;
@@ -35,10 +39,14 @@ import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.ITargetExecutionConfig;
 import org.talend.core.model.process.JobInfo;
+import org.talend.core.model.process.ProcessUtils;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
+import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.runprocess.IEclipseProcessor;
+import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
@@ -53,6 +61,8 @@ import org.talend.designer.runprocess.ProcessMessage.MsgType;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -447,8 +457,9 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                     }
                 }
             } catch (Exception e) {
-                writeLog(processMessageManager, new ProcessMessage(MsgType.STD_ERR, ExceptionUtils.getStackTrace(e) + ".\n"));
-                return new Status(IStatus.ERROR, "org.talend.designer.esb.runcontainer", "Kill process might failed.", e);
+                // writeLog(processMessageManager, new ProcessMessage(MsgType.STD_ERR, ExceptionUtils.getStackTrace(e) +
+                // ".\n"));
+                return new Status(IStatus.WARNING, "org.talend.designer.esb.runcontainer", "Kill process might failed.", e);
             }
             return Status.OK_STATUS;
         }
@@ -457,51 +468,53 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
 
             File target = null;
             try {
-                // writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT,
-                // "Deply process to runtime."));
-
                 IRepositoryViewObject viewObject = findJob(process.getId());
                 RepositoryNode node = new RepositoryNode(viewObject, null, ENodeType.REPOSITORY_ELEMENT);
 
                 if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
                     // publish job
-                    target = File.createTempFile("job", ".jar", null);
                     ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
-                    JobScriptsManager jobScriptsManager = new JobJavaScriptOSGIForESBRuntimeManager(
-                            JobScriptsManagerFactory.getDefaultExportChoiceMap(), processItem.getProcess().getDefaultContext(),
-                            JobScriptsManager.LAUNCHER_ALL, statisticsPort, tracePort);
+                    List<Item> items = new ArrayList<Item>(1);
+                    items.add(processItem);
+                    Collection<IRepositoryViewObject> allDependencies = ProcessUtils.getProcessDependencies(
+                            ERepositoryObjectType.METADATA, items, false);
+                    // check service
+                    if (!allDependencies.isEmpty()) {
+                        target = File.createTempFile("service", FileConstants.KAR_FILE_SUFFIX, null);
+                        for (IRepositoryViewObject object : allDependencies) {
+                            if (object.getProperty().getItem() != null && object.getProperty().getItem() instanceof ServiceItem) {
+                                ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
+                                IRunnableWithProgress action = new ExportServiceAction(serviceItem, target.getAbsolutePath(),
+                                        null);
+                                action.run(monitor);
+                                kars = JMXUtil.installKar(target);
+                                writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install kar, return value: "
+                                        + Arrays.toString(kars) + ".\n"));
+                            }
+                        }
+                    } else {
+                        target = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX, null);
+                        JobScriptsManager jobScriptsManager = new JobJavaScriptOSGIForESBRuntimeManager(
+                                JobScriptsManagerFactory.getDefaultExportChoiceMap(), processItem.getProcess()
+                                        .getDefaultContext(), JobScriptsManager.LAUNCHER_ALL, statisticsPort, tracePort);
+                        // generate
+                        jobScriptsManager.setDestinationPath(target.getAbsolutePath());
+                        JobExportAction jobAction = new JobExportAction(Collections.singletonList(node), node.getObject()
+                                .getProperty().getVersion(), node.getObject().getProperty().getVersion(), jobScriptsManager,
+                                System.getProperty("java.io.tmpdir"));
 
-                    // JobScriptsManagerFactory.createManagerInstance(JobScriptsManagerFactory.getDefaultExportChoiceMap(),
-                    // processItem.getProcess().getDefaultContext(), JobScriptsManager.LAUNCHER_ALL,
-                    // statisticsPort,
-                    // tracePort, JobExportType.OSGI);
-
-                    // generate
-                    jobScriptsManager.setDestinationPath(target.getAbsolutePath());
-                    JobExportAction jobAction = new JobExportAction(Collections.singletonList(node), node.getObject()
-                            .getProperty().getVersion(), node.getObject().getProperty().getVersion(), jobScriptsManager,
-                            System.getProperty("java.io.tmpdir"));
-
-                    jobAction.run(monitor);
-
-                    bundles = JMXUtil.installBundle(target);
-
-                    writeLog(processMessageManager,
-                            new ProcessMessage(MsgType.STD_OUT, "Install bundle, return value: " + Arrays.toString(bundles)
-                                    + ".\n"));
+                        jobAction.run(monitor);
+                        bundles = JMXUtil.installBundle(target);
+                        writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install bundle, return value: "
+                                + Arrays.toString(bundles) + ".\n"));
+                    }
                 } else if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
                     // publish route
-                    target = File.createTempFile("route", ".kar", null);
+                    target = File.createTempFile("route", FileConstants.KAR_FILE_SUFFIX, null);
                     JavaCamelJobScriptsExportWSAction camelAction = new JavaCamelJobScriptsExportWSAction(node,
                             process.getVersion(), target.getAbsolutePath(), true, statisticsPort, tracePort);
-
-                    // JavaCamelJobScriptsExportWSForRuntimeAction camelAction = new
-                    // JavaCamelJobScriptsExportWSForRuntimeAction(node,
-                    // process.getVersion(), target.getAbsolutePath(), true, statisticsPort, tracePort);
                     camelAction.run(monitor);
-
                     kars = JMXUtil.installKar(target);
-
                     writeLog(processMessageManager,
                             new ProcessMessage(MsgType.STD_OUT, "Install kar, return value: " + Arrays.toString(kars) + ".\n"));
                 } else {
