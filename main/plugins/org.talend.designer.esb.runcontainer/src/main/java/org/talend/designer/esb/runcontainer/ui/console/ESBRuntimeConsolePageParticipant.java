@@ -1,22 +1,13 @@
 // ============================================================================
 //
-// Talend Community Edition
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// Copyright (C) 2006-2013 Talend – www.talend.com
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.console;
@@ -32,14 +23,11 @@ import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.server.RuntimeStatusChangeListener;
 import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimeInfoAction;
-import org.talend.designer.esb.runcontainer.ui.actions.RebootRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 
 public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant {
 
     private StartRuntimeAction startRuntimeAction;
-
-    private RebootRuntimeAction rebootRuntimeAction;
 
     private HaltRuntimeAction haltRuntimeAction;
 
@@ -49,7 +37,6 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
 
     @Override
     public Object getAdapter(Class adapter) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -57,7 +44,6 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
     public void init(IPageBookViewPage page, IConsole console) {
 
         startRuntimeAction = new StartRuntimeAction();
-        rebootRuntimeAction = new RebootRuntimeAction();
         haltRuntimeAction = new HaltRuntimeAction();
         openRuntimeInfoAction = new OpenRuntimeInfoAction();
         serverListener = new RuntimeStatusChangeListener() {
@@ -105,7 +91,6 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
 
     private void configureToolBar(IToolBarManager mgr) {
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, startRuntimeAction);
-        // mgr.prependToGroup(IConsoleConstants.LAUNCH_GROUP, rebootRuntimeAction);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, haltRuntimeAction);
         mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, openRuntimeInfoAction);
     }

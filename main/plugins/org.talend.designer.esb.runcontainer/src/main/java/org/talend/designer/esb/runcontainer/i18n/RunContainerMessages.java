@@ -10,30 +10,30 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.camel.designer.i18n;
+package org.talend.designer.esb.runcontainer.i18n;
 
 import java.util.ResourceBundle;
 
 import org.talend.commons.i18n.MessagesCore;
 
-/**
- * Default implementation of MessageCore from org.talend.commons plug-in.<br/>
- * 
- * Developpers can copy this class in their plug-in and change :
- * <ul>
- * <li>the BUNDLE_NAME constant</li>
- * </ul>
- * 
- * $Id: DefaultMessagesImpl.java 2738 2007-03-28 13:12:27Z plegall $
- * 
- */
-public class Messages extends MessagesCore {
+public class RunContainerMessages extends MessagesCore {
 
-    private static final String BUNDLE_NAME = "org.talend.designer.esb.runcontainer.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "messages"; //$NON-NLS-1$
 
-	private static final String PLUGIN_ID = "org.talend.camel.designer"; //$NON-NLS-1$
+    private static final String PLUGIN_ID = "org.talend.designer.esb.runcontainer"; //$NON-NLS-1$
 
     private static ResourceBundle resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+
+    private static ResourceBundle getBundle() {
+        if (resourceBundle == null) {
+            try {
+                resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+            } catch (Exception e) {
+                // Nothing to do (return null)
+            }
+        }
+        return resourceBundle;
+    }
 
     /**
      * Returns the i18n formatted message for <i>key</i> in the class bundle.
@@ -43,7 +43,7 @@ public class Messages extends MessagesCore {
      * @see MessagesCore#getString(String, ResourceBundle)
      */
     public static String getString(String key) {
-        return getString(key, PLUGIN_ID, resourceBundle);
+        return getString(key, getBundle());
     }
 
     /**
@@ -55,6 +55,6 @@ public class Messages extends MessagesCore {
      * @see MessagesCore#getString(String, ResourceBundle, Object[])
      */
     public static String getString(String key, Object... args) {
-        return MessagesCore.getString(key, PLUGIN_ID, resourceBundle, args);
+        return MessagesCore.getString(key, PLUGIN_ID, getBundle(), args);
     }
 }

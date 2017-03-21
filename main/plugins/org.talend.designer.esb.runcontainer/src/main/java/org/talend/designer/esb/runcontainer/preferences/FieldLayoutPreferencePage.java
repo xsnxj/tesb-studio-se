@@ -1,22 +1,13 @@
 // ============================================================================
 //
-// Talend Community Edition
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// Copyright (C) 2006-2013 Talend – www.talend.com
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
 package org.talend.designer.esb.runcontainer.preferences;
@@ -104,7 +95,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
         if (m_fields != null) {
             int size = m_fields.size();
             for (int i = 0; i < size; i++) {
-                FieldEditor editor = (FieldEditor) m_fields.get(i);
+                FieldEditor editor = m_fields.get(i);
                 valid = valid && editor.isValid();
                 if (!valid) {
                     m_invalidFieldEditor = editor;
@@ -118,6 +109,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
     /*
      * (non-Javadoc) Method declared on PreferencePage.
      */
+    @Override
     protected Control createContents(Composite parent) {
         Control contens = createPageContents(parent);
         initialize();
@@ -144,6 +136,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
      * controls and images. Subclasses may override to release their own allocated SWT resources, but must call
      * <code>super.dispose</code>.
      */
+    @Override
     public void dispose() {
         super.dispose();
         if (m_fields != null) {
@@ -177,6 +170,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
      * The field editor preference page implementation of a <code>PreferencePage</code> method loads all the field
      * editors with their default values.
      */
+    @Override
     protected void performDefaults() {
         if (m_fields != null) {
             Iterator<FieldEditor> I = m_fields.iterator();
@@ -197,6 +191,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
      *
      * @see FieldEditor#store()
      */
+    @Override
     public boolean performOk() {
         if (m_fields != null) {
             Iterator<FieldEditor> I = m_fields.iterator();
@@ -213,6 +208,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
      * <code>IPropertyChangeListener</code>) method intercepts <code>IS_VALID</code> events but passes other events on
      * to its superclass.
      */
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
         if (event.getProperty().equals(FieldEditor.IS_VALID)) {
             boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
@@ -230,6 +226,7 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
     /*
      * (non-Javadoc) Method declared on IDialog.
      */
+    @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible && m_invalidFieldEditor != null) {

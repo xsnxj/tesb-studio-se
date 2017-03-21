@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.designer.esb.runcontainer.util;
 
 import java.io.File;
@@ -18,7 +30,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class RuntimeContainerUtil {
+public class FileUtil {
 
     private static final List<String> CONTAINER_FILES;
 
@@ -31,12 +43,10 @@ public class RuntimeContainerUtil {
         containerFiles.add("/system/org/apache/karaf");
         containerFiles.add("/system/org/talend/esb");
         containerFiles.add("/lib/boot");
-        // containerFiles.add("/version.txt");
-
         CONTAINER_FILES = Collections.unmodifiableList(containerFiles);
     }
 
-    private RuntimeContainerUtil() {
+    private FileUtil() {
     }
 
     public static boolean isValidLocation(String rtHome) {

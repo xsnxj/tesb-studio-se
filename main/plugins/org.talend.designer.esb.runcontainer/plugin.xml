@@ -21,7 +21,7 @@
             category="org.talend.designer.runprocess"
             class="org.talend.designer.esb.runcontainer.preferences.RunContainerPreferencePage"
             id="org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage"
-            name="Local Runtime">
+            name="%RuntimeName">
       </page>
    </extension>
    <extension
@@ -35,7 +35,7 @@
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="org.talend.designer.esb.runcontainer.ui.console.ESBRuntimeConsoleFactory"
-            label="Talend ESB Runtime">
+            label="%RuntimeName">
       </consoleFactory>
    </extension>
    <extension

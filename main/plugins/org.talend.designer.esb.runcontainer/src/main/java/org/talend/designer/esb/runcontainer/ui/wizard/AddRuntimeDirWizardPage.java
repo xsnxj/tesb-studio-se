@@ -1,22 +1,13 @@
 // ============================================================================
 //
-// Talend Community Edition
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// Copyright (C) 2006-2013 Talend – www.talend.com
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.wizard;
@@ -40,13 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 
-/**
- * DOC yyan class global comment. Detailled comment <br/>
- *
- * Support user to choice ESB server or runtime server
- *
- */
 public class AddRuntimeDirWizardPage extends WizardPage {
 
     private final String target;
@@ -67,16 +53,16 @@ public class AddRuntimeDirWizardPage extends WizardPage {
      * Create the wizard.
      */
     public AddRuntimeDirWizardPage(String target) {
-        super("Add ESB Runtime Server");
+        super(RunContainerMessages.getString("AddRuntimeDirWizardPage.Title")); //$NON-NLS-1$
         this.target = target;
-        setTitle("Add ESB Runtime Server");
-        setDescription("Please select local runtime installation directory");
-        rtFiles.add("/bin/trun");
-        rtFiles.add("/bin/setenv");
-        rtFiles.add("/etc");
-        rtFiles.add("/system/org/apache/karaf");
-        rtFiles.add("/system/org/talend/esb");
-        rtFiles.add("/lib/boot");
+        setTitle(RunContainerMessages.getString("AddRuntimeDirWizardPage.Title")); //$NON-NLS-1$
+        setDescription(RunContainerMessages.getString("AddRuntimeDirWizardPage.Desc")); //$NON-NLS-1$
+        rtFiles.add("/bin/trun"); //$NON-NLS-1$
+        rtFiles.add("/bin/setenv"); //$NON-NLS-1$
+        rtFiles.add("/etc"); //$NON-NLS-1$
+        rtFiles.add("/system/org/apache/karaf"); //$NON-NLS-1$
+        rtFiles.add("/system/org/talend/esb"); //$NON-NLS-1$
+        rtFiles.add("/lib/boot"); //$NON-NLS-1$
         // rtFiles.add("/version.txt");
     }
 
@@ -85,6 +71,7 @@ public class AddRuntimeDirWizardPage extends WizardPage {
      * 
      * @param parent
      */
+    @Override
     public void createControl(Composite parent) {
         Composite container = new Composite(parent, SWT.NULL);
 
@@ -104,12 +91,13 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         GridData gd_lblHome = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
         gd_lblHome.widthHint = 116;
         lblHome.setLayoutData(gd_lblHome);
-        lblHome.setText("Runtime home:");
+        lblHome.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Home")); //$NON-NLS-1$
 
         rtDirText = new Text(compLocation, SWT.BORDER);
         rtDirText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         rtDirText.addModifyListener(new ModifyListener() {
 
+            @Override
             public void modifyText(ModifyEvent e) {
                 // Handle event
                 validate();
@@ -128,18 +116,18 @@ public class AddRuntimeDirWizardPage extends WizardPage {
                 }
             }
         });
-        btnNewButton.setText("&Directory...");
+        btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.DirButton")); //$NON-NLS-1$
 
         Composite compCheck = new Composite(body, SWT.NONE);
         compCheck.setLayout(new GridLayout(2, false));
 
         btnCopyToStudio = new Button(compCheck, SWT.CHECK);
-        btnCopyToStudio.setText("Copy entire runtime server into studio directory and use it");
+        btnCopyToStudio.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.IfCopy")); //$NON-NLS-1$
         btnCopyToStudio.setSelection(true);
         btnCopyToStudio.setEnabled(true);
 
         Label blank = new Label(compCheck, SWT.NONE);
-        blank.setText("");
+        blank.setText(""); //$NON-NLS-1$
 
         Label labelStudioPath = new Label(compCheck, SWT.NONE);
         labelStudioPath.setText(target);
@@ -148,25 +136,25 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         compInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         Label lblSpace = new Label(compInfo, SWT.NONE);
-        lblSpace.setText("Available Spaces:");
+        lblSpace.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Space")); //$NON-NLS-1$
 
         Label labelSpaceSize = new Label(compInfo, SWT.NONE);
         labelSpaceSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        labelSpaceSize.setText(new File(System.getProperty("user.dir")).getFreeSpace() / 1024 / 1024 + " MB");
+        labelSpaceSize.setText(new File(System.getProperty("user.dir")).getFreeSpace() / 1024 / 1024 + " MB"); //$NON-NLS-1$ //$NON-NLS-2$
 
         Label lblRuntimeServerVersion = new Label(compInfo, SWT.NONE);
-        lblRuntimeServerVersion.setText("Runtime Server Version:");
+        lblRuntimeServerVersion.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Version")); //$NON-NLS-1$
 
         labelVersion = new Label(compInfo, SWT.NONE);
         labelVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        labelVersion.setText("");
+        labelVersion.setText(""); //$NON-NLS-1$
 
         Label lblRtSize = new Label(compInfo, SWT.NONE);
-        lblRtSize.setText("Size:");
+        lblRtSize.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Size")); //$NON-NLS-1$
 
         labelSize = new Label(compInfo, SWT.NONE);
         labelSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        labelSize.setText("");
+        labelSize.setText(""); //$NON-NLS-1$
 
     }
 
@@ -198,29 +186,29 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     }
 
     private void validate() {
-        labelVersion.setText("");
-        labelSize.setText("");
+        labelVersion.setText(""); //$NON-NLS-1$
+        labelSize.setText(""); //$NON-NLS-1$
         labelVersion.getParent().layout();
         String rtHome = rtDirText.getText();
         // validate, 1st version, 2nd etc
         boolean validated = true;
-        String errorMsg = "Cannot find ESB Runtime server in the directory";
+        String errorMsg = RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorFind"); //$NON-NLS-1$
         if (rtHome != null) {
             rtHome = rtHome.trim();
             if (rtHome.length() > 0) {
                 File rtDir = new File(rtHome);
                 // find version.txt, 1st in root, second check in container folder
                 if (rtDir.isDirectory()) {
-                    File version = new File(rtHome + "/version.txt");
-                    String ver = "";
+                    File version = new File(rtHome + "/version.txt"); //$NON-NLS-1$
+                    String ver = ""; //$NON-NLS-1$
                     try {
                         if (version.exists()) {
                             ver = Files.readAllLines(version.toPath()).get(0);
                         } else {
-                            version = new File(rtHome + "/container/version.txt");
+                            version = new File(rtHome + "/container/version.txt"); //$NON-NLS-1$
                             if (version.exists()) {
                                 ver = Files.readAllLines(version.toPath()).get(0);
-                                rtHome += "/container/";
+                                rtHome += "/container/"; //$NON-NLS-1$
                             }
                         }
                     } catch (IOException e1) {
@@ -231,14 +219,14 @@ public class AddRuntimeDirWizardPage extends WizardPage {
                     } else {
                         labelVersion.setText(ver);
                         long size = getFolderSize(new File(rtHome)) / 1024 / 1024;
-                        labelSize.setText(size + " MB");
+                        labelSize.setText(size + " MB"); //$NON-NLS-1$
                         labelVersion.getParent().layout();
 
                         for (String f : rtFiles) {
                             File resFile = new File(rtHome + f);
                             if (!resFile.exists()) {
                                 validated = false;
-                                errorMsg = "This is not an complete ESB Runtime server installation";
+                                errorMsg = RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorDir"); //$NON-NLS-1$
                                 break;
                             }
                         }

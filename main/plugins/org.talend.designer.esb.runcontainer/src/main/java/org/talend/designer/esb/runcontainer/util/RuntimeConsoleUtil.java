@@ -1,22 +1,13 @@
 // ============================================================================
 //
-// Talend Community Edition
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// Copyright (C) 2006-2013 Talend – www.talend.com
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
 package org.talend.designer.esb.runcontainer.util;
@@ -34,21 +25,16 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
-import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.console.RuntimeClient;
 
 public class RuntimeConsoleUtil {
 
     public static final String KARAF_CONSOLE = "ESB Runtime";
 
-    private static RuntimeServerController server;
-
-    private static String systemCommand = null;
-
     public static IOConsole findConsole(String name) {
         ConsolePlugin plugin = ConsolePlugin.getDefault();
         IConsoleManager conMan = plugin.getConsoleManager();
-        IConsole[] existing = (IConsole[]) conMan.getConsoles();
+        IConsole[] existing = conMan.getConsoles();
         for (int i = 0; i < existing.length; i++) {
             if (name.equals(existing[i].getName()))
                 return (IOConsole) existing[i];
@@ -66,7 +52,7 @@ public class RuntimeConsoleUtil {
     public static void clearConsole() {
         ConsolePlugin plugin = ConsolePlugin.getDefault();
         IConsoleManager conMan = plugin.getConsoleManager();
-        IConsole[] existing = (IConsole[]) conMan.getConsoles();
+        IConsole[] existing = conMan.getConsoles();
         for (int i = 0; i < existing.length; i++) {
             if (KARAF_CONSOLE.equals(existing[i].getName())) {
                 ((IOConsole) existing[i]).destroy();
@@ -89,8 +75,9 @@ public class RuntimeConsoleUtil {
         }
         m.setInputStream(pis);
 
-        Thread consoleThread = new Thread("Runtime Console 1") {
+        Thread consoleThread = new Thread("Runtime Console Input") {
 
+            @Override
             public void run() {
                 InputStream is = findConsole(KARAF_CONSOLE).getInputStream();
 
@@ -102,13 +89,20 @@ public class RuntimeConsoleUtil {
                     }
                 } catch (IOException e1) {
                     e1.printStackTrace();
+                } finally {
+                    try {
+                        pos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
         consoleThread.start();
 
-        Thread connectThread = new Thread("Runtime Console 2") {
+        Thread connectThread = new Thread("Runtime Console Connector") {
 
+            @Override
             public void run() {
                 IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                 String etcLocation = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION);
@@ -124,25 +118,5 @@ public class RuntimeConsoleUtil {
             }
         };
         connectThread.start();
-    }
-
-    public static void startLocalRuntime(String karafHome) {
-        // find bin
-
-    }
-
-    // test
-    public static void main(String[] args) {
-        startLocalRuntime("E:\\nb\\Talend-ESB-V6.3.1\\container");
-    }
-
-    public static void exec(String cmd) {
-        try {
-            findConsole(KARAF_CONSOLE).newOutputStream().write(cmd + '\n');
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        // systemCommand = cmd;
     }
 }

@@ -1,22 +1,13 @@
 // ============================================================================
 //
-// Talend Community Edition
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
 //
-// Copyright (C) 2006-2013 Talend – www.talend.com
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.actions;
@@ -29,19 +20,14 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.runprocess.ui.ERunprocessImages;
 
-/**
- * DOC yyan class global comment. Detailled comment <br/>
- *
- * $Id$
- *
- */
 public class HaltRuntimeAction extends Action {
 
     public HaltRuntimeAction() {
-        setToolTipText("Stop Server");
+        setToolTipText(RunContainerMessages.getString("HaltRuntimeAction.Stop")); //$NON-NLS-1$
         setImageDescriptor(ImageProvider.getImageDesc(ERunprocessImages.KILL_PROCESS_ACTION));
         setEnabled(RuntimeServerController.getInstance().isRunning());
     }
@@ -59,15 +45,15 @@ public class HaltRuntimeAction extends Action {
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    monitor.beginTask("Halting Runtime Server...", 20);
+                    monitor.beginTask(RunContainerMessages.getString("HaltRuntimeAction.Stoping"), 20); //$NON-NLS-1$
                     try {
                         RuntimeServerController.getInstance().stopRuntimeServer();
                         int i = 0;
-                        String dot = ".";
+                        String dot = "."; //$NON-NLS-1$
                         // JMXUtil.connectToRuntime() != null
                         while (RuntimeServerController.getInstance().isRunning() && i < 20 && !monitor.isCanceled()) {
-                            monitor.subTask("Halting Runtime Server" + dot);
-                            dot += ".";
+                            monitor.subTask(RunContainerMessages.getString("HaltRuntimeAction.Task") + dot); //$NON-NLS-1$
+                            dot += "."; //$NON-NLS-1$
                             monitor.worked(1);
                             Thread.sleep(1000);
                         }

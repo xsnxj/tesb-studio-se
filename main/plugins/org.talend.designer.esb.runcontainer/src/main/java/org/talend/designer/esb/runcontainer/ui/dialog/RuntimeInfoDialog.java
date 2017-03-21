@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.designer.esb.runcontainer.ui.dialog;
 
 import java.util.List;
@@ -13,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 
 public class RuntimeInfoDialog extends Dialog {
 
@@ -35,7 +48,7 @@ public class RuntimeInfoDialog extends Dialog {
     }
 
     /**
-     * DOC yyi RuntimeInfoDialog constructor comment.
+     * DOC yyan RuntimeInfoDialog constructor comment.
      * 
      * @param activeShell
      * @param list
@@ -70,7 +83,7 @@ public class RuntimeInfoDialog extends Dialog {
     private void createContents() {
         shell = new Shell(getParent(), getStyle());
         shell.setSize(650, 500);
-        shell.setText("Runtime Information");
+        shell.setText(RunContainerMessages.getString("RuntimeInfoDialog.Title")); //$NON-NLS-1$
         shell.setLayout(new GridLayout(1, false));
 
         Composite parent = new Composite(shell, SWT.NONE);
@@ -83,15 +96,15 @@ public class RuntimeInfoDialog extends Dialog {
         table.setLinesVisible(true);
 
         TableColumn tblName = new TableColumn(table, SWT.NONE);
-        tblName.setText("Name");
+        tblName.setText(RunContainerMessages.getString("RuntimeInfoDialog.Name")); //$NON-NLS-1$
         TableColumn tblValue = new TableColumn(table, SWT.NONE);
-        tblValue.setText("Value");
+        tblValue.setText(RunContainerMessages.getString("RuntimeInfoDialog.Value")); //$NON-NLS-1$
         // TableColumn tblDesc = new TableColumn(table, SWT.NONE);
         // tblDesc.setText("Type");
 
         for (Map<String, String> attr : attrInfo) {
             TableItem tableItem = new TableItem(table, SWT.NONE);
-            tableItem.setText(new String[] { attr.get("name"), attr.get("value") });
+            tableItem.setText(new String[] { attr.get("name"), attr.get("value") }); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         tblName.pack();
