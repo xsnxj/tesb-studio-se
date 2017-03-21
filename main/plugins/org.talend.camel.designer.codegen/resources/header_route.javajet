@@ -2010,25 +2010,7 @@ if (isProvider) {
 %>
             @Override
             public void configure() throws java.lang.Exception {
-                <%
-                    if(hasRouteletComponent(process)){
-                %>
-                        doConfig();
-                <%
-                    }else{
-                        if(isRoutelet){
-                %>
-                            if(!runInRuntime){
-                                doConfig();
-                            }
-                <%
-                        }else{
-                %>
-                            doConfig();
-                <%
-                        }
-                    }
-                %>
+				doConfig();
             }
             
             public void doConfig() throws java.lang.Exception {
