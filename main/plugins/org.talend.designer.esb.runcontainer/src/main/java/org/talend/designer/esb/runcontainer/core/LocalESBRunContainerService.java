@@ -121,12 +121,12 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
                                     RunContainerMessages.getString("LocalESBRunContainerService.Dialog1"), //$NON-NLS-1$
                                     RunContainerMessages.getString("LocalESBRunContainerService.Dialog2")); //$NON-NLS-1$
                             if (openPrefs) {
-                                PreferenceDialog d = new PreferenceDialog(jobComposite.getShell(), PlatformUI.getWorkbench()
+                                PreferenceDialog dlg = new PreferenceDialog(jobComposite.getShell(), PlatformUI.getWorkbench()
                                         .getPreferenceManager());
-                                d.setSelectedNode(RunContainerPreferencePage.ID);
-                                d.open();
+                                dlg.setSelectedNode(RunContainerPreferencePage.ID);
+                                dlg.open();
+                                ((Combo) e.getSource()).select(index);
                             }
-                            // ((Combo) e.getSource()).select(index);
                         }
                     } else if (defaultContextManager != null) {
                         RunProcessPlugin.getDefault().setRunProcessContextManager(defaultContextManager);
