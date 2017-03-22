@@ -208,10 +208,10 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         groupEnd.setBounds(0, 0, 70, 82);
         groupEnd.setLayout(new GridLayout(1, false));
 
-        Composite compScript = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT,
-                RunContainerMessages.getString("RunContainerPreferencePage.MavenScript"), //$NON-NLS-1$
-                BooleanFieldEditor.DEFAULT, compScript));
+        //Composite compScript = new Composite(groupEnd, SWT.NONE);
+        //addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT,
+          //      RunContainerMessages.getString("RunContainerPreferencePage.MavenScript"), //$NON-NLS-1$
+            //    BooleanFieldEditor.DEFAULT, compScript));
 
         Composite compCache = new Composite(groupEnd, SWT.NONE);
         GridLayout gl_compCache = new GridLayout(2, false);
