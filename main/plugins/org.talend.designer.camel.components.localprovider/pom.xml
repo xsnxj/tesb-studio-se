@@ -12,7 +12,7 @@
   <packaging>eclipse-plugin</packaging>
 
     <properties>
-        <camel.version>2.17.3</camel.version>
+        <camel.version>2.17.6</camel.version>
         <activemq.version>5.14.4</activemq.version>
         <!--spring.osgi.compatible.version>1.2.1</spring.osgi.compatible.version-->
         <!-- camel-groovy -->
