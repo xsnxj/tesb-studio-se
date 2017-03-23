@@ -37,7 +37,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
@@ -155,13 +154,6 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected String getGroupId() {
         return CamelFeatureUtil.getMavenGroupId(routeNode.getObject().getProperty().getItem());
-    }
-
-    protected String getJobGroupId(String jobId, String jobName) {
-        String defaultProjectName = JavaResourcesHelper.getProjectFolderName(
-                routeNode.getObject().getProperty().getItem());
-        // return CamelFeatureUtil.getMavenGroupId(jobId, jobName, defaultProjectName);
-        return JavaResourcesHelper.getGroupItemName(defaultProjectName, jobName);
     }
 
     protected String getArtifactId() {

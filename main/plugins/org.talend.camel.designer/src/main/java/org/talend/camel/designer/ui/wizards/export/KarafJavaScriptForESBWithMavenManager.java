@@ -46,7 +46,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.ItemResourceUtil;
@@ -87,8 +86,9 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     private Map<String, OSGIJavaScriptForESBWithMavenManager> talendJobOsgiWithMavenManagersMap = new HashMap<String, OSGIJavaScriptForESBWithMavenManager>();
 
-    private String projectName;
-
+    // private String projectName;
+    private String routeName;
+    private String routeVersion;
     private String groupId;
 
     private String type = "Job";
@@ -286,20 +286,12 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     @Override
     protected Map<String, String> getMainMavenProperties(Item item) {
         Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
-        this.groupId = CamelFeatureUtil.getMavenGroupId(item);
-        this.projectName = JavaResourcesHelper.getProjectFolderName(item);
-
-        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), getGroupId());
-
+        // projectName = getCorrespondingProjectName(item);
+        routeName = item.getProperty().getLabel();
+        routeVersion = item.getProperty().getVersion();
+        groupId = CamelFeatureUtil.getMavenGroupId(item);
+        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), groupId);
         return mavenPropertiesMap;
-    }
-
-    private String getGroupId() {
-        return groupId;
-    }
-
-    private String getJobGroupId(String jobId, String jobName) {
-    	return CamelFeatureUtil.getMavenGroupId(jobId, jobName, projectName);
     }
 
     @Override
@@ -405,11 +397,11 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (repObject != null) {
                 Element dependencyElement = parentEle.addElement(IMavenProperties.ELE_DEPENDENCY);
                 Element groupIdElement = dependencyElement.addElement(IMavenProperties.ELE_GROUP_ID);
-                groupIdElement.setText(getJobGroupId(repObject.getId(), repObject.getLabel()));
+                groupIdElement.setText(groupId);
                 Element artifactIdElement = dependencyElement.addElement(IMavenProperties.ELE_ARTIFACT_ID);
-                artifactIdElement.setText(repObject.getLabel() + "-bundle");
+                artifactIdElement.setText(routeName + "_" + repObject.getLabel());
                 Element versionElement = dependencyElement.addElement(IMavenProperties.ELE_VERSION);
-                versionElement.setText(repObject.getVersion());
+                versionElement.setText(routeVersion);
             }
         }
         // add libs.
@@ -482,6 +474,10 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             }
 
         }
+    }
+
+    private String getGroupId() {
+    	return groupId;
     }
 
     /**
