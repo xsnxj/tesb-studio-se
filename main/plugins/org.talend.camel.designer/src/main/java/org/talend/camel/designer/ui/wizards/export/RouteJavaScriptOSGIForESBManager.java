@@ -42,20 +42,33 @@ import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.TemplateProcessor;
 
 /**
  * DOC ycbai class global comment. Detailled comment
  */
-public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBManager {
+public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIForESBManager {
 
     private final Collection<String> routelets;
 
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
         Collection<String> routelets) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        this.routelets = routelets;
+    }
+
+    /**
+     * DOC yyan RouteJavaScriptOSGIForESBManager constructor comment.
+     * @param exportChoice
+     * @param context
+     * @param routelets2
+     * @param statisticsPort
+     * @param tracePort
+     */
+    public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String context,
+            Collection<String> routelets, int statisticsPort, int tracePort) {
+        super(exportChoiceMap, context, null, statisticsPort, tracePort);
         this.routelets = routelets;
     }
 
@@ -114,7 +127,14 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
 
         // route name and class name
         routeInfo.put("name", processItem.getProperty().getLabel()); //$NON-NLS-1$
-        routeInfo.put("className", getClassName(processItem)); //$NON-NLS-1$
+        String className = getClassName(processItem);
+        String idName = className;
+        String suffix = getOsgiServiceIdSuffix();
+        if (suffix != null && suffix.length() > 0) {
+        	idName += suffix;
+        }
+        routeInfo.put("className", className); //$NON-NLS-1$
+        routeInfo.put("idName", idName); //$NON-NLS-2$
 
         boolean useSAM = false;
         boolean hasCXFUsernameToken = false;
@@ -225,5 +245,4 @@ public class RouteJavaScriptOSGIForESBManager extends JobJavaScriptOSGIForESBMan
             }
         }
     }
-
 }
