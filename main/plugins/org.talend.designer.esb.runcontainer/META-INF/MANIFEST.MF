@@ -18,7 +18,8 @@ Require-Bundle: org.talend.camel.model,
  org.talend.designer.publish.core,
  org.talend.repository,
  org.eclipse.jdt.core,
- org.talend.libraries.apache.http
+ org.talend.libraries.apache.http,
+ org.talend.repository.services
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin
 Bundle-ClassPath: .,

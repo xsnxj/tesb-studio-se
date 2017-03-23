@@ -2010,25 +2010,7 @@ if (isProvider) {
 %>
             @Override
             public void configure() throws java.lang.Exception {
-                <%
-                    if(hasRouteletComponent(process)){
-                %>
-                        doConfig();
-                <%
-                    }else{
-                        if(isRoutelet){
-                %>
-                            if(!runInRuntime){
-                                doConfig();
-                            }
-                <%
-                        }else{
-                %>
-                            doConfig();
-                <%
-                        }
-                    }
-                %>
+				doConfig();
             }
 
             public void doConfig() throws java.lang.Exception {
@@ -2175,6 +2157,43 @@ if (isProvider) {
                                 <% } %>
                             }
 <%
+                        } else if ("OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
+                            String oidcIntrospectionEndpoint = ElementParameterParser.getValue(node, "__OIDC_INTROSPECTION_ENDPOINT__");
+                            %>
+                                // OpenID authentication
+                                sf_<%=cid%>.setProvider(new javax.ws.rs.container.ContainerRequestFilter() {
+                                    @Override
+                                    public void filter(javax.ws.rs.container.ContainerRequestContext requestContext) throws java.io.IOException {
+                                        boolean authFailed = true;
+                                        String authzHeader = requestContext.getHeaders().getFirst("Authorization");
+                                        if (authzHeader != null && authzHeader.startsWith("Bearer ")) {
+                                            String accessToken = authzHeader.substring("Bearer ".length());
+                                            if (accessToken != null && !accessToken.isEmpty()) {
+                                                org.apache.cxf.jaxrs.client.WebClient oidcWebClient =
+                                                    org.apache.cxf.jaxrs.client.WebClient.create(<%=oidcIntrospectionEndpoint%>,
+                                                        java.util.Collections.singletonList(new org.apache.cxf.jaxrs.provider.json.JSONProvider())).type("application/x-www-form-urlencoded");
+                                                javax.ws.rs.core.Response response = oidcWebClient.post("token=" + java.net.URLEncoder.encode(accessToken, "UTF-8")+ "&token_type_hint=access_token");
+                                                String responseString = response.readEntity(String.class);
+                                                org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+                                                try {
+                                                    org.json.simple.JSONObject responseJson = (org.json.simple.JSONObject)parser.parse(responseString);
+                                                    if ((Boolean)responseJson.get("active") && "Bearer".equals(responseJson.get("token_type"))) {
+                                                        authFailed = false;
+                                                    }
+                                                } catch (Exception e) {
+                                                    authFailed = true;
+                                                }
+                                            }
+                                        }
+
+                                        if (authFailed) {
+                                            javax.ws.rs.core.Response.ResponseBuilder builder = javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED);
+                                            builder.header(javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE, "Bearer");
+                                            requestContext.abortWith(builder.build());
+                                        }
+                                    }
+                                });
+                            <%
                         }
                     }
                 } else {

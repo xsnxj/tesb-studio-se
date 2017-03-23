@@ -147,6 +147,7 @@
 			<ITEMS DEFAULT="BASIC">
 				<ITEM NAME="BASIC" VALUE="BASIC" />
 				<ITEM NAME="SAML" VALUE="SAML" />
+                <ITEM NAME="OIDC" VALUE="OIDC" />
 			</ITEMS>
 		</PARAMETER>
 		
@@ -159,7 +160,12 @@
 			REQUIRED="true" SHOW_IF="(ENABLE_SECURITY == 'true') AND (#LINK@CONNECTOR.IN.ANY &gt; '0')">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
-		
+
+        <PARAMETER NAME="OIDC_INTROSPECTION_ENDPOINT" FIELD="TEXT" NUM_ROW="80"
+            REQUIRED="true" SHOW_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'OIDC')">
+            <DEFAULT>"http://127.0.0.1:9080/oidc/oauth2/introspect"</DEFAULT>
+        </PARAMETER>
+
 		<PARAMETER NAME="USE_AUTHORIZATION" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="81" READONLY="false"
 			SHOW_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML' ) AND	 (IS_STUDIO_EE_VERSION == 'true') " >
@@ -223,6 +229,10 @@
 
             <IMPORT MODULE_GROUP="security-common"
                     REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
+
+            <IMPORT NAME="json-simple-1.1" MODULE="json-simple-1.1.jar" MVN="mvn:org.talend.libraries/json-simple-1.1/6.0.0"
+                UrlPath="platform:/plugin/org.talend.libraries.apache.storm/lib/json-simple-1.1.jar"
+                REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'OIDC')" />
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
