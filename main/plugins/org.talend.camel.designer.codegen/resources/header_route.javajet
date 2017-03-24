@@ -3152,13 +3152,14 @@ if (isProvider) {
         // when propagateHeader parameter will be removed the https://github.com/Talend/tesb-rt-se/blob/master/camel-talendjob/src/main/java/org/talend/camel/TalendProducer.java
         // have to be changed - remove populateTalendContextParamsWithCamelHeaders(exchange, args);
         String propagateHeader = ElementParameterParser.getValue(node, "__PROPAGATE_HEADER__");
+        String stickyJob = ElementParameterParser.getValue(node, "__STICKY_JOB__");
         if("true".equals(useJar)){
             String typeName = ElementParameterParser.getValue(node, "__JOB__");
             String context = ElementParameterParser.getValue(node, "__CONTEXT__");
             contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
 %>
         org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>");
+            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
         }else{
             String typeName = "";
@@ -3199,12 +3200,12 @@ if (isProvider) {
                 String executionContextVariable = "contextStr";
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
             } else {
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
             }
         }
