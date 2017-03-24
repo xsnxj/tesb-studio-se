@@ -12,8 +12,11 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards.export;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -60,6 +63,7 @@ import org.talend.designer.maven.template.MavenTemplateManager;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
@@ -339,41 +343,41 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-            /*final Map<String, Object> templateParameters = PomUtil.getTemplateParameters(item.getProperty());*/
+            final Map<String, Object> templateParameters = getTemplateParameters(item.getProperty());
 
-            String mavenScript = MavenTemplateManager.getTemplateContent(templatePomFile,
+            String mavenScript = getTemplateContent(templatePomFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_POM, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
-                    IProjectSettingTemplateConstants.PATH_ROUTE + '/' + TalendMavenConstants.POM_FILE_NAME/*, templateParameters*/);
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/' + TalendMavenConstants.POM_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
                 scriptsUrls.add(mavenBuildFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateBundleFile,
+            mavenScript = getTemplateContent(templateBundleFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_BUNDLE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME/*, templateParameters*/);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
                 scriptsUrls.add(mavenBuildBundleFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateFeatureFile,
+            mavenScript = getTemplateContent(templateFeatureFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_FEATURE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME/*, templateParameters*/);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
                 scriptsUrls.add(mavenBuildFeatureFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateParentFile,
+            mavenScript = getTemplateContent(templateParentFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_PARENT, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME/*, templateParameters*/);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
@@ -634,5 +638,75 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     public void setReferenceRoutelets(Collection<String> routelets) {
         this.referenceRoutelets = routelets;
+    }
+
+    private static Map<String, Object> getTemplateParameters(Property property) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (property != null && property.eResource() != null) {
+            final org.talend.core.model.properties.Project project = ProjectManager.getInstance().getProject(property);
+            if (project != null // from reference projects
+                    && !ProjectManager.getInstance().getCurrentProject().getTechnicalLabel().equals(project.getTechnicalLabel())) {
+                parameters.put("ProjectName", project.getTechnicalLabel());
+            }
+        }
+        return parameters;
+    }
+
+    private static String getTemplateContent(File templateFile, String projectSettingKey, String bundleName,
+            String bundleTemplatePath, Map<String, Object> parameters) throws Exception {
+        return MavenTemplateManager.getContentFromInputStream(getTemplateStream(
+                templateFile, projectSettingKey, bundleName, bundleTemplatePath, parameters));
+    }
+
+    private static InputStream getTemplateStream(File templateFile, String projectSettingKey, String bundleName,
+            String bundleTemplatePath, Map<String, Object> parameters) throws Exception {
+        InputStream stream = null;
+        // 1. from file template directly.
+        if (templateFile != null && templateFile.exists()) {
+            // will close it later.
+            stream = new BufferedInputStream(new FileInputStream(templateFile));
+        }
+        // 2. from project setting
+        if (stream == null && projectSettingKey != null) {
+            stream = getProjectSettingStream(projectSettingKey, parameters);
+        }
+        // 3. from bundle template.
+        if (stream == null && bundleName != null && bundleTemplatePath != null) {
+            stream = MavenTemplateManager.getBundleTemplateStream(bundleName, bundleTemplatePath);
+        }
+        return stream;
+    }
+
+    private static Method mGetProjectSettingStream = null;
+    private static boolean newMethod = false;
+
+    private static InputStream getProjectSettingStream(String key, Map<String, Object> parameters) {
+        if (mGetProjectSettingStream == null) {
+            try {
+                try {
+                    mGetProjectSettingStream = MavenTemplateManager.class.getMethod(
+                            "getProjectSettingStream", String.class, Map.class);
+                    newMethod = true;
+                } catch (NoSuchMethodException ne) {
+                    mGetProjectSettingStream = MavenTemplateManager.class.getMethod(
+                            "getProjectSettingStream", String.class);
+                    newMethod = false;
+                }
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new IllegalStateException("Unexpected method resolution failure. ", e);
+            }
+        }
+    	try {
+            if (newMethod) {
+                return (InputStream) mGetProjectSettingStream.invoke(null, key, parameters);
+            } else {
+                return (InputStream) mGetProjectSettingStream.invoke(null, key);
+            }
+    	} catch (Exception e) {
+    	    // ignore
+    	}
+        return null;
     }
 }
